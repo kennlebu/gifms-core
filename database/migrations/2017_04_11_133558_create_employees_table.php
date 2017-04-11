@@ -1,0 +1,47 @@
+<?php
+
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
+
+class CreateEmployeesTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('employees', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('f_name');
+            $table->string('l_name');
+            $table->integer('department_id');
+            $table->string('post');
+            $table->string('mobile_no');
+            $table->string('mpesa_no');
+            $table->string('bank_account');
+            $table->string('cheque_addressee');
+            $table->string('payment_mode');
+            $table->integer('bank');
+            $table->integer('bank_branch');
+            $table->string('station');
+            $table->string('swift_code');
+            $table->string('signature');
+            $table->string('bank_signatory');
+            $table->timestamps();
+            $table->softDeletes();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('employees');
+    }
+}
