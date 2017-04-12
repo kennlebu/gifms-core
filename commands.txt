@@ -1,0 +1,385 @@
+
+C:\Laravel_projects\gifms-core>php artisan make:migration create_employees_table
+Created Migration: 2017_04_11_133558_create_employees_table
+
+C:\Laravel_projects\gifms-core>php artisan migrate
+Migrated: 2017_04_11_133558_create_employees_table
+
+C:\Laravel_projects\gifms-core>php artisan make:migration create_banks_table
+Created Migration: 2017_04_11_135926_create_banks_table
+
+C:\Laravel_projects\gifms-core>php artisan migrate
+Migrated: 2017_04_11_135926_create_banks_table
+
+C:\Laravel_projects\gifms-core>php artisan make:migration create_bank_branches_table
+Created Migration: 2017_04_11_140747_create_bank_branches_table
+
+C:\Laravel_projects\gifms-core>php artisan migrate
+Migrated: 2017_04_11_140747_create_bank_branches_table
+
+C:\Laravel_projects\gifms-core>php artisan make:migration create_departments_table
+Created Migration: 2017_04_11_141929_create_departments_table
+
+C:\Laravel_projects\gifms-core>php artisan make:migration create_payment_mode_table
+Created Migration: 2017_04_11_142450_create_payment_mode_table
+
+C:\Laravel_projects\gifms-core>php artisan migrate
+
+
+  [Symfony\Component\Debug\Exception\FatalThrowableError]
+  Parse error: syntax error, unexpected 'public' (T_PUBLIC), expecting end of file
+
+
+
+C:\Laravel_projects\gifms-core>php artisan migrate
+Migrated: 2017_04_11_141929_create_departments_table
+Migrated: 2017_04_11_142450_create_payment_mode_table
+
+C:\Laravel_projects\gifms-core>composer require doctrine/dbal
+Using version ^2.5 for doctrine/dbal
+./composer.json has been updated
+Loading composer repositories with package information
+Updating dependencies (including require-dev)
+Package operations: 6 installs, 0 updates, 0 removals
+  - Installing doctrine/lexer (v1.0.1): Downloading (100%)
+  - Installing doctrine/collections (v1.4.0): Downloading (100%)
+  - Installing doctrine/cache (v1.6.1): Downloading (100%)
+  - Installing doctrine/annotations (v1.4.0): Downloading (100%)
+  - Installing doctrine/common (v2.7.2): Downloading (100%)
+  - Installing doctrine/dbal (v2.5.12): Downloading (100%)
+Writing lock file
+Generating autoload files
+> Illuminate\Foundation\ComposerScripts::postUpdate
+> php artisan optimize
+Generating optimized class loader
+The compiled class file has been removed.
+
+C:\Laravel_projects\gifms-core>php artisan make:model bank
+Model created successfully.
+
+C:\Laravel_projects\gifms-core>php artisan make:model Models/BankModels/bank
+Model created successfully.
+
+C:\Laravel_projects\gifms-core>php artisan make:model Models/BankModels/bank_branch
+Model created successfully.
+
+C:\Laravel_projects\gifms-core>php artisan make:model Models/ListsModels/Department
+Model created successfully.
+
+C:\Laravel_projects\gifms-core>php artisan make:model Models/ListsModels/Bank
+Model created successfully.
+
+C:\Laravel_projects\gifms-core>php artisan make:model Models/ListsModels/BankBranch
+Model created successfully.
+
+C:\Laravel_projects\gifms-core>php artisan make:model Models/ListsModels/PaymentMode --migration
+Model created successfully.
+Created Migration: 2017_04_11_154752_create_payment_modes_table
+
+C:\Laravel_projects\gifms-core>php artisan make:model Models/UsersModels/Employees
+Model created successfully.
+
+C:\Laravel_projects\gifms-core>php artisan make:migration remove_payment_mode_table
+Created Migration: 2017_04_11_155804_remove_payment_mode_table
+
+C:\Laravel_projects\gifms-core>php artisan migrate
+Migrated: 2017_04_11_154752_create_payment_modes_table
+Migrated: 2017_04_11_155804_remove_payment_mode_table
+
+C:\Laravel_projects\gifms-core>php artisan migrate
+
+
+  [Illuminate\Database\QueryException]
+  could not find driver (SQL: select * from sysobjects where type = 'U' and name = migrations)
+
+
+
+  [Doctrine\DBAL\Driver\PDOException]
+  could not find driver
+
+
+
+  [PDOException]
+  could not find driver
+
+
+
+C:\Laravel_projects\gifms-core>php artisan migrate
+
+
+  [Illuminate\Database\QueryException]
+  SQLSTATE[28000]: [Microsoft][ODBC Driver 13 for SQL Server][SQL Server]Login failed for user 'forge'. (SQL: select
+  * from sysobjects where type = 'U' and name = migrations)
+
+
+
+  [Doctrine\DBAL\Driver\PDOException]
+  SQLSTATE[28000]: [Microsoft][ODBC Driver 13 for SQL Server][SQL Server]Login failed for user 'forge'.
+
+
+
+  [PDOException]
+  SQLSTATE[28000]: [Microsoft][ODBC Driver 13 for SQL Server][SQL Server]Login failed for user 'forge'.
+
+
+
+C:\Laravel_projects\gifms-core>php artisan migrate
+Migration table created successfully.
+
+
+  [Illuminate\Database\QueryException]
+  SQLSTATE[42S01]: [Microsoft][ODBC Driver 13 for SQL Server][SQL Server]There is already an object named 'employees'
+   in the database. (SQL: create table "employees" ("id" int identity primary key not null, "f_name" nvarchar(255) no
+  t null, "l_name" nvarchar(255) not null, "department_id" int not null, "post" nvarchar(255) not null, "mobile_no" n
+  varchar(255) not null, "mpesa_no" nvarchar(255) not null, "bank_account" nvarchar(255) not null, "cheque_addressee"
+   nvarchar(255) not null, "payment_mode" nvarchar(255) not null, "bank" int not null, "bank_branch" int not null, "s
+  tation" nvarchar(255) not null, "swift_code" nvarchar(255) not null, "signature" nvarchar(255) not null, "bank_sign
+  atory" nvarchar(255) not null, "created_at" datetime null, "updated_at" datetime null, "deleted_at" datetime null))
+
+
+
+  [Doctrine\DBAL\Driver\PDOException]
+  SQLSTATE[42S01]: [Microsoft][ODBC Driver 13 for SQL Server][SQL Server]There is already an object named 'employees'
+   in the database.
+
+
+
+  [PDOException]
+  SQLSTATE[42S01]: [Microsoft][ODBC Driver 13 for SQL Server][SQL Server]There is already an object named 'employees'
+   in the database.
+
+
+
+C:\Laravel_projects\gifms-core>php artisan migrate
+Migration table created successfully.
+Migrated: 2014_10_12_000000_create_users_table
+Migrated: 2014_10_12_100000_create_password_resets_table
+Migrated: 2017_04_10_044715_create_cache_table
+Migrated: 2017_04_11_133558_create_employees_table
+Migrated: 2017_04_11_135926_create_banks_table
+Migrated: 2017_04_11_140747_create_bank_branches_table
+Migrated: 2017_04_11_141929_create_departments_table
+Migrated: 2017_04_11_142450_create_payment_mode_table
+Migrated: 2017_04_11_154752_create_payment_modes_table
+Migrated: 2017_04_11_155804_remove_payment_mode_table
+
+C:\Laravel_projects\gifms-core>php artisan migrate
+Nothing to migrate.
+
+C:\Laravel_projects\gifms-core>php artisan route:list
++--------+----------+----------+------+---------+--------------+
+| Domain | Method   | URI      | Name | Action  | Middleware   |
++--------+----------+----------+------+---------+--------------+
+|        | GET|HEAD | /        |      | Closure | web          |
+|        | GET|HEAD | api/user |      | Closure | api,auth:api |
++--------+----------+----------+------+---------+--------------+
+
+C:\Laravel_projects\gifms-core>php artisan --h
+Laravel Framework version 5.3.31
+
+Usage:
+  command [options] [arguments]
+
+Options:
+  -h, --help            Display this help message
+  -q, --quiet           Do not output any message
+  -V, --version         Display this application version
+      --ansi            Force ANSI output
+      --no-ansi         Disable ANSI output
+  -n, --no-interaction  Do not ask any interactive question
+      --env[=ENV]       The environment the command should run under
+  -v|vv|vvv, --verbose  Increase the verbosity of messages: 1 for normal output, 2 for more verbose output and 3 for debug
+
+Available commands:
+  clear-compiled       Remove the compiled class file
+  down                 Put the application into maintenance mode
+  env                  Display the current framework environment
+  help                 Displays help for a command
+  inspire              Display an inspiring quote
+  list                 Lists commands
+  migrate              Run the database migrations
+  optimize             Optimize the framework for better performance
+  serve                Serve the application on the PHP development server
+  tinker               Interact with your application
+  up                   Bring the application out of maintenance mode
+ app
+  app:name             Set the application namespace
+ auth
+  auth:clear-resets    Flush expired password reset tokens
+ cache
+  cache:clear          Flush the application cache
+  cache:table          Create a migration for the cache database table
+ config
+  config:cache         Create a cache file for faster configuration loading
+  config:clear         Remove the configuration cache file
+ db
+  db:seed              Seed the database with records
+ event
+  event:generate       Generate the missing events and listeners based on registration
+ key
+  key:generate         Set the application key
+ make
+  make:auth            Scaffold basic login and registration views and routes
+  make:command         Create a new Artisan command
+  make:controller      Create a new controller class
+  make:event           Create a new event class
+  make:job             Create a new job class
+  make:listener        Create a new event listener class
+  make:mail            Create a new email class
+  make:middleware      Create a new middleware class
+  make:migration       Create a new migration file
+  make:model           Create a new Eloquent model class
+  make:notification    Create a new notification class
+  make:policy          Create a new policy class
+  make:provider        Create a new service provider class
+  make:request         Create a new form request class
+  make:seeder          Create a new seeder class
+  make:test            Create a new test class
+ migrate
+  migrate:install      Create the migration repository
+  migrate:refresh      Reset and re-run all migrations
+  migrate:reset        Rollback all database migrations
+  migrate:rollback     Rollback the last database migration
+  migrate:status       Show the status of each migration
+ notifications
+  notifications:table  Create a migration for the notifications table
+ queue
+  queue:failed         List all of the failed queue jobs
+  queue:failed-table   Create a migration for the failed queue jobs database table
+  queue:flush          Flush all of the failed queue jobs
+  queue:forget         Delete a failed queue job
+  queue:listen         Listen to a given queue
+  queue:restart        Restart queue worker daemons after their current job
+  queue:retry          Retry a failed queue job
+  queue:table          Create a migration for the queue jobs database table
+  queue:work           Start processing jobs on the queue as a daemon
+ route
+  route:cache          Create a route cache file for faster route registration
+  route:clear          Remove the route cache file
+  route:list           List all registered routes
+ schedule
+  schedule:run         Run the scheduled commands
+ session
+  session:table        Create a migration for the session database table
+ storage
+  storage:link         Create a symbolic link from "public/storage" to "storage/app/public"
+ vendor
+  vendor:publish       Publish any publishable assets from vendor packages
+ view
+  view:clear           Clear all compiled view files
+
+C:\Laravel_projects\gifms-core>php artisan migrate
+Migration table created successfully.
+Migrated: 2014_10_12_000000_create_users_table
+Migrated: 2014_10_12_100000_create_password_resets_table
+Migrated: 2017_04_10_044715_create_cache_table
+Migrated: 2017_04_11_133558_create_employees_table
+Migrated: 2017_04_11_135926_create_banks_table
+Migrated: 2017_04_11_140747_create_bank_branches_table
+Migrated: 2017_04_11_141929_create_departments_table
+Migrated: 2017_04_11_142450_create_payment_mode_table
+Migrated: 2017_04_11_154752_create_payment_modes_table
+Migrated: 2017_04_11_155804_remove_payment_mode_table
+
+C:\Laravel_projects\gifms-core>composer require tymon/jwt-auth
+Using version ^0.5.11 for tymon/jwt-auth
+./composer.json has been updated
+Loading composer repositories with package information
+Updating dependencies (including require-dev)
+Package operations: 3 installs, 0 updates, 0 removals
+  - Installing phpseclib/phpseclib (0.3.10): Downloading (100%)
+  - Installing namshi/jose (5.0.2): Downloading (100%)
+  - Installing tymon/jwt-auth (0.5.11): Downloading (100%)
+phpseclib/phpseclib suggests installing ext-gmp (Install the GMP (GNU Multiple Precision) extension in order to speed up arbitrary precision integer arithmetic operations.)
+phpseclib/phpseclib suggests installing pear-pear/PHP_Compat (Install PHP_Compat to get phpseclib working on PHP < 4.3.3.)
+Writing lock file
+Generating autoload files
+> Illuminate\Foundation\ComposerScripts::postUpdate
+> php artisan optimize
+Generating optimized class loader
+The compiled class file has been removed.
+
+C:\Laravel_projects\gifms-core>php artisan vendor:publish
+Copied Directory [\vendor\laravel\framework\src\Illuminate\Notifications\resources\views] To [\resources\views\vendor\notifications]
+Copied Directory [\vendor\laravel\framework\src\Illuminate\Pagination\resources\views] To [\resources\views\vendor\pagination]
+Copied File [\vendor\tymon\jwt-auth\src\config\config.php] To [\config\jwt.php]
+Publishing complete for tag []!
+
+C:\Laravel_projects\gifms-core>php artisan jwt:generate
+jwt-auth secret [eUYflp0E80AepquVMvxWJUkJFsGyPTkQ] set successfully.
+
+C:\Laravel_projects\gifms-core>php artisan make:controller ApiAuthController
+Controller created successfully.
+
+C:\Laravel_projects\gifms-core>php artisan migrate
+Nothing to migrate.
+
+C:\Laravel_projects\gifms-core>php artisan migrate
+Nothing to migrate.
+
+C:\Laravel_projects\gifms-core>php artisan migrate
+Migration table created successfully.
+Migrated: 2014_10_12_000000_create_users_table
+Migrated: 2014_10_12_100000_create_password_resets_table
+Migrated: 2017_04_10_044715_create_cache_table
+Migrated: 2017_04_11_133558_create_employees_table
+Migrated: 2017_04_11_135926_create_banks_table
+Migrated: 2017_04_11_140747_create_bank_branches_table
+Migrated: 2017_04_11_141929_create_departments_table
+Migrated: 2017_04_11_142450_create_payment_mode_table
+Migrated: 2017_04_11_154752_create_payment_modes_table
+Migrated: 2017_04_11_155804_remove_payment_mode_table
+
+C:\Laravel_projects\gifms-core>php artisan tinker
+Psy Shell v0.8.3 (PHP 7.0.13 ΓÇö cli) by Justin Hileman
+>>> factory('App User',6)->create();
+PHP error:  Class 'App User' not found in C:\Laravel_projects\gifms-core\vendor\laravel\framework\src\Illuminate\Database\Eloquent\FactoryBuilder.php on line 142
+>>> factory('App\User',6)->create();
+=> Illuminate\Database\Eloquent\Collection {#717
+     all: [
+       App\User {#718
+         name: "Della Blick",
+         email: "blanda.rusty@example.org",
+         updated_at: "2017-04-12 04:58:35",
+         created_at: "2017-04-12 04:58:35",
+         id: 1,
+       },
+       App\User {#720
+         name: "Dr. Markus Steuber",
+         email: "dylan91@example.net",
+         updated_at: "2017-04-12 04:58:35",
+         created_at: "2017-04-12 04:58:35",
+         id: 2,
+       },
+       App\User {#722
+         name: "Candida Runolfsdottir",
+         email: "wkoepp@example.com",
+         updated_at: "2017-04-12 04:58:35",
+         created_at: "2017-04-12 04:58:35",
+         id: 3,
+       },
+       App\User {#725
+         name: "Cathrine Cruickshank",
+         email: "bridget.thompson@example.net",
+         updated_at: "2017-04-12 04:58:35",
+         created_at: "2017-04-12 04:58:35",
+         id: 4,
+       },
+       App\User {#726
+         name: "Molly Thiel",
+         email: "posinski@example.net",
+         updated_at: "2017-04-12 04:58:35",
+         created_at: "2017-04-12 04:58:35",
+         id: 5,
+       },
+       App\User {#727
+         name: "Ms. Kyra Altenwerth",
+         email: "rdicki@example.org",
+         updated_at: "2017-04-12 04:58:35",
+         created_at: "2017-04-12 04:58:35",
+         id: 6,
+       },
+     ],
+   }
+>>> ^C
+C:\Laravel_projects\gifms-core>

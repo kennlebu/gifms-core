@@ -18,6 +18,7 @@ class CreateBankBranchesTable extends Migration
             $table->string('bank_id');
             $table->string('branch_name');
             $table->string('branch_code');
+            $table->integer('migration_id')->unique();
             $table->timestamps();
             $table->softDeletes();
         });

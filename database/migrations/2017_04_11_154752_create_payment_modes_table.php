@@ -17,6 +17,7 @@ class CreatePaymentModesTable extends Migration
             $table->increments('id');
             $table->string('payment_mode_description');
             $table->string('abrv');
+            $table->integer('migration_id')->unique();
             $table->timestamps();
             $table->softDeletes();
         });

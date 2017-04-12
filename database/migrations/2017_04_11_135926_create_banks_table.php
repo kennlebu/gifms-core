@@ -18,6 +18,7 @@ class CreateBanksTable extends Migration
             $table->string('bank_name');
             $table->string('bank_code');
             $table->integer('swift_code');
+            $table->integer('migration_id')->unique();
             $table->timestamps();
             $table->softDeletes();
         });

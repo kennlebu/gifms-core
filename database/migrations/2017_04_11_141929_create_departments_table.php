@@ -18,7 +18,8 @@ class CreateDepartmentsTable extends Migration
             $table->string('department_name');
             $table->string('description');
             $table->string('acronym');
-            $table->string('HOD');
+            $table->string('HOD')->nullable();
+            $table->integer('migration_id')->unique();
             $table->timestamps();
             $table->softDeletes();
         });
