@@ -16,8 +16,8 @@ class CreateBanksTable extends Migration
         Schema::create('banks', function (Blueprint $table) {
             $table->increments('id');
             $table->string('bank_name');
-            $table->string('bank_code');
-            $table->integer('swift_code');
+            $table->string('bank_code')->nullable();
+            $table->integer('swift_code')->nullable();
             $table->integer('migration_id')->unique();
             $table->timestamps();
             $table->softDeletes();

@@ -17,10 +17,6 @@ class migrate_departments_table extends Seeder
 
         $departments = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('Departments')->get();
 
-        // $departments = get_object_vars($departments);
-
-        var_dump($departments);
-
         $departments_to_migrate=array();
 
         foreach ($departments as $key => $value) {
