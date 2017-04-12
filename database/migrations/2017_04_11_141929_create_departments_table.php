@@ -16,10 +16,12 @@ class CreateDepartmentsTable extends Migration
         Schema::create('departments', function (Blueprint $table) {
             $table->increments('id');
             $table->string('department_name');
-            $table->string('description');
-            $table->string('acronym');
-            $table->string('HOD');
-            $table->timestamps();
+            $table->string('description')->nullable();
+            $table->string('acronym')->nullable();
+            $table->string('HOD')->nullable();
+            $table->integer('migration_id')->unique();
+            $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
             $table->softDeletes();
         });
     

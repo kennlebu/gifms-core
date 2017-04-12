@@ -16,9 +16,11 @@ class CreateBanksTable extends Migration
         Schema::create('banks', function (Blueprint $table) {
             $table->increments('id');
             $table->string('bank_name');
-            $table->string('bank_code');
-            $table->integer('swift_code');
-            $table->timestamps();
+            $table->string('bank_code')->nullable();
+            $table->string('swift_code')->nullable();
+            $table->integer('migration_id')->unique();
+            $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
             $table->softDeletes();
         });
     }

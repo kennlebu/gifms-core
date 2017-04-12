@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreatePaymentModesTable extends Migration
+class CreateBankStatementsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,20 @@ class CreatePaymentModesTable extends Migration
      */
     public function up()
     {
-        Schema::create('payment_modes', function (Blueprint $table) {
+        Schema::create('bank_statements', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('payment_mode_description');
-            $table->string('abrv');
+            $table->date('post_date');
+            $table->longText('reference');
+            $table->longText('narrative');
+            $table->date('value_date');
+            $table->decimal('debit',18,2);
+            $table->decimal('credit',18,2);
+            $table->decimal('closingBalance',18,2);
+            $table->integer('statement_month');
+            $table->integer('statement_year');
+            $table->integer('bank_account');
+            $table->integer('posted');
+            $table->integer('payment');
             $table->integer('migration_id')->unique();
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
@@ -31,6 +41,6 @@ class CreatePaymentModesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('payment_modes');
+        Schema::dropIfExists('bank_statements');
     }
 }

@@ -20,7 +20,7 @@ class CreateEmployeesTable extends Migration
             $table->integer('department_id');
             $table->string('post');
             $table->string('mobile_no');
-            $table->string('mpesa_no');
+            $table->string('mpesa_no')->nullable();
             $table->string('bank_account');
             $table->string('cheque_addressee');
             $table->string('payment_mode');
@@ -28,9 +28,11 @@ class CreateEmployeesTable extends Migration
             $table->integer('bank_branch');
             $table->string('station');
             $table->string('swift_code');
-            $table->string('signature');
+            $table->string('signature')->nullable();
             $table->string('bank_signatory');
-            $table->timestamps();
+            $table->integer('migration_id')->unique();
+            $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
             $table->softDeletes();
         });
     }
