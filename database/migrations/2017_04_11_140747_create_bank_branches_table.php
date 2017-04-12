@@ -19,7 +19,8 @@ class CreateBankBranchesTable extends Migration
             $table->string('branch_name');
             $table->string('branch_code');
             $table->integer('migration_id')->unique();
-            $table->timestamps();
+            $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
             $table->softDeletes();
         });
     }

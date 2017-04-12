@@ -21,7 +21,8 @@ class CreateUsersTable extends Migration
             $table->integer('is_admin');
             $table->integer('migration_id')->unique();
             $table->rememberToken();
-            $table->timestamps();
+            $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
         });
     }
 

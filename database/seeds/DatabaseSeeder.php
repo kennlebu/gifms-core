@@ -13,5 +13,6 @@ class DatabaseSeeder extends Seeder
     {
         // $this->call(UsersTableSeeder::class);
         $this->call(migrate_departments_table::class);
+        $this->call(migrate_banking_data::class);
     }
 }

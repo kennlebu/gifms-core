@@ -15,7 +15,8 @@ class CreateBankStatementsTable extends Migration
     {
         Schema::create('bank_statements', function (Blueprint $table) {
             $table->increments('id');
-            $table->timestamps();
+            $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
             $table->softDeletes();
         });
     }

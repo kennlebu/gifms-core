@@ -18,7 +18,8 @@ class CreatePaymentModesTable extends Migration
             $table->string('payment_mode_description');
             $table->string('abrv');
             $table->integer('migration_id')->unique();
-            $table->timestamps();
+            $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
             $table->softDeletes();
         });
     }

@@ -30,7 +30,7 @@ class migrate_banking_data extends Seeder
 
 
         	echo "\n";
-        	echo $data[$key]['Department'];
+        	echo $data[$key]['BankName'];
         }
 
         DB::table('banks')->insert($data_to_migrate);
@@ -55,7 +55,7 @@ class migrate_banking_data extends Seeder
 
 
         	echo "\n";
-        	echo $data[$key]['Department'];
+        	echo $data[$key]['BankBranch'];
         }
 
         DB::table('bank_branches')->insert($data_to_migrate);
