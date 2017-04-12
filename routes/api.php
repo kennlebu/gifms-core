@@ -14,5 +14,15 @@ use Illuminate\Http\Request;
 */
 
 Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:api');
+    return ["name"=>"Kevin"];
+});
+
+Route::post('/authenticate', [
+
+	'uses' => 'ApiAuthController@authenticate'
+
+]);
+
+Route::get('/authenticate', function (Request $request) {
+    return ["name"=>"Kevin"];
+})->middleware('jwt.auth');
