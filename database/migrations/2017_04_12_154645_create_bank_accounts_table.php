@@ -15,6 +15,13 @@ class CreateBankAccountsTable extends Migration
     {
         Schema::create('bank_accounts', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('title');
+            $table->string('bank_name');
+            $table->string('branch_name')->nullable();
+            $table->string('account_number');
+            $table->integer('currency');
+            $table->integer('balance_locked');
+            $table->integer('migration_id')->unique();
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
             $table->softDeletes();

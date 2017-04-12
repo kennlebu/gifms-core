@@ -15,6 +15,9 @@ class CreateBankCsvsTable extends Migration
     {
         Schema::create('bank_csvs', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('csv_document');
+            $table->string('date');
+            $table->integer('migration_id')->unique();
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
             $table->softDeletes();
