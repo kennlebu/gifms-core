@@ -11,8 +11,13 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // $this->call(UsersTableSeeder::class);
+        //refferences
+        $this->call(migrate_referrence_tables::class);
+
+
+        //accounting
         $this->call(migrate_departments_table::class);
         $this->call(migrate_banking_data::class);
+        $this->call(migrate_lpo_data::class);
     }
 }
