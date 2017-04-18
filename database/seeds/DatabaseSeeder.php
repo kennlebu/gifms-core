@@ -13,6 +13,7 @@ class DatabaseSeeder extends Seeder
     {
         //refferences
         $this->call(migrate_referrence_tables::class);
+        $this->call(migrate_approvals_table::class);
 
 
         //accounting
