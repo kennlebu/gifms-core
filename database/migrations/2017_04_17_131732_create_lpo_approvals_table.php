@@ -18,7 +18,6 @@ class CreateLpoApprovalsTable extends Migration
             $table->increments('id');
             $table->integer('lpo_id');
             $table->integer('approval_level_id');
-            // $table->integer('migration_id');
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
             $table->softDeletes();

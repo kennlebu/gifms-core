@@ -124,6 +124,54 @@ class migrate_lpo_data extends Seeder
 
         DB::table('lpo_approvals')->insert($fin_approval);
 
+
+
+
+
+         // move lpo_items from previous db table
+
+        DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->setFetchMode(PDO::FETCH_ASSOC);
+
+        $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('LpoItems')->get();
+
+        $data_to_migrate=array();
+
+        foreach ($data as $key => $value) {
+
+            $data_to_migrate[$key]['item_description']      = $data[$key]['ItemDescription'];
+            $data_to_migrate[$key]['unit_price']            = $data[$key]['UnitPrice'];
+            $data_to_migrate[$key]['vat_inclusive']         = $data[$key]['VATInclusive'];
+            $data_to_migrate[$key]['qty']                   = $data[$key]['Qty'];
+            $data_to_migrate[$key]['qty_description']       = $data[$key]['QuantityDescription'];
+            $data_to_migrate[$key]['quotation']             = $data[$key]['Quotation'];
+            $data_to_migrate[$key]['item']                  = $data[$key]['Item'];
+            $data_to_migrate[$key]['vat_charge']            = $data[$key]['VATCharge'];
+            $data_to_migrate[$key]['lpo_migration_id']      = $data[$key]['LPO'];
+            $data_to_migrate[$key]['migration_id']          = $data[$key]['ID'];
+
+
+            echo "\n Lpo Items---";
+            echo $data[$key]['ItemDescription'];
+        }
+        
+        echo "\n-----------------------------------------------------------------------------------------------------";
+
+        DB::table('lpo_items')->insert($data_to_migrate);
+
+        $migrate_keys_sql = "
+                                UPDATE lpo_items i 
+                                    JOIN lpos l 
+                                    ON i.lpo_migration_id = l.migration_id
+                                    SET i.lpo_id = l.id 
+                            ";
+
+        DB::statement($migrate_keys_sql);
+
+        echo "\n ___________Migrated keys___________";
+
+
+
+
       
     }
 }
