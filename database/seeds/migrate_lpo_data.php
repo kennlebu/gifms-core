@@ -230,10 +230,10 @@ class migrate_lpo_data extends Seeder
 
         foreach ($data as $key => $value) {
 
-            $data_to_migrate[$key]['lpo_status']         = $data[$key]['LPOStatus'];
-            $data_to_migrate[$key]['next_status']              = $data[$key]['NextStatus'];
-            $data_to_migrate[$key]['status_security_level']                = $data[$key]['StatusSecurityLevel'];
-            $data_to_migrate[$key]['migration_id']          = $data[$key]['ID'];
+            $data_to_migrate[$key]['lpo_status']                = $data[$key]['LPOStatus'];
+            $data_to_migrate[$key]['next_status']               = $data[$key]['NextStatus'];
+            $data_to_migrate[$key]['status_security_level']     = $data[$key]['StatusSecurityLevel'];
+            $data_to_migrate[$key]['migration_id']              = $data[$key]['ID'];
 
 
             echo "\n Lpo Statuses---";
@@ -279,6 +279,37 @@ class migrate_lpo_data extends Seeder
         DB::statement($migrate_keys_sql);
 
         echo "\n ___________Migrated LPO TERMS keys___________";
+
+
+
+
+
+
+
+
+
+        // move lpo_viewing_permissions from previous db table
+
+        DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->setFetchMode(PDO::FETCH_ASSOC);
+
+        $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('LPOStatusView')->get();
+
+        $data_to_migrate=array();
+
+        foreach ($data as $key => $value) {
+
+            $data_to_migrate[$key]['lpo_status']                 = $data[$key]['LPOStatus'];
+            $data_to_migrate[$key]['security_level']                 = $data[$key]['SecurityLevel'];
+            $data_to_migrate[$key]['migration_id']          = $data[$key]['ID'];
+
+
+            echo "\n LPO  Status  View---";
+            echo $data[$key]['LPOStatus'];
+        }
+        
+        echo "\n-----------------------------------------------------------------------------------------------------";
+
+        DB::table('lpo_viewing_permissions')->insert($data_to_migrate);
 
 
 
