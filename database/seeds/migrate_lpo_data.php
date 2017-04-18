@@ -220,6 +220,32 @@ class migrate_lpo_data extends Seeder
 
 
 
+        // move lpo_statuses from previous db table
+
+        DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->setFetchMode(PDO::FETCH_ASSOC);
+
+        $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('LPOStatuses')->get();
+
+        $data_to_migrate=array();
+
+        foreach ($data as $key => $value) {
+
+            $data_to_migrate[$key]['lpo_status']         = $data[$key]['LPOStatus'];
+            $data_to_migrate[$key]['next_status']              = $data[$key]['NextStatus'];
+            $data_to_migrate[$key]['status_security_level']                = $data[$key]['StatusSecurityLevel'];
+            $data_to_migrate[$key]['migration_id']          = $data[$key]['ID'];
+
+
+            echo "\n Lpo Statuses---";
+            echo $data[$key]['LPOStatus'];
+        }
+        
+        echo "\n-----------------------------------------------------------------------------------------------------";
+
+        DB::table('lpo_statuses')->insert($data_to_migrate);
+
+
+
 
       
     }
