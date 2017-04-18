@@ -15,6 +15,9 @@ class CreateLpoTermsTable extends Migration
     {
         Schema::create('lpo_terms', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('lpo_id')->nullable();
+            $table->text('terms');            
+            $table->integer('lpo_migration_id');
             $table->integer('migration_id')->unique();
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
