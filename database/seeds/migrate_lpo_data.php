@@ -23,6 +23,8 @@ class migrate_lpo_data extends Seeder
             $data_to_migrate_pm[$key]['id']                             = $key+1;
             $data_to_migrate_man[$key]['id']                            = $key+1;
             $data_to_migrate_fin[$key]['id']                            = $key+1;
+
+
             $data_to_migrate[$key]['chai_ref']                      = $data[$key]['OurRef'];
         	$data_to_migrate[$key]['lpo_date'] 						= $data[$key]['LPODate'];
         	$data_to_migrate[$key]['suppllier_id'] 					= $data[$key]['Supplier'];
@@ -31,10 +33,12 @@ class migrate_lpo_data extends Seeder
         	$data_to_migrate[$key]['purpose'] 						= $data[$key]['Purpose'];
             $data_to_migrate[$key]['requested_by']                  = $data[$key]['RequestedBy'];
         	$data_to_migrate[$key]['request_date'] 					= $data[$key]['RequestDate'];
+
         	$data_to_migrate_pm[$key]['pm_approval'] 					 = $data[$key]['PMApproval'];
         	$data_to_migrate_pm[$key]['pm_approval_date'] 				 = $data[$key]['PMApprovalDate'];
         	$data_to_migrate_man[$key]['management_approval'] 			 = $data[$key]['ManagementApproval'];
             $data_to_migrate_man[$key]['management_approval_date']       = $data[$key]['ManagementApprovalDate'];
+
         	$data_to_migrate[$key]['status'] 						= $data[$key]['Status'];
         	$data_to_migrate[$key]['currency'] 						= $data[$key]['LPOCurrency'];
         	$data_to_migrate[$key]['quotation'] 					= $data[$key]['Quotation'];
@@ -51,8 +55,10 @@ class migrate_lpo_data extends Seeder
         	$data_to_migrate[$key]['lpo_email'] 					= $data[$key]['LPOEmail'];
         	$data_to_migrate[$key]['project_manager'] 				= $data[$key]['ProjectManager'];
         	$data_to_migrate[$key]['reject_reason'] 				= $data[$key]['RejectReason'];
+
         	$data_to_migrate_fin[$key]['finance_approval']                 = $data[$key]['FinanceApproval'];
         	$data_to_migrate_fin[$key]['finance_approval_date'] 		   = $data[$key]['FinanceApprovalDate'];
+
         	$data_to_migrate[$key]['quote_exempt'] 					= $data[$key]['QuoteExempt'];
         	$data_to_migrate[$key]['quote_exempt_explanation'] 		= $data[$key]['QuotesExemptExplaination'];
         	$data_to_migrate[$key]['migration_id'] 					= $data[$key]['ID'];
@@ -160,6 +166,49 @@ class migrate_lpo_data extends Seeder
 
         $migrate_keys_sql = "
                                 UPDATE lpo_items i 
+                                    JOIN lpos l 
+                                    ON i.lpo_migration_id = l.migration_id
+                                    SET i.lpo_id = l.id 
+                            ";
+
+        DB::statement($migrate_keys_sql);
+
+        echo "\n ___________Migrated keys___________";
+
+
+
+
+         // move lpo_quotations from previous db table
+
+        DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->setFetchMode(PDO::FETCH_ASSOC);
+
+        $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('LPOQuotations')->get();
+
+        $data_to_migrate=array();
+
+        foreach ($data as $key => $value) {
+
+            $data_to_migrate[$key]['quotation_doc']         = $data[$key]['Quotation'];
+            $data_to_migrate[$key]['Supplier']              = $data[$key]['Supplier'];
+            $data_to_migrate[$key]['amount']                = $data[$key]['Amount'];
+            $data_to_migrate[$key]['quote_description']     = $data[$key]['QuoteDescription'];
+            $data_to_migrate[$key]['quote_date']            = $data[$key]['QuoteDate'];
+            $data_to_migrate[$key]['Uploaded_by']           = $data[$key]['UploadedBy'];
+            $data_to_migrate[$key]['quote_option']          = $data[$key]['QuoteOption'];
+            $data_to_migrate[$key]['lpo_migration_id']      = $data[$key]['LPO'];
+            $data_to_migrate[$key]['migration_id']          = $data[$key]['ID'];
+
+
+            echo "\n Lpo Quotations---";
+            echo $data[$key]['Quotation'];
+        }
+        
+        echo "\n-----------------------------------------------------------------------------------------------------";
+
+        DB::table('lpo_quotations')->insert($data_to_migrate);
+
+        $migrate_keys_sql = "
+                                UPDATE lpo_quotations i 
                                     JOIN lpos l 
                                     ON i.lpo_migration_id = l.migration_id
                                     SET i.lpo_id = l.id 
