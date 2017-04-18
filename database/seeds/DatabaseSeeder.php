@@ -14,14 +14,15 @@ class DatabaseSeeder extends Seeder
         //refferences
         $this->call(migrate_referrence_tables::class);
         $this->call(migrate_approvals_table::class);
+        
+        //personell
+        $this->call(migrate_employees_data::class);
 
         //accounting
         $this->call(migrate_departments_table::class);
         $this->call(migrate_banking_data::class);
         $this->call(migrate_lpo_data::class);
 
-        //personell
-        $this->call(migrate_employees_data::class);
 
         // $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('Employees')->get();
 

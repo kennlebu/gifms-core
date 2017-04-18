@@ -57,7 +57,7 @@ class migrate_lpo_data extends Seeder
             $data_to_migrate[$key]['quote_exempt_explanation']      = $data[$key]['QuotesExemptExplaination'];
             
             $data_to_migrate[$key]['migration_account']             = $data[$key]['Account'];
-            $data_to_migrate[$key]['migration_project_manager']     = $data[$key]['ProjectManager'];
+            $data_to_migrate[$key]['migration_project_manager_id']     = $data[$key]['ProjectManager'];
             $data_to_migrate[$key]['migration_received_by']         = $data[$key]['RecievedBy'];
             $data_to_migrate[$key]['migration_project_id']          = $data[$key]['Project'];
             $data_to_migrate[$key]['migration_requested_by']        = $data[$key]['RequestedBy'];
@@ -75,13 +75,55 @@ class migrate_lpo_data extends Seeder
 
 
 
+        $migrate_keys_sql = "
+                                UPDATE lpos l 
+                                    LEFT JOIN users pm 
+                                    ON pm.migration_id = l.migration_project_manager_id
+                                    LEFT JOIN users rcb 
+                                    ON rcb.migration_id = l.migration_received_by
+                                    LEFT JOIN users rq 
+                                    ON rq.migration_id = l.migration_requested_by
+
+                                    SET     l.project_manager_id    =   pm.id ,
+                                            l.received_by           =   rcb.id,
+                                            l.requested_by          =   rq.id
+                             ";
+
+        DB::statement($migrate_keys_sql);
+
+        echo "\n ___________Migrated LPO  keys___________";
+        echo "\n-----------------------------------------------------------------------------------------------------";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         $pm_approval=array();
 
         foreach ($data_to_migrate_pm as $key => $value) {
 
             if($value){
-                array_push($pm_approval,['approval_level_id' => 2,'created_at' => $value['pm_approval_date'],'lpo_id' => $value['id']]);
+                array_push($pm_approval,['approval_level_id' => 2,'created_at' => $value['pm_approval_date'],'lpo_id' => $value['id'],'migration_approver' => $value['pm_approval']]);
             }
 
             echo "\n---LPO----pm appr date::::::::";
@@ -100,7 +142,7 @@ class migrate_lpo_data extends Seeder
         foreach ($data_to_migrate_man as $key => $value) {
 
             if($value){
-                array_push($man_approval,['approval_level_id' => 4,'created_at' => $value['management_approval_date'],'lpo_id' => $value['id']]);
+                array_push($man_approval,['approval_level_id' => 4,'created_at' => $value['management_approval_date'],'lpo_id' => $value['id'],'migration_approver' => $value['management_approval']]);
             }
 
             echo "\n---LPO---man appr date :::::: ";
@@ -119,7 +161,7 @@ class migrate_lpo_data extends Seeder
         foreach ($data_to_migrate_fin as $key => $value) {
 
             if($value){
-                array_push($fin_approval,['approval_level_id' => 3,'created_at' => $value['finance_approval_date'],'lpo_id' => $value['id']]);
+                array_push($fin_approval,['approval_level_id' => 3,'created_at' => $value['finance_approval_date'],'lpo_id' => $value['id'],'migration_approver' => $value['finance_approval']]);
             }
 
             echo "\n---LPO---fin appr date:::::";
@@ -130,6 +172,55 @@ class migrate_lpo_data extends Seeder
         echo "\n-----------------------------------------------------------------------------------------------------";
 
         DB::table('lpo_approvals')->insert($fin_approval);
+
+
+
+
+
+
+        $migrate_keys_sql = "
+                                UPDATE lpo_approvals l 
+                                    LEFT JOIN users ap 
+                                    ON ap.migration_id = l.migration_approver
+
+                                    SET     l.approver    =   ap.id 
+                             ";
+
+        DB::statement($migrate_keys_sql);
+
+        echo "\n ___________Migrated LPO Approvals keys___________";
+        echo "\n-----------------------------------------------------------------------------------------------------";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -180,6 +271,30 @@ class migrate_lpo_data extends Seeder
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
          // move lpo_quotations from previous db table
 
         DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->setFetchMode(PDO::FETCH_ASSOC);
@@ -223,6 +338,25 @@ class migrate_lpo_data extends Seeder
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         // move lpo_statuses from previous db table
 
         DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->setFetchMode(PDO::FETCH_ASSOC);
@@ -246,6 +380,39 @@ class migrate_lpo_data extends Seeder
         echo "\n-----------------------------------------------------------------------------------------------------";
 
         DB::table('lpo_statuses')->insert($data_to_migrate);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -283,6 +450,30 @@ class migrate_lpo_data extends Seeder
 
         echo "\n ___________Migrated LPO TERMS keys___________";
         echo "\n-----------------------------------------------------------------------------------------------------";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

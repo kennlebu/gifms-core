@@ -37,7 +37,7 @@ class CreateLposTable extends Migration
             $table->integer('account')->nullable();
             $table->string('attention')->nullable();
             $table->string('lpo_email')->nullable();
-            $table->integer('project_manager')->nullable();
+            $table->integer('project_manager_id')->nullable();
             $table->text('reject_reason')->nullable();
             $table->integer('quote_exempt')->nullable();
             $table->text('quote_exempt_explanation')->nullable();
@@ -46,7 +46,7 @@ class CreateLposTable extends Migration
             $table->integer('migration_project_id');
             $table->integer('migration_received_by')->nullable();
             $table->integer('migration_supplier_id')->nullable();
-            $table->integer('migration_project_manager')->nullable();
+            $table->integer('migration_project_manager_id')->nullable();
             $table->integer('migration_id')->unique();
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
