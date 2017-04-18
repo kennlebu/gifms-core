@@ -170,6 +170,7 @@ return [
          */
 
         Tymon\JWTAuth\Providers\JWTAuthServiceProvider::class,
+        Anchu\Ftp\FtpServiceProvider::class,
 
         /*
          * Application Service Providers...
