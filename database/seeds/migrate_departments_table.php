@@ -28,7 +28,7 @@ class migrate_departments_table extends Seeder
         	$departments_to_migrate[$key]['migration_id'] 		= $departments[$key]['DID'];
 
 
-        	echo "\n";
+        	echo "\nDepartments-----";
         	echo $departments[$key]['Department'];
         }
         
