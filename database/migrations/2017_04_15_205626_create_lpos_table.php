@@ -17,11 +17,11 @@ class CreateLposTable extends Migration
             $table->increments('id');
             $table->string('chai_ref')->nullable();
             $table->string('lpo_date')->nullable();
-            $table->integer('suppllier_id')->nullable();
+            $table->integer('supplier_id')->nullable();
             $table->string('addressee')->nullable();
             $table->string('title');
             $table->string('purpose')->nullable();
-            $table->integer('requested_by');
+            $table->integer('requested_by')->nullable();
             $table->date('request_date');
             $table->integer('status');
             $table->double('currency',22,5)->nullable();
@@ -33,7 +33,7 @@ class CreateLposTable extends Migration
             $table->integer('meeting');
             $table->text('comments');
             $table->string('preffered_supplier')->nullable();
-            $table->integer('project');
+            $table->integer('project_id')->nullable();
             $table->integer('account')->nullable();
             $table->string('attention')->nullable();
             $table->string('lpo_email')->nullable();
@@ -41,6 +41,12 @@ class CreateLposTable extends Migration
             $table->text('reject_reason')->nullable();
             $table->integer('quote_exempt')->nullable();
             $table->text('quote_exempt_explanation')->nullable();
+            $table->integer('migration_account')->nullable();
+            $table->integer('migration_requested_by')->nullable();
+            $table->integer('migration_project_id');
+            $table->integer('migration_received_by')->nullable();
+            $table->integer('migration_supplier_id')->nullable();
+            $table->integer('migration_project_manager')->nullable();
             $table->integer('migration_id')->unique();
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
