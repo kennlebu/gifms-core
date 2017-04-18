@@ -29,7 +29,7 @@ class migrate_banking_data extends Seeder
         	$data_to_migrate[$key]['migration_id'] 		= $data[$key]['ID'];
 
 
-        	echo "\n";
+        	echo "\n Bank---";
         	echo $data[$key]['BankName'];
         }
         
@@ -60,7 +60,7 @@ class migrate_banking_data extends Seeder
         	$data_to_migrate[$key]['migration_id'] 		= $data[$key]['ID'];
 
 
-        	echo "\n";
+        	echo "\n Branch -----";
         	echo $data[$key]['BankBranch'];
         }
         
@@ -92,7 +92,7 @@ class migrate_banking_data extends Seeder
         	$data_to_migrate[$key]['migration_id'] 						= $data[$key]['ID'];
 
 
-        	echo "\n";
+        	echo "\n payment mode ---";
         	echo $data[$key]['PaymentMode'];
         }
         
@@ -126,7 +126,7 @@ class migrate_banking_data extends Seeder
         	$data_to_migrate[$key]['migration_id'] 		= $data[$key]['ID'];
 
 
-        	echo "\n";
+        	echo "\nbank account----";
         	echo $data[$key]['Title'];
         }
         
@@ -157,7 +157,7 @@ class migrate_banking_data extends Seeder
         	$data_to_migrate[$key]['migration_id'] 		= $data[$key]['ID'];
 
 
-        	echo "\n";
+        	echo "\n bank csv----";
         	echo $data[$key]['CSVDocument'];
         }
 
@@ -194,7 +194,7 @@ class migrate_banking_data extends Seeder
         	$data_to_migrate[$key]['migration_id'] 			= $data[$key]['ID'];
 
 
-        	echo "\n";
+        	echo "\n bank project balances - ---";
         	echo $data[$key]['BalanceDate'];
         }
 
@@ -234,7 +234,7 @@ class migrate_banking_data extends Seeder
         	$data_to_migrate[$key]['migration_id'] 		= $data[$key]['ID'];
 
 
-        	echo "\n";
+        	echo "\nBank Statement------";
         	echo $data[$key]['Reference'];
         }
         
@@ -277,7 +277,7 @@ class migrate_banking_data extends Seeder
         	$data_to_migrate[$key]['migration_id'] 		= $data[$key]['ID'];
 
 
-        	echo "\n";
+        	echo "\nBank Transactions------";
         	echo $data[$key]['ClinHealthRef'];
         }
         
@@ -308,7 +308,7 @@ class migrate_banking_data extends Seeder
         	$data_to_migrate[$key]['migration_id'] 		= $data[$key]['ID'];
 
 
-        	echo "\n";
+        	echo "\nBank Transfer Types---";
         	echo $data[$key]['TransferType'];
         }
         
