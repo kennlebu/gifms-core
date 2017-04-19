@@ -56,7 +56,7 @@ class migrate_lpo_data extends Seeder
             $data_to_migrate[$key]['quote_exempt']                  = $data[$key]['QuoteExempt'];
             $data_to_migrate[$key]['quote_exempt_explanation']      = $data[$key]['QuotesExemptExplaination'];
             
-            $data_to_migrate[$key]['migration_account']             = $data[$key]['Account'];
+            $data_to_migrate[$key]['migration_account_id']             = $data[$key]['Account'];
             $data_to_migrate[$key]['migration_project_manager_id']     = $data[$key]['ProjectManager'];
             $data_to_migrate[$key]['migration_received_by']         = $data[$key]['RecievedBy'];
             $data_to_migrate[$key]['migration_project_id']          = $data[$key]['Project'];
@@ -83,10 +83,19 @@ class migrate_lpo_data extends Seeder
                                     ON rcb.migration_id = l.migration_received_by
                                     LEFT JOIN users rq 
                                     ON rq.migration_id = l.migration_requested_by
+                                    LEFT JOIN projects p 
+                                    ON p.migration_id = l.migration_project_id
+                                    LEFT JOIN suppliers s 
+                                    ON s.migration_id = l.migration_supplier_id
+                                    LEFT JOIN accounts a 
+                                    ON a.migration_id = l.migration_account_id
 
                                     SET     l.project_manager_id    =   pm.id ,
                                             l.received_by           =   rcb.id,
-                                            l.requested_by          =   rq.id
+                                            l.requested_by          =   rq.id,
+                                            l.project_id            =   p.id,
+                                            l.supplier_id           =   s.id,
+                                            l.account_id            =   a.id
                              ";
 
         DB::statement($migrate_keys_sql);

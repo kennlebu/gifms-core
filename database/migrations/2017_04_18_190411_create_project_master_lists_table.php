@@ -16,6 +16,7 @@ class CreateProjectMasterListsTable extends Migration
         Schema::create('project_master_lists', function (Blueprint $table) {
             $table->increments('id');
             $table->text('approval_level');
+            $table->integer('migration_id')->unique();
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
             $table->softDeletes();
