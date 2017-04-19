@@ -134,6 +134,54 @@ class migrate_referrence_tables extends Seeder
 
 
 
+        /**
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         *                  Cities
+         * 
+         * 
+         * 
+         * 
+         * 
+         */
+
+        DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->setFetchMode(PDO::FETCH_ASSOC);
+
+        $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('Citys')->get();
+
+        $data_to_migrate=array();
+
+        foreach ($data as $key => $value) {
+
+            $data_to_migrate[$key]['city_name']      = $data[$key]['City'];
+            $data_to_migrate[$key]['migration_id']      = $data[$key]['CityIDD'];
+
+
+            echo "\n Cities---";
+            echo $data[$key]['City'];
+        }
+        
+        echo "\n-----------------------------------------------------------------------------------------------------\n";
+
+        DB::table('cities')->insert($data_to_migrate);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
