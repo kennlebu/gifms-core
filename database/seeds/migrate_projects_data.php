@@ -453,5 +453,56 @@ class migrate_projects_data extends Seeder
 
 
 
+
+
+
+
+
+
+
+        /**
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         *                  ProjectMasterList
+         * 
+         * 
+         * 
+         * 
+         * 
+         */
+
+        DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->setFetchMode(PDO::FETCH_ASSOC);
+
+        $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('ProjectMasterList')->get();
+
+        $data_to_migrate=array();
+
+        foreach ($data as $key => $value) {
+
+            $data_to_migrate[$key]['Description']                = $data[$key]['ProjectDescription'];
+            $data_to_migrate[$key]['program']                    = $data[$key]['Program'];
+            $data_to_migrate[$key]['strategic_group']            = $data[$key]['StrategicGroup'];
+            $data_to_migrate[$key]['focus_area']                 = $data[$key]['FocusArea'];
+            $data_to_migrate[$key]['region']                     = $data[$key]['Region'];
+            $data_to_migrate[$key]['global_association']         = $data[$key]['GlobalAssociation'];
+            $data_to_migrate[$key]['status']                     = $data[$key]['Status'];
+            $data_to_migrate[$key]['start_date']                 = $data[$key]['StartDate'];
+            $data_to_migrate[$key]['migration_id']               = $data[$key]['ProjectID'];
+
+
+            echo "\n ProjectMasterList ---";
+            echo $data[$key]['ProjectDescription'];
+        }
+        
+        echo "\n-----------------------------------------------------------------------------------------------------\n";
+
+        DB::table('project_master_lists')->insert($data_to_migrate);
+
+
+
     }
 }

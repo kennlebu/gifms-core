@@ -15,7 +15,14 @@ class CreateProjectMasterListsTable extends Migration
     {
         Schema::create('project_master_lists', function (Blueprint $table) {
             $table->increments('id');
-            $table->text('approval_level');
+            $table->text('Description');
+            $table->text('program');
+            $table->text('strategic_group');
+            $table->text('focus_area');
+            $table->text('region');
+            $table->text('global_association');
+            $table->text('status');
+            $table->text('start_date');
             $table->integer('migration_id')->unique();
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
