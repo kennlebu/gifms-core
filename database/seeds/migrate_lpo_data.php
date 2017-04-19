@@ -100,7 +100,7 @@ class migrate_lpo_data extends Seeder
 
         DB::statement($migrate_keys_sql);
 
-        echo "\n ___________Migrated LPO  keys___________";
+        echo "\n ___________Migrated LPOS  keys___________";
         echo "\n-----------------------------------------------------------------------------------------------------";
 
 
