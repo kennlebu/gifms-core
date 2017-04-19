@@ -32,6 +32,8 @@ class CreateEmployeesTable extends Migration
             $table->string('signature')->nullable();
             $table->string('bank_signatory')->nullable();
             $table->integer('user_id')->nullable();
+            $table->integer('migration_bank_id')->nullable();
+            $table->integer('migration_bank_branch_id')->nullable();
             $table->integer('migration_user_id')->nullable();
             $table->integer('migration_department_id')->nullable();
             $table->integer('migration_id')->unique();

@@ -32,7 +32,7 @@ class migrate_departments_table extends Seeder
         	echo $departments[$key]['Department'];
         }
         
-        echo "\n-----------------------------------------------------------------------------------------------------";
+        echo "\n-----------------------------------------------------------------------------------------------------\n";
 
         DB::table('departments')->insert($departments_to_migrate);
 

@@ -34,16 +34,19 @@ class migrate_employees_data extends Seeder
             $data_to_migrate[$key]['bank_account']				= $data[$key]['BankAccount'];
             $data_to_migrate[$key]['cheque_addressee']			= $data[$key]['ChequeAddressee'];
             $data_to_migrate[$key]['payment_mode']				= $data[$key]['PaymentMode'];
-            $data_to_migrate[$key]['bank_id']					= (int)$data[$key]['Bank'];
-            $data_to_migrate[$key]['bank_branch_id']			= (int)$data[$key]['BankBranch'];
-            $data_to_migrate[$key]['station']					= $data[$key]['Station'];
-            $data_to_migrate[$key]['swift_code']				= $data[$key]['SWIFTCode'];
-            $data_to_migrate[$key]['active']					= $data[$key]['Active'];
-            $data_to_migrate[$key]['signature']					= $data[$key]['Signature'];
-            $data_to_migrate[$key]['bank_signatory']			= $data[$key]['BankSignatory'];
+            $data_to_migrate[$key]['station']                   = $data[$key]['Station'];
+            $data_to_migrate[$key]['swift_code']                = $data[$key]['SWIFTCode'];
+            $data_to_migrate[$key]['active']                    = $data[$key]['Active'];
+            $data_to_migrate[$key]['signature']                 = $data[$key]['Signature'];
+            $data_to_migrate[$key]['bank_signatory']            = $data[$key]['BankSignatory'];
+
+            $data_to_migrate[$key]['migration_bank_branch_id']  = (int)$data[$key]['BankBranch'];
+            $data_to_migrate[$key]['migration_bank_id']			= (int)$data[$key]['Bank'];
             $data_to_migrate[$key]['migration_department_id']	= $data[$key]['Department'];
             $data_to_migrate[$key]['migration_user_id']			= $data[$key]['EID'];
             $data_to_migrate[$key]['migration_id']				= $data[$key]['EID'];
+
+
 
 
             $data_to_migrate_u[$key]['migration_id']			= $data[$key]['EID'];
@@ -57,9 +60,31 @@ class migrate_employees_data extends Seeder
             echo $data[$key]['FirstName'];
         }
         
-        echo "\n-----------------------------------------------------------------------------------------------------";
+        echo "\n-----------------------------------------------------------------------------------------------------\n\n";
 
         DB::table('employees')->insert($data_to_migrate);
         DB::table('users')->insert($data_to_migrate_u);
+
+
+        $migrate_keys_sql = "
+                                UPDATE employees e 
+                                    LEFT JOIN departments d 
+                                    ON d.migration_id = e.migration_department_id
+                                    LEFT JOIN banks b 
+                                    ON b.migration_id = e.migration_bank_id
+                                    LEFT JOIN bank_branches bbr 
+                                    ON bbr.migration_id = e.migration_bank_branch_id
+
+                                    SET     e.department_id       =   d.id ,
+                                            e.bank_id             =   b.id ,
+                                            e.bank_branch_id      =   bbr.id 
+                             ";
+
+        DB::statement($migrate_keys_sql);
+
+        echo "\n ___________Migrated employees  keys___________";
+        echo "\n-----------------------------------------------------------------------------------------------------\n";
+
+
     }
 }

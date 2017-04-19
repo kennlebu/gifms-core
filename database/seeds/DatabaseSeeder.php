@@ -14,20 +14,21 @@ class DatabaseSeeder extends Seeder
         //refferences
         $this->call(migrate_referrence_tables::class);
         $this->call(migrate_approvals_table::class);
-
-        //accounting
         $this->call(migrate_departments_table::class);
-        $this->call(migrate_banking_data::class);
-        $this->call(migrate_lpo_data::class);
-
+        $this->call(migrate_projects_data::class);
+        
         //personell
         $this->call(migrate_employees_data::class);
+        $this->call(migrate_suppliers_data::class);
 
-        // $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('Employees')->get();
+        //accounting
+        $this->call(migrate_banking_data::class);
+        $this->call(migrate_lpo_data::class);
+        $this->call(migrate_mpesa_data::class);
+        $this->call(migrate_invoice_data::class);
 
-        // foreach ($data as $key => $value) {
-        //     echo "\n ---";
-        //     echo $value->email;
-        // }
+        // do post data migration keys migration
+        $this->call(post_data_migration_keys_migration::class);
+        
     }
 }
