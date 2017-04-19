@@ -15,7 +15,15 @@ class CreateProjectCashNeedsTable extends Migration
     {
         Schema::create('project_cash_needs', function (Blueprint $table) {
             $table->increments('id');
-            $table->text('approval_level');
+            $table->text('activity')->nullable();
+            $table->double('amount',26,5);
+            $table->integer('month')->nullable();
+            $table->integer('year')->nullable();
+            $table->integer('project_id')->nullable();
+            $table->integer('requested_by')->nullable();
+            $table->integer('cash_request_purpose')->nullable();
+            $table->integer('migration_project_id')->nullable();
+            $table->integer('migration_requested_by')->nullable();
             $table->integer('migration_id')->unique();
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
