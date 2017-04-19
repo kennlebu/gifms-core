@@ -58,8 +58,8 @@ class migrate_suppliers_data extends Seeder
             $data_to_migrate[$key]['password']      				= $data[$key]['Passwd'];
             $data_to_migrate[$key]['quick_books']      				= $data[$key]['Quickbooks'];
             $data_to_migrate[$key]['tax_pin']      					= $data[$key]['TaxPIN'];
-            $data_to_migrate[$key]['migration_bank_id']      		= $data[$key]['Bank'];
-            $data_to_migrate[$key]['migration_Bank_branch_id']      = $data[$key]['BankBranch'];
+            $data_to_migrate[$key]['migration_bank_id']      		= (int)$data[$key]['Bank'];
+            $data_to_migrate[$key]['migration_bank_branch_id']      = (int)$data[$key]['BankBranch'];
             $data_to_migrate[$key]['migration_id']      			= $data[$key]['ID'];
 
 
@@ -80,10 +80,10 @@ class migrate_suppliers_data extends Seeder
                                     LEFT JOIN banks b 
                                     ON b.migration_id = sup.migration_bank_id
                                     LEFT JOIN bank_branches bb 
-                                    ON bb.migration_id = sup.migration_Bank_branch_id
+                                    ON bb.migration_id = sup.migration_bank_branch_id
 
                                     SET     sup.bank_id    			=   b.id ,
-                                    		sup.Bank_branch_id    	=   bb.id
+                                    		sup.bank_branch_id    	=   bb.id
                              ";
 
         DB::statement($migrate_keys_sql);

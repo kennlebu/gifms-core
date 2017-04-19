@@ -16,7 +16,7 @@ class CreateSuppliersTable extends Migration
         Schema::create('suppliers', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('bank_id')->nullable();
-            $table->integer('Bank_branch_id')->nullable();
+            $table->integer('bank_branch_id')->nullable();
             $table->string('supplier_name')->nullable();
             $table->string('contact_name')->nullable();
             $table->string('address')->nullable();
@@ -41,7 +41,7 @@ class CreateSuppliersTable extends Migration
             $table->integer('quick_books')->nullable();
             $table->string('tax_pin')->nullable();
             $table->integer('migration_bank_id')->nullable();
-            $table->integer('migration_Bank_branch_id')->nullable();
+            $table->integer('migration_bank_branch_id')->nullable();
             $table->integer('migration_id')->unique();
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));

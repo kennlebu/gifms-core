@@ -263,6 +263,46 @@ class post_data_migration_keys_migration extends Seeder
 
 
 
+        /**
+         * 
+         * 
+         * 
+         * 
+         * 
+         *                  Suppliers
+         * 
+         * 
+         * 
+         * 
+         */
+
+
+
+
+        $migrate_keys_sql = "
+                                UPDATE suppliers sup 
+                                    LEFT JOIN banks b 
+                                    ON b.migration_id = sup.migration_bank_id
+                                    LEFT JOIN bank_branches bb 
+                                    ON bb.migration_id = sup.migration_bank_branch_id
+
+                                    SET     sup.bank_id             =   b.id ,
+                                            sup.bank_branch_id      =   bb.id
+                             ";
+
+        DB::statement($migrate_keys_sql);
+
+        echo "\n ___________Migrated Suppliers  keys___________";
+        echo "\n-----------------------------------------------------------------------------------------------------\n";
+
+
+
+
+
+
+
+
+
 
 
 
