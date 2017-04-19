@@ -384,5 +384,74 @@ class migrate_projects_data extends Seeder
 
 
 
+
+
+
+
+
+
+        /**
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         *                  Project Cash Needs
+         * 
+         * 
+         * 
+         * 
+         * 
+         */
+
+        DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->setFetchMode(PDO::FETCH_ASSOC);
+
+        $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('ProjectCashNeeds')->get();
+
+        $data_to_migrate=array();
+
+        foreach ($data as $key => $value) {
+
+            $data_to_migrate[$key]['activity']                              = $data[$key]['Activity'];
+            $data_to_migrate[$key]['amount']                                = $data[$key]['Amount'];
+            $data_to_migrate[$key]['month']                                 = $data[$key]['RequestMonth'];
+            $data_to_migrate[$key]['year']                                  = $data[$key]['RequestYear'];
+            $data_to_migrate[$key]['cash_request_purpose']                  = $data[$key]['RequestCategory'];
+            $data_to_migrate[$key]['migration_project_id']                  = $data[$key]['Project'];
+            $data_to_migrate[$key]['migration_requested_by']                = $data[$key]['RequestedBy'];
+            $data_to_migrate[$key]['migration_id']                          = $data[$key]['ID'];
+
+
+            echo "\n ProjectCashNeeds ---";
+            echo $data[$key]['Activity'];
+        }
+        
+        echo "\n-----------------------------------------------------------------------------------------------------\n";
+
+        DB::table('project_cash_needs')->insert($data_to_migrate);
+
+
+
+
+        $migrate_keys_sql = "
+                                UPDATE project_cash_needs cn 
+                                    LEFT JOIN employees emp 
+                                    ON emp.migration_id = cn.migration_requested_by
+                                    LEFT JOIN projects p 
+                                    ON p.migration_id = cn.migration_project_id
+
+                                    SET     cn.project_id               =   p.id ,
+                                            cn.requested_by             =   emp.id
+                             ";
+
+        DB::statement($migrate_keys_sql);
+
+        echo "\n ___________Migrated ProjectCashNeeds  keys___________";
+        echo "\n-----------------------------------------------------------------------------------------------------\n";
+
+
+
+
     }
 }

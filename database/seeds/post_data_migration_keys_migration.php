@@ -218,5 +218,53 @@ class post_data_migration_keys_migration extends Seeder
 
 
 
+
+
+
+
+
+
+
+        /**
+         * 
+         * 
+         * 
+         * 
+         * 
+         *                  ProjectCashNeeds
+         * 
+         * 
+         * 
+         * 
+         */
+
+
+
+
+
+        $migrate_keys_sql = "
+                                UPDATE project_cash_needs cn 
+                                    LEFT JOIN employees emp 
+                                    ON emp.migration_id = cn.migration_requested_by
+                                    LEFT JOIN projects p 
+                                    ON p.migration_id = cn.migration_project_id
+
+                                    SET     cn.project_id               =   p.id ,
+                                            cn.requested_by             =   emp.id
+                             ";
+
+        DB::statement($migrate_keys_sql);
+
+        echo "\n ___________Migrated ProjectCashNeeds  keys___________";
+        echo "\n-----------------------------------------------------------------------------------------------------\n";
+
+
+
+
+
+
+
+
+
     }
 }
