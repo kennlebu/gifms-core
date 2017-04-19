@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateProjectActivitiesTable extends Migration
+class CreateCountriesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,10 @@ class CreateProjectActivitiesTable extends Migration
      */
     public function up()
     {
-        Schema::create('project_activities', function (Blueprint $table) {
+        Schema::create('countries', function (Blueprint $table) {
             $table->increments('id');
-            $table->text('activity_desc');
-            $table->integer('project_id')->nullable();
-            $table->integer('project_objective_id')->nullable();
-            $table->integer('migration_project_id')->nullable();
-            $table->integer('migration_project_objective_id')->nullable();
+            $table->string('country_name');
+            $table->string('abbrv');
             $table->integer('migration_id')->unique();
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
@@ -34,6 +31,6 @@ class CreateProjectActivitiesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('project_activities');
+        Schema::dropIfExists('countries');
     }
 }

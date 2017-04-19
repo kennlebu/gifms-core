@@ -15,7 +15,9 @@ class CreateProjectObjectivesTable extends Migration
     {
         Schema::create('project_objectives', function (Blueprint $table) {
             $table->increments('id');
-            $table->text('approval_level');
+            $table->string('objective_desc');
+            $table->integer('project_id')->nullable();
+            $table->integer('migration_project_id')->nullable();
             $table->integer('migration_id')->unique();
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
