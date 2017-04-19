@@ -60,7 +60,7 @@ class migrate_employees_data extends Seeder
             echo $data[$key]['FirstName'];
         }
         
-        echo "\n-----------------------------------------------------------------------------------------------------";
+        echo "\n-----------------------------------------------------------------------------------------------------\n\n";
 
         DB::table('employees')->insert($data_to_migrate);
         DB::table('users')->insert($data_to_migrate_u);
@@ -83,7 +83,7 @@ class migrate_employees_data extends Seeder
         DB::statement($migrate_keys_sql);
 
         echo "\n ___________Migrated employees  keys___________";
-        echo "\n-----------------------------------------------------------------------------------------------------";
+        echo "\n-----------------------------------------------------------------------------------------------------\n";
 
 
     }
