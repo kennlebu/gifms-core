@@ -31,11 +31,6 @@ class migrate_projects_data extends Seeder
 
 
 
-
-        // move projects from previous db table
-
-        DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->setFetchMode(PDO::FETCH_ASSOC);
-
         $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('Projects')->get();
 
         $data_to_migrate=array();
@@ -90,8 +85,6 @@ class migrate_projects_data extends Seeder
 	     * 
 	     */
 
-        DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->setFetchMode(PDO::FETCH_ASSOC);
-
         $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('ProjectTeam')->get();
 
         $data_to_migrate=array();
@@ -139,7 +132,6 @@ class migrate_projects_data extends Seeder
 	     * 
 	     */
 
-        DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->setFetchMode(PDO::FETCH_ASSOC);
 
         $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('ProjectBudgetAccounts')->get();
 
@@ -192,7 +184,6 @@ class migrate_projects_data extends Seeder
 
 
 
-        DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->setFetchMode(PDO::FETCH_ASSOC);
 
         $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('ProjectObjectives')->get();
 
@@ -241,7 +232,6 @@ class migrate_projects_data extends Seeder
          * 
          */
 
-        DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->setFetchMode(PDO::FETCH_ASSOC);
 
         $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('ProjectActivities')->get();
 
@@ -285,7 +275,6 @@ class migrate_projects_data extends Seeder
          * 
          */
 
-        DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->setFetchMode(PDO::FETCH_ASSOC);
 
         $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('ProjectCashNeeds')->get();
 
@@ -332,8 +321,6 @@ class migrate_projects_data extends Seeder
          * 
          * 
          */
-
-        DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->setFetchMode(PDO::FETCH_ASSOC);
 
         $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('ProjectMasterList')->get();
 

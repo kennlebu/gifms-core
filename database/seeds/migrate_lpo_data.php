@@ -324,8 +324,6 @@ class migrate_lpo_data extends Seeder
          * 
          */
 
-        DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->setFetchMode(PDO::FETCH_ASSOC);
-
         $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('LPOStatuses')->get();
 
         $data_to_migrate=array();
@@ -370,8 +368,6 @@ class migrate_lpo_data extends Seeder
          * 
          */
 
-        DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->setFetchMode(PDO::FETCH_ASSOC);
-
         $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('LPOTerms')->get();
 
         $data_to_migrate=array();
@@ -412,8 +408,6 @@ class migrate_lpo_data extends Seeder
          * 
          * 
          */
-
-        DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->setFetchMode(PDO::FETCH_ASSOC);
 
         $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('LPOStatusView')->get();
 

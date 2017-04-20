@@ -30,8 +30,6 @@ class migrate_employees_data extends Seeder
          * 
          */
 
-        DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->setFetchMode(PDO::FETCH_ASSOC);
-
         $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('Employees')->get();
 
         $data_to_migrate=array();

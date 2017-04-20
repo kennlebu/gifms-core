@@ -28,8 +28,6 @@ class migrate_approvals_data extends Seeder
 	     */
 
 
-        DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->setFetchMode(PDO::FETCH_ASSOC);
-
         $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('Approvals')->get();
 
         $data_to_migrate=array();

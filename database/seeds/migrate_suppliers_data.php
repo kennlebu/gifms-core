@@ -27,8 +27,6 @@ class migrate_suppliers_data extends Seeder
          * 
          */
 
-        DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->setFetchMode(PDO::FETCH_ASSOC);
-
         $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('Suppliers')->get();
 
         $data_to_migrate=array();
@@ -98,7 +96,6 @@ class migrate_suppliers_data extends Seeder
          * 
          */
 
-        DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->setFetchMode(PDO::FETCH_ASSOC);
 
         $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('SupplyCategories')->get();
 
@@ -151,7 +148,6 @@ class migrate_suppliers_data extends Seeder
          * 
          */
 
-        DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->setFetchMode(PDO::FETCH_ASSOC);
 
         $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('SupplyCategoryItems')->get();
 
@@ -201,7 +197,6 @@ class migrate_suppliers_data extends Seeder
          * 
          */
 
-        DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->setFetchMode(PDO::FETCH_ASSOC);
 
         $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('SupplierRates')->get();
 

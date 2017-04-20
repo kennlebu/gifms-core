@@ -29,8 +29,6 @@ class migrate_departments_data extends Seeder
 	     */
 
 
-        DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->setFetchMode(PDO::FETCH_ASSOC);
-
         $departments = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('Departments')->get();
 
         $departments_to_migrate=array();

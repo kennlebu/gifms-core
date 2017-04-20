@@ -32,8 +32,6 @@ class migrate_invoice_data extends Seeder
 
         // move projects from previous db table
 
-        DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->setFetchMode(PDO::FETCH_ASSOC);
-
         $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('Invoices')->get();
 
         $data_to_migrate=array();
@@ -92,8 +90,6 @@ class migrate_invoice_data extends Seeder
             echo $data[$key]['InvoiceNumber'];
         }
         
-        // DB::table('invoices')->insert($data_to_migrate);
-
         $insertBatchs = array_chunk($data_to_migrate, 500);
 		foreach ($insertBatchs as $batch) {
 		    DB::table('invoices')->insert($batch);
