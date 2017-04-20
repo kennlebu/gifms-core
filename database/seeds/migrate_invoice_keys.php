@@ -56,6 +56,43 @@ class migrate_invoice_keys extends Seeder
 
         echo "\n __________Migrated invoices Foreign keys ---------- banks,bank_branches \n";
 
+      /**
+         * 
+         * 
+         * 
+         * 
+         * 
+         *                  invoice_project_account_allocations
+         * 
+         * 
+         * 
+         * 
+         */
+
+        $migrate_keys_sql = "
+                                UPDATE invoice_project_account_allocations ipaa 
+                                    LEFT JOIN staff ab 
+                                    ON ab.migration_id = ipaa.migration_allocated_by
+                                    LEFT JOIN invoices i 
+                                    ON i.migration_id = ipaa.migration_invoice_id
+                                    LEFT JOIN projects p 
+                                    ON p.migration_id = ipaa.migration_project_id
+                                    LEFT JOIN accounts a 
+                                    ON a.account_code = ipaa.migration_project_account
+                                    LEFT JOIN accounts a16 
+                                    ON a16.account_code = ipaa.migration_project_account_2016
+
+                                    SET     ipaa.allocated_by              =   ab.id, 
+                                            ipaa.invoice_id                =   i.id, 
+                                            ipaa.project_id                =   p.id, 
+                                            ipaa.project_account           =   a.id, 
+                                            ipaa.project_account_2016      =   a16.id, 
+                             ";
+
+        DB::statement($migrate_keys_sql);
+
+        echo "\n __________Migrated invoice_project_account_allocations Foreign keys ----------  allocated_by, invoice_id, project_id, project_account, project_account_2016   \n";
+
 
 
 

@@ -15,7 +15,9 @@ class CreateMpesaPaymentStatusesTable extends Migration
     {
         Schema::create('mpesa_payment_statuses', function (Blueprint $table) {
             $table->increments('id');
-            $table->text('approval_level');
+            $table->string('mpesa_payment_status');
+            $table->integer('next_status')->nullable();
+            $table->integer('status_security_level')->nullable();
             $table->integer('migration_id')->unique();
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));

@@ -103,6 +103,11 @@ class migrate_invoice_data extends Seeder
 
 
 
+
+
+
+
+
         /**
          * 
          * 
@@ -134,6 +139,116 @@ class migrate_invoice_data extends Seeder
         }
         
         DB::table('invoice_allocation_types')->insert($data_to_migrate);
+        
+        echo "\n-----------------------------------------------------------------------------------------------------\n";
+
+
+
+
+
+
+
+
+
+
+
+
+        /**
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         *                  InvoiceStatuses
+         * 
+         * 
+         * 
+         * 
+         * 
+         */
+
+
+        $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('InvoiceStatuses')->get();
+
+        $data_to_migrate=array();
+
+        foreach ($data as $key => $value) {
+
+            $data_to_migrate[$key]['invoice_status']            = $data[$key]['InvoiceStatus'];
+            $data_to_migrate[$key]['next_status']               = $data[$key]['NextStatus'];
+            $data_to_migrate[$key]['status_security_level']     = $data[$key]['StatusSecurityLevel'];
+            $data_to_migrate[$key]['migration_id']              = $data[$key]['ID'];
+
+
+            echo "\n InvoiceStatuses-$key---";
+            echo $data[$key]['InvoiceStatus'];
+        }
+        
+        DB::table('invoice_statuses')->insert($data_to_migrate);
+        
+        echo "\n-----------------------------------------------------------------------------------------------------\n";
+
+
+
+
+
+
+
+
+
+
+
+
+        /**
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         *                  InvoiceProjectAccountAllocation
+         * 
+         * 
+         * 
+         * 
+         * 
+         */
+
+
+        $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('InvoiceProjectAccountAllocation')->get();
+
+        $data_to_migrate=array();
+
+        foreach ($data as $key => $value) {
+
+            $data_to_migrate[$key]['amount_allocated']                  =        $data[$key]['AmountAllocated'];
+            $data_to_migrate[$key]['invoice_allocation_month']          =        $data[$key]['InvoiceAllocationMonth'];
+            $data_to_migrate[$key]['invoice_allocation_year']           =        $data[$key]['InvoiceAllocationYear'];
+            $data_to_migrate[$key]['allocation_purpose']                =        $data[$key]['AllocationPurpose'];
+            $data_to_migrate[$key]['percentage_allocated']              =        $data[$key]['PercentageAllocated'];
+            $data_to_migrate[$key]['brevity']                           =        $data[$key]['Berevity'];
+            $data_to_migrate[$key]['migration_allocated_by']            =        $data[$key]['AllocatedBy'];
+            $data_to_migrate[$key]['migration_invoice_id']              =        $data[$key]['Invoice'];
+            $data_to_migrate[$key]['migration_project_id']              =        $data[$key]['Project'];
+            $data_to_migrate[$key]['migration_project_account']         =        $data[$key]['ProjectAccount'];
+            $data_to_migrate[$key]['migration_project_account_2016']    =        $data[$key]['ProjectAccount2016'];
+            $data_to_migrate[$key]['migration_id']                      =        $data[$key]['ID'];
+
+
+            echo "\n InvoiceProjectAccountAllocation-$key---";
+            echo $data[$key]['Invoice'];
+        }
+
+
+               
+        $insertBatchs = array_chunk($data_to_migrate, 500);
+        foreach ($insertBatchs as $batch) {
+            DB::table('invoice_project_account_allocations')->insert($batch);
+             echo "\n-------------------------------------------------------Batch inserted\n";
+        }
+        
+        // DB::table('invoice_project_account_allocations')->insert($data_to_migrate);
         
         echo "\n-----------------------------------------------------------------------------------------------------\n";
 
