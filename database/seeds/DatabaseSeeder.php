@@ -26,6 +26,7 @@ class DatabaseSeeder extends Seeder
         $this->call(migrate_lpo_data::class);
         $this->call(migrate_mpesa_data::class);
         $this->call(migrate_invoice_data::class);
+        $this->call(migrate_accounting_data::class);
 
         // do post data migration keys migration
         $this->call(post_data_migration_keys_migration::class);
