@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Seeder;
 
-class migrate_department_keys extends Seeder
+class post_migration_keys_drop extends Seeder
 {
     /**
      * Run the database seeds.

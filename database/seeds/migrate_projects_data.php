@@ -56,34 +56,13 @@ class migrate_projects_data extends Seeder
             $data_to_migrate[$key]['migration_id']					= $data[$key]['ID'];
 
 
-            echo "\n Projects---";
+            echo "\n Projects-$key---";
             echo $data[$key]['ProjectID'];
         }
         
         echo "\n-----------------------------------------------------------------------------------------------------\n";
 
         DB::table('projects')->insert($data_to_migrate);
-
-
-
-
-        $migrate_keys_sql = "
-                                UPDATE projects p 
-                                    LEFT JOIN employees pm 
-                                    ON pm.migration_id = p.migration_project_manager_id
-
-                                    SET     p.project_manager_id    =   pm.id 
-                             ";
-
-        DB::statement($migrate_keys_sql);
-
-        echo "\n ___________Migrated Project  keys___________";
-        echo "\n-----------------------------------------------------------------------------------------------------\n";
-
-
-
-
-
 
 
 
@@ -124,42 +103,13 @@ class migrate_projects_data extends Seeder
             $data_to_migrate[$key]['migration_id']							= $data[$key]['ID'];
 
 
-            echo "\n Project Team ---";
+            echo "\n Project Team -$key---";
             echo $data[$key]['Project'];
         }
         
         echo "\n-----------------------------------------------------------------------------------------------------\n";
 
         DB::table('project_teams')->insert($data_to_migrate);
-
-
-
-
-        $migrate_keys_sql = "
-                                UPDATE project_teams pt 
-                                    LEFT JOIN employees e 
-                                    ON e.migration_id = pt.migration_employee_id
-                                    LEFT JOIN projects p 
-                                    ON p.migration_id = pt.migration_project_id
-
-                                    SET     pt.employee_id    	=   e.id ,
-                                    		pt.project_id    	=   p.id
-                             ";
-
-        DB::statement($migrate_keys_sql);
-
-        echo "\n ___________Migrated Project Team  keys___________";
-        echo "\n-----------------------------------------------------------------------------------------------------\n";
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -208,43 +158,13 @@ class migrate_projects_data extends Seeder
             $data_to_migrate[$key]['migration_id']					= $data[$key]['ID'];
 
 
-            echo "\n ProjectBudgetAccounts ---";
+            echo "\n ProjectBudgetAccounts -$key---";
             echo $data[$key]['BudgetAmount'];
         }
         
         echo "\n-----------------------------------------------------------------------------------------------------\n";
 
         DB::table('project_budget_accounts')->insert($data_to_migrate);
-
-
-
-
-        $migrate_keys_sql = "
-                                UPDATE project_budget_accounts pba 
-                                    LEFT JOIN accounts a 
-                                    ON a.migration_id = pba.migration_account_id
-                                    LEFT JOIN projects p 
-                                    ON p.migration_id = pba.migration_project_id
-
-                                    SET     pba.account_id    	=   a.id ,
-                                    		pba.project_id    	=   p.id
-                             ";
-
-        DB::statement($migrate_keys_sql);
-
-        echo "\n ___________Migrated ProjectBudgetAccounts  keys___________";
-        echo "\n-----------------------------------------------------------------------------------------------------\n";
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -285,32 +205,13 @@ class migrate_projects_data extends Seeder
             $data_to_migrate[$key]['migration_id']                          = $data[$key]['ID'];
 
 
-            echo "\n ProjectObjectives ---";
+            echo "\n ProjectObjectives -$key---";
             echo $data[$key]['Activity'];
         }
         
         echo "\n-----------------------------------------------------------------------------------------------------\n";
 
         DB::table('project_objectives')->insert($data_to_migrate);
-
-
-
-
-        $migrate_keys_sql = "
-                                UPDATE project_objectives po 
-                                    LEFT JOIN projects p 
-                                    ON p.migration_id = po.migration_project_id
-
-                                    SET     po.project_id               =   p.id 
-                             ";
-
-        DB::statement($migrate_keys_sql);
-
-        echo "\n ___________Migrated ProjectObjectives  keys___________";
-        echo "\n-----------------------------------------------------------------------------------------------------\n";
-
-
-
 
 
 
@@ -354,34 +255,13 @@ class migrate_projects_data extends Seeder
             $data_to_migrate[$key]['migration_id']                          = $data[$key]['ID'];
 
 
-            echo "\n ProjectActivities ---";
+            echo "\n ProjectActivities -$key---";
             echo $data[$key]['Activity'];
         }
         
         echo "\n-----------------------------------------------------------------------------------------------------\n";
 
         DB::table('project_activities')->insert($data_to_migrate);
-
-
-
-
-        $migrate_keys_sql = "
-                                UPDATE project_activities pt 
-                                    LEFT JOIN project_objectives po 
-                                    ON po.migration_id = pt.migration_project_objective_id
-                                    LEFT JOIN projects p 
-                                    ON p.migration_id = pt.migration_project_id
-
-                                    SET     pt.project_id               =   po.id ,
-                                            pt.project_objective_id     =   p.id
-                             ";
-
-        DB::statement($migrate_keys_sql);
-
-        echo "\n ___________Migrated ProjectActivities  keys___________";
-        echo "\n-----------------------------------------------------------------------------------------------------\n";
-
-
 
 
 
@@ -423,35 +303,13 @@ class migrate_projects_data extends Seeder
             $data_to_migrate[$key]['migration_id']                          = $data[$key]['ID'];
 
 
-            echo "\n ProjectCashNeeds ---";
+            echo "\n ProjectCashNeeds -$key---";
             echo $data[$key]['Activity'];
         }
         
         echo "\n-----------------------------------------------------------------------------------------------------\n";
 
         DB::table('project_cash_needs')->insert($data_to_migrate);
-
-
-
-
-        $migrate_keys_sql = "
-                                UPDATE project_cash_needs cn 
-                                    LEFT JOIN employees emp 
-                                    ON emp.migration_id = cn.migration_requested_by
-                                    LEFT JOIN projects p 
-                                    ON p.migration_id = cn.migration_project_id
-
-                                    SET     cn.project_id               =   p.id ,
-                                            cn.requested_by             =   emp.id
-                             ";
-
-        DB::statement($migrate_keys_sql);
-
-        echo "\n ___________Migrated ProjectCashNeeds  keys___________";
-        echo "\n-----------------------------------------------------------------------------------------------------\n";
-
-
-
 
 
 
@@ -494,7 +352,7 @@ class migrate_projects_data extends Seeder
             $data_to_migrate[$key]['migration_id']               = $data[$key]['ProjectID'];
 
 
-            echo "\n ProjectMasterList ---";
+            echo "\n ProjectMasterList -$key---";
             echo $data[$key]['ProjectDescription'];
         }
         

@@ -26,13 +26,15 @@ class migrate_lookup_data extends Seeder
          * 
          * 
          */
+        echo "\nApproval Levels -[ALL]---\n";
+
         DB::table('approval_levels')->insert([
 		    ['approval_level' => 'Accountant Approval'],
 		    ['approval_level' => 'PM Approval'],
 		    ['approval_level' => 'Finance Approval'],
 		    ['approval_level' => 'Management Approval']
 		]);
-
+        echo "\n-----------------------------------------------------------------------------------------------------\n";
 
 
 
@@ -66,13 +68,14 @@ class migrate_lookup_data extends Seeder
             $data_to_migrate[$key]['migration_id']      = $data[$key]['ID'];
 
 
-            echo "\n Countries---";
+            echo "\n Countries-$key---";
             echo $data[$key]['Abbrv'];
         }
         
+        DB::table('countries')->insert($data_to_migrate);
+        
         echo "\n-----------------------------------------------------------------------------------------------------\n";
 
-        DB::table('countries')->insert($data_to_migrate);
 
 
 
@@ -113,13 +116,14 @@ class migrate_lookup_data extends Seeder
             $data_to_migrate[$key]['migration_id']      = $data[$key]['ID'];
 
 
-            echo "\n Counties---";
+            echo "\n Counties-$key---";
             echo $data[$key]['County'];
         }
         
+        DB::table('counties')->insert($data_to_migrate);
+        
         echo "\n-----------------------------------------------------------------------------------------------------\n";
 
-        DB::table('counties')->insert($data_to_migrate);
 
 
 
@@ -161,13 +165,14 @@ class migrate_lookup_data extends Seeder
             $data_to_migrate[$key]['migration_id']      = $data[$key]['CityIDD'];
 
 
-            echo "\n Cities---";
+            echo "\n Cities-$key---";
             echo $data[$key]['City'];
         }
         
+        DB::table('cities')->insert($data_to_migrate);
+        
         echo "\n-----------------------------------------------------------------------------------------------------\n";
 
-        DB::table('cities')->insert($data_to_migrate);
 
 
 
@@ -208,13 +213,14 @@ class migrate_lookup_data extends Seeder
             $data_to_migrate[$key]['migration_id']      = $data[$key]['ID'];
 
 
-            echo "\n Regions---";
+            echo "\n Regions-$key---";
             echo $data[$key]['Region'];
         }
         
+        DB::table('regions')->insert($data_to_migrate);
+        
         echo "\n-----------------------------------------------------------------------------------------------------\n";
 
-        DB::table('regions')->insert($data_to_migrate);
 
 
 
@@ -259,13 +265,14 @@ class migrate_lookup_data extends Seeder
             $data_to_migrate[$key]['migration_id']                  = $data[$key]['ID'];
 
 
-            echo "\n CashRequestPurposes---";
+            echo "\n CashRequestPurposes-$key---";
             echo $data[$key]['CashRequestPurpose'];
         }
         
+        DB::table('cash_request_purposes')->insert($data_to_migrate);
+        
         echo "\n-----------------------------------------------------------------------------------------------------\n";
 
-        DB::table('cash_request_purposes')->insert($data_to_migrate);
 
 
 
@@ -310,13 +317,14 @@ class migrate_lookup_data extends Seeder
             $data_to_migrate[$key]['migration_id']                  = $data[$key]['ID'];
 
 
-            echo "\n ExchangeRates---";
+            echo "\n ExchangeRates-$key---";
             echo $data[$key]['ExchangeRate'];
         }
         
+        DB::table('exchange_rates')->insert($data_to_migrate);
+        
         echo "\n-----------------------------------------------------------------------------------------------------\n";
 
-        DB::table('exchange_rates')->insert($data_to_migrate);
 
 
 
@@ -371,13 +379,14 @@ class migrate_lookup_data extends Seeder
             $data_to_migrate[$key]['migration_id']                  = $data[$key]['STID'];
 
 
-            echo "\n Stations---";
+            echo "\n Stations-$key---";
             echo $data[$key]['StationAdd'];
         }
         
+        DB::table('stations')->insert($data_to_migrate);
+        
         echo "\n-----------------------------------------------------------------------------------------------------\n";
 
-        DB::table('stations')->insert($data_to_migrate);
 
 
 

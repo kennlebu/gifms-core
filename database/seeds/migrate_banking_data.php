@@ -13,7 +13,23 @@ class migrate_banking_data extends Seeder
 
 
     {
-         // move banks from previous db table
+         
+
+        /**
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         *                  Banks
+         * 
+         * 
+         * 
+         * 
+         * 
+         */
+
 
         DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->setFetchMode(PDO::FETCH_ASSOC);
 
@@ -29,14 +45,13 @@ class migrate_banking_data extends Seeder
         	$data_to_migrate[$key]['migration_id'] 		= $data[$key]['ID'];
 
 
-        	echo "\n Bank---";
+        	echo "\n Bank-$key---";
         	echo $data[$key]['BankName'];
         }
         
-        echo "\n-----------------------------------------------------------------------------------------------------\n";
-
         DB::table('banks')->insert($data_to_migrate);
 
+        echo "\n-----------------------------------------------------------------------------------------------------\n";
 
 
 
@@ -45,7 +60,25 @@ class migrate_banking_data extends Seeder
 
 
 
-         // move bank branchess from previous db table
+
+
+         
+
+        /**
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         *                  BankBranches
+         * 
+         * 
+         * 
+         * 
+         * 
+         */
+
 
 
         $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('BankBranches')->get();
@@ -60,13 +93,14 @@ class migrate_banking_data extends Seeder
         	$data_to_migrate[$key]['migration_id'] 		= $data[$key]['ID'];
 
 
-        	echo "\n Branch -----";
+        	echo "\n Branch -$key---";
         	echo $data[$key]['BankBranch'];
         }
         
+        DB::table('bank_branches')->insert($data_to_migrate);
+
         echo "\n-----------------------------------------------------------------------------------------------------\n";
 
-        DB::table('bank_branches')->insert($data_to_migrate);
 
 
 
@@ -80,7 +114,23 @@ class migrate_banking_data extends Seeder
 
 
 
-        // move payment modes from previous db table
+        
+
+        /**
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         *                  BankAccounts
+         * 
+         * 
+         * 
+         * 
+         * 
+         */
+
 
 
         $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('BankAccounts')->get();
@@ -98,13 +148,14 @@ class migrate_banking_data extends Seeder
         	$data_to_migrate[$key]['migration_id'] 		= $data[$key]['ID'];
 
 
-        	echo "\nbank account----";
+        	echo "\nbank account-$key---";
         	echo $data[$key]['Title'];
         }
         
+        DB::table('bank_accounts')->insert($data_to_migrate);
+
         echo "\n-----------------------------------------------------------------------------------------------------\n";
 
-        DB::table('bank_accounts')->insert($data_to_migrate);
 
 
         
@@ -115,7 +166,23 @@ class migrate_banking_data extends Seeder
 
 
 
-        // move payment modes from previous db table
+        
+
+        /**
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         *                  BankCSV
+         * 
+         * 
+         * 
+         * 
+         * 
+         */
+
 
 
         $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('BankCSV')->get();
@@ -129,13 +196,14 @@ class migrate_banking_data extends Seeder
         	$data_to_migrate[$key]['migration_id'] 		= $data[$key]['ID'];
 
 
-        	echo "\n bank csv----";
+        	echo "\n bank csv-$key---";
         	echo $data[$key]['CSVDocument'];
         }
 
+        DB::table('bank_csvs')->insert($data_to_migrate);
+
         echo "\n-----------------------------------------------------------------------------------------------------\n";
 
-        DB::table('bank_csvs')->insert($data_to_migrate);
 
 
         
@@ -146,7 +214,23 @@ class migrate_banking_data extends Seeder
 
 
 
-        // move payment modes from previous db table
+        
+
+        /**
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         *                  BankProjectBalances
+         * 
+         * 
+         * 
+         * 
+         * 
+         */
+
 
 
         $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('BankProjectBalances')->get();
@@ -166,13 +250,14 @@ class migrate_banking_data extends Seeder
         	$data_to_migrate[$key]['migration_id'] 			= $data[$key]['ID'];
 
 
-        	echo "\n bank project balances - ---";
+        	echo "\n bank project balances -$key---";
         	echo $data[$key]['BalanceDate'];
         }
 
+        DB::table('bank_project_balances')->insert($data_to_migrate);
+
         echo "\n-----------------------------------------------------------------------------------------------------\n";
 
-        DB::table('bank_project_balances')->insert($data_to_migrate);
 
         
 
@@ -182,7 +267,23 @@ class migrate_banking_data extends Seeder
 
 
 
-        // move payment modes from previous db table
+        
+
+        /**
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         *                  BankStatement
+         * 
+         * 
+         * 
+         * 
+         * 
+         */
+
 
 
         $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('BankStatement')->get();
@@ -206,14 +307,15 @@ class migrate_banking_data extends Seeder
         	$data_to_migrate[$key]['migration_id'] 		= $data[$key]['ID'];
 
 
-        	echo "\nBank Statement------";
+        	echo "\nBank Statement-$key---";
         	echo $data[$key]['Reference'];
         }
         
-        echo "\n-----------------------------------------------------------------------------------------------------\n";
-
         DB::table('bank_statements')->insert($data_to_migrate);
 
+        echo "\n-----------------------------------------------------------------------------------------------------\n";
+
+
 
         
         
@@ -224,7 +326,23 @@ class migrate_banking_data extends Seeder
 
 
 
-        // move payment modes from previous db table
+        
+
+        /**
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         *                  BankTransactions
+         * 
+         * 
+         * 
+         * 
+         * 
+         */
+
 
 
         $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('BankTransactions')->get();
@@ -249,14 +367,15 @@ class migrate_banking_data extends Seeder
         	$data_to_migrate[$key]['migration_id'] 		= $data[$key]['ID'];
 
 
-        	echo "\nBank Transactions------";
+        	echo "\nBank Transactions-$key---";
         	echo $data[$key]['ClinHealthRef'];
         }
         
-        echo "\n-----------------------------------------------------------------------------------------------------\n";
-
         DB::table('bank_transactions')->insert($data_to_migrate);
 
+        echo "\n-----------------------------------------------------------------------------------------------------\n";
+
+
 
         
         
@@ -267,7 +386,23 @@ class migrate_banking_data extends Seeder
 
 
 
-        // move payment modes from previous db table
+        
+
+        /**
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         *                  BankTransferTypes
+         * 
+         * 
+         * 
+         * 
+         * 
+         */
+
 
 
         $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('BankTransferTypes')->get();
@@ -280,13 +415,14 @@ class migrate_banking_data extends Seeder
         	$data_to_migrate[$key]['migration_id'] 		= $data[$key]['ID'];
 
 
-        	echo "\nBank Transfer Types---";
+        	echo "\nBank Transfer Types-$key---";
         	echo $data[$key]['TransferType'];
         }
         
+        DB::table('bank_transfer_types')->insert($data_to_migrate);
+
         echo "\n-----------------------------------------------------------------------------------------------------\n";
 
-        DB::table('bank_transfer_types')->insert($data_to_migrate);
 
 
 

@@ -44,13 +44,14 @@ class migrate_departments_data extends Seeder
         	$departments_to_migrate[$key]['migration_id'] 		= $departments[$key]['DID'];
 
 
-        	echo "\nDepartments-----";
+        	echo "\nDepartments-$key---";
         	echo $departments[$key]['Department'];
         }
         
+        DB::table('departments')->insert($departments_to_migrate);
+        
         echo "\n-----------------------------------------------------------------------------------------------------\n";
 
-        DB::table('departments')->insert($departments_to_migrate);
 
 
 

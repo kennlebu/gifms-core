@@ -63,44 +63,14 @@ class migrate_suppliers_data extends Seeder
             $data_to_migrate[$key]['migration_id']                  = $data[$key]['ID'];
 
 
-            echo "\n Suppliers---";
+            echo "\n Suppliers-$key---";
             echo $data[$key]['Supplier'];
         }
-        
-        echo "\n-----------------------------------------------------------------------------------------------------\n";
+
 
         DB::table('suppliers')->insert($data_to_migrate);
-
-
-
-
-
-        $migrate_keys_sql = "
-                                UPDATE suppliers sup 
-                                    LEFT JOIN banks b 
-                                    ON b.migration_id = sup.migration_bank_id
-                                    LEFT JOIN bank_branches bb 
-                                    ON bb.migration_id = sup.migration_bank_branch_id
-
-                                    SET     sup.bank_id             =   b.id ,
-                                            sup.bank_branch_id      =   bb.id
-                             ";
-
-        DB::statement($migrate_keys_sql);
-
-        echo "\n ___________Migrated Suppliers  keys___________";
+        
         echo "\n-----------------------------------------------------------------------------------------------------\n";
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -140,20 +110,13 @@ class migrate_suppliers_data extends Seeder
             $data_to_migrate[$key]['migration_id']                      = $data[$key]['ID'];
 
 
-            echo "\n SupplyCategories---";
+            echo "\n SupplyCategories-$key---";
             echo $data[$key]['SupplyCategory'];
         }
-        
-        echo "\n-----------------------------------------------------------------------------------------------------\n";
 
         DB::table('supply_categories')->insert($data_to_migrate);
-
-
-
-
-
-
-
+        
+        echo "\n-----------------------------------------------------------------------------------------------------\n";
 
 
 
@@ -201,35 +164,12 @@ class migrate_suppliers_data extends Seeder
             $data_to_migrate[$key]['migration_id']                      = $data[$key]['ID'];
 
 
-            echo "\n SupplyCategoryItems---";
+            echo "\n SupplyCategoryItems-$key---";
             echo $data[$key]['CategoryItem'];
         }
+        DB::table('supply_category_items')->insert($data_to_migrate);
         
         echo "\n-----------------------------------------------------------------------------------------------------\n";
-
-        DB::table('supply_category_items')->insert($data_to_migrate);
-
-
-
-
-
-        $migrate_keys_sql = "
-                                UPDATE supply_category_items sci 
-                                    LEFT JOIN supply_categories sc 
-                                    ON sc.migration_id = sci.migration_category_id
-
-                                    SET     sci.category_id        =   sc.id 
-                             ";
-
-        DB::statement($migrate_keys_sql);
-
-        echo "\n ___________Migrated SupplyCategoryItems  keys___________";
-        echo "\n-----------------------------------------------------------------------------------------------------\n";
-
-
-
-
-
 
 
 
@@ -275,37 +215,13 @@ class migrate_suppliers_data extends Seeder
             $data_to_migrate[$key]['migration_id']                  = $data[$key]['ID'];
 
 
-            echo "\n SupplierRates---";
+            echo "\n SupplierRates-$key---";
             echo $data[$key]['CategoryItem'];
         }
         
-        echo "\n-----------------------------------------------------------------------------------------------------\n";
-
         DB::table('supplier_rates')->insert($data_to_migrate);
-
-
-
-
-
-
-
-
-        $migrate_keys_sql = "
-                                UPDATE supplier_rates sr 
-                                    LEFT JOIN supply_category_items sci 
-                                    ON sci.migration_id = sr.migration_category_item_id
-
-                                    SET     sr.category_item_id        =   sci.id 
-                             ";
-
-        DB::statement($migrate_keys_sql);
-
-        echo "\n ___________Migrated SupplierRates  keys___________";
+        
         echo "\n-----------------------------------------------------------------------------------------------------\n";
-
-
-
-
 
 
 

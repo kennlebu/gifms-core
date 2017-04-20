@@ -48,13 +48,14 @@ class migrate_accounting_data extends Seeder
             $data_to_migrate[$key]['migration_id']                  = $data[$key]['ID'];
 
 
-            echo "\n Accounts---";
+            echo "\n Accounts-$key---";
             echo $data[$key]['Account'];
         }
         
+        DB::table('accounts')->insert($data_to_migrate);
+        
         echo "\n-----------------------------------------------------------------------------------------------------\n";
 
-        DB::table('accounts')->insert($data_to_migrate);
 
 
 
@@ -98,13 +99,14 @@ class migrate_accounting_data extends Seeder
             $data_to_migrate[$key]['migration_id']                  = $data[$key]['ID'];
 
 
-            echo "\n Accounts2016---";
+            echo "\n Accounts2016-$key---";
             echo $data[$key]['Account'];
         }
         
+        DB::table('accounts')->insert($data_to_migrate);
+        
         echo "\n-----------------------------------------------------------------------------------------------------\n";
 
-        DB::table('accounts')->insert($data_to_migrate);
 
 
 
@@ -138,13 +140,14 @@ class migrate_accounting_data extends Seeder
             $data_to_migrate[$key]['migration_id']                  = $data[$key]['ID'];
 
 
-            echo "\n AccountClassifications---";
+            echo "\n AccountClassifications-$key---";
             echo $data[$key]['AccountClassification'];
         }
         
+        DB::table('account_classifications')->insert($data_to_migrate);
+        
         echo "\n-----------------------------------------------------------------------------------------------------\n";
 
-        DB::table('account_classifications')->insert($data_to_migrate);
 
 
 
@@ -182,13 +185,14 @@ class migrate_accounting_data extends Seeder
             $data_to_migrate[$key]['migration_id']      = $data[$key]['ID'];
 
 
-            echo "\n QBAccounts---";
+            echo "\n QBAccounts-$key---";
             echo $data[$key]['AccountName'];
         }
         
+        DB::table('qb_accounts')->insert($data_to_migrate);
+        
         echo "\n-----------------------------------------------------------------------------------------------------\n";
 
-        DB::table('qb_accounts')->insert($data_to_migrate);
 
 
 
@@ -228,13 +232,14 @@ class migrate_accounting_data extends Seeder
             $data_to_migrate[$key]['migration_id']                  = $data[$key]['ID'];
 
 
-            echo "\n AccountTypes---";
+            echo "\n AccountTypes-$key---";
             echo $data[$key]['AccountType'];
         }
         
+        DB::table('account_types')->insert($data_to_migrate);
+        
         echo "\n-----------------------------------------------------------------------------------------------------\n";
 
-        DB::table('account_types')->insert($data_to_migrate);
 
 
 

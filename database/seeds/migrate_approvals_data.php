@@ -47,12 +47,14 @@ class migrate_approvals_data extends Seeder
             $data_to_migrate[$key]['migration_id']		= $data[$key]['ID'];
 
 
-            echo "\n Approvals---";
+            echo "\n Approvals-$key---";
             echo $data[$key]['Approval'];
         }
+
+        
+        DB::table('approvals')->insert($data_to_migrate);
         
         echo "\n-----------------------------------------------------------------------------------------------------\n";
 
-        DB::table('approvals')->insert($data_to_migrate);
     }
 }
