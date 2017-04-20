@@ -426,7 +426,7 @@ class migrate_lookup_data extends Seeder
             echo $data[$key]['Description'];
         }
         
-        DB::table('seculity_levels')->insert($data_to_migrate);
+        DB::table('security_levels')->insert($data_to_migrate);
         
         echo "\n-----------------------------------------------------------------------------------------------------\n";
 

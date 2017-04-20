@@ -360,10 +360,10 @@ class migrate_lpo_data extends Seeder
 
         foreach ($data as $key => $value) {
 
-            $data_to_migrate[$key]['lpo_status']                = $data[$key]['LPOStatus'];
-            $data_to_migrate[$key]['next_status']               = $data[$key]['NextStatus'];
-            $data_to_migrate[$key]['status_security_level']     = $data[$key]['StatusSecurityLevel'];
-            $data_to_migrate[$key]['migration_id']              = $data[$key]['ID'];
+            $data_to_migrate[$key]['lpo_status']                            = $data[$key]['LPOStatus'];
+            $data_to_migrate[$key]['next_status']                           = $data[$key]['NextStatus'];
+            $data_to_migrate[$key]['migration_status_security_level']       = $data[$key]['StatusSecurityLevel'];
+            $data_to_migrate[$key]['migration_id']                          = $data[$key]['ID'];
 
 
             echo "\n Lpo Statuses-$key---";
@@ -450,9 +450,9 @@ class migrate_lpo_data extends Seeder
 
         foreach ($data as $key => $value) {
 
-            $data_to_migrate[$key]['lpo_status']            = $data[$key]['LPOStatus'];
-            $data_to_migrate[$key]['security_level']        = $data[$key]['SecurityLevel'];
-            $data_to_migrate[$key]['migration_id']          = $data[$key]['ID'];
+            $data_to_migrate[$key]['lpo_status']                        = $data[$key]['LPOStatus'];
+            $data_to_migrate[$key]['migration_security_level']          = $data[$key]['SecurityLevel'];
+            $data_to_migrate[$key]['migration_id']                      = $data[$key]['ID'];
 
 
             echo "\n LPO  Status View -$key---";

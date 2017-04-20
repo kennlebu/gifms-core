@@ -93,6 +93,35 @@ class migrate_invoice_keys extends Seeder
 
         echo "\n __________Migrated invoice_project_account_allocations Foreign keys ----------  allocated_by, invoice_id, project_id, project_account, project_account_2016   \n";
 
+     
+
+
+
+      /**
+         * 
+         * 
+         * 
+         * 
+         * 
+         *                  invoice_statuses
+         * 
+         * 
+         * 
+         * 
+         */
+
+        $migrate_keys_sql = "
+                                UPDATE invoice_statuses is 
+                                    LEFT JOIN security_levels sl 
+                                    ON sl.migration_id = is.migration_status_security_level
+
+                                    SET     is.status_security_level              =   sl.id
+                             ";
+
+        DB::statement($migrate_keys_sql);
+
+        echo "\n __________Migrated invoice_statuses Foreign keys ----------  status_security_level   \n";
+
 
 
 

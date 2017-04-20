@@ -141,7 +141,7 @@ class migrate_lpo_keys extends Seeder
 
         DB::statement($migrate_keys_sql);
 
-       echo "\n __________Migrated lpo_quotations Foreign keys ---------- lpos \n";
+       echo "\n __________Migrated lpo_quotations Foreign keys ---------- lpo_id \n";
 
 
          /**
@@ -168,7 +168,70 @@ class migrate_lpo_keys extends Seeder
 
         DB::statement($migrate_keys_sql);
 
-       echo "\n __________Migrated lpo_terms Foreign keys ---------- lpos \n";
+       echo "\n __________Migrated lpo_terms Foreign keys ---------- lpo_id \n";
+
+
+
+
+
+
+         /**
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         *                  lpo_statuses
+         * 
+         * 
+         * 
+         * 
+         * 
+         */
+
+        $migrate_keys_sql = "
+                                UPDATE lpo_statuses s 
+                                    LEFT JOIN security_levels sl 
+                                    ON s.migration_status_security_level = sl.migration_id
+                                    SET s.status_security_level = sl.id 
+                            ";
+
+        DB::statement($migrate_keys_sql);
+
+       echo "\n __________Migrated lpo_statuses Foreign keys ---------- status_security_level \n";
+
+
+
+
+
+
+
+         /**
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         *                  lpo_viewing_permissions
+         * 
+         * 
+         * 
+         * 
+         * 
+         */
+
+        $migrate_keys_sql = "
+                                UPDATE lpo_viewing_permissions lvp 
+                                    LEFT JOIN security_levels sl 
+                                    ON lvp.migration_security_level = sl.migration_id
+                                    SET lvp.security_level = sl.id 
+                            ";
+
+        DB::statement($migrate_keys_sql);
+
+       echo "\n __________Migrated lpo_viewing_permissions Foreign keys ---------- security_level \n";
 
 
 

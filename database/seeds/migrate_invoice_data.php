@@ -175,10 +175,10 @@ class migrate_invoice_data extends Seeder
 
         foreach ($data as $key => $value) {
 
-            $data_to_migrate[$key]['invoice_status']            = $data[$key]['InvoiceStatus'];
-            $data_to_migrate[$key]['next_status']               = $data[$key]['NextStatus'];
-            $data_to_migrate[$key]['status_security_level']     = $data[$key]['StatusSecurityLevel'];
-            $data_to_migrate[$key]['migration_id']              = $data[$key]['ID'];
+            $data_to_migrate[$key]['invoice_status']                        = $data[$key]['InvoiceStatus'];
+            $data_to_migrate[$key]['next_status']                           = $data[$key]['NextStatus'];
+            $data_to_migrate[$key]['migration_status_security_level']       = $data[$key]['StatusSecurityLevel'];
+            $data_to_migrate[$key]['migration_id']                          = $data[$key]['ID'];
 
 
             echo "\n InvoiceStatuses-$key---";
