@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Seeder;
 
-class migrate_referrence_tables extends Seeder
+class migrate_lookup_data extends Seeder
 {
     /**
      * Run the database seeds.

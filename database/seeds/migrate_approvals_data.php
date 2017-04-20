@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Seeder;
 
-class migrate_approvals_table extends Seeder
+class migrate_approvals_data extends Seeder
 {
     /**
      * Run the database seeds.
@@ -12,7 +12,21 @@ class migrate_approvals_table extends Seeder
     public function run()
     {
         
-        // move approvals from previous db table
+        /**
+	     * 
+	     * 
+	     * 
+	     * 
+	     * 
+	     * 
+	     *					Approvals
+	     * 
+	     * 
+	     * 
+	     * 
+	     * 
+	     */
+
 
         DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->setFetchMode(PDO::FETCH_ASSOC);
 

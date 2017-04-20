@@ -12,9 +12,9 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         //refferences
-        $this->call(migrate_referrence_tables::class);
-        $this->call(migrate_approvals_table::class);
-        $this->call(migrate_departments_table::class);
+        $this->call(migrate_lookup_data::class);
+        $this->call(migrate_approvals_data::class);
+        $this->call(migrate_departments_data::class);
         $this->call(migrate_projects_data::class);
         
         //personell

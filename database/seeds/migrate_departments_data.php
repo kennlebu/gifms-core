@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Seeder;
 
-class migrate_departments_table extends Seeder
+class migrate_departments_data extends Seeder
 {
     /**
      * Run the database seeds.
@@ -11,7 +11,23 @@ class migrate_departments_table extends Seeder
      */
     public function run()
     {
-        // move data from previous db table
+       
+
+       /**
+	     * 
+	     * 
+	     * 
+	     * 
+	     * 
+	     * 
+	     *					Departments
+	     * 
+	     * 
+	     * 
+	     * 
+	     * 
+	     */
+
 
         DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->setFetchMode(PDO::FETCH_ASSOC);
 
@@ -39,5 +55,5 @@ class migrate_departments_table extends Seeder
 
 
 
-    }
+   }
 }
