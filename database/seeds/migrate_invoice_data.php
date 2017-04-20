@@ -101,5 +101,45 @@ class migrate_invoice_data extends Seeder
 
 
 
+
+
+        /**
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         *                  InvoiceAllocationType
+         * 
+         * 
+         * 
+         * 
+         * 
+         */
+
+
+        $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('InvoiceAllocationType')->get();
+
+        $data_to_migrate=array();
+
+        foreach ($data as $key => $value) {
+
+            $data_to_migrate[$key]['allocation_type_desc']        = $data[$key]['AllocationType'];
+            $data_to_migrate[$key]['migration_id']                = $data[$key]['ID'];
+
+
+            echo "\n InvoiceAllocationType-$key---";
+            echo $data[$key]['AllocationType'];
+        }
+        
+        DB::table('invoice_allocation_types')->insert($data_to_migrate);
+        
+        echo "\n-----------------------------------------------------------------------------------------------------\n";
+
+
+
+
+
     }
 }
