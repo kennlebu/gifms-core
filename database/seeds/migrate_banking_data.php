@@ -78,34 +78,6 @@ class migrate_banking_data extends Seeder
 
 
 
-        // move payment modes from previous db table
-
-
-        $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('PaymentModes')->get();
-
-        $data_to_migrate=array();
-
-        foreach ($data as $key => $value) {
-
-        	$data_to_migrate[$key]['payment_mode_description'] 			= $data[$key]['PaymentMode'];
-        	$data_to_migrate[$key]['abrv'] 								= $data[$key]['Abbrv'];
-        	$data_to_migrate[$key]['migration_id'] 						= $data[$key]['ID'];
-
-
-        	echo "\n payment mode ---";
-        	echo $data[$key]['PaymentMode'];
-        }
-        
-        echo "\n-----------------------------------------------------------------------------------------------------\n";
-
-        DB::table('payment_modes')->insert($data_to_migrate);
-
-        
-
-
-
-
-
 
 
         // move payment modes from previous db table
