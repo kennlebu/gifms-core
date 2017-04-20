@@ -15,7 +15,14 @@ class CreateQbAccountsTable extends Migration
     {
         Schema::create('qb_accounts', function (Blueprint $table) {
             $table->increments('id');
-            $table->timestamps();
+            $table->string('account_name')->nullable();
+            $table->integer('account_number')->nullable();
+            $table->string('account_type')->nullable();
+            $table->text('account_desc')->nullable();
+            $table->integer('migration_id')->unique();
+            $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
+            $table->softDeletes();
         });
     }
 

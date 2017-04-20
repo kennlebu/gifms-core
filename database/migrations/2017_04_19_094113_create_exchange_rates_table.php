@@ -15,7 +15,14 @@ class CreateExchangeRatesTable extends Migration
     {
         Schema::create('exchange_rates', function (Blueprint $table) {
             $table->increments('id');
-            $table->timestamps();
+            $table->double('exchange_rate',25,5)->nullable();
+            $table->integer('current_rate')->nullable();
+            $table->timestamp('active_date')->nullable();
+            $table->timestamp('end_date')->nullable();
+            $table->integer('migration_id')->unique();
+            $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
+            $table->softDeletes();
         });
     }
 

@@ -15,7 +15,14 @@ class CreateAccountsTable extends Migration
     {
         Schema::create('accounts', function (Blueprint $table) {
             $table->increments('id');
-            $table->text('approval_level');
+            $table->integer('account_code');
+            $table->string('account_name')->nullable();
+            $table->text('account_desc')->nullable();
+            $table->integer('account_type')->nullable();
+            $table->integer('client')->nullable();
+            $table->integer('brevity')->nullable()->default(0);
+            $table->integer('office_cost')->nullable()->default(0);
+            $table->string('account_format')->nullable()->default(2016);
             $table->integer('migration_id')->unique();
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));

@@ -14,9 +14,21 @@ class migrate_employees_data extends Seeder
     public function run()
     {
                
-        // move employeed from previous db table
-
-        DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->setFetchMode(PDO::FETCH_ASSOC);
+        
+        /**
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         *                  Employees
+         * 
+         * 
+         * 
+         * 
+         * 
+         */
 
         $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('Employees')->get();
 
@@ -56,34 +68,17 @@ class migrate_employees_data extends Seeder
             $data_to_migrate_u[$key]['password']				= bcrypt('secret');
 
 
-            echo "\n Employees---";
+            echo "\n Employees-$key---";
             echo $data[$key]['FirstName'];
         }
-        
-        echo "\n-----------------------------------------------------------------------------------------------------\n\n";
 
         DB::table('employees')->insert($data_to_migrate);
         DB::table('users')->insert($data_to_migrate_u);
+        
+        echo "\n-----------------------------------------------------------------------------------------------------\n\n";
 
 
-        $migrate_keys_sql = "
-                                UPDATE employees e 
-                                    LEFT JOIN departments d 
-                                    ON d.migration_id = e.migration_department_id
-                                    LEFT JOIN banks b 
-                                    ON b.migration_id = e.migration_bank_id
-                                    LEFT JOIN bank_branches bbr 
-                                    ON bbr.migration_id = e.migration_bank_branch_id
 
-                                    SET     e.department_id       =   d.id ,
-                                            e.bank_id             =   b.id ,
-                                            e.bank_branch_id      =   bbr.id 
-                             ";
-
-        DB::statement($migrate_keys_sql);
-
-        echo "\n ___________Migrated employees  keys___________";
-        echo "\n-----------------------------------------------------------------------------------------------------\n";
 
 
     }

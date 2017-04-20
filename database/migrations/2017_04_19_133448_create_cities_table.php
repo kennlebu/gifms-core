@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateSupplierRatesTable extends Migration
+class CreateCitiesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,9 @@ class CreateSupplierRatesTable extends Migration
      */
     public function up()
     {
-        Schema::create('supplier_rates', function (Blueprint $table) {
+        Schema::create('cities', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('category_item_id')->nullable();
-            $table->double('rate',26,5)->nullable();
-            $table->integer('year')->nullable();
-            $table->integer('migration_category_item_id')->nullable();
+            $table->string('city_name');
             $table->integer('migration_id')->unique();
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
@@ -33,6 +30,6 @@ class CreateSupplierRatesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('supplier_rates');
+        Schema::dropIfExists('cities');
     }
 }

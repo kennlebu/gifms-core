@@ -12,7 +12,22 @@ class migrate_lpo_data extends Seeder
     public function run()
     {
         
-        DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->setFetchMode(PDO::FETCH_ASSOC);
+
+
+        /**
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         *                  LPO
+         * 
+         * 
+         * 
+         * 
+         * 
+         */
 
         $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('LPO')->get();
 
@@ -65,42 +80,12 @@ class migrate_lpo_data extends Seeder
         	$data_to_migrate[$key]['migration_id'] 					= $data[$key]['ID'];
 
 
-        	echo "\nLPO date :::::";
+        	echo "\nLPO -$key---";
         	echo $data[$key]['Title'];
         }
         
-        echo "\n-----------------------------------------------------------------------------------------------------\n";
-
         DB::table('lpos')->insert($data_to_migrate);
 
-
-
-        $migrate_keys_sql = "
-                                UPDATE lpos l 
-                                    LEFT JOIN users pm 
-                                    ON pm.migration_id = l.migration_project_manager_id
-                                    LEFT JOIN users rcb 
-                                    ON rcb.migration_id = l.migration_received_by
-                                    LEFT JOIN users rq 
-                                    ON rq.migration_id = l.migration_requested_by
-                                    LEFT JOIN projects p 
-                                    ON p.migration_id = l.migration_project_id
-                                    LEFT JOIN suppliers s 
-                                    ON s.migration_id = l.migration_supplier_id
-                                    LEFT JOIN accounts a 
-                                    ON a.migration_id = l.migration_account_id
-
-                                    SET     l.project_manager_id    =   pm.id ,
-                                            l.received_by           =   rcb.id,
-                                            l.requested_by          =   rq.id,
-                                            l.project_id            =   p.id,
-                                            l.supplier_id           =   s.id,
-                                            l.account_id            =   a.id
-                             ";
-
-        DB::statement($migrate_keys_sql);
-
-        echo "\n ___________Migrated LPOS  keys___________";
         echo "\n-----------------------------------------------------------------------------------------------------\n";
 
 
@@ -123,7 +108,20 @@ class migrate_lpo_data extends Seeder
 
 
 
-
+        /**
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         *                  lpo_approvals
+         * 
+         * 
+         * 
+         * 
+         * 
+         */
 
 
 
@@ -135,14 +133,15 @@ class migrate_lpo_data extends Seeder
                 array_push($pm_approval,['approval_level_id' => 2,'created_at' => $value['pm_approval_date'],'lpo_id' => $value['id'],'migration_approver' => $value['pm_approval']]);
             }
 
-            echo "\n---LPO----pm appr date::::::::";
+            echo "\nLPO Approval-$key---";
             echo $data_to_migrate_pm[$key]['pm_approval_date'];
 
         }
         
+        DB::table('lpo_approvals')->insert($pm_approval);
+
         echo "\n-----------------------------------------------------------------------------------------------------\n";
 
-        DB::table('lpo_approvals')->insert($pm_approval);
 
 
 
@@ -154,14 +153,15 @@ class migrate_lpo_data extends Seeder
                 array_push($man_approval,['approval_level_id' => 4,'created_at' => $value['management_approval_date'],'lpo_id' => $value['id'],'migration_approver' => $value['management_approval']]);
             }
 
-            echo "\n---LPO---man appr date :::::: ";
+            echo "\nLPO Approval-$key---";
             echo $data_to_migrate_man[$key]['management_approval_date'];
 
         }
         
+        DB::table('lpo_approvals')->insert($man_approval);
+
         echo "\n-----------------------------------------------------------------------------------------------------\n";
 
-        DB::table('lpo_approvals')->insert($man_approval);
 
 
 
@@ -173,31 +173,13 @@ class migrate_lpo_data extends Seeder
                 array_push($fin_approval,['approval_level_id' => 3,'created_at' => $value['finance_approval_date'],'lpo_id' => $value['id'],'migration_approver' => $value['finance_approval']]);
             }
 
-            echo "\n---LPO---fin appr date:::::";
+            echo "\nLPO Approval-$key---";
             echo $data_to_migrate_fin[$key]['finance_approval_date'];
 
         }
         
-        echo "\n-----------------------------------------------------------------------------------------------------\n";
-
         DB::table('lpo_approvals')->insert($fin_approval);
 
-
-
-
-
-
-        $migrate_keys_sql = "
-                                UPDATE lpo_approvals l 
-                                    LEFT JOIN users ap 
-                                    ON ap.migration_id = l.migration_approver
-
-                                    SET     l.approver    =   ap.id 
-                             ";
-
-        DB::statement($migrate_keys_sql);
-
-        echo "\n ___________Migrated LPO Approvals keys___________";
         echo "\n-----------------------------------------------------------------------------------------------------\n";
 
 
@@ -208,36 +190,21 @@ class migrate_lpo_data extends Seeder
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-         // move lpo_items from previous db table
-
-        DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->setFetchMode(PDO::FETCH_ASSOC);
+        
+        /**
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         *                  LpoItems
+         * 
+         * 
+         * 
+         * 
+         * 
+         */
 
         $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('LpoItems')->get();
 
@@ -257,24 +224,12 @@ class migrate_lpo_data extends Seeder
             $data_to_migrate[$key]['migration_id']          = $data[$key]['ID'];
 
 
-            echo "\n Lpo Items---";
+            echo "\n Lpo Items-$key---";
             echo $data[$key]['ItemDescription'];
         }
         
-        echo "\n-----------------------------------------------------------------------------------------------------\n";
-
         DB::table('lpo_items')->insert($data_to_migrate);
 
-        $migrate_keys_sql = "
-                                UPDATE lpo_items i 
-                                    JOIN lpos l 
-                                    ON i.lpo_migration_id = l.migration_id
-                                    SET i.lpo_id = l.id 
-                            ";
-
-        DB::statement($migrate_keys_sql);
-
-        echo "\n ___________Migrated lpo items keys___________";
         echo "\n-----------------------------------------------------------------------------------------------------\n";
 
 
@@ -299,14 +254,21 @@ class migrate_lpo_data extends Seeder
 
 
 
-
-
-
-
-
-         // move lpo_quotations from previous db table
-
-        DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->setFetchMode(PDO::FETCH_ASSOC);
+        
+        /**
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         *                  LPOQuotations
+         * 
+         * 
+         * 
+         * 
+         * 
+         */
 
         $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('LPOQuotations')->get();
 
@@ -325,25 +287,14 @@ class migrate_lpo_data extends Seeder
             $data_to_migrate[$key]['migration_id']          = $data[$key]['ID'];
 
 
-            echo "\n Lpo Quotations---";
+            echo "\n Lpo Quotations-$key---";
             echo $data[$key]['Quotation'];
         }
+
+        DB::table('lpo_quotations')->insert($data_to_migrate);
         
         echo "\n-----------------------------------------------------------------------------------------------------\n";
 
-        DB::table('lpo_quotations')->insert($data_to_migrate);
-
-        $migrate_keys_sql = "
-                                UPDATE lpo_quotations i 
-                                    JOIN lpos l 
-                                    ON i.lpo_migration_id = l.migration_id
-                                    SET i.lpo_id = l.id 
-                            ";
-
-        DB::statement($migrate_keys_sql);
-
-        echo "\n ___________Migrated quotations keys___________";
-        echo "\n-----------------------------------------------------------------------------------------------------\n";
 
 
 
@@ -357,18 +308,21 @@ class migrate_lpo_data extends Seeder
 
 
 
-
-
-
-
-
-
-
-
-
-        // move lpo_statuses from previous db table
-
-        DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->setFetchMode(PDO::FETCH_ASSOC);
+      
+        /**
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         *                  LPOStatuses
+         * 
+         * 
+         * 
+         * 
+         * 
+         */
 
         $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('LPOStatuses')->get();
 
@@ -382,14 +336,13 @@ class migrate_lpo_data extends Seeder
             $data_to_migrate[$key]['migration_id']              = $data[$key]['ID'];
 
 
-            echo "\n Lpo Statuses---";
+            echo "\n Lpo Statuses-$key---";
             echo $data[$key]['LPOStatus'];
         }
         
-        echo "\n-----------------------------------------------------------------------------------------------------\n";
-
         DB::table('lpo_statuses')->insert($data_to_migrate);
 
+        echo "\n-----------------------------------------------------------------------------------------------------\n";
 
 
 
@@ -399,35 +352,21 @@ class migrate_lpo_data extends Seeder
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        // move lpo_terms from previous db table
-
-        DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->setFetchMode(PDO::FETCH_ASSOC);
+        
+        /**
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         *                  LPOTerms
+         * 
+         * 
+         * 
+         * 
+         * 
+         */
 
         $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('LPOTerms')->get();
 
@@ -440,24 +379,12 @@ class migrate_lpo_data extends Seeder
             $data_to_migrate[$key]['migration_id']          = $data[$key]['ID'];
 
 
-            echo "\n Lpo Terms---";
+            echo "\n Lpo Terms-$key---";
             echo $data[$key]['Terms'];
         }
         
-        echo "\n-----------------------------------------------------------------------------------------------------\n";
-
         DB::table('lpo_terms')->insert($data_to_migrate);
 
-        $migrate_keys_sql = "
-                                UPDATE lpo_terms t 
-                                    JOIN lpos l 
-                                    ON t.lpo_migration_id = l.migration_id
-                                    SET t.lpo_id = l.id 
-                            ";
-
-        DB::statement($migrate_keys_sql);
-
-        echo "\n ___________Migrated LPO TERMS keys___________";
         echo "\n-----------------------------------------------------------------------------------------------------\n";
 
 
@@ -466,33 +393,21 @@ class migrate_lpo_data extends Seeder
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        // move lpo_viewing_permissions from previous db table
-
-        DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->setFetchMode(PDO::FETCH_ASSOC);
+        
+        /**
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         *                  LPOStatusView
+         * 
+         * 
+         * 
+         * 
+         * 
+         */
 
         $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('LPOStatusView')->get();
 
@@ -505,13 +420,14 @@ class migrate_lpo_data extends Seeder
             $data_to_migrate[$key]['migration_id']          = $data[$key]['ID'];
 
 
-            echo "\n LPO  Status  View---";
+            echo "\n LPO  Status View -$key---";
             echo $data[$key]['LPOStatus'];
         }
         
+        DB::table('lpo_viewing_permissions')->insert($data_to_migrate);
+
         echo "\n-----------------------------------------------------------------------------------------------------\n";
 
-        DB::table('lpo_viewing_permissions')->insert($data_to_migrate);
 
 
 

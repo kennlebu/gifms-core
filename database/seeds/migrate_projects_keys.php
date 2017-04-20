@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Seeder;
 
-class post_data_migration_keys_migration extends Seeder
+class migrate_projects_keys extends Seeder
 {
     /**
      * Run the database seeds.
@@ -12,19 +12,7 @@ class post_data_migration_keys_migration extends Seeder
     public function run()
     {
 
-    	/**
-	     * 
-	     * 
-	     * 
-	     * 
-	     * 
-	     *					PROJECTS
-	     * 
-	     * 
-	     * 
-	     * 
-	     * 
-	     */
+
 
         $migrate_keys_sql = "
                                 UPDATE projects p 
@@ -36,32 +24,12 @@ class post_data_migration_keys_migration extends Seeder
 
         DB::statement($migrate_keys_sql);
 
-        echo "\n ___________POST-Migrated Project  keys___________";
-        echo "\n-----------------------------------------------------------------------------------------------------\n";
+       echo "\n __________Migrated projects Foreign keys ---------- project_manager_id \n";
 
 
 
 
 
-
-
-
-
-
-
-
-        /**
-	     * 
-	     * 
-	     * 
-	     * 
-	     * 
-	     *					ProjectTeam
-	     * 
-	     * 
-	     * 
-	     * 
-	     */
 
 
 
@@ -73,38 +41,17 @@ class post_data_migration_keys_migration extends Seeder
                                     LEFT JOIN projects p 
                                     ON p.migration_id = pt.migration_project_id
 
-                                    SET     pt.employee_id      =   e.id ,
-                                            pt.project_id       =   p.id
+                                    SET     pt.employee_id    	=   e.id ,
+                                    		pt.project_id    	=   p.id
                              ";
 
         DB::statement($migrate_keys_sql);
 
-        echo "\n ___________POST-Migrated Project Teams  keys___________";
-        echo "\n-----------------------------------------------------------------------------------------------------\n";
+       echo "\n __________Migrated project_teams Foreign keys ---------- employee_id, project_id,\n";
 
 
 
 
-
-
-
-
-
-
-
-
-        /**
-	     * 
-	     * 
-	     * 
-	     * 
-	     * 
-	     *					ProjectBudgetAccounts
-	     * 
-	     * 
-	     * 
-	     * 
-	     */
 
 
 
@@ -116,14 +63,13 @@ class post_data_migration_keys_migration extends Seeder
                                     LEFT JOIN projects p 
                                     ON p.migration_id = pba.migration_project_id
 
-                                    SET     pba.account_id      =   a.id ,
-                                            pba.project_id      =   p.id
+                                    SET     pba.account_id    	=   a.id ,
+                                    		pba.project_id    	=   p.id
                              ";
 
         DB::statement($migrate_keys_sql);
 
-        echo "\n ___________Migrated ProjectBudgetAccounts  keys___________";
-        echo "\n-----------------------------------------------------------------------------------------------------\n";
+       echo "\n __________Migrated project_budget_accounts Foreign keys ---------- account_id,project_id \n";
 
 
 
@@ -131,20 +77,6 @@ class post_data_migration_keys_migration extends Seeder
 
 
 
-
-
-        /**
-         * 
-         * 
-         * 
-         * 
-         * 
-         *                  ProjectObjectives
-         * 
-         * 
-         * 
-         * 
-         */
 
 
         $migrate_keys_sql = "
@@ -157,38 +89,11 @@ class post_data_migration_keys_migration extends Seeder
 
         DB::statement($migrate_keys_sql);
 
-        echo "\n ___________Migrated ProjectObjectives  keys___________";
-        echo "\n-----------------------------------------------------------------------------------------------------\n";
+       echo "\n __________Migrated project_objectives Foreign keys ---------- project_id \n";
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        /**
-	     * 
-	     * 
-	     * 
-	     * 
-	     * 
-	     *					ProjectActivities
-	     * 
-	     * 
-	     * 
-	     * 
-	     */
 
 
 
@@ -199,44 +104,14 @@ class post_data_migration_keys_migration extends Seeder
                                     LEFT JOIN projects p 
                                     ON p.migration_id = pt.migration_project_id
 
-                                    SET     pt.project_id    			=   po.id ,
-                                    		pt.project_objective_id    	=   p.id
+                                    SET     pt.project_id               =   po.id ,
+                                            pt.project_objective_id     =   p.id
                              ";
 
         DB::statement($migrate_keys_sql);
 
-        echo "\n ___________Migrated ProjectActivities  keys___________";
-        echo "\n-----------------------------------------------------------------------------------------------------\n";
+       echo "\n __________Migrated project_activities Foreign keys ---------- project_objective_id, project_id\n";
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        /**
-         * 
-         * 
-         * 
-         * 
-         * 
-         *                  ProjectCashNeeds
-         * 
-         * 
-         * 
-         * 
-         */
 
 
 
@@ -255,8 +130,9 @@ class post_data_migration_keys_migration extends Seeder
 
         DB::statement($migrate_keys_sql);
 
-        echo "\n ___________Migrated ProjectCashNeeds  keys___________";
-        echo "\n-----------------------------------------------------------------------------------------------------\n";
+       echo "\n __________Migrated project_cash_needs Foreign keys ---------- project_id, requested_by\n";
+
+
 
 
 
