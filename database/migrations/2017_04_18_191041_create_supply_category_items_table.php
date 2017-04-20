@@ -15,7 +15,9 @@ class CreateSupplyCategoryItemsTable extends Migration
     {
         Schema::create('supply_category_items', function (Blueprint $table) {
             $table->increments('id');
-            $table->text('approval_level');
+            $table->string('category_item_name')->nullable();
+            $table->integer('category_id')->nullable();
+            $table->integer('migration_category_id')->nullable();
             $table->integer('migration_id')->unique();
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
