@@ -16,7 +16,7 @@ class migrate_projects_keys extends Seeder
 
         $migrate_keys_sql = "
                                 UPDATE projects p 
-                                    LEFT JOIN employees pm 
+                                    LEFT JOIN staff pm 
                                     ON pm.migration_id = p.migration_project_manager_id
 
                                     SET     p.project_manager_id    =   pm.id 
@@ -36,18 +36,18 @@ class migrate_projects_keys extends Seeder
 
         $migrate_keys_sql = "
                                 UPDATE project_teams pt 
-                                    LEFT JOIN employees e 
-                                    ON e.migration_id = pt.migration_employee_id
+                                    LEFT JOIN staff e 
+                                    ON e.migration_id = pt.migration_staff_id
                                     LEFT JOIN projects p 
                                     ON p.migration_id = pt.migration_project_id
 
-                                    SET     pt.employee_id    	=   e.id ,
+                                    SET     pt.staff_id    	=   e.id ,
                                     		pt.project_id    	=   p.id
                              ";
 
         DB::statement($migrate_keys_sql);
 
-       echo "\n __________Migrated project_teams Foreign keys ---------- employee_id, project_id,\n";
+       echo "\n __________Migrated project_teams Foreign keys ---------- staff_id, project_id,\n";
 
 
 
@@ -119,7 +119,7 @@ class migrate_projects_keys extends Seeder
 
         $migrate_keys_sql = "
                                 UPDATE project_cash_needs cn 
-                                    LEFT JOIN employees emp 
+                                    LEFT JOIN staff emp 
                                     ON emp.migration_id = cn.migration_requested_by
                                     LEFT JOIN projects p 
                                     ON p.migration_id = cn.migration_project_id

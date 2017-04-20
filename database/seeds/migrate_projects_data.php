@@ -92,7 +92,7 @@ class migrate_projects_data extends Seeder
         foreach ($data as $key => $value) {
 
             $data_to_migrate[$key]['migration_project_id']  				= $data[$key]['Project'];
-            $data_to_migrate[$key]['migration_employee_id']  				= $data[$key]['Employee'];
+            $data_to_migrate[$key]['migration_staff_id']  				    = $data[$key]['Employee'];
             $data_to_migrate[$key]['migration_id']							= $data[$key]['ID'];
 
 

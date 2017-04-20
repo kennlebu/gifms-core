@@ -52,7 +52,7 @@ class migrate_invoice_data extends Seeder
             $data_to_migrate[$key]['management_approval_date']		= $data[$key]['ManagementApprovalDate'];
             $data_to_migrate[$key]['allocated']  					= $data[$key]['Allocated'];
             $data_to_migrate[$key]['payment_date']  				= $data[$key]['PaymentDate'];
-            $data_to_migrate[$key]['employee_advance']  			= $data[$key]['EmployeeAdvance'];
+            $data_to_migrate[$key]['staff_advance']  			    = $data[$key]['EmployeeAdvance'];
             $data_to_migrate[$key]['reconcilliation_date']  		= $data[$key]['ReconciliationDate'];
             $data_to_migrate[$key]['invoice_comments']  			= $data[$key]['InvoiceComments'];
             $data_to_migrate[$key]['pm_approval_date']  			= $data[$key]['PMApprovalDate'];

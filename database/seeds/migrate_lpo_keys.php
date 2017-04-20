@@ -27,11 +27,11 @@ class migrate_lpo_keys extends Seeder
          */
         $migrate_keys_sql = "
                                 UPDATE lpos l 
-                                    LEFT JOIN employees pm 
+                                    LEFT JOIN staff pm 
                                     ON pm.migration_id = l.migration_project_manager_id
-                                    LEFT JOIN employees rcb 
+                                    LEFT JOIN staff rcb 
                                     ON rcb.migration_id = l.migration_received_by
-                                    LEFT JOIN employees rq 
+                                    LEFT JOIN staff rq 
                                     ON rq.migration_id = l.migration_requested_by
                                     LEFT JOIN projects p 
                                     ON p.migration_id = l.migration_project_id
@@ -71,7 +71,7 @@ class migrate_lpo_keys extends Seeder
 
         $migrate_keys_sql = "
                                 UPDATE lpo_approvals l 
-                                    LEFT JOIN employees ap 
+                                    LEFT JOIN staff ap 
                                     ON ap.migration_id = l.migration_approver
 
                                     SET     l.approver    =   ap.id 

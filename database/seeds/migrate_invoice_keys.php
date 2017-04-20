@@ -28,11 +28,11 @@ class migrate_invoice_keys extends Seeder
 
         $migrate_keys_sql = "
                                 UPDATE invoices i 
-                                    LEFT JOIN employees ma 
+                                    LEFT JOIN staff ma 
                                     ON ma.migration_id = i.migration_management_approval
-                                    LEFT JOIN employees ub 
+                                    LEFT JOIN staff ub 
                                     ON ub.migration_id = i.migration_uploaded_by
-                                    LEFT JOIN employees ap 
+                                    LEFT JOIN staff ap 
                                     ON ap.migration_id = i.migration_approver_id
                                     LEFT JOIN claims c 
                                     ON c.migration_id = i.migration_claim_id
@@ -40,7 +40,7 @@ class migrate_invoice_keys extends Seeder
                                     ON l.migration_id = i.migration_lpo_id
                                     LEFT JOIN staff_advances sa 
                                     ON sa.migration_id = i.migration_advance_id
-                                    LEFT JOIN employees mp 
+                                    LEFT JOIN staff mp 
                                     ON mp.migration_id = i.migration_mpesa_id
 
                                     SET     i.management_approval   =   ma.id, 

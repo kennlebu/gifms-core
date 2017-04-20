@@ -2,10 +2,8 @@
 
 use Illuminate\Database\Seeder;
 
-class migrate_employees_data extends Seeder
+class migrate_staff_data extends Seeder
 {
-
-
     /**
      * Run the database seeds.
      *
@@ -13,7 +11,7 @@ class migrate_employees_data extends Seeder
      */
     public function run()
     {
-               
+              
         
         /**
          * 
@@ -22,7 +20,7 @@ class migrate_employees_data extends Seeder
          * 
          * 
          * 
-         *                  Employees
+         *                  Staff
          * 
          * 
          * 
@@ -72,7 +70,7 @@ class migrate_employees_data extends Seeder
             echo $data[$key]['FirstName'];
         }
 
-        DB::table('employees')->insert($data_to_migrate);
+        DB::table('staff')->insert($data_to_migrate);
         DB::table('users')->insert($data_to_migrate_u);
         
         echo "\n-----------------------------------------------------------------------------------------------------\n\n";

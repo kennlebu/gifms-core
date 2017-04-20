@@ -29,7 +29,7 @@ class CreateInvoicesTable extends Migration
             $table->dateTime('management_approval_date')->nullable();
             $table->integer('allocated')->nullable();
             $table->dateTime('payment_date')->nullable();
-            $table->integer('employee_advance')->nullable();
+            $table->integer('staff_advance')->nullable();
             $table->date('reconcilliation_date')->nullable();
             $table->text('invoice_comments')->nullable();
             $table->dateTime('pm_approval_date')->nullable();
