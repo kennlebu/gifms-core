@@ -84,7 +84,12 @@ class migrate_lpo_data extends Seeder
         	echo $data[$key]['Title'];
         }
         
-        DB::table('lpos')->insert($data_to_migrate);
+
+        $insertBatchs = array_chunk($data_to_migrate, 500);
+        foreach ($insertBatchs as $batch) {
+            DB::table('lpos')->insert($batch);
+             echo "\n-------------------------------------------------------Batch inserted\n";
+        }
 
         echo "\n-----------------------------------------------------------------------------------------------------\n";
 
@@ -137,8 +142,13 @@ class migrate_lpo_data extends Seeder
             echo $data_to_migrate_pm[$key]['pm_approval_date'];
 
         }
-        
-        DB::table('lpo_approvals')->insert($pm_approval);
+
+
+        $insertBatchs = array_chunk($pm_approval, 500);
+        foreach ($insertBatchs as $batch) {
+            DB::table('lpo_approvals')->insert($batch);
+             echo "\n-------------------------------------------------------Batch inserted\n";
+        }
 
         echo "\n-----------------------------------------------------------------------------------------------------\n";
 
@@ -157,8 +167,13 @@ class migrate_lpo_data extends Seeder
             echo $data_to_migrate_man[$key]['management_approval_date'];
 
         }
-        
-        DB::table('lpo_approvals')->insert($man_approval);
+
+
+        $insertBatchs = array_chunk($man_approval, 500);
+        foreach ($insertBatchs as $batch) {
+            DB::table('lpo_approvals')->insert($batch);
+             echo "\n-------------------------------------------------------Batch inserted\n";
+        }
 
         echo "\n-----------------------------------------------------------------------------------------------------\n";
 
@@ -177,8 +192,13 @@ class migrate_lpo_data extends Seeder
             echo $data_to_migrate_fin[$key]['finance_approval_date'];
 
         }
-        
-        DB::table('lpo_approvals')->insert($fin_approval);
+
+
+        $insertBatchs = array_chunk($fin_approval, 500);
+        foreach ($insertBatchs as $batch) {
+            DB::table('lpo_approvals')->insert($batch);
+             echo "\n-------------------------------------------------------Batch inserted\n";
+        }
 
         echo "\n-----------------------------------------------------------------------------------------------------\n";
 
@@ -228,7 +248,12 @@ class migrate_lpo_data extends Seeder
             echo $data[$key]['ItemDescription'];
         }
         
-        DB::table('lpo_items')->insert($data_to_migrate);
+
+        $insertBatchs = array_chunk($data_to_migrate, 500);
+        foreach ($insertBatchs as $batch) {
+            DB::table('lpo_items')->insert($batch);
+             echo "\n-------------------------------------------------------Batch inserted\n";
+        }
 
         echo "\n-----------------------------------------------------------------------------------------------------\n";
 
@@ -291,7 +316,12 @@ class migrate_lpo_data extends Seeder
             echo $data[$key]['Quotation'];
         }
 
-        DB::table('lpo_quotations')->insert($data_to_migrate);
+
+        $insertBatchs = array_chunk($data_to_migrate, 500);
+        foreach ($insertBatchs as $batch) {
+            DB::table('lpo_quotations')->insert($batch);
+             echo "\n-------------------------------------------------------Batch inserted\n";
+        }
         
         echo "\n-----------------------------------------------------------------------------------------------------\n";
 
@@ -382,8 +412,13 @@ class migrate_lpo_data extends Seeder
             echo "\n Lpo Terms-$key---";
             echo $data[$key]['Terms'];
         }
+
+        $insertBatchs = array_chunk($data_to_migrate, 500);
+        foreach ($insertBatchs as $batch) {
+            DB::table('lpo_terms')->insert($batch);
+             echo "\n-------------------------------------------------------Batch inserted\n";
+        }
         
-        DB::table('lpo_terms')->insert($data_to_migrate);
 
         echo "\n-----------------------------------------------------------------------------------------------------\n";
 
@@ -401,7 +436,7 @@ class migrate_lpo_data extends Seeder
          * 
          * 
          * 
-         *                  LPOStatusView
+         *                  lpo_viewing_permissions
          * 
          * 
          * 

@@ -241,14 +241,13 @@ class migrate_invoice_data extends Seeder
         }
 
 
-               
+
         $insertBatchs = array_chunk($data_to_migrate, 500);
         foreach ($insertBatchs as $batch) {
             DB::table('invoice_project_account_allocations')->insert($batch);
              echo "\n-------------------------------------------------------Batch inserted\n";
         }
         
-        // DB::table('invoice_project_account_allocations')->insert($data_to_migrate);
         
         echo "\n-----------------------------------------------------------------------------------------------------\n";
 
