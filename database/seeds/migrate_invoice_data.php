@@ -255,5 +255,50 @@ class migrate_invoice_data extends Seeder
 
 
 
+
+
+
+
+
+        /**
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         *                  InvoiceApportionmentRates
+         * 
+         * 
+         * 
+         * 
+         * 
+         */
+
+
+        $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('InvoiceApportionmentRates')->get();
+
+        $data_to_migrate=array();
+
+        foreach ($data as $key => $value) {
+
+            $data_to_migrate[$key]['invoice_split']                         = $data[$key]['InvoiceSplit'];
+            $data_to_migrate[$key]['migration_account_id']                  = $data[$key]['Account'];
+            $data_to_migrate[$key]['migration_project_id']                  = $data[$key]['Project'];
+            $data_to_migrate[$key]['migration_id']                          = $data[$key]['ID'];
+
+
+            echo "\n InvoiceApportionmentRates-$key---";
+            echo $data[$key]['InvoiceSplit'];
+        }
+        
+        DB::table('invoice_apportionment_rates')->insert($data_to_migrate);
+        
+        echo "\n-----------------------------------------------------------------------------------------------------\n";
+
+
+
+
+
     }
 }
