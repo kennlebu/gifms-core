@@ -125,5 +125,84 @@ class migrate_invoice_keys extends Seeder
 
 
 
+
+
+
+         /**
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         *                  invoice_viewing_permissions
+         * 
+         * 
+         * 
+         * 
+         * 
+         */
+
+        $migrate_keys_sql = "
+                                UPDATE invoice_viewing_permissions ivp 
+                                    LEFT JOIN security_levels sl 
+                                    ON ivp.migration_security_level = sl.migration_id
+                                    SET ivp.security_level = sl.id 
+                            ";
+
+        DB::statement($migrate_keys_sql);
+
+       echo "\n __________Migrated invoice_viewing_permissions Foreign keys ---------- security_level \n";
+
+
+
+
+
+
+
+
+
+
+         /**
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         *                  invoices_logs
+         * 
+         * 
+         * 
+         * 
+         * 
+         */
+
+
+        $migrate_keys_sql = "
+                                UPDATE invoices_logs il 
+                                    LEFT JOIN staff lb 
+                                    ON il.migration_logged_by = lb.migration_id
+                                    LEFT JOIN staff s 
+                                    ON il.migration_staff_id = s.migration_id
+                                    LEFT JOIN suppliers su 
+                                    ON il.migration_supplier_id = su.migration_id
+                                    SET il.logged_by = lb.id ,
+                                        il.staff_id = s.id ,
+                                        il.supplier_id = su.id 
+                            ";
+
+        DB::statement($migrate_keys_sql);
+
+       echo "\n __________Migrated invoices_logs Foreign keys ---------- logged_by,staff_id,supplier_id \n";
+
+
+
+
+
+
+
+
+
     }
 }

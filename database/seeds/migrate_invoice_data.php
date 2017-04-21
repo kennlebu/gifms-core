@@ -300,5 +300,147 @@ class migrate_invoice_data extends Seeder
 
 
 
+
+        
+        /**
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         *                  invoice_viewing_permissions
+         * 
+         * 
+         * 
+         * 
+         * 
+         */
+
+        $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('InvoiceStatusView')->get();
+
+        $data_to_migrate=array();
+
+        foreach ($data as $key => $value) {
+
+            $data_to_migrate[$key]['invoice_status']                    = $data[$key]['InvoiceStatus'];
+            $data_to_migrate[$key]['migration_security_level']          = $data[$key]['SecurityLevel'];
+            $data_to_migrate[$key]['migration_id']                      = $data[$key]['ID'];
+
+
+            echo "\n Invoice  Status View -$key---";
+            echo $data[$key]['InvoiceStatus'];
+        }
+        
+        DB::table('invoice_viewing_permissions')->insert($data_to_migrate);
+
+        echo "\n-----------------------------------------------------------------------------------------------------\n";
+
+
+
+
+
+
+
+
+
+
+
+
+
+        /**
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         *                  InvoiceTypes
+         * 
+         * 
+         * 
+         * 
+         * 
+         */
+
+        DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->setFetchMode(PDO::FETCH_ASSOC);
+
+        $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('InvoiceTypes')->get();
+
+        $data_to_migrate=array();
+
+        foreach ($data as $key => $value) {
+
+            $data_to_migrate[$key]['invoice_type']      = $data[$key]['InvoiceTypes'];
+            $data_to_migrate[$key]['migration_id']      = $data[$key]['ID'];
+
+
+            echo "\n InvoiceTypes-$key---";
+            echo $data[$key]['InvoiceTypes'];
+        }
+        
+        DB::table('invoice_types')->insert($data_to_migrate);
+        
+        echo "\n-----------------------------------------------------------------------------------------------------\n";
+
+
+
+
+
+
+
+
+
+
+        /**
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         *                  InvoiceLog
+         * 
+         * 
+         * 
+         * 
+         * 
+         */
+
+        DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->setFetchMode(PDO::FETCH_ASSOC);
+
+        $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('InvoiceLog')->get();
+
+        $data_to_migrate=array();
+
+        foreach ($data as $key => $value) {
+
+            $data_to_migrate[$key]['invoice_date']                  = $data[$key]['InvoiceDate'];
+            $data_to_migrate[$key]['invoice_amount']                = (double)$data[$key]['InvoiceAmount'];
+            $data_to_migrate[$key]['log_status']                    = $data[$key]['LogStatus'];
+            $data_to_migrate[$key]['invoice_no']                    = $data[$key]['InvoiceNumber'];
+            $data_to_migrate[$key]['migration_supplier_id']         = $data[$key]['Supplier'];
+            $data_to_migrate[$key]['migration_logged_by']           = $data[$key]['LoggedBy'];
+            $data_to_migrate[$key]['migration_staff_id']            = $data[$key]['Staff'];
+            $data_to_migrate[$key]['migration_id']                  = $data[$key]['ID'];
+            $data_to_migrate[$key]['created_at']                    = $data[$key]['LogDate'];
+
+
+            echo "\n InvoiceLog-$key---";
+            echo $data[$key]['InvoiceDate'];
+        }
+        
+        DB::table('invoice_types')->insert($data_to_migrate);
+        
+        echo "\n-----------------------------------------------------------------------------------------------------\n";
+
+
+
+
+
+
+
+
+
     }
 }

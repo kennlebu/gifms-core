@@ -15,7 +15,9 @@ class CreateInvoiceViewingPermissionsTable extends Migration
     {
         Schema::create('invoice_viewing_permissions', function (Blueprint $table) {
             $table->increments('id');
-            $table->text('approval_level');
+            $table->integer('invoice_status');
+            $table->integer('security_level')->nullable();
+            $table->integer('migration_security_level')->nullable();
             $table->integer('migration_id')->unique();
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
