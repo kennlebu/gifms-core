@@ -66,7 +66,12 @@ class migrate_suppliers_data extends Seeder
         }
 
 
-        DB::table('suppliers')->insert($data_to_migrate);
+        $insertBatchs = array_chunk($data_to_migrate, 500);
+        foreach ($insertBatchs as $batch) {
+            DB::table('suppliers')->insert($batch);
+             echo "\n-------------------------------------------------------Batch inserted\n";
+        }
+
         
         echo "\n-----------------------------------------------------------------------------------------------------\n";
 

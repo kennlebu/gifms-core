@@ -95,7 +95,11 @@ class migrate_banking_data extends Seeder
         	echo $data[$key]['BankBranch'];
         }
         
-        DB::table('bank_branches')->insert($data_to_migrate);
+        $insertBatchs = array_chunk($data_to_migrate, 500);
+        foreach ($insertBatchs as $batch) {
+            DB::table('bank_branches')->insert($batch);
+             echo "\n-------------------------------------------------------Batch inserted\n";
+        }
 
         echo "\n-----------------------------------------------------------------------------------------------------\n";
 
@@ -252,7 +256,11 @@ class migrate_banking_data extends Seeder
         	echo $data[$key]['BalanceDate'];
         }
 
-        DB::table('bank_project_balances')->insert($data_to_migrate);
+        $insertBatchs = array_chunk($data_to_migrate, 500);
+        foreach ($insertBatchs as $batch) {
+            DB::table('bank_project_balances')->insert($batch);
+             echo "\n-------------------------------------------------------Batch inserted\n";
+        }
 
         echo "\n-----------------------------------------------------------------------------------------------------\n";
 
@@ -309,7 +317,12 @@ class migrate_banking_data extends Seeder
         	echo $data[$key]['Reference'];
         }
         
-        DB::table('bank_statements')->insert($data_to_migrate);
+
+        $insertBatchs = array_chunk($data_to_migrate, 500);
+        foreach ($insertBatchs as $batch) {
+            DB::table('bank_statements')->insert($batch);
+             echo "\n-------------------------------------------------------Batch inserted\n";
+        }
 
         echo "\n-----------------------------------------------------------------------------------------------------\n";
 
@@ -369,7 +382,11 @@ class migrate_banking_data extends Seeder
         	echo $data[$key]['ClinHealthRef'];
         }
         
-        DB::table('bank_transactions')->insert($data_to_migrate);
+        $insertBatchs = array_chunk($data_to_migrate, 500);
+        foreach ($insertBatchs as $batch) {
+            DB::table('bank_transactions')->insert($batch);
+             echo "\n-------------------------------------------------------Batch inserted\n";
+        }
 
         echo "\n-----------------------------------------------------------------------------------------------------\n";
 

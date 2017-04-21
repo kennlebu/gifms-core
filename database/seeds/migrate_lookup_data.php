@@ -390,5 +390,48 @@ class migrate_lookup_data extends Seeder
 
 
 
+
+
+
+
+        /**
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         *                  SecurityLevel
+         * 
+         * 
+         * 
+         * 
+         * 
+         */
+
+        DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->setFetchMode(PDO::FETCH_ASSOC);
+
+        $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('SecurityLevel')->get();
+
+        $data_to_migrate=array();
+
+        foreach ($data as $key => $value) {
+
+            $data_to_migrate[$key]['security_level_desc']       = $data[$key]['Description'];
+            $data_to_migrate[$key]['home_page']                 = $data[$key]['HomePage'];
+            $data_to_migrate[$key]['migration_id']              = $data[$key]['ID'];
+
+
+            echo "\n SecurityLevel-$key---";
+            echo $data[$key]['Description'];
+        }
+        
+        DB::table('security_levels')->insert($data_to_migrate);
+        
+        echo "\n-----------------------------------------------------------------------------------------------------\n";
+
+
+
+
     }
 }

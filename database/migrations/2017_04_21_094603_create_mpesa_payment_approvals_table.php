@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateLpoStatusesTable extends Migration
+class CreateMpesaPaymentApprovalsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,13 @@ class CreateLpoStatusesTable extends Migration
      */
     public function up()
     {
-        Schema::create('lpo_statuses', function (Blueprint $table) {
+        Schema::create('mpesa_payment_approvals', function (Blueprint $table) {
+            
             $table->increments('id');
-            $table->string('lpo_status');
-            $table->integer('next_status')->nullable();
-            $table->integer('status_security_level')->nullable();
-            $table->integer('migration_status_security_level')->nullable();
-            $table->integer('migration_id')->unique();
+            $table->integer('mpesa_payment_id');
+            $table->integer('approval_level_id');
+            $table->integer('approver')->nullable();
+            $table->integer('migration_approver')->nullable();
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
             $table->softDeletes();
@@ -33,6 +33,6 @@ class CreateLpoStatusesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('lpo_statuses');
+        Schema::dropIfExists('mpesa_payment_approvals');
     }
 }

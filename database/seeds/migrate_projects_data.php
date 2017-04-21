@@ -55,9 +55,10 @@ class migrate_projects_data extends Seeder
             echo $data[$key]['ProjectID'];
         }
         
+        DB::table('projects')->insert($data_to_migrate);
+
         echo "\n-----------------------------------------------------------------------------------------------------\n";
 
-        DB::table('projects')->insert($data_to_migrate);
 
 
 
@@ -92,7 +93,7 @@ class migrate_projects_data extends Seeder
         foreach ($data as $key => $value) {
 
             $data_to_migrate[$key]['migration_project_id']  				= $data[$key]['Project'];
-            $data_to_migrate[$key]['migration_employee_id']  				= $data[$key]['Employee'];
+            $data_to_migrate[$key]['migration_staff_id']  				    = $data[$key]['Employee'];
             $data_to_migrate[$key]['migration_id']							= $data[$key]['ID'];
 
 
@@ -100,9 +101,10 @@ class migrate_projects_data extends Seeder
             echo $data[$key]['Project'];
         }
         
+        DB::table('project_teams')->insert($data_to_migrate);
+
         echo "\n-----------------------------------------------------------------------------------------------------\n";
 
-        DB::table('project_teams')->insert($data_to_migrate);
 
 
 
@@ -153,10 +155,16 @@ class migrate_projects_data extends Seeder
             echo "\n ProjectBudgetAccounts -$key---";
             echo $data[$key]['BudgetAmount'];
         }
-        
+
+        $insertBatchs = array_chunk($data_to_migrate, 500);
+        foreach ($insertBatchs as $batch) {
+            DB::table('project_budget_accounts')->insert($batch);
+             echo "\n-------------------------------------------------------Batch inserted\n";
+        }
+
+
         echo "\n-----------------------------------------------------------------------------------------------------\n";
 
-        DB::table('project_budget_accounts')->insert($data_to_migrate);
 
 
 
@@ -200,9 +208,10 @@ class migrate_projects_data extends Seeder
             echo $data[$key]['Activity'];
         }
         
+        DB::table('project_objectives')->insert($data_to_migrate);
+
         echo "\n-----------------------------------------------------------------------------------------------------\n";
 
-        DB::table('project_objectives')->insert($data_to_migrate);
 
 
 
@@ -249,9 +258,10 @@ class migrate_projects_data extends Seeder
             echo $data[$key]['Activity'];
         }
         
+        DB::table('project_activities')->insert($data_to_migrate);
+
         echo "\n-----------------------------------------------------------------------------------------------------\n";
 
-        DB::table('project_activities')->insert($data_to_migrate);
 
 
 
@@ -296,9 +306,10 @@ class migrate_projects_data extends Seeder
             echo $data[$key]['Activity'];
         }
         
+        DB::table('project_cash_needs')->insert($data_to_migrate);
+
         echo "\n-----------------------------------------------------------------------------------------------------\n";
 
-        DB::table('project_cash_needs')->insert($data_to_migrate);
 
 
 
@@ -343,9 +354,10 @@ class migrate_projects_data extends Seeder
             echo $data[$key]['ProjectDescription'];
         }
         
+        DB::table('project_master_lists')->insert($data_to_migrate);
+
         echo "\n-----------------------------------------------------------------------------------------------------\n";
 
-        DB::table('project_master_lists')->insert($data_to_migrate);
 
 
 

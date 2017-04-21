@@ -35,23 +35,14 @@ class migrate_lpo_data extends Seeder
 
         foreach ($data as $key => $value) {
 
-            $data_to_migrate_pm[$key]['id']                             = $key+1;
-            $data_to_migrate_man[$key]['id']                            = $key+1;
-            $data_to_migrate_fin[$key]['id']                            = $key+1;
 
 
             $data_to_migrate[$key]['chai_ref']                      = $data[$key]['OurRef'];
-        	$data_to_migrate[$key]['lpo_date'] 						= $data[$key]['LPODate'];
+            $data_to_migrate[$key]['lpo_date']                      = $data[$key]['LPODate'];
             $data_to_migrate[$key]['addressee']                     = $data[$key]['Addressee'];
             $data_to_migrate[$key]['title']                         = $data[$key]['Title'];
             $data_to_migrate[$key]['purpose']                       = $data[$key]['Purpose'];
             $data_to_migrate[$key]['request_date']                  = $data[$key]['RequestDate'];
-
-            $data_to_migrate_pm[$key]['pm_approval']                     = $data[$key]['PMApproval'];
-            $data_to_migrate_pm[$key]['pm_approval_date']                = $data[$key]['PMApprovalDate'];
-            $data_to_migrate_man[$key]['management_approval']            = $data[$key]['ManagementApproval'];
-            $data_to_migrate_man[$key]['management_approval_date']       = $data[$key]['ManagementApprovalDate'];
-
             $data_to_migrate[$key]['status']                        = $data[$key]['Status'];
             $data_to_migrate[$key]['currency']                      = $data[$key]['LPOCurrency'];
             $data_to_migrate[$key]['quotation']                     = $data[$key]['Quotation'];
@@ -64,27 +55,40 @@ class migrate_lpo_data extends Seeder
             $data_to_migrate[$key]['attention']                     = $data[$key]['Attention'];
             $data_to_migrate[$key]['lpo_email']                     = $data[$key]['LPOEmail'];
             $data_to_migrate[$key]['reject_reason']                 = $data[$key]['RejectReason'];
-
-            $data_to_migrate_fin[$key]['finance_approval']                 = $data[$key]['FinanceApproval'];
-            $data_to_migrate_fin[$key]['finance_approval_date']            = $data[$key]['FinanceApprovalDate'];
-
             $data_to_migrate[$key]['quote_exempt']                  = $data[$key]['QuoteExempt'];
-            $data_to_migrate[$key]['quote_exempt_explanation']      = $data[$key]['QuotesExemptExplaination'];
-            
-            $data_to_migrate[$key]['migration_account_id']             = $data[$key]['Account'];
-            $data_to_migrate[$key]['migration_project_manager_id']     = $data[$key]['ProjectManager'];
+            $data_to_migrate[$key]['quote_exempt_explanation']      = $data[$key]['QuotesExemptExplaination'];            
+            $data_to_migrate[$key]['migration_account_id']          = $data[$key]['Account'];
+            $data_to_migrate[$key]['migration_project_manager_id']  = $data[$key]['ProjectManager'];
             $data_to_migrate[$key]['migration_received_by']         = $data[$key]['RecievedBy'];
             $data_to_migrate[$key]['migration_project_id']          = $data[$key]['Project'];
             $data_to_migrate[$key]['migration_requested_by']        = $data[$key]['RequestedBy'];
             $data_to_migrate[$key]['migration_supplier_id']         = $data[$key]['Supplier'];
-        	$data_to_migrate[$key]['migration_id'] 					= $data[$key]['ID'];
+            $data_to_migrate[$key]['migration_id']                  = $data[$key]['ID'];
 
+
+
+            $data_to_migrate_fin[$key]['id']                                = $key+1;
+            $data_to_migrate_fin[$key]['finance_approval']                  = $data[$key]['FinanceApproval'];
+            $data_to_migrate_fin[$key]['finance_approval_date']             = $data[$key]['FinanceApprovalDate'];
+
+            $data_to_migrate_man[$key]['id']                                = $key+1;
+            $data_to_migrate_man[$key]['management_approval']               = $data[$key]['ManagementApproval'];
+            $data_to_migrate_man[$key]['management_approval_date']          = $data[$key]['ManagementApprovalDate'];
+
+            $data_to_migrate_pm[$key]['id']                                 = $key+1;
+            $data_to_migrate_pm[$key]['pm_approval']                        = $data[$key]['PMApproval'];
+            $data_to_migrate_pm[$key]['pm_approval_date']                   = $data[$key]['PMApprovalDate'];
 
         	echo "\nLPO -$key---";
         	echo $data[$key]['Title'];
         }
         
-        DB::table('lpos')->insert($data_to_migrate);
+
+        $insertBatchs = array_chunk($data_to_migrate, 500);
+        foreach ($insertBatchs as $batch) {
+            DB::table('lpos')->insert($batch);
+             echo "\n-------------------------------------------------------Batch inserted\n";
+        }
 
         echo "\n-----------------------------------------------------------------------------------------------------\n";
 
@@ -137,8 +141,13 @@ class migrate_lpo_data extends Seeder
             echo $data_to_migrate_pm[$key]['pm_approval_date'];
 
         }
-        
-        DB::table('lpo_approvals')->insert($pm_approval);
+
+
+        $insertBatchs = array_chunk($pm_approval, 500);
+        foreach ($insertBatchs as $batch) {
+            DB::table('lpo_approvals')->insert($batch);
+             echo "\n-------------------------------------------------------Batch inserted\n";
+        }
 
         echo "\n-----------------------------------------------------------------------------------------------------\n";
 
@@ -157,8 +166,13 @@ class migrate_lpo_data extends Seeder
             echo $data_to_migrate_man[$key]['management_approval_date'];
 
         }
-        
-        DB::table('lpo_approvals')->insert($man_approval);
+
+
+        $insertBatchs = array_chunk($man_approval, 500);
+        foreach ($insertBatchs as $batch) {
+            DB::table('lpo_approvals')->insert($batch);
+             echo "\n-------------------------------------------------------Batch inserted\n";
+        }
 
         echo "\n-----------------------------------------------------------------------------------------------------\n";
 
@@ -177,8 +191,13 @@ class migrate_lpo_data extends Seeder
             echo $data_to_migrate_fin[$key]['finance_approval_date'];
 
         }
-        
-        DB::table('lpo_approvals')->insert($fin_approval);
+
+
+        $insertBatchs = array_chunk($fin_approval, 500);
+        foreach ($insertBatchs as $batch) {
+            DB::table('lpo_approvals')->insert($batch);
+             echo "\n-------------------------------------------------------Batch inserted\n";
+        }
 
         echo "\n-----------------------------------------------------------------------------------------------------\n";
 
@@ -228,7 +247,12 @@ class migrate_lpo_data extends Seeder
             echo $data[$key]['ItemDescription'];
         }
         
-        DB::table('lpo_items')->insert($data_to_migrate);
+
+        $insertBatchs = array_chunk($data_to_migrate, 500);
+        foreach ($insertBatchs as $batch) {
+            DB::table('lpo_items')->insert($batch);
+             echo "\n-------------------------------------------------------Batch inserted\n";
+        }
 
         echo "\n-----------------------------------------------------------------------------------------------------\n";
 
@@ -291,7 +315,12 @@ class migrate_lpo_data extends Seeder
             echo $data[$key]['Quotation'];
         }
 
-        DB::table('lpo_quotations')->insert($data_to_migrate);
+
+        $insertBatchs = array_chunk($data_to_migrate, 500);
+        foreach ($insertBatchs as $batch) {
+            DB::table('lpo_quotations')->insert($batch);
+             echo "\n-------------------------------------------------------Batch inserted\n";
+        }
         
         echo "\n-----------------------------------------------------------------------------------------------------\n";
 
@@ -330,10 +359,10 @@ class migrate_lpo_data extends Seeder
 
         foreach ($data as $key => $value) {
 
-            $data_to_migrate[$key]['lpo_status']                = $data[$key]['LPOStatus'];
-            $data_to_migrate[$key]['next_status']               = $data[$key]['NextStatus'];
-            $data_to_migrate[$key]['status_security_level']     = $data[$key]['StatusSecurityLevel'];
-            $data_to_migrate[$key]['migration_id']              = $data[$key]['ID'];
+            $data_to_migrate[$key]['lpo_status']                            = $data[$key]['LPOStatus'];
+            $data_to_migrate[$key]['next_status']                           = $data[$key]['NextStatus'];
+            $data_to_migrate[$key]['migration_status_security_level']       = $data[$key]['StatusSecurityLevel'];
+            $data_to_migrate[$key]['migration_id']                          = $data[$key]['ID'];
 
 
             echo "\n Lpo Statuses-$key---";
@@ -382,8 +411,13 @@ class migrate_lpo_data extends Seeder
             echo "\n Lpo Terms-$key---";
             echo $data[$key]['Terms'];
         }
+
+        $insertBatchs = array_chunk($data_to_migrate, 500);
+        foreach ($insertBatchs as $batch) {
+            DB::table('lpo_terms')->insert($batch);
+             echo "\n-------------------------------------------------------Batch inserted\n";
+        }
         
-        DB::table('lpo_terms')->insert($data_to_migrate);
 
         echo "\n-----------------------------------------------------------------------------------------------------\n";
 
@@ -401,7 +435,7 @@ class migrate_lpo_data extends Seeder
          * 
          * 
          * 
-         *                  LPOStatusView
+         *                  lpo_viewing_permissions
          * 
          * 
          * 
@@ -415,9 +449,9 @@ class migrate_lpo_data extends Seeder
 
         foreach ($data as $key => $value) {
 
-            $data_to_migrate[$key]['lpo_status']            = $data[$key]['LPOStatus'];
-            $data_to_migrate[$key]['security_level']        = $data[$key]['SecurityLevel'];
-            $data_to_migrate[$key]['migration_id']          = $data[$key]['ID'];
+            $data_to_migrate[$key]['lpo_status']                        = $data[$key]['LPOStatus'];
+            $data_to_migrate[$key]['migration_security_level']          = $data[$key]['SecurityLevel'];
+            $data_to_migrate[$key]['migration_id']                      = $data[$key]['ID'];
 
 
             echo "\n LPO  Status View -$key---";

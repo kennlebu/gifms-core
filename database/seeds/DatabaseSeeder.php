@@ -23,7 +23,7 @@ class DatabaseSeeder extends Seeder
         $this->call(migrate_projects_data::class);
         
         //personell
-        $this->call(migrate_employees_data::class);
+        $this->call(migrate_staff_data::class);
         $this->call(migrate_suppliers_data::class);
 
         //accounting
@@ -45,7 +45,7 @@ class DatabaseSeeder extends Seeder
         $this->call(migrate_projects_keys::class);
         
         //personell
-        $this->call(migrate_employees_keys::class);
+        $this->call(migrate_staff_keys::class);
         $this->call(migrate_suppliers_keys::class);
 
         //accounting
@@ -53,7 +53,7 @@ class DatabaseSeeder extends Seeder
         $this->call(migrate_accounting_keys::class);
         $this->call(migrate_payment_keys::class);
         $this->call(migrate_lpo_keys::class);
-        //$this->call(migrate_invoice_keys::class);   //waiting for definitions claims, staff_advances, mpesa_payments
+        $this->call(migrate_invoice_keys::class);   //waiting for definitions claims, staff_advances, mpesa_payments
         $this->call(migrate_mpesa_keys::class);
 
 
