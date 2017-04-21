@@ -15,7 +15,13 @@ class CreateMpesaTarrifsTable extends Migration
     {
         Schema::create('mpesa_tarrifs', function (Blueprint $table) {
             $table->increments('id');
-            $table->timestamps();
+            $table->double('min_limit',30,2)->nullable();
+            $table->double('max_limit',30,2)->nullable();
+            $table->double('tarrif',30,2)->nullable();
+            $table->integer('migration_id')->unique();
+            $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
+            $table->softDeletes();
         });
     }
 

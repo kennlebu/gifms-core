@@ -385,5 +385,48 @@ class migrate_mpesa_data extends Seeder
 
 
 
+
+        
+        /**
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         *                  mpesa_tarrifs
+         * 
+         * 
+         * 
+         * 
+         * 
+         */
+
+        $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('MPESATarrifs')->get();
+
+        $data_to_migrate=array();
+
+        foreach ($data as $key => $value) {
+
+            $data_to_migrate[$key]['min_limit']                 = $data[$key]['MinLimit'];
+            $data_to_migrate[$key]['max_limit']                 = $data[$key]['MaxLimit'];
+            $data_to_migrate[$key]['tarrif']                    = $data[$key]['Tarrif'];
+            $data_to_migrate[$key]['migration_id']              = $data[$key]['ID'];
+
+
+            echo "\n mpesa payment types -$key---";
+            echo $data[$key]['Tarrif'];
+        }
+        
+        DB::table('mpesa_tarrifs')->insert($data_to_migrate);
+
+        echo "\n-----------------------------------------------------------------------------------------------------\n";
+
+
+
+
+
+
+
     }
 }
