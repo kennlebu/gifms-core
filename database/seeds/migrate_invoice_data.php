@@ -430,7 +430,7 @@ class migrate_invoice_data extends Seeder
             echo $data[$key]['InvoiceDate'];
         }
         
-        DB::table('invoice_types')->insert($data_to_migrate);
+        DB::table('invoices_logs')->insert($data_to_migrate);
         
         echo "\n-----------------------------------------------------------------------------------------------------\n";
 

@@ -52,7 +52,7 @@ class migrate_invoice_keys extends Seeder
                                             i.mpesa_id              =   mp.id, 
                              ";
 
-        DB::statement($migrate_keys_sql);
+        // DB::statement($migrate_keys_sql);
 
         echo "\n __________Migrated invoices Foreign keys ---------- banks,bank_branches \n";
 
@@ -86,7 +86,7 @@ class migrate_invoice_keys extends Seeder
                                             ipaa.invoice_id                =   i.id, 
                                             ipaa.project_id                =   p.id, 
                                             ipaa.project_account           =   a.id, 
-                                            ipaa.project_account_2016      =   a16.id, 
+                                            ipaa.project_account_2016      =   a16.id
                              ";
 
         DB::statement($migrate_keys_sql);
@@ -111,11 +111,11 @@ class migrate_invoice_keys extends Seeder
          */
 
         $migrate_keys_sql = "
-                                UPDATE invoice_statuses is 
+                                UPDATE invoice_statuses iss 
                                     LEFT JOIN security_levels sl 
-                                    ON sl.migration_id = is.migration_status_security_level
+                                    ON sl.migration_id = iss.migration_status_security_level
 
-                                    SET     is.status_security_level              =   sl.id
+                                    SET     iss.status_security_level              =   sl.id
                              ";
 
         DB::statement($migrate_keys_sql);
