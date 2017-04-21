@@ -345,5 +345,45 @@ class migrate_mpesa_data extends Seeder
 
 
 
+        
+        /**
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         *                  mpesa_payment_types
+         * 
+         * 
+         * 
+         * 
+         * 
+         */
+
+        $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('AllowanceTypes')->get();
+
+        $data_to_migrate=array();
+
+        foreach ($data as $key => $value) {
+
+            $data_to_migrate[$key]['allowance_type_desc']               = $data[$key]['AllowanceType'];
+            $data_to_migrate[$key]['migration_id']                      = $data[$key]['ID'];
+
+
+            echo "\n mpesa payment types -$key---";
+            echo $data[$key]['AllowanceType'];
+        }
+        
+        DB::table('mpesa_payment_types')->insert($data_to_migrate);
+
+        echo "\n-----------------------------------------------------------------------------------------------------\n";
+
+
+
+
+
+
+
     }
 }
