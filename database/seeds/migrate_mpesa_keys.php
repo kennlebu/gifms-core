@@ -123,5 +123,87 @@ class migrate_mpesa_keys extends Seeder
 
        echo "\n __________Migrated mpesa_payees Foreign keys ---------- mpesa_payment_id \n";
 
+
+
+
+
+
+
+
+
+         /**
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         *                  mpesa_payment_statuses
+         * 
+         * 
+         * 
+         * 
+         * 
+         */
+
+        $migrate_keys_sql = "
+                                 UPDATE mpesa_payment_statuses mps
+                                      LEFT JOIN security_levels sl
+                                      ON mps.migration_status_security_level = sl.migration_id
+                                      SET mps.status_security_level = sl.id
+                            ";
+
+        DB::statement($migrate_keys_sql);
+
+       echo "\n __________Migrated mpesa_payment_statuses Foreign keys ---------- security_level \n";
+
+
+
+
+
+
+
+
+
+
+
+
+
+         /**
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         *                  mpesa_viewing_permissions
+         * 
+         * 
+         * 
+         * 
+         * 
+         */
+
+        $migrate_keys_sql = "
+                                UPDATE mpesa_viewing_permissions mvp 
+                                    LEFT JOIN security_levels sl 
+                                    ON mvp.migration_security_level = sl.migration_id
+                                    SET mvp.security_level = sl.id 
+                            ";
+
+        DB::statement($migrate_keys_sql);
+
+       echo "\n __________Migrated mpesa_viewing_permissions Foreign keys ---------- security_level \n";
+
+
+
+
+
+
+
+
+
+
+
     }
 }

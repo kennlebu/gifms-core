@@ -121,7 +121,7 @@ class migrate_mpesa_data extends Seeder
                 array_push($pm_approval,['approval_level_id' => 2,'created_at' => $value['pm_approval_date'],'mpesa_payment_id' => $value['id'],'migration_approver' => $value['pm_approval']]);
             }
 
-            echo "\nLPO Approval-$key---";
+            echo "\n Mpesa Payment Approval-$key---";
             echo $data_to_migrate_pm[$key]['pm_approval_date'];
 
         }
@@ -146,7 +146,7 @@ class migrate_mpesa_data extends Seeder
                 array_push($man_approval,['approval_level_id' => 4,'created_at' => $value['management_approval_date'],'mpesa_payment_id' => $value['id'],'migration_approver' => $value['management_approval']]);
             }
 
-            echo "\nLPO Approval-$key---";
+            echo "\n Mpesa Payment Approval-$key---";
             echo $data_to_migrate_man[$key]['management_approval_date'];
 
         }
@@ -171,7 +171,7 @@ class migrate_mpesa_data extends Seeder
                 array_push($fin_approval,['approval_level_id' => 3,'created_at' => $value['finance_approval_date'],'mpesa_payment_id' => $value['id'],'migration_approver' => $value['finance_approval']]);
             }
 
-            echo "\nLPO Approval-$key---";
+            echo "\n Mpesa Payment Approval-$key---";
             echo $data_to_migrate_fin[$key]['finance_approval_date'];
 
         }
@@ -257,6 +257,87 @@ class migrate_mpesa_data extends Seeder
 
 
 
+
+
+
+
+
+        
+        /**
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         *                  mpesa_payment_statuses
+         * 
+         * 
+         * 
+         * 
+         * 
+         */
+
+        $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('AllowanceStatuses')->get();
+
+        $data_to_migrate=array();
+
+        foreach ($data as $key => $value) {
+
+            $data_to_migrate[$key]['mpesa_payment_status']              = $data[$key]['AllowanceStatus'];
+            $data_to_migrate[$key]['next_status']                       = $data[$key]['NextStatus'];
+            $data_to_migrate[$key]['migration_status_security_level']   = $data[$key]['StatusSecurityLevel'];
+            $data_to_migrate[$key]['migration_id']                      = $data[$key]['ID'];
+
+
+            echo "\n Allowance Status -$key---";
+            echo $data[$key]['AllowanceStatus'];
+        }
+        
+        DB::table('mpesa_payment_statuses')->insert($data_to_migrate);
+
+        echo "\n-----------------------------------------------------------------------------------------------------\n";
+
+
+
+
+
+
+
+        
+        /**
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         *                  mpesa_viewing_permissions
+         * 
+         * 
+         * 
+         * 
+         * 
+         */
+
+        $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('AllowanceStatusView')->get();
+
+        $data_to_migrate=array();
+
+        foreach ($data as $key => $value) {
+
+            $data_to_migrate[$key]['mpesa_payment_status']              = $data[$key]['AllowanceStatus'];
+            $data_to_migrate[$key]['migration_security_level']          = $data[$key]['SecurityLevel'];
+            $data_to_migrate[$key]['migration_id']                      = $data[$key]['ID'];
+
+
+            echo "\n mpesa viewing permissions -$key---";
+            echo $data[$key]['AllowanceStatus'];
+        }
+        
+        DB::table('mpesa_viewing_permissions')->insert($data_to_migrate);
+
+        echo "\n-----------------------------------------------------------------------------------------------------\n";
 
 
 
