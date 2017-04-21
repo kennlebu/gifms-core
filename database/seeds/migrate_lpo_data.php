@@ -35,23 +35,14 @@ class migrate_lpo_data extends Seeder
 
         foreach ($data as $key => $value) {
 
-            $data_to_migrate_pm[$key]['id']                             = $key+1;
-            $data_to_migrate_man[$key]['id']                            = $key+1;
-            $data_to_migrate_fin[$key]['id']                            = $key+1;
 
 
             $data_to_migrate[$key]['chai_ref']                      = $data[$key]['OurRef'];
-        	$data_to_migrate[$key]['lpo_date'] 						= $data[$key]['LPODate'];
+            $data_to_migrate[$key]['lpo_date']                      = $data[$key]['LPODate'];
             $data_to_migrate[$key]['addressee']                     = $data[$key]['Addressee'];
             $data_to_migrate[$key]['title']                         = $data[$key]['Title'];
             $data_to_migrate[$key]['purpose']                       = $data[$key]['Purpose'];
             $data_to_migrate[$key]['request_date']                  = $data[$key]['RequestDate'];
-
-            $data_to_migrate_pm[$key]['pm_approval']                     = $data[$key]['PMApproval'];
-            $data_to_migrate_pm[$key]['pm_approval_date']                = $data[$key]['PMApprovalDate'];
-            $data_to_migrate_man[$key]['management_approval']            = $data[$key]['ManagementApproval'];
-            $data_to_migrate_man[$key]['management_approval_date']       = $data[$key]['ManagementApprovalDate'];
-
             $data_to_migrate[$key]['status']                        = $data[$key]['Status'];
             $data_to_migrate[$key]['currency']                      = $data[$key]['LPOCurrency'];
             $data_to_migrate[$key]['quotation']                     = $data[$key]['Quotation'];
@@ -64,21 +55,29 @@ class migrate_lpo_data extends Seeder
             $data_to_migrate[$key]['attention']                     = $data[$key]['Attention'];
             $data_to_migrate[$key]['lpo_email']                     = $data[$key]['LPOEmail'];
             $data_to_migrate[$key]['reject_reason']                 = $data[$key]['RejectReason'];
-
-            $data_to_migrate_fin[$key]['finance_approval']                 = $data[$key]['FinanceApproval'];
-            $data_to_migrate_fin[$key]['finance_approval_date']            = $data[$key]['FinanceApprovalDate'];
-
             $data_to_migrate[$key]['quote_exempt']                  = $data[$key]['QuoteExempt'];
-            $data_to_migrate[$key]['quote_exempt_explanation']      = $data[$key]['QuotesExemptExplaination'];
-            
-            $data_to_migrate[$key]['migration_account_id']             = $data[$key]['Account'];
-            $data_to_migrate[$key]['migration_project_manager_id']     = $data[$key]['ProjectManager'];
+            $data_to_migrate[$key]['quote_exempt_explanation']      = $data[$key]['QuotesExemptExplaination'];            
+            $data_to_migrate[$key]['migration_account_id']          = $data[$key]['Account'];
+            $data_to_migrate[$key]['migration_project_manager_id']  = $data[$key]['ProjectManager'];
             $data_to_migrate[$key]['migration_received_by']         = $data[$key]['RecievedBy'];
             $data_to_migrate[$key]['migration_project_id']          = $data[$key]['Project'];
             $data_to_migrate[$key]['migration_requested_by']        = $data[$key]['RequestedBy'];
             $data_to_migrate[$key]['migration_supplier_id']         = $data[$key]['Supplier'];
-        	$data_to_migrate[$key]['migration_id'] 					= $data[$key]['ID'];
+            $data_to_migrate[$key]['migration_id']                  = $data[$key]['ID'];
 
+
+
+            $data_to_migrate_fin[$key]['id']                                = $key+1;
+            $data_to_migrate_fin[$key]['finance_approval']                  = $data[$key]['FinanceApproval'];
+            $data_to_migrate_fin[$key]['finance_approval_date']             = $data[$key]['FinanceApprovalDate'];
+
+            $data_to_migrate_man[$key]['id']                                = $key+1;
+            $data_to_migrate_man[$key]['management_approval']               = $data[$key]['ManagementApproval'];
+            $data_to_migrate_man[$key]['management_approval_date']          = $data[$key]['ManagementApprovalDate'];
+
+            $data_to_migrate_pm[$key]['id']                                 = $key+1;
+            $data_to_migrate_pm[$key]['pm_approval']                        = $data[$key]['PMApproval'];
+            $data_to_migrate_pm[$key]['pm_approval_date']                   = $data[$key]['PMApprovalDate'];
 
         	echo "\nLPO -$key---";
         	echo $data[$key]['Title'];
