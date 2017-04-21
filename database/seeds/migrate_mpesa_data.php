@@ -47,10 +47,10 @@ class migrate_mpesa_data extends Seeder
             $data_to_migrate[$key]['county']         						= $data[$key]['County'];
             $data_to_migrate[$key]['attentendance_sheet']         			= $data[$key]['AttendanceScheet'];
             $data_to_migrate[$key]['reject_reason']         				= $data[$key]['RejectReason'];
-            $data_to_migrate[$key]['migration_project_id']         					= $data[$key]['Project'];
-            $data_to_migrate[$key]['migration_account_id']         						= $data[$key]['Account'];
-            $data_to_migrate[$key]['migration_invoice_id']         					= $data[$key]['Invoice'];
-            $data_to_migrate[$key]['migration_project_manager']         				= $data[$key]['ProjectManager'];
+            $data_to_migrate[$key]['migration_project_id']         			= $data[$key]['Project'];
+            $data_to_migrate[$key]['migration_account_id']         			= $data[$key]['Account'];
+            $data_to_migrate[$key]['migration_invoice_id']         			= $data[$key]['Invoice'];
+            $data_to_migrate[$key]['migration_project_manager']         	= $data[$key]['ProjectManager'];
         	$data_to_migrate[$key]['migration_id'] 							= $data[$key]['ID'];
 
 
@@ -193,6 +193,67 @@ class migrate_mpesa_data extends Seeder
 
 
 
+
+
+
+
+
+
+
+
+
+        
+        /**
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         *                  Mpesa Payees
+         * 
+         * 
+         * 
+         * 
+         * 
+         */
+
+        $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('AllowancePayees')->get();
+
+        $data_to_migrate=array();
+
+        foreach ($data as $key => $value) {
+
+            $data_to_migrate[$key]['name']                          = $data[$key]['Name'];
+            $data_to_migrate[$key]['registered_name']               = $data[$key]['RegisteredName'];
+            $data_to_migrate[$key]['id_number']                     = $data[$key]['IDNumber'];
+            $data_to_migrate[$key]['mobile_number']                 = $data[$key]['MobileNumber'];
+            $data_to_migrate[$key]['amount']                        = $data[$key]['Amount'];
+            $data_to_migrate[$key]['email']                         = $data[$key]['email'];
+            $data_to_migrate[$key]['mpesa_withdrawal_charges']      = $data[$key]['MPESA'];
+            $data_to_migrate[$key]['total']                         = $data[$key]['Total'];
+            $data_to_migrate[$key]['designation']                   = $data[$key]['Designation'];
+            $data_to_migrate[$key]['sub_county_id']                 = $data[$key]['SubCounty'];
+            $data_to_migrate[$key]['county_id']                     = $data[$key]['County'];
+            $data_to_migrate[$key]['region_id']                     = $data[$key]['Region'];
+            $data_to_migrate[$key]['paid']                          = $data[$key]['Paid'];
+            $data_to_migrate[$key]['payment_reference']             = $data[$key]['PaymentReference'];
+            $data_to_migrate[$key]['migration_mpesa_payment_id']    = $data[$key]['AllowanceRequest'];
+            $data_to_migrate[$key]['migration_id']                  = $data[$key]['ID'];
+
+
+            echo "\n Mpesa Payees-$key---";
+            echo $data[$key]['RegisteredName'];
+        }
+
+
+        $insertBatchs = array_chunk($data_to_migrate, 500);
+        foreach ($insertBatchs as $batch) {
+            DB::table('mpesa_payees')->insert($batch);
+             echo "\n-------------------------------------------------------Batch inserted\n";
+        }
+        
+        echo "\n-----------------------------------------------------------------------------------------------------\n";
 
 
 

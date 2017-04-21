@@ -59,7 +59,7 @@ class migrate_mpesa_keys extends Seeder
 
 
 
- 		/**
+        /**
          * 
          * 
          * 
@@ -85,6 +85,43 @@ class migrate_mpesa_keys extends Seeder
         DB::statement($migrate_keys_sql);
 
        echo "\n __________Migrated mpesa_payment_approvals Foreign keys ---------- approver \n";
+
+
+
+
+
+
+
+
+
+
+
+        /**
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         *                  mpesa_payees
+         * 
+         * 
+         * 
+         * 
+         * 
+         */
+
+        $migrate_keys_sql = "
+                                UPDATE mpesa_payees mp 
+                                    LEFT JOIN mpesa_payments a 
+                                    ON a.migration_id = mp.migration_mpesa_payment_id
+
+                                    SET     mp.mpesa_payment_id    =   a.id 
+                             ";
+
+        DB::statement($migrate_keys_sql);
+
+       echo "\n __________Migrated mpesa_payees Foreign keys ---------- mpesa_payment_id \n";
 
     }
 }
