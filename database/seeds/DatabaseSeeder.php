@@ -33,6 +33,7 @@ class DatabaseSeeder extends Seeder
         $this->call(migrate_lpo_data::class);
         $this->call(migrate_invoice_data::class);
         $this->call(migrate_mpesa_data::class);
+        $this->call(migrate_finance_data::class);
 
 
 
@@ -55,6 +56,7 @@ class DatabaseSeeder extends Seeder
         $this->call(migrate_lpo_keys::class);
         $this->call(migrate_invoice_keys::class);   //waiting for definitions claims, staff_advances, mpesa_payments
         $this->call(migrate_mpesa_keys::class);
+        $this->call(migrate_finance_keys::class);
 
 
 
