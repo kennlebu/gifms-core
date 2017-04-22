@@ -204,5 +204,41 @@ class migrate_invoice_keys extends Seeder
 
 
 
+
+         /**
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         *                  recurring_invoices
+         * 
+         * 
+         * 
+         * 
+         * 
+         */
+
+
+        $migrate_keys_sql = "
+                                UPDATE recurring_invoices rp 
+                                    LEFT JOIN invoices inv 
+                                    ON rp.migration_invoice_id = inv.migration_id
+                                    SET rp.invoice_id = inv.id 
+                            ";
+
+        DB::statement($migrate_keys_sql);
+
+       echo "\n __________Migrated recurring_invoices Foreign keys ---------- invoice_id \n";
+
+
+
+
+
+
+
+
+
     }
 }

@@ -442,5 +442,53 @@ class migrate_invoice_data extends Seeder
 
 
 
+
+
+
+
+
+
+
+        /**
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         *                  RecurringInvoices
+         * 
+         * 
+         * 
+         * 
+         * 
+         */
+
+        $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('RecurringInvoices')->get();
+
+        $data_to_migrate=array();
+
+        foreach ($data as $key => $value) {
+
+            $data_to_migrate[$key]['recurrence_date']           = $data[$key]['RecurrenceDate'];
+            $data_to_migrate[$key]['recurrence_count']          = $data[$key]['RecurrenceCount'];
+            $data_to_migrate[$key]['posted']                    = $data[$key]['Posted'];
+            $data_to_migrate[$key]['migration_invoice_id']      = $data[$key]['Invoice'];
+            $data_to_migrate[$key]['migration_id']              = $data[$key]['ID'];
+
+
+            echo "\n Recurring Invoices-$key---";
+            echo $data[$key]['RecurrenceDate'];
+        }
+        
+        DB::table('recurring_invoices')->insert($data_to_migrate);
+        
+        echo "\n-----------------------------------------------------------------------------------------------------\n";
+
+
+
+
+
+
     }
 }

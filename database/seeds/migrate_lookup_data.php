@@ -55,7 +55,6 @@ class migrate_lookup_data extends Seeder
          * 
          */
 
-        DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->setFetchMode(PDO::FETCH_ASSOC);
 
         $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('Countrys')->get();
 
@@ -104,7 +103,6 @@ class migrate_lookup_data extends Seeder
          * 
          */
 
-        DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->setFetchMode(PDO::FETCH_ASSOC);
 
         $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('Countys')->get();
 
@@ -153,7 +151,6 @@ class migrate_lookup_data extends Seeder
          * 
          */
 
-        DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->setFetchMode(PDO::FETCH_ASSOC);
 
         $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('Citys')->get();
 
@@ -201,7 +198,6 @@ class migrate_lookup_data extends Seeder
          * 
          */
 
-        DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->setFetchMode(PDO::FETCH_ASSOC);
 
         $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('Regions')->get();
 
@@ -253,7 +249,6 @@ class migrate_lookup_data extends Seeder
          * 
          */
 
-        DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->setFetchMode(PDO::FETCH_ASSOC);
 
         $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('CashRequestPurposes')->get();
 
@@ -302,8 +297,6 @@ class migrate_lookup_data extends Seeder
          * 
          */
 
-        DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->setFetchMode(PDO::FETCH_ASSOC);
-
         $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('ExchangeRates')->get();
 
         $data_to_migrate=array();
@@ -346,8 +339,6 @@ class migrate_lookup_data extends Seeder
          * 
          * 
          */
-
-        DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->setFetchMode(PDO::FETCH_ASSOC);
 
         $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('Stations')->get();
 
@@ -409,7 +400,6 @@ class migrate_lookup_data extends Seeder
          * 
          */
 
-        DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->setFetchMode(PDO::FETCH_ASSOC);
 
         $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('SecurityLevel')->get();
 
@@ -427,6 +417,51 @@ class migrate_lookup_data extends Seeder
         }
         
         DB::table('security_levels')->insert($data_to_migrate);
+        
+        echo "\n-----------------------------------------------------------------------------------------------------\n";
+
+
+
+
+
+
+
+
+
+
+
+
+        /**
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         *                  recurring_periods
+         * 
+         * 
+         * 
+         * 
+         * 
+         */
+
+        $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('RecurringPeriods')->get();
+
+        $data_to_migrate=array();
+
+        foreach ($data as $key => $value) {
+
+            $data_to_migrate[$key]['recurr_period']             = $data[$key]['RecurrPeriod'];
+            $data_to_migrate[$key]['days']                      = $data[$key]['RecurrDays'];
+            $data_to_migrate[$key]['migration_id']              = $data[$key]['ID'];
+
+
+            echo "\n recurring periods-$key---";
+            echo $data[$key]['RecurrPeriod'];
+        }
+        
+        DB::table('recurring_periods')->insert($data_to_migrate);
         
         echo "\n-----------------------------------------------------------------------------------------------------\n";
 
