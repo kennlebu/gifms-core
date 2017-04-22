@@ -15,7 +15,17 @@ class CreatePaymentBatchesTable extends Migration
     {
         Schema::create('payment_batches', function (Blueprint $table) {
             $table->increments('id');
-            $table->timestamps();
+            $table->date('payment_date')->nullable();
+            $table->date('upload_date')->nullable();
+            $table->integer('upload_status')->nullable();
+            $table->integer('processed_by')->nullable();
+            $table->integer('uploaded_by')->nullable();
+            $table->integer('migration_processed_by')->nullable();
+            $table->integer('migration_uploaded_by')->nullable();
+            $table->integer('migration_id')->unique();
+            $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
+            $table->softDeletes();
         });
     }
 

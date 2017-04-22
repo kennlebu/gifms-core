@@ -15,7 +15,19 @@ class CreatePaymentsTable extends Migration
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->increments('id');
-            $table->timestamps();
+            $table->integer('invoice_id')->nullable();
+            $table->integer('advance_id')->nullable();
+            $table->integer('payment_mode_id')->nullable();
+            $table->double('amount',30,5)->nullable();
+            $table->string('payment_batch_id')->nullable();
+            $table->double('bank_charges',26,2)->nullable();
+            $table->string('migration_payment_batch_id')->nullable();
+            $table->integer('migration_invoice_id')->nullable();
+            $table->integer('migration_advance_id')->nullable();
+            $table->integer('migration_id')->unique();
+            $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
+            $table->softDeletes();
         });
     }
 
