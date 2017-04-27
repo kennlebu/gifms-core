@@ -47,7 +47,7 @@
       "name": "status",
       "in": "query",
       "description": "approval status",
-      "required": true,
+      "required": false,
       "type": "number",
       "format": "integer"
      }
@@ -166,7 +166,7 @@
     ],
     "summary": "Find lpo by ID",
     "description": "Returns a single lpo",
-    "operationId": "get_pet_by_id",
+    "operationId": "get_lpo_by_id",
     "produces": [
      "application/json",
      "application/xml"
@@ -207,7 +207,7 @@
     ],
     "summary": "Updates a lpo with form data",
     "description": "updates each field when not set as null",
-    "operationId": "updatePetWithForm",
+    "operationId": "update_lpo_with_form",
     "consumes": [
      "application/x-www-form-urlencoded"
     ],
