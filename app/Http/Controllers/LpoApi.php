@@ -16,6 +16,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Request;
+use App\Models\LPOModels\Lpo;
 
 class LpoApi extends Controller
 {
@@ -134,6 +135,26 @@ class LpoApi extends Controller
 
         return response('How about implementing updateLpoWithForm as a POST method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation lposGet
      *
@@ -145,20 +166,33 @@ class LpoApi extends Controller
     public function lposGet()
     {
         $input = Request::all();
+        $response;
 
         //path params validation
 
 
-        //not path params validation
-        try{
+        //if status is set
 
-            $status = $input['status'];
+        if(array_key_exists('status', $input)){
 
-        }catch(Exception $e){
+            $response = Lpo::where("deleted_at",null)
+                ->where('status', $input['status'])
+                ->orderBy('chai_ref', 'desc')
+                ->get();
 
+        }else{
+
+             $response = Lpo::where("deleted_at",null)
+                ->orderBy('chai_ref', 'desc')
+                ->get();
         }
 
 
-        return response('How about implementing lposGet as a GET method ?');
+           
+
+
+            return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+
+
     }
 }
