@@ -1,919 +1,919 @@
 {
-    "swagger": "2.0",
-    "info": {
-        "description": "Finance management sysytem",
-        "version": "1.0.0",
-        "title": "Grants Information Management System",
-        "termsOfService": "http://kefinance.clintonhealthaccess.org/terms/",
-        "contact": {
-            "email": "mwangikevinn@gmail.com"
-        },
-        "license": {
-            "name": "Apache 2.0",
-            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
-        }
-    },
-    "host": "kefinance.clintonhealthaccess.org",
-    "basePath": "/api",
+ "swagger": "2.0",
+ "info": {
+  "description": "Finance management sysytem",
+  "version": "1.0.0",
+  "title": "Grants Information Management System",
+  "termsOfService": "http://kefinance.clintonhealthaccess.org/terms/",
+  "contact": {
+   "email": "mwangikevinn@gmail.com"
+  },
+  "license": {
+   "name": "Apache 2.0",
+   "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+  }
+ },
+ "host": "kefinance.clintonhealthaccess.org",
+ "basePath": "/api",
+ "tags": [
+  {
+   "name": "lpo",
+   "description": "Everything About Local Purchase Orders",
+   "externalDocs": {
+    "description": "Find out more",
+    "url": "http://kefinance.clintonhealthaccess.org/api/lpos/docs"
+   }
+  },
+  {
+   "name": "user",
+   "description": "Operations about User",
+   "externalDocs": {
+    "description": "Find out more",
+    "url": "http://kefinance.clintonhealthaccess.org/api/user/docs"
+   }
+  }
+ ],
+ "schemes": [
+  "http",
+  "https"
+ ],
+ "paths": {
+  "/lpos": {
+   "get": {
+    "summary": "lpo List",
+    "description": "The Lpos endpoint returns information about the LPO requested give the parameters injected. The response includes the Reference-No\nand other details about each lpo, and lists the products in the\nproper display order.\n",
+    "parameters": [
+     {
+      "name": "status",
+      "in": "query",
+      "description": "approval status",
+      "required": true,
+      "type": "number",
+      "format": "integer"
+     }
+    ],
     "tags": [
-        {
-            "name": "lpo",
-            "description": "Everything About Local Purchase Orders",
-            "externalDocs": {
-                "description": "Find out more",
-                "url": "http://kefinance.clintonhealthaccess.org/api/lpos/docs"
-            }
-        },
-        {
-            "name": "user",
-            "description": "Operations about User",
-            "externalDocs": {
-                "description": "Find out more",
-                "url": "http://kefinance.clintonhealthaccess.org/api/user/docs"
-            }
-        }
+     "lpo"
     ],
-    "schemes": [
-        "http",
-        "https"
-    ],
-    "paths": {
-        "/lpos": {
-            "get": {
-                "summary": "lpo List",
-                "description": "The Lpos endpoint returns information about the LPO requested give the parameters injected. The response includes the Reference-No\nand other details about each lpo, and lists the products in the\nproper display order.\n",
-                "parameters": [
-                    {
-                        "name": "status",
-                        "in": "query",
-                        "description": "approval status",
-                        "required": true,
-                        "type": "number",
-                        "format": "integer"
-                    }
-                ],
-                "tags": [
-                    "lpo"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "An array of lpos returned",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/lpo"
-                            }
-                        }
-                    },
-                    "default": {
-                        "description": "Unexpected error",
-                        "schema": {
-                            "$ref": "#/definitions/Error"
-                        }
-                    }
-                }
-            }
-        },
-        "/lpo": {
-            "post": {
-                "tags": [
-                    "lpo"
-                ],
-                "summary": "Add a new lpo request to the store",
-                "description": "lpo awaits approvals from relevant parties",
-                "operationId": "add",
-                "consumes": [
-                    "application/json",
-                    "application/xml"
-                ],
-                "produces": [
-                    "application/json",
-                    "application/xml"
-                ],
-                "parameters": [
-                    {
-                        "in": "body",
-                        "name": "body",
-                        "description": "lpo object that needs to be added to the store",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/lpo"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successfully requested a new LPO for approval"
-                    },
-                    "405": {
-                        "description": "Invalid input,lpo request was unsuccessful"
-                    }
-                },
-                "security": [
-                    {
-                        "api_key": []
-                    }
-                ]
-            },
-            "put": {
-                "tags": [
-                    "lpo"
-                ],
-                "summary": "Update an existing LPO",
-                "description": "",
-                "operationId": "update_lpo",
-                "consumes": [
-                    "application/json",
-                    "application/xml"
-                ],
-                "produces": [
-                    "application/json",
-                    "application/xml"
-                ],
-                "parameters": [
-                    {
-                        "in": "body",
-                        "name": "body",
-                        "description": "LPO object that needs to be added",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/lpo"
-                        }
-                    }
-                ],
-                "responses": {
-                    "400": {
-                        "description": "Invalid ID supplied"
-                    },
-                    "404": {
-                        "description": "lpo not found"
-                    },
-                    "405": {
-                        "description": "Validation exception"
-                    }
-                },
-                "security": [
-                    {
-                        "api_key": []
-                    }
-                ]
-            }
-        },
-        "/lpo/{lpo_id}": {
-            "get": {
-                "tags": [
-                    "lpo"
-                ],
-                "summary": "Find lpo by ID",
-                "description": "Returns a single lpo",
-                "operationId": "get_pet_by_id",
-                "produces": [
-                    "application/json",
-                    "application/xml"
-                ],
-                "parameters": [
-                    {
-                        "name": "lpo_id",
-                        "in": "path",
-                        "description": "ID of lpo to return lpo object",
-                        "required": true,
-                        "type": "integer",
-                        "format": "int64"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "successful operation",
-                        "schema": {
-                            "$ref": "#/definitions/lpo"
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid ID supplied"
-                    },
-                    "404": {
-                        "description": "lpo not found"
-                    }
-                },
-                "security": [
-                    {
-                        "api_key": []
-                    }
-                ]
-            },
-            "post": {
-                "tags": [
-                    "lpo"
-                ],
-                "summary": "Updates a lpo with form data",
-                "description": "updates each field when not set as null",
-                "operationId": "updatePetWithForm",
-                "consumes": [
-                    "application/x-www-form-urlencoded"
-                ],
-                "produces": [
-                    "application/json",
-                    "application/xml"
-                ],
-                "parameters": [
-                    {
-                        "name": "lpo_id",
-                        "in": "path",
-                        "description": "ID of lpo that needs to be updated",
-                        "required": true,
-                        "type": "integer",
-                        "format": "int64"
-                    },
-                    {
-                        "name": "chai_ref",
-                        "in": "formData",
-                        "description": "Updated chai_ref of the lpo",
-                        "required": false,
-                        "type": "string"
-                    },
-                    {
-                        "name": "lpo_date",
-                        "in": "formData",
-                        "description": "Updated lpo_date of the lpo",
-                        "required": false,
-                        "type": "string"
-                    },
-                    {
-                        "name": "supplier_id",
-                        "in": "formData",
-                        "description": "Updated supplier_id of the lpo",
-                        "required": false,
-                        "type": "integer"
-                    },
-                    {
-                        "name": "addressee",
-                        "in": "formData",
-                        "description": "Updated addressee of the lpo",
-                        "required": false,
-                        "type": "string"
-                    },
-                    {
-                        "name": "title",
-                        "in": "formData",
-                        "description": "Updated title of the lpo",
-                        "required": false,
-                        "type": "string"
-                    },
-                    {
-                        "name": "purpose",
-                        "in": "formData",
-                        "description": "Updated purpose of the lpo",
-                        "required": false,
-                        "type": "string"
-                    },
-                    {
-                        "name": "requested_by",
-                        "in": "formData",
-                        "description": "Updated requested_by of the lpo",
-                        "required": false,
-                        "type": "integer"
-                    },
-                    {
-                        "name": "request_date",
-                        "in": "formData",
-                        "description": "Updated request_date of the lpo",
-                        "required": false,
-                        "type": "string"
-                    },
-                    {
-                        "name": "status",
-                        "in": "formData",
-                        "description": "Updated status of the lpo",
-                        "required": false,
-                        "type": "integer"
-                    },
-                    {
-                        "name": "currency",
-                        "in": "formData",
-                        "description": "Updated currency of the lpo",
-                        "required": false,
-                        "type": "integer"
-                    },
-                    {
-                        "name": "quotation",
-                        "in": "formData",
-                        "description": "Updated quotation of the lpo",
-                        "required": false,
-                        "type": "string"
-                    },
-                    {
-                        "name": "supply_category",
-                        "in": "formData",
-                        "description": "Updated supply_category of the lpo",
-                        "required": false,
-                        "type": "integer"
-                    },
-                    {
-                        "name": "delivery_document",
-                        "in": "formData",
-                        "description": "Updated delivery_document of the lpo",
-                        "required": false,
-                        "type": "string"
-                    },
-                    {
-                        "name": "date_delivered",
-                        "in": "formData",
-                        "description": "Updated date_delivered of the lpo",
-                        "required": false,
-                        "type": "string"
-                    },
-                    {
-                        "name": "received_by",
-                        "in": "formData",
-                        "description": "Updated received_by of the lpo",
-                        "required": false,
-                        "type": "integer"
-                    },
-                    {
-                        "name": "meeting",
-                        "in": "formData",
-                        "description": "Updated meeting of the lpo",
-                        "required": false,
-                        "type": "integer"
-                    },
-                    {
-                        "name": "comments",
-                        "in": "formData",
-                        "description": "Updated comments of the lpo",
-                        "required": false,
-                        "type": "string"
-                    },
-                    {
-                        "name": "preffered_supplier",
-                        "in": "formData",
-                        "description": "Updated preffered_supplier of the lpo",
-                        "required": false,
-                        "type": "integer"
-                    },
-                    {
-                        "name": "project_id",
-                        "in": "formData",
-                        "description": "Updated project_id of the lpo",
-                        "required": false,
-                        "type": "integer"
-                    },
-                    {
-                        "name": "account_id",
-                        "in": "formData",
-                        "description": "Updated account_id of the lpo",
-                        "required": false,
-                        "type": "string"
-                    },
-                    {
-                        "name": "attention",
-                        "in": "formData",
-                        "description": "Updated attention of the lpo",
-                        "required": false,
-                        "type": "string"
-                    },
-                    {
-                        "name": "lpo_email",
-                        "in": "formData",
-                        "description": "Updated lpo_email of the lpo",
-                        "required": false,
-                        "type": "string"
-                    },
-                    {
-                        "name": "project_manager_id",
-                        "in": "formData",
-                        "description": "Updated project_manager_id of the lpo",
-                        "required": false,
-                        "type": "integer"
-                    },
-                    {
-                        "name": "quote_exempt",
-                        "in": "formData",
-                        "description": "Updated quote_exempt of the lpo",
-                        "required": false,
-                        "type": "integer"
-                    },
-                    {
-                        "name": "quote_exempt_explanation",
-                        "in": "formData",
-                        "description": "Updated quote_exempt_explanation of the lpo",
-                        "required": false,
-                        "type": "string"
-                    }
-                ],
-                "responses": {
-                    "405": {
-                        "description": "Invalid input"
-                    }
-                },
-                "security": [
-                    {
-                        "api_key": []
-                    }
-                ]
-            },
-            "delete": {
-                "tags": [
-                    "lpo"
-                ],
-                "summary": "Deletes an lpo",
-                "description": "",
-                "operationId": "delete_lpo",
-                "produces": [
-                    "application/json",
-                    "application/xml"
-                ],
-                "parameters": [
-                    {
-                        "name": "api_key",
-                        "in": "header",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "name": "lpo_id",
-                        "in": "path",
-                        "description": "lpo id to delete",
-                        "required": true,
-                        "type": "integer",
-                        "format": "int64"
-                    }
-                ],
-                "responses": {
-                    "400": {
-                        "description": "Invalid ID supplied"
-                    },
-                    "404": {
-                        "description": "Pet not found"
-                    }
-                },
-                "security": [
-                    {
-                        "api_key": []
-                    }
-                ]
-            }
-        },
-        "/user": {
-            "post": {
-                "tags": [
-                    "user"
-                ],
-                "summary": "Create user",
-                "description": "This can only be done by the logged in user.",
-                "operationId": "createUser",
-                "produces": [
-                    "application/xml",
-                    "application/json"
-                ],
-                "parameters": [
-                    {
-                        "in": "body",
-                        "name": "body",
-                        "description": "Created user object",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/User"
-                        }
-                    }
-                ],
-                "responses": {
-                    "default": {
-                        "description": "successful operation"
-                    }
-                }
-            }
-        },
-        "/user/createWithArray": {
-            "post": {
-                "tags": [
-                    "user"
-                ],
-                "summary": "Creates list of users with given input array",
-                "description": "",
-                "operationId": "createUsersWithArrayInput",
-                "produces": [
-                    "application/xml",
-                    "application/json"
-                ],
-                "parameters": [
-                    {
-                        "in": "body",
-                        "name": "body",
-                        "description": "List of user object",
-                        "required": true,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/User"
-                            }
-                        }
-                    }
-                ],
-                "responses": {
-                    "default": {
-                        "description": "successful operation"
-                    }
-                }
-            }
-        },
-        "/user/login": {
-            "get": {
-                "tags": [
-                    "user"
-                ],
-                "summary": "Logs user into the system",
-                "description": "",
-                "operationId": "loginUser",
-                "produces": [
-                    "application/xml",
-                    "application/json"
-                ],
-                "parameters": [
-                    {
-                        "name": "username",
-                        "in": "query",
-                        "description": "The user name for login",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "name": "password",
-                        "in": "query",
-                        "description": "The password for login in clear text",
-                        "required": true,
-                        "type": "string"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "successful operation",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "headers": {
-                            "X-Rate-Limit": {
-                                "type": "integer",
-                                "format": "int32",
-                                "description": "calls per hour allowed by the user"
-                            },
-                            "X-Expires-After": {
-                                "type": "string",
-                                "format": "date-time",
-                                "description": "date in UTC when token expires"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid username/password supplied"
-                    }
-                }
-            }
-        },
-        "/user/logout": {
-            "get": {
-                "tags": [
-                    "user"
-                ],
-                "summary": "Logs out current logged in user session",
-                "description": "",
-                "operationId": "logoutUser",
-                "produces": [
-                    "application/xml",
-                    "application/json"
-                ],
-                "parameters": [],
-                "responses": {
-                    "default": {
-                        "description": "successful operation"
-                    }
-                }
-            }
-        },
-        "/user/{username}": {
-            "get": {
-                "tags": [
-                    "user"
-                ],
-                "summary": "Get user by username",
-                "description": "",
-                "operationId": "getUserByName",
-                "produces": [
-                    "application/xml",
-                    "application/json"
-                ],
-                "parameters": [
-                    {
-                        "name": "username",
-                        "in": "path",
-                        "description": "The name that needs to be fetched. Use user1 for testing. ",
-                        "required": true,
-                        "type": "string"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "successful operation",
-                        "schema": {
-                            "$ref": "#/definitions/User"
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid username supplied"
-                    },
-                    "404": {
-                        "description": "User not found"
-                    }
-                }
-            },
-            "put": {
-                "tags": [
-                    "user"
-                ],
-                "summary": "Updated user",
-                "description": "This can only be done by the logged in user.",
-                "operationId": "updateUser",
-                "produces": [
-                    "application/xml",
-                    "application/json"
-                ],
-                "parameters": [
-                    {
-                        "name": "username",
-                        "in": "path",
-                        "description": "name that need to be updated",
-                        "required": true,
-                        "type": "string"
-                    },
-                    {
-                        "in": "body",
-                        "name": "body",
-                        "description": "Updated user object",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/User"
-                        }
-                    }
-                ],
-                "responses": {
-                    "400": {
-                        "description": "Invalid user supplied"
-                    },
-                    "404": {
-                        "description": "User not found"
-                    }
-                }
-            },
-            "delete": {
-                "tags": [
-                    "user"
-                ],
-                "summary": "Delete user",
-                "description": "This can only be done by the logged in user.",
-                "operationId": "deleteUser",
-                "produces": [
-                    "application/xml",
-                    "application/json"
-                ],
-                "parameters": [
-                    {
-                        "name": "username",
-                        "in": "path",
-                        "description": "The name that needs to be deleted",
-                        "required": true,
-                        "type": "string"
-                    }
-                ],
-                "responses": {
-                    "400": {
-                        "description": "Invalid username supplied"
-                    },
-                    "404": {
-                        "description": "User not found"
-                    }
-                }
-            }
-        }
-    },
-    "securityDefinitions": {
-        "api_key": {
-            "type": "apiKey",
-            "name": "X-API-Key",
-            "in": "header"
-        }
-    },
-    "definitions": {
-        "User": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "integer",
-                    "format": "int64"
-                },
-                "username": {
-                    "type": "string"
-                },
-                "first_name": {
-                    "type": "string"
-                },
-                "last_name": {
-                    "type": "string"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "password": {
-                    "type": "string"
-                },
-                "phone": {
-                    "type": "string"
-                },
-                "userStatus": {
-                    "type": "integer",
-                    "format": "int32",
-                    "description": "User Status"
-                }
-            },
-            "xml": {
-                "name": "User"
-            }
-        },
-        "lpo": {
-            "type": "object",
-            "required": [
-                "id",
-                "chai_ref",
-                "lpo_date",
-                "addressee",
-                "title",
-                "purpose",
-                "request_date",
-                "status",
-                "currency",
-                "quotation",
-                "supply_category",
-                "delivery_document",
-                "date_delivered",
-                "meeting",
-                "comments",
-                "preffered_supplier",
-                "attention",
-                "lpo_email",
-                "reject_reason",
-                "quote_exempt",
-                "quote_exempt_explanation",
-                "account_id",
-                "project_manager_id",
-                "received_by",
-                "project_id",
-                "requested_by",
-                "supplier_id"
-            ],
-            "properties": {
-                "id": {
-                    "type": "integer",
-                    "format": "int64",
-                    "example": 1
-                },
-                "chai_ref": {
-                    "type": "string",
-                    "example": "REF-100001"
-                },
-                "lpo_date": {
-                    "type": "string",
-                    "format": "date-time",
-                    "example": "2010-02-11"
-                },
-                "addressee": {
-                    "type": "string",
-                    "example": "Kevin Mwangi"
-                },
-                "title": {
-                    "type": "string",
-                    "example": "Print Paper"
-                },
-                "purpose": {
-                    "type": "string",
-                    "example": "Office Supplies"
-                },
-                "request_date": {
-                    "type": "string",
-                    "example": "REF-100001"
-                },
-                "status": {
-                    "type": "integer",
-                    "format": "int64",
-                    "description": "lpo status",
-                    "example": 2
-                },
-                "currency": {
-                    "type": "integer",
-                    "format": "int64",
-                    "example": 1
-                },
-                "quotation": {
-                    "type": "integer",
-                    "format": "int64",
-                    "example": 123
-                },
-                "supply_category": {
-                    "type": "integer",
-                    "format": "int64",
-                    "example": 1
-                },
-                "delivery_document": {
-                    "type": "string",
-                    "description": "delivery document scanned and stored",
-                    "example": "delivered.pdf"
-                },
-                "date_delivered": {
-                    "type": "string",
-                    "format": "date",
-                    "example": "2017-01-01"
-                },
-                "meeting": {
-                    "type": "integer",
-                    "format": "int64",
-                    "example": 23
-                },
-                "comments": {
-                    "type": "string",
-                    "example": "Everything seems fine"
-                },
-                "preffered_supplier": {
-                    "type": "integer",
-                    "format": "int64",
-                    "example": 25
-                },
-                "attention": {
-                    "type": "string",
-                    "example": "Sir"
-                },
-                "lpo_email": {
-                    "type": "string",
-                    "example": "mwangikevinn@gmail.com"
-                },
-                "reject_reason": {
-                    "type": "string",
-                    "example": "No currency indicated"
-                },
-                "quote_exempt": {
-                    "type": "integer",
-                    "format": "int64",
-                    "example": 1
-                },
-                "quote_exempt_explanation": {
-                    "type": "string",
-                    "example": "Short delivery time required"
-                },
-                "account_id": {
-                    "type": "integer",
-                    "format": "int64",
-                    "example": 43
-                },
-                "project_manager_id": {
-                    "type": "integer",
-                    "format": "int64",
-                    "example": 23
-                },
-                "received_by": {
-                    "type": "integer",
-                    "format": "int64",
-                    "example": 23
-                },
-                "project_id": {
-                    "type": "integer",
-                    "format": "int64",
-                    "example": 2
-                },
-                "requested_by": {
-                    "type": "integer",
-                    "format": "int64",
-                    "example": 23
-                },
-                "supplier_id": {
-                    "type": "integer",
-                    "format": "int64",
-                    "example": 2
-                }
-            },
-            "xml": {
-                "name": "lpo"
-            }
-        },
-        "Error": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer",
-                    "format": "int32"
-                },
-                "message": {
-                    "type": "string"
-                },
-                "fields": {
-                    "type": "string"
-                }
-            }
-        }
+    "responses": {
+     "200": {
+      "description": "An array of lpos returned",
+      "schema": {
+       "type": "array",
+       "items": {
+        "$ref": "#/definitions/lpo"
+       }
+      }
+     },
+     "default": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Error"
+      }
+     }
     }
+   }
+  },
+  "/lpo": {
+   "post": {
+    "tags": [
+     "lpo"
+    ],
+    "summary": "Add a new lpo request to the store",
+    "description": "lpo awaits approvals from relevant parties",
+    "operationId": "add",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "lpo object that needs to be added to the store",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/lpo"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successfully requested a new LPO for approval"
+     },
+     "405": {
+      "description": "Invalid input,lpo request was unsuccessful"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "put": {
+    "tags": [
+     "lpo"
+    ],
+    "summary": "Update an existing LPO",
+    "description": "",
+    "operationId": "update_lpo",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "LPO object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/lpo"
+      }
+     }
+    ],
+    "responses": {
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo not found"
+     },
+     "405": {
+      "description": "Validation exception"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/lpo/{lpo_id}": {
+   "get": {
+    "tags": [
+     "lpo"
+    ],
+    "summary": "Find lpo by ID",
+    "description": "Returns a single lpo",
+    "operationId": "get_pet_by_id",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "lpo_id",
+      "in": "path",
+      "description": "ID of lpo to return lpo object",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "successful operation",
+      "schema": {
+       "$ref": "#/definitions/lpo"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "post": {
+    "tags": [
+     "lpo"
+    ],
+    "summary": "Updates a lpo with form data",
+    "description": "updates each field when not set as null",
+    "operationId": "updatePetWithForm",
+    "consumes": [
+     "application/x-www-form-urlencoded"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "lpo_id",
+      "in": "path",
+      "description": "ID of lpo that needs to be updated",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     },
+     {
+      "name": "chai_ref",
+      "in": "formData",
+      "description": "Updated chai_ref of the lpo",
+      "required": false,
+      "type": "string"
+     },
+     {
+      "name": "lpo_date",
+      "in": "formData",
+      "description": "Updated lpo_date of the lpo",
+      "required": false,
+      "type": "string"
+     },
+     {
+      "name": "supplier_id",
+      "in": "formData",
+      "description": "Updated supplier_id of the lpo",
+      "required": false,
+      "type": "integer"
+     },
+     {
+      "name": "addressee",
+      "in": "formData",
+      "description": "Updated addressee of the lpo",
+      "required": false,
+      "type": "string"
+     },
+     {
+      "name": "title",
+      "in": "formData",
+      "description": "Updated title of the lpo",
+      "required": false,
+      "type": "string"
+     },
+     {
+      "name": "purpose",
+      "in": "formData",
+      "description": "Updated purpose of the lpo",
+      "required": false,
+      "type": "string"
+     },
+     {
+      "name": "requested_by",
+      "in": "formData",
+      "description": "Updated requested_by of the lpo",
+      "required": false,
+      "type": "integer"
+     },
+     {
+      "name": "request_date",
+      "in": "formData",
+      "description": "Updated request_date of the lpo",
+      "required": false,
+      "type": "string"
+     },
+     {
+      "name": "status",
+      "in": "formData",
+      "description": "Updated status of the lpo",
+      "required": false,
+      "type": "integer"
+     },
+     {
+      "name": "currency",
+      "in": "formData",
+      "description": "Updated currency of the lpo",
+      "required": false,
+      "type": "integer"
+     },
+     {
+      "name": "quotation",
+      "in": "formData",
+      "description": "Updated quotation of the lpo",
+      "required": false,
+      "type": "string"
+     },
+     {
+      "name": "supply_category",
+      "in": "formData",
+      "description": "Updated supply_category of the lpo",
+      "required": false,
+      "type": "integer"
+     },
+     {
+      "name": "delivery_document",
+      "in": "formData",
+      "description": "Updated delivery_document of the lpo",
+      "required": false,
+      "type": "string"
+     },
+     {
+      "name": "date_delivered",
+      "in": "formData",
+      "description": "Updated date_delivered of the lpo",
+      "required": false,
+      "type": "string"
+     },
+     {
+      "name": "received_by",
+      "in": "formData",
+      "description": "Updated received_by of the lpo",
+      "required": false,
+      "type": "integer"
+     },
+     {
+      "name": "meeting",
+      "in": "formData",
+      "description": "Updated meeting of the lpo",
+      "required": false,
+      "type": "integer"
+     },
+     {
+      "name": "comments",
+      "in": "formData",
+      "description": "Updated comments of the lpo",
+      "required": false,
+      "type": "string"
+     },
+     {
+      "name": "preffered_supplier",
+      "in": "formData",
+      "description": "Updated preffered_supplier of the lpo",
+      "required": false,
+      "type": "integer"
+     },
+     {
+      "name": "project_id",
+      "in": "formData",
+      "description": "Updated project_id of the lpo",
+      "required": false,
+      "type": "integer"
+     },
+     {
+      "name": "account_id",
+      "in": "formData",
+      "description": "Updated account_id of the lpo",
+      "required": false,
+      "type": "string"
+     },
+     {
+      "name": "attention",
+      "in": "formData",
+      "description": "Updated attention of the lpo",
+      "required": false,
+      "type": "string"
+     },
+     {
+      "name": "lpo_email",
+      "in": "formData",
+      "description": "Updated lpo_email of the lpo",
+      "required": false,
+      "type": "string"
+     },
+     {
+      "name": "project_manager_id",
+      "in": "formData",
+      "description": "Updated project_manager_id of the lpo",
+      "required": false,
+      "type": "integer"
+     },
+     {
+      "name": "quote_exempt",
+      "in": "formData",
+      "description": "Updated quote_exempt of the lpo",
+      "required": false,
+      "type": "integer"
+     },
+     {
+      "name": "quote_exempt_explanation",
+      "in": "formData",
+      "description": "Updated quote_exempt_explanation of the lpo",
+      "required": false,
+      "type": "string"
+     }
+    ],
+    "responses": {
+     "405": {
+      "description": "Invalid input"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "delete": {
+    "tags": [
+     "lpo"
+    ],
+    "summary": "Deletes an lpo",
+    "description": "",
+    "operationId": "delete_lpo",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "api_key",
+      "in": "header",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "lpo_id",
+      "in": "path",
+      "description": "lpo id to delete",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/user": {
+   "post": {
+    "tags": [
+     "user"
+    ],
+    "summary": "Create user",
+    "description": "This can only be done by the logged in user.",
+    "operationId": "createUser",
+    "produces": [
+     "application/xml",
+     "application/json"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "Created user object",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/User"
+      }
+     }
+    ],
+    "responses": {
+     "default": {
+      "description": "successful operation"
+     }
+    }
+   }
+  },
+  "/user/createWithArray": {
+   "post": {
+    "tags": [
+     "user"
+    ],
+    "summary": "Creates list of users with given input array",
+    "description": "",
+    "operationId": "createUsersWithArrayInput",
+    "produces": [
+     "application/xml",
+     "application/json"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "List of user object",
+      "required": true,
+      "schema": {
+       "type": "array",
+       "items": {
+        "$ref": "#/definitions/User"
+       }
+      }
+     }
+    ],
+    "responses": {
+     "default": {
+      "description": "successful operation"
+     }
+    }
+   }
+  },
+  "/user/login": {
+   "get": {
+    "tags": [
+     "user"
+    ],
+    "summary": "Logs user into the system",
+    "description": "",
+    "operationId": "loginUser",
+    "produces": [
+     "application/xml",
+     "application/json"
+    ],
+    "parameters": [
+     {
+      "name": "username",
+      "in": "query",
+      "description": "The user name for login",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "password",
+      "in": "query",
+      "description": "The password for login in clear text",
+      "required": true,
+      "type": "string"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "successful operation",
+      "schema": {
+       "type": "string"
+      },
+      "headers": {
+       "X-Rate-Limit": {
+        "type": "integer",
+        "format": "int32",
+        "description": "calls per hour allowed by the user"
+       },
+       "X-Expires-After": {
+        "type": "string",
+        "format": "date-time",
+        "description": "date in UTC when token expires"
+       }
+      }
+     },
+     "400": {
+      "description": "Invalid username/password supplied"
+     }
+    }
+   }
+  },
+  "/user/logout": {
+   "get": {
+    "tags": [
+     "user"
+    ],
+    "summary": "Logs out current logged in user session",
+    "description": "",
+    "operationId": "logoutUser",
+    "produces": [
+     "application/xml",
+     "application/json"
+    ],
+    "parameters": [],
+    "responses": {
+     "default": {
+      "description": "successful operation"
+     }
+    }
+   }
+  },
+  "/user/{username}": {
+   "get": {
+    "tags": [
+     "user"
+    ],
+    "summary": "Get user by username",
+    "description": "",
+    "operationId": "getUserByName",
+    "produces": [
+     "application/xml",
+     "application/json"
+    ],
+    "parameters": [
+     {
+      "name": "username",
+      "in": "path",
+      "description": "The name that needs to be fetched. Use user1 for testing. ",
+      "required": true,
+      "type": "string"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "successful operation",
+      "schema": {
+       "$ref": "#/definitions/User"
+      }
+     },
+     "400": {
+      "description": "Invalid username supplied"
+     },
+     "404": {
+      "description": "User not found"
+     }
+    }
+   },
+   "put": {
+    "tags": [
+     "user"
+    ],
+    "summary": "Updated user",
+    "description": "This can only be done by the logged in user.",
+    "operationId": "updateUser",
+    "produces": [
+     "application/xml",
+     "application/json"
+    ],
+    "parameters": [
+     {
+      "name": "username",
+      "in": "path",
+      "description": "name that need to be updated",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "in": "body",
+      "name": "body",
+      "description": "Updated user object",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/User"
+      }
+     }
+    ],
+    "responses": {
+     "400": {
+      "description": "Invalid user supplied"
+     },
+     "404": {
+      "description": "User not found"
+     }
+    }
+   },
+   "delete": {
+    "tags": [
+     "user"
+    ],
+    "summary": "Delete user",
+    "description": "This can only be done by the logged in user.",
+    "operationId": "deleteUser",
+    "produces": [
+     "application/xml",
+     "application/json"
+    ],
+    "parameters": [
+     {
+      "name": "username",
+      "in": "path",
+      "description": "The name that needs to be deleted",
+      "required": true,
+      "type": "string"
+     }
+    ],
+    "responses": {
+     "400": {
+      "description": "Invalid username supplied"
+     },
+     "404": {
+      "description": "User not found"
+     }
+    }
+   }
+  }
+ },
+ "securityDefinitions": {
+  "api_key": {
+   "type": "apiKey",
+   "name": "X-API-Key",
+   "in": "header"
+  }
+ },
+ "definitions": {
+  "User": {
+   "type": "object",
+   "properties": {
+    "id": {
+     "type": "integer",
+     "format": "int64"
+    },
+    "username": {
+     "type": "string"
+    },
+    "first_name": {
+     "type": "string"
+    },
+    "last_name": {
+     "type": "string"
+    },
+    "email": {
+     "type": "string"
+    },
+    "password": {
+     "type": "string"
+    },
+    "phone": {
+     "type": "string"
+    },
+    "userStatus": {
+     "type": "integer",
+     "format": "int32",
+     "description": "User Status"
+    }
+   },
+   "xml": {
+    "name": "User"
+   }
+  },
+  "lpo": {
+   "type": "object",
+   "required": [
+    "id",
+    "chai_ref",
+    "lpo_date",
+    "addressee",
+    "title",
+    "purpose",
+    "request_date",
+    "status",
+    "currency",
+    "quotation",
+    "supply_category",
+    "delivery_document",
+    "date_delivered",
+    "meeting",
+    "comments",
+    "preffered_supplier",
+    "attention",
+    "lpo_email",
+    "reject_reason",
+    "quote_exempt",
+    "quote_exempt_explanation",
+    "account_id",
+    "project_manager_id",
+    "received_by",
+    "project_id",
+    "requested_by",
+    "supplier_id"
+   ],
+   "properties": {
+    "id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "chai_ref": {
+     "type": "string",
+     "example": "REF-100001"
+    },
+    "lpo_date": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "addressee": {
+     "type": "string",
+     "example": "Kevin Mwangi"
+    },
+    "title": {
+     "type": "string",
+     "example": "Print Paper"
+    },
+    "purpose": {
+     "type": "string",
+     "example": "Office Supplies"
+    },
+    "request_date": {
+     "type": "string",
+     "example": "REF-100001"
+    },
+    "status": {
+     "type": "integer",
+     "format": "int64",
+     "description": "lpo status",
+     "example": 2
+    },
+    "currency": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "quotation": {
+     "type": "integer",
+     "format": "int64",
+     "example": 123
+    },
+    "supply_category": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "delivery_document": {
+     "type": "string",
+     "description": "delivery document scanned and stored",
+     "example": "delivered.pdf"
+    },
+    "date_delivered": {
+     "type": "string",
+     "format": "date",
+     "example": "2017-01-01"
+    },
+    "meeting": {
+     "type": "integer",
+     "format": "int64",
+     "example": 23
+    },
+    "comments": {
+     "type": "string",
+     "example": "Everything seems fine"
+    },
+    "preffered_supplier": {
+     "type": "integer",
+     "format": "int64",
+     "example": 25
+    },
+    "attention": {
+     "type": "string",
+     "example": "Sir"
+    },
+    "lpo_email": {
+     "type": "string",
+     "example": "mwangikevinn@gmail.com"
+    },
+    "reject_reason": {
+     "type": "string",
+     "example": "No currency indicated"
+    },
+    "quote_exempt": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "quote_exempt_explanation": {
+     "type": "string",
+     "example": "Short delivery time required"
+    },
+    "account_id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 43
+    },
+    "project_manager_id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 23
+    },
+    "received_by": {
+     "type": "integer",
+     "format": "int64",
+     "example": 23
+    },
+    "project_id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 2
+    },
+    "requested_by": {
+     "type": "integer",
+     "format": "int64",
+     "example": 23
+    },
+    "supplier_id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 2
+    }
+   },
+   "xml": {
+    "name": "lpo"
+   }
+  },
+  "Error": {
+   "type": "object",
+   "properties": {
+    "code": {
+     "type": "integer",
+     "format": "int32"
+    },
+    "message": {
+     "type": "string"
+    },
+    "fields": {
+     "type": "string"
+    }
+   }
+  }
+ }
 }

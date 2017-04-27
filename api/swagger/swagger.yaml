@@ -328,7 +328,7 @@ paths:
         '400':
           description: Invalid ID supplied
         '404':
-          description: Pet not found
+          description: lpo not found
       security:
         - api_key: []
             
