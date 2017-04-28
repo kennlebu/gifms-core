@@ -50,7 +50,7 @@ paths:
             type: array
             items:
               $ref: '#/definitions/lpo'
-        default:
+        404:
           description: Unexpected error
           schema:
             $ref: '#/definitions/Error'
@@ -61,7 +61,7 @@ paths:
 
 
 
-        
+
 
   /lpo:    
     post:
@@ -114,6 +114,10 @@ paths:
           schema:
             $ref: '#/definitions/lpo'
       responses:
+        200:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Success'
         '400':
           description: Invalid ID supplied
         '404':
@@ -503,13 +507,18 @@ definitions:
   Error:
     type: object
     properties:
-      code:
-        type: integer
-        format: int32
-      message:
+      error:
         type: string
-      fields:
+        example: object not found
+
+
+  
+  Success:
+    type: object
+    properties:
+      msg:
         type: string
+        example: object not found
 
       
       

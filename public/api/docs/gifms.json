@@ -65,7 +65,7 @@
        }
       }
      },
-     "default": {
+     "404": {
       "description": "Unexpected error",
       "schema": {
        "$ref": "#/definitions/Error"
@@ -147,6 +147,12 @@
      }
     ],
     "responses": {
+     "200": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Success"
+      }
+     },
      "400": {
       "description": "Invalid ID supplied"
      },
@@ -645,15 +651,18 @@
   "Error": {
    "type": "object",
    "properties": {
-    "code": {
-     "type": "integer",
-     "format": "int32"
-    },
-    "message": {
-     "type": "string"
-    },
-    "fields": {
-     "type": "string"
+    "error": {
+     "type": "string",
+     "example": "object not found"
+    }
+   }
+  },
+  "Success": {
+   "type": "object",
+   "properties": {
+    "msg": {
+     "type": "string",
+     "example": "object not found"
     }
    }
   }

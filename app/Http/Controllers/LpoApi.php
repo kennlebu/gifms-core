@@ -117,7 +117,7 @@ class LpoApi extends Controller
         if($deleted_lpo){
             return response()->json(['msg'=>"lpo deleted"], 200,array(),JSON_PRETTY_PRINT);
         }else{
-            return response()->json(['msg'=>"lpo not found"], 404,array(),JSON_PRETTY_PRINT);
+            return response()->json(['error'=>"lpo not found"], 404,array(),JSON_PRETTY_PRINT);
         }
 
     }
