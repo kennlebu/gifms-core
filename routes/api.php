@@ -32,6 +32,23 @@ Route::get('/', function (Request $request) {
 Route::post('/authenticate', [	'uses' => 'ApiAuthController@authenticate']);
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /**
  * POST add
  * Summary: Add a new lpo request to the store
@@ -78,4 +95,61 @@ Route::GET('/lpos', 'LpoApi@lposGet')->middleware('jwt.auth');
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * POST addLpoStatus
+ * Summary: Add a new lpo status to the store
+ * Notes: lpo status
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/lpo_status', 'LPOStatusApi@addLpoStatus')->middleware('jwt.auth');
+/**
+ * PUT updateLpoStatus
+ * Summary: Update an existing LPO Status
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/lpo_status', 'LPOStatusApi@updateLpoStatus')->middleware('jwt.auth');
+/**
+ * DELETE deleteLpoStatus
+ * Summary: Deletes an lpo_status
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/lpo_status/{lpo_status_id}', 'LPOStatusApi@deleteLpoStatus')->middleware('jwt.auth');
+/**
+ * GET getLpoStatusById
+ * Summary: Find lpo by ID
+ * Notes: Returns a single lpo
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/lpo_status/{lpo_status_id}', 'LPOStatusApi@getLpoStatusById')->middleware('jwt.auth');
+/**
+ * GET lpoStatusesGet
+ * Summary: lpo statuses List
+ * Notes: The Lpo Statuses endpoint returns information about the LPO statuses requested give the parameters injected.  
+
+ */
+Route::GET('/lpo_statuses', 'LPOStatusApi@lpoStatusesGet')->middleware('jwt.auth');
 

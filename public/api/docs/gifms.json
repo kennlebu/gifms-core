@@ -13,7 +13,7 @@
    "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
   }
  },
- "host": "localhost:8000/",
+ "host": "localhost:8000",
  "basePath": "/api",
  "tags": [
   {
@@ -25,11 +25,11 @@
    }
   },
   {
-   "name": "user",
-   "description": "Operations about User",
+   "name": "LPO Status",
+   "description": "Everything About LPO Statuses",
    "externalDocs": {
     "description": "Find out more",
-    "url": "http://kefinance.clintonhealthaccess.org/api/user/docs"
+    "url": "http://kefinance.clintonhealthaccess.org/api/lpo_statuses/docs"
    }
   }
  ],
@@ -463,6 +463,222 @@
      }
     ]
    }
+  },
+  "/lpo_statuses": {
+   "get": {
+    "summary": "lpo statuses List",
+    "description": "The Lpo Statuses endpoint returns information about the LPO statuses requested give the parameters injected. \n",
+    "parameters": [
+     {
+      "name": "staff_id",
+      "in": "query",
+      "description": "staff id",
+      "required": false,
+      "type": "number",
+      "format": "integer"
+     }
+    ],
+    "tags": [
+     "LPO Status"
+    ],
+    "responses": {
+     "200": {
+      "description": "An array of lpo_statuses returned",
+      "schema": {
+       "type": "array",
+       "items": {
+        "$ref": "#/definitions/lpo_status"
+       }
+      }
+     },
+     "404": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Error"
+      }
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/lpo_status": {
+   "post": {
+    "tags": [
+     "LPO Status"
+    ],
+    "summary": "Add a new lpo status to the store",
+    "description": "lpo status",
+    "operationId": "add_lpo_status",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "lpo status object that needs to be added to the store",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/lpo_status"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successfully added a new Lpo status for approval"
+     },
+     "405": {
+      "description": "Invalid input,adding a new lpo status was unsuccessful"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "put": {
+    "tags": [
+     "LPO Status"
+    ],
+    "summary": "Update an existing LPO Status",
+    "description": "",
+    "operationId": "update_lpo_status",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "LPO Status object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/lpo_status"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Success"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo status not found"
+     },
+     "405": {
+      "description": "Validation exception"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/lpo_status/{lpo_status_id}": {
+   "get": {
+    "tags": [
+     "LPO Status"
+    ],
+    "summary": "Find lpo by ID",
+    "description": "Returns a single lpo",
+    "operationId": "get_lpo_status_by_id",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "lpo_status_id",
+      "in": "path",
+      "description": "ID of lpo status to return object",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "successful operation",
+      "schema": {
+       "$ref": "#/definitions/lpo_status"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "delete": {
+    "tags": [
+     "LPO Status"
+    ],
+    "summary": "Deletes an lpo_status",
+    "description": "",
+    "operationId": "delete_lpo_status",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "api_key",
+      "in": "header",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "lpo_status_id",
+      "in": "path",
+      "description": "lpo status id to delete",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo status not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
   }
  },
  "securityDefinitions": {
@@ -629,6 +845,51 @@
      "example": 23
     },
     "supplier_id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 2
+    },
+    "created_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "updated_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    }
+   },
+   "xml": {
+    "name": "lpo"
+   }
+  },
+  "lpo_status": {
+   "type": "object",
+   "required": [
+    "id",
+    "lpo_status",
+    "next_status",
+    "status_security_level",
+    "created_at",
+    "updated_at"
+   ],
+   "properties": {
+    "id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "lpo_status": {
+     "type": "string",
+     "example": "Pending management approval"
+    },
+    "next_status": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "status_security_level": {
      "type": "integer",
      "format": "int64",
      "example": 2
