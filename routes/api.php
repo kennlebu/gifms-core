@@ -38,42 +38,43 @@ Route::post('/authenticate', [	'uses' => 'ApiAuthController@authenticate']);
  * Notes: lpo awaits approvals from relevant parties
  * Output-Formats: [application/json, application/xml]
  */
-Route::POST('/lpo', 'LpoApi@add');
+Route::POST('/lpo', 'LpoApi@add')->middleware('jwt.auth');
+;
 /**
  * PUT updateLpo
  * Summary: Update an existing LPO
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::PUT('/lpo', 'LpoApi@updateLpo');
+Route::PUT('/lpo', 'LpoApi@updateLpo')->middleware('jwt.auth');
 /**
  * DELETE deleteLpo
  * Summary: Deletes an lpo
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::DELETE('/lpo/{lpo_id}', 'LpoApi@deleteLpo');
+Route::DELETE('/lpo/{lpo_id}', 'LpoApi@deleteLpo')->middleware('jwt.auth');
 /**
  * GET getLpoById
  * Summary: Find lpo by ID
  * Notes: Returns a single lpo
  * Output-Formats: [application/json, application/xml]
  */
-Route::GET('/lpo/{lpo_id}', 'LpoApi@getLpoById');
+Route::GET('/lpo/{lpo_id}', 'LpoApi@getLpoById')->middleware('jwt.auth');
 /**
  * POST updateLpoWithForm
  * Summary: Updates a lpo with form data
  * Notes: updates each field when not set as null
  * Output-Formats: [application/json, application/xml]
  */
-Route::POST('/lpo/{lpo_id}', 'LpoApi@updateLpoWithForm');
+Route::POST('/lpo/{lpo_id}', 'LpoApi@updateLpoWithForm')->middleware('jwt.auth');
 /**
  * GET lposGet
  * Summary: lpo List
  * Notes: The Lpos endpoint returns information about the LPO requested give the parameters injected. The response includes the Reference-No and other details about each lpo, and lists the products in the proper display order. 
 
  */
-Route::GET('/lpos', 'LpoApi@lposGet');
+Route::GET('/lpos', 'LpoApi@lposGet')->middleware('jwt.auth');
 
 
 
