@@ -17,6 +17,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Request;
 use App\Models\LPOModels\Lpo;
+use Exception;
 
 class LpoApi extends Controller
 {
@@ -75,6 +76,21 @@ class LpoApi extends Controller
 
         return response('How about implementing updateLpo as a PUT method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /**
      * Operation deleteLpo
      *
@@ -93,8 +109,40 @@ class LpoApi extends Controller
 
         //not path params validation
 
-        return response('How about implementing deleteLpo as a DELETE method ?');
+
+        $deleted_lpo = lpo::destroy($lpo_id);
+
+        print_r($deleted_lpo);
+
+        if($deleted_lpo){
+            return response()->json(['msg'=>"lpo deleted"], 200,array(),JSON_PRETTY_PRINT);
+        }else{
+            return response()->json(['msg'=>"lpo not found"], 404,array(),JSON_PRETTY_PRINT);
+        }
+
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /**
      * Operation getLpoById
      *
@@ -113,8 +161,34 @@ class LpoApi extends Controller
 
         //not path params validation
 
-        return response('How about implementing getLpoById as a GET method ?');
+        try{
+            
+            $response = Lpo::findOrFail($lpo_id);
+            return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+
+        }catch(Exception $e){
+
+            $response =  ["error"=>"lpo could not be found"];
+            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+        }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /**
      * Operation updateLpoWithForm
      *
@@ -154,7 +228,7 @@ class LpoApi extends Controller
 
 
 
-    
+
     /**
      * Operation lposGet
      *
