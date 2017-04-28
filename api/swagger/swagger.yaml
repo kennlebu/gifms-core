@@ -9,7 +9,7 @@ info:
   license:
     name: Apache 2.0
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
-host: kefinance.clintonhealthaccess.org
+host: localhost:8000/
 basePath: /api
 tags:
   - name: lpo
@@ -54,6 +54,14 @@ paths:
           description: Unexpected error
           schema:
             $ref: '#/definitions/Error'
+      security:
+        - api_key: []
+
+
+
+
+
+        
 
   /lpo:    
     post:
@@ -339,7 +347,7 @@ paths:
 securityDefinitions:
   api_key:
     type: apiKey
-    name: X-API-Key
+    name: Authorization
     in: header
      
      
