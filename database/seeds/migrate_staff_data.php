@@ -36,6 +36,12 @@ class migrate_staff_data extends Seeder
 
         foreach ($data as $key => $value) {
 
+
+            $data_to_migrate[$key]['username']                  = $data[$key]['UserName'];
+            $data_to_migrate[$key]['email']                     = $data[$key]['email'];
+            $data_to_migrate[$key]['security_group']            = $data[$key]['SecurityGroup'];
+            $data_to_migrate[$key]['password']                  = bcrypt('secret');
+
             $data_to_migrate[$key]['f_name']					= $data[$key]['FirstName'];
             $data_to_migrate[$key]['l_name']					= $data[$key]['LastName'];
             $data_to_migrate[$key]['post']						= $data[$key]['Post'];
@@ -53,25 +59,17 @@ class migrate_staff_data extends Seeder
             $data_to_migrate[$key]['migration_bank_branch_id']  = (int)$data[$key]['BankBranch'];
             $data_to_migrate[$key]['migration_bank_id']			= (int)$data[$key]['Bank'];
             $data_to_migrate[$key]['migration_department_id']	= $data[$key]['Department'];
-            $data_to_migrate[$key]['migration_user_id']			= $data[$key]['EID'];
             $data_to_migrate[$key]['migration_id']				= $data[$key]['EID'];
 
 
 
 
-            $data_to_migrate_u[$key]['migration_id']			= $data[$key]['EID'];
-            $data_to_migrate_u[$key]['username']				= $data[$key]['UserName'];
-            $data_to_migrate_u[$key]['email']					= $data[$key]['email'];
-            $data_to_migrate_u[$key]['security_group']			= $data[$key]['SecurityGroup'];
-            $data_to_migrate_u[$key]['password']				= bcrypt('secret');
 
-
-            echo "\n Employees-$key---";
+            echo "\n Staff-$key---";
             echo $data[$key]['FirstName'];
         }
 
         DB::table('staff')->insert($data_to_migrate);
-        DB::table('users')->insert($data_to_migrate_u);
         
         echo "\n-----------------------------------------------------------------------------------------------------\n\n";
 

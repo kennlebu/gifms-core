@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\UsersModels;
+namespace App\Models\StaffModels;
 
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -9,13 +9,15 @@ class User extends Authenticatable
 {
     use Notifiable;
 
+    protected $table = 'staff';
+
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
-        'username', 'email', 'password', 'is_admin', 'security_group',
+        'username', 'email', 'password', 'security_group',
     ];
 
     /**
