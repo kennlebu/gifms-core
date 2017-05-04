@@ -16,6 +16,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Request;
+use App\Models\LPOModels\LpoStatuses;
 
 class LPOStatusApi extends Controller
 {
@@ -246,12 +247,28 @@ class LPOStatusApi extends Controller
         $input = Request::all();
 
         //path params validation
+        $response;
+
+        //path params validation
 
 
-        //not path params validation
-        $staff_id = $input['staff_id'];
+        //if status is set
+
+        if(array_key_exists('staff_id', $input)){
+
+     
+
+        }else{
+
+             $response = LpoStatuses::where("deleted_at",null)
+                ->orderBy('lpo_status', 'desc')
+                ->get();
+        }
 
 
-        return response('How about implementing lpoStatusesGet as a GET method ?');
+           
+
+
+            return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
     }
 }
