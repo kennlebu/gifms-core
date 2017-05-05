@@ -241,6 +241,7 @@ class LpoApi extends Controller
     {
         $input = Request::all();
         $response;
+        $initial_response_data_size = 1000;
 
         //path params validation
 
@@ -261,11 +262,13 @@ class LpoApi extends Controller
                 ->get();
         }
 
+        if(array_key_exists('datatables', $input)){
+            $response = Lpo::arr_to_dt_response( $response, $input['draw'],$initial_response_data_size,sizeof($response));
+        }
+        
 
-           
 
-
-            return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+        return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
 
 
     }
