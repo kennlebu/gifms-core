@@ -242,6 +242,7 @@ class LpoApi extends Controller
         $input = Request::all();
         $response;
         $initial_response_data_size = 1000;
+        $response_dt;
 
         //path params validation
 
@@ -249,11 +250,11 @@ class LpoApi extends Controller
         //if status is set
 
         if(array_key_exists('status', $input)){
-
             $response = Lpo::where("deleted_at",null)
                 ->where('status', $input['status'])
                 ->orderBy('chai_ref', 'desc')
                 ->get();
+
 
         }else{
 
@@ -263,7 +264,13 @@ class LpoApi extends Controller
         }
 
         if(array_key_exists('datatables', $input)){
-            $response = Lpo::arr_to_dt_response( $response, $input['draw'],$initial_response_data_size,sizeof($response));
+
+            $response_dt = Lpo::where("deleted_at",null)
+                ->where('status', $input['status'])
+                ->orderBy('chai_ref', 'desc')
+                ->limit($input['length'])->offset($input['start'])
+                ->get();
+            $response = Lpo::arr_to_dt_response( $response_dt, $input['draw'],$initial_response_data_size,sizeof($response));
         }
         
 
