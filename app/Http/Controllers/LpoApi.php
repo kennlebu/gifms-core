@@ -266,8 +266,7 @@ class LpoApi extends Controller
 
         }else{
 
-             $response = Lpo::where("deleted_at",null)
-                ->orderBy('chai_ref', 'desc')
+             $response = LpoQuotation::where("deleted_at",null)
                 ->get();
         }
 
