@@ -26,7 +26,12 @@ tags:
     description: Everything About LPO Quotations
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/lpo_quotattions/docs'
+      url: 'http://kefinance.clintonhealthaccess.org/api/lpo_quotations/docs'
+  - name: LPO Item
+    description: Everything About LPO Items
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/lpo_items/docs'
 schemes:
   - http
   - https
@@ -597,7 +602,7 @@ paths:
       tags:
         - LPO Quotation
       summary: Add a new lpo quotation
-      description: new lpo quotaion  
+      description: new lpo quotation  
       operationId: add_lpo_quotation
       consumes:
         - application/json
@@ -616,7 +621,7 @@ paths:
         '200':
           description: Successfully added a new Lpo quotation for approval 
         '405':
-          description: Invalid input,adding a new lpo quoatation was unsuccessful
+          description: Invalid input,adding a new lpo quotation was unsuccessful
       security:
         - api_key: []
             
@@ -733,6 +738,187 @@ paths:
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  /lpo_items:
+    get:
+      summary: lpo items List
+      description: |
+        The Lpo Items endpoint returns information about the LPO Item requested given the parameters injected. 
+      parameters:
+        - name: lpo_id
+          in: query
+          description: staff id 
+          required: false
+          type: number
+          format: integer
+      tags:
+        - LPO Item
+      responses:
+        200:
+          description: An array of lpo_items returned
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/lpo_item'
+        404:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+        - api_key: []
+
+
+
+
+
+
+
+  /lpo_item:    
+    post:
+      tags:
+        - LPO Item
+      summary: Add a new lpo item
+      description: new lpo item  
+      operationId: add_lpo_item
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: lpo item object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/lpo_item'
+      responses:
+        '200':
+          description: Successfully added a new Lpo item for approval 
+        '405':
+          description: Invalid input,adding a new lpo item was unsuccessful
+      security:
+        - api_key: []
+            
+            
+            
+
+            
+    put:
+      tags:
+        - LPO Item
+      summary: Update an existing LPO Item
+      description: ''
+      operationId: update_lpo_item
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: LPO Item object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/lpo_item'
+      responses:
+        200:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Success'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: lpo item not found
+        '405':
+          description: Validation exception
+      security:
+        - api_key: []
+        
+        
+        
+        
+        
+        
+  '/lpo_item/{lpo_item_id}':
+    get:
+      tags:
+        - LPO Item
+      summary: Find lpo item by ID
+      description: Returns a single lpo item
+      operationId: get_lpo_item_by_id
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: lpo_item_id
+          in: path
+          description: ID of lpo item to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/lpo_item'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: lpo item not found
+      security:
+        - api_key: []
+        
+        
+     
+            
+            
+            
+    delete:
+      tags:
+        - LPO Item
+      summary: Deletes an lpo_item
+      description: ''
+      operationId: delete_lpo_item
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: api_key
+          in: header
+          required: true
+          type: string
+        - name: lpo_item_id
+          in: path
+          description: lpo item id to delete
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: lpo item not found
+      security:
+        - api_key: []
 
 
 
@@ -1020,6 +1206,67 @@ definitions:
         example: '2010-02-11'
     xml:
       name: lpo_quotation
+
+
+
+
+
+
+  lpo_item:
+    type: object
+    required:
+      - id
+      - lpo_id
+      - created_at
+      - updated_at
+    properties:
+      id:
+        type: integer
+        format: int64
+        example: 1
+      lpo_id:
+        type: integer
+        example: 10
+      item_description:
+        type: string
+        example: 'Trial'
+      unit_price:
+        type: number
+        format: int64
+        example: 20000
+      vat_inclusive:
+        type: integer
+        example: 0
+      vat_charge:
+        type: number
+        format: int64
+        example: 200.10
+      qty:
+        type: integer
+        example: 10
+      qty_description:
+        type: integer
+        example: 10
+      quotation:
+        type: integer
+        example: 1
+      item_name:
+        type: string
+        example: 'HP Pro 3500 Microtower PC, IntelÂ® Coreâ„¢ i3- 3240'
+      uploaded_by_id:
+        type: integer
+        format: int64
+        example: 2
+      created_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      updated_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+    xml:
+      name: lpo_item
     
     
   

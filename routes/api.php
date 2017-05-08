@@ -216,3 +216,60 @@ Route::GET('/api/lpo_quotation/{lpo_quotation_id}', 'LPOQuotationApi@getLpoQuota
 
  */
 Route::GET('/api/lpo_quotations', 'LPOQuotationApi@lpoQuotationsGet')->middleware('jwt.auth');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * POST addLpoItem
+ * Summary: Add a new lpo item
+ * Notes: new lpo item
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/api/lpo_item', 'LPOItemApi@addLpoItem')->middleware('jwt.auth');
+/**
+ * PUT updateLpoItem
+ * Summary: Update an existing LPO Item
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/api/lpo_item', 'LPOItemApi@updateLpoItem')->middleware('jwt.auth');
+/**
+ * DELETE deleteLpoItem
+ * Summary: Deletes an lpo_item
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/api/lpo_item/{lpo_item_id}', 'LPOItemApi@deleteLpoItem')->middleware('jwt.auth');
+/**
+ * GET getLpoItemById
+ * Summary: Find lpo item by ID
+ * Notes: Returns a single lpo item
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/api/lpo_item/{lpo_item_id}', 'LPOItemApi@getLpoItemById')->middleware('jwt.auth');
+/**
+ * GET lpoItemsGet
+ * Summary: lpo items List
+ * Notes: The Lpo Items endpoint returns information about the LPO Item requested given the parameters injected.  
+
+ */
+Route::GET('/api/lpo_items', 'LPOItemApi@lpoItemsGet')->middleware('jwt.auth');

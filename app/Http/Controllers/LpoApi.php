@@ -266,7 +266,7 @@ class LpoApi extends Controller
 
         }else{
 
-             $response = LpoQuotation::where("deleted_at",null)
+             $response = LpoTerm::where("deleted_at",null)
                 ->get();
         }
 
