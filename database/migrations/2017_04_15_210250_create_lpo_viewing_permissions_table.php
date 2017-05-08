@@ -16,8 +16,9 @@ class CreateLpoViewingPermissionsTable extends Migration
         Schema::create('lpo_viewing_permissions', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('lpo_status');
-            $table->integer('security_level')->nullable();
-            $table->integer('migration_security_level')->nullable();
+            $table->integer('security_level_id')->nullable();
+            $table->integer('migration_security_level_id')->nullable();
+            $table->string('display_color')->nullable();
             $table->integer('migration_id')->unique();
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));

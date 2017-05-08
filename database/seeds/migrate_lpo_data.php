@@ -450,7 +450,7 @@ class migrate_lpo_data extends Seeder
         foreach ($data as $key => $value) {
 
             $data_to_migrate[$key]['lpo_status']                        = $data[$key]['LPOStatus'];
-            $data_to_migrate[$key]['migration_security_level']          = $data[$key]['SecurityLevel'];
+            $data_to_migrate[$key]['migration_security_level_id']       = $data[$key]['SecurityLevel'];
             $data_to_migrate[$key]['migration_id']                      = $data[$key]['ID'];
 
 

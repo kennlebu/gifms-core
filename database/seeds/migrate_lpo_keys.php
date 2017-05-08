@@ -225,8 +225,8 @@ class migrate_lpo_keys extends Seeder
         $migrate_keys_sql = "
                                 UPDATE lpo_viewing_permissions lvp 
                                     LEFT JOIN security_levels sl 
-                                    ON lvp.migration_security_level = sl.migration_id
-                                    SET lvp.security_level = sl.id 
+                                    ON lvp.migration_security_level_id = sl.migration_id
+                                    SET lvp.security_level_id = sl.id 
                             ";
 
         DB::statement($migrate_keys_sql);
