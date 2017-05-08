@@ -18,6 +18,9 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Request;
 use App\Models\LPOModels\Lpo;
 use App\Models\SuppliesModels\Supplier;
+use App\Models\StaffModels\Staff;
+use App\Models\AccountingModels\Account;
+use App\Models\ProjectsModels\Project;
 use Exception;
 
 class LpoApi extends Controller
@@ -293,10 +296,34 @@ class LpoApi extends Controller
 
         foreach ($data as $key => $value) {
 
-            $data[$key]["supplier"] = Supplier::find((int) $data[$key]["supplier_id"]);
-            
-            if($data[$key]["supplier"]==null){
+            $data[$key]["account"]              = Account::find((int) $data[$key]["account_id"]);
+            $data[$key]["project_manager"]      = Staff::find((int) $data[$key]["project_manager_id"]);
+            $data[$key]["received_by"]          = Staff::find((int) $data[$key]["received_by_id"]);
+            $data[$key]["project"]              = Project::find((int) $data[$key]["project_id"]);
+            $data[$key]["requested_by"]         = Staff::find((int) $data[$key]["requested_by_id"]);
+            $data[$key]["supplier"]             = Supplier::find((int) $data[$key]["supplier_id"]);
 
+            if($data[$key]["account"]==null){
+                $data[$key]["account"] = array("account_name"=>"N/A");
+            }
+
+            if($data[$key]["project_manager"]==null){
+                $data[$key]["project_manager"] = array("project_manager_name"=>"N/A");
+            }
+
+            if($data[$key]["received_by"]==null){
+                $data[$key]["received_by"] = array("f_name"=>"N/A");
+            }
+
+            if($data[$key]["project"]==null){
+                $data[$key]["project"] = array("Project_name"=>"N/A");
+            }
+
+            if($data[$key]["requested_by"]==null){
+                $data[$key]["requested_by"] = array("f_name"=>"N/A");
+            }
+
+            if($data[$key]["supplier"]==null){
                 $data[$key]["supplier"] = array("supplier_name"=>"N/A");
             }
         }
