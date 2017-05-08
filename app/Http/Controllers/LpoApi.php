@@ -293,9 +293,17 @@ class LpoApi extends Controller
 
         foreach ($data as $key => $value) {
 
-            $data[$key]["supplier"] = Supplier::findOrFail((int) $data[$key]["supplier_id"]);
+            $data[$key]["supplier"] = Supplier::find((int) $data[$key]["supplier_id"]);
+            
+            if($data[$key]["supplier"]==null){
+
+                $data[$key]["supplier"] = array("supplier_name"=>"N/A");
+            }
         }
         return $data;
+
+
+
 
 
     }
