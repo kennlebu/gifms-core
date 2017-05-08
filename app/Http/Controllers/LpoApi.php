@@ -17,6 +17,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Request;
 use App\Models\LPOModels\Lpo;
+use App\Models\SuppliesModels\Supplier;
 use Exception;
 
 class LpoApi extends Controller
@@ -270,12 +271,31 @@ class LpoApi extends Controller
                 ->orderBy('chai_ref', 'desc')
                 ->limit($input['length'])->offset($input['start'])
                 ->get();
+
+            $response_dt = $this->append_attribute_objects($response_dt);
             $response = Lpo::arr_to_dt_response( $response_dt, $input['draw'],$initial_response_data_size,sizeof($response));
         }
-        
+
 
 
         return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+
+
+    }
+
+
+
+
+
+    public function append_attribute_objects($data = array()){
+
+
+
+        foreach ($data as $key => $value) {
+
+            $data[$key]["supplier"] = Supplier::findOrFail((int) $data[$key]["supplier_id"]);
+        }
+        return $data;
 
 
     }
