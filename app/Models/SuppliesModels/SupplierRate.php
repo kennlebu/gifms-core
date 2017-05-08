@@ -3,8 +3,11 @@
 namespace App\Models\SuppliesModels;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\BaseModels\BaseModel;
 
-class SupplierRate extends Model
+class SupplierRate extends BaseModel
 {
     //
+    use SoftDeletes;
 }

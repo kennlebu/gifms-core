@@ -6,8 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\BaseModels\BaseModel;
 
-class Staff extends Model
+class Staff extends BaseModel
 {
     
     use SoftDeletes;    

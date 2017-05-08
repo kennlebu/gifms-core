@@ -2,9 +2,13 @@
 
 namespace App\Models\PaymentModels;
 
-use Illuminate\Database\Eloquent\Model;
 
-class PaymentBatch extends Model
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\BaseModels\BaseModel;
+
+class PaymentBatch extends BaseModel
 {
     //
+    use SoftDeletes;
 }

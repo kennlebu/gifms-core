@@ -3,8 +3,11 @@
 namespace App\Models\AccountingModels;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\BaseModels\BaseModel;
 
-class Account extends Model
+class Account extends BaseModel
 {
     //
+    use SoftDeletes;
 }

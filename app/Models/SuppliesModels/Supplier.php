@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\BaseModels\BaseModel;
 
-class Supplier extends Model
+class Supplier extends BaseModel
 {
     //
     use SoftDeletes;

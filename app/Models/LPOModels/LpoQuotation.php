@@ -2,9 +2,13 @@
 
 namespace App\Models\LPOModels;
 
-use Illuminate\Database\Eloquent\Model;
 
-class LpoQuotation extends Model
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\BaseModels\BaseModel;
+
+class LpoQuotation extends BaseModel
 {
     //
+    use SoftDeletes;
 }
