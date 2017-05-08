@@ -20,6 +20,7 @@ use App\Models\LPOModels\Lpo;
 use App\Models\LPOModels\LpoQuotation;
 use App\Models\LPOModels\LpoItem;
 use App\Models\LPOModels\LpoTerm;
+use App\Models\LPOModels\LpoStatus;
 use App\Models\SuppliesModels\Supplier;
 use App\Models\StaffModels\Staff;
 use App\Models\AccountingModels\Account;
@@ -258,14 +259,14 @@ class LpoApi extends Controller
 
         if(array_key_exists('status', $input)){
             $response = Lpo::where("deleted_at",null)
-                ->where('status', $input['status'])
+                ->where('status_id', $input['status'])
                 ->orderBy('chai_ref', 'desc')
                 ->get();
 
 
         }else{
 
-             $response = LpoQuotation::where("deleted_at",null)
+             $response = Lpo::where("deleted_at",null)
                 ->orderBy('chai_ref', 'desc')
                 ->get();
         }
@@ -273,7 +274,7 @@ class LpoApi extends Controller
         if(array_key_exists('datatables', $input)){
 
             $response_dt = Lpo::where("deleted_at",null)
-                ->where('status', $input['status'])
+                ->where('status_id', $input['status'])
                 ->orderBy('chai_ref', 'desc')
                 ->limit($input['length'])->offset($input['start'])
                 ->get();
@@ -305,6 +306,7 @@ class LpoApi extends Controller
             $data[$key]["project"]              = Project::find((int) $data[$key]["project_id"]);
             $data[$key]["requested_by"]         = Staff::find((int) $data[$key]["requested_by_id"]);
             $data[$key]["supplier"]             = Supplier::find((int) $data[$key]["supplier_id"]);
+            $data[$key]["status"]               = LpoStatus::find((int) $data[$key]["status_id"]);
             $data[$key]["quotations"]           = LpoQuotation::where("deleted_at",null)
                                                         ->where("lpo_id",$data[$key]["id"])
                                                         ->get();
@@ -338,6 +340,10 @@ class LpoApi extends Controller
 
             if($data[$key]["supplier"]==null){
                 $data[$key]["supplier"] = array("supplier_name"=>"N/A");
+            }
+
+            if($data[$key]["status"]==null){
+                $data[$key]["status"] = array("lpo_status"=>"N/A");
             }
         }
         return $data;

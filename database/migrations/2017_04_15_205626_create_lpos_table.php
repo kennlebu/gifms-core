@@ -23,7 +23,7 @@ class CreateLposTable extends Migration
             $table->string('purpose')->nullable();
             $table->integer('requested_by_id')->nullable();
             $table->date('request_date');
-            $table->integer('status');
+            $table->integer('status_id');
             $table->double('currency',22,5)->nullable();
             $table->integer('quotation')->nullable();
             $table->integer('supply_category')->nullable();
