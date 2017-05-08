@@ -18,6 +18,8 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Request;
 use App\Models\LPOModels\Lpo;
 use App\Models\LPOModels\LpoQuotation;
+use App\Models\LPOModels\LpoItem;
+use App\Models\LPOModels\LpoTerm;
 use App\Models\SuppliesModels\Supplier;
 use App\Models\StaffModels\Staff;
 use App\Models\AccountingModels\Account;
@@ -306,6 +308,13 @@ class LpoApi extends Controller
             $data[$key]["quotations"]           = LpoQuotation::where("deleted_at",null)
                                                         ->where("lpo_id",$data[$key]["id"])
                                                         ->get();
+            $data[$key]["items"]                = LpoItem::where("deleted_at",null)
+                                                        ->where("lpo_id",$data[$key]["id"])
+                                                        ->get();
+            $data[$key]["terms"]                = LpoTerm::where("deleted_at",null)
+                                                        ->where("lpo_id",$data[$key]["id"])
+                                                        ->get();
+
 
             if($data[$key]["account"]==null){
                 $data[$key]["account"] = array("account_name"=>"N/A");
