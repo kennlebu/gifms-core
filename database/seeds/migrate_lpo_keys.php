@@ -30,9 +30,9 @@ class migrate_lpo_keys extends Seeder
                                     LEFT JOIN staff pm 
                                     ON pm.migration_id = l.migration_project_manager_id
                                     LEFT JOIN staff rcb 
-                                    ON rcb.migration_id = l.migration_received_by
+                                    ON rcb.migration_id = l.migration_received_by_id
                                     LEFT JOIN staff rq 
-                                    ON rq.migration_id = l.migration_requested_by
+                                    ON rq.migration_id = l.migration_requested_by_id
                                     LEFT JOIN projects p 
                                     ON p.migration_id = l.migration_project_id
                                     LEFT JOIN suppliers s 
@@ -41,8 +41,8 @@ class migrate_lpo_keys extends Seeder
                                     ON a.migration_id = l.migration_account_id
 
                                     SET     l.project_manager_id    =   pm.id ,
-                                            l.received_by           =   rcb.id,
-                                            l.requested_by          =   rq.id,
+                                            l.received_by_id           =   rcb.id,
+                                            l.requested_by_id       =   rq.id,
                                             l.project_id            =   p.id,
                                             l.supplier_id           =   s.id,
                                             l.account_id            =   a.id

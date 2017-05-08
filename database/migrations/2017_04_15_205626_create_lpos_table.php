@@ -21,7 +21,7 @@ class CreateLposTable extends Migration
             $table->string('addressee')->nullable();
             $table->string('title');
             $table->string('purpose')->nullable();
-            $table->integer('requested_by')->nullable();
+            $table->integer('requested_by_id')->nullable();
             $table->date('request_date');
             $table->integer('status');
             $table->double('currency',22,5)->nullable();
@@ -29,7 +29,7 @@ class CreateLposTable extends Migration
             $table->integer('supply_category')->nullable();
             $table->string('delivery_document')->nullable();
             $table->date('date_delivered')->nullable();
-            $table->integer('received_by')->nullable();
+            $table->integer('received_by_id')->nullable();
             $table->integer('meeting');
             $table->text('comments');
             $table->string('preffered_supplier')->nullable();
@@ -42,9 +42,9 @@ class CreateLposTable extends Migration
             $table->integer('quote_exempt')->nullable();
             $table->text('quote_exempt_explanation')->nullable();
             $table->integer('migration_account_id')->nullable();
-            $table->integer('migration_requested_by')->nullable();
+            $table->integer('migration_requested_by_id')->nullable();
             $table->integer('migration_project_id');
-            $table->integer('migration_received_by')->nullable();
+            $table->integer('migration_received_by_id')->nullable();
             $table->integer('migration_supplier_id')->nullable();
             $table->integer('migration_project_manager_id')->nullable();
             $table->integer('migration_id')->unique();
