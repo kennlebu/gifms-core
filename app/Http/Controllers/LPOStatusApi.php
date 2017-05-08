@@ -16,7 +16,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Request;
-use App\Models\LPOModels\LpoStatuses;
+use App\Models\LPOModels\LpoStatus;
 
 class LPOStatusApi extends Controller
 {
@@ -260,7 +260,7 @@ class LPOStatusApi extends Controller
 
         }else{
 
-             $response = LpoStatuses::where("deleted_at",null)
+             $response = LpoStatus::where("deleted_at",null)
                 ->orderBy('lpo_status', 'desc')
                 ->get();
         }
