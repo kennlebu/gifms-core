@@ -17,6 +17,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Request;
 use App\Models\LPOModels\Lpo;
+use App\Models\LPOModels\LpoQuotation;
 use App\Models\SuppliesModels\Supplier;
 use App\Models\StaffModels\Staff;
 use App\Models\AccountingModels\Account;
@@ -262,7 +263,7 @@ class LpoApi extends Controller
 
         }else{
 
-             $response = Lpo::where("deleted_at",null)
+             $response = LpoQuotation::where("deleted_at",null)
                 ->orderBy('chai_ref', 'desc')
                 ->get();
         }
@@ -302,6 +303,9 @@ class LpoApi extends Controller
             $data[$key]["project"]              = Project::find((int) $data[$key]["project_id"]);
             $data[$key]["requested_by"]         = Staff::find((int) $data[$key]["requested_by_id"]);
             $data[$key]["supplier"]             = Supplier::find((int) $data[$key]["supplier_id"]);
+            $data[$key]["quotations"]           = LpoQuotation::where("deleted_at",null)
+                                                        ->where("lpo_id",$data[$key]["id"])
+                                                        ->get();
 
             if($data[$key]["account"]==null){
                 $data[$key]["account"] = array("account_name"=>"N/A");
