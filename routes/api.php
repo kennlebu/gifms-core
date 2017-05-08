@@ -273,3 +273,68 @@ Route::GET('/api/lpo_item/{lpo_item_id}', 'LPOItemApi@getLpoItemById')->middlewa
 
  */
 Route::GET('/api/lpo_items', 'LPOItemApi@lpoItemsGet')->middleware('jwt.auth');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * POST addLpoTerm
+ * Summary: Add a new lpo term
+ * Notes: new lpo term
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/api/lpo_term', 'LPOTermApi@addLpoTerm')->middleware('jwt.auth');
+/**
+ * PUT updateLpoTerm
+ * Summary: Update an existing LPO Term
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/api/lpo_term', 'LPOTermApi@updateLpoTerm')->middleware('jwt.auth');
+/**
+ * DELETE deleteLpoTerm
+ * Summary: Deletes an lpo_term
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/api/lpo_term/{lpo_term_id}', 'LPOTermApi@deleteLpoTerm')->middleware('jwt.auth');
+/**
+ * GET getLpoTermById
+ * Summary: Find lpo term by ID
+ * Notes: Returns a single lpo term
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/api/lpo_term/{lpo_term_id}', 'LPOTermApi@getLpoTermById')->middleware('jwt.auth');
+/**
+ * GET lpoTermsGet
+ * Summary: lpo terms List
+ * Notes: The Lpo Terms endpoint returns information about the LPO Term requested given the parameters injected.  
+
+ */
+Route::GET('/api/lpo_terms', 'LPOTermApi@lpoTermsGet')->middleware('jwt.auth');
