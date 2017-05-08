@@ -338,3 +338,78 @@ Route::GET('/api/lpo_term/{lpo_term_id}', 'LPOTermApi@getLpoTermById')->middlewa
 
  */
 Route::GET('/api/lpo_terms', 'LPOTermApi@lpoTermsGet')->middleware('jwt.auth');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * POST addLpoComment
+ * Summary: Add a new lpo comment
+ * Notes: new lpo comment
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/api/lpo_comment', 'LPOCommentApi@addLpoComment')->middleware('jwt.auth');
+/**
+ * PUT updateLpoComment
+ * Summary: Update an existing LPO Comment
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/api/lpo_comment', 'LPOCommentApi@updateLpoComment')->middleware('jwt.auth');
+/**
+ * DELETE deleteLpoComment
+ * Summary: Deletes an lpo_comment
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/api/lpo_comment/{lpo_comment_id}', 'LPOCommentApi@deleteLpoComment')->middleware('jwt.auth');
+/**
+ * GET getLpoCommentById
+ * Summary: Find lpo comment by ID
+ * Notes: Returns a single lpo comment
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/api/lpo_comment/{lpo_comment_id}', 'LPOCommentApi@getLpoCommentById')->middleware('jwt.auth');
+/**
+ * GET lpoCommentsGet
+ * Summary: lpo comments List
+ * Notes: The Lpo Comments endpoint returns information about the LPO Comment requested given the parameters injected.  
+
+ */
+Route::GET('/api/lpo_comments', 'LPOCommentApi@lpoCommentsGet')->middleware('jwt.auth');
+
+
+
+
+
+

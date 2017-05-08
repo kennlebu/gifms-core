@@ -17,7 +17,7 @@
  "basePath": "/api",
  "tags": [
   {
-   "name": "lpo",
+   "name": "LPO",
    "description": "Everything About Local Purchase Orders",
    "externalDocs": {
     "description": "Find out more",
@@ -55,6 +55,14 @@
     "description": "Find out more",
     "url": "http://kefinance.clintonhealthaccess.org/api/lpo_terms/docs"
    }
+  },
+  {
+   "name": "LPO Comment",
+   "description": "Everything About LPO Comments",
+   "externalDocs": {
+    "description": "Find out more",
+    "url": "http://kefinance.clintonhealthaccess.org/api/lpo_comments/docs"
+   }
   }
  ],
  "schemes": [
@@ -77,7 +85,7 @@
      }
     ],
     "tags": [
-     "lpo"
+     "LPO"
     ],
     "responses": {
      "200": {
@@ -106,7 +114,7 @@
   "/lpo": {
    "post": {
     "tags": [
-     "lpo"
+     "LPO"
     ],
     "summary": "Add a new lpo request t",
     "description": "lpo awaits approvals from relevant parties",
@@ -146,7 +154,7 @@
    },
    "put": {
     "tags": [
-     "lpo"
+     "LPO"
     ],
     "summary": "Update an existing LPO",
     "description": "",
@@ -197,7 +205,7 @@
   "/lpo/{lpo_id}": {
    "get": {
     "tags": [
-     "lpo"
+     "LPO"
     ],
     "summary": "Find lpo by ID",
     "description": "Returns a single lpo",
@@ -238,7 +246,7 @@
    },
    "post": {
     "tags": [
-     "lpo"
+     "LPO"
     ],
     "summary": "Updates a lpo with form data",
     "description": "updates each field when not set as null",
@@ -448,7 +456,7 @@
    },
    "delete": {
     "tags": [
-     "lpo"
+     "LPO"
     ],
     "summary": "Deletes an lpo",
     "description": "",
@@ -1351,6 +1359,222 @@
      }
     ]
    }
+  },
+  "/lpo_comments": {
+   "get": {
+    "summary": "lpo comments List",
+    "description": "The Lpo Comments endpoint returns information about the LPO Comment requested given the parameters injected. \n",
+    "parameters": [
+     {
+      "name": "lpo_id",
+      "in": "query",
+      "description": "staff id",
+      "required": false,
+      "type": "number",
+      "format": "integer"
+     }
+    ],
+    "tags": [
+     "LPO Comment"
+    ],
+    "responses": {
+     "200": {
+      "description": "An array of lpo_comments returned",
+      "schema": {
+       "type": "array",
+       "items": {
+        "$ref": "#/definitions/lpo_comment"
+       }
+      }
+     },
+     "404": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Error"
+      }
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/lpo_comment": {
+   "post": {
+    "tags": [
+     "LPO Comment"
+    ],
+    "summary": "Add a new lpo comment",
+    "description": "new lpo comment",
+    "operationId": "add_lpo_comment",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "lpo comment object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/lpo_comment"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successfully added a new Lpo comment for approval"
+     },
+     "405": {
+      "description": "Invalid input,adding a new lpo comment was unsuccessful"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "put": {
+    "tags": [
+     "LPO Comment"
+    ],
+    "summary": "Update an existing LPO Comment",
+    "description": "",
+    "operationId": "update_lpo_comment",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "LPO Comment object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/lpo_comment"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Success"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo comment not found"
+     },
+     "405": {
+      "description": "Validation exception"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/lpo_comment/{lpo_comment_id}": {
+   "get": {
+    "tags": [
+     "LPO Comment"
+    ],
+    "summary": "Find lpo comment by ID",
+    "description": "Returns a single lpo comment",
+    "operationId": "get_lpo_comment_by_id",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "lpo_comment_id",
+      "in": "path",
+      "description": "ID of lpo comment to return object",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "successful operation",
+      "schema": {
+       "$ref": "#/definitions/lpo_comment"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo comment not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "delete": {
+    "tags": [
+     "LPO Comment"
+    ],
+    "summary": "Deletes an lpo_comment",
+    "description": "",
+    "operationId": "delete_lpo_comment",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "api_key",
+      "in": "header",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "lpo_comment_id",
+      "in": "path",
+      "description": "lpo comment id to delete",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo comment not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
   }
  },
  "securityDefinitions": {
@@ -1720,7 +1944,6 @@
    "required": [
     "id",
     "lpo_id",
-    "supplier_id",
     "created_at",
     "updated_at"
    ],
@@ -1756,6 +1979,57 @@
    },
    "xml": {
     "name": "lpo_term"
+   }
+  },
+  "lpo_comment": {
+   "type": "object",
+   "required": [
+    "id",
+    "lpo_id",
+    "created_at",
+    "updated_at"
+   ],
+   "properties": {
+    "id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "lpo_id": {
+     "type": "integer",
+     "example": 10
+    },
+    "comment": {
+     "type": "string",
+     "example": "Trial"
+    },
+    "comment_doc": {
+     "type": "string",
+     "example": "Needs 3 quotations"
+    },
+    "commentor_id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 2
+    },
+    "at_status_id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 2
+    },
+    "created_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "updated_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    }
+   },
+   "xml": {
+    "name": "lpo_comment"
    }
   },
   "Error": {
