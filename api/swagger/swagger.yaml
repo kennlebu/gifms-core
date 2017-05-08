@@ -47,6 +47,11 @@ tags:
     externalDocs:
       description: Find out more
       url: 'http://kefinance.clintonhealthaccess.org/api/lpo_viewing_permissions/docs'
+  - name: LPO Approval
+    description: Everything About LPO Approvals
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/lpo_approvals/docs'
 schemes:
   - http
   - https
@@ -1608,6 +1613,238 @@ paths:
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  /lpo_approvals:
+    get:
+      summary: lpo approvals List
+      description: |
+        The Lpo Approvals endpoint returns information about the LPO Approval requested given the parameters injected. 
+      parameters:
+        - name: lpo_id
+          in: query
+          description: staff id 
+          required: false
+          type: number
+          format: integer
+      tags:
+        - LPO Approval
+      responses:
+        200:
+          description: An array of lpo_approvals returned
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/lpo_approval'
+        404:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+        - api_key: []
+
+
+
+
+
+
+
+  /lpo_approval:    
+    post:
+      tags:
+        - LPO Approval
+      summary: Add a new lpo approval
+      description: new lpo approval  
+      operationId: add_lpo_approval
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: lpo approval object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/lpo_approval'
+      responses:
+        '200':
+          description: Successfully added a new Lpo approval for approval 
+        '405':
+          description: Invalid input,adding a new lpo approval was unsuccessful
+      security:
+        - api_key: []
+            
+            
+            
+
+            
+    put:
+      tags:
+        - LPO Approval
+      summary: Update an existing LPO Approval
+      description: ''
+      operationId: update_lpo_approval
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: LPO Approval object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/lpo_approval'
+      responses:
+        200:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Success'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: lpo approval not found
+        '405':
+          description: Validation exception
+      security:
+        - api_key: []
+        
+        
+        
+        
+        
+        
+  '/lpo_approval/{lpo_approval_id}':
+    get:
+      tags:
+        - LPO Approval
+      summary: Find lpo approval by ID
+      description: Returns a single lpo approval
+      operationId: get_lpo_approval_by_id
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: lpo_approval_id
+          in: path
+          description: ID of lpo approval to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/lpo_approval'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: lpo approval not found
+      security:
+        - api_key: []
+        
+        
+     
+            
+            
+            
+    delete:
+      tags:
+        - LPO Approval
+      summary: Deletes an lpo_approval
+      description: ''
+      operationId: delete_lpo_approval
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: api_key
+          in: header
+          required: true
+          type: string
+        - name: lpo_approval_id
+          in: path
+          description: lpo approval id to delete
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: lpo approval not found
+      security:
+        - api_key: []
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
           
           
 securityDefinitions:
@@ -2071,7 +2308,60 @@ definitions:
 
 
 
+
+
+
+
+
+
+
+      
+      
+  lpo_approval:
+    type: object
+    required:
+      - id
+      - lpo_id
+      - created_at
+      - updated_at
+    properties:
+      id:
+        type: integer
+        format: int64
+        example: 1
+      lpo_id:
+        type: integer
+        example: 10
+      approval_level_id:
+        type: integer
+        example: 10
+      approver_id:
+        type: integer
+        format: int64
+        example: 2
+      created_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      updated_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+    xml:
+      name: lpo_approval
+    
   
+    
+
+
+
+
+
+
+
+
+
+
   
   
   

@@ -134,7 +134,7 @@ class migrate_lpo_data extends Seeder
         foreach ($data_to_migrate_pm as $key => $value) {
 
             if($value){
-                array_push($pm_approval,['approval_level_id' => 2,'created_at' => $value['pm_approval_date'],'lpo_id' => $value['id'],'migration_approver' => $value['pm_approval']]);
+                array_push($pm_approval,['approval_level_id' => 2,'created_at' => $value['pm_approval_date'],'lpo_id' => $value['id'],'migration_approver_id' => $value['pm_approval']]);
             }
 
             echo "\nLPO Approval-$key---";
@@ -159,7 +159,7 @@ class migrate_lpo_data extends Seeder
         foreach ($data_to_migrate_man as $key => $value) {
 
             if($value){
-                array_push($man_approval,['approval_level_id' => 4,'created_at' => $value['management_approval_date'],'lpo_id' => $value['id'],'migration_approver' => $value['management_approval']]);
+                array_push($man_approval,['approval_level_id' => 4,'created_at' => $value['management_approval_date'],'lpo_id' => $value['id'],'migration_approver_id' => $value['management_approval']]);
             }
 
             echo "\nLPO Approval-$key---";
@@ -184,7 +184,7 @@ class migrate_lpo_data extends Seeder
         foreach ($data_to_migrate_fin as $key => $value) {
 
             if($value){
-                array_push($fin_approval,['approval_level_id' => 3,'created_at' => $value['finance_approval_date'],'lpo_id' => $value['id'],'migration_approver' => $value['finance_approval']]);
+                array_push($fin_approval,['approval_level_id' => 3,'created_at' => $value['finance_approval_date'],'lpo_id' => $value['id'],'migration_approver_id' => $value['finance_approval']]);
             }
 
             echo "\nLPO Approval-$key---";

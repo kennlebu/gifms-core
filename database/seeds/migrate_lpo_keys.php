@@ -72,9 +72,9 @@ class migrate_lpo_keys extends Seeder
         $migrate_keys_sql = "
                                 UPDATE lpo_approvals l 
                                     LEFT JOIN staff ap 
-                                    ON ap.migration_id = l.migration_approver
+                                    ON ap.migration_id = l.migration_approver_id
 
-                                    SET     l.approver    =   ap.id 
+                                    SET     l.approver_id   =   ap.id 
                              ";
 
         DB::statement($migrate_keys_sql);

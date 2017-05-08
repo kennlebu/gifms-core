@@ -413,3 +413,56 @@ Route::GET('/api/lpo_comments', 'LPOCommentApi@lpoCommentsGet')->middleware('jwt
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * POST addLpoApproval
+ * Summary: Add a new lpo approval
+ * Notes: new lpo approval
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/api/lpo_approval', 'LPOApprovalApi@addLpoApproval')->middleware('jwt.auth');
+/**
+ * PUT updateLpoApproval
+ * Summary: Update an existing LPO Approval
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/api/lpo_approval', 'LPOApprovalApi@updateLpoApproval')->middleware('jwt.auth');
+/**
+ * DELETE deleteLpoApproval
+ * Summary: Deletes an lpo_approval
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/api/lpo_approval/{lpo_approval_id}', 'LPOApprovalApi@deleteLpoApproval')->middleware('jwt.auth');
+/**
+ * GET getLpoApprovalById
+ * Summary: Find lpo approval by ID
+ * Notes: Returns a single lpo approval
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/api/lpo_approval/{lpo_approval_id}', 'LPOApprovalApi@getLpoApprovalById')->middleware('jwt.auth');
+/**
+ * GET lpoApprovalsGet
+ * Summary: lpo approvals List
+ * Notes: The Lpo Approvals endpoint returns information about the LPO Approval requested given the parameters injected.  
+
+ */
+Route::GET('/api/lpo_approvals', 'LPOApprovalApi@lpoApprovalsGet')->middleware('jwt.auth');
