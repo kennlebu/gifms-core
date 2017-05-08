@@ -31,6 +31,14 @@
     "description": "Find out more",
     "url": "http://kefinance.clintonhealthaccess.org/api/lpo_statuses/docs"
    }
+  },
+  {
+   "name": "LPO Quotation",
+   "description": "Everything About LPO Quotations",
+   "externalDocs": {
+    "description": "Find out more",
+    "url": "http://kefinance.clintonhealthaccess.org/api/lpo_quotattions/docs"
+   }
   }
  ],
  "schemes": [
@@ -84,7 +92,7 @@
     "tags": [
      "lpo"
     ],
-    "summary": "Add a new lpo request to the store",
+    "summary": "Add a new lpo request t",
     "description": "lpo awaits approvals from relevant parties",
     "operationId": "add",
     "consumes": [
@@ -99,7 +107,7 @@
      {
       "in": "body",
       "name": "body",
-      "description": "lpo object that needs to be added to the store",
+      "description": "lpo object that needs to be added",
       "required": true,
       "schema": {
        "$ref": "#/definitions/lpo"
@@ -510,7 +518,7 @@
     "tags": [
      "LPO Status"
     ],
-    "summary": "Add a new lpo status to the store",
+    "summary": "Add a new lpo status",
     "description": "lpo status",
     "operationId": "add_lpo_status",
     "consumes": [
@@ -525,7 +533,7 @@
      {
       "in": "body",
       "name": "body",
-      "description": "lpo status object that needs to be added to the store",
+      "description": "lpo status object that needs to be added",
       "required": true,
       "schema": {
        "$ref": "#/definitions/lpo_status"
@@ -671,6 +679,222 @@
      },
      "404": {
       "description": "lpo status not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/lpo_quotations": {
+   "get": {
+    "summary": "lpo quotations List",
+    "description": "The Lpo Quotations endpoint returns information about the LPO Quotation requested given the parameters injected. \n",
+    "parameters": [
+     {
+      "name": "lpo_id",
+      "in": "query",
+      "description": "staff id",
+      "required": false,
+      "type": "number",
+      "format": "integer"
+     }
+    ],
+    "tags": [
+     "LPO Quotation"
+    ],
+    "responses": {
+     "200": {
+      "description": "An array of lpo_quotations returned",
+      "schema": {
+       "type": "array",
+       "items": {
+        "$ref": "#/definitions/lpo_quotation"
+       }
+      }
+     },
+     "404": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Error"
+      }
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/lpo_quotation": {
+   "post": {
+    "tags": [
+     "LPO Quotation"
+    ],
+    "summary": "Add a new lpo quotation",
+    "description": "new lpo quotaion",
+    "operationId": "add_lpo_quotation",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "lpo quotation object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/lpo_quotation"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successfully added a new Lpo quotation for approval"
+     },
+     "405": {
+      "description": "Invalid input,adding a new lpo quoatation was unsuccessful"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "put": {
+    "tags": [
+     "LPO Quotation"
+    ],
+    "summary": "Update an existing LPO Quotation",
+    "description": "",
+    "operationId": "update_lpo_quotation",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "LPO Quotation object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/lpo_quotation"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Success"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo quotation not found"
+     },
+     "405": {
+      "description": "Validation exception"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/lpo_quotation/{lpo_quotation_id}": {
+   "get": {
+    "tags": [
+     "LPO Quotation"
+    ],
+    "summary": "Find lpo quotation by ID",
+    "description": "Returns a single lpo quotation",
+    "operationId": "get_lpo_quotation_by_id",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "lpo_quotation_id",
+      "in": "path",
+      "description": "ID of lpo quotation to return object",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "successful operation",
+      "schema": {
+       "$ref": "#/definitions/lpo_quotation"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo quotation not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "delete": {
+    "tags": [
+     "LPO Quotation"
+    ],
+    "summary": "Deletes an lpo_quotation",
+    "description": "",
+    "operationId": "delete_lpo_quotation",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "api_key",
+      "in": "header",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "lpo_quotation_id",
+      "in": "path",
+      "description": "lpo quotation id to delete",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo quotation not found"
      }
     },
     "security": [
@@ -907,6 +1131,68 @@
    },
    "xml": {
     "name": "lpo"
+   }
+  },
+  "lpo_quotation": {
+   "type": "object",
+   "required": [
+    "id",
+    "lpo_id",
+    "supplier_id",
+    "created_at",
+    "updated_at"
+   ],
+   "properties": {
+    "id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "lpo_id": {
+     "type": "integer",
+     "example": 10
+    },
+    "supplier_id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 2
+    },
+    "amount": {
+     "type": "number",
+     "format": "int64",
+     "example": 20000
+    },
+    "quote_description": {
+     "type": "string",
+     "example": "Trial"
+    },
+    "quotation_doc": {
+     "type": "string",
+     "example": "PayPal.pdf"
+    },
+    "quote_date": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "uploaded_by_id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 2
+    },
+    "created_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "updated_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    }
+   },
+   "xml": {
+    "name": "lpo_quotation"
    }
   },
   "Error": {

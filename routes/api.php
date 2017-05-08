@@ -153,3 +153,66 @@ Route::GET('/lpo_status/{lpo_status_id}', 'LPOStatusApi@getLpoStatusById')->midd
  */
 Route::GET('/lpo_statuses', 'LPOStatusApi@lpoStatusesGet')->middleware('jwt.auth');
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * POST addLpoQuotation
+ * Summary: Add a new lpo quotation
+ * Notes: new lpo quotaion
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/api/lpo_quotation', 'LPOQuotationApi@addLpoQuotation')->middleware('jwt.auth');
+/**
+ * PUT updateLpoQuotation
+ * Summary: Update an existing LPO Quotation
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/api/lpo_quotation', 'LPOQuotationApi@updateLpoQuotation')->middleware('jwt.auth');
+/**
+ * DELETE deleteLpoQuotation
+ * Summary: Deletes an lpo_quotation
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/api/lpo_quotation/{lpo_quotation_id}', 'LPOQuotationApi@deleteLpoQuotation')->middleware('jwt.auth');
+/**
+ * GET getLpoQuotationById
+ * Summary: Find lpo quotation by ID
+ * Notes: Returns a single lpo quotation
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/api/lpo_quotation/{lpo_quotation_id}', 'LPOQuotationApi@getLpoQuotationById')->middleware('jwt.auth');
+/**
+ * GET lpoQuotationsGet
+ * Summary: lpo quotations List
+ * Notes: The Lpo Quotations endpoint returns information about the LPO Quotation requested given the parameters injected.  
+
+ */
+Route::GET('/api/lpo_quotations', 'LPOQuotationApi@lpoQuotationsGet')->middleware('jwt.auth');
