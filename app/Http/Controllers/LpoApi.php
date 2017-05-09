@@ -83,11 +83,14 @@ class LpoApi extends Controller
             $lpo->quote_exempt                      =   $form['quote_exempt'];
             $lpo->quote_exempt_explanation          =   $form['quote_exempt_explanation'];
             $lpo->preffered_supplier_id             =   $form['preffered_supplier_id'];
+            $lpo->status_id                         =   1;
 
 
             if($lpo->save()) {
                 
                 return Response::json(array('success' => 'lpo added'), 200);
+
+                // Save quotations
             }
 
         }catch (JWTException $e){
