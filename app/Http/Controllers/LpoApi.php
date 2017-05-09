@@ -52,14 +52,84 @@ class LpoApi extends Controller
 
 
         //not path params validation
-        if (!isset($input['body'])) {
-            throw new \InvalidArgumentException('Missing the required parameter $body when calling add');
+        // if (!isset($input['body'])) {
+        //     throw new \InvalidArgumentException('Missing the required parameter $body when calling add');
+        // }
+        // $body = $input['body'];
+
+        // print_r($body);
+
+
+        $form = request()->only(
+            'requested_by_id',
+            'expense_desc',
+            'expense_purpose',
+            'project_id',
+            'currency_id',
+            'quote_exempt'
+            );
+
+        // $file = $request->file('requeste');
+
+        try{
+
+            $lpo = new Lpo;
+
+            $lpo->requested_by_id                   =   $form['requested_by_id'];
+            $lpo->expense_desc                      =   $form['expense_desc'];
+            $lpo->expense_purpose                   =   $form['expense_purpose'];
+            $lpo->program_id                        =   $form['project_id'];
+            $lpo->currency_id                       =   $form['currency_id'];
+            $lpo->quote_exempt                      =   $form['quote_exempt'];
+            $lpo->quote_exempt_explanation          =   $form['quote_exempt_explanation'];
+            $lpo->preffered_supplier_id             =   $form['preffered_supplier_id'];
+
+
+            if($lpo->save()) {
+                
+                return Response::json(array('success' => 'lpo added'), 200);
+            }
+
+        }catch (JWTException $e){
+
+                return response()->json(['error'=>'something went wrong'], 500);
+
         }
-        $body = $input['body'];
 
-
-        return response('How about implementing add as a POST method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /**
      * Operation updateLpo
      *
