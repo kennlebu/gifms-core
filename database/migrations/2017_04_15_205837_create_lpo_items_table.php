@@ -25,7 +25,7 @@ class CreateLpoItemsTable extends Migration
             $table->string('item')->nullable();
             $table->integer('vat_charge');
             $table->integer('lpo_migration_id');
-            $table->integer('migration_id')->unique();
+            $table->integer('migration_id')->nullable();
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
             $table->softDeletes();

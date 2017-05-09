@@ -20,7 +20,7 @@ class CreateLpoCommentsTable extends Migration
             $table->text('comment');   
             $table->text('commentor_id');            
             $table->integer('lpo_migration_id');
-            $table->integer('migration_id')->unique();
+            $table->integer('migration_id')->nullable();
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
             $table->softDeletes();

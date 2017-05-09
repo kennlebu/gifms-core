@@ -16,7 +16,7 @@ class CreateCashRequestPurposesTable extends Migration
         Schema::create('cash_request_purposes', function (Blueprint $table) {
             $table->increments('id');
             $table->string('cash_request_purpose');
-            $table->integer('migration_id')->unique();
+            $table->integer('migration_id')->nullable();
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
             $table->softDeletes();

@@ -18,7 +18,7 @@ class CreateSupplyCategoryItemsTable extends Migration
             $table->string('category_item_name')->nullable();
             $table->integer('category_id')->nullable();
             $table->integer('migration_category_id')->nullable();
-            $table->integer('migration_id')->unique();
+            $table->integer('migration_id')->nullable();
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
             $table->softDeletes();

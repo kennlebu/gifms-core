@@ -25,7 +25,7 @@ class CreateProjectBudgetAccountsTable extends Migration
             $table->integer('reforcast_month');
             $table->integer('migration_project_id');
             $table->integer('migration_account_id');
-            $table->integer('migration_id')->unique();
+            $table->integer('migration_id')->nullable();
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
             $table->softDeletes();

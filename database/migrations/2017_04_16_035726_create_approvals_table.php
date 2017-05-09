@@ -23,7 +23,7 @@ class CreateApprovalsTable extends Migration
             $table->string('title_field')->nullable();
             $table->string('payee_field')->nullable();
             $table->string('amounts_field')->nullable();
-            $table->integer('migration_id')->unique();
+            $table->integer('migration_id')->nullable();
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
             $table->softDeletes();

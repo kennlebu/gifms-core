@@ -27,7 +27,7 @@ class CreateBankStatementsTable extends Migration
             $table->integer('bank_account');
             $table->integer('posted');
             $table->integer('payment');
-            $table->integer('migration_id')->unique();
+            $table->integer('migration_id')->nullable();
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
             $table->softDeletes();

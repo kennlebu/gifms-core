@@ -16,7 +16,7 @@ class CreateInvoiceAllocationTypesTable extends Migration
         Schema::create('invoice_allocation_types', function (Blueprint $table) {
             $table->increments('id');
             $table->text('allocation_type_desc');
-            $table->integer('migration_id')->unique();
+            $table->integer('migration_id')->nullable();
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
             $table->softDeletes();

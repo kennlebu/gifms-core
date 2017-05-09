@@ -19,7 +19,7 @@ class CreateDepartmentsTable extends Migration
             $table->string('desc')->nullable();
             $table->string('acronym')->nullable();
             $table->string('HOD_id')->nullable();
-            $table->integer('migration_id')->unique();
+            $table->integer('migration_id')->nullable();
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
             $table->softDeletes();

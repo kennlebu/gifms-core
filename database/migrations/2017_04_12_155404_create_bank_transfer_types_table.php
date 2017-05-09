@@ -15,7 +15,7 @@ class CreateBankTransferTypesTable extends Migration
     {
         Schema::create('bank_transfer_types', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('migration_id')->unique();
+            $table->integer('migration_id')->nullable();
             $table->string('transfer_type');
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
