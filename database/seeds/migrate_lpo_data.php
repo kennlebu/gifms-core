@@ -41,10 +41,10 @@ class migrate_lpo_data extends Seeder
             $data_to_migrate[$key]['lpo_date']                      = $data[$key]['LPODate'];
             $data_to_migrate[$key]['addressee']                     = $data[$key]['Addressee'];
             $data_to_migrate[$key]['expense_desc']                  = $data[$key]['Title'];
-            $data_to_migrate[$key]['purpose']                       = $data[$key]['Purpose'];
+            $data_to_migrate[$key]['expense_purpose']               = $data[$key]['Purpose'];
             $data_to_migrate[$key]['request_date']                  = $data[$key]['RequestDate'];
             $data_to_migrate[$key]['status_id']                     = $data[$key]['Status'];
-            $data_to_migrate[$key]['currency']                      = $data[$key]['LPOCurrency'];
+            $data_to_migrate[$key]['currency_id']                   = $data[$key]['LPOCurrency'];
             $data_to_migrate[$key]['quotation']                     = $data[$key]['Quotation'];
             $data_to_migrate[$key]['supply_category']               = $data[$key]['SupplyCategory'];
             $data_to_migrate[$key]['delivery_document']             = $data[$key]['DeliveryDocument'];

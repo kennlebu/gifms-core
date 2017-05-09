@@ -20,12 +20,12 @@ class CreateLposTable extends Migration
             $table->integer('supplier_id')->nullable();
             $table->string('addressee')->nullable();
             $table->text('expense_desc')->nullable();
-            $table->text('purpose')->nullable();
+            $table->text('expense_purpose')->nullable();
             $table->integer('requested_by_id')->nullable();
             $table->integer('requested_action_by_id')->nullable();
             $table->date('request_date')->nullable();
             $table->integer('status_id')->nullable();
-            $table->integer('currency')->nullable();
+            $table->integer('currency_id')->nullable();
             $table->integer('quotation')->nullable();
             $table->integer('supply_category')->nullable();
             $table->string('delivery_document')->nullable();
@@ -45,11 +45,11 @@ class CreateLposTable extends Migration
             $table->text('quote_exempt_explanation')->nullable();
             $table->integer('migration_account_id')->nullable();
             $table->integer('migration_requested_by_id')->nullable();
-            $table->integer('migration_project_id');
+            $table->integer('migration_project_id')->nullable();
             $table->integer('migration_received_by_id')->nullable();
             $table->integer('migration_supplier_id')->nullable();
             $table->integer('migration_project_manager_id')->nullable();
-            $table->integer('migration_id')->unique();
+            $table->integer('migration_id')->nullable();
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
             $table->softDeletes();

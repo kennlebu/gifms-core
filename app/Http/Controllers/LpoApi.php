@@ -66,7 +66,9 @@ class LpoApi extends Controller
             'expense_purpose',
             'project_id',
             'currency_id',
-            'quote_exempt'
+            'quote_exempt',
+            'quote_exempt_explanation',
+            'preffered_supplier_id'
             );
 
         // $file = $request->file('requeste');
@@ -78,7 +80,7 @@ class LpoApi extends Controller
             $lpo->requested_by_id                   =   $form['requested_by_id'];
             $lpo->expense_desc                      =   $form['expense_desc'];
             $lpo->expense_purpose                   =   $form['expense_purpose'];
-            $lpo->program_id                        =   $form['project_id'];
+            $lpo->project_id                        =   $form['project_id'];
             $lpo->currency_id                       =   $form['currency_id'];
             $lpo->quote_exempt                      =   $form['quote_exempt'];
             $lpo->quote_exempt_explanation          =   $form['quote_exempt_explanation'];
@@ -88,7 +90,7 @@ class LpoApi extends Controller
 
             if($lpo->save()) {
                 
-                return Response::json(array('success' => 'lpo added'), 200);
+                return Response()->json(array('success' => 'lpo added'), 200);
 
                 // Save quotations
             }
