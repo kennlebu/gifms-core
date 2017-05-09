@@ -19,7 +19,7 @@ class CreateStaffTable extends Migration
             $table->string('email')->unique();
             $table->string('password');
             $table->integer('is_admin')->nullable();
-            $table->integer('security_group')->nullable();
+            $table->integer('security_group_id')->nullable();
             $table->string('f_name')->nullable();
             $table->string('l_name')->nullable();
             $table->integer('department_id')->nullable();
@@ -28,7 +28,7 @@ class CreateStaffTable extends Migration
             $table->string('mpesa_no')->nullable();
             $table->string('bank_account')->nullable();
             $table->string('cheque_addressee')->nullable();
-            $table->string('payment_mode')->nullable();
+            $table->string('payment_mode_id')->nullable();
             $table->integer('bank_id')->nullable();
             $table->integer('bank_branch_id')->nullable();
             $table->string('station')->nullable();

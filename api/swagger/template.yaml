@@ -12,11 +12,11 @@ info:
 host: 'localhost:8000'
 basePath: /api
 tags:
-  - name: LPO Quotation
-    description: Everything About LPO Quotations
+  - name: Staff
+    description: Everything About Staff
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/lpo_quotations/docs'
+      url: 'http://kefinance.clintonhealthaccess.org/api/staff/docs'
 schemes:
   - http
   - https
@@ -32,27 +32,27 @@ paths:
 
 
 
-  /lpo_quotations:
+  /staffs:
     get:
-      summary: lpo quotations List
+      summary: staffs List
       description: |
-        The Lpo Quotations endpoint returns information about the LPO Quotation requested given the parameters injected. 
+        The staff endpoint returns multiple staff requested given the parameters injected. 
       parameters:
-        - name: lpo_id
+        - name: staff_id
           in: query
           description: staff id 
           required: false
           type: number
           format: integer
       tags:
-        - LPO Quotation
+        - Staff
       responses:
         200:
-          description: An array of lpo_quotations returned
+          description: An array of staff returned
           schema:
             type: array
             items:
-              $ref: '#/definitions/lpo_quotation'
+              $ref: '#/definitions/staff'
         404:
           description: Unexpected error
           schema:
@@ -66,13 +66,13 @@ paths:
 
 
 
-  /lpo_quotation:    
+  /staff:    
     post:
       tags:
-        - LPO Quotation
-      summary: Add a new lpo quotation
-      description: new lpo quotation  
-      operationId: add_lpo_quotation
+        - Staff
+      summary: Add a new staff
+      description: new staff  
+      operationId: add_staff
       consumes:
         - application/json
         - application/xml
@@ -82,15 +82,15 @@ paths:
       parameters:
         - in: body
           name: body
-          description: lpo quotation object that needs to be added
+          description: staff object that needs to be added
           required: true
           schema:
-            $ref: '#/definitions/lpo_quotation'
+            $ref: '#/definitions/staff'
       responses:
         '200':
-          description: Successfully added a new Lpo quotation for approval 
+          description: Successfully added a new staff for approval 
         '405':
-          description: Invalid input,adding a new lpo quotation was unsuccessful
+          description: Invalid input,adding a new staff was unsuccessful
       security:
         - api_key: []
             
@@ -100,10 +100,10 @@ paths:
             
     put:
       tags:
-        - LPO Quotation
-      summary: Update an existing LPO Quotation
+        - Staff
+      summary: Update an existing staff
       description: ''
-      operationId: update_lpo_quotation
+      operationId: update_staff
       consumes:
         - application/json
         - application/xml
@@ -113,10 +113,10 @@ paths:
       parameters:
         - in: body
           name: body
-          description: LPO Quotation object that needs to be added
+          description: staff object that needs to be added
           required: true
           schema:
-            $ref: '#/definitions/lpo_quotation'
+            $ref: '#/definitions/staff'
       responses:
         200:
           description: Unexpected error
@@ -125,7 +125,7 @@ paths:
         '400':
           description: Invalid ID supplied
         '404':
-          description: lpo quotation not found
+          description: staff not found
         '405':
           description: Validation exception
       security:
@@ -136,20 +136,20 @@ paths:
         
         
         
-  '/lpo_quotation/{lpo_quotation_id}':
+  '/staff/{staff_id}':
     get:
       tags:
-        - LPO Quotation
-      summary: Find lpo quotation by ID
-      description: Returns a single lpo quotation
-      operationId: get_lpo_quotation_by_id
+        - Staff
+      summary: Find staff by ID
+      description: Returns a single staff
+      operationId: get_staff_by_id
       produces:
         - application/json
         - application/xml
       parameters:
-        - name: lpo_quotation_id
+        - name: staff_id
           in: path
-          description: ID of lpo quotation to return object
+          description: ID of staff to return object
           required: true
           type: integer
           format: int64
@@ -157,11 +157,11 @@ paths:
         '200':
           description: successful operation
           schema:
-            $ref: '#/definitions/lpo_quotation'
+            $ref: '#/definitions/staff'
         '400':
           description: Invalid ID supplied
         '404':
-          description: lpo quotation not found
+          description: staff not found
       security:
         - api_key: []
         
@@ -172,10 +172,10 @@ paths:
             
     delete:
       tags:
-        - LPO Quotation
-      summary: Deletes an lpo_quotation
+        - Staff
+      summary: Deletes an staff
       description: ''
-      operationId: delete_lpo_quotation
+      operationId: delete_staff
       produces:
         - application/json
         - application/xml
@@ -184,9 +184,9 @@ paths:
           in: header
           required: true
           type: string
-        - name: lpo_quotation_id
+        - name: staff_id
           in: path
-          description: lpo quotation id to delete
+          description: staff id to delete
           required: true
           type: integer
           format: int64
@@ -194,7 +194,7 @@ paths:
         '400':
           description: Invalid ID supplied
         '404':
-          description: lpo quotation not found
+          description: staff not found
       security:
         - api_key: []
 
@@ -248,36 +248,27 @@ definitions:
 
       
       
-  lpo_quotation:
+  staff:
     type: object
     required:
       - id
-      - lpo_id
       - created_at
-      - updated_at
     properties:
       id:
         type: integer
         format: int64
         example: 1
-      lpo_id:
-        type: integer
-        example: 10
-      amount:
+      num:
         type: number
         format: int64
         example: 20000
-      quotation_doc:
+      str:
         type: string
         example: 'PayPal.pdf'
-      quote_date:
+      date:
         type: string
         format: date-time
         example: '2010-02-11'
-      uploaded_by_id:
-        type: integer
-        format: int64
-        example: 2
       created_at:
         type: string
         format: date-time
@@ -287,7 +278,7 @@ definitions:
         format: date-time
         example: '2010-02-11'
     xml:
-      name: lpo_quotation
+      name: staff
     
   
     

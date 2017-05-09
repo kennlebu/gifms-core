@@ -466,3 +466,265 @@ Route::GET('/api/lpo_approval/{lpo_approval_id}', 'LPOApprovalApi@getLpoApproval
 
  */
 Route::GET('/api/lpo_approvals', 'LPOApprovalApi@lpoApprovalsGet')->middleware('jwt.auth');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * POST addDepartment
+ * Summary: Add a new department
+ * Notes: new department
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/api/department', 'DepartmentApi@addDepartment')->middleware('jwt.auth');
+/**
+ * PUT updateDepartment
+ * Summary: Update an existing department
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/api/department', 'DepartmentApi@updateDepartment')->middleware('jwt.auth');
+/**
+ * DELETE deleteDepartment
+ * Summary: Deletes an department
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/api/department/{department_id}', 'DepartmentApi@deleteDepartment')->middleware('jwt.auth');
+/**
+ * GET getDepartmentById
+ * Summary: Find department by ID
+ * Notes: Returns a single department
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/api/department/{department_id}', 'DepartmentApi@getDepartmentById')->middleware('jwt.auth');
+/**
+ * GET departmentsGet
+ * Summary: departments List
+ * Notes: The department endpoint returns multiple department requested given the parameters injected.  
+
+ */
+Route::GET('/api/departments', 'DepartmentApi@departmentsGet')->middleware('jwt.auth');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * POST addRight
+ * Summary: Add a new right
+ * Notes: new right
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/api/right', 'RightsApi@addRight')->middleware('jwt.auth');
+/**
+ * PUT updateRight
+ * Summary: Update an existing right
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/api/right', 'RightsApi@updateRight')->middleware('jwt.auth');
+/**
+ * DELETE deleteRight
+ * Summary: Deletes an right
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/api/right/{right_id}', 'RightsApi@deleteRight')->middleware('jwt.auth');
+/**
+ * GET getRightById
+ * Summary: Find right by ID
+ * Notes: Returns a single right
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/api/right/{right_id}', 'RightsApi@getRightById')->middleware('jwt.auth');
+/**
+ * GET rightsGet
+ * Summary: rights List
+ * Notes: The right endpoint returns multiple right requested given the parameters injected.  
+
+ */
+Route::GET('/api/rights', 'RightsApi@rightsGet')->middleware('jwt.auth');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * POST addRole
+ * Summary: Add a new role
+ * Notes: new role
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/api/role', 'RolesApi@addRole')->middleware('jwt.auth');
+/**
+ * PUT updateRole
+ * Summary: Update an existing role
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/api/role', 'RolesApi@updateRole')->middleware('jwt.auth');
+/**
+ * DELETE deleteRole
+ * Summary: Deletes an role
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/api/role/{role_id}', 'RolesApi@deleteRole')->middleware('jwt.auth');
+/**
+ * GET getRoleById
+ * Summary: Find role by ID
+ * Notes: Returns a single role
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/api/role/{role_id}', 'RolesApi@getRoleById')->middleware('jwt.auth');
+/**
+ * GET rolesGet
+ * Summary: roles List
+ * Notes: The role endpoint returns multiple role requested given the parameters injected.  
+
+ */
+Route::GET('/api/roles', 'RolesApi@rolesGet')->middleware('jwt.auth');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * POST addStaff
+ * Summary: Add a new staff
+ * Notes: new staff
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/api/staff', 'StaffApi@addStaff')->middleware('jwt.auth');
+/**
+ * PUT updateStaff
+ * Summary: Update an existing staff
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/api/staff', 'StaffApi@updateStaff')->middleware('jwt.auth');
+/**
+ * DELETE deleteStaff
+ * Summary: Deletes an staff
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/api/staff/{staff_id}', 'StaffApi@deleteStaff')->middleware('jwt.auth');
+/**
+ * GET getStaffById
+ * Summary: Find staff by ID
+ * Notes: Returns a single staff
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/api/staff/{staff_id}', 'StaffApi@getStaffById')->middleware('jwt.auth');
+/**
+ * GET staffsGet
+ * Summary: staffs List
+ * Notes: The staff endpoint returns multiple staff requested given the parameters injected.  
+
+ */
+Route::GET('/api/staffs', 'StaffApi@staffsGet')->middleware('jwt.auth');
+

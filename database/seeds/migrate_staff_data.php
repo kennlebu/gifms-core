@@ -39,7 +39,7 @@ class migrate_staff_data extends Seeder
 
             $data_to_migrate[$key]['username']                  = $data[$key]['UserName'];
             $data_to_migrate[$key]['email']                     = $data[$key]['email'];
-            $data_to_migrate[$key]['security_group']            = $data[$key]['SecurityGroup'];
+            $data_to_migrate[$key]['security_group_id']         = $data[$key]['SecurityGroup'];
             $data_to_migrate[$key]['password']                  = bcrypt('secret');
 
             $data_to_migrate[$key]['f_name']					= $data[$key]['FirstName'];
@@ -49,7 +49,7 @@ class migrate_staff_data extends Seeder
             $data_to_migrate[$key]['mpesa_no']					= $data[$key]['Mobile'];
             $data_to_migrate[$key]['bank_account']				= $data[$key]['BankAccount'];
             $data_to_migrate[$key]['cheque_addressee']			= $data[$key]['ChequeAddressee'];
-            $data_to_migrate[$key]['payment_mode']				= $data[$key]['PaymentMode'];
+            $data_to_migrate[$key]['payment_mode_id']			= $data[$key]['PaymentMode'];
             $data_to_migrate[$key]['station']                   = $data[$key]['Station'];
             $data_to_migrate[$key]['swift_code']                = $data[$key]['SWIFTCode'];
             $data_to_migrate[$key]['active']                    = $data[$key]['Active'];
