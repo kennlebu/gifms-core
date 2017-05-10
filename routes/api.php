@@ -728,3 +728,447 @@ Route::GET('/api/staff/{staff_id}', 'StaffApi@getStaffById')->middleware('jwt.au
  */
 Route::GET('/api/staffs', 'StaffApi@staffsGet')->middleware('jwt.auth');
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * POST addProject
+ * Summary: Add a new project
+ * Notes: new project
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/api/project', 'ProjectApi@addProject')->middleware('jwt.auth');
+/**
+ * PUT updateProject
+ * Summary: Update an existing project
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/api/project', 'ProjectApi@updateProject')->middleware('jwt.auth');
+/**
+ * DELETE deleteProject
+ * Summary: Deletes an project
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/api/project/{project_id}', 'ProjectApi@deleteProject')->middleware('jwt.auth');
+/**
+ * GET getProjectById
+ * Summary: Find project by ID
+ * Notes: Returns a single project
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/api/project/{project_id}', 'ProjectApi@getProjectById')->middleware('jwt.auth');
+/**
+ * GET projectsGet
+ * Summary: projects List
+ * Notes: The project endpoint returns multiple project requested given the parameters injected.  
+
+ */
+Route::GET('/api/projects', 'ProjectApi@projectsGet')->middleware('jwt.auth');
+/**
+ * GET projectActivitiesGet
+ * Summary: project_activities List
+ * Notes: The project_activity endpoint returns multiple project_activity requested given the parameters injected.  
+
+ */
+Route::GET('/api/project_activities', 'ProjectActivityApi@projectActivitiesGet')->middleware('jwt.auth');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * POST addProjectActivity
+ * Summary: Add a new project_activity
+ * Notes: new project_activity
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/api/project_activity', 'ProjectActivityApi@addProjectActivity')->middleware('jwt.auth');
+/**
+ * PUT updateProjectActivity
+ * Summary: Update an existing project_activity
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/api/project_activity', 'ProjectActivityApi@updateProjectActivity')->middleware('jwt.auth');
+/**
+ * DELETE deleteProjectActivity
+ * Summary: Deletes an project_activity
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/api/project_activity/{project_activity_id}', 'ProjectActivityApi@deleteProjectActivity')->middleware('jwt.auth');
+/**
+ * GET getProjectActivityById
+ * Summary: Find project_activity by ID
+ * Notes: Returns a single project_activity
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/api/project_activity/{project_activity_id}', 'ProjectActivityApi@getProjectActivityById')->middleware('jwt.auth');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * POST addProjectBudgetAccount
+ * Summary: Add a new project_budget_account
+ * Notes: new project_budget_account
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/api/project_budget_account', 'ProjectBudgetAccountApi@addProjectBudgetAccount')->middleware('jwt.auth');
+/**
+ * PUT updateProjectBudgetAccount
+ * Summary: Update an existing project_budget_account
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/api/project_budget_account', 'ProjectBudgetAccountApi@updateProjectBudgetAccount')->middleware('jwt.auth');
+/**
+ * DELETE deleteProjectBudgetAccount
+ * Summary: Deletes an project_budget_account
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/api/project_budget_account/{project_budget_account_id}', 'ProjectBudgetAccountApi@deleteProjectBudgetAccount')->middleware('jwt.auth');
+/**
+ * GET getProjectBudgetAccountById
+ * Summary: Find project_budget_account by ID
+ * Notes: Returns a single project_budget_account
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/api/project_budget_account/{project_budget_account_id}', 'ProjectBudgetAccountApi@getProjectBudgetAccountById')->middleware('jwt.auth');
+/**
+ * GET projectBudgetAccountsGet
+ * Summary: project_budget_accounts List
+ * Notes: The project_budget_account endpoint returns multiple project_budget_account requested given the parameters injected.  
+
+ */
+Route::GET('/api/project_budget_accounts', 'ProjectBudgetAccountApi@projectBudgetAccountsGet')->middleware('jwt.auth');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * POST addProjectCashNeeds
+ * Summary: Add a new project_cash_needs
+ * Notes: new project_cash_needs
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/api/project_cash_needs', 'ProjectCashNeedsApi@addProjectCashNeeds')->middleware('jwt.auth');
+/**
+ * PUT updateProjectCashNeeds
+ * Summary: Update an existing project_cash_needs
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/api/project_cash_needs', 'ProjectCashNeedsApi@updateProjectCashNeeds')->middleware('jwt.auth');
+/**
+ * DELETE deleteProjectCashNeeds
+ * Summary: Deletes an project_cash_needs
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/api/project_cash_needs/{project_cash_needs_id}', 'ProjectCashNeedsApi@deleteProjectCashNeeds')->middleware('jwt.auth');
+/**
+ * GET getProjectCashNeedsById
+ * Summary: Find project_cash_needs by ID
+ * Notes: Returns a single project_cash_needs
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/api/project_cash_needs/{project_cash_needs_id}', 'ProjectCashNeedsApi@getProjectCashNeedsById')->middleware('jwt.auth');
+/**
+ * GET projectCashNeedssGet
+ * Summary: project_cash_needss List
+ * Notes: The project_cash_needs endpoint returns multiple project_cash_needs requested given the parameters injected.  
+
+ */
+Route::GET('/api/project_cash_needss', 'ProjectCashNeedsApi@projectCashNeedssGet')->middleware('jwt.auth');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * POST addProjectMasterList
+ * Summary: Add a new project_master_list
+ * Notes: new project_master_list
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/api/project_master_list', 'ProjectMasterListApi@addProjectMasterList')->middleware('jwt.auth');
+/**
+ * PUT updateProjectMasterList
+ * Summary: Update an existing project_master_list
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/api/project_master_list', 'ProjectMasterListApi@updateProjectMasterList')->middleware('jwt.auth');
+/**
+ * DELETE deleteProjectMasterList
+ * Summary: Deletes an project_master_list
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/api/project_master_list/{project_master_list_id}', 'ProjectMasterListApi@deleteProjectMasterList')->middleware('jwt.auth');
+/**
+ * GET getProjectMasterListById
+ * Summary: Find project_master_list by ID
+ * Notes: Returns a single project_master_list
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/api/project_master_list/{project_master_list_id}', 'ProjectMasterListApi@getProjectMasterListById')->middleware('jwt.auth');
+/**
+ * GET projectMasterListsGet
+ * Summary: project_master_lists List
+ * Notes: The project_master_list endpoint returns multiple project_master_list requested given the parameters injected.  
+
+ */
+Route::GET('/api/project_master_lists', 'ProjectMasterListApi@projectMasterListsGet')->middleware('jwt.auth');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * POST addProjectObjective
+ * Summary: Add a new project_objective
+ * Notes: new project_objective
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/api/project_objective', 'ProjectObjectiveApi@addProjectObjective')->middleware('jwt.auth');
+/**
+ * PUT updateProjectObjective
+ * Summary: Update an existing project_objective
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/api/project_objective', 'ProjectObjectiveApi@updateProjectObjective')->middleware('jwt.auth');
+/**
+ * DELETE deleteProjectObjective
+ * Summary: Deletes an project_objective
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/api/project_objective/{project_objective_id}', 'ProjectObjectiveApi@deleteProjectObjective')->middleware('jwt.auth');
+/**
+ * GET getProjectObjectiveById
+ * Summary: Find project_objective by ID
+ * Notes: Returns a single project_objective
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/api/project_objective/{project_objective_id}', 'ProjectObjectiveApi@getProjectObjectiveById')->middleware('jwt.auth');
+/**
+ * GET projectObjectivesGet
+ * Summary: project_objectives List
+ * Notes: The project_objective endpoint returns multiple project_objective requested given the parameters injected.  
+
+ */
+Route::GET('/api/project_objectives', 'ProjectObjectiveApi@projectObjectivesGet')->middleware('jwt.auth');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * POST addProjectTeam
+ * Summary: Add a new project_team
+ * Notes: new project_team
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/api/project_team', 'ProjectTeamApi@addProjectTeam')->middleware('jwt.auth');
+/**
+ * PUT updateProjectTeam
+ * Summary: Update an existing project_team
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/api/project_team', 'ProjectTeamApi@updateProjectTeam')->middleware('jwt.auth');
+/**
+ * DELETE deleteProjectTeam
+ * Summary: Deletes an project_team
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/api/project_team/{project_team_id}', 'ProjectTeamApi@deleteProjectTeam')->middleware('jwt.auth');
+/**
+ * GET getProjectTeamById
+ * Summary: Find project_team by ID
+ * Notes: Returns a single project_team
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/api/project_team/{project_team_id}', 'ProjectTeamApi@getProjectTeamById')->middleware('jwt.auth');
+/**
+ * GET projectTeamsGet
+ * Summary: project_teams List
+ * Notes: The project_team endpoint returns multiple project_team requested given the parameters injected.  
+
+ */
+Route::GET('/api/project_teams', 'ProjectTeamApi@projectTeamsGet')->middleware('jwt.auth');
+
