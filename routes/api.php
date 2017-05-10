@@ -1172,3 +1172,161 @@ Route::GET('/api/project_team/{project_team_id}', 'ProjectTeamApi@getProjectTeam
  */
 Route::GET('/api/project_teams', 'ProjectTeamApi@projectTeamsGet')->middleware('jwt.auth');
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * POST addSupplier
+ * Summary: Add a new supplier
+ * Notes: new supplier
+ * Output-Formats: [application/json, application/xml]
+ */
+$app->POST('/api/supplier', 'SupplierApi@addSupplier');
+/**
+ * PUT updateSupplier
+ * Summary: Update an existing supplier
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+$app->PUT('/api/supplier', 'SupplierApi@updateSupplier');
+/**
+ * DELETE deleteSupplier
+ * Summary: Deletes an supplier
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+$app->DELETE('/api/supplier/{supplier_id}', 'SupplierApi@deleteSupplier');
+/**
+ * GET getSupplierById
+ * Summary: Find supplier by ID
+ * Notes: Returns a single supplier
+ * Output-Formats: [application/json, application/xml]
+ */
+$app->GET('/api/supplier/{supplier_id}', 'SupplierApi@getSupplierById');
+/**
+ * GET suppliersGet
+ * Summary: suppliers List
+ * Notes: The supplier endpoint returns multiple supplier requested given the parameters injected.  
+
+ */
+$app->GET('/api/suppliers', 'SupplierApi@suppliersGet');
+/**
+ * POST addSupplierRate
+ * Summary: Add a new supplier_rate
+ * Notes: new supplier_rate
+ * Output-Formats: [application/json, application/xml]
+ */
+$app->POST('/api/supplier_rate', 'SupplierRateApi@addSupplierRate');
+/**
+ * PUT updateSupplierRate
+ * Summary: Update an existing supplier_rate
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+$app->PUT('/api/supplier_rate', 'SupplierRateApi@updateSupplierRate');
+/**
+ * DELETE deleteSupplierRate
+ * Summary: Deletes an supplier_rate
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+$app->DELETE('/api/supplier_rate/{supplier_rate_id}', 'SupplierRateApi@deleteSupplierRate');
+/**
+ * GET getSupplierRateById
+ * Summary: Find supplier_rate by ID
+ * Notes: Returns a single supplier_rate
+ * Output-Formats: [application/json, application/xml]
+ */
+$app->GET('/api/supplier_rate/{supplier_rate_id}', 'SupplierRateApi@getSupplierRateById');
+/**
+ * GET supplierRatesGet
+ * Summary: supplier_rates List
+ * Notes: The supplier_rate endpoint returns multiple supplier_rate requested given the parameters injected.  
+
+ */
+$app->GET('/api/supplier_rates', 'SupplierRateApi@supplierRatesGet');
+/**
+ * GET supplyCategoriesGet
+ * Summary: supply_categories List
+ * Notes: The supply_category endpoint returns multiple supply_category requested given the parameters injected.  
+
+ */
+$app->GET('/api/supply_categories', 'SupplyCategoryApi@supplyCategoriesGet');
+/**
+ * POST addSupplyCategory
+ * Summary: Add a new supply_category
+ * Notes: new supply_category
+ * Output-Formats: [application/json, application/xml]
+ */
+$app->POST('/api/supply_category', 'SupplyCategoryApi@addSupplyCategory');
+/**
+ * PUT updateSupplyCategory
+ * Summary: Update an existing supply_category
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+$app->PUT('/api/supply_category', 'SupplyCategoryApi@updateSupplyCategory');
+/**
+ * DELETE deleteSupplyCategory
+ * Summary: Deletes an supply_category
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+$app->DELETE('/api/supply_category/{supply_category_id}', 'SupplyCategoryApi@deleteSupplyCategory');
+/**
+ * GET getSupplyCategoryById
+ * Summary: Find supply_category by ID
+ * Notes: Returns a single supply_category
+ * Output-Formats: [application/json, application/xml]
+ */
+$app->GET('/api/supply_category/{supply_category_id}', 'SupplyCategoryApi@getSupplyCategoryById');
+/**
+ * POST addSupplyCategoryItem
+ * Summary: Add a new supply_category_item
+ * Notes: new supply_category_item
+ * Output-Formats: [application/json, application/xml]
+ */
+$app->POST('/api/supply_category_item', 'SupplyCategoryItemApi@addSupplyCategoryItem');
+/**
+ * PUT updateSupplyCategoryItem
+ * Summary: Update an existing supply_category_item
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+$app->PUT('/api/supply_category_item', 'SupplyCategoryItemApi@updateSupplyCategoryItem');
+/**
+ * DELETE deleteSupplyCategoryItem
+ * Summary: Deletes an supply_category_item
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+$app->DELETE('/api/supply_category_item/{supply_category_item_id}', 'SupplyCategoryItemApi@deleteSupplyCategoryItem');
+/**
+ * GET getSupplyCategoryItemById
+ * Summary: Find supply_category_item by ID
+ * Notes: Returns a single supply_category_item
+ * Output-Formats: [application/json, application/xml]
+ */
+$app->GET('/api/supply_category_item/{supply_category_item_id}', 'SupplyCategoryItemApi@getSupplyCategoryItemById');
+/**
+ * GET supplyCategoryItemsGet
+ * Summary: supply_category_items List
+ * Notes: The supply_category_item endpoint returns multiple supply_category_item requested given the parameters injected.  
+
+ */
+$app->GET('/api/supply_category_items', 'SupplyCategoryItemApi@supplyCategoryItemsGet');
+
