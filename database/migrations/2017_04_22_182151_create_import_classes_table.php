@@ -13,9 +13,15 @@ class CreateImportClassesTable extends Migration
      */
     public function up()
     {
-        Schema::create('import_classes', function (Blueprint $table) {
+        Schema::create('import_classes', function (Blueprint $table) {          
             $table->increments('id');
-            $table->timestamps();
+            $table->datetime('date_time')->nullable();
+            $table->string('status')->nullable();
+            $table->string('class_name')->nullable();
+            $table->integer('migration_id')->nullable();
+            $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
+            $table->softDeletes();
         });
     }
 

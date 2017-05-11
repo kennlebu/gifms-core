@@ -13,9 +13,13 @@ class CreateInflowsTable extends Migration
      */
     public function up()
     {
-        Schema::create('inflows', function (Blueprint $table) {
+        Schema::create('inflows', function (Blueprint $table) {          
             $table->increments('id');
-            $table->timestamps();
+            $table->string('recurr_period')->nullable();
+            $table->integer('migration_id')->nullable();
+            $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
+            $table->softDeletes();
         });
     }
 

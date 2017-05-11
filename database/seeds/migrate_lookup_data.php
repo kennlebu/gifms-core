@@ -468,5 +468,294 @@ class migrate_lookup_data extends Seeder
 
 
 
+
+
+
+
+
+
+
+
+
+
+        /**
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         *                  activation_types
+         * 
+         * 
+         * 
+         * 
+         * 
+         */
+
+        $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('ActivationTypes')->get();
+
+        $data_to_migrate=array();
+
+        foreach ($data as $key => $value) {
+
+            $data_to_migrate[$key]['activation_type']             = $data[$key]['ActivationType'];
+            $data_to_migrate[$key]['migration_id']              = $data[$key]['ID'];
+
+
+            echo "\n Activation Type-$key---";
+            echo $data[$key]['ActivationType'];
+        }
+        
+        DB::table('activation_types')->insert($data_to_migrate);
+        
+        echo "\n-----------------------------------------------------------------------------------------------------\n";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        /**
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         *                  clusters
+         * 
+         * 
+         * 
+         * 
+         * 
+         */
+
+        $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('Clusters')->get();
+
+        $data_to_migrate=array();
+
+        foreach ($data as $key => $value) {
+
+            $data_to_migrate[$key]['cluster_desc']                  = $data[$key]['Cluster'];
+            $data_to_migrate[$key]['strategic_group_id']            = $data[$key]['StrategicGroup'];
+            $data_to_migrate[$key]['migration_id']                  = $data[$key]['ID'];
+
+
+            echo "\n Clusters -$key---";
+            echo $data[$key]['Cluster'];
+        }
+        
+        DB::table('clusters')->insert($data_to_migrate);
+        
+        echo "\n-----------------------------------------------------------------------------------------------------\n";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        /**
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         *                  currencies
+         * 
+         * 
+         * 
+         * 
+         * 
+         */
+
+        $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('Currencys')->get();
+
+        $data_to_migrate=array();
+
+        foreach ($data as $key => $value) {
+
+            $data_to_migrate[$key]['currency_name']                 = $data[$key]['Currency'];
+            $data_to_migrate[$key]['default_currency']              = $data[$key]['DefaultCurrency'];
+            $data_to_migrate[$key]['migration_id']                  = $data[$key]['ID'];
+
+
+            echo "\n Currencies -$key---";
+            echo $data[$key]['Currency'];
+        }
+        
+        DB::table('currencies')->insert($data_to_migrate);
+        
+        echo "\n-----------------------------------------------------------------------------------------------------\n";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        /**
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         *                  import_classes
+         * 
+         * 
+         * 
+         * 
+         * 
+         */
+
+        $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('ImportClasses')->get();
+
+        $data_to_migrate=array();
+
+        foreach ($data as $key => $value) {
+
+            $data_to_migrate[$key]['date_time']                     = $data[$key]['Date/Time'];
+            $data_to_migrate[$key]['status']                        = $data[$key]['Status'];
+            $data_to_migrate[$key]['class_name']                    = $data[$key]['Class Name'];
+            $data_to_migrate[$key]['migration_id']                  = $key;
+
+
+            echo "\n Import Classes -$key---";
+            echo $data[$key]['Class Name'];
+        }
+        
+        DB::table('import_classes')->insert($data_to_migrate);
+        
+        echo "\n-----------------------------------------------------------------------------------------------------\n";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        /**
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         *                  import_vendors
+         * 
+         * 
+         * 
+         * 
+         * 
+         */
+
+        $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('ImportedVendors')->get();
+
+        $data_to_migrate=array();
+
+        foreach ($data as $key => $value) {
+
+            $data_to_migrate[$key]['date_time']                 = $data[$key]['Date/Time'];
+            $data_to_migrate[$key]['status']                 = $data[$key]['Status'];
+            $data_to_migrate[$key]['vendor_name']                 = $data[$key]['Vendor Name'];
+            $data_to_migrate[$key]['is_active']                 = $data[$key]['Is Active'];
+            $data_to_migrate[$key]['company_name']                 = $data[$key]['Company Name'];
+            $data_to_migrate[$key]['salutation']                 = $data[$key]['Salutation'];
+            $data_to_migrate[$key]['first_name']                 = $data[$key]['First Name'];
+            $data_to_migrate[$key]['m_i']                 = $data[$key]['M#I#'];
+            $data_to_migrate[$key]['last_name']                 = $data[$key]['Last Name'];
+            $data_to_migrate[$key]['contact']                 = $data[$key]['Contact'];
+            $data_to_migrate[$key]['phone']                 = $data[$key]['Phone'];
+            $data_to_migrate[$key]['fax']                 = $data[$key]['Fax'];
+            $data_to_migrate[$key]['alt_phone']                 = $data[$key]['Alt# Phone'];
+            $data_to_migrate[$key]['alt_contact']                 = $data[$key]['Alt# Contact'];
+            $data_to_migrate[$key]['email']                 = $data[$key]['Email'];
+            $data_to_migrate[$key]['print_on_check']                 = $data[$key]['Print on Check'];
+            $data_to_migrate[$key]['address_line_1']                 = $data[$key]['Address Line1'];
+            $data_to_migrate[$key]['address_line_2']                 = $data[$key]['Address Line2'];
+            $data_to_migrate[$key]['address_line_3']                 = $data[$key]['Address Line3'];
+            $data_to_migrate[$key]['address_line_4']                 = $data[$key]['Address Line4'];
+            $data_to_migrate[$key]['address_city']                 = $data[$key]['Address City'];
+            $data_to_migrate[$key]['address_state']                 = $data[$key]['Address State'];
+            $data_to_migrate[$key]['address_postal_code']             = $data[$key]['Address PostalCode'];
+            $data_to_migrate[$key]['address_country']                 = $data[$key]['Address Country'];
+            $data_to_migrate[$key]['vendor_type']                 = $data[$key]['Vendor Type'];
+            $data_to_migrate[$key]['terms']                 = $data[$key]['Terms'];
+            $data_to_migrate[$key]['tax_id']                 = $data[$key]['Tax ID'];
+            $data_to_migrate[$key]['eligible_for_1099']                 = $data[$key]['Eligible for 1099'];
+            $data_to_migrate[$key]['account_number']                 = $data[$key]['Account Number'];
+            $data_to_migrate[$key]['credit_limit']                 = $data[$key]['Credit Limit'];
+            $data_to_migrate[$key]['notes']                 = $data[$key]['Notes'];
+            $data_to_migrate[$key]['prefill_account']                 = $data[$key]['Prefill Account'];
+            $data_to_migrate[$key]['billing_rate']                 = $data[$key]['Billing Rate'];
+            $data_to_migrate[$key]['migration_id']                  = $key;
+
+
+            echo "\n Imported Vendors -$key---";
+            echo $data[$key]['Vendor Name'];
+        }
+        
+        DB::table('import_vendors')->insert($data_to_migrate);
+        
+        echo "\n-----------------------------------------------------------------------------------------------------\n";
+
+
+
+
+
+
+
+
+
+
+
     }
 }
