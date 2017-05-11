@@ -1195,35 +1195,35 @@ Route::GET('/project_teams', 'ProjectTeamApi@projectTeamsGet')->middleware('jwt.
  * Notes: new supplier
  * Output-Formats: [application/json, application/xml]
  */
-Route::POST('/supplier', 'SupplierApi@addSupplier')->middleware('jwt,auth');
+Route::POST('/supplier', 'SupplierApi@addSupplier')->middleware('jwt.auth');
 /**
  * PUT updateSupplier
  * Summary: Update an existing supplier
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::PUT('/supplier', 'SupplierApi@updateSupplier')->middleware('jwt,auth');
+Route::PUT('/supplier', 'SupplierApi@updateSupplier')->middleware('jwt.auth');
 /**
  * DELETE deleteSupplier
  * Summary: Deletes an supplier
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::DELETE('/supplier/{supplier_id}', 'SupplierApi@deleteSupplier')->middleware('jwt,auth');
+Route::DELETE('/supplier/{supplier_id}', 'SupplierApi@deleteSupplier')->middleware('jwt.auth');
 /**
  * GET getSupplierById
  * Summary: Find supplier by ID
  * Notes: Returns a single supplier
  * Output-Formats: [application/json, application/xml]
  */
-Route::GET('/supplier/{supplier_id}', 'SupplierApi@getSupplierById')->middleware('jwt,auth');
+Route::GET('/supplier/{supplier_id}', 'SupplierApi@getSupplierById')->middleware('jwt.auth');
 /**
  * GET suppliersGet
  * Summary: suppliers List
  * Notes: The supplier endpoint returns multiple supplier requested given the parameters injected.  
 
  */
-Route::GET('/suppliers', 'SupplierApi@suppliersGet')->middleware('jwt,auth');
+Route::GET('/suppliers', 'SupplierApi@suppliersGet')->middleware('jwt.auth');
 
 
 
@@ -1263,35 +1263,35 @@ Route::GET('/suppliers', 'SupplierApi@suppliersGet')->middleware('jwt,auth');
  * Notes: new supplier_rate
  * Output-Formats: [application/json, application/xml]
  */
-Route::POST('/supplier_rate', 'SupplierRateApi@addSupplierRate')->middleware('jwt,auth');
+Route::POST('/supplier_rate', 'SupplierRateApi@addSupplierRate')->middleware('jwt.auth');
 /**
  * PUT updateSupplierRate
  * Summary: Update an existing supplier_rate
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::PUT('/supplier_rate', 'SupplierRateApi@updateSupplierRate')->middleware('jwt,auth');
+Route::PUT('/supplier_rate', 'SupplierRateApi@updateSupplierRate')->middleware('jwt.auth');
 /**
  * DELETE deleteSupplierRate
  * Summary: Deletes an supplier_rate
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::DELETE('/supplier_rate/{supplier_rate_id}', 'SupplierRateApi@deleteSupplierRate')->middleware('jwt,auth');
+Route::DELETE('/supplier_rate/{supplier_rate_id}', 'SupplierRateApi@deleteSupplierRate')->middleware('jwt.auth');
 /**
  * GET getSupplierRateById
  * Summary: Find supplier_rate by ID
  * Notes: Returns a single supplier_rate
  * Output-Formats: [application/json, application/xml]
  */
-Route::GET('/supplier_rate/{supplier_rate_id}', 'SupplierRateApi@getSupplierRateById')->middleware('jwt,auth');
+Route::GET('/supplier_rate/{supplier_rate_id}', 'SupplierRateApi@getSupplierRateById')->middleware('jwt.auth');
 /**
  * GET supplierRatesGet
  * Summary: supplier_rates List
  * Notes: The supplier_rate endpoint returns multiple supplier_rate requested given the parameters injected.  
 
  */
-Route::GET('/supplier_rates', 'SupplierRateApi@supplierRatesGet')->middleware('jwt,auth');
+Route::GET('/supplier_rates', 'SupplierRateApi@supplierRatesGet')->middleware('jwt.auth');
 
 
 
@@ -1336,35 +1336,35 @@ Route::GET('/supplier_rates', 'SupplierRateApi@supplierRatesGet')->middleware('j
  * Notes: The supply_category endpoint returns multiple supply_category requested given the parameters injected.  
 
  */
-Route::GET('/supply_categories', 'SupplyCategoryApi@supplyCategoriesGet')->middleware('jwt,auth');
+Route::GET('/supply_categories', 'SupplyCategoryApi@supplyCategoriesGet')->middleware('jwt.auth');
 /**
  * POST addSupplyCategory
  * Summary: Add a new supply_category
  * Notes: new supply_category
  * Output-Formats: [application/json, application/xml]
  */
-Route::POST('/supply_category', 'SupplyCategoryApi@addSupplyCategory')->middleware('jwt,auth');
+Route::POST('/supply_category', 'SupplyCategoryApi@addSupplyCategory')->middleware('jwt.auth');
 /**
  * PUT updateSupplyCategory
  * Summary: Update an existing supply_category
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::PUT('/supply_category', 'SupplyCategoryApi@updateSupplyCategory')->middleware('jwt,auth');
+Route::PUT('/supply_category', 'SupplyCategoryApi@updateSupplyCategory')->middleware('jwt.auth');
 /**
  * DELETE deleteSupplyCategory
  * Summary: Deletes an supply_category
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::DELETE('/supply_category/{supply_category_id}', 'SupplyCategoryApi@deleteSupplyCategory')->middleware('jwt,auth');
+Route::DELETE('/supply_category/{supply_category_id}', 'SupplyCategoryApi@deleteSupplyCategory')->middleware('jwt.auth');
 /**
  * GET getSupplyCategoryById
  * Summary: Find supply_category by ID
  * Notes: Returns a single supply_category
  * Output-Formats: [application/json, application/xml]
  */
-Route::GET('/supply_category/{supply_category_id}', 'SupplyCategoryApi@getSupplyCategoryById')->middleware('jwt,auth');
+Route::GET('/supply_category/{supply_category_id}', 'SupplyCategoryApi@getSupplyCategoryById')->middleware('jwt.auth');
 
 
 
@@ -1404,35 +1404,35 @@ Route::GET('/supply_category/{supply_category_id}', 'SupplyCategoryApi@getSupply
  * Notes: new supply_category_item
  * Output-Formats: [application/json, application/xml]
  */
-Route::POST('/supply_category_item', 'SupplyCategoryItemApi@addSupplyCategoryItem')->middleware('jwt,auth');
+Route::POST('/supply_category_item', 'SupplyCategoryItemApi@addSupplyCategoryItem')->middleware('jwt.auth');
 /**
  * PUT updateSupplyCategoryItem
  * Summary: Update an existing supply_category_item
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::PUT('/supply_category_item', 'SupplyCategoryItemApi@updateSupplyCategoryItem')->middleware('jwt,auth');
+Route::PUT('/supply_category_item', 'SupplyCategoryItemApi@updateSupplyCategoryItem')->middleware('jwt.auth');
 /**
  * DELETE deleteSupplyCategoryItem
  * Summary: Deletes an supply_category_item
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::DELETE('/supply_category_item/{supply_category_item_id}', 'SupplyCategoryItemApi@deleteSupplyCategoryItem')->middleware('jwt,auth');
+Route::DELETE('/supply_category_item/{supply_category_item_id}', 'SupplyCategoryItemApi@deleteSupplyCategoryItem')->middleware('jwt.auth');
 /**
  * GET getSupplyCategoryItemById
  * Summary: Find supply_category_item by ID
  * Notes: Returns a single supply_category_item
  * Output-Formats: [application/json, application/xml]
  */
-Route::GET('/supply_category_item/{supply_category_item_id}', 'SupplyCategoryItemApi@getSupplyCategoryItemById')->middleware('jwt,auth');
+Route::GET('/supply_category_item/{supply_category_item_id}', 'SupplyCategoryItemApi@getSupplyCategoryItemById')->middleware('jwt.auth');
 /**
  * GET supplyCategoryItemsGet
  * Summary: supply_category_items List
  * Notes: The supply_category_item endpoint returns multiple supply_category_item requested given the parameters injected.  
 
  */
-Route::GET('/supply_category_items', 'SupplyCategoryItemApi@supplyCategoryItemsGet')->middleware('jwt,auth');
+Route::GET('/supply_category_items', 'SupplyCategoryItemApi@supplyCategoryItemsGet')->middleware('jwt.auth');
 
 
 
@@ -1466,33 +1466,33 @@ Route::GET('/supply_category_items', 'SupplyCategoryItemApi@supplyCategoryItemsG
  * Notes: The currency endpoint returns multiple currency requested given the parameters injected.  
 
  */
-Route::GET('/currencies', 'CurrencyApi@currenciesGet')->middleware('jwt,auth');
+Route::GET('/currencies', 'CurrencyApi@currenciesGet')->middleware('jwt.auth');
 /**
  * POST addCurrency
  * Summary: Add a new currency
  * Notes: new currency
  * Output-Formats: [application/json, application/xml]
  */
-Route::POST('/currency', 'CurrencyApi@addCurrency')->middleware('jwt,auth');
+Route::POST('/currency', 'CurrencyApi@addCurrency')->middleware('jwt.auth');
 /**
  * PUT updateCurrency
  * Summary: Update an existing currency
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::PUT('/currency', 'CurrencyApi@updateCurrency')->middleware('jwt,auth');
+Route::PUT('/currency', 'CurrencyApi@updateCurrency')->middleware('jwt.auth');
 /**
  * DELETE deleteCurrency
  * Summary: Deletes an currency
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::DELETE('/currency/{currency_id}', 'CurrencyApi@deleteCurrency')->middleware('jwt,auth');
+Route::DELETE('/currency/{currency_id}', 'CurrencyApi@deleteCurrency')->middleware('jwt.auth');
 /**
  * GET getCurrencyById
  * Summary: Find currency by ID
  * Notes: Returns a single currency
  * Output-Formats: [application/json, application/xml]
  */
-Route::GET('/currency/{currency_id}', 'CurrencyApi@getCurrencyById')->middleware('jwt,auth');
+Route::GET('/currency/{currency_id}', 'CurrencyApi@getCurrencyById')->middleware('jwt.auth');
 
