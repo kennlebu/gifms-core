@@ -226,6 +226,66 @@ class migrate_suppliers_data extends Seeder
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        /**
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         *                  category_suppliers
+         * 
+         * 
+         * 
+         * 
+         * 
+         */
+
+        $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('CategorySuppliers')->get();
+
+        $data_to_migrate=array();
+
+        foreach ($data as $key => $value) {
+
+            $data_to_migrate[$key]['migration_category_id']         = $data[$key]['Category'];
+            $data_to_migrate[$key]['migration_supplier_id']         = $data[$key]['Supplier'];
+            $data_to_migrate[$key]['migration_id']                  = $key;
+
+
+            echo "\n SupplyCategories -$key---";
+            echo $data[$key]['Category'];
+        }
+        
+        DB::table('category_suppliers')->insert($data_to_migrate);
+        
+        echo "\n-----------------------------------------------------------------------------------------------------\n";
+
+
+
+
+
+
+
     }
 
 

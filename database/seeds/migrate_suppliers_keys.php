@@ -100,7 +100,7 @@ class migrate_suppliers_keys extends Seeder
 
 
 
-    	/**
+        /**
          * 
          * 
          * 
@@ -129,6 +129,61 @@ class migrate_suppliers_keys extends Seeder
         DB::statement($migrate_keys_sql);
 
        echo "\n __________Migrated supplier_rates Foreign keys ---------- supply_category_items \n";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        /**
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         *                  category_suppliers
+         * 
+         * 
+         * 
+         * 
+         * 
+         */
+
+
+
+
+        $migrate_keys_sql = "
+                                UPDATE category_suppliers cs 
+                                    LEFT JOIN supply_categories sc 
+                                    ON sc.migration_id = cs.migration_category_id
+                                    LEFT JOIN suppliers s 
+                                    ON s.migration_id = cs.migration_category_id
+
+                                    SET     cs.category_id         =   sc.id ,
+                                            cs.supplier_id              =   s.id 
+                             ";
+
+        DB::statement($migrate_keys_sql);
+
+       echo "\n __________Migrated category_suppliers Foreign keys ---------- supply_categories, suppliers\n";
 
 
 
