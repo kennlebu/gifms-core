@@ -16,6 +16,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Request;
+use App\Models\LookupModels\Currency;
 
 class CurrencyApi extends Controller
 {
@@ -40,12 +41,10 @@ class CurrencyApi extends Controller
 
         //path params validation
 
+         $response = Currency::all();
 
-        //not path params validation
-        $currency_id = $input['currency_id'];
+          return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
 
-
-        return response('How about implementing currenciesGet as a GET method ?');
     }
     /**
      * Operation addCurrency
