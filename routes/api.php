@@ -187,35 +187,35 @@ Route::GET('/lpo_statuses', 'LPOStatusApi@lpoStatusesGet')->middleware('jwt.auth
  * Notes: new lpo quotaion
  * Output-Formats: [application/json, application/xml]
  */
-Route::POST('/api/lpo_quotation', 'LPOQuotationApi@addLpoQuotation')->middleware('jwt.auth');
+Route::POST('/lpo_quotation', 'LPOQuotationApi@addLpoQuotation')->middleware('jwt.auth');
 /**
  * PUT updateLpoQuotation
  * Summary: Update an existing LPO Quotation
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::PUT('/api/lpo_quotation', 'LPOQuotationApi@updateLpoQuotation')->middleware('jwt.auth');
+Route::PUT('/lpo_quotation', 'LPOQuotationApi@updateLpoQuotation')->middleware('jwt.auth');
 /**
  * DELETE deleteLpoQuotation
  * Summary: Deletes an lpo_quotation
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::DELETE('/api/lpo_quotation/{lpo_quotation_id}', 'LPOQuotationApi@deleteLpoQuotation')->middleware('jwt.auth');
+Route::DELETE('/lpo_quotation/{lpo_quotation_id}', 'LPOQuotationApi@deleteLpoQuotation')->middleware('jwt.auth');
 /**
  * GET getLpoQuotationById
  * Summary: Find lpo quotation by ID
  * Notes: Returns a single lpo quotation
  * Output-Formats: [application/json, application/xml]
  */
-Route::GET('/api/lpo_quotation/{lpo_quotation_id}', 'LPOQuotationApi@getLpoQuotationById')->middleware('jwt.auth');
+Route::GET('/lpo_quotation/{lpo_quotation_id}', 'LPOQuotationApi@getLpoQuotationById')->middleware('jwt.auth');
 /**
  * GET lpoQuotationsGet
  * Summary: lpo quotations List
  * Notes: The Lpo Quotations endpoint returns information about the LPO Quotation requested given the parameters injected.  
 
  */
-Route::GET('/api/lpo_quotations', 'LPOQuotationApi@lpoQuotationsGet')->middleware('jwt.auth');
+Route::GET('/lpo_quotations', 'LPOQuotationApi@lpoQuotationsGet')->middleware('jwt.auth');
 
 
 
@@ -244,35 +244,35 @@ Route::GET('/api/lpo_quotations', 'LPOQuotationApi@lpoQuotationsGet')->middlewar
  * Notes: new lpo item
  * Output-Formats: [application/json, application/xml]
  */
-Route::POST('/api/lpo_item', 'LPOItemApi@addLpoItem')->middleware('jwt.auth');
+Route::POST('/lpo_item', 'LPOItemApi@addLpoItem')->middleware('jwt.auth');
 /**
  * PUT updateLpoItem
  * Summary: Update an existing LPO Item
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::PUT('/api/lpo_item', 'LPOItemApi@updateLpoItem')->middleware('jwt.auth');
+Route::PUT('/lpo_item', 'LPOItemApi@updateLpoItem')->middleware('jwt.auth');
 /**
  * DELETE deleteLpoItem
  * Summary: Deletes an lpo_item
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::DELETE('/api/lpo_item/{lpo_item_id}', 'LPOItemApi@deleteLpoItem')->middleware('jwt.auth');
+Route::DELETE('/lpo_item/{lpo_item_id}', 'LPOItemApi@deleteLpoItem')->middleware('jwt.auth');
 /**
  * GET getLpoItemById
  * Summary: Find lpo item by ID
  * Notes: Returns a single lpo item
  * Output-Formats: [application/json, application/xml]
  */
-Route::GET('/api/lpo_item/{lpo_item_id}', 'LPOItemApi@getLpoItemById')->middleware('jwt.auth');
+Route::GET('/lpo_item/{lpo_item_id}', 'LPOItemApi@getLpoItemById')->middleware('jwt.auth');
 /**
  * GET lpoItemsGet
  * Summary: lpo items List
  * Notes: The Lpo Items endpoint returns information about the LPO Item requested given the parameters injected.  
 
  */
-Route::GET('/api/lpo_items', 'LPOItemApi@lpoItemsGet')->middleware('jwt.auth');
+Route::GET('/lpo_items', 'LPOItemApi@lpoItemsGet')->middleware('jwt.auth');
 
 
 
@@ -309,35 +309,35 @@ Route::GET('/api/lpo_items', 'LPOItemApi@lpoItemsGet')->middleware('jwt.auth');
  * Notes: new lpo term
  * Output-Formats: [application/json, application/xml]
  */
-Route::POST('/api/lpo_term', 'LPOTermApi@addLpoTerm')->middleware('jwt.auth');
+Route::POST('/lpo_term', 'LPOTermApi@addLpoTerm')->middleware('jwt.auth');
 /**
  * PUT updateLpoTerm
  * Summary: Update an existing LPO Term
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::PUT('/api/lpo_term', 'LPOTermApi@updateLpoTerm')->middleware('jwt.auth');
+Route::PUT('/lpo_term', 'LPOTermApi@updateLpoTerm')->middleware('jwt.auth');
 /**
  * DELETE deleteLpoTerm
  * Summary: Deletes an lpo_term
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::DELETE('/api/lpo_term/{lpo_term_id}', 'LPOTermApi@deleteLpoTerm')->middleware('jwt.auth');
+Route::DELETE('/lpo_term/{lpo_term_id}', 'LPOTermApi@deleteLpoTerm')->middleware('jwt.auth');
 /**
  * GET getLpoTermById
  * Summary: Find lpo term by ID
  * Notes: Returns a single lpo term
  * Output-Formats: [application/json, application/xml]
  */
-Route::GET('/api/lpo_term/{lpo_term_id}', 'LPOTermApi@getLpoTermById')->middleware('jwt.auth');
+Route::GET('/lpo_term/{lpo_term_id}', 'LPOTermApi@getLpoTermById')->middleware('jwt.auth');
 /**
  * GET lpoTermsGet
  * Summary: lpo terms List
  * Notes: The Lpo Terms endpoint returns information about the LPO Term requested given the parameters injected.  
 
  */
-Route::GET('/api/lpo_terms', 'LPOTermApi@lpoTermsGet')->middleware('jwt.auth');
+Route::GET('/lpo_terms', 'LPOTermApi@lpoTermsGet')->middleware('jwt.auth');
 
 
 
@@ -378,35 +378,35 @@ Route::GET('/api/lpo_terms', 'LPOTermApi@lpoTermsGet')->middleware('jwt.auth');
  * Notes: new lpo comment
  * Output-Formats: [application/json, application/xml]
  */
-Route::POST('/api/lpo_comment', 'LPOCommentApi@addLpoComment')->middleware('jwt.auth');
+Route::POST('/lpo_comment', 'LPOCommentApi@addLpoComment')->middleware('jwt.auth');
 /**
  * PUT updateLpoComment
  * Summary: Update an existing LPO Comment
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::PUT('/api/lpo_comment', 'LPOCommentApi@updateLpoComment')->middleware('jwt.auth');
+Route::PUT('/lpo_comment', 'LPOCommentApi@updateLpoComment')->middleware('jwt.auth');
 /**
  * DELETE deleteLpoComment
  * Summary: Deletes an lpo_comment
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::DELETE('/api/lpo_comment/{lpo_comment_id}', 'LPOCommentApi@deleteLpoComment')->middleware('jwt.auth');
+Route::DELETE('/lpo_comment/{lpo_comment_id}', 'LPOCommentApi@deleteLpoComment')->middleware('jwt.auth');
 /**
  * GET getLpoCommentById
  * Summary: Find lpo comment by ID
  * Notes: Returns a single lpo comment
  * Output-Formats: [application/json, application/xml]
  */
-Route::GET('/api/lpo_comment/{lpo_comment_id}', 'LPOCommentApi@getLpoCommentById')->middleware('jwt.auth');
+Route::GET('/lpo_comment/{lpo_comment_id}', 'LPOCommentApi@getLpoCommentById')->middleware('jwt.auth');
 /**
  * GET lpoCommentsGet
  * Summary: lpo comments List
  * Notes: The Lpo Comments endpoint returns information about the LPO Comment requested given the parameters injected.  
 
  */
-Route::GET('/api/lpo_comments', 'LPOCommentApi@lpoCommentsGet')->middleware('jwt.auth');
+Route::GET('/lpo_comments', 'LPOCommentApi@lpoCommentsGet')->middleware('jwt.auth');
 
 
 
@@ -437,35 +437,35 @@ Route::GET('/api/lpo_comments', 'LPOCommentApi@lpoCommentsGet')->middleware('jwt
  * Notes: new lpo approval
  * Output-Formats: [application/json, application/xml]
  */
-Route::POST('/api/lpo_approval', 'LPOApprovalApi@addLpoApproval')->middleware('jwt.auth');
+Route::POST('/lpo_approval', 'LPOApprovalApi@addLpoApproval')->middleware('jwt.auth');
 /**
  * PUT updateLpoApproval
  * Summary: Update an existing LPO Approval
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::PUT('/api/lpo_approval', 'LPOApprovalApi@updateLpoApproval')->middleware('jwt.auth');
+Route::PUT('/lpo_approval', 'LPOApprovalApi@updateLpoApproval')->middleware('jwt.auth');
 /**
  * DELETE deleteLpoApproval
  * Summary: Deletes an lpo_approval
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::DELETE('/api/lpo_approval/{lpo_approval_id}', 'LPOApprovalApi@deleteLpoApproval')->middleware('jwt.auth');
+Route::DELETE('/lpo_approval/{lpo_approval_id}', 'LPOApprovalApi@deleteLpoApproval')->middleware('jwt.auth');
 /**
  * GET getLpoApprovalById
  * Summary: Find lpo approval by ID
  * Notes: Returns a single lpo approval
  * Output-Formats: [application/json, application/xml]
  */
-Route::GET('/api/lpo_approval/{lpo_approval_id}', 'LPOApprovalApi@getLpoApprovalById')->middleware('jwt.auth');
+Route::GET('/lpo_approval/{lpo_approval_id}', 'LPOApprovalApi@getLpoApprovalById')->middleware('jwt.auth');
 /**
  * GET lpoApprovalsGet
  * Summary: lpo approvals List
  * Notes: The Lpo Approvals endpoint returns information about the LPO Approval requested given the parameters injected.  
 
  */
-Route::GET('/api/lpo_approvals', 'LPOApprovalApi@lpoApprovalsGet')->middleware('jwt.auth');
+Route::GET('/lpo_approvals', 'LPOApprovalApi@lpoApprovalsGet')->middleware('jwt.auth');
 
 
 
@@ -497,35 +497,35 @@ Route::GET('/api/lpo_approvals', 'LPOApprovalApi@lpoApprovalsGet')->middleware('
  * Notes: new department
  * Output-Formats: [application/json, application/xml]
  */
-Route::POST('/api/department', 'DepartmentApi@addDepartment')->middleware('jwt.auth');
+Route::POST('/department', 'DepartmentApi@addDepartment')->middleware('jwt.auth');
 /**
  * PUT updateDepartment
  * Summary: Update an existing department
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::PUT('/api/department', 'DepartmentApi@updateDepartment')->middleware('jwt.auth');
+Route::PUT('/department', 'DepartmentApi@updateDepartment')->middleware('jwt.auth');
 /**
  * DELETE deleteDepartment
  * Summary: Deletes an department
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::DELETE('/api/department/{department_id}', 'DepartmentApi@deleteDepartment')->middleware('jwt.auth');
+Route::DELETE('/department/{department_id}', 'DepartmentApi@deleteDepartment')->middleware('jwt.auth');
 /**
  * GET getDepartmentById
  * Summary: Find department by ID
  * Notes: Returns a single department
  * Output-Formats: [application/json, application/xml]
  */
-Route::GET('/api/department/{department_id}', 'DepartmentApi@getDepartmentById')->middleware('jwt.auth');
+Route::GET('/department/{department_id}', 'DepartmentApi@getDepartmentById')->middleware('jwt.auth');
 /**
  * GET departmentsGet
  * Summary: departments List
  * Notes: The department endpoint returns multiple department requested given the parameters injected.  
 
  */
-Route::GET('/api/departments', 'DepartmentApi@departmentsGet')->middleware('jwt.auth');
+Route::GET('/departments', 'DepartmentApi@departmentsGet')->middleware('jwt.auth');
 
 
 
@@ -558,35 +558,35 @@ Route::GET('/api/departments', 'DepartmentApi@departmentsGet')->middleware('jwt.
  * Notes: new right
  * Output-Formats: [application/json, application/xml]
  */
-Route::POST('/api/right', 'RightsApi@addRight')->middleware('jwt.auth');
+Route::POST('/right', 'RightsApi@addRight')->middleware('jwt.auth');
 /**
  * PUT updateRight
  * Summary: Update an existing right
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::PUT('/api/right', 'RightsApi@updateRight')->middleware('jwt.auth');
+Route::PUT('/right', 'RightsApi@updateRight')->middleware('jwt.auth');
 /**
  * DELETE deleteRight
  * Summary: Deletes an right
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::DELETE('/api/right/{right_id}', 'RightsApi@deleteRight')->middleware('jwt.auth');
+Route::DELETE('/right/{right_id}', 'RightsApi@deleteRight')->middleware('jwt.auth');
 /**
  * GET getRightById
  * Summary: Find right by ID
  * Notes: Returns a single right
  * Output-Formats: [application/json, application/xml]
  */
-Route::GET('/api/right/{right_id}', 'RightsApi@getRightById')->middleware('jwt.auth');
+Route::GET('/right/{right_id}', 'RightsApi@getRightById')->middleware('jwt.auth');
 /**
  * GET rightsGet
  * Summary: rights List
  * Notes: The right endpoint returns multiple right requested given the parameters injected.  
 
  */
-Route::GET('/api/rights', 'RightsApi@rightsGet')->middleware('jwt.auth');
+Route::GET('/rights', 'RightsApi@rightsGet')->middleware('jwt.auth');
 
 
 
@@ -627,35 +627,35 @@ Route::GET('/api/rights', 'RightsApi@rightsGet')->middleware('jwt.auth');
  * Notes: new role
  * Output-Formats: [application/json, application/xml]
  */
-Route::POST('/api/role', 'RolesApi@addRole')->middleware('jwt.auth');
+Route::POST('/role', 'RolesApi@addRole')->middleware('jwt.auth');
 /**
  * PUT updateRole
  * Summary: Update an existing role
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::PUT('/api/role', 'RolesApi@updateRole')->middleware('jwt.auth');
+Route::PUT('/role', 'RolesApi@updateRole')->middleware('jwt.auth');
 /**
  * DELETE deleteRole
  * Summary: Deletes an role
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::DELETE('/api/role/{role_id}', 'RolesApi@deleteRole')->middleware('jwt.auth');
+Route::DELETE('/role/{role_id}', 'RolesApi@deleteRole')->middleware('jwt.auth');
 /**
  * GET getRoleById
  * Summary: Find role by ID
  * Notes: Returns a single role
  * Output-Formats: [application/json, application/xml]
  */
-Route::GET('/api/role/{role_id}', 'RolesApi@getRoleById')->middleware('jwt.auth');
+Route::GET('/role/{role_id}', 'RolesApi@getRoleById')->middleware('jwt.auth');
 /**
  * GET rolesGet
  * Summary: roles List
  * Notes: The role endpoint returns multiple role requested given the parameters injected.  
 
  */
-Route::GET('/api/roles', 'RolesApi@rolesGet')->middleware('jwt.auth');
+Route::GET('/roles', 'RolesApi@rolesGet')->middleware('jwt.auth');
 
 
 
@@ -698,35 +698,35 @@ Route::GET('/api/roles', 'RolesApi@rolesGet')->middleware('jwt.auth');
  * Notes: new staff
  * Output-Formats: [application/json, application/xml]
  */
-Route::POST('/api/staff', 'StaffApi@addStaff')->middleware('jwt.auth');
+Route::POST('/staff', 'StaffApi@addStaff')->middleware('jwt.auth');
 /**
  * PUT updateStaff
  * Summary: Update an existing staff
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::PUT('/api/staff', 'StaffApi@updateStaff')->middleware('jwt.auth');
+Route::PUT('/staff', 'StaffApi@updateStaff')->middleware('jwt.auth');
 /**
  * DELETE deleteStaff
  * Summary: Deletes an staff
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::DELETE('/api/staff/{staff_id}', 'StaffApi@deleteStaff')->middleware('jwt.auth');
+Route::DELETE('/staff/{staff_id}', 'StaffApi@deleteStaff')->middleware('jwt.auth');
 /**
  * GET getStaffById
  * Summary: Find staff by ID
  * Notes: Returns a single staff
  * Output-Formats: [application/json, application/xml]
  */
-Route::GET('/api/staff/{staff_id}', 'StaffApi@getStaffById')->middleware('jwt.auth');
+Route::GET('/staff/{staff_id}', 'StaffApi@getStaffById')->middleware('jwt.auth');
 /**
  * GET staffsGet
  * Summary: staffs List
  * Notes: The staff endpoint returns multiple staff requested given the parameters injected.  
 
  */
-Route::GET('/api/staffs', 'StaffApi@staffsGet')->middleware('jwt.auth');
+Route::GET('/staffs', 'StaffApi@staffsGet')->middleware('jwt.auth');
 
 
 
@@ -748,42 +748,42 @@ Route::GET('/api/staffs', 'StaffApi@staffsGet')->middleware('jwt.auth');
  * Notes: new project
  * Output-Formats: [application/json, application/xml]
  */
-Route::POST('/api/project', 'ProjectApi@addProject')->middleware('jwt.auth');
+Route::POST('/project', 'ProjectApi@addProject')->middleware('jwt.auth');
 /**
  * PUT updateProject
  * Summary: Update an existing project
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::PUT('/api/project', 'ProjectApi@updateProject')->middleware('jwt.auth');
+Route::PUT('/project', 'ProjectApi@updateProject')->middleware('jwt.auth');
 /**
  * DELETE deleteProject
  * Summary: Deletes an project
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::DELETE('/api/project/{project_id}', 'ProjectApi@deleteProject')->middleware('jwt.auth');
+Route::DELETE('/project/{project_id}', 'ProjectApi@deleteProject')->middleware('jwt.auth');
 /**
  * GET getProjectById
  * Summary: Find project by ID
  * Notes: Returns a single project
  * Output-Formats: [application/json, application/xml]
  */
-Route::GET('/api/project/{project_id}', 'ProjectApi@getProjectById')->middleware('jwt.auth');
+Route::GET('/project/{project_id}', 'ProjectApi@getProjectById')->middleware('jwt.auth');
 /**
  * GET projectsGet
  * Summary: projects List
  * Notes: The project endpoint returns multiple project requested given the parameters injected.  
 
  */
-Route::GET('/api/projects', 'ProjectApi@projectsGet')->middleware('jwt.auth');
+Route::GET('/projects', 'ProjectApi@projectsGet')->middleware('jwt.auth');
 /**
  * GET projectActivitiesGet
  * Summary: project_activities List
  * Notes: The project_activity endpoint returns multiple project_activity requested given the parameters injected.  
 
  */
-Route::GET('/api/project_activities', 'ProjectActivityApi@projectActivitiesGet')->middleware('jwt.auth');
+Route::GET('/project_activities', 'ProjectActivityApi@projectActivitiesGet')->middleware('jwt.auth');
 
 
 
@@ -819,28 +819,28 @@ Route::GET('/api/project_activities', 'ProjectActivityApi@projectActivitiesGet')
  * Notes: new project_activity
  * Output-Formats: [application/json, application/xml]
  */
-Route::POST('/api/project_activity', 'ProjectActivityApi@addProjectActivity')->middleware('jwt.auth');
+Route::POST('/project_activity', 'ProjectActivityApi@addProjectActivity')->middleware('jwt.auth');
 /**
  * PUT updateProjectActivity
  * Summary: Update an existing project_activity
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::PUT('/api/project_activity', 'ProjectActivityApi@updateProjectActivity')->middleware('jwt.auth');
+Route::PUT('/project_activity', 'ProjectActivityApi@updateProjectActivity')->middleware('jwt.auth');
 /**
  * DELETE deleteProjectActivity
  * Summary: Deletes an project_activity
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::DELETE('/api/project_activity/{project_activity_id}', 'ProjectActivityApi@deleteProjectActivity')->middleware('jwt.auth');
+Route::DELETE('/project_activity/{project_activity_id}', 'ProjectActivityApi@deleteProjectActivity')->middleware('jwt.auth');
 /**
  * GET getProjectActivityById
  * Summary: Find project_activity by ID
  * Notes: Returns a single project_activity
  * Output-Formats: [application/json, application/xml]
  */
-Route::GET('/api/project_activity/{project_activity_id}', 'ProjectActivityApi@getProjectActivityById')->middleware('jwt.auth');
+Route::GET('/project_activity/{project_activity_id}', 'ProjectActivityApi@getProjectActivityById')->middleware('jwt.auth');
 
 
 
@@ -876,35 +876,35 @@ Route::GET('/api/project_activity/{project_activity_id}', 'ProjectActivityApi@ge
  * Notes: new project_budget_account
  * Output-Formats: [application/json, application/xml]
  */
-Route::POST('/api/project_budget_account', 'ProjectBudgetAccountApi@addProjectBudgetAccount')->middleware('jwt.auth');
+Route::POST('/project_budget_account', 'ProjectBudgetAccountApi@addProjectBudgetAccount')->middleware('jwt.auth');
 /**
  * PUT updateProjectBudgetAccount
  * Summary: Update an existing project_budget_account
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::PUT('/api/project_budget_account', 'ProjectBudgetAccountApi@updateProjectBudgetAccount')->middleware('jwt.auth');
+Route::PUT('/project_budget_account', 'ProjectBudgetAccountApi@updateProjectBudgetAccount')->middleware('jwt.auth');
 /**
  * DELETE deleteProjectBudgetAccount
  * Summary: Deletes an project_budget_account
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::DELETE('/api/project_budget_account/{project_budget_account_id}', 'ProjectBudgetAccountApi@deleteProjectBudgetAccount')->middleware('jwt.auth');
+Route::DELETE('/project_budget_account/{project_budget_account_id}', 'ProjectBudgetAccountApi@deleteProjectBudgetAccount')->middleware('jwt.auth');
 /**
  * GET getProjectBudgetAccountById
  * Summary: Find project_budget_account by ID
  * Notes: Returns a single project_budget_account
  * Output-Formats: [application/json, application/xml]
  */
-Route::GET('/api/project_budget_account/{project_budget_account_id}', 'ProjectBudgetAccountApi@getProjectBudgetAccountById')->middleware('jwt.auth');
+Route::GET('/project_budget_account/{project_budget_account_id}', 'ProjectBudgetAccountApi@getProjectBudgetAccountById')->middleware('jwt.auth');
 /**
  * GET projectBudgetAccountsGet
  * Summary: project_budget_accounts List
  * Notes: The project_budget_account endpoint returns multiple project_budget_account requested given the parameters injected.  
 
  */
-Route::GET('/api/project_budget_accounts', 'ProjectBudgetAccountApi@projectBudgetAccountsGet')->middleware('jwt.auth');
+Route::GET('/project_budget_accounts', 'ProjectBudgetAccountApi@projectBudgetAccountsGet')->middleware('jwt.auth');
 
 
 
@@ -943,35 +943,35 @@ Route::GET('/api/project_budget_accounts', 'ProjectBudgetAccountApi@projectBudge
  * Notes: new project_cash_needs
  * Output-Formats: [application/json, application/xml]
  */
-Route::POST('/api/project_cash_needs', 'ProjectCashNeedsApi@addProjectCashNeeds')->middleware('jwt.auth');
+Route::POST('/project_cash_needs', 'ProjectCashNeedsApi@addProjectCashNeeds')->middleware('jwt.auth');
 /**
  * PUT updateProjectCashNeeds
  * Summary: Update an existing project_cash_needs
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::PUT('/api/project_cash_needs', 'ProjectCashNeedsApi@updateProjectCashNeeds')->middleware('jwt.auth');
+Route::PUT('/project_cash_needs', 'ProjectCashNeedsApi@updateProjectCashNeeds')->middleware('jwt.auth');
 /**
  * DELETE deleteProjectCashNeeds
  * Summary: Deletes an project_cash_needs
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::DELETE('/api/project_cash_needs/{project_cash_needs_id}', 'ProjectCashNeedsApi@deleteProjectCashNeeds')->middleware('jwt.auth');
+Route::DELETE('/project_cash_needs/{project_cash_needs_id}', 'ProjectCashNeedsApi@deleteProjectCashNeeds')->middleware('jwt.auth');
 /**
  * GET getProjectCashNeedsById
  * Summary: Find project_cash_needs by ID
  * Notes: Returns a single project_cash_needs
  * Output-Formats: [application/json, application/xml]
  */
-Route::GET('/api/project_cash_needs/{project_cash_needs_id}', 'ProjectCashNeedsApi@getProjectCashNeedsById')->middleware('jwt.auth');
+Route::GET('/project_cash_needs/{project_cash_needs_id}', 'ProjectCashNeedsApi@getProjectCashNeedsById')->middleware('jwt.auth');
 /**
  * GET projectCashNeedssGet
  * Summary: project_cash_needss List
  * Notes: The project_cash_needs endpoint returns multiple project_cash_needs requested given the parameters injected.  
 
  */
-Route::GET('/api/project_cash_needss', 'ProjectCashNeedsApi@projectCashNeedssGet')->middleware('jwt.auth');
+Route::GET('/project_cash_needss', 'ProjectCashNeedsApi@projectCashNeedssGet')->middleware('jwt.auth');
 
 
 
@@ -1009,35 +1009,35 @@ Route::GET('/api/project_cash_needss', 'ProjectCashNeedsApi@projectCashNeedssGet
  * Notes: new project_master_list
  * Output-Formats: [application/json, application/xml]
  */
-Route::POST('/api/project_master_list', 'ProjectMasterListApi@addProjectMasterList')->middleware('jwt.auth');
+Route::POST('/project_master_list', 'ProjectMasterListApi@addProjectMasterList')->middleware('jwt.auth');
 /**
  * PUT updateProjectMasterList
  * Summary: Update an existing project_master_list
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::PUT('/api/project_master_list', 'ProjectMasterListApi@updateProjectMasterList')->middleware('jwt.auth');
+Route::PUT('/project_master_list', 'ProjectMasterListApi@updateProjectMasterList')->middleware('jwt.auth');
 /**
  * DELETE deleteProjectMasterList
  * Summary: Deletes an project_master_list
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::DELETE('/api/project_master_list/{project_master_list_id}', 'ProjectMasterListApi@deleteProjectMasterList')->middleware('jwt.auth');
+Route::DELETE('/project_master_list/{project_master_list_id}', 'ProjectMasterListApi@deleteProjectMasterList')->middleware('jwt.auth');
 /**
  * GET getProjectMasterListById
  * Summary: Find project_master_list by ID
  * Notes: Returns a single project_master_list
  * Output-Formats: [application/json, application/xml]
  */
-Route::GET('/api/project_master_list/{project_master_list_id}', 'ProjectMasterListApi@getProjectMasterListById')->middleware('jwt.auth');
+Route::GET('/project_master_list/{project_master_list_id}', 'ProjectMasterListApi@getProjectMasterListById')->middleware('jwt.auth');
 /**
  * GET projectMasterListsGet
  * Summary: project_master_lists List
  * Notes: The project_master_list endpoint returns multiple project_master_list requested given the parameters injected.  
 
  */
-Route::GET('/api/project_master_lists', 'ProjectMasterListApi@projectMasterListsGet')->middleware('jwt.auth');
+Route::GET('/project_master_lists', 'ProjectMasterListApi@projectMasterListsGet')->middleware('jwt.auth');
 
 
 
@@ -1077,35 +1077,35 @@ Route::GET('/api/project_master_lists', 'ProjectMasterListApi@projectMasterLists
  * Notes: new project_objective
  * Output-Formats: [application/json, application/xml]
  */
-Route::POST('/api/project_objective', 'ProjectObjectiveApi@addProjectObjective')->middleware('jwt.auth');
+Route::POST('/project_objective', 'ProjectObjectiveApi@addProjectObjective')->middleware('jwt.auth');
 /**
  * PUT updateProjectObjective
  * Summary: Update an existing project_objective
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::PUT('/api/project_objective', 'ProjectObjectiveApi@updateProjectObjective')->middleware('jwt.auth');
+Route::PUT('/project_objective', 'ProjectObjectiveApi@updateProjectObjective')->middleware('jwt.auth');
 /**
  * DELETE deleteProjectObjective
  * Summary: Deletes an project_objective
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::DELETE('/api/project_objective/{project_objective_id}', 'ProjectObjectiveApi@deleteProjectObjective')->middleware('jwt.auth');
+Route::DELETE('/project_objective/{project_objective_id}', 'ProjectObjectiveApi@deleteProjectObjective')->middleware('jwt.auth');
 /**
  * GET getProjectObjectiveById
  * Summary: Find project_objective by ID
  * Notes: Returns a single project_objective
  * Output-Formats: [application/json, application/xml]
  */
-Route::GET('/api/project_objective/{project_objective_id}', 'ProjectObjectiveApi@getProjectObjectiveById')->middleware('jwt.auth');
+Route::GET('/project_objective/{project_objective_id}', 'ProjectObjectiveApi@getProjectObjectiveById')->middleware('jwt.auth');
 /**
  * GET projectObjectivesGet
  * Summary: project_objectives List
  * Notes: The project_objective endpoint returns multiple project_objective requested given the parameters injected.  
 
  */
-Route::GET('/api/project_objectives', 'ProjectObjectiveApi@projectObjectivesGet')->middleware('jwt.auth');
+Route::GET('/project_objectives', 'ProjectObjectiveApi@projectObjectivesGet')->middleware('jwt.auth');
 
 
 
@@ -1142,35 +1142,35 @@ Route::GET('/api/project_objectives', 'ProjectObjectiveApi@projectObjectivesGet'
  * Notes: new project_team
  * Output-Formats: [application/json, application/xml]
  */
-Route::POST('/api/project_team', 'ProjectTeamApi@addProjectTeam')->middleware('jwt.auth');
+Route::POST('/project_team', 'ProjectTeamApi@addProjectTeam')->middleware('jwt.auth');
 /**
  * PUT updateProjectTeam
  * Summary: Update an existing project_team
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::PUT('/api/project_team', 'ProjectTeamApi@updateProjectTeam')->middleware('jwt.auth');
+Route::PUT('/project_team', 'ProjectTeamApi@updateProjectTeam')->middleware('jwt.auth');
 /**
  * DELETE deleteProjectTeam
  * Summary: Deletes an project_team
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::DELETE('/api/project_team/{project_team_id}', 'ProjectTeamApi@deleteProjectTeam')->middleware('jwt.auth');
+Route::DELETE('/project_team/{project_team_id}', 'ProjectTeamApi@deleteProjectTeam')->middleware('jwt.auth');
 /**
  * GET getProjectTeamById
  * Summary: Find project_team by ID
  * Notes: Returns a single project_team
  * Output-Formats: [application/json, application/xml]
  */
-Route::GET('/api/project_team/{project_team_id}', 'ProjectTeamApi@getProjectTeamById')->middleware('jwt.auth');
+Route::GET('/project_team/{project_team_id}', 'ProjectTeamApi@getProjectTeamById')->middleware('jwt.auth');
 /**
  * GET projectTeamsGet
  * Summary: project_teams List
  * Notes: The project_team endpoint returns multiple project_team requested given the parameters injected.  
 
  */
-Route::GET('/api/project_teams', 'ProjectTeamApi@projectTeamsGet')->middleware('jwt.auth');
+Route::GET('/project_teams', 'ProjectTeamApi@projectTeamsGet')->middleware('jwt.auth');
 
 
 
@@ -1195,35 +1195,35 @@ Route::GET('/api/project_teams', 'ProjectTeamApi@projectTeamsGet')->middleware('
  * Notes: new supplier
  * Output-Formats: [application/json, application/xml]
  */
-Route::POST('/api/supplier', 'SupplierApi@addSupplier')->middleware('jwt,auth');
+Route::POST('/supplier', 'SupplierApi@addSupplier')->middleware('jwt,auth');
 /**
  * PUT updateSupplier
  * Summary: Update an existing supplier
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::PUT('/api/supplier', 'SupplierApi@updateSupplier')->middleware('jwt,auth');
+Route::PUT('/supplier', 'SupplierApi@updateSupplier')->middleware('jwt,auth');
 /**
  * DELETE deleteSupplier
  * Summary: Deletes an supplier
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::DELETE('/api/supplier/{supplier_id}', 'SupplierApi@deleteSupplier')->middleware('jwt,auth');
+Route::DELETE('/supplier/{supplier_id}', 'SupplierApi@deleteSupplier')->middleware('jwt,auth');
 /**
  * GET getSupplierById
  * Summary: Find supplier by ID
  * Notes: Returns a single supplier
  * Output-Formats: [application/json, application/xml]
  */
-Route::GET('/api/supplier/{supplier_id}', 'SupplierApi@getSupplierById')->middleware('jwt,auth');
+Route::GET('/supplier/{supplier_id}', 'SupplierApi@getSupplierById')->middleware('jwt,auth');
 /**
  * GET suppliersGet
  * Summary: suppliers List
  * Notes: The supplier endpoint returns multiple supplier requested given the parameters injected.  
 
  */
-Route::GET('/api/suppliers', 'SupplierApi@suppliersGet')->middleware('jwt,auth');
+Route::GET('/suppliers', 'SupplierApi@suppliersGet')->middleware('jwt,auth');
 
 
 
@@ -1263,35 +1263,35 @@ Route::GET('/api/suppliers', 'SupplierApi@suppliersGet')->middleware('jwt,auth')
  * Notes: new supplier_rate
  * Output-Formats: [application/json, application/xml]
  */
-Route::POST('/api/supplier_rate', 'SupplierRateApi@addSupplierRate')->middleware('jwt,auth');
+Route::POST('/supplier_rate', 'SupplierRateApi@addSupplierRate')->middleware('jwt,auth');
 /**
  * PUT updateSupplierRate
  * Summary: Update an existing supplier_rate
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::PUT('/api/supplier_rate', 'SupplierRateApi@updateSupplierRate')->middleware('jwt,auth');
+Route::PUT('/supplier_rate', 'SupplierRateApi@updateSupplierRate')->middleware('jwt,auth');
 /**
  * DELETE deleteSupplierRate
  * Summary: Deletes an supplier_rate
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::DELETE('/api/supplier_rate/{supplier_rate_id}', 'SupplierRateApi@deleteSupplierRate')->middleware('jwt,auth');
+Route::DELETE('/supplier_rate/{supplier_rate_id}', 'SupplierRateApi@deleteSupplierRate')->middleware('jwt,auth');
 /**
  * GET getSupplierRateById
  * Summary: Find supplier_rate by ID
  * Notes: Returns a single supplier_rate
  * Output-Formats: [application/json, application/xml]
  */
-Route::GET('/api/supplier_rate/{supplier_rate_id}', 'SupplierRateApi@getSupplierRateById')->middleware('jwt,auth');
+Route::GET('/supplier_rate/{supplier_rate_id}', 'SupplierRateApi@getSupplierRateById')->middleware('jwt,auth');
 /**
  * GET supplierRatesGet
  * Summary: supplier_rates List
  * Notes: The supplier_rate endpoint returns multiple supplier_rate requested given the parameters injected.  
 
  */
-Route::GET('/api/supplier_rates', 'SupplierRateApi@supplierRatesGet')->middleware('jwt,auth');
+Route::GET('/supplier_rates', 'SupplierRateApi@supplierRatesGet')->middleware('jwt,auth');
 
 
 
@@ -1336,35 +1336,35 @@ Route::GET('/api/supplier_rates', 'SupplierRateApi@supplierRatesGet')->middlewar
  * Notes: The supply_category endpoint returns multiple supply_category requested given the parameters injected.  
 
  */
-Route::GET('/api/supply_categories', 'SupplyCategoryApi@supplyCategoriesGet')->middleware('jwt,auth');
+Route::GET('/supply_categories', 'SupplyCategoryApi@supplyCategoriesGet')->middleware('jwt,auth');
 /**
  * POST addSupplyCategory
  * Summary: Add a new supply_category
  * Notes: new supply_category
  * Output-Formats: [application/json, application/xml]
  */
-Route::POST('/api/supply_category', 'SupplyCategoryApi@addSupplyCategory')->middleware('jwt,auth');
+Route::POST('/supply_category', 'SupplyCategoryApi@addSupplyCategory')->middleware('jwt,auth');
 /**
  * PUT updateSupplyCategory
  * Summary: Update an existing supply_category
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::PUT('/api/supply_category', 'SupplyCategoryApi@updateSupplyCategory')->middleware('jwt,auth');
+Route::PUT('/supply_category', 'SupplyCategoryApi@updateSupplyCategory')->middleware('jwt,auth');
 /**
  * DELETE deleteSupplyCategory
  * Summary: Deletes an supply_category
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::DELETE('/api/supply_category/{supply_category_id}', 'SupplyCategoryApi@deleteSupplyCategory')->middleware('jwt,auth');
+Route::DELETE('/supply_category/{supply_category_id}', 'SupplyCategoryApi@deleteSupplyCategory')->middleware('jwt,auth');
 /**
  * GET getSupplyCategoryById
  * Summary: Find supply_category by ID
  * Notes: Returns a single supply_category
  * Output-Formats: [application/json, application/xml]
  */
-Route::GET('/api/supply_category/{supply_category_id}', 'SupplyCategoryApi@getSupplyCategoryById')->middleware('jwt,auth');
+Route::GET('/supply_category/{supply_category_id}', 'SupplyCategoryApi@getSupplyCategoryById')->middleware('jwt,auth');
 
 
 
@@ -1404,33 +1404,33 @@ Route::GET('/api/supply_category/{supply_category_id}', 'SupplyCategoryApi@getSu
  * Notes: new supply_category_item
  * Output-Formats: [application/json, application/xml]
  */
-Route::POST('/api/supply_category_item', 'SupplyCategoryItemApi@addSupplyCategoryItem')->middleware('jwt,auth');
+Route::POST('/supply_category_item', 'SupplyCategoryItemApi@addSupplyCategoryItem')->middleware('jwt,auth');
 /**
  * PUT updateSupplyCategoryItem
  * Summary: Update an existing supply_category_item
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::PUT('/api/supply_category_item', 'SupplyCategoryItemApi@updateSupplyCategoryItem')->middleware('jwt,auth');
+Route::PUT('/supply_category_item', 'SupplyCategoryItemApi@updateSupplyCategoryItem')->middleware('jwt,auth');
 /**
  * DELETE deleteSupplyCategoryItem
  * Summary: Deletes an supply_category_item
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::DELETE('/api/supply_category_item/{supply_category_item_id}', 'SupplyCategoryItemApi@deleteSupplyCategoryItem')->middleware('jwt,auth');
+Route::DELETE('/supply_category_item/{supply_category_item_id}', 'SupplyCategoryItemApi@deleteSupplyCategoryItem')->middleware('jwt,auth');
 /**
  * GET getSupplyCategoryItemById
  * Summary: Find supply_category_item by ID
  * Notes: Returns a single supply_category_item
  * Output-Formats: [application/json, application/xml]
  */
-Route::GET('/api/supply_category_item/{supply_category_item_id}', 'SupplyCategoryItemApi@getSupplyCategoryItemById')->middleware('jwt,auth');
+Route::GET('/supply_category_item/{supply_category_item_id}', 'SupplyCategoryItemApi@getSupplyCategoryItemById')->middleware('jwt,auth');
 /**
  * GET supplyCategoryItemsGet
  * Summary: supply_category_items List
  * Notes: The supply_category_item endpoint returns multiple supply_category_item requested given the parameters injected.  
 
  */
-Route::GET('/api/supply_category_items', 'SupplyCategoryItemApi@supplyCategoryItemsGet')->middleware('jwt,auth');
+Route::GET('/supply_category_items', 'SupplyCategoryItemApi@supplyCategoryItemsGet')->middleware('jwt,auth');
 
