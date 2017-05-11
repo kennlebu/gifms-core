@@ -1224,6 +1224,39 @@ Route::GET('/api/supplier/{supplier_id}', 'SupplierApi@getSupplierById')->middle
 
  */
 Route::GET('/api/suppliers', 'SupplierApi@suppliersGet')->middleware('jwt,auth');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /**
  * POST addSupplierRate
  * Summary: Add a new supplier_rate
@@ -1259,6 +1292,44 @@ Route::GET('/api/supplier_rate/{supplier_rate_id}', 'SupplierRateApi@getSupplier
 
  */
 Route::GET('/api/supplier_rates', 'SupplierRateApi@supplierRatesGet')->middleware('jwt,auth');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /**
  * GET supplyCategoriesGet
  * Summary: supply_categories List
@@ -1294,6 +1365,39 @@ Route::DELETE('/api/supply_category/{supply_category_id}', 'SupplyCategoryApi@de
  * Output-Formats: [application/json, application/xml]
  */
 Route::GET('/api/supply_category/{supply_category_id}', 'SupplyCategoryApi@getSupplyCategoryById')->middleware('jwt,auth');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /**
  * POST addSupplyCategoryItem
  * Summary: Add a new supply_category_item
