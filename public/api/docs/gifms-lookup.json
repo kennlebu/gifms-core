@@ -17,11 +17,11 @@
  "basePath": "/api",
  "tags": [
   {
-   "name": "LPO Quotation",
-   "description": "Everything About LPO Quotations",
+   "name": "Currency",
+   "description": "Everything About Currency",
    "externalDocs": {
     "description": "Find out more",
-    "url": "http://kefinance.clintonhealthaccess.org/api/lpo_quotations/docs"
+    "url": "http://kefinance.clintonhealthaccess.org/api/currency/docs"
    }
   }
  ],
@@ -30,30 +30,30 @@
   "https"
  ],
  "paths": {
-  "/lpo_quotations": {
+  "/currencies": {
    "get": {
-    "summary": "lpo quotations List",
-    "description": "The Lpo Quotations endpoint returns information about the LPO Quotation requested given the parameters injected. \n",
+    "summary": "currencies List",
+    "description": "The currency endpoint returns multiple currency requested given the parameters injected. \n",
     "parameters": [
      {
-      "name": "lpo_id",
+      "name": "currency_id",
       "in": "query",
-      "description": "staff id",
+      "description": "currency id",
       "required": false,
       "type": "number",
       "format": "integer"
      }
     ],
     "tags": [
-     "LPO Quotation"
+     "Currency"
     ],
     "responses": {
      "200": {
-      "description": "An array of lpo_quotations returned",
+      "description": "An array of currency returned",
       "schema": {
        "type": "array",
        "items": {
-        "$ref": "#/definitions/lpo_quotation"
+        "$ref": "#/definitions/currency"
        }
       }
      },
@@ -71,14 +71,14 @@
     ]
    }
   },
-  "/lpo_quotation": {
+  "/currency": {
    "post": {
     "tags": [
-     "LPO Quotation"
+     "Currency"
     ],
-    "summary": "Add a new lpo quotation",
-    "description": "new lpo quotation",
-    "operationId": "add_lpo_quotation",
+    "summary": "Add a new currency",
+    "description": "new currency",
+    "operationId": "add_currency",
     "consumes": [
      "application/json",
      "application/xml"
@@ -91,19 +91,19 @@
      {
       "in": "body",
       "name": "body",
-      "description": "lpo quotation object that needs to be added",
+      "description": "currency object that needs to be added",
       "required": true,
       "schema": {
-       "$ref": "#/definitions/lpo_quotation"
+       "$ref": "#/definitions/currency"
       }
      }
     ],
     "responses": {
      "200": {
-      "description": "Successfully added a new Lpo quotation for approval"
+      "description": "Successfully added a new currency for approval"
      },
      "405": {
-      "description": "Invalid input,adding a new lpo quotation was unsuccessful"
+      "description": "Invalid input,adding a new currency was unsuccessful"
      }
     },
     "security": [
@@ -114,11 +114,11 @@
    },
    "put": {
     "tags": [
-     "LPO Quotation"
+     "Currency"
     ],
-    "summary": "Update an existing LPO Quotation",
+    "summary": "Update an existing currency",
     "description": "",
-    "operationId": "update_lpo_quotation",
+    "operationId": "update_currency",
     "consumes": [
      "application/json",
      "application/xml"
@@ -131,10 +131,10 @@
      {
       "in": "body",
       "name": "body",
-      "description": "LPO Quotation object that needs to be added",
+      "description": "currency object that needs to be added",
       "required": true,
       "schema": {
-       "$ref": "#/definitions/lpo_quotation"
+       "$ref": "#/definitions/currency"
       }
      }
     ],
@@ -149,7 +149,7 @@
       "description": "Invalid ID supplied"
      },
      "404": {
-      "description": "lpo quotation not found"
+      "description": "currency not found"
      },
      "405": {
       "description": "Validation exception"
@@ -162,23 +162,23 @@
     ]
    }
   },
-  "/lpo_quotation/{lpo_quotation_id}": {
+  "/currency/{currency_id}": {
    "get": {
     "tags": [
-     "LPO Quotation"
+     "Currency"
     ],
-    "summary": "Find lpo quotation by ID",
-    "description": "Returns a single lpo quotation",
-    "operationId": "get_lpo_quotation_by_id",
+    "summary": "Find currency by ID",
+    "description": "Returns a single currency",
+    "operationId": "get_currency_by_id",
     "produces": [
      "application/json",
      "application/xml"
     ],
     "parameters": [
      {
-      "name": "lpo_quotation_id",
+      "name": "currency_id",
       "in": "path",
-      "description": "ID of lpo quotation to return object",
+      "description": "ID of currency to return object",
       "required": true,
       "type": "integer",
       "format": "int64"
@@ -188,14 +188,14 @@
      "200": {
       "description": "successful operation",
       "schema": {
-       "$ref": "#/definitions/lpo_quotation"
+       "$ref": "#/definitions/currency"
       }
      },
      "400": {
       "description": "Invalid ID supplied"
      },
      "404": {
-      "description": "lpo quotation not found"
+      "description": "currency not found"
      }
     },
     "security": [
@@ -206,11 +206,11 @@
    },
    "delete": {
     "tags": [
-     "LPO Quotation"
+     "Currency"
     ],
-    "summary": "Deletes an lpo_quotation",
+    "summary": "Deletes an currency",
     "description": "",
-    "operationId": "delete_lpo_quotation",
+    "operationId": "delete_currency",
     "produces": [
      "application/json",
      "application/xml"
@@ -223,9 +223,9 @@
       "type": "string"
      },
      {
-      "name": "lpo_quotation_id",
+      "name": "currency_id",
       "in": "path",
-      "description": "lpo quotation id to delete",
+      "description": "currency id to delete",
       "required": true,
       "type": "integer",
       "format": "int64"
@@ -236,7 +236,7 @@
       "description": "Invalid ID supplied"
      },
      "404": {
-      "description": "lpo quotation not found"
+      "description": "currency not found"
      }
     },
     "security": [
@@ -255,13 +255,11 @@
   }
  },
  "definitions": {
-  "lpo_quotation": {
+  "currency": {
    "type": "object",
    "required": [
     "id",
-    "lpo_id",
-    "created_at",
-    "updated_at"
+    "created_at"
    ],
    "properties": {
     "id": {
@@ -269,28 +267,19 @@
      "format": "int64",
      "example": 1
     },
-    "lpo_id": {
-     "type": "integer",
-     "example": 10
-    },
-    "amount": {
+    "num": {
      "type": "number",
      "format": "int64",
      "example": 20000
     },
-    "quotation_doc": {
+    "str": {
      "type": "string",
      "example": "PayPal.pdf"
     },
-    "quote_date": {
+    "date": {
      "type": "string",
      "format": "date-time",
      "example": "2010-02-11"
-    },
-    "uploaded_by_id": {
-     "type": "integer",
-     "format": "int64",
-     "example": 2
     },
     "created_at": {
      "type": "string",
@@ -304,7 +293,7 @@
     }
    },
    "xml": {
-    "name": "lpo_quotation"
+    "name": "currency"
    }
   },
   "Error": {

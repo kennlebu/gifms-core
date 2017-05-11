@@ -1434,3 +1434,65 @@ Route::GET('/supply_category_item/{supply_category_item_id}', 'SupplyCategoryIte
  */
 Route::GET('/supply_category_items', 'SupplyCategoryItemApi@supplyCategoryItemsGet')->middleware('jwt,auth');
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * GET currenciesGet
+ * Summary: currencies List
+ * Notes: The currency endpoint returns multiple currency requested given the parameters injected.  
+
+ */
+Route::GET('/currencies', 'CurrencyApi@currenciesGet')->middleware('jwt,auth');
+/**
+ * POST addCurrency
+ * Summary: Add a new currency
+ * Notes: new currency
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/currency', 'CurrencyApi@addCurrency')->middleware('jwt,auth');
+/**
+ * PUT updateCurrency
+ * Summary: Update an existing currency
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/currency', 'CurrencyApi@updateCurrency')->middleware('jwt,auth');
+/**
+ * DELETE deleteCurrency
+ * Summary: Deletes an currency
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/currency/{currency_id}', 'CurrencyApi@deleteCurrency')->middleware('jwt,auth');
+/**
+ * GET getCurrencyById
+ * Summary: Find currency by ID
+ * Notes: Returns a single currency
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/currency/{currency_id}', 'CurrencyApi@getCurrencyById')->middleware('jwt,auth');
+
