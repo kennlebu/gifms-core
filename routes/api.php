@@ -112,6 +112,64 @@ Route::GET('/lpos', 'LpoApi@lposGet')->middleware('jwt.auth');
 
 
 
+/**
+ * POST addLpoDefaultTerm
+ * Summary: Add a new lpo_default_term
+ * Notes: new lpo_default_term
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/lpo_default_term', 'LPODefaultTermApi@addLpoDefaultTerm')->middleware('jwt.auth');
+/**
+ * PUT updateLpoDefaultTerm
+ * Summary: Update an existing lpo_default_term
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/lpo_default_term', 'LPODefaultTermApi@updateLpoDefaultTerm')->middleware('jwt.auth');
+/**
+ * DELETE deleteLpoDefaultTerm
+ * Summary: Deletes an lpo_default_term
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/lpo_default_term/{lpo_default_term_id}', 'LPODefaultTermApi@deleteLpoDefaultTerm')->middleware('jwt.auth');
+/**
+ * GET getLpoDefaultTermById
+ * Summary: Find lpo_default_term by ID
+ * Notes: Returns a single lpo_default_term
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/lpo_default_term/{lpo_default_term_id}', 'LPODefaultTermApi@getLpoDefaultTermById')->middleware('jwt.auth');
+/**
+ * GET lpoDefaultTermsGet
+ * Summary: lpo_default_terms List
+ * Notes: The lpo_default_term endpoint returns multiple lpo_default_term requested given the parameters injected.  
+
+ */
+Route::GET('/lpo_default_terms', 'LPODefaultTermApi@lpoDefaultTermsGet')->middleware('jwt.auth');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -100,6 +100,28 @@ class migrate_lpo_data extends Seeder
 
 
 
+  /**
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         *                  lpo_default_terms
+         * 
+         * 
+         * 
+         * 
+         * 
+         */
+        echo "\nLPO Default Terms -[ALL]---\n";
+
+        DB::table('lpo_default_terms')->insert([
+            ['terms' => 'Payment: 30 day upon delivery of goods/ services and Invoice to our offices.'],
+            ['terms' => 'Payment: Please quote the LPO reference number in your invoice for it to be successfully processed.'],
+        ]);
+        echo "\n-----------------------------------------------------------------------------------------------------\n";
+
 
 
 

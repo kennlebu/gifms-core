@@ -126,6 +126,7 @@ class LPOTermApi extends Controller
     public function lpoTermsGet()
     {
         $input = Request::all();
+        $response;
 
         //path params validation
 

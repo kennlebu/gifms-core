@@ -126,6 +126,7 @@ class LPOItemApi extends Controller
     public function lpoItemsGet()
     {
         $input = Request::all();
+        $response;
 
         //path params validation
 
