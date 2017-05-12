@@ -60,7 +60,7 @@ class LpoApi extends Controller
         // print_r($body);
 
 
-        $form = request()->only(
+        $form = Request::only(
             'requested_by_id',
             'expense_desc',
             'expense_purpose',
@@ -68,10 +68,11 @@ class LpoApi extends Controller
             'currency_id',
             'quote_exempt',
             'quote_exempt_explanation',
-            'preffered_supplier_id'
+            'preffered_supplier_id',
+            'payload'
             );
 
-        // $file = $request->file('requeste');
+        // print_r($form);
 
         try{
 
