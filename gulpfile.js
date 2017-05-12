@@ -23,12 +23,16 @@ elixir((mix) => {
 
 
 
-var gulp 	= require ("gulp");
-var yaml 	= require ("js-yaml");
-var path 	= require ("path");
-var fs 		= require ("fs");
-var map     = require('map-stream');
-var gutil = require("gulp-util");
+var gulp 	    = require ("gulp");
+var yaml 	    = require ("js-yaml");
+var path 	    = require ("path");
+var fs 		    = require ("fs");
+var map       = require('map-stream');
+var gutil     = require("gulp-util");
+var yamlMerge = require('gulp-yaml-merge');
+
+
+
 
 gulp.task("swagger",function(){
 
@@ -69,4 +73,12 @@ gulp.task('swagger_multiple', function(){
       cb(null,file);
     }))
     .pipe(gulp.dest('public/api/docs/'));
+});
+
+
+ 
+gulp.task('mergedocs', function() {
+  return gulp.src('./api/swagger/**.yaml')
+    .pipe(yamlMerge('gifms.yaml'))
+    .pipe(gulp.dest('./api/swagger/'));
 });
