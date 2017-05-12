@@ -17,11 +17,11 @@
  "basePath": "/api",
  "tags": [
   {
-   "name": "Staff",
-   "description": "Everything About Staff",
+   "name": "Test",
+   "description": "Everything About Test",
    "externalDocs": {
     "description": "Find out more",
-    "url": "http://kefinance.clintonhealthaccess.org/api/staff/docs"
+    "url": "http://kefinance.clintonhealthaccess.org/api/test/docs"
    }
   }
  ],
@@ -30,30 +30,30 @@
   "https"
  ],
  "paths": {
-  "/staffs": {
+  "/tests": {
    "get": {
-    "summary": "staffs List",
-    "description": "The staff endpoint returns multiple staff requested given the parameters injected. \n",
+    "summary": "tests List",
+    "description": "The test endpoint returns multiple test requested given the parameters injected. \n",
     "parameters": [
      {
-      "name": "staff_id",
+      "name": "test_id",
       "in": "query",
-      "description": "staff id",
+      "description": "test id",
       "required": false,
       "type": "number",
       "format": "integer"
      }
     ],
     "tags": [
-     "Staff"
+     "Test"
     ],
     "responses": {
      "200": {
-      "description": "An array of staff returned",
+      "description": "An array of test returned",
       "schema": {
        "type": "array",
        "items": {
-        "$ref": "#/definitions/staff"
+        "$ref": "#/definitions/test"
        }
       }
      },
@@ -71,14 +71,14 @@
     ]
    }
   },
-  "/staff": {
+  "/test": {
    "post": {
     "tags": [
-     "Staff"
+     "Test"
     ],
-    "summary": "Add a new staff",
-    "description": "new staff",
-    "operationId": "add_staff",
+    "summary": "Add a new test",
+    "description": "new test",
+    "operationId": "add_test",
     "consumes": [
      "application/json",
      "application/xml"
@@ -91,19 +91,19 @@
      {
       "in": "body",
       "name": "body",
-      "description": "staff object that needs to be added",
+      "description": "test object that needs to be added",
       "required": true,
       "schema": {
-       "$ref": "#/definitions/staff"
+       "$ref": "#/definitions/test"
       }
      }
     ],
     "responses": {
      "200": {
-      "description": "Successfully added a new staff for approval"
+      "description": "Successfully added a new test for approval"
      },
      "405": {
-      "description": "Invalid input,adding a new staff was unsuccessful"
+      "description": "Invalid input,adding a new test was unsuccessful"
      }
     },
     "security": [
@@ -114,11 +114,11 @@
    },
    "put": {
     "tags": [
-     "Staff"
+     "Test"
     ],
-    "summary": "Update an existing staff",
+    "summary": "Update an existing test",
     "description": "",
-    "operationId": "update_staff",
+    "operationId": "update_test",
     "consumes": [
      "application/json",
      "application/xml"
@@ -131,10 +131,10 @@
      {
       "in": "body",
       "name": "body",
-      "description": "staff object that needs to be added",
+      "description": "test object that needs to be added",
       "required": true,
       "schema": {
-       "$ref": "#/definitions/staff"
+       "$ref": "#/definitions/test"
       }
      }
     ],
@@ -149,7 +149,7 @@
       "description": "Invalid ID supplied"
      },
      "404": {
-      "description": "staff not found"
+      "description": "test not found"
      },
      "405": {
       "description": "Validation exception"
@@ -162,23 +162,23 @@
     ]
    }
   },
-  "/staff/{staff_id}": {
+  "/test/{test_id}": {
    "get": {
     "tags": [
-     "Staff"
+     "Test"
     ],
-    "summary": "Find staff by ID",
-    "description": "Returns a single staff",
-    "operationId": "get_staff_by_id",
+    "summary": "Find test by ID",
+    "description": "Returns a single test",
+    "operationId": "get_test_by_id",
     "produces": [
      "application/json",
      "application/xml"
     ],
     "parameters": [
      {
-      "name": "staff_id",
+      "name": "test_id",
       "in": "path",
-      "description": "ID of staff to return object",
+      "description": "ID of test to return object",
       "required": true,
       "type": "integer",
       "format": "int64"
@@ -188,14 +188,14 @@
      "200": {
       "description": "successful operation",
       "schema": {
-       "$ref": "#/definitions/staff"
+       "$ref": "#/definitions/test"
       }
      },
      "400": {
       "description": "Invalid ID supplied"
      },
      "404": {
-      "description": "staff not found"
+      "description": "test not found"
      }
     },
     "security": [
@@ -206,11 +206,11 @@
    },
    "delete": {
     "tags": [
-     "Staff"
+     "Test"
     ],
-    "summary": "Deletes an staff",
+    "summary": "Deletes an test",
     "description": "",
-    "operationId": "delete_staff",
+    "operationId": "delete_test",
     "produces": [
      "application/json",
      "application/xml"
@@ -223,9 +223,9 @@
       "type": "string"
      },
      {
-      "name": "staff_id",
+      "name": "test_id",
       "in": "path",
-      "description": "staff id to delete",
+      "description": "test id to delete",
       "required": true,
       "type": "integer",
       "format": "int64"
@@ -236,7 +236,7 @@
       "description": "Invalid ID supplied"
      },
      "404": {
-      "description": "staff not found"
+      "description": "test not found"
      }
     },
     "security": [
@@ -255,7 +255,7 @@
   }
  },
  "definitions": {
-  "staff": {
+  "test": {
    "type": "object",
    "required": [
     "id",
@@ -293,7 +293,7 @@
     }
    },
    "xml": {
-    "name": "staff"
+    "name": "test"
    }
   },
   "Error": {
