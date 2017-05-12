@@ -91,7 +91,7 @@ class LpoApi extends Controller
 
             if($lpo->save()) {
                 
-                return Response()->json(array('success' => 'lpo added'), 200);
+                return Response()->json(array('success' => 'lpo added','lpo' => $lpo), 200);
 
                 // Save quotations
             }
