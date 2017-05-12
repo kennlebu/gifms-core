@@ -66,10 +66,7 @@ class LpoApi extends Controller
             'expense_purpose',
             'project_id',
             'currency_id',
-            'quote_exempt',
-            'quote_exempt_explanation',
-            'preffered_supplier_id',
-            'payload'
+            'project_manager_id'
             );
 
         // print_r($form);
@@ -78,14 +75,12 @@ class LpoApi extends Controller
 
             $lpo = new Lpo;
 
-            $lpo->requested_by_id                   =   $form['requested_by_id'];
+            $lpo->requested_by_id                   =   (int)   $form['requested_by_id'];
             $lpo->expense_desc                      =   $form['expense_desc'];
             $lpo->expense_purpose                   =   $form['expense_purpose'];
-            $lpo->project_id                        =   $form['project_id'];
-            $lpo->currency_id                       =   $form['currency_id'];
-            $lpo->quote_exempt                      =   $form['quote_exempt'];
-            $lpo->quote_exempt_explanation          =   $form['quote_exempt_explanation'];
-            $lpo->preffered_supplier_id             =   $form['preffered_supplier_id'];
+            $lpo->project_id                        =   (int)   $form['project_id'];
+            $lpo->currency_id                       =   (int)   $form['currency_id'];
+            $lpo->project_manager_id                =   (int)   $form['project_manager_id'];
             $lpo->status_id                         =   1;
 
 
