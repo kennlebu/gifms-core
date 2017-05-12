@@ -996,40 +996,40 @@ Route::GET('/project_budget_accounts', 'ProjectBudgetAccountApi@projectBudgetAcc
 
 
 /**
- * POST addProjectCashNeeds
- * Summary: Add a new project_cash_needs
- * Notes: new project_cash_needs
+ * POST addProjectCashNeed
+ * Summary: Add a new project_cash_need
+ * Notes: new project_cash_need
  * Output-Formats: [application/json, application/xml]
  */
-Route::POST('/project_cash_needs', 'ProjectCashNeedsApi@addProjectCashNeeds')->middleware('jwt.auth');
+Route::POST('/project_cash_need', 'ProjectCashNeedsApi@addProjectCashNeed')->middleware('jwt.auth');
 /**
- * PUT updateProjectCashNeeds
- * Summary: Update an existing project_cash_needs
+ * PUT updateProjectCashNeed
+ * Summary: Update an existing project_cash_need
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::PUT('/project_cash_needs', 'ProjectCashNeedsApi@updateProjectCashNeeds')->middleware('jwt.auth');
+Route::PUT('/project_cash_need', 'ProjectCashNeedsApi@updateProjectCashNeed')->middleware('jwt.auth');
 /**
- * DELETE deleteProjectCashNeeds
- * Summary: Deletes an project_cash_needs
+ * DELETE deleteProjectCashNeed
+ * Summary: Deletes an project_cash_need
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::DELETE('/project_cash_needs/{project_cash_needs_id}', 'ProjectCashNeedsApi@deleteProjectCashNeeds')->middleware('jwt.auth');
+Route::DELETE('/project_cash_need/{project_cash_need_id}', 'ProjectCashNeedsApi@deleteProjectCashNeed')->middleware('jwt.auth');
 /**
- * GET getProjectCashNeedsById
- * Summary: Find project_cash_needs by ID
- * Notes: Returns a single project_cash_needs
+ * GET getProjectCashNeedById
+ * Summary: Find project_cash_need by ID
+ * Notes: Returns a single project_cash_need
  * Output-Formats: [application/json, application/xml]
  */
-Route::GET('/project_cash_needs/{project_cash_needs_id}', 'ProjectCashNeedsApi@getProjectCashNeedsById')->middleware('jwt.auth');
+Route::GET('/project_cash_need/{project_cash_need_id}', 'ProjectCashNeedsApi@getProjectCashNeedById')->middleware('jwt.auth');
 /**
- * GET projectCashNeedssGet
- * Summary: project_cash_needss List
- * Notes: The project_cash_needs endpoint returns multiple project_cash_needs requested given the parameters injected.  
+ * GET projectCashNeedsGet
+ * Summary: project_cash_needs List
+ * Notes: The project_cash_need endpoint returns multiple project_cash_need requested given the parameters injected.  
 
  */
-Route::GET('/project_cash_needss', 'ProjectCashNeedsApi@projectCashNeedssGet')->middleware('jwt.auth');
+Route::GET('/project_cash_needs', 'ProjectCashNeedsApi@projectCashNeedsGet')->middleware('jwt.auth');
 
 
 

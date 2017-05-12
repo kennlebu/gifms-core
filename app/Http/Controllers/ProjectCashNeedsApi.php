@@ -27,14 +27,14 @@ class ProjectCashNeedsApi extends Controller
     }
 
     /**
-     * Operation addProjectCashNeeds
+     * Operation addProjectCashNeed
      *
-     * Add a new project_cash_needs.
+     * Add a new project_cash_need.
      *
      *
      * @return Http response
      */
-    public function addProjectCashNeeds()
+    public function addProjectCashNeed()
     {
         $input = Request::all();
 
@@ -43,22 +43,22 @@ class ProjectCashNeedsApi extends Controller
 
         //not path params validation
         if (!isset($input['body'])) {
-            throw new \InvalidArgumentException('Missing the required parameter $body when calling addProjectCashNeeds');
+            throw new \InvalidArgumentException('Missing the required parameter $body when calling addProjectCashNeed');
         }
         $body = $input['body'];
 
 
-        return response('How about implementing addProjectCashNeeds as a POST method ?');
+        return response('How about implementing addProjectCashNeed as a POST method ?');
     }
     /**
-     * Operation updateProjectCashNeeds
+     * Operation updateProjectCashNeed
      *
-     * Update an existing project_cash_needs.
+     * Update an existing project_cash_need.
      *
      *
      * @return Http response
      */
-    public function updateProjectCashNeeds()
+    public function updateProjectCashNeed()
     {
         $input = Request::all();
 
@@ -67,23 +67,23 @@ class ProjectCashNeedsApi extends Controller
 
         //not path params validation
         if (!isset($input['body'])) {
-            throw new \InvalidArgumentException('Missing the required parameter $body when calling updateProjectCashNeeds');
+            throw new \InvalidArgumentException('Missing the required parameter $body when calling updateProjectCashNeed');
         }
         $body = $input['body'];
 
 
-        return response('How about implementing updateProjectCashNeeds as a PUT method ?');
+        return response('How about implementing updateProjectCashNeed as a PUT method ?');
     }
     /**
-     * Operation deleteProjectCashNeeds
+     * Operation deleteProjectCashNeed
      *
-     * Deletes an project_cash_needs.
+     * Deletes an project_cash_need.
      *
-     * @param int $project_cash_needs_id project_cash_needs id to delete (required)
+     * @param int $project_cash_need_id project_cash_need id to delete (required)
      *
      * @return Http response
      */
-    public function deleteProjectCashNeeds($project_cash_needs_id)
+    public function deleteProjectCashNeed($project_cash_need_id)
     {
         $input = Request::all();
 
@@ -92,18 +92,18 @@ class ProjectCashNeedsApi extends Controller
 
         //not path params validation
 
-        return response('How about implementing deleteProjectCashNeeds as a DELETE method ?');
+        return response('How about implementing deleteProjectCashNeed as a DELETE method ?');
     }
     /**
-     * Operation getProjectCashNeedsById
+     * Operation getProjectCashNeedById
      *
-     * Find project_cash_needs by ID.
+     * Find project_cash_need by ID.
      *
-     * @param int $project_cash_needs_id ID of project_cash_needs to return object (required)
+     * @param int $project_cash_need_id ID of project_cash_need to return object (required)
      *
      * @return Http response
      */
-    public function getProjectCashNeedsById($project_cash_needs_id)
+    public function getProjectCashNeedById($project_cash_need_id)
     {
         $input = Request::all();
 
@@ -112,17 +112,17 @@ class ProjectCashNeedsApi extends Controller
 
         //not path params validation
 
-        return response('How about implementing getProjectCashNeedsById as a GET method ?');
+        return response('How about implementing getProjectCashNeedById as a GET method ?');
     }
     /**
-     * Operation projectCashNeedssGet
+     * Operation projectCashNeedsGet
      *
-     * project_cash_needss List.
+     * project_cash_needs List.
      *
      *
      * @return Http response
      */
-    public function projectCashNeedssGet()
+    public function projectCashNeedsGet()
     {
         $input = Request::all();
 
@@ -130,9 +130,9 @@ class ProjectCashNeedsApi extends Controller
 
 
         //not path params validation
-        $project_cash_needs_id = $input['project_cash_needs_id'];
+        $project_cash_need_id = $input['project_cash_need_id'];
 
 
-        return response('How about implementing projectCashNeedssGet as a GET method ?');
+        return response('How about implementing projectCashNeedsGet as a GET method ?');
     }
 }

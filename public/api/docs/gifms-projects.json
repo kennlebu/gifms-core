@@ -45,7 +45,7 @@
    "description": "Everything About Project Cash Needs",
    "externalDocs": {
     "description": "Find out more",
-    "url": "http://kefinance.clintonhealthaccess.org/api/project_cash_needs/docs"
+    "url": "http://kefinance.clintonhealthaccess.org/api/project_cash_need/docs"
    }
   },
   {
@@ -726,15 +726,15 @@
     ]
    }
   },
-  "/project_cash_needss": {
+  "/project_cash_needs": {
    "get": {
-    "summary": "project_cash_needss List",
-    "description": "The project_cash_needs endpoint returns multiple project_cash_needs requested given the parameters injected. \n",
+    "summary": "project_cash_needs List",
+    "description": "The project_cash_need endpoint returns multiple project_cash_need requested given the parameters injected. \n",
     "parameters": [
      {
-      "name": "project_cash_needs_id",
+      "name": "project_cash_need_id",
       "in": "query",
-      "description": "project_cash_needs id",
+      "description": "project_cash_need id",
       "required": false,
       "type": "number",
       "format": "integer"
@@ -745,11 +745,11 @@
     ],
     "responses": {
      "200": {
-      "description": "An array of project_cash_needs returned",
+      "description": "An array of project_cash_need returned",
       "schema": {
        "type": "array",
        "items": {
-        "$ref": "#/definitions/project_cash_needs"
+        "$ref": "#/definitions/project_cash_need"
        }
       }
      },
@@ -767,14 +767,14 @@
     ]
    }
   },
-  "/project_cash_needs": {
+  "/project_cash_need": {
    "post": {
     "tags": [
      "Project Cash Needs"
     ],
-    "summary": "Add a new project_cash_needs",
-    "description": "new project_cash_needs",
-    "operationId": "add_project_cash_needs",
+    "summary": "Add a new project_cash_need",
+    "description": "new project_cash_need",
+    "operationId": "add_project_cash_need",
     "consumes": [
      "application/json",
      "application/xml"
@@ -787,19 +787,19 @@
      {
       "in": "body",
       "name": "body",
-      "description": "project_cash_needs object that needs to be added",
+      "description": "project_cash_need object that needs to be added",
       "required": true,
       "schema": {
-       "$ref": "#/definitions/project_cash_needs"
+       "$ref": "#/definitions/project_cash_need"
       }
      }
     ],
     "responses": {
      "200": {
-      "description": "Successfully added a new project_cash_needs for approval"
+      "description": "Successfully added a new project_cash_need for approval"
      },
      "405": {
-      "description": "Invalid input,adding a new project_cash_needs was unsuccessful"
+      "description": "Invalid input,adding a new project_cash_need was unsuccessful"
      }
     },
     "security": [
@@ -812,9 +812,9 @@
     "tags": [
      "Project Cash Needs"
     ],
-    "summary": "Update an existing project_cash_needs",
+    "summary": "Update an existing project_cash_need",
     "description": "",
-    "operationId": "update_project_cash_needs",
+    "operationId": "update_project_cash_need",
     "consumes": [
      "application/json",
      "application/xml"
@@ -827,10 +827,10 @@
      {
       "in": "body",
       "name": "body",
-      "description": "project_cash_needs object that needs to be added",
+      "description": "project_cash_need object that needs to be added",
       "required": true,
       "schema": {
-       "$ref": "#/definitions/project_cash_needs"
+       "$ref": "#/definitions/project_cash_need"
       }
      }
     ],
@@ -845,7 +845,7 @@
       "description": "Invalid ID supplied"
      },
      "404": {
-      "description": "project_cash_needs not found"
+      "description": "project_cash_need not found"
      },
      "405": {
       "description": "Validation exception"
@@ -858,23 +858,23 @@
     ]
    }
   },
-  "/project_cash_needs/{project_cash_needs_id}": {
+  "/project_cash_need/{project_cash_need_id}": {
    "get": {
     "tags": [
      "Project Cash Needs"
     ],
-    "summary": "Find project_cash_needs by ID",
-    "description": "Returns a single project_cash_needs",
-    "operationId": "get_project_cash_needs_by_id",
+    "summary": "Find project_cash_need by ID",
+    "description": "Returns a single project_cash_need",
+    "operationId": "get_project_cash_need_by_id",
     "produces": [
      "application/json",
      "application/xml"
     ],
     "parameters": [
      {
-      "name": "project_cash_needs_id",
+      "name": "project_cash_need_id",
       "in": "path",
-      "description": "ID of project_cash_needs to return object",
+      "description": "ID of project_cash_need to return object",
       "required": true,
       "type": "integer",
       "format": "int64"
@@ -884,14 +884,14 @@
      "200": {
       "description": "successful operation",
       "schema": {
-       "$ref": "#/definitions/project_cash_needs"
+       "$ref": "#/definitions/project_cash_need"
       }
      },
      "400": {
       "description": "Invalid ID supplied"
      },
      "404": {
-      "description": "project_cash_needs not found"
+      "description": "project_cash_need not found"
      }
     },
     "security": [
@@ -904,9 +904,9 @@
     "tags": [
      "Project Cash Needs"
     ],
-    "summary": "Deletes an project_cash_needs",
+    "summary": "Deletes an project_cash_need",
     "description": "",
-    "operationId": "delete_project_cash_needs",
+    "operationId": "delete_project_cash_need",
     "produces": [
      "application/json",
      "application/xml"
@@ -919,9 +919,9 @@
       "type": "string"
      },
      {
-      "name": "project_cash_needs_id",
+      "name": "project_cash_need_id",
       "in": "path",
-      "description": "project_cash_needs id to delete",
+      "description": "project_cash_need id to delete",
       "required": true,
       "type": "integer",
       "format": "int64"
@@ -932,7 +932,7 @@
       "description": "Invalid ID supplied"
      },
      "404": {
-      "description": "project_cash_needs not found"
+      "description": "project_cash_need not found"
      }
     },
     "security": [
@@ -1722,7 +1722,7 @@
     "name": "project_budget_account"
    }
   },
-  "project_cash_needs": {
+  "project_cash_need": {
    "type": "object",
    "required": [
     "id",
@@ -1760,7 +1760,7 @@
     }
    },
    "xml": {
-    "name": "project_cash_needs"
+    "name": "project_cash_need"
    }
   },
   "project_master_list": {
