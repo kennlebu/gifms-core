@@ -16,6 +16,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Request;
+use App\Models\ProjectsModels\Project;
 
 class ProjectApi extends Controller
 {
@@ -130,9 +131,12 @@ class ProjectApi extends Controller
 
 
         //not path params validation
-        $project_id = $input['project_id'];
+        // $project_id = $input['project_id'];
 
 
-        return response('How about implementing projectsGet as a GET method ?');
+
+         $response = Project::all();
+
+          return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
     }
 }

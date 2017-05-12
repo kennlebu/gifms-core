@@ -133,15 +133,22 @@ class migrate_lpo_keys extends Seeder
 
 
         $migrate_keys_sql = "
-                                UPDATE lpo_quotations i 
-                                    JOIN lpos l 
-                                    ON i.lpo_migration_id = l.migration_id
-                                    SET i.lpo_id = l.id 
+                                UPDATE lpo_quotations lq 
+                                    LEFT JOIN lpos l 
+                                    ON lq.migration_lpo_id = l.migration_id
+                                    LEFT JOIN suppliers s 
+                                    ON lq.migration_supplier_id = s.migration_id
+                                    LEFT JOIN staff st 
+                                    ON lq.migration_uploaded_by_id = st.migration_id
+                                SET lq.lpo_id = l.id ,
+                                    lq.supplier_id = s.id,
+                                    lq.uploaded_by_id = st.id
+
                             ";
 
         DB::statement($migrate_keys_sql);
 
-       echo "\n __________Migrated lpo_quotations Foreign keys ---------- lpo_id \n";
+       echo "\n __________Migrated lpo_quotations Foreign keys ---------- lpo_id ,supplier_id, uploaded_by_id\n";
 
 
          /**

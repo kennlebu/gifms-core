@@ -16,6 +16,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Request;
+use App\Models\LpoModels\LpoItem;
 
 class LPOItemApi extends Controller
 {
@@ -130,9 +131,23 @@ class LPOItemApi extends Controller
 
 
         //not path params validation
-        $lpo_id = $input['lpo_id'];
+        // $lpo_id = $input['lpo_id'];
 
 
-        return response('How about implementing lpoItemsGet as a GET method ?');
+        // return response('How about implementing lpoTermsGet as a GET method ?');
+        if(array_key_exists('lpo_id', $input)){
+
+            $response = LpoItem::where("deleted_at",null)
+                ->where('lpo_id', $input['lpo_id'])
+                ->get();
+
+        }else{
+
+            $response = LpoItem::all();
+
+        }
+
+
+        return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
     }
 }

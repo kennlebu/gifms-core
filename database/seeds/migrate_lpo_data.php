@@ -300,15 +300,15 @@ class migrate_lpo_data extends Seeder
 
         foreach ($data as $key => $value) {
 
-            $data_to_migrate[$key]['quotation_doc']         = $data[$key]['Quotation'];
-            $data_to_migrate[$key]['Supplier']              = $data[$key]['Supplier'];
-            $data_to_migrate[$key]['amount']                = $data[$key]['Amount'];
-            $data_to_migrate[$key]['quote_description']     = $data[$key]['QuoteDescription'];
-            $data_to_migrate[$key]['quote_date']            = $data[$key]['QuoteDate'];
-            $data_to_migrate[$key]['Uploaded_by']           = $data[$key]['UploadedBy'];
-            $data_to_migrate[$key]['quote_option']          = $data[$key]['QuoteOption'];
-            $data_to_migrate[$key]['lpo_migration_id']      = $data[$key]['LPO'];
-            $data_to_migrate[$key]['migration_id']          = $data[$key]['ID'];
+            $data_to_migrate[$key]['quotation_doc']                 = $data[$key]['Quotation'];
+            $data_to_migrate[$key]['amount']                        = $data[$key]['Amount'];
+            $data_to_migrate[$key]['quote_description']             = $data[$key]['QuoteDescription'];
+            $data_to_migrate[$key]['quote_date']                    = $data[$key]['QuoteDate'];
+            $data_to_migrate[$key]['migration_supplier_id']         = $data[$key]['Supplier'];
+            $data_to_migrate[$key]['migration_uploaded_by_id']      = $data[$key]['UploadedBy'];
+            $data_to_migrate[$key]['quote_option']                  = $data[$key]['QuoteOption'];
+            $data_to_migrate[$key]['migration_lpo_id']              = $data[$key]['LPO'];
+            $data_to_migrate[$key]['migration_id']                  = $data[$key]['ID'];
 
 
             echo "\n Lpo Quotations-$key---";

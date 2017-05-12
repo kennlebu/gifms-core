@@ -16,6 +16,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Request;
+use App\Models\LpoModels\LpoQuotation;
 
 class LPOQuotationApi extends Controller
 {
@@ -125,14 +126,29 @@ class LPOQuotationApi extends Controller
     public function lpoQuotationsGet()
     {
         $input = Request::all();
+        $response;
 
         //path params validation
 
 
         //not path params validation
-        $lpo_id = $input['lpo_id'];
+        // $lpo_id = $input['lpo_id'];
+
+        if(array_key_exists('lpo_id', $input)){
+
+            $response = LpoQuotation::where("deleted_at",null)
+                ->where('lpo_id', $input['lpo_id'])
+                ->get();
+
+        }else{
+
+            $response = LpoQuotation::all();
+
+        }
 
 
-        return response('How about implementing lpoQuotationsGet as a GET method ?');
+
+
+        return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
     }
 }

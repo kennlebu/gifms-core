@@ -16,6 +16,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Request;
+use App\Models\StaffModels\Staff;
 
 class StaffApi extends Controller
 {
@@ -130,9 +131,12 @@ class StaffApi extends Controller
 
 
         //not path params validation
-        $staff_id = $input['staff_id'];
+        // $staff_id = $input['staff_id'];
 
 
-        return response('How about implementing staffsGet as a GET method ?');
+
+         $response = Staff::all();
+
+          return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
     }
 }
