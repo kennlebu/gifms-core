@@ -12,11 +12,11 @@ info:
 host: 'localhost:8000'
 basePath: /api
 tags:
-  - name: Staff
-    description: Everything About Staff
+  - name: Test
+    description: Everything About Test
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/staff/docs'
+      url: 'http://kefinance.clintonhealthaccess.org/api/test/docs'
 schemes:
   - http
   - https
@@ -32,27 +32,27 @@ paths:
 
 
 
-  /staffs:
+  /tests:
     get:
-      summary: staffs List
+      summary: tests List
       description: |
-        The staff endpoint returns multiple staff requested given the parameters injected. 
+        The test endpoint returns multiple test requested given the parameters injected. 
       parameters:
-        - name: staff_id
+        - name: test_id
           in: query
-          description: staff id 
+          description: test id 
           required: false
           type: number
           format: integer
       tags:
-        - Staff
+        - Test
       responses:
         200:
-          description: An array of staff returned
+          description: An array of test returned
           schema:
             type: array
             items:
-              $ref: '#/definitions/staff'
+              $ref: '#/definitions/test'
         404:
           description: Unexpected error
           schema:
@@ -66,13 +66,13 @@ paths:
 
 
 
-  /staff:    
+  /test:    
     post:
       tags:
-        - Staff
-      summary: Add a new staff
-      description: new staff  
-      operationId: add_staff
+        - Test
+      summary: Add a new test
+      description: new test  
+      operationId: add_test
       consumes:
         - application/json
         - application/xml
@@ -82,15 +82,15 @@ paths:
       parameters:
         - in: body
           name: body
-          description: staff object that needs to be added
+          description: test object that needs to be added
           required: true
           schema:
-            $ref: '#/definitions/staff'
+            $ref: '#/definitions/test'
       responses:
         '200':
-          description: Successfully added a new staff for approval 
+          description: Successfully added a new test for approval 
         '405':
-          description: Invalid input,adding a new staff was unsuccessful
+          description: Invalid input,adding a new test was unsuccessful
       security:
         - api_key: []
             
@@ -100,10 +100,10 @@ paths:
             
     put:
       tags:
-        - Staff
-      summary: Update an existing staff
+        - Test
+      summary: Update an existing test
       description: ''
-      operationId: update_staff
+      operationId: update_test
       consumes:
         - application/json
         - application/xml
@@ -113,10 +113,10 @@ paths:
       parameters:
         - in: body
           name: body
-          description: staff object that needs to be added
+          description: test object that needs to be added
           required: true
           schema:
-            $ref: '#/definitions/staff'
+            $ref: '#/definitions/test'
       responses:
         200:
           description: Unexpected error
@@ -125,7 +125,7 @@ paths:
         '400':
           description: Invalid ID supplied
         '404':
-          description: staff not found
+          description: test not found
         '405':
           description: Validation exception
       security:
@@ -136,20 +136,20 @@ paths:
         
         
         
-  '/staff/{staff_id}':
+  '/test/{test_id}':
     get:
       tags:
-        - Staff
-      summary: Find staff by ID
-      description: Returns a single staff
-      operationId: get_staff_by_id
+        - Test
+      summary: Find test by ID
+      description: Returns a single test
+      operationId: get_test_by_id
       produces:
         - application/json
         - application/xml
       parameters:
-        - name: staff_id
+        - name: test_id
           in: path
-          description: ID of staff to return object
+          description: ID of test to return object
           required: true
           type: integer
           format: int64
@@ -157,11 +157,11 @@ paths:
         '200':
           description: successful operation
           schema:
-            $ref: '#/definitions/staff'
+            $ref: '#/definitions/test'
         '400':
           description: Invalid ID supplied
         '404':
-          description: staff not found
+          description: test not found
       security:
         - api_key: []
         
@@ -172,10 +172,10 @@ paths:
             
     delete:
       tags:
-        - Staff
-      summary: Deletes an staff
+        - Test
+      summary: Deletes an test
       description: ''
-      operationId: delete_staff
+      operationId: delete_test
       produces:
         - application/json
         - application/xml
@@ -184,9 +184,9 @@ paths:
           in: header
           required: true
           type: string
-        - name: staff_id
+        - name: test_id
           in: path
-          description: staff id to delete
+          description: test id to delete
           required: true
           type: integer
           format: int64
@@ -194,7 +194,7 @@ paths:
         '400':
           description: Invalid ID supplied
         '404':
-          description: staff not found
+          description: test not found
       security:
         - api_key: []
 
@@ -248,7 +248,7 @@ definitions:
 
       
       
-  staff:
+  test:
     type: object
     required:
       - id
@@ -278,7 +278,7 @@ definitions:
         format: date-time
         example: '2010-02-11'
     xml:
-      name: staff
+      name: test
     
   
     
