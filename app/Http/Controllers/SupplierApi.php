@@ -16,6 +16,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Request;
+use App\Models\SuppliesModels\Supplier;
 
 class SupplierApi extends Controller
 {
@@ -125,14 +126,19 @@ class SupplierApi extends Controller
     public function suppliersGet()
     {
         $input = Request::all();
+        $response;
 
         //path params validation
 
 
         //not path params validation
-        $supplier_id = $input['supplier_id'];
+        // $supplier_id = $input['supplier_id'];
 
 
-        return response('How about implementing suppliersGet as a GET method ?');
+         $response = Supplier::where("deleted_at",null)        
+                        ->orderBy('supplier_name','asc')
+                        ->get();
+
+          return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
     }
 }
