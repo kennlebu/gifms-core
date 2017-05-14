@@ -443,5 +443,7 @@ public function append_attribute_objects($data = array()){
 }
 
 
-public function 
+public function next_status(){
+    
+}
 }
