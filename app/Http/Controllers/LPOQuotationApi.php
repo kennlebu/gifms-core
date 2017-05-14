@@ -17,6 +17,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Request;
 use App\Models\LpoModels\LpoQuotation;
+use Anchu\Ftp\Facades\Ftp;
 
 class LPOQuotationApi extends Controller
 {
@@ -37,19 +38,57 @@ class LPOQuotationApi extends Controller
      */
     public function addLpoQuotation()
     {
-        $input = Request::all();
+        // $input = Request::all();
 
-        //path params validation
+        $lpo_quotation = new LpoQuotation;
 
 
-        //not path params validation
-        if (!isset($input['body'])) {
-            throw new \InvalidArgumentException('Missing the required parameter $body when calling addLpoQuotation');
+        try{
+
+
+            $form = Request::only(
+                        'lpo_id',
+                        'uploaded_by_id',
+                        'supplier_id',
+                        'amount',
+                        'file'
+                    );
+
+
+            // FTP::connection()->changeDir('./lpos');
+
+            $ftp = FTP::connection()->getDirListing();
+
+            // print_r($form['file']);
+
+            $file = $form['file'];
+
+
+            $lpo_quotation->uploaded_by_id                      =   (int)       $form['uploaded_by_id'];
+            $lpo_quotation->supplier_id                         =   (int)       $form['supplier_id'];
+            $lpo_quotation->amount                              =   (double)    $form['amount'];
+            $lpo_quotation->lpo_id                              =   (int)       $form['lpo_id'];
+
+
+            if($lpo_quotation->save()) {
+
+                FTP::connection()->makeDir('./lpos/'.$lpo_quotation->lpo_id.'/quotations/'.$lpo_quotation->id);
+                FTP::connection()->makeDir('./lpos/'.$lpo_quotation->lpo_id.'/quotations/'.$lpo_quotation->id);
+                FTP::connection()->uploadFile($file->getPathname(), './lpos/'.$lpo_quotation->lpo_id.'/quotations/'.$lpo_quotation->id.'/'.$lpo_quotation->id.'.'.$file->getClientOriginalExtension());
+
+                $lpo_quotation->quotation_doc                   =   $lpo_quotation->id.'.'.$file->getClientOriginalExtension();
+                $lpo_quotation->save();
+                
+                return Response()->json(array('success' => 'lpo quoatation added','lpo' => $lpo_quotation), 200);
+            }
+
+
+        }catch (JWTException $e){
+
+                return response()->json(['error'=>'You are not Authenticated'], 500);
+
         }
-        $body = $input['body'];
 
-
-        return response('How about implementing addLpoQuotation as a POST method ?');
     }
     /**
      * Operation updateLpoQuotation
