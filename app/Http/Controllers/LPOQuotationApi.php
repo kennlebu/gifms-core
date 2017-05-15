@@ -79,7 +79,7 @@ class LPOQuotationApi extends Controller
                 $lpo_quotation->quotation_doc                   =   $lpo_quotation->id.'.'.$file->getClientOriginalExtension();
                 $lpo_quotation->save();
                 
-                return Response()->json(array('success' => 'lpo quoatation added','lpo' => $lpo_quotation), 200);
+                return Response()->json(array('success' => 'lpo quoatation added','lpo_quotation' => $lpo_quotation), 200);
             }
 
 
