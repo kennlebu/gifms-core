@@ -39,17 +39,36 @@ class LPOTermApi extends Controller
     {
         $input = Request::all();
 
-        //path params validation
+        $lpo_term = new LpoTerm;
 
 
-        //not path params validation
-        if (!isset($input['body'])) {
-            throw new \InvalidArgumentException('Missing the required parameter $body when calling addLpoTerm');
+        try{
+
+
+            $form = Request::only(
+                        'lpo_id',
+                        'terms'
+                    );
+
+
+
+            $lpo_term->lpo_id                     =   (int)       $form['lpo_id'];
+            $lpo_term->terms                      =               $form['terms'];
+            $lpo_term->lpo_migration_id           =     0 ;
+
+
+            if($lpo_term->save()) {
+
+                return Response()->json(array('success' => 'lpo term added','lpo' => $lpo_term), 200);
+            }
+
+
+        }catch (JWTException $e){
+
+                return response()->json(['error'=>'You are not Authenticated'], 500);
+
         }
-        $body = $input['body'];
 
-
-        return response('How about implementing addLpoTerm as a POST method ?');
     }
     /**
      * Operation updateLpoTerm
