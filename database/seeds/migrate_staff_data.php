@@ -77,5 +77,148 @@ class migrate_staff_data extends Seeder
 
 
 
+
+
+
+
+
+
+
+
+        /**
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         *                  Roles
+         * 
+         * 
+         * 
+         * 
+         * 
+         */
+        echo "\nRoles -[ALL]---\n";
+
+        DB::table('roles')->insert([
+            [
+                'role_name'             => 'Administrator',
+                'acronym'               => 'admin'
+            ],
+            [
+                'role_name'             => 'Director',
+                'acronym'               => 'dir'
+            ],
+            [
+                'role_name'             => 'Associate Director',
+                'acronym'               => 'a-dir'
+            ],
+            [
+                'role_name'             => 'Financial Controller',
+                'acronym'               => 'fin'
+            ],
+            [
+                'role_name'             => 'Program Manager',
+                'acronym'               => 'pm'
+            ],
+            [
+                'role_name'             => 'Program Analyst',
+                'acronym'               => 'pa'
+            ],
+            [
+                'role_name'             => 'Program Analyst',
+                'acronym'               => 'pa'
+            ],
+            [
+                'role_name'             => 'Accountant',
+                'acronym'               => 'ac'
+            ],
+            [
+                'role_name'             => 'Assistant Accountant',
+                'acronym'               => 'a-ac'
+            ],
+            [
+                'role_name'             => 'Auditor',
+                'acronym'               => 'a-ac'
+            ]
+        ]);
+        echo "\n-----------------------------------------------------------------------------------------------------\n";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        /**
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         *                  Rights
+         * 
+         * 
+         * 
+         * 
+         * 
+         */
+        echo "\nRights -[ALL]---\n";
+
+        DB::table('rights')->insert([
+           [
+                'right_name'            => 'View All user LPOS',
+                'operation_type'        => 'Read',
+                'right_abbr'            => 'READ_LPO_-0',
+                'entity'                => 'Lpo',
+                'at_status_id'          => '0'
+            ],
+            [
+                'right_name'            => 'View All LPOS',
+                'operation_type'        => 'Read',
+                'right_abbr'            => 'READ_LPO_-1',
+                'entity'                => 'Lpo',
+                'at_status_id'          => '-1'
+            ],
+            [
+                'right_name'            => 'Create LPO',
+                'operation_type'        => 'Create',
+                'operation_type_abbr'   => 'CREATE_LPO_-0',
+                'entity'                => 'Lpo',
+                'at_status_id'          => '0'
+            ],
+            [
+                'right_name'            => 'Update created LPO details',
+                'operation_type'        => 'Update',
+                'operation_type_abbr'   => 'CREATE_LPO_-0',
+                'entity'                => 'Lpo',
+                'at_status_id'          => '1'
+            ],
+            [
+                'right_name'            => 'Update LPO with no quotes',
+                'operation_type'        => 'Update',
+                'operation_type_abbr'   => 'CREATE_LPO_-0',
+                'entity'                => 'Lpo',
+                'at_status_id'          => '1'
+            ],
+        ]);
+        echo "\n-----------------------------------------------------------------------------------------------------\n";
+
+
+
+
+
+
+
+
     }
 }

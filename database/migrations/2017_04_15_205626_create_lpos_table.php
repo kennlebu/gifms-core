@@ -26,7 +26,7 @@ class CreateLposTable extends Migration
             $table->date('request_date')->nullable();
             $table->integer('status_id')->nullable();
             $table->integer('currency_id')->nullable();
-            $table->integer('quotation')->nullable();
+            $table->integer('preffered_quotation_id')->nullable();
             $table->integer('supply_category')->nullable();
             $table->string('delivery_document')->nullable();
             $table->date('date_delivered')->nullable();
@@ -43,6 +43,7 @@ class CreateLposTable extends Migration
             $table->text('reject_reason')->nullable();
             $table->integer('quote_exempt')->nullable();
             $table->text('quote_exempt_explanation')->nullable();
+            $table->integer('migration_preffered_quotation_id')->nullable();
             $table->integer('migration_account_id')->nullable();
             $table->integer('migration_requested_by_id')->nullable();
             $table->integer('migration_project_id')->nullable();

@@ -39,13 +39,16 @@ class migrate_lpo_keys extends Seeder
                                     ON s.migration_id = l.migration_supplier_id
                                     LEFT JOIN accounts a 
                                     ON a.migration_id = l.migration_account_id
+                                    LEFT JOIN lpo_quotations q 
+                                    ON q.migration_id = l.migration_preffered_quotation_id
 
-                                    SET     l.project_manager_id    =   pm.id ,
-                                            l.received_by_id           =   rcb.id,
-                                            l.requested_by_id       =   rq.id,
-                                            l.project_id            =   p.id,
-                                            l.supplier_id           =   s.id,
-                                            l.account_id            =   a.id
+                                    SET     l.project_manager_id            =   pm.id ,
+                                            l.received_by_id                =   rcb.id,
+                                            l.requested_by_id               =   rq.id,
+                                            l.project_id                    =   p.id,
+                                            l.supplier_id                   =   s.id,
+                                            l.account_id                    =   a.id,
+                                            l.preffered_quotation_id        =   q.id
                              ";
 
         DB::statement($migrate_keys_sql);

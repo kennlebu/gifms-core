@@ -37,33 +37,34 @@ class migrate_lpo_data extends Seeder
 
 
 
-            $data_to_migrate[$key]['chai_ref']                      = $data[$key]['OurRef'];
-            $data_to_migrate[$key]['lpo_date']                      = $data[$key]['LPODate'];
-            $data_to_migrate[$key]['addressee']                     = $data[$key]['Addressee'];
-            $data_to_migrate[$key]['expense_desc']                  = $data[$key]['Title'];
-            $data_to_migrate[$key]['expense_purpose']               = $data[$key]['Purpose'];
-            $data_to_migrate[$key]['request_date']                  = $data[$key]['RequestDate'];
-            $data_to_migrate[$key]['status_id']                     = $data[$key]['Status'];
-            $data_to_migrate[$key]['currency_id']                   = $data[$key]['LPOCurrency'];
-            $data_to_migrate[$key]['quotation']                     = $data[$key]['Quotation'];
-            $data_to_migrate[$key]['supply_category']               = $data[$key]['SupplyCategory'];
-            $data_to_migrate[$key]['delivery_document']             = $data[$key]['DeliveryDocument'];
-            $data_to_migrate[$key]['date_delivered']                = $data[$key]['DateDelivered'];
-            $data_to_migrate[$key]['meeting']                       = $data[$key]['Meeting'];
-            $data_to_migrate[$key]['comments']                      = $data[$key]['Comments'];
-            $data_to_migrate[$key]['preffered_supplier']            = $data[$key]['PreferredSupplier'];
-            $data_to_migrate[$key]['attention']                     = $data[$key]['Attention'];
-            $data_to_migrate[$key]['lpo_email']                     = $data[$key]['LPOEmail'];
-            $data_to_migrate[$key]['reject_reason']                 = $data[$key]['RejectReason'];
-            $data_to_migrate[$key]['quote_exempt']                  = $data[$key]['QuoteExempt'];
-            $data_to_migrate[$key]['quote_exempt_explanation']      = $data[$key]['QuotesExemptExplaination'];            
-            $data_to_migrate[$key]['migration_account_id']          = $data[$key]['Account'];
-            $data_to_migrate[$key]['migration_project_manager_id']  = $data[$key]['ProjectManager'];
-            $data_to_migrate[$key]['migration_received_by_id']      = $data[$key]['RecievedBy'];
-            $data_to_migrate[$key]['migration_project_id']          = $data[$key]['Project'];
-            $data_to_migrate[$key]['migration_requested_by_id']     = $data[$key]['RequestedBy'];
-            $data_to_migrate[$key]['migration_supplier_id']         = $data[$key]['Supplier'];
-            $data_to_migrate[$key]['migration_id']                  = $data[$key]['ID'];
+            $data_to_migrate[$key]['chai_ref']                              = $data[$key]['OurRef'];
+            $data_to_migrate[$key]['lpo_date']                              = $data[$key]['LPODate'];
+            $data_to_migrate[$key]['addressee']                             = $data[$key]['Addressee'];
+            $data_to_migrate[$key]['expense_desc']                          = $data[$key]['Title'];
+            $data_to_migrate[$key]['expense_purpose']                       = $data[$key]['Purpose'];
+            $data_to_migrate[$key]['request_date']                          = $data[$key]['RequestDate'];
+            $data_to_migrate[$key]['status_id']                             = $data[$key]['Status'];
+            $data_to_migrate[$key]['currency_id']                           = $data[$key]['LPOCurrency'];
+            $data_to_migrate[$key]['quotation']                             = $data[$key]['Quotation'];
+            $data_to_migrate[$key]['supply_category']                       = $data[$key]['SupplyCategory'];
+            $data_to_migrate[$key]['delivery_document']                     = $data[$key]['DeliveryDocument'];
+            $data_to_migrate[$key]['date_delivered']                        = $data[$key]['DateDelivered'];
+            $data_to_migrate[$key]['meeting']                               = $data[$key]['Meeting'];
+            $data_to_migrate[$key]['comments']                              = $data[$key]['Comments'];
+            $data_to_migrate[$key]['preffered_supplier']                    = $data[$key]['PreferredSupplier'];
+            $data_to_migrate[$key]['attention']                             = $data[$key]['Attention'];
+            $data_to_migrate[$key]['lpo_email']                             = $data[$key]['LPOEmail'];
+            $data_to_migrate[$key]['reject_reason']                         = $data[$key]['RejectReason'];
+            $data_to_migrate[$key]['quote_exempt']                          = $data[$key]['QuoteExempt'];
+            $data_to_migrate[$key]['quote_exempt_explanation']              = $data[$key]['QuotesExemptExplaination'];   
+            $data_to_migrate[$key]['migration_preffered_quotation_id']      = $data[$key]['Quotation'];         
+            $data_to_migrate[$key]['migration_account_id']                  = $data[$key]['Account'];
+            $data_to_migrate[$key]['migration_project_manager_id']          = $data[$key]['ProjectManager'];
+            $data_to_migrate[$key]['migration_received_by_id']              = $data[$key]['RecievedBy'];
+            $data_to_migrate[$key]['migration_project_id']                  = $data[$key]['Project'];
+            $data_to_migrate[$key]['migration_requested_by_id']             = $data[$key]['RequestedBy'];
+            $data_to_migrate[$key]['migration_supplier_id']                 = $data[$key]['Supplier'];
+            $data_to_migrate[$key]['migration_id']                          = $data[$key]['ID'];
 
 
 
