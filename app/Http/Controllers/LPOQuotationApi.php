@@ -147,14 +147,18 @@ class LPOQuotationApi extends Controller
      */
     public function getLpoQuotationById($lpo_quotation_id)
     {
-        $input = Request::all();
+         $input = Request::all();
 
-        //path params validation
+        try{
 
+            $response = LpoQuotation::findOrFail($lpo_quotation_id);
+            return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
 
-        //not path params validation
+        }catch(Exception $e){
 
-        return response('How about implementing getLpoQuotationById as a GET method ?');
+            $response =  ["error"=>"lpo could not be found"];
+            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+        }
     }
     /**
      * Operation lpoQuotationsGet

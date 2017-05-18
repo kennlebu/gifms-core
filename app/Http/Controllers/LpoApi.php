@@ -141,12 +141,10 @@ public function updateLpo()
 {
     $input = Request::all();
 
-//path params validation
-
-    print_r($input);
+    // path params validation
 
 
-//not path params validation
+    //not path params validation
     if (!isset($input['body'])) {
         throw new \InvalidArgumentException('Missing the required parameter $body when calling updateLpo');
     }
