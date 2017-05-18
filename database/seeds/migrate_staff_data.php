@@ -178,37 +178,42 @@ class migrate_staff_data extends Seeder
            [
                 'right_name'            => 'View All user LPOS',
                 'operation_type'        => 'Read',
-                'right_abbr'            => 'READ_LPO_0',
+                'operation_type_abbr'   => 'READ_LPO_0',
                 'entity'                => 'Lpo',
-                'at_status_id'          => '0'
+                'at_status_id'          => '0',
+                'approval_level_id'     => '0'
             ],
             [
                 'right_name'            => 'View All LPOS',
                 'operation_type'        => 'Read',
-                'right_abbr'            => 'READ_LPO_-1',
+                'operation_type_abbr'   => 'READ_LPO_-1',
                 'entity'                => 'Lpo',
-                'at_status_id'          => '-1'
+                'at_status_id'          => '-1',
+                'approval_level_id'     => '0'
             ],
             [
                 'right_name'            => 'Create LPO',
                 'operation_type'        => 'Create',
                 'operation_type_abbr'   => 'CREATE_LPO_0',
                 'entity'                => 'Lpo',
-                'at_status_id'          => '0'
+                'at_status_id'          => '0',
+                'approval_level_id'     => '0'
             ],
             [
                 'right_name'            => 'Update created LPO details',
                 'operation_type'        => 'Update',
                 'operation_type_abbr'   => 'CREATE_LPO_1',
                 'entity'                => 'Lpo',
-                'at_status_id'          => '1'
+                'at_status_id'          => '1',
+                'approval_level_id'     => '0'
             ],
             [
                 'right_name'            => 'Update LPO pending quotations',
                 'operation_type'        => 'Update',
                 'operation_type_abbr'   => 'CREATE_LPO_2',
                 'entity'                => 'Lpo',
-                'at_status_id'          => '2'
+                'at_status_id'          => '2',
+                'approval_level_id'     => '0'
             ],
             [
                 'right_name'            => 'LPO PM Approval',
