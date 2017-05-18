@@ -34,7 +34,8 @@ class migrate_suppliers_data extends Seeder
         foreach ($data as $key => $value) {
 
             $data_to_migrate[$key]['supplier_name']                 = $data[$key]['Supplier'];
-            $data_to_migrate[$key]['contact_name']                  = $data[$key]['Contact'];
+            $data_to_migrate[$key]['contact_name_1']                = $data[$key]['Contact'];
+            $data_to_migrate[$key]['contact_email_1']               = $data[$key]['AlternativeEmail'];
             $data_to_migrate[$key]['address']                       = $data[$key]['Addresss'];
             $data_to_migrate[$key]['telephone']                     = $data[$key]['Telephone'];
             $data_to_migrate[$key]['email']                         = $data[$key]['Email'];
@@ -42,20 +43,20 @@ class migrate_suppliers_data extends Seeder
             $data_to_migrate[$key]['bank_account']                  = $data[$key]['BankAccount'];
             $data_to_migrate[$key]['mobile_payment_number']         = $data[$key]['MobilePaymentNumber'];
             $data_to_migrate[$key]['chaque_address']                = $data[$key]['ChequeAddressee'];
-            $data_to_migrate[$key]['payment_mode']                  = $data[$key]['PaymentMode'];
+            $data_to_migrate[$key]['payment_mode_id']               = $data[$key]['PaymentMode'];
             $data_to_migrate[$key]['bank_code']                     = $data[$key]['BankCode'];
             $data_to_migrate[$key]['swift_code']                    = $data[$key]['SWIFTCode'];
             $data_to_migrate[$key]['usd_account']                   = $data[$key]['USDAccount'];
             $data_to_migrate[$key]['alternative_email']             = $data[$key]['AlternativeEmail'];
-            $data_to_migrate[$key]['currency']                      = $data[$key]['Currency'];
+            $data_to_migrate[$key]['currency_id']                   = $data[$key]['Currency'];
             $data_to_migrate[$key]['mobile_payment_name']           = $data[$key]['MobilePaymentName'];
             $data_to_migrate[$key]['city_id']                       = $data[$key]['City'];
             $data_to_migrate[$key]['qb']                            = $data[$key]['QB'];
-            $data_to_migrate[$key]['status']                        = $data[$key]['Status'];
-            $data_to_migrate[$key]['staff']                         = $data[$key]['Staff'];
+            $data_to_migrate[$key]['status_id']                     = $data[$key]['Status'];
             $data_to_migrate[$key]['password']                      = $data[$key]['Passwd'];
             $data_to_migrate[$key]['quick_books']                   = $data[$key]['Quickbooks'];
             $data_to_migrate[$key]['tax_pin']                       = $data[$key]['TaxPIN'];
+            $data_to_migrate[$key]['migration_staff_id']            = $data[$key]['Staff'];
             $data_to_migrate[$key]['migration_bank_id']             = (int)$data[$key]['Bank'];
             $data_to_migrate[$key]['migration_bank_branch_id']      = (int)$data[$key]['BankBranch'];
             $data_to_migrate[$key]['migration_id']                  = $data[$key]['ID'];

@@ -36,9 +36,12 @@ class migrate_suppliers_keys extends Seeder
                                     ON b.migration_id = sup.migration_bank_id
                                     LEFT JOIN bank_branches bb 
                                     ON bb.migration_id = sup.migration_bank_branch_id
+                                    LEFT JOIN staff s 
+                                    ON s.migration_id = sup.migration_staff_id
 
                                     SET     sup.bank_id             =   b.id ,
-                                            sup.bank_branch_id      =   bb.id
+                                            sup.bank_branch_id      =   bb.id,
+                                            sup.staff_id            =   s.id
                              ";
 
         DB::statement($migrate_keys_sql);
