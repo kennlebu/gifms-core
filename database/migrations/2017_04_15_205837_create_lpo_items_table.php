@@ -23,8 +23,8 @@ class CreateLpoItemsTable extends Migration
             $table->string('qty_description')->nullable();
             $table->string('quotation')->nullable();
             $table->string('item')->nullable();
-            $table->integer('vat_charge');
-            $table->integer('lpo_migration_id');
+            $table->integer('vat_charge')->nullable();
+            $table->integer('lpo_migration_id')->nullable();
             $table->integer('migration_id')->nullable();
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));

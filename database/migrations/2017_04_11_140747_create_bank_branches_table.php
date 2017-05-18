@@ -16,8 +16,8 @@ class CreateBankBranchesTable extends Migration
         Schema::create('bank_branches', function (Blueprint $table) {
             $table->increments('id');
             $table->string('bank_id');
-            $table->string('branch_name');
-            $table->string('branch_code');
+            $table->string('branch_name')->nullable();
+            $table->string('branch_code')->nullable();
             $table->integer('migration_id')->nullable();
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));

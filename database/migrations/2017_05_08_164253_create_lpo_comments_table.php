@@ -18,8 +18,8 @@ class CreateLpoCommentsTable extends Migration
             $table->integer('lpo_id')->nullable();
             $table->integer('at_status_id')->nullable();
             $table->text('comment');   
-            $table->text('commentor_id');            
-            $table->integer('lpo_migration_id');
+            $table->text('commentor_id')->nullable();            
+            $table->integer('lpo_migration_id')->nullable();
             $table->integer('migration_id')->nullable();
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));

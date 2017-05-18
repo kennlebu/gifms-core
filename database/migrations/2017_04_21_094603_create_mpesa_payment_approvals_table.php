@@ -16,8 +16,8 @@ class CreateMpesaPaymentApprovalsTable extends Migration
         Schema::create('mpesa_payment_approvals', function (Blueprint $table) {
             
             $table->increments('id');
-            $table->integer('mpesa_payment_id');
-            $table->integer('approval_level_id');
+            $table->integer('mpesa_payment_id')->nullable();
+            $table->integer('approval_level_id')->nullable();
             $table->integer('approver')->nullable();
             $table->integer('migration_approver')->nullable();
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));

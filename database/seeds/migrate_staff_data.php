@@ -178,7 +178,7 @@ class migrate_staff_data extends Seeder
            [
                 'right_name'            => 'View All user LPOS',
                 'operation_type'        => 'Read',
-                'right_abbr'            => 'READ_LPO_-0',
+                'right_abbr'            => 'READ_LPO_0',
                 'entity'                => 'Lpo',
                 'at_status_id'          => '0'
             ],
@@ -192,24 +192,64 @@ class migrate_staff_data extends Seeder
             [
                 'right_name'            => 'Create LPO',
                 'operation_type'        => 'Create',
-                'operation_type_abbr'   => 'CREATE_LPO_-0',
+                'operation_type_abbr'   => 'CREATE_LPO_0',
                 'entity'                => 'Lpo',
                 'at_status_id'          => '0'
             ],
             [
                 'right_name'            => 'Update created LPO details',
                 'operation_type'        => 'Update',
-                'operation_type_abbr'   => 'CREATE_LPO_-0',
+                'operation_type_abbr'   => 'CREATE_LPO_1',
                 'entity'                => 'Lpo',
                 'at_status_id'          => '1'
             ],
             [
-                'right_name'            => 'Update LPO with no quotes',
+                'right_name'            => 'Update LPO pending quotations',
                 'operation_type'        => 'Update',
-                'operation_type_abbr'   => 'CREATE_LPO_-0',
+                'operation_type_abbr'   => 'CREATE_LPO_2',
                 'entity'                => 'Lpo',
-                'at_status_id'          => '1'
+                'at_status_id'          => '2'
             ],
+            [
+                'right_name'            => 'LPO PM Approval',
+                'operation_type'        => 'Approval',
+                'operation_type_abbr'   => 'Approve_LPO_4',
+                'entity'                => 'Lpo',
+                'at_status_id'          => '4',
+                'approval_level_id'     => '2'
+            ],
+            [
+                'right_name'            => 'LPO PM Approval',
+                'operation_type'        => 'Approval',
+                'operation_type_abbr'   => 'Approve_LPO_3',
+                'entity'                => 'Lpo',
+                'at_status_id'          => '3',
+                'approval_level_id'     => '2'
+            ],
+            [
+                'right_name'            => 'LPO AC Approval',
+                'operation_type'        => 'Approval',
+                'operation_type_abbr'   => 'Approve_LPO_13',
+                'entity'                => 'Lpo',
+                'at_status_id'          => '13',
+                'approval_level_id'     => '1'
+            ],
+            [
+                'right_name'            => 'LPO FIN Approval',
+                'operation_type'        => 'Approval',
+                'operation_type_abbr'   => 'Approve_LPO_4',
+                'entity'                => 'Lpo',
+                'at_status_id'          => '4',
+                'approval_level_id'     => '3'
+            ],
+            [
+                'right_name'            => 'LPO MAN Approval',
+                'operation_type'        => 'Approval',
+                'operation_type_abbr'   => 'Approve_LPO_5',
+                'entity'                => 'Lpo',
+                'at_status_id'          => '5',
+                'approval_level_id'     => '4'
+            ]
         ]);
         echo "\n-----------------------------------------------------------------------------------------------------\n";
 

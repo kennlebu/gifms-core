@@ -23,8 +23,8 @@ class CreateProjectBudgetAccountsTable extends Migration
             $table->integer('funding_status');
             $table->integer('current_forecast');
             $table->integer('reforcast_month');
-            $table->integer('migration_project_id');
-            $table->integer('migration_account_id');
+            $table->integer('migration_project_id')->nullable();
+            $table->integer('migration_account_id')->nullable();
             $table->integer('migration_id')->nullable();
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
