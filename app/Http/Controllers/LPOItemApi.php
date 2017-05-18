@@ -119,12 +119,14 @@ class LPOItemApi extends Controller
     {
         $input = Request::all();
 
-        //path params validation
+        $deleted_lpo_item = LpoItem::destroy($lpo_item_id);
 
 
-        //not path params validation
-
-        return response('How about implementing deleteLpoItem as a DELETE method ?');
+        if($deleted_lpo_item){
+            return response()->json(['msg'=>"lpo item deleted"], 200,array(),JSON_PRETTY_PRINT);
+        }else{
+            return response()->json(['error'=>"lpo item not found"], 404,array(),JSON_PRETTY_PRINT);
+        }
     }
     /**
      * Operation getLpoItemById

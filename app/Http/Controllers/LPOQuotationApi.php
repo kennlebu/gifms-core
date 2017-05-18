@@ -127,12 +127,14 @@ class LPOQuotationApi extends Controller
     {
         $input = Request::all();
 
-        //path params validation
+        $deleted_lpo_quotation = LpoQuotation::destroy($lpo_quotation_id);
 
 
-        //not path params validation
-
-        return response('How about implementing deleteLpoQuotation as a DELETE method ?');
+        if($deleted_lpo_quotation){
+            return response()->json(['msg'=>"lpo quotation deleted"], 200,array(),JSON_PRETTY_PRINT);
+        }else{
+            return response()->json(['error'=>"lpo quotation not found"], 404,array(),JSON_PRETTY_PRINT);
+        }
     }
     /**
      * Operation getLpoQuotationById

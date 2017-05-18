@@ -59,7 +59,7 @@ class LPOTermApi extends Controller
 
             if($lpo_term->save()) {
 
-                return Response()->json(array('success' => 'lpo term added','lpo' => $lpo_term), 200);
+                return Response()->json(array('success' => 'lpo term added','lpo_term' => $lpo_term), 200);
             }
 
 
@@ -107,12 +107,14 @@ class LPOTermApi extends Controller
     {
         $input = Request::all();
 
-        //path params validation
+        $deleted_lpo_term = LpoTerm::destroy($lpo_term_id);
 
 
-        //not path params validation
-
-        return response('How about implementing deleteLpoTerm as a DELETE method ?');
+        if($deleted_lpo_term){
+            return response()->json(['msg'=>"lpo term deleted"], 200,array(),JSON_PRETTY_PRINT);
+        }else{
+            return response()->json(['error'=>"lpo term not found"], 404,array(),JSON_PRETTY_PRINT);
+        }
     }
     /**
      * Operation getLpoTermById

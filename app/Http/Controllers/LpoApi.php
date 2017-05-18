@@ -164,6 +164,7 @@ public function updateLpo()
     $lpo->currency_id                       =   (int)   $body['currency_id'];
     $lpo->project_manager_id                =   (int)   $body['project_manager_id'];
     $lpo->quote_exempt                      =   (int)   $body['quote_exempt'];
+    $lpo->preffered_quotation_id            =   (int)   $body['preffered_quotation_id'];
     $lpo->quote_exempt_explanation          =   $body['quote_exempt_explanation'];
 
 
@@ -209,7 +210,6 @@ public function deleteLpo($lpo_id)
 
     $deleted_lpo = lpo::destroy($lpo_id);
 
-    print_r($deleted_lpo);
 
     if($deleted_lpo){
         return response()->json(['msg'=>"lpo deleted"], 200,array(),JSON_PRETTY_PRINT);
