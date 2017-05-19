@@ -81,6 +81,13 @@ Route::DELETE('/lpo/{lpo_id}', 'LpoApi@deleteLpo')->middleware('jwt.auth');
  */
 Route::GET('/lpo/{lpo_id}', 'LpoApi@getLpoById')->middleware('jwt.auth');
 /**
+ * PATCH submitOrApprove
+ * Summary: Submits or Approves Lpo
+ * Notes: Submits or Approves Lpo and returns the submitted/approved lpo
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PATCH('lpo/{lpo_id}', 'LPOApi@submitOrApprove')->middleware('jwt.auth');
+/**
  * POST updateLpoWithForm
  * Summary: Updates a lpo with form data
  * Notes: updates each field when not set as null

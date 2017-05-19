@@ -67,6 +67,9 @@ class migrate_lpo_data extends Seeder
             $data_to_migrate[$key]['migration_supplier_id']                 = $data[$key]['Supplier'];
             $data_to_migrate[$key]['migration_id']                          = $data[$key]['ID'];
 
+            
+            $data_to_migrate[$key]['created_at']                            = $data[$key]['LPODate'];
+
 
 
             $data_to_migrate_fin[$key]['id']                                = $key+1;
@@ -384,7 +387,7 @@ class migrate_lpo_data extends Seeder
         foreach ($data as $key => $value) {
 
             $data_to_migrate[$key]['lpo_status']                            = $data[$key]['LPOStatus'];
-            $data_to_migrate[$key]['next_status']                           = $data[$key]['NextStatus'];
+            $data_to_migrate[$key]['next_status_id']                        = $data[$key]['NextStatus'];
             $data_to_migrate[$key]['migration_status_security_level']       = $data[$key]['StatusSecurityLevel'];
             $data_to_migrate[$key]['migration_id']                          = $data[$key]['ID'];
 

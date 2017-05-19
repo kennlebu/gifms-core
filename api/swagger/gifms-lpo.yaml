@@ -193,6 +193,41 @@ paths:
           description: lpo not found
       security:
         - api_key: []
+
+
+
+
+
+
+    patch:
+      tags:
+        - LPO
+      summary: Submits or Approves Lpo
+      description: Submits or Approves Lpo and returns the submitted/approved lpo
+      operationId: submit_or_approve
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: lpo_id
+          in: path
+          description: ID of lpo to return lpo object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/lpo'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: lpo not found
+      security:
+        - api_key: []
+
+
         
         
         

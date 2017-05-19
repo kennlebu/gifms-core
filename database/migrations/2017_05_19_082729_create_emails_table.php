@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateLpoStatusesTable extends Migration
+class CreateEmailsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,16 +13,20 @@ class CreateLpoStatusesTable extends Migration
      */
     public function up()
     {
-        Schema::create('lpo_statuses', function (Blueprint $table) {
+        Schema::create('emails', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('lpo_status');
-            $table->integer('next_status_id')->nullable();
-            $table->integer('status_security_level')->nullable();
-            $table->integer('migration_status_security_level')->nullable();
-            $table->integer('migration_id')->nullable();
+            $table->timestamps();
+            $table->text('to')->nullable();      
+            $table->text('cc')->nullable();       
+            $table->text('bcc')->nullable();   
+            $table->text('subject')->nullable(); 
+            $table->text('message')->nullable();   
+            $table->text('attachments')->nullable();   
+            $table->text('sent')->nullable();                              
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
             $table->softDeletes();
+        });
         });
     }
 
@@ -33,6 +37,6 @@ class CreateLpoStatusesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('lpo_statuses');
+        Schema::dropIfExists('emails');
     }
 }

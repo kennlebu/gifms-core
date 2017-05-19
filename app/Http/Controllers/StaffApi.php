@@ -137,6 +137,15 @@ class StaffApi extends Controller
 
          $response = Staff::all();
 
+
+        if(array_key_exists('role_abr', $input)&& $input['role_abr'] = "pm"){
+            $response = Staff::where("deleted_at",null)
+            ->where('post', "Program Manager")
+            ->orWhere('post', "Financial Controller")
+            ->get();
+        }
+
+
           return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
     }
 }

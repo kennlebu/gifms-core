@@ -81,7 +81,7 @@ public function add()
         $lpo->project_id                        =   (int)   $form['project_id'];
         $lpo->currency_id                       =   (int)   $form['currency_id'];
         $lpo->project_manager_id                =   (int)   $form['project_manager_id'];
-        $lpo->status_id                         =   1;
+        $lpo->status_id                         =   2;
 
 
         if($lpo->save()) {
@@ -267,6 +267,57 @@ public function getLpoById($lpo_id)
         return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /**
+     * Operation submitOrApprove
+     *
+     * Submits or Approves Lpo.
+     *
+     * @param int $lpo_id ID of lpo to return lpo object (required)
+     *
+     * @return Http response
+     */
+    public function submitOrApprove($lpo_id)
+    {
+
+
+        try{
+            $response;
+            $lpo            = Lpo::findOrFail($lpo_id);
+            $lpo_status     = Lpo::findOrFail($lpo->status_id);
+            $next_status    = $lpo_status->next_status;
+            $lpo->status_id = $next_status;
+
+
+            return Response()->json(array('msg' => 'Success','lpo' => $lpo), 200);
+
+        }catch(Exception $e){
+
+            $response =  ["error"=>"lpo could not be found"];
+            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+        }
+        
+    }
+
+
 
 
 
