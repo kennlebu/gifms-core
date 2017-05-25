@@ -1,0 +1,2040 @@
+swagger: '2.0'
+info:
+  description: Finance management sysytem
+  version: 1.0.0
+  title: Grants Information Management System
+  termsOfService: 'http://kefinance.clintonhealthaccess.org/terms/'
+  contact:
+    email: mwangikevinn@gmail.com
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+host: 'localhost:8000'
+basePath: /api
+tags:
+  - name: Mobile Payment
+    description: Everything About Mobile Payment
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/mobile_payment/docs'
+  - name: Mobile Payment Approval
+    description: Everything About Mobile Payment Approval
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/mobile_payment_approval/docs'
+  - name: Mobile Payment Payee
+    description: Everything About Mobile Payment Payee
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/mobile_payment_payee/docs'
+  - name: Mobile Payment Status
+    description: Everything About Mobile Payment Status
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/mobile_payment_status/docs'
+  - name: Mobile Payment Tariff
+    description: Everything About Mobile Payment Tariff
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/mobile_payment_tariff/docs'
+  - name: Mobile Payment Type
+    description: Everything About Mobile Payment Type
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/mobile_payment_type/docs'
+  - name: Mobile Payment Viewing Permission
+    description: Everything About Mobile Payment Viewing Permission
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/mobile_payment_viewing_permission/docs'
+schemes:
+  - http
+  - https
+paths:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  /mobile_payments:
+    get:
+      summary: mobile_payments List
+      description: |
+        The mobile_payment endpoint returns multiple mobile_payment requested given the parameters injected. 
+      parameters:
+        - name: mobile_payment_id
+          in: query
+          description: mobile_payment id 
+          required: false
+          type: number
+          format: integer
+      tags:
+        - Mobile Payment
+      responses:
+        200:
+          description: An array of mobile_payment returned
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/mobile_payment'
+        404:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+        - api_key: []
+
+
+
+
+
+
+
+  /mobile_payment:    
+    post:
+      tags:
+        - Mobile Payment
+      summary: Add a new mobile_payment
+      description: new mobile_payment  
+      operationId: add_mobile_payment
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: mobile_payment object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/mobile_payment'
+      responses:
+        '200':
+          description: Successfully added a new mobile_payment for approval 
+        '405':
+          description: Invalid input,adding a new mobile_payment was unsuccessful
+      security:
+        - api_key: []
+            
+            
+            
+
+            
+    put:
+      tags:
+        - Mobile Payment
+      summary: Update an existing mobile_payment
+      description: ''
+      operationId: update_mobile_payment
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: mobile_payment object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/mobile_payment'
+      responses:
+        200:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Success'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: mobile_payment not found
+        '405':
+          description: Validation exception
+      security:
+        - api_key: []
+        
+        
+        
+        
+        
+        
+  '/mobile_payment/{mobile_payment_id}':
+    get:
+      tags:
+        - Mobile Payment
+      summary: Find mobile_payment by ID
+      description: Returns a single mobile_payment
+      operationId: get_mobile_payment_by_id
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: mobile_payment_id
+          in: path
+          description: ID of mobile_payment to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/mobile_payment'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: mobile_payment not found
+      security:
+        - api_key: []
+        
+        
+     
+     
+
+        
+        
+        
+        
+        
+  '/mobile_payment/{mobile_payment_id}/submit_for_approval':
+    patch:
+      tags:
+        - Mobile Payment
+      summary: Submit mobile_payment by ID
+      description: Submits
+      operationId: submit_for_approval
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: mobile_payment_id
+          in: path
+          description: ID of mobile_payment to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/mobile_payment'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: mobile_payment not found
+      security:
+        - api_key: []
+        
+        
+             
+        
+        
+        
+        
+  '/mobile_payment/{mobile_payment_id}/approve':
+    patch:
+      tags:
+        - Mobile Payment
+      summary: Submit/Approve mobile_payment by ID
+      description: Approves Mobile Payment
+      operationId: approve
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: mobile_payment_id
+          in: path
+          description: ID of mobile_payment to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/mobile_payment'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: mobile_payment not found
+      security:
+        - api_key: []
+        
+        
+     
+            
+            
+            
+    delete:
+      tags:
+        - Mobile Payment
+      summary: Deletes an mobile_payment
+      description: ''
+      operationId: delete_mobile_payment
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: api_key
+          in: header
+          required: true
+          type: string
+        - name: mobile_payment_id
+          in: path
+          description: mobile_payment id to delete
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: mobile_payment not found
+      security:
+        - api_key: []
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  /mobile_payment_approvals:
+    get:
+      summary: mobile_payment_approvals List
+      description: |
+        The mobile_payment_approval endpoint returns multiple mobile_payment_approval requested given the parameters injected. 
+      parameters:
+        - name: mobile_payment_approval_id
+          in: query
+          description: mobile_payment_approval id 
+          required: false
+          type: number
+          format: integer
+      tags:
+        - Mobile Payment Approval
+      responses:
+        200:
+          description: An array of mobile_payment_approval returned
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/mobile_payment_approval'
+        404:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+        - api_key: []
+
+
+
+
+
+
+
+  /mobile_payment_approval:    
+    post:
+      tags:
+        - Mobile Payment Approval
+      summary: Add a new mobile_payment_approval
+      description: new mobile_payment_approval  
+      operationId: add_mobile_payment_approval
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: mobile_payment_approval object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/mobile_payment_approval'
+      responses:
+        '200':
+          description: Successfully added a new mobile_payment_approval for approval 
+        '405':
+          description: Invalid input,adding a new mobile_payment_approval was unsuccessful
+      security:
+        - api_key: []
+            
+            
+            
+
+            
+    put:
+      tags:
+        - Mobile Payment Approval
+      summary: Update an existing mobile_payment_approval
+      description: ''
+      operationId: update_mobile_payment_approval
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: mobile_payment_approval object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/mobile_payment_approval'
+      responses:
+        200:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Success'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: mobile_payment_approval not found
+        '405':
+          description: Validation exception
+      security:
+        - api_key: []
+        
+        
+        
+        
+        
+        
+  '/mobile_payment_approval/{mobile_payment_approval_id}':
+    get:
+      tags:
+        - Mobile Payment Approval
+      summary: Find mobile_payment_approval by ID
+      description: Returns a single mobile_payment_approval
+      operationId: get_mobile_payment_approval_by_id
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: mobile_payment_approval_id
+          in: path
+          description: ID of mobile_payment_approval to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/mobile_payment_approval'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: mobile_payment_approval not found
+      security:
+        - api_key: []
+        
+        
+     
+            
+            
+            
+    delete:
+      tags:
+        - Mobile Payment Approval
+      summary: Deletes an mobile_payment_approval
+      description: ''
+      operationId: delete_mobile_payment_approval
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: api_key
+          in: header
+          required: true
+          type: string
+        - name: mobile_payment_approval_id
+          in: path
+          description: mobile_payment_approval id to delete
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: mobile_payment_approval not found
+      security:
+        - api_key: []
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  /mobile_payment_payees:
+    get:
+      summary: mobile_payment_payees List
+      description: |
+        The mobile_payment_payee endpoint returns multiple mobile_payment_payees requested given the parameters injected. 
+      parameters:
+        - name: mobile_payment_payee_id
+          in: query
+          description: mobile_payment_payee id 
+          required: false
+          type: number
+          format: integer
+      tags:
+        - Mobile Payment Payee
+      responses:
+        200:
+          description: An array of mobile_payment_payee returned
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/mobile_payment_payee'
+        404:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+        - api_key: []
+
+
+
+
+
+
+
+  /mobile_payment_payee:    
+    post:
+      tags:
+        - Mobile Payment Payee
+      summary: Add a new mobile_payment_payee
+      description: new mobile_payment_payee  
+      operationId: add_mobile_payment_payee
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: mobile_payment_payee object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/mobile_payment_payee'
+      responses:
+        '200':
+          description: Successfully added a new mobile_payment_payee for approval 
+        '405':
+          description: Invalid input,adding a new mobile_payment_payee was unsuccessful
+      security:
+        - api_key: []
+            
+            
+            
+
+            
+    put:
+      tags:
+        - Mobile Payment Payee
+      summary: Update an existing mobile_payment_payee
+      description: ''
+      operationId: update_mobile_payment_payee
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: mobile_payment_payee object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/mobile_payment_payee'
+      responses:
+        200:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Success'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: mobile_payment_payee not found
+        '405':
+          description: Validation exception
+      security:
+        - api_key: []
+        
+        
+        
+        
+        
+        
+  '/mobile_payment_payee/{mobile_payment_payee_id}':
+    get:
+      tags:
+        - Mobile Payment Payee
+      summary: Find mobile_payment_payee by ID
+      description: Returns a single mobile_payment_payee
+      operationId: get_mobile_payment_payee_by_id
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: mobile_payment_payee_id
+          in: path
+          description: ID of mobile_payment_payee to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/mobile_payment_payee'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: mobile_payment_payee not found
+      security:
+        - api_key: []
+        
+        
+     
+            
+            
+            
+    delete:
+      tags:
+        - Mobile Payment Payee
+      summary: Deletes an mobile_payment_payee
+      description: ''
+      operationId: delete_mobile_payment_payee
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: api_key
+          in: header
+          required: true
+          type: string
+        - name: mobile_payment_payee_id
+          in: path
+          description: mobile_payment_payee id to delete
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: mobile_payment_payee not found
+      security:
+        - api_key: []
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  /mobile_payment_statuses:
+    get:
+      summary: mobile_payment_statuses List
+      description: |
+        The mobile_payment_status endpoint returns multiple mobile_payment_status requested given the parameters injected. 
+      parameters:
+        - name: mobile_payment_status_id
+          in: query
+          description: mobile_payment_status id 
+          required: false
+          type: number
+          format: integer
+      tags:
+        - Mobile Payment Status
+      responses:
+        200:
+          description: An array of mobile_payment_status returned
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/mobile_payment_status'
+        404:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+        - api_key: []
+
+
+
+
+
+
+
+  /mobile_payment_status:    
+    post:
+      tags:
+        - Mobile Payment Status
+      summary: Add a new mobile_payment_status
+      description: new mobile_payment_status  
+      operationId: add_mobile_payment_status
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: mobile_payment_status object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/mobile_payment_status'
+      responses:
+        '200':
+          description: Successfully added a new mobile_payment_status for approval 
+        '405':
+          description: Invalid input,adding a new mobile_payment_status was unsuccessful
+      security:
+        - api_key: []
+            
+            
+            
+
+            
+    put:
+      tags:
+        - Mobile Payment Status
+      summary: Update an existing mobile_payment_status
+      description: ''
+      operationId: update_mobile_payment_status
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: mobile_payment_status object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/mobile_payment_status'
+      responses:
+        200:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Success'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: mobile_payment_status not found
+        '405':
+          description: Validation exception
+      security:
+        - api_key: []
+        
+        
+        
+        
+        
+        
+  '/mobile_payment_status/{mobile_payment_status_id}':
+    get:
+      tags:
+        - Mobile Payment Status
+      summary: Find mobile_payment_status by ID
+      description: Returns a single mobile_payment_status
+      operationId: get_mobile_payment_status_by_id
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: mobile_payment_status_id
+          in: path
+          description: ID of mobile_payment_status to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/mobile_payment_status'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: mobile_payment_status not found
+      security:
+        - api_key: []
+        
+        
+     
+            
+            
+            
+    delete:
+      tags:
+        - Mobile Payment Status
+      summary: Deletes an mobile_payment_status
+      description: ''
+      operationId: delete_mobile_payment_status
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: api_key
+          in: header
+          required: true
+          type: string
+        - name: mobile_payment_status_id
+          in: path
+          description: mobile_payment_status id to delete
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: mobile_payment_status not found
+      security:
+        - api_key: []
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  /mobile_payment_tariffs:
+    get:
+      summary: mobile_payment_tariffs List
+      description: |
+        The mobile_payment_tariff endpoint returns multiple mobile_payment_tariff requested given the parameters injected. 
+      parameters:
+        - name: mobile_payment_tariff_id
+          in: query
+          description: mobile_payment_tariff id 
+          required: false
+          type: number
+          format: integer
+      tags:
+        - Mobile Payment Tariff
+      responses:
+        200:
+          description: An array of mobile_payment_tariff returned
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/mobile_payment_tariff'
+        404:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+        - api_key: []
+
+
+
+
+
+
+
+  /mobile_payment_tariff:    
+    post:
+      tags:
+        - Mobile Payment Tariff
+      summary: Add a new mobile_payment_tariff
+      description: new mobile_payment_tariff  
+      operationId: add_mobile_payment_tariff
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: mobile_payment_tariff object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/mobile_payment_tariff'
+      responses:
+        '200':
+          description: Successfully added a new mobile_payment_tariff for approval 
+        '405':
+          description: Invalid input,adding a new mobile_payment_tariff was unsuccessful
+      security:
+        - api_key: []
+            
+            
+            
+
+            
+    put:
+      tags:
+        - Mobile Payment Tariff
+      summary: Update an existing mobile_payment_tariff
+      description: ''
+      operationId: update_mobile_payment_tariff
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: mobile_payment_tariff object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/mobile_payment_tariff'
+      responses:
+        200:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Success'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: mobile_payment_tariff not found
+        '405':
+          description: Validation exception
+      security:
+        - api_key: []
+        
+        
+        
+        
+        
+        
+  '/mobile_payment_tariff/{mobile_payment_tariff_id}':
+    get:
+      tags:
+        - Mobile Payment Tariff
+      summary: Find mobile_payment_tariff by ID
+      description: Returns a single mobile_payment_tariff
+      operationId: get_mobile_payment_tariff_by_id
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: mobile_payment_tariff_id
+          in: path
+          description: ID of mobile_payment_tariff to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/mobile_payment_tariff'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: mobile_payment_tariff not found
+      security:
+        - api_key: []
+        
+        
+     
+            
+            
+            
+    delete:
+      tags:
+        - Mobile Payment Tariff
+      summary: Deletes an mobile_payment_tariff
+      description: ''
+      operationId: delete_mobile_payment_tariff
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: api_key
+          in: header
+          required: true
+          type: string
+        - name: mobile_payment_tariff_id
+          in: path
+          description: mobile_payment_tariff id to delete
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: mobile_payment_tariff not found
+      security:
+        - api_key: []
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  /mobile_payment_types:
+    get:
+      summary: mobile_payment_types List
+      description: |
+        The mobile_payment_type endpoint returns multiple mobile_payment_type requested given the parameters injected. 
+      parameters:
+        - name: mobile_payment_type_id
+          in: query
+          description: mobile_payment_type id 
+          required: false
+          type: number
+          format: integer
+      tags:
+        - Mobile Payment Type
+      responses:
+        200:
+          description: An array of mobile_payment_type returned
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/mobile_payment_type'
+        404:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+        - api_key: []
+
+
+
+
+
+
+
+  /mobile_payment_type:    
+    post:
+      tags:
+        - Mobile Payment Type
+      summary: Add a new mobile_payment_type
+      description: new mobile_payment_type  
+      operationId: add_mobile_payment_type
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: mobile_payment_type object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/mobile_payment_type'
+      responses:
+        '200':
+          description: Successfully added a new mobile_payment_type for approval 
+        '405':
+          description: Invalid input,adding a new mobile_payment_type was unsuccessful
+      security:
+        - api_key: []
+            
+            
+            
+
+            
+    put:
+      tags:
+        - Mobile Payment Type
+      summary: Update an existing mobile_payment_type
+      description: ''
+      operationId: update_mobile_payment_type
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: mobile_payment_type object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/mobile_payment_type'
+      responses:
+        200:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Success'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: mobile_payment_type not found
+        '405':
+          description: Validation exception
+      security:
+        - api_key: []
+        
+        
+        
+        
+        
+        
+  '/mobile_payment_type/{mobile_payment_type_id}':
+    get:
+      tags:
+        - Mobile Payment Type
+      summary: Find mobile_payment_type by ID
+      description: Returns a single mobile_payment_type
+      operationId: get_mobile_payment_type_by_id
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: mobile_payment_type_id
+          in: path
+          description: ID of mobile_payment_type to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/mobile_payment_type'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: mobile_payment_type not found
+      security:
+        - api_key: []
+        
+        
+     
+            
+            
+            
+    delete:
+      tags:
+        - Mobile Payment Type
+      summary: Deletes an mobile_payment_type
+      description: ''
+      operationId: delete_mobile_payment_type
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: api_key
+          in: header
+          required: true
+          type: string
+        - name: mobile_payment_type_id
+          in: path
+          description: mobile_payment_type id to delete
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: mobile_payment_type not found
+      security:
+        - api_key: []
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  /mobile_payment_viewing_permissions:
+    get:
+      summary: mobile_payment_viewing_permissions List
+      description: |
+        The mobile_payment_viewing_permission endpoint returns multiple mobile_payment_viewing_permission requested given the parameters injected. 
+      parameters:
+        - name: mobile_payment_viewing_permission_id
+          in: query
+          description: mobile_payment_viewing_permission id 
+          required: false
+          type: number
+          format: integer
+      tags:
+        - Mobile Payment Viewing Permission
+      responses:
+        200:
+          description: An array of mobile_payment_viewing_permission returned
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/mobile_payment_viewing_permission'
+        404:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+        - api_key: []
+
+
+
+
+
+
+
+  /mobile_payment_viewing_permission:    
+    post:
+      tags:
+        - Mobile Payment Viewing Permission
+      summary: Add a new mobile_payment_viewing_permission
+      description: new mobile_payment_viewing_permission  
+      operationId: add_mobile_payment_viewing_permission
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: mobile_payment_viewing_permission object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/mobile_payment_viewing_permission'
+      responses:
+        '200':
+          description: Successfully added a new mobile_payment_viewing_permission for approval 
+        '405':
+          description: Invalid input,adding a new mobile_payment_viewing_permission was unsuccessful
+      security:
+        - api_key: []
+            
+            
+            
+
+            
+    put:
+      tags:
+        - Mobile Payment Viewing Permission
+      summary: Update an existing mobile_payment_viewing_permission
+      description: ''
+      operationId: update_mobile_payment_viewing_permission
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: mobile_payment_viewing_permission object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/mobile_payment_viewing_permission'
+      responses:
+        200:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Success'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: mobile_payment_viewing_permission not found
+        '405':
+          description: Validation exception
+      security:
+        - api_key: []
+        
+        
+        
+        
+        
+        
+  '/mobile_payment_viewing_permission/{mobile_payment_viewing_permission_id}':
+    get:
+      tags:
+        - Mobile Payment Viewing Permission
+      summary: Find mobile_payment_viewing_permission by ID
+      description: Returns a single mobile_payment_viewing_permission
+      operationId: get_mobile_payment_viewing_permission_by_id
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: mobile_payment_viewing_permission_id
+          in: path
+          description: ID of mobile_payment_viewing_permission to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/mobile_payment_viewing_permission'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: mobile_payment_viewing_permission not found
+      security:
+        - api_key: []
+        
+        
+     
+            
+            
+            
+    delete:
+      tags:
+        - Mobile Payment Viewing Permission
+      summary: Deletes an mobile_payment_viewing_permission
+      description: ''
+      operationId: delete_mobile_payment_viewing_permission
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: api_key
+          in: header
+          required: true
+          type: string
+        - name: mobile_payment_viewing_permission_id
+          in: path
+          description: mobile_payment_viewing_permission id to delete
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: mobile_payment_viewing_permission not found
+      security:
+        - api_key: []
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+          
+          
+securityDefinitions:
+  api_key:
+    type: apiKey
+    name: Authorization
+    in: header
+     
+     
+     
+definitions:
+
+
+      
+      
+  mobile_payment:
+    type: object
+    required:
+      - id
+      - created_at
+    properties:
+      id:
+        type: integer
+        format: int64
+        example: 1
+      num:
+        type: number
+        format: int64
+        example: 20000
+      str:
+        type: string
+        example: 'PayPal.pdf'
+      date:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      created_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      updated_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+    xml:
+      name: mobile_payment
+    
+  
+    
+      
+      
+  mobile_payment_approval:
+    type: object
+    required:
+      - id
+      - created_at
+    properties:
+      id:
+        type: integer
+        format: int64
+        example: 1
+      num:
+        type: number
+        format: int64
+        example: 20000
+      str:
+        type: string
+        example: 'PayPal.pdf'
+      date:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      created_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      updated_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+    xml:
+      name: mobile_payment_approval
+    
+  
+    
+  
+
+
+      
+  mobile_payment_payee:
+    type: object
+    required:
+      - id
+      - created_at
+    properties:
+      id:
+        type: integer
+        format: int64
+        example: 1
+      num:
+        type: number
+        format: int64
+        example: 20000
+      str:
+        type: string
+        example: 'PayPal.pdf'
+      date:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      created_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      updated_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+    xml:
+      name: mobile_payment_payee
+    
+  
+    
+  
+       
+      
+  mobile_payment_status:
+    type: object
+    required:
+      - id
+      - created_at
+    properties:
+      id:
+        type: integer
+        format: int64
+        example: 1
+      num:
+        type: number
+        format: int64
+        example: 20000
+      str:
+        type: string
+        example: 'PayPal.pdf'
+      date:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      created_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      updated_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+    xml:
+      name: mobile_payment_status
+    
+  
+    
+  
+  
+
+
+      
+      
+  mobile_payment_tariff:
+    type: object
+    required:
+      - id
+      - created_at
+    properties:
+      id:
+        type: integer
+        format: int64
+        example: 1
+      num:
+        type: number
+        format: int64
+        example: 20000
+      str:
+        type: string
+        example: 'PayPal.pdf'
+      date:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      created_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      updated_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+    xml:
+      name: mobile_payment_tariff
+    
+  
+    
+  
+      
+      
+  mobile_payment_type:
+    type: object
+    required:
+      - id
+      - created_at
+    properties:
+      id:
+        type: integer
+        format: int64
+        example: 1
+      num:
+        type: number
+        format: int64
+        example: 20000
+      str:
+        type: string
+        example: 'PayPal.pdf'
+      date:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      created_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      updated_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+    xml:
+      name: mobile_payment_type
+    
+  
+    
+  
+  
+  
+  
+      
+
+      
+      
+  mobile_payment_viewing_permission:
+    type: object
+    required:
+      - id
+      - created_at
+    properties:
+      id:
+        type: integer
+        format: int64
+        example: 1
+      num:
+        type: number
+        format: int64
+        example: 20000
+      str:
+        type: string
+        example: 'PayPal.pdf'
+      date:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      created_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      updated_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+    xml:
+      name: mobile_payment_viewing_permission
+    
+  
+    
+  
+  
+  
+  
+  
+  
+  Error:
+    type: object
+    properties:
+      error:
+        type: string
+        example: object not found
+
+
+  
+  Success:
+    type: object
+    properties:
+      msg:
+        type: string
+        example: object not found
+
+      
+      
+      
+      

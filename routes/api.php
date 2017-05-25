@@ -1563,3 +1563,483 @@ Route::DELETE('/currency/{currency_id}', 'CurrencyApi@deleteCurrency')->middlewa
  */
 Route::GET('/currency/{currency_id}', 'CurrencyApi@getCurrencyById')->middleware('jwt.auth');
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * POST addMobilePayment
+ * Summary: Add a new mobile_payment
+ * Notes: new mobile_payment
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/mobile_payment', 'MobilePaymentApi@addMobilePayment')->middleware('jwt.auth');
+/**
+ * PUT updateMobilePayment
+ * Summary: Update an existing mobile_payment
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/mobile_payment', 'MobilePaymentApi@updateMobilePayment')->middleware('jwt.auth');
+/**
+ * GET getMobilePaymentById
+ * Summary: Find mobile_payment by ID
+ * Notes: Returns a single mobile_payment
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/mobile_payment/{mobile_payment_id}', 'MobilePaymentApi@getMobilePaymentById')->middleware('jwt.auth');
+/**
+ * PATCH approve
+ * Summary: Submit/Approve mobile_payment by ID
+ * Notes: Approves Mobile Payment
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PATCH('/mobile_payment/{mobile_payment_id}/approve', 'MobilePaymentApi@approve')->middleware('jwt.auth');
+/**
+ * DELETE deleteMobilePayment
+ * Summary: Deletes an mobile_payment
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/mobile_payment/{mobile_payment_id}/approve', 'MobilePaymentApi@deleteMobilePayment')->middleware('jwt.auth');
+/**
+ * PATCH submitForApproval
+ * Summary: Submit mobile_payment by ID
+ * Notes: Submits
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PATCH('/mobile_payment/{mobile_payment_id}/submit_for_approval', 'MobilePaymentApi@submitForApproval')->middleware('jwt.auth');
+/**
+ * GET mobilePaymentsGet
+ * Summary: mobile_payments List
+ * Notes: The mobile_payment endpoint returns multiple mobile_payment requested given the parameters injected.  
+
+ */
+Route::GET('/mobile_payments', 'MobilePaymentApi@mobilePaymentsGet')->middleware('jwt.auth');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * POST addMobilePaymentApproval
+ * Summary: Add a new mobile_payment_approval
+ * Notes: new mobile_payment_approval
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/mobile_payment_approval', 'MobilePaymentApprovalApi@addMobilePaymentApproval')->middleware('jwt.auth');
+/**
+ * PUT updateMobilePaymentApproval
+ * Summary: Update an existing mobile_payment_approval
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/mobile_payment_approval', 'MobilePaymentApprovalApi@updateMobilePaymentApproval')->middleware('jwt.auth');
+/**
+ * DELETE deleteMobilePaymentApproval
+ * Summary: Deletes an mobile_payment_approval
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/mobile_payment_approval/{mobile_payment_approval_id}', 'MobilePaymentApprovalApi@deleteMobilePaymentApproval')->middleware('jwt.auth');
+/**
+ * GET getMobilePaymentApprovalById
+ * Summary: Find mobile_payment_approval by ID
+ * Notes: Returns a single mobile_payment_approval
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/mobile_payment_approval/{mobile_payment_approval_id}', 'MobilePaymentApprovalApi@getMobilePaymentApprovalById')->middleware('jwt.auth');
+/**
+ * GET mobilePaymentApprovalsGet
+ * Summary: mobile_payment_approvals List
+ * Notes: The mobile_payment_approval endpoint returns multiple mobile_payment_approval requested given the parameters injected.  
+
+ */
+Route::GET('/mobile_payment_approvals', 'MobilePaymentApprovalApi@mobilePaymentApprovalsGet')->middleware('jwt.auth');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * POST addMobilePaymentPayee
+ * Summary: Add a new mobile_payment_payee
+ * Notes: new mobile_payment_payee
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/mobile_payment_payee', 'MobilePaymentPayeeApi@addMobilePaymentPayee')->middleware('jwt.auth');
+/**
+ * PUT updateMobilePaymentPayee
+ * Summary: Update an existing mobile_payment_payee
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/mobile_payment_payee', 'MobilePaymentPayeeApi@updateMobilePaymentPayee')->middleware('jwt.auth');
+/**
+ * DELETE deleteMobilePaymentPayee
+ * Summary: Deletes an mobile_payment_payee
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/mobile_payment_payee/{mobile_payment_payee_id}', 'MobilePaymentPayeeApi@deleteMobilePaymentPayee')->middleware('jwt.auth');
+/**
+ * GET getMobilePaymentPayeeById
+ * Summary: Find mobile_payment_payee by ID
+ * Notes: Returns a single mobile_payment_payee
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/mobile_payment_payee/{mobile_payment_payee_id}', 'MobilePaymentPayeeApi@getMobilePaymentPayeeById')->middleware('jwt.auth');
+/**
+ * GET mobilePaymentPayeesGet
+ * Summary: mobile_payment_payees List
+ * Notes: The mobile_payment_payee endpoint returns multiple mobile_payment_payees requested given the parameters injected.  
+
+ */
+Route::GET('/mobile_payment_payees', 'MobilePaymentPayeeApi@mobilePaymentPayeesGet')->middleware('jwt.auth');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * POST addMobilePaymentStatus
+ * Summary: Add a new mobile_payment_status
+ * Notes: new mobile_payment_status
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/mobile_payment_status', 'MobilePaymentStatusApi@addMobilePaymentStatus')->middleware('jwt.auth');
+/**
+ * PUT updateMobilePaymentStatus
+ * Summary: Update an existing mobile_payment_status
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/mobile_payment_status', 'MobilePaymentStatusApi@updateMobilePaymentStatus')->middleware('jwt.auth');
+/**
+ * DELETE deleteMobilePaymentStatus
+ * Summary: Deletes an mobile_payment_status
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/mobile_payment_status/{mobile_payment_status_id}', 'MobilePaymentStatusApi@deleteMobilePaymentStatus')->middleware('jwt.auth');
+/**
+ * GET getMobilePaymentStatusById
+ * Summary: Find mobile_payment_status by ID
+ * Notes: Returns a single mobile_payment_status
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/mobile_payment_status/{mobile_payment_status_id}', 'MobilePaymentStatusApi@getMobilePaymentStatusById')->middleware('jwt.auth');
+/**
+ * GET mobilePaymentStatusesGet
+ * Summary: mobile_payment_statuses List
+ * Notes: The mobile_payment_status endpoint returns multiple mobile_payment_status requested given the parameters injected.  
+
+ */
+Route::GET('/mobile_payment_statuses', 'MobilePaymentStatusApi@mobilePaymentStatusesGet')->middleware('jwt.auth');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * POST addMobilePaymentTariff
+ * Summary: Add a new mobile_payment_tariff
+ * Notes: new mobile_payment_tariff
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/mobile_payment_tariff', 'MobilePaymentTariffApi@addMobilePaymentTariff')->middleware('jwt.auth');
+/**
+ * PUT updateMobilePaymentTariff
+ * Summary: Update an existing mobile_payment_tariff
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/mobile_payment_tariff', 'MobilePaymentTariffApi@updateMobilePaymentTariff')->middleware('jwt.auth');
+/**
+ * DELETE deleteMobilePaymentTariff
+ * Summary: Deletes an mobile_payment_tariff
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/mobile_payment_tariff/{mobile_payment_tariff_id}', 'MobilePaymentTariffApi@deleteMobilePaymentTariff')->middleware('jwt.auth');
+/**
+ * GET getMobilePaymentTariffById
+ * Summary: Find mobile_payment_tariff by ID
+ * Notes: Returns a single mobile_payment_tariff
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/mobile_payment_tariff/{mobile_payment_tariff_id}', 'MobilePaymentTariffApi@getMobilePaymentTariffById')->middleware('jwt.auth');
+/**
+ * GET mobilePaymentTariffsGet
+ * Summary: mobile_payment_tariffs List
+ * Notes: The mobile_payment_tariff endpoint returns multiple mobile_payment_tariff requested given the parameters injected.  
+
+ */
+Route::GET('/mobile_payment_tariffs', 'MobilePaymentTariffApi@mobilePaymentTariffsGet')->middleware('jwt.auth');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * POST addMobilePaymentType
+ * Summary: Add a new mobile_payment_type
+ * Notes: new mobile_payment_type
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/mobile_payment_type', 'MobilePaymentTypeApi@addMobilePaymentType')->middleware('jwt.auth');
+/**
+ * PUT updateMobilePaymentType
+ * Summary: Update an existing mobile_payment_type
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/mobile_payment_type', 'MobilePaymentTypeApi@updateMobilePaymentType')->middleware('jwt.auth');
+/**
+ * DELETE deleteMobilePaymentType
+ * Summary: Deletes an mobile_payment_type
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/mobile_payment_type/{mobile_payment_type_id}', 'MobilePaymentTypeApi@deleteMobilePaymentType')->middleware('jwt.auth');
+/**
+ * GET getMobilePaymentTypeById
+ * Summary: Find mobile_payment_type by ID
+ * Notes: Returns a single mobile_payment_type
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/mobile_payment_type/{mobile_payment_type_id}', 'MobilePaymentTypeApi@getMobilePaymentTypeById')->middleware('jwt.auth');
+/**
+ * GET mobilePaymentTypesGet
+ * Summary: mobile_payment_types List
+ * Notes: The mobile_payment_type endpoint returns multiple mobile_payment_type requested given the parameters injected.  
+
+ */
+Route::GET('/mobile_payment_types', 'MobilePaymentTypeApi@mobilePaymentTypesGet')->middleware('jwt.auth');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * POST addMobilePaymentViewingPermission
+ * Summary: Add a new mobile_payment_viewing_permission
+ * Notes: new mobile_payment_viewing_permission
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/mobile_payment_viewing_permission', 'MobilePaymentViewingPermissionApi@addMobilePaymentViewingPermission')->middleware('jwt.auth');
+/**
+ * PUT updateMobilePaymentViewingPermission
+ * Summary: Update an existing mobile_payment_viewing_permission
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/mobile_payment_viewing_permission', 'MobilePaymentViewingPermissionApi@updateMobilePaymentViewingPermission')->middleware('jwt.auth');
+/**
+ * DELETE deleteMobilePaymentViewingPermission
+ * Summary: Deletes an mobile_payment_viewing_permission
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/mobile_payment_viewing_permission/{mobile_payment_viewing_permission_id}', 'MobilePaymentViewingPermissionApi@deleteMobilePaymentViewingPermission')->middleware('jwt.auth');
+/**
+ * GET getMobilePaymentViewingPermissionById
+ * Summary: Find mobile_payment_viewing_permission by ID
+ * Notes: Returns a single mobile_payment_viewing_permission
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/mobile_payment_viewing_permission/{mobile_payment_viewing_permission_id}', 'MobilePaymentViewingPermissionApi@getMobilePaymentViewingPermissionById')->middleware('jwt.auth');
+/**
+ * GET mobilePaymentViewingPermissionsGet
+ * Summary: mobile_payment_viewing_permissions List
+ * Notes: The mobile_payment_viewing_permission endpoint returns multiple mobile_payment_viewing_permission requested given the parameters injected.  
+
+ */
+Route::GET('/mobile_payment_viewing_permissions', 'MobilePaymentViewingPermissionApi@mobilePaymentViewingPermissionsGet')->middleware('jwt.auth');
+
