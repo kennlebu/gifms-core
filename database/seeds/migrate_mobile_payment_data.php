@@ -410,7 +410,7 @@ class migrate_mobile_payment_data extends Seeder
 
             $data_to_migrate[$key]['min_limit']                 = $data[$key]['MinLimit'];
             $data_to_migrate[$key]['max_limit']                 = $data[$key]['MaxLimit'];
-            $data_to_migrate[$key]['tarrif']                    = $data[$key]['Tarrif'];
+            $data_to_migrate[$key]['tariff']                    = $data[$key]['Tarrif'];
             $data_to_migrate[$key]['migration_id']              = $data[$key]['ID'];
 
 
@@ -418,7 +418,7 @@ class migrate_mobile_payment_data extends Seeder
             echo $data[$key]['Tarrif'];
         }
         
-        DB::table('mobile_payment_tarrifs')->insert($data_to_migrate);
+        DB::table('mobile_payment_tariffs')->insert($data_to_migrate);
 
         echo "\n-----------------------------------------------------------------------------------------------------\n";
 
