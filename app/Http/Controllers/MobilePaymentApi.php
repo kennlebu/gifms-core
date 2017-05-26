@@ -16,6 +16,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Request;
+use App\Models\MobilePaymentModels\MobilePayment;
 
 class MobilePaymentApi extends Controller
 {
@@ -25,6 +26,21 @@ class MobilePaymentApi extends Controller
     public function __construct()
     {
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     /**
      * Operation addMobilePayment
@@ -50,6 +66,29 @@ class MobilePaymentApi extends Controller
 
         return response('How about implementing addMobilePayment as a POST method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /**
      * Operation updateMobilePayment
      *
@@ -74,6 +113,24 @@ class MobilePaymentApi extends Controller
 
         return response('How about implementing updateMobilePayment as a PUT method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /**
      * Operation getMobilePaymentById
      *
@@ -85,15 +142,38 @@ class MobilePaymentApi extends Controller
      */
     public function getMobilePaymentById($mobile_payment_id)
     {
-        $input = Request::all();
+        $response = [];
 
-        //path params validation
+        try{
+            $response = MobilePayment::findOrFail($mobile_payment_id);
+            return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
 
+        }catch(Exception $e){
 
-        //not path params validation
-
-        return response('How about implementing getMobilePaymentById as a GET method ?');
+            $response =  ["error"=>"lpo could not be found"];
+            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+        }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /**
      * Operation approve
      *
@@ -114,6 +194,25 @@ class MobilePaymentApi extends Controller
 
         return response('How about implementing approve as a PATCH method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /**
      * Operation deleteMobilePayment
      *
@@ -134,6 +233,29 @@ class MobilePaymentApi extends Controller
 
         return response('How about implementing deleteMobilePayment as a DELETE method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /**
      * Operation submitForApproval
      *
@@ -154,6 +276,29 @@ class MobilePaymentApi extends Controller
 
         return response('How about implementing submitForApproval as a PATCH method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /**
      * Operation mobilePaymentsGet
      *
@@ -175,4 +320,10 @@ class MobilePaymentApi extends Controller
 
         return response('How about implementing mobilePaymentsGet as a GET method ?');
     }
+
+
+
+
+
+
 }
