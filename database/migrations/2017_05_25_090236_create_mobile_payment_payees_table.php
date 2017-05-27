@@ -24,7 +24,7 @@ class CreateMobilePaymentPayeesTable extends Migration
             $table->double('withdrawal_charges',10,2)->nullable();
             $table->double('total',30,5)->nullable();
             $table->string('designation')->nullable();
-            $table->string('sub_county_id')->nullable();
+            $table->string('sub_county')->nullable();
             $table->string('county_id')->nullable();
             $table->string('region_id')->nullable();
             $table->integer('paid')->nullable();

@@ -13,6 +13,8 @@ use App\Models\MobilePaymentModels\MobilePaymentType;
 use App\Models\InvoicesModels\Invoice;
 use App\Models\LookupModels\Region;
 use App\Models\LookupModels\County;
+use App\Models\MobilePaymentModels\MobilePaymentPayee;
+use App\Models\MobilePaymentModels\MobilePaymentApproval;
 
 class MobilePayment extends BaseModel
 {
@@ -29,7 +31,10 @@ class MobilePayment extends BaseModel
                             'status',
                             'project_manager',
                             'region',
-                            'county'
+                            'county',
+                            'rejected_by',
+                            'payees',
+                            'mobile_payment_approvals'
                         ];
 
 
@@ -111,8 +116,32 @@ class MobilePayment extends BaseModel
     {
         
 
-	        return County::find($this->attributes['county_id']);
-	    
+            return County::find($this->attributes['county_id']);
+        
+
+    }
+    public function getRejectedByAttribute()
+    {
+        
+
+            return Staff::find($this->attributes['rejected_by_id']);
+        
+
+    }
+    public function getPayeesAttribute()
+    {
+        
+
+            return MobilePaymentPayee::where('mobile_payment_id',$this->attributes['id'])->get();
+        
+
+    }
+    public function getMobilePaymentApprovalsAttribute()
+    {
+        
+
+            return MobilePaymentApproval::where('mobile_payment_id',$this->attributes['id'])->get();
+        
 
     }
 }

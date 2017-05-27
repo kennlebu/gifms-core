@@ -233,7 +233,7 @@ class migrate_mobile_payment_data extends Seeder
             $data_to_migrate[$key]['withdrawal_charges']            = $data[$key]['MPESA'];
             $data_to_migrate[$key]['total']                         = $data[$key]['Total'];
             $data_to_migrate[$key]['designation']                   = $data[$key]['Designation'];
-            $data_to_migrate[$key]['sub_county_id']                 = $data[$key]['SubCounty'];
+            $data_to_migrate[$key]['sub_county']                    = $data[$key]['SubCounty'];
             $data_to_migrate[$key]['county_id']                     = $data[$key]['County'];
             $data_to_migrate[$key]['region_id']                     = $data[$key]['Region'];
             $data_to_migrate[$key]['paid']                          = $data[$key]['Paid'];
