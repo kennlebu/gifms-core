@@ -474,12 +474,48 @@ class MobilePaymentApi extends Controller
         foreach ($data as $key => $value) {
 
 
+            if($value["requested_by"]==null){
+                $data[$key]['requested_by'] = array("full_name"=>"N/A");
+                
+            }
+            if($value["requested_action_by"]==null){
+                $data[$key]['requested_action_by'] = array("full_name"=>"N/A");
+                
+            }
+            if($value["project"]==null){
+                $data[$key]['project'] = array("project_name"=>"N/A");
+                
+            }
+            if($value["account"]==null){
+                $data[$key]['account'] = array("account_name"=>"N/A");
+                
+            }
+            if($value["mobile_payment_type"]==null){
+                $data[$key]['mobile_payment_type'] = array("desc"=>"N/A");
+                
+            }
             if($value["invoice"]==null){
                 $data[$key]['invoice'] = array("invoice_title"=>"N/A");
                 
             }
-            if($value["requested_by"]==null){
-                $data[$key]['requested_by'] = array("full_name"=>"N/A");
+            if($value["status"]==null){
+                $data[$key]['status'] = array("mobile_payment_status"=>"N/A");
+                
+            }
+            if($value["project_manager"]==null){
+                $data[$key]['project_manager'] = array("full_name"=>"N/A");
+                
+            }
+            if($value["region"]==null){
+                $data[$key]['region'] = array("region_name"=>"N/A");
+                
+            }
+            if($value["county"]==null){
+                $data[$key]['county'] = array("county_name"=>"N/A");
+                
+            }
+            if($value["rejected_by"]==null){
+                $data[$key]['rejected_by'] = array("full_name"=>"N/A");
                 
             }
         }
