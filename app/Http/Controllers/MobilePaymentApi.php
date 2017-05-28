@@ -242,12 +242,14 @@ class MobilePaymentApi extends Controller
     {
         $input = Request::all();
 
-        //path params validation
+        $deleted = MobilePayment::destroy($lpo_id);
 
+        if($deleted){
+            return response()->json(['msg'=>"Mobile Payment deleted"], 200,array(),JSON_PRETTY_PRINT);
+        }else{
+            return response()->json(['error'=>"Mobile Payment not found"], 404,array(),JSON_PRETTY_PRINT);
+        }
 
-        //not path params validation
-
-        return response('How about implementing deleteMobilePayment as a DELETE method ?');
     }
 
 

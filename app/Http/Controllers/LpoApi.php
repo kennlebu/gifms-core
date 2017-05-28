@@ -200,16 +200,9 @@ public function deleteLpo($lpo_id)
 {
     $input = Request::all();
 
-//path params validation
+    $deleted = lpo::destroy($lpo_id);
 
-
-//not path params validation
-
-
-    $deleted_lpo = lpo::destroy($lpo_id);
-
-
-    if($deleted_lpo){
+    if($deleted){
         return response()->json(['msg'=>"lpo deleted"], 200,array(),JSON_PRETTY_PRINT);
     }else{
         return response()->json(['error'=>"lpo not found"], 404,array(),JSON_PRETTY_PRINT);
