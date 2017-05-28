@@ -18,7 +18,6 @@ class CreateStaffTable extends Migration
             $table->string('username');
             $table->string('email')->unique();
             $table->string('password');
-            $table->integer('is_admin')->nullable();
             $table->integer('security_group_id')->nullable();
             $table->string('f_name')->nullable();
             $table->string('l_name')->nullable();

@@ -11,6 +11,7 @@ use App\Models\ProjectsModels\Project;
 use App\Models\AccountingModels\Account;
 use App\Models\MobilePaymentModels\MobilePaymentType;
 use App\Models\InvoicesModels\Invoice;
+use App\Models\MobilePaymentModels\MobilePaymentStatus;
 use App\Models\LookupModels\Region;
 use App\Models\LookupModels\County;
 use App\Models\MobilePaymentModels\MobilePaymentPayee;
@@ -21,127 +22,69 @@ class MobilePayment extends BaseModel
     //
     use SoftDeletes;
 
-    protected $appends = [
-                            'requested_by',
-                            'requested_action_by',
-                            'project',
-                            'account',
-                            'mobile_payment_type',
-                            'invoice',
-                            'status',
-                            'project_manager',
-                            'region',
-                            'county',
-                            'rejected_by',
-                            'payees',
-                            'mobile_payment_approvals'
-                        ];
+    protected $appends = [];
 
 
 
-    public function getRequestedByAttribute()
+    public function requested_by()
     {
-    	
-
-	        return Staff::find($this->attributes['requested_by_id']);
-
-
+        return $this->belongsTo('App\Models\StaffModels\Staff','requested_by_id');
     }
-    public function getRequestedActionByAttribute()
+    public function requested_action_by()
     {
-       
-
-	        return Staff::find($this->attributes['requested_action_by_id']);
-	    
-
+        return $this->belongsTo('App\Models\StaffModels\Staff','requested_action_by_id');
     }
-    public function getProjectAttribute()
+    public function project()
     {
-        
-
-	        return Project::find($this->attributes['project_id']);
-
-	    
-
+        return $this->belongsTo('App\Models\ProjectsModels\Project');
     }
-    public function getAccountAttribute()
+    public function account()
     {
-        
-
-	        return Account::find($this->attributes['account_id']);
-	    
-
+        return $this->belongsTo('App\Models\AccountingModels\Account');
     }
-    public function getMobilePaymentTypeAttribute()
+    public function mobile_payment_type()
     {
-        
-
-	        return MobilePaymentType::find($this->attributes['mobile_payment_type_id']);
-	    
-
+        return $this->belongsTo('App\Models\MobilePaymentModels\MobilePaymentType');
     }
-    public function getInvoiceAttribute()
+    public function invoice()
     {
-        
-
-	        return Invoice::find($this->attributes['invoice_id']);
-	    
-
+        return $this->belongsTo('App\Models\InvoicesModels\Invoice');
     }
-    public function getStatusAttribute()
+    public function status()
     {
-        
-
-	        return MobilePaymentStatus::find($this->attributes['status_id']);
-	    
-
+        return $this->belongsTo('App\Models\MobilePaymentModels\MobilePaymentStatus');
     }
-    public function getProjectManagerAttribute()
+    public function project_manager()
     {
-        
-
-	        return Staff::find($this->attributes['project_manager_id']);
-	    
-
+        return $this->belongsTo('App\Models\StaffModels\Staff','project_manager_id');
     }
-    public function getRegionAttribute()
+    public function region()
     {
-        
-
-	        return Region::find($this->attributes['region_id']);
-	    
-
+        return $this->belongsTo('App\Models\LookupModels\Region');
     }
-    public function getCountyAttribute()
+    public function county()
     {
-        
-
-            return County::find($this->attributes['county_id']);
-        
-
+        return $this->belongsTo('App\Models\LookupModels\County');
     }
-    public function getRejectedByAttribute()
+    public function rejected_by()
     {
-        
-
-            return Staff::find($this->attributes['rejected_by_id']);
-        
-
+        return $this->belongsTo('App\Models\StaffModels\Staff','rejected_by_id');
     }
-    public function getPayeesAttribute()
+    public function payees()
     {
-        
-
-            return MobilePaymentPayee::where('mobile_payment_id',$this->attributes['id'])->get();
-        
-
+        return $this->hasMany('App\Models\MobilePaymentModels\MobilePaymentPayee');
     }
-    public function getMobilePaymentApprovalsAttribute()
+    public function mobile_payment_approvals()
     {
-        
-
-            return MobilePaymentApproval::where('mobile_payment_id',$this->attributes['id'])->get();
-        
-
+        return $this->hasMany('App\Models\MobilePaymentModels\MobilePaymentApproval');
     }
+
+
+
+
+
+
+
+
+
 }

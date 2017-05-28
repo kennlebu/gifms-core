@@ -14,11 +14,6 @@ class BaseModel extends Model
 
 
 
-
-
-
-
-
 	
 
 	protected function arr_to_dt_response($data,$draw,$total_records,$records_filtered){
@@ -35,6 +30,20 @@ class BaseModel extends Model
 					'recordsFiltered' 	=> 	$records_filtered,
 					'data' 				=> 	$data
 			);
+
+	}
+
+	protected function bind_presql($sql, $bindings){
+		
+		$needle = '?';
+
+        foreach ($bindings as $replace){
+            $pos = strpos($sql, $needle);
+            if ($pos !== false) {
+                $sql = substr_replace($sql, $replace, $pos, strlen($needle));
+            }
+        }
+        return $sql;
 
 	}
 

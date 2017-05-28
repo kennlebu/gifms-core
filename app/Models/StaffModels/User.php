@@ -28,4 +28,30 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    
+    protected $appends = ['full_name','is_admin'];
+
+
+
+
+
+
+
+    public function getFullNameAttribute()
+    {       
+
+        return $this->attributes['f_name'].' '.$this->attributes['l_name'];
+
+    }
+
+    public function getIsAdminAttribute()
+    {       
+        //this is a stub
+        $is_admin = 0;
+
+        
+        return $is_admin;
+
+    }
 }

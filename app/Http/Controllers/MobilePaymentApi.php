@@ -16,6 +16,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\DB;
 use App\Models\MobilePaymentModels\MobilePayment;
 
 class MobilePaymentApi extends Controller
@@ -145,7 +146,22 @@ class MobilePaymentApi extends Controller
         $response = [];
 
         try{
-            $response = MobilePayment::findOrFail($mobile_payment_id);
+            $model      = new MobilePayment();
+            $response   = $model::findOrFail($mobile_payment_id);
+            $response['requested_by']                = $model->find($mobile_payment_id)->requested_by;
+            $response['requested_action_by']         = $model->find($mobile_payment_id)->requested_action_by;
+            $response['project']                     = $model->find($mobile_payment_id)->project;
+            $response['account']                     = $model->find($mobile_payment_id)->account;
+            $response['mobile_payment_type']         = $model->find($mobile_payment_id)->mobile_payment_type;
+            $response['invoice']                     = $model->find($mobile_payment_id)->invoice;
+            $response['status']                      = $model->find($mobile_payment_id)->status;
+            $response['project_manager']             = $model->find($mobile_payment_id)->project_manager;
+            $response['region']                      = $model->find($mobile_payment_id)->region;
+            $response['county']                      = $model->find($mobile_payment_id)->county;
+            $response['rejected_by']                 = $model->find($mobile_payment_id)->rejected_by;
+            $response['payees']                      = $model->find($mobile_payment_id)->payees;
+            $response['mobile_payment_approvals']    = $model->find($mobile_payment_id)->mobile_payment_approvals;
+
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
 
         }catch(Exception $e){
@@ -311,14 +327,166 @@ class MobilePaymentApi extends Controller
     {
         $input = Request::all();
 
-        //path params validation
+        $qb = DB::table('mobile_payments');
+
+        $response;
+        $response_dt;
+
+        $total_records          = $qb->count();
+        $records_filtered       = 0;
 
 
-        //not path params validation
-        $mobile_payment_id = $input['mobile_payment_id'];
 
 
-        return response('How about implementing mobilePaymentsGet as a GET method ?');
+
+
+        //if status is set
+
+        if(array_key_exists('status', $input)){
+            $qb->where('status_id', $input['status']);
+            // $total_records          = $qb->count();     //may need this
+        }
+
+
+
+
+        //searching
+        if(array_key_exists('searchval', $input)){
+            $qb->where(function ($query) use ($input) {
+                    
+                $query->orWhere('id','like', '\'%' . $input['searchval']. '%\'');
+                $query->orWhere('title','like', '\'%' . $input['searchval']. '%\'');
+                $query->orWhere('payment_desc','like', '\'%' . $input['searchval']. '%\'');
+
+            });
+
+            // $records_filtered       =  $qb->count(); //doesn't work
+
+            $sql = MobilePayment::bind_presql($qb->toSql(),$qb->getBindings());
+            $sql = str_replace("*"," count(*) AS count ", $sql);
+            $dt = json_decode(json_encode(DB::select($sql)), true);
+
+            $records_filtered = (int) $dt[0]['count'];
+
+
+        }
+
+
+
+
+        if(array_key_exists('datatables', $input)){
+
+            //searching
+            $qb->where(function ($query) use ($input) {
+                    
+                $query->orWhere('id','like', '\'%' . $input['search']['value']. '%\'');
+                $query->orWhere('title','like', '\'%' . $input['search']['value']. '%\'');
+                $query->orWhere('payment_desc','like', '\'%' . $input['search']['value']. '%\'');
+
+            });
+
+
+
+
+
+            //ordering
+            $order_column_id    = $input['order'][0]['column'];
+            $order_column_name  = $input['columns'][$order_column_id]['name'];
+            $order_direction    = $input['order'][0]['dir'];
+
+            $qb->orderBy($order_column_name, $order_direction);
+
+
+
+
+
+
+            //limit $ offset
+            $response_dt    =   $qb->limit($input['length'])->offset($input['start']);
+
+
+
+
+
+            $sql = MobilePayment::bind_presql($qb->toSql(),$qb->getBindings());
+
+            // $response_dt = DB::select($qb->toSql(),$qb->getBindings());         //pseudo
+            $response_dt = DB::select($sql);
+
+
+            $response_dt = json_decode(json_encode($response_dt), true);
+
+            $response_dt    = $this->append_relationships_objects($response_dt);
+            $response_dt    = $this->append_relationships_nulls($response_dt);
+            $response       = MobilePayment::arr_to_dt_response( 
+                                                $response_dt, $input['draw'],
+                                                $total_records,
+                                                $records_filtered
+                                                );
+
+
+        }else{
+
+            $sql            = MobilePayment::bind_presql($qb->toSql(),$qb->getBindings());
+            $response       = json_decode(json_encode(DB::select($sql)), true);
+        }
+
+
+
+
+        return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+    }
+
+    public function append_relationships_objects($data = array()){
+
+        // print_r($data);
+
+        foreach ($data as $key => $value) {
+
+            $model = new MobilePayment();
+
+            $data[$key]['requested_by']                = $model->find($data[$key]['id'])->requested_by;
+            $data[$key]['requested_action_by']         = $model->find($data[$key]['id'])->requested_action_by;
+            $data[$key]['project']                     = $model->find($data[$key]['id'])->project;
+            $data[$key]['account']                     = $model->find($data[$key]['id'])->account;
+            $data[$key]['mobile_payment_type']         = $model->find($data[$key]['id'])->mobile_payment_type;
+            $data[$key]['invoice']                     = $model->find($data[$key]['id'])->invoice;
+            $data[$key]['status']                      = $model->find($data[$key]['id'])->status;
+            $data[$key]['project_manager']             = $model->find($data[$key]['id'])->project_manager;
+            $data[$key]['region']                      = $model->find($data[$key]['id'])->region;
+            $data[$key]['county']                      = $model->find($data[$key]['id'])->county;
+            $data[$key]['rejected_by']                 = $model->find($data[$key]['id'])->rejected_by;
+            $data[$key]['payees']                      = $model->find($data[$key]['id'])->payees;
+            $data[$key]['mobile_payment_approvals']    = $model->find($data[$key]['id'])->mobile_payment_approvals;
+
+        }
+
+        return $data;
+
+
+    }
+
+
+
+    public function append_relationships_nulls($data = array()){
+
+
+        foreach ($data as $key => $value) {
+
+
+            if($value["invoice"]==null){
+                $data[$key]['invoice'] = array("invoice_title"=>"N/A");
+                
+            }
+            if($value["requested_by"]==null){
+                $data[$key]['requested_by'] = array("full_name"=>"N/A");
+                
+            }
+        }
+
+        return $data;
+
+
     }
 
 
