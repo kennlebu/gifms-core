@@ -55,17 +55,57 @@ class MobilePaymentApi extends Controller
     {
         $input = Request::all();
 
-        //path params validation
 
 
-        //not path params validation
-        if (!isset($input['body'])) {
-            throw new \InvalidArgumentException('Missing the required parameter $body when calling addMobilePayment');
+        $form = Request::only(
+            'requested_by_id',
+            'requested_action_by_id',
+            'project_id',
+            'account_id',
+            'mobile_payment_type_id',
+            'title',
+            'payment_desc',
+            'payment_document',
+            'status_id',
+            'project_manager_id',
+            'region_id',
+            'county_id',
+            'attentendance_sheet',
+            'rejection_reason',
+            'rejected_by_id'
+            );
+
+        try{
+
+            $mobile_payment = new MobilePayment;
+
+            $mobile_payment->requested_by_id                =   (int)   $form['requested_by_id'];
+            $mobile_payment->requested_action_by_id         =   (int)   $form['requested_action_by_id'];
+            $mobile_payment->project_id                     =   (int)   $form['project_id'];
+            $mobile_payment->account_id                     =   (int)   $form['account_id'];
+            $mobile_payment->mobile_payment_type_id         =   (int)   $form['mobile_payment_type_id'];
+            $mobile_payment->title                          =           $form['title'];
+            $mobile_payment->payment_desc                   =           $form['payment_desc'];
+            $mobile_payment->payment_document               =   (int)   $form['payment_document'];
+            $mobile_payment->status_id                      =   (int)   $form['status_id'];
+            $mobile_payment->project_manager_id             =   (int)   $form['project_manager_id'];
+            $mobile_payment->region_id                      =   (int)   $form['region_id'];
+            $mobile_payment->county_id                      =   (int)   $form['county_id'];
+            $mobile_payment->attentendance_sheet            =           $form['attentendance_sheet'];
+            $mobile_payment->rejection_reason               =           $form['rejection_reason'];
+            $mobile_payment->rejected_by_id                 =   (int)   $form['rejected_by_id'];
+
+
+            if($lpo->save()) {
+
+                return Response()->json(array('msg' => 'Success: mobile payment added','mobile_payment' => $mobile_payment), 200);
+            }
+
+        }catch (JWTException $e){
+
+            return response()->json(['error'=>'something went wrong'], 500);
+
         }
-        $body = $input['body'];
-
-
-        return response('How about implementing addMobilePayment as a POST method ?');
     }
 
 
