@@ -40,7 +40,7 @@ class CreateLposTable extends Migration
             $table->string('attention')->nullable();
             $table->string('lpo_email')->nullable();
             $table->integer('project_manager_id')->nullable();
-            $table->text('reject_reason')->nullable();
+            $table->text('rejection_reason')->nullable();
             $table->integer('rejected_by_id')->nullable();
             $table->integer('quote_exempt')->nullable();
             $table->text('quote_exempt_explanation')->nullable();

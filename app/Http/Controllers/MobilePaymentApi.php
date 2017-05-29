@@ -102,17 +102,42 @@ class MobilePaymentApi extends Controller
     {
         $input = Request::all();
 
-        //path params validation
-
-
-        //not path params validation
         if (!isset($input['body'])) {
             throw new \InvalidArgumentException('Missing the required parameter $body when calling updateMobilePayment');
         }
+        
         $body = $input['body'];
 
+        $mobile_payment = Lpo::find($body['id']);
 
-        return response('How about implementing updateMobilePayment as a PUT method ?');
+
+
+        // $mobile_payment->meeting                            =   (int)   $body['meeting'];
+        $mobile_payment->requested_date                     =           $body['requested_date'];
+        $mobile_payment->requested_by_id                    =   (int)   $body['requested_by_id'];
+        $mobile_payment->payment_desc                       =           $body['payment_desc'];
+        $mobile_payment->payment_purpose                    =           $body['payment_purpose'];
+        $mobile_payment->project_id                         =   (int)   $body['project_id'];
+        $mobile_payment->account_id                         =   (int)   $body['account_id'];
+        $mobile_payment->mobile_payment_id                  =   (int)   $body['mobile_payment_id'];
+        $mobile_payment->invoice_id                         =   (int)   $body['invoice_id'];
+        $mobile_payment->title                              =           $body['title'];
+        $mobile_payment->payment_desc                       =           $body['payment_desc'];
+        $mobile_payment->payment_document                   =           $body['payment_document'];
+        $mobile_payment->status_id                          =   (int)   $body['status_id'];
+        $mobile_payment->project_manager_id                 =   (int)   $body['project_manager_id'];
+        $mobile_payment->region_id                          =   (int)   $body['region_id'];
+        $mobile_payment->county_id                          =   (int)   $body['county_id'];
+        $mobile_payment->attendance_sheet                   =           $body['attendance_sheet'];
+        $mobile_payment->rejection_reason                   =           $body['rejection_reason'];
+        $mobile_payment->rejected_by_id                     =   (int)   $body['rejected_by_id'];
+
+
+
+        if($mobile_payment->save()) {
+
+            return Response()->json(array('msg' => 'Success: Mobile payment updated','mobile_payment' => $lpo), 200);
+        }
     }
 
 

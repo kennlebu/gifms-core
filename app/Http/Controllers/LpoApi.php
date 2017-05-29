@@ -141,10 +141,6 @@ public function updateLpo()
 {
     $input = Request::all();
 
-    // path params validation
-
-
-    //not path params validation
     if (!isset($input['body'])) {
         throw new \InvalidArgumentException('Missing the required parameter $body when calling updateLpo');
     }
@@ -155,15 +151,36 @@ public function updateLpo()
 
 
 
-    $lpo->requested_by_id                   =   (int)   $body['requested_by_id'];
-    $lpo->expense_desc                      =   $body['expense_desc'];
-    $lpo->expense_purpose                   =   $body['expense_purpose'];
-    $lpo->project_id                        =   (int)   $body['project_id'];
-    $lpo->currency_id                       =   (int)   $body['currency_id'];
-    $lpo->project_manager_id                =   (int)   $body['project_manager_id'];
-    $lpo->quote_exempt                      =   (int)   $body['quote_exempt'];
-    $lpo->preffered_quotation_id            =   (int)   $body['preffered_quotation_id'];
-    $lpo->quote_exempt_explanation          =   $body['quote_exempt_explanation'];
+
+    $lpo->chai_ref                           =   (int)   $body['chai_ref'];
+    // $lpo->lpo_date                           =           $body['lpo_date'];
+    $lpo->supplier_id                        =   (int)   $body['supplier_id'];
+    // $lpo->addressee                          =           $body['addressee'];
+    $lpo->expense_desc                       =           $body['expense_desc'];
+    $lpo->expense_purpose                    =           $body['expense_purpose'];
+    $lpo->requested_by_id                    =   (int)   $body['requested_by_id'];
+    $lpo->requested_action_by_id             =   (int)   $body['requested_action_by_id'];
+    $lpo->request_date                       =           $body['request_date'];
+    $lpo->status_id                          =   (int)   $body['status_id'];
+    $lpo->currency_id                        =   (int)   $body['currency_id'];
+    $lpo->preffered_quotation_id             =   (int)   $body['preffered_quotation_id'];
+    // $lpo->supply_category                    =   (int)   $body['supply_category'];
+    $lpo->delivery_document                  =           $body['delivery_document'];
+    $lpo->date_delivered                     =   (int)   $body['date_delivered'];
+    $lpo->received_by_id                     =   (int)   $body['received_by_id'];
+    // $lpo->meeting                            =   (int)   $body['meeting'];
+    // $lpo->comments                           =           $body['comments'];
+    $lpo->preffered_supplier                 =   (int)   $body['preffered_supplier'];
+    $lpo->preffered_supplier_id              =   (int)   $body['preffered_supplier_id'];
+    $lpo->project_id                         =   (int)   $body['project_id'];
+    $lpo->account_id                         =   (int)   $body['account_id'];
+    // $lpo->attention                          =           $body['attention'];
+    // $lpo->lpo_email                          =   (int)   $body['lpo_email'];
+    $lpo->project_manager_id                 =   (int)   $body['project_manager_id'];
+    $lpo->rejection_reason                   =           $body['rejection_reason'];
+    $lpo->rejected_by_id                     =   (int)   $body['rejected_by_id'];
+    $lpo->quote_exempt                       =   (int)   $body['quote_exempt'];
+    $lpo->quote_exempt_explanation           =           $body['quote_exempt_explanation'];
 
 
 

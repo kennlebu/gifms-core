@@ -33,7 +33,7 @@ class CreateMobilePaymentsTable extends Migration
             $table->integer('region_id')->nullable();
             $table->integer('county_id')->nullable();
             $table->string('attentendance_sheet')->nullable();
-            $table->text('reject_reason')->nullable();
+            $table->text('rejection_reason')->nullable();
             $table->integer('rejected_by_id')->nullable();
             $table->integer('migration_project_id')->nullable();
             $table->integer('migration_account_id')->nullable();

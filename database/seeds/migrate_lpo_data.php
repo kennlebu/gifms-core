@@ -53,7 +53,7 @@ class migrate_lpo_data extends Seeder
             $data_to_migrate[$key]['preffered_supplier']                    = $data[$key]['PreferredSupplier'];
             $data_to_migrate[$key]['attention']                             = $data[$key]['Attention'];
             $data_to_migrate[$key]['lpo_email']                             = $data[$key]['LPOEmail'];
-            $data_to_migrate[$key]['reject_reason']                         = $data[$key]['RejectReason'];
+            $data_to_migrate[$key]['rejection_reason']                      = $data[$key]['RejectReason'];
             $data_to_migrate[$key]['quote_exempt']                          = $data[$key]['QuoteExempt'];
             $data_to_migrate[$key]['quote_exempt_explanation']              = $data[$key]['QuotesExemptExplaination'];   
             $data_to_migrate[$key]['created_at']                            = $data[$key]['LPODate'];   
