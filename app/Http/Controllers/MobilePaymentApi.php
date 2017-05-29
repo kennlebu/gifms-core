@@ -63,8 +63,8 @@ class MobilePaymentApi extends Controller
             'project_id',
             'account_id',
             'mobile_payment_type_id',
-            'title',
-            'payment_desc',
+            'expense_desc',
+            'expense_purpose',
             'payment_document',
             'status_id',
             'project_manager_id',
@@ -84,8 +84,8 @@ class MobilePaymentApi extends Controller
             $mobile_payment->project_id                     =   (int)   $form['project_id'];
             $mobile_payment->account_id                     =   (int)   $form['account_id'];
             $mobile_payment->mobile_payment_type_id         =   (int)   $form['mobile_payment_type_id'];
-            $mobile_payment->title                          =           $form['title'];
-            $mobile_payment->payment_desc                   =           $form['payment_desc'];
+            $mobile_payment->expense_desc                   =           $form['expense_desc'];
+            $mobile_payment->expense_purpose                =           $form['expense_purpose'];
             $mobile_payment->payment_document               =   (int)   $form['payment_document'];
             $mobile_payment->status_id                      =   (int)   $form['status_id'];
             $mobile_payment->project_manager_id             =   (int)   $form['project_manager_id'];
@@ -161,8 +161,8 @@ class MobilePaymentApi extends Controller
         $mobile_payment->account_id                         =   (int)   $body['account_id'];
         $mobile_payment->mobile_payment_id                  =   (int)   $body['mobile_payment_id'];
         $mobile_payment->invoice_id                         =   (int)   $body['invoice_id'];
-        $mobile_payment->title                              =           $body['title'];
-        $mobile_payment->payment_desc                       =           $body['payment_desc'];
+        $mobile_payment->expense_desc                       =           $body['expense_desc'];
+        $mobile_payment->expense_purpose                    =           $body['expense_purpose'];
         $mobile_payment->payment_document                   =           $body['payment_document'];
         $mobile_payment->status_id                          =   (int)   $body['status_id'];
         $mobile_payment->project_manager_id                 =   (int)   $body['project_manager_id'];
@@ -422,8 +422,8 @@ class MobilePaymentApi extends Controller
             $qb->where(function ($query) use ($input) {
                     
                 $query->orWhere('id','like', '\'%' . $input['searchval']. '%\'');
-                $query->orWhere('title','like', '\'%' . $input['searchval']. '%\'');
-                $query->orWhere('payment_desc','like', '\'%' . $input['searchval']. '%\'');
+                $query->orWhere('expense_desc','like', '\'%' . $input['searchval']. '%\'');
+                $query->orWhere('expense_purpose','like', '\'%' . $input['searchval']. '%\'');
 
             });
 
@@ -447,8 +447,8 @@ class MobilePaymentApi extends Controller
             $qb->where(function ($query) use ($input) {
                     
                 $query->orWhere('id','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('title','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('payment_desc','like', '\'%' . $input['search']['value']. '%\'');
+                $query->orWhere('expense_desc','like', '\'%' . $input['search']['value']. '%\'');
+                $query->orWhere('expense_purpose','like', '\'%' . $input['search']['value']. '%\'');
 
             });
 
