@@ -16,7 +16,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Request;
-use App\Models\LpoModels\LpoQuotation;
+use App\Models\LPOModels\LpoQuotation;
 use Anchu\Ftp\Facades\Ftp;
 
 class LPOQuotationApi extends Controller

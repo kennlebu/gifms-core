@@ -16,7 +16,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Request;
-use App\Models\LpoModels\LpoItem;
+use App\Models\LPOModels\LpoItem;
 
 class LPOItemApi extends Controller
 {

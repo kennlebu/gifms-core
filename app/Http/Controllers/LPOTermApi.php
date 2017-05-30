@@ -16,7 +16,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Request;
-use App\Models\LpoModels\LpoTerm;
+use App\Models\LPOModels\LpoTerm;
 
 class LPOTermApi extends Controller
 {
