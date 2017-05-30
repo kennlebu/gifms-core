@@ -434,6 +434,7 @@ class MobilePaymentApi extends Controller
             $dt = json_decode(json_encode(DB::select($sql)), true);
 
             $records_filtered = (int) $dt[0]['count'];
+            // $records_filtered = 30;
 
 
         }
@@ -455,13 +456,30 @@ class MobilePaymentApi extends Controller
 
 
 
+            $sql = MobilePayment::bind_presql($qb->toSql(),$qb->getBindings());
+            $sql = str_replace("*"," count(*) AS count ", $sql);
+            $dt = json_decode(json_encode(DB::select($sql)), true);
+
+            $records_filtered = (int) $dt[0]['count'];
+
 
             //ordering
-            $order_column_id    = $input['order'][0]['column'];
-            $order_column_name  = $input['columns'][$order_column_id]['name'];
+            $order_column_id    = (int) $input['order'][0]['column'];
+            $order_column_name  = $input['columns'][$order_column_id]['data'];
             $order_direction    = $input['order'][0]['dir'];
 
-            $qb->orderBy($order_column_name, $order_direction);
+            if ($order_column_id == 0){
+                $order_column_name = "created_at";
+            }
+            if ($order_column_id == 1){
+                $order_column_name = "id";
+            }
+
+            if($order_column_name!=''){
+
+                $qb->orderBy($order_column_name, $order_direction);
+
+            }
 
 
 

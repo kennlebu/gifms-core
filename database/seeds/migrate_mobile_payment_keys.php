@@ -28,6 +28,8 @@ class migrate_mobile_payment_keys extends Seeder
 
         $migrate_keys_sql = "
                                 UPDATE mobile_payments mp 
+                                    LEFT JOIN staff rb 
+                                    ON rb.migration_id = mp.migration_requested_by_id
                                     LEFT JOIN staff pm 
                                     ON pm.migration_id = mp.migration_project_manager_id
                                     LEFT JOIN invoices inv 
@@ -37,10 +39,12 @@ class migrate_mobile_payment_keys extends Seeder
                                     LEFT JOIN projects pr 
                                     ON pr.migration_id = mp.migration_project_id
 
-                                    SET     mp.project_manager_id   =   pm.id ,
-                                    		mp.invoice_id    		=   inv.id ,
-                                    		mp.account_id    		=   acc.id ,
-                                    		mp.project_id    		=   pr.id 
+                                    SET     mp.requested_by_id             =   rb.id ,
+                                            mp.requested_action_by_id      =   rb.id ,
+                                            mp.project_manager_id          =   pm.id ,
+                                            mp.invoice_id    		       =   inv.id ,
+                                    		mp.account_id    		       =   acc.id ,
+                                    		mp.project_id    		       =   pr.id 
                              ";
 
         DB::statement($migrate_keys_sql);

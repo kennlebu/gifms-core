@@ -12,4 +12,17 @@ class MobilePaymentStatus extends BaseModel
     //
     use SoftDeletes;
 
+
+
+    protected $appends = ['mobile_payments_count'];
+
+
+    public function getMobilePaymentsCountAttribute()
+    {
+        return MobilePayment::where("deleted_at",null)
+		        ->where('status_id', $this->attributes['id'])
+		        ->count();
+
+    }
+
 }

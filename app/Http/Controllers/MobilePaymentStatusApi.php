@@ -16,6 +16,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Request;
+use App\Models\MobilePaymentModels\MobilePaymentStatus;
 
 class MobilePaymentStatusApi extends Controller
 {
@@ -114,6 +115,42 @@ class MobilePaymentStatusApi extends Controller
 
         return response('How about implementing getMobilePaymentStatusById as a GET method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /**
      * Operation mobilePaymentStatusesGet
      *
@@ -123,16 +160,33 @@ class MobilePaymentStatusApi extends Controller
      * @return Http response
      */
     public function mobilePaymentStatusesGet()
-    {
+    { 
+
         $input = Request::all();
+
+        //path params validation
+        $response;
 
         //path params validation
 
 
-        //not path params validation
-        $mobile_payment_status_id = $input['mobile_payment_status_id'];
+        //if status is set
+
+        if(array_key_exists('staff_id', $input)){
+
+     
+
+        }else{
+
+             $response = MobilePaymentStatus::where("deleted_at",null)
+                ->orderBy('mobile_payment_status', 'desc')
+                ->get();
+        }
 
 
-        return response('How about implementing mobilePaymentStatusesGet as a GET method ?');
+           
+
+
+            return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
     }
 }
