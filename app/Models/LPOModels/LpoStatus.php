@@ -6,7 +6,7 @@ namespace App\Models\LPOModels;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\BaseModels\BaseModel;
-use App\Models\LpoModels\Lpo;
+use App\Models\LPOModels\Lpo;
 
 class LpoStatus extends BaseModel
 {
