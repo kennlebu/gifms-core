@@ -140,7 +140,7 @@ class LpoApi extends Controller
 
 
 
-        $lpo->chai_ref                           =   (int)   $body['chai_ref'];
+        $lpo->chai_ref                           =           $body['chai_ref'];
         // $lpo->lpo_date                           =           $body['lpo_date'];
         $lpo->supplier_id                        =   (int)   $body['supplier_id'];
         // $lpo->addressee                          =           $body['addressee'];
@@ -154,7 +154,7 @@ class LpoApi extends Controller
         $lpo->preffered_quotation_id             =   (int)   $body['preffered_quotation_id'];
         // $lpo->supply_category                    =   (int)   $body['supply_category'];
         $lpo->delivery_document                  =           $body['delivery_document'];
-        $lpo->date_delivered                     =   (int)   $body['date_delivered'];
+        $lpo->date_delivered                     =           $body['date_delivered'];
         $lpo->received_by_id                     =   (int)   $body['received_by_id'];
         // $lpo->meeting                            =   (int)   $body['meeting'];
         // $lpo->comments                           =           $body['comments'];
