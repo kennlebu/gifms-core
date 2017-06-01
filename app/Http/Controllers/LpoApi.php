@@ -25,6 +25,7 @@ use App\Models\SuppliesModels\Supplier;
 use App\Models\StaffModels\Staff;
 use App\Models\AccountingModels\Account;
 use App\Models\ProjectsModels\Project;
+use App\Models\LookupModels\Currency;
 use Exception;
 
 class LpoApi extends Controller
@@ -418,7 +419,7 @@ class LpoApi extends Controller
     public function append_attribute_objects($data = array()){
 
 
-
+        
         foreach ($data as $key => $value) {
 
             $data[$key]["account"]              = Account::find((int) $data[$key]["account_id"]);
@@ -428,6 +429,7 @@ class LpoApi extends Controller
             $data[$key]["requested_by"]         = Staff::find((int) $data[$key]["requested_by_id"]);
             $data[$key]["supplier"]             = Supplier::find((int) $data[$key]["supplier_id"]);
             $data[$key]["status"]               = LpoStatus::find((int) $data[$key]["status_id"]);
+            $data[$key]["currency"]             = Currency::find((int) $data[$key]["currency_id"]);
             $data[$key]["quotations"]           = LpoQuotation::where("deleted_at",null)
             ->where("lpo_id",$data[$key]["id"])
             ->get();
@@ -465,6 +467,10 @@ class LpoApi extends Controller
 
             if($data[$key]["status"]==null){
                 $data[$key]["status"] = array("lpo_status"=>"N/A");
+            }
+
+            if($data[$key]["currency"]==null){
+                $data[$key]["currency"] = array("currency_name"=>"N/A");
             }
         }
         return $data;
