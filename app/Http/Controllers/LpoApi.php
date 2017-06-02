@@ -74,6 +74,9 @@ class LpoApi extends Controller
 
 
             if($lpo->save()) {
+                
+                $lpo->ref = "CHAI/LPO/#$lpo->id/".date_format($lpo->created_at,"Y/m/d");
+                $lpo->save();
 
                 return Response()->json(array('msg' => 'Success: lpo added','lpo' => $lpo), 200);
             }

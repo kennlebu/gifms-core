@@ -16,6 +16,7 @@ class post_keys_migration_migration extends Seeder
     			UPDATE `lpos` 
 	    			SET `created_at`  = `request_date`,
  						`updated_at`  = `request_date`
+                        `ref`         = CONCAT('CHAI/LPO/#',`id`,'/',DATE_FORMAT(`created_at`,'%Y/%m/%d'))
 
     			";
 
