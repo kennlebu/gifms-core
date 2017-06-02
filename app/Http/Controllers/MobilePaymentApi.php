@@ -393,7 +393,7 @@ class MobilePaymentApi extends Controller
     public function mobilePaymentsGet()
     {
         $input = Request::all();
-
+        //query builder
         $qb = DB::table('mobile_payments');
 
         $response;

@@ -1991,6 +1991,41 @@ Route::GET('/mobile_payment_types', 'MobilePaymentTypeApi@mobilePaymentTypesGet'
 
 
 
+/**
+ * POST addAccount
+ * Summary: Add a new account
+ * Notes: new account
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/account', 'AccountApi@addAccount')->middleware('jwt.auth');
+/**
+ * PUT updateAccount
+ * Summary: Update an existing account
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/account', 'AccountApi@updateAccount')->middleware('jwt.auth');
+/**
+ * DELETE deleteAccount
+ * Summary: Deletes an account
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/account/{account_id}', 'AccountApi@deleteAccount')->middleware('jwt.auth');
+/**
+ * GET getAccountById
+ * Summary: Find account by ID
+ * Notes: Returns a single account
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/account/{account_id}', 'AccountApi@getAccountById')->middleware('jwt.auth');
+/**
+ * GET accountsGet
+ * Summary: accounts List
+ * Notes: The account endpoint returns multiple account requested given the parameters injected.  
+
+ */
+Route::GET('/accounts', 'AccountApi@accountsGet')->middleware('jwt.auth');
 
 
 

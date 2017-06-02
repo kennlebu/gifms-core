@@ -15,6 +15,7 @@
 
 namespace App\Http\Controllers;
 
+use JWTAuth;
 use Illuminate\Support\Facades\Request;
 use App\Models\LPOModels\Lpo;
 use App\Models\LPOModels\LpoQuotation;
@@ -56,6 +57,7 @@ class LpoApi extends Controller
             'expense_desc',
             'expense_purpose',
             'project_id',
+            'account_id',
             'currency_id',
             'project_manager_id'
             );
@@ -68,17 +70,22 @@ class LpoApi extends Controller
             $lpo->expense_desc                      =           $form['expense_desc'];
             $lpo->expense_purpose                   =           $form['expense_purpose'];
             $lpo->project_id                        =   (int)   $form['project_id'];
+            $lpo->account_id                        =   (int)   $form['account_id'];
             $lpo->currency_id                       =   (int)   $form['currency_id'];
             $lpo->project_manager_id                =   (int)   $form['project_manager_id'];
             $lpo->status_id                         =   2;
 
+            $user = JWTAuth::parseToken()->authenticate();
+            $lpo->requested_action_by_id            =   (int)   $user->id;
+
+
 
             if($lpo->save()) {
-                
+
                 $lpo->ref = "CHAI/LPO/#$lpo->id/".date_format($lpo->created_at,"Y/m/d");
                 $lpo->save();
 
-                return Response()->json(array('msg' => 'Success: lpo added','lpo' => $lpo), 200);
+                return Response()->json(array('msg' => 'Success: lpo added','lpo' => Lpo::find((int)$lpo->id)), 200);
             }
 
         }catch (JWTException $e){
