@@ -65,6 +65,7 @@ class DatabaseSeeder extends Seeder
 
 
         // drop keys after migration
+        $this->call(post_keys_migration_migration::class);
         $this->call(post_migration_keys_drop::class);
         
     }

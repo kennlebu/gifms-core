@@ -139,6 +139,10 @@ class migrate_staff_data extends Seeder
                 'acronym'               => 'a-ac'
             ],
             [
+                'role_name'             => 'Office Manager',
+                'acronym'               => 'om'
+            ],
+            [
                 'role_name'             => 'Auditor',
                 'acronym'               => 'a-ac'
             ]
