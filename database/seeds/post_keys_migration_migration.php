@@ -15,7 +15,7 @@ class post_keys_migration_migration extends Seeder
     	$sql = "
     			UPDATE `lpos` 
 	    			SET `created_at`  = `request_date`,
- 						`updated_at`  = `request_date`
+ 						`updated_at`  = `request_date`,
                         `ref`         = CONCAT('CHAI/LPO/#',`id`,'/',DATE_FORMAT(`request_date`,'%Y/%m/%d'))
 
     			";
