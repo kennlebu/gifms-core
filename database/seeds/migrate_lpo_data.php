@@ -37,7 +37,7 @@ class migrate_lpo_data extends Seeder
 
 
 
-            $data_to_migrate[$key]['chai_ref']                              = $data[$key]['OurRef'];
+            $data_to_migrate[$key]['ref']                                   = $data[$key]['OurRef'];
             $data_to_migrate[$key]['lpo_date']                              = $data[$key]['LPODate'];
             $data_to_migrate[$key]['addressee']                             = $data[$key]['Addressee'];
             $data_to_migrate[$key]['expense_desc']                          = $data[$key]['Title'];

@@ -141,7 +141,7 @@ class LpoApi extends Controller
 
 
 
-        $lpo->chai_ref                           =           $body['chai_ref'];
+        $lpo->ref                                =           $body['ref'];
         // $lpo->lpo_date                           =           $body['lpo_date'];
         $lpo->supplier_id                        =   (int)   $body['supplier_id'];
         // $lpo->addressee                          =           $body['addressee'];
@@ -383,7 +383,7 @@ class LpoApi extends Controller
         if(array_key_exists('status', $input)){
             $response = Lpo::where("deleted_at",null)
             ->where('status_id', $input['status'])
-            ->orderBy('chai_ref', 'desc')
+            ->orderBy('ref', 'desc')
             ->get();
 
 
@@ -397,7 +397,7 @@ class LpoApi extends Controller
 
             $response_dt = Lpo::where("deleted_at",null)
             ->where('status_id', $input['status'])
-            ->orderBy('chai_ref', 'desc')
+            ->orderBy('ref', 'desc')
             ->limit($input['length'])->offset($input['start'])
             ->get();
 

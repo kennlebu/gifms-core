@@ -15,7 +15,7 @@ class CreateLposTable extends Migration
     {
         Schema::create('lpos', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('chai_ref')->nullable();
+            $table->string('ref')->nullable();
             $table->string('lpo_date')->nullable();
             $table->integer('supplier_id')->nullable();
             $table->string('addressee')->nullable();

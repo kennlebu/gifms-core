@@ -26,8 +26,7 @@ class post_migration_keys_drop extends Seeder
 					DROP COLUMN `supply_category`,
 					DROP COLUMN `request_date`,
 					DROP COLUMN `addressee`,
-					DROP COLUMN `lpo_date`,
-					DROP COLUMN `chai_ref`
+					DROP COLUMN `lpo_date`
     			";
 
 
