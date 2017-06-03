@@ -1618,7 +1618,7 @@ Route::PATCH('/mobile_payment/{mobile_payment_id}/approve', 'MobilePaymentApi@ap
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::DELETE('/mobile_payment/{mobile_payment_id}/approve', 'MobilePaymentApi@deleteMobilePayment')->middleware('jwt.auth');
+Route::DELETE('/mobile_payment/{mobile_payment_id}', 'MobilePaymentApi@deleteMobilePayment')->middleware('jwt.auth');
 /**
  * PATCH submitForApproval
  * Summary: Submit mobile_payment by ID

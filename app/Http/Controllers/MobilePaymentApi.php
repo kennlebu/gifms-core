@@ -307,7 +307,7 @@ class MobilePaymentApi extends Controller
     {
         $input = Request::all();
 
-        $deleted = MobilePayment::destroy($lpo_id);
+        $deleted = MobilePayment::destroy($mobile_payment_id);
 
         if($deleted){
             return response()->json(['msg'=>"Mobile Payment deleted"], 200,array(),JSON_PRETTY_PRINT);
@@ -396,6 +396,8 @@ class MobilePaymentApi extends Controller
         //query builder
         $qb = DB::table('mobile_payments');
 
+        $qb->whereNull('deleted_at');
+
         $response;
         $response_dt;
 
@@ -465,7 +467,7 @@ class MobilePaymentApi extends Controller
 
             //ordering
             $order_column_id    = (int) $input['order'][0]['column'];
-            $order_column_name  = $input['columns'][$order_column_id]['data'];
+            $order_column_name  = $input['columns'][$order_column_id]['order_by'];
             $order_direction    = $input['order'][0]['dir'];
 
             if ($order_column_id == 0){
