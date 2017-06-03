@@ -116,11 +116,11 @@ class migrate_mobile_payment_keys extends Seeder
          */
 
         $migrate_keys_sql = "
-                                UPDATE mobile_payment_payees mp 
-                                    LEFT JOIN mpesa_payments a 
-                                    ON a.migration_id = mp.migration_mobile_payment_id
+                                UPDATE mobile_payment_payees mpp 
+                                    LEFT JOIN mobile_payments p 
+                                    ON p.migration_id = mpp.migration_mobile_payment_id
 
-                                    SET     mp.mobile_payment_id    =   a.id 
+                                    SET     mpp.mobile_payment_id    =   p.id 
                              ";
 
         DB::statement($migrate_keys_sql);
