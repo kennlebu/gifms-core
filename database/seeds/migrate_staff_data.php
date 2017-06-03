@@ -803,6 +803,8 @@ class migrate_staff_data extends Seeder
          * 
          */
 
+        echo "\n Role Rights -[ALL]---\n";
+
         DB::table('role_access_rights')->insert([
 
 

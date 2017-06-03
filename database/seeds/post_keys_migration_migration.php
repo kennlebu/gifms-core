@@ -35,7 +35,7 @@ class post_keys_migration_migration extends Seeder
                 ]
             ]);
 
-        DB::statement("UPDATE `lpo_statuses` SET `next_status` = '14' WHERE `id` = '10' ");
+        DB::statement("UPDATE `lpo_statuses` SET `next_status_id` = '14' WHERE `id` = '10' ");
 
 
     }
