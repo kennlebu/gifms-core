@@ -22,13 +22,14 @@ class CreateLposTable extends Migration
             $table->text('expense_desc')->nullable();
             $table->text('expense_purpose')->nullable();
             $table->integer('requested_by_id')->nullable();
-            $table->integer('requested_action_by_id')->nullable();
+            $table->integer('request_action_by_id')->nullable();
             $table->date('request_date')->nullable();
             $table->integer('status_id')->nullable();
             $table->integer('currency_id')->nullable();
             $table->integer('preffered_quotation_id')->nullable();
             $table->integer('supply_category')->nullable();
             $table->string('delivery_document')->nullable();
+            $table->text('delivery_Comment')->nullable();
             $table->date('date_delivered')->nullable();
             $table->integer('received_by_id')->nullable();
             $table->integer('meeting')->nullable();
@@ -42,6 +43,8 @@ class CreateLposTable extends Migration
             $table->integer('project_manager_id')->nullable();
             $table->text('rejection_reason')->nullable();
             $table->integer('rejected_by_id')->nullable();
+            $table->text('cancellation_reason')->nullable();
+            $table->integer('cancelled_by_id')->nullable();
             $table->integer('quote_exempt')->nullable();
             $table->text('quote_exempt_explanation')->nullable();
             $table->integer('migration_preffered_quotation_id')->nullable();

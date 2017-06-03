@@ -40,7 +40,7 @@ class migrate_mobile_payment_keys extends Seeder
                                     ON pr.migration_id = mp.migration_project_id
 
                                     SET     mp.requested_by_id             =   rb.id ,
-                                            mp.requested_action_by_id      =   rb.id ,
+                                            mp.request_action_by_id        =   rb.id ,
                                             mp.project_manager_id          =   pm.id ,
                                             mp.invoice_id    		       =   inv.id ,
                                     		mp.account_id    		       =   acc.id ,

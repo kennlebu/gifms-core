@@ -18,6 +18,7 @@ class CreateLpoStatusesTable extends Migration
             $table->string('lpo_status');
             $table->integer('next_status_id')->nullable();
             $table->integer('status_security_level')->nullable();
+            $table->integer('order_priority')->nullable();
             $table->integer('migration_status_security_level')->nullable();
             $table->integer('migration_id')->nullable();
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));

@@ -24,5 +24,19 @@ class post_keys_migration_migration extends Seeder
         DB::statement($sql);
 
     	echo "\n lpos date data updated ---";
+
+
+
+
+        //lpo_statuses
+        DB::table('lpo_statuses')->insert([
+                [
+                    'lpo_status' =>'Paid and completed'
+                ]
+            ]);
+
+        DB::statement("UPDATE `lpo_statuses` SET `next_status` = '14' WHERE `id` = '10' ");
+
+
     }
 }
