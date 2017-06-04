@@ -36,9 +36,9 @@ class Lpo extends BaseModel
     {
         return $this->belongsTo('App\Models\StaffModels\Staff','requested_by_id');
     }
-    public function requested_action_by()
+    public function request_action_by()
     {
-        return $this->belongsTo('App\Models\StaffModels\Staff','requested_action_by_id');
+        return $this->belongsTo('App\Models\StaffModels\Staff','request_action_by_id');
     }
     public function project()
     {

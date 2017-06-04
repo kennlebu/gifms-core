@@ -68,7 +68,7 @@ class LpoApi extends Controller
             $lpo->status_id                         =   2;
 
             $user = JWTAuth::parseToken()->authenticate();
-            $lpo->requested_action_by_id            =   (int)   $user->id;
+            $lpo->request_action_by_id            =   (int)   $user->id;
 
 
 
@@ -150,8 +150,8 @@ class LpoApi extends Controller
         $lpo->expense_desc                       =           $body['expense_desc'];
         $lpo->expense_purpose                    =           $body['expense_purpose'];
         $lpo->requested_by_id                    =   (int)   $body['requested_by_id'];
-        $lpo->requested_action_by_id             =   (int)   $body['requested_action_by_id'];
-        $lpo->request_date                       =           $body['request_date'];
+        $lpo->request_action_by_id               =   (int)   $body['request_action_by_id'];
+        // $lpo->request_date                       =           $body['request_date'];
         $lpo->status_id                          =   (int)   $body['status_id'];
         $lpo->currency_id                        =   (int)   $body['currency_id'];
         $lpo->preffered_quotation_id             =   (int)   $body['preffered_quotation_id'];
@@ -161,7 +161,7 @@ class LpoApi extends Controller
         $lpo->received_by_id                     =   (int)   $body['received_by_id'];
         // $lpo->meeting                            =   (int)   $body['meeting'];
         // $lpo->comments                           =           $body['comments'];
-        $lpo->preffered_supplier                 =   (int)   $body['preffered_supplier'];
+        // $lpo->preffered_supplier                 =   (int)   $body['preffered_supplier'];
         $lpo->preffered_supplier_id              =   (int)   $body['preffered_supplier_id'];
         $lpo->project_id                         =   (int)   $body['project_id'];
         $lpo->account_id                         =   (int)   $body['account_id'];
@@ -258,7 +258,7 @@ class LpoApi extends Controller
             $response   = Lpo::findOrFail($lpo_id);
 
             $response['requested_by']             = $model->find($lpo_id)->requested_by;
-            $response['requested_action_by']      = $model->find($lpo_id)->requested_action_by;
+            $response['request_action_by']        = $model->find($lpo_id)->request_action_by;
             $response['project']                  = $model->find($lpo_id)->project;
             $response['account']                  = $model->find($lpo_id)->account;
             $response['invoice']                  = $model->find($lpo_id)->invoice;
@@ -570,7 +570,7 @@ class LpoApi extends Controller
             $model = new Lpo();
 
             $data[$key]['requested_by']             = $model->find($data[$key]['id'])->requested_by;
-            $data[$key]['requested_action_by']      = $model->find($data[$key]['id'])->requested_action_by;
+            $data[$key]['request_action_by']        = $model->find($data[$key]['id'])->request_action_by;
             $data[$key]['project']                  = $model->find($data[$key]['id'])->project;
             $data[$key]['account']                  = $model->find($data[$key]['id'])->account;
             $data[$key]['invoice']                  = $model->find($data[$key]['id'])->invoice;
