@@ -424,6 +424,7 @@ class MobilePaymentApi extends Controller
             $qb->where(function ($query) use ($input) {
                     
                 $query->orWhere('id','like', '\'%' . $input['searchval']. '%\'');
+                $query->orWhere('ref','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('expense_desc','like', '\'%' . $input['searchval']. '%\'');
                 $query->orWhere('expense_purpose','like', '\'%' . $input['searchval']. '%\'');
 
@@ -470,12 +471,12 @@ class MobilePaymentApi extends Controller
             $order_column_name  = $input['columns'][$order_column_id]['order_by'];
             $order_direction    = $input['order'][0]['dir'];
 
-            if ($order_column_id == 0){
-                $order_column_name = "created_at";
-            }
-            if ($order_column_id == 1){
-                $order_column_name = "id";
-            }
+            // if ($order_column_id == 0){
+            //     $order_column_name = "created_at";
+            // }
+            // if ($order_column_id == 1){
+            //     $order_column_name = "id";
+            // }
 
             if($order_column_name!=''){
 
@@ -524,6 +525,29 @@ class MobilePaymentApi extends Controller
         return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     public function append_relationships_objects($data = array()){
 
         // print_r($data);
@@ -552,6 +576,23 @@ class MobilePaymentApi extends Controller
 
 
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
 
 
 
