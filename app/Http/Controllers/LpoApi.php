@@ -412,7 +412,21 @@ class LpoApi extends Controller
         //if status is set
 
         if(array_key_exists('status', $input)){
-            $qb->where('status_id', $input['status']);
+
+            $status_ = (int) $input['status'];
+
+            if($status_ >-1){
+                $qb->where('status_id', $input['status']);
+                $qb->where('requested_by_id',$this->current_user()->id);
+            }elseif ($status_==-1) {
+                $qb->where('requested_by_id',$this->current_user()->id);
+            }elseif ($status_==-2) {
+                
+            }
+
+
+
+
             // $total_records          = $qb->count();     //may need this
         }
 
@@ -614,7 +628,7 @@ class LpoApi extends Controller
             }
 
             if($data[$key]["requested_by"]==null){
-                $data[$key]["requested_by"] = array("f_name"=>"N/A");
+                $data[$key]["requested_by"] = array("full_name"=>"N/A");
             }
 
             if($data[$key]["supplier"]==null){
