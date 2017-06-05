@@ -102,6 +102,14 @@ Route::POST('/lpo/{lpo_id}', 'LpoApi@updateLpoWithForm')->middleware('jwt.auth')
  */
 Route::GET('/lpos', 'LpoApi@lposGet')->middleware('jwt.auth');
 
+/**
+ * GET getDocumentById
+ * Summary: preview LPO document ID
+ * Notes: Returns a single lpo document
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/api/lpo/{lpo_id}/get_document', 'LPOApi@getDocumentById')->middleware('jwt.auth');
+
 
 
 

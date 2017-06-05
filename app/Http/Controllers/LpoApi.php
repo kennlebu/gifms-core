@@ -344,6 +344,31 @@ class LpoApi extends Controller
 
 
 
+    /**
+     * Operation getDocumentById
+     *
+     * preview LPO document ID.
+     *
+     * @param int $lpo_id ID of lpo to return lpo object (required)
+     *
+     * @return Http response
+     */
+    public function getDocumentById($lpo_id)
+    {
+        $input = Request::all();
+
+        //path params validation
+
+
+        //not path params validation
+
+        return response('How about implementing getDocumentById as a GET method ?');
+    }
+
+
+
+
+
 
 
 

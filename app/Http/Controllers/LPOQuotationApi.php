@@ -28,6 +28,14 @@ class LPOQuotationApi extends Controller
     {
     }
 
+
+
+
+
+
+
+
+
     /**
      * Operation addLpoQuotation
      *
@@ -90,6 +98,42 @@ class LPOQuotationApi extends Controller
         }
 
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /**
      * Operation updateLpoQuotation
      *
@@ -114,6 +158,26 @@ class LPOQuotationApi extends Controller
 
         return response('How about implementing updateLpoQuotation as a PUT method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /**
      * Operation deleteLpoQuotation
      *
@@ -136,6 +200,26 @@ class LPOQuotationApi extends Controller
             return response()->json(['error'=>"lpo quotation not found"], 404,array(),JSON_PRETTY_PRINT);
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /**
      * Operation getLpoQuotationById
      *
@@ -160,6 +244,56 @@ class LPOQuotationApi extends Controller
             return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+    /**
+     * Operation getLpoQuotationDocumentById
+     *
+     * Find lpo quotation document by ID.
+     *
+     * @param int $lpo_quotation_id ID of lpo quotation to return object (required)
+     *
+     * @return Http response
+     */
+    public function getLpoQuotationDocumentById($lpo_quotation_id)
+    {
+        $input = Request::all();
+
+        //path params validation
+
+
+        //not path params validation
+
+        return response('How about implementing getLpoQuotationDocumentById as a GET method ?');
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation lpoQuotationsGet
      *

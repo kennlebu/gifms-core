@@ -658,6 +658,49 @@
     ]
    }
   },
+  "/lpo/{lpo_id}/get_document": {
+   "get": {
+    "tags": [
+     "LPO"
+    ],
+    "summary": "preview LPO document ID",
+    "description": "Returns a single lpo document",
+    "operationId": "get_document_by_id",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "lpo_id",
+      "in": "path",
+      "description": "ID of lpo to return lpo object",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "successful operation",
+      "schema": {
+       "$ref": "#/definitions/lpo"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
   "/lpo/{lpo_id}": {
    "get": {
     "tags": [
@@ -1332,6 +1375,49 @@
      },
      "405": {
       "description": "Validation exception"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/lpo_quotation/{lpo_quotation_id}/get_document": {
+   "get": {
+    "tags": [
+     "LPO Quotation"
+    ],
+    "summary": "Find lpo quotation document by ID",
+    "description": "Returns a single lpo quotation document",
+    "operationId": "get_lpo_quotation_document_by_id",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "lpo_quotation_id",
+      "in": "path",
+      "description": "ID of lpo quotation to return object",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "successful operation",
+      "schema": {
+       "$ref": "#/definitions/lpo_quotation"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo quotation not found"
      }
     },
     "security": [
@@ -2882,6 +2968,47 @@
        "$ref": "#/definitions/mobile_payment"
       }
      },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "mobile_payment not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "delete": {
+    "tags": [
+     "Mobile Payment"
+    ],
+    "summary": "Deletes an mobile_payment",
+    "description": "",
+    "operationId": "delete_mobile_payment",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "api_key",
+      "in": "header",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "mobile_payment_id",
+      "in": "path",
+      "description": "mobile_payment id to delete",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
      "400": {
       "description": "Invalid ID supplied"
      },

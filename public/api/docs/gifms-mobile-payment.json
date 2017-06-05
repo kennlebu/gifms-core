@@ -251,6 +251,47 @@
       "api_key": []
      }
     ]
+   },
+   "delete": {
+    "tags": [
+     "Mobile Payment"
+    ],
+    "summary": "Deletes an mobile_payment",
+    "description": "",
+    "operationId": "delete_mobile_payment",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "api_key",
+      "in": "header",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "mobile_payment_id",
+      "in": "path",
+      "description": "mobile_payment id to delete",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "mobile_payment not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
    }
   },
   "/mobile_payment/{mobile_payment_id}/submit_for_approval": {
@@ -325,47 +366,6 @@
        "$ref": "#/definitions/mobile_payment"
       }
      },
-     "400": {
-      "description": "Invalid ID supplied"
-     },
-     "404": {
-      "description": "mobile_payment not found"
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   },
-   "delete": {
-    "tags": [
-     "Mobile Payment"
-    ],
-    "summary": "Deletes an mobile_payment",
-    "description": "",
-    "operationId": "delete_mobile_payment",
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "name": "api_key",
-      "in": "header",
-      "required": true,
-      "type": "string"
-     },
-     {
-      "name": "mobile_payment_id",
-      "in": "path",
-      "description": "mobile_payment id to delete",
-      "required": true,
-      "type": "integer",
-      "format": "int64"
-     }
-    ],
-    "responses": {
      "400": {
       "description": "Invalid ID supplied"
      },
