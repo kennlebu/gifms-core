@@ -616,11 +616,11 @@ class LpoApi extends Controller
             }
 
             if($data[$key]["project_manager"]==null){
-                $data[$key]["project_manager"] = array("project_manager_name"=>"N/A");
+                $data[$key]["project_manager"] = array("full_name"=>"N/A");
             }
 
             if($data[$key]["received_by"]==null){
-                $data[$key]["received_by"] = array("f_name"=>"N/A");
+                $data[$key]["received_by"] = array("full_name"=>"N/A");
             }
 
             if($data[$key]["project"]==null){

@@ -28,8 +28,10 @@ class Lpo extends BaseModel
 
     use SoftDeletes;
 
-    protected $dates = ['deleted_at'];
+    protected $dates = ['created_at','updated_at','deleted_at'];
 
+    protected $appends = ['amount'];
+ 
 
 
     public function requested_by()
@@ -93,6 +95,45 @@ class Lpo extends BaseModel
         return $this->hasMany('App\Models\LPOModels\LpoApproval');
     }
 
+
+
+    public function getAmountAttribute(){
+
+        $items = $this->items;
+        $total = 0;
+
+
+        foreach ($items as $key => $value) {
+
+            $unit_price     = (float)   $value->unit_price;
+            $vat_charge     = (int)     $value->vat_charge;
+            $qty            = (int)     $value->qty;
+            $vat            = 0;
+            $sub_total      = 0;
+
+            if($vat_charge==0){
+                $vat = (16/100)*$unit_price*$qty;
+                $sub_total = $unit_price*$qty;
+            }
+
+
+            if($vat_charge==1){
+                $vat = (16/100)*$unit_price*$qty;
+                $sub_total = (84/100)*$unit_price*$qty;
+            }
+
+            if($vat_charge==2){
+                $vat = 0;
+                $sub_total = $unit_price*$qty;
+            }
+
+            $total += $sub_total+$vat;
+
+        }
+        
+        return $total;
+
+    }
 
 
 

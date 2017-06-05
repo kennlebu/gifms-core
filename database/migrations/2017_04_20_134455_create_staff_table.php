@@ -21,6 +21,7 @@ class CreateStaffTable extends Migration
             $table->integer('security_group_id')->nullable();
             $table->string('f_name')->nullable();
             $table->string('l_name')->nullable();
+            $table->string('o_names')->nullable();
             $table->integer('department_id')->nullable();
             $table->string('post')->nullable();
             $table->string('mobile_no')->nullable();
