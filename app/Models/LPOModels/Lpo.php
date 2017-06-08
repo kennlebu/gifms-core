@@ -99,6 +99,11 @@ class Lpo extends BaseModel
         return $this->hasMany('App\Models\LPOModels\LpoApproval');
     }
 
+    public function deliveries()
+    {
+        return $this->hasMany('App\Models\DeliveriesModels\Delivery');
+    }
+
 
 
     public function getAmountAttribute(){

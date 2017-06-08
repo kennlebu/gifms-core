@@ -273,6 +273,7 @@ class LpoApi extends Controller
             $response['items']                    = $model->find($lpo_id)->items;
             $response['terms']                    = $model->find($lpo_id)->terms;
             $response['lpo_approvals']            = $model->find($lpo_id)->lpo_approvals;
+            $response['deliveries']               = $model->find($lpo_id)->deliveries;
 
 
 
@@ -611,6 +612,7 @@ class LpoApi extends Controller
             $data[$key]['items']                    = $model->find($data[$key]['id'])->items;
             $data[$key]['terms']                    = $model->find($data[$key]['id'])->terms;
             $data[$key]['lpo_approvals']            = $model->find($data[$key]['id'])->lpo_approvals;
+            $data[$key]['deliveries']               = $model->find($data[$key]['id'])->deliveries;
 
         }
 

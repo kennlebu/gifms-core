@@ -15,6 +15,8 @@ class CreateLpoQuotationsTable extends Migration
     {
         Schema::create('lpo_quotations', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('internal_ref')->nullable();
+            $table->string('external_ref')->nullable();
             $table->integer('lpo_id')->nullable();
             $table->string('quotation_doc')->nullable();
             $table->integer('supplier_id')->nullable();
