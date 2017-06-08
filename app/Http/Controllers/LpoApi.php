@@ -265,7 +265,8 @@ class LpoApi extends Controller
             $response['status']                   = $model->find($lpo_id)->status;
             $response['project_manager']          = $model->find($lpo_id)->project_manager;
             $response['rejected_by']              = $model->find($lpo_id)->rejected_by;
-            $response['received_by']              = $model->find($lpo_id)->rejected_by;
+            $response['cancelled_by']             = $model->find($lpo_id)->cancelled_by;
+            $response['received_by']              = $model->find($lpo_id)->received_by;
             $response['supplier']                 = $model->find($lpo_id)->supplier;
             $response['currency']                 = $model->find($lpo_id)->currency;
             $response['quotations']               = $model->find($lpo_id)->quotations;
@@ -602,7 +603,8 @@ class LpoApi extends Controller
             $data[$key]['status']                   = $model->find($data[$key]['id'])->status;
             $data[$key]['project_manager']          = $model->find($data[$key]['id'])->project_manager;
             $data[$key]['rejected_by']              = $model->find($data[$key]['id'])->rejected_by;
-            $data[$key]['received_by']              = $model->find($data[$key]['id'])->rejected_by;
+            $data[$key]['cancelled_by']             = $model->find($data[$key]['id'])->cancelled_by;
+            $data[$key]['received_by']              = $model->find($data[$key]['id'])->received_by;
             $data[$key]['supplier']                 = $model->find($data[$key]['id'])->supplier;
             $data[$key]['currency']                 = $model->find($data[$key]['id'])->currency;
             $data[$key]['quotations']               = $model->find($data[$key]['id'])->quotations;
@@ -654,6 +656,11 @@ class LpoApi extends Controller
 
             if($data[$key]["requested_by"]==null){
                 $data[$key]["requested_by"] = array("full_name"=>"N/A");
+            }
+
+
+            if($data[$key]["cancelled_by"]==null){
+                $data[$key]["cancelled_by"] = array("full_name"=>"N/A");
             }
 
             if($data[$key]["supplier"]==null){

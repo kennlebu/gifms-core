@@ -74,6 +74,10 @@ class Lpo extends BaseModel
     {
         return $this->belongsTo('App\Models\StaffModels\Staff','received_by_id');
     }
+    public function cancelled_by()
+    {
+        return $this->belongsTo('App\Models\StaffModels\Staff','cancelled_by_id');
+    }
     public function currency()
     {
         return $this->belongsTo('App\Models\LookupModels\Currency');
