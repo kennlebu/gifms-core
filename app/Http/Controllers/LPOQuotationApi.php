@@ -18,6 +18,9 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Request;
 use App\Models\LPOModels\LpoQuotation;
 use Anchu\Ftp\Facades\Ftp;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Response;
 
 class LPOQuotationApi extends Controller
 {
@@ -55,12 +58,12 @@ class LPOQuotationApi extends Controller
 
 
             $form = Request::only(
-                        'lpo_id',
-                        'uploaded_by_id',
-                        'supplier_id',
-                        'amount',
-                        'file'
-                    );
+                'lpo_id',
+                'uploaded_by_id',
+                'supplier_id',
+                'amount',
+                'file'
+                );
 
 
             // FTP::connection()->changeDir('./lpos');
@@ -93,7 +96,7 @@ class LPOQuotationApi extends Controller
 
         }catch (JWTException $e){
 
-                return response()->json(['error'=>'You are not Authenticated'], 500);
+            return response()->json(['error'=>'You are not Authenticated'], 500);
 
         }
 
@@ -231,19 +234,19 @@ class LPOQuotationApi extends Controller
      */
     public function getLpoQuotationById($lpo_quotation_id)
     {
-         $input = Request::all();
+       $input = Request::all();
 
-        try{
+       try{
 
-            $response = LpoQuotation::findOrFail($lpo_quotation_id);
-            return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+        $response = LpoQuotation::findOrFail($lpo_quotation_id);
+        return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
 
-        }catch(Exception $e){
+    }catch(Exception $e){
 
-            $response =  ["error"=>"lpo could not be found"];
-            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
-        }
+        $response =  ["error"=>"lpo could not be found"];
+        return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
     }
+}
 
 
 
@@ -267,14 +270,27 @@ class LPOQuotationApi extends Controller
      */
     public function getLpoQuotationDocumentById($lpo_quotation_id)
     {
-        $input = Request::all();
 
-        //path params validation
+        $ftp            = FTP::connection()->getDirListing();
 
+        $quotation      = LpoQuotation::findOrFail($lpo_quotation_id);
 
-        //not path params validation
+        $path           = './lpos/'.$quotation->lpo_id.'/quotations/'.$quotation->id.'/'.$quotation->quotation_doc;
 
-        return response('How about implementing getLpoQuotationDocumentById as a GET method ?');
+        $file_contents  = FTP::connection()->readFile($path);
+
+        Storage::put('lpo_quotation/'.$quotation->id.'.pdf', $file_contents);
+
+        $url       = storage_path("app/lpo_quotation/".$quotation->id.'.pdf');
+
+        $file = File::get($url);
+
+        $response = Response::make($file, 200);
+
+        $response->header('Content-Type', 'application/pdf');
+
+        return $response;
+
     }
 
 
@@ -316,8 +332,8 @@ class LPOQuotationApi extends Controller
         if(array_key_exists('lpo_id', $input)){
 
             $response = LpoQuotation::where("deleted_at",null)
-                ->where('lpo_id', $input['lpo_id'])
-                ->get();
+            ->where('lpo_id', $input['lpo_id'])
+            ->get();
 
         }else{
 

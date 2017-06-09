@@ -291,6 +291,13 @@ Route::GET('/lpo_quotation/{lpo_quotation_id}', 'LPOQuotationApi@getLpoQuotation
 
  */
 Route::GET('/lpo_quotations', 'LPOQuotationApi@lpoQuotationsGet')->middleware('jwt.auth');
+/**
+ * GET getLpoQuotationDocumentById
+ * Summary: Find lpo quotation document by ID
+ * Notes: Returns a single lpo quotation document
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/lpo_quotation/{lpo_quotation_id}/get_document', 'LPOQuotationApi@getLpoQuotationDocumentById');
 
 
 
