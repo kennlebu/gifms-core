@@ -43,8 +43,10 @@ class CreateLposTable extends Migration
             $table->integer('project_manager_id')->nullable();
             $table->text('rejection_reason')->nullable();
             $table->integer('rejected_by_id')->nullable();
+            $table->timestamp('rejected_at')->nullable();
             $table->text('cancellation_reason')->nullable();
             $table->integer('cancelled_by_id')->nullable();
+            $table->timestamp('cancelled_at')->nullable();
             $table->integer('quote_exempt')->nullable();
             $table->text('quote_exempt_explanation')->nullable();
             $table->integer('migration_preffered_quotation_id')->nullable();

@@ -103,6 +103,16 @@ return [
             'prefix' => '',
         ],
 
+        'sqlsrv2' => [
+            'driver' => 'sqlsrv',
+            'host' => env('DBSQLSVR2_HOST', 'localhost'),
+            'database' => env('DBSQLSVR2_DATABASE', 'forge'),
+            'username' => env('DBSQLSVR2_USERNAME', 'forge'),
+            'password' => env('DBSQLSVR2_PASSWORD', ''),
+            'charset' => 'utf8',
+            'prefix' => '',
+        ],
+
     ],
 
     /*
