@@ -172,6 +172,7 @@ return [
         Tymon\JWTAuth\Providers\JWTAuthServiceProvider::class,
         Anchu\Ftp\FtpServiceProvider::class,
         Barryvdh\DomPDF\ServiceProvider::class,
+        niklasravnsborg\LaravelPdf\PdfServiceProvider::class
 
         /*
          * Application Service Providers...
@@ -232,6 +233,7 @@ return [
 
         'JWTAuth' => Tymon\JWTAuth\Facades\JWTAuth::class,
         'PDF' => Barryvdh\DomPDF\Facade::class,
+        'mPDF' => niklasravnsborg\LaravelPdf\Facades\Pdf::class
 
     ],
 
