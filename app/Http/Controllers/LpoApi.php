@@ -21,6 +21,11 @@ use Illuminate\Support\Facades\DB;
 use App\Models\LPOModels\Lpo;
 use Exception;
 use PDF;
+use App;
+use Anchu\Ftp\Facades\Ftp;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Response;
 
 class LpoApi extends Controller
 {
@@ -359,8 +364,36 @@ class LpoApi extends Controller
     public function getDocumentById($lpo_id)
     {   
         $data = array();
+
         $pdf = PDF::loadView('pdf/test', $data);
-        return $pdf->download('welcome.pdf');
+
+        // $pdf = App::make('dompdf.wrapper');
+        // $pdf->loadHTML('<h1>Test</h1>');
+
+        // return $pdf->download('welcome.pdf');
+
+        // $ftp            = FTP::connection()->getDirListing();
+
+        // $quotation      = LpoQuotation::findOrFail($lpo_quotation_id);
+
+        // $path           = './lpos/'.$quotation->lpo_id.'/quotations/'.$quotation->id.'/'.$quotation->quotation_doc;
+
+        // $file_contents  = FTP::connection()->readFile($path);
+
+        $file_contents  = $pdf->stream();
+
+        Storage::put('lpo/'.$lpo_id.'.temp', $file_contents);
+
+        $url       = storage_path("app/lpo/".$lpo_id.'.temp');
+
+        $file = File::get($url);
+
+        $response = Response::make($file, 200);
+
+        $response->header('Content-Type', 'application/pdf');
+
+        return $response;
+
     }
 
 
