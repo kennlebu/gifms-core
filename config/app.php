@@ -171,6 +171,7 @@ return [
 
         Tymon\JWTAuth\Providers\JWTAuthServiceProvider::class,
         Anchu\Ftp\FtpServiceProvider::class,
+        Barryvdh\DomPDF\ServiceProvider::class,
 
         /*
          * Application Service Providers...
@@ -230,6 +231,7 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
 
         'JWTAuth' => Tymon\JWTAuth\Facades\JWTAuth::class,
+        'PDF' => Barryvdh\DomPDF\Facade::class,
 
     ],
 
