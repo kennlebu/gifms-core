@@ -172,7 +172,7 @@ return [
         Tymon\JWTAuth\Providers\JWTAuthServiceProvider::class,
         Anchu\Ftp\FtpServiceProvider::class,
         Barryvdh\DomPDF\ServiceProvider::class,
-        niklasravnsborg\LaravelPdf\PdfServiceProvider::class
+        niklasravnsborg\LaravelPdf\PdfServiceProvider::class,
 
         /*
          * Application Service Providers...
