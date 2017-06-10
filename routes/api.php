@@ -108,7 +108,7 @@ Route::GET('/lpos', 'LpoApi@lposGet')->middleware('jwt.auth');
  * Notes: Returns a single lpo document
  * Output-Formats: [application/json, application/xml]
  */
-Route::GET('/api/lpo/{lpo_id}/get_document', 'LPOApi@getDocumentById')->middleware('jwt.auth');
+Route::GET('/lpo/{lpo_id}/get_document', 'LPOApi@getDocumentById')->middleware('jwt.auth');
 
 
 

@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\LPOModels\Lpo;
 use Exception;
+use PDF;
 
 class LpoApi extends Controller
 {
@@ -356,15 +357,10 @@ class LpoApi extends Controller
      * @return Http response
      */
     public function getDocumentById($lpo_id)
-    {
-        $input = Request::all();
-
-        //path params validation
-
-
-        //not path params validation
-
-        return response('How about implementing getDocumentById as a GET method ?');
+    {   
+        $data = array();
+        $pdf = PDF::loadView('pdf/test', $data);
+        return $pdf->download('welcome.pdf');
     }
 
 
