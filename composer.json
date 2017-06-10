@@ -7,6 +7,7 @@
     "require": {
         "php": ">=5.6.4",
         "anchu/ftp": "^2.0",
+        "barryvdh/laravel-dompdf": "^0.8.0",
         "doctrine/dbal": "^2.5",
         "laravel/framework": "5.3.*",
         "tymon/jwt-auth": "^0.5.11",
