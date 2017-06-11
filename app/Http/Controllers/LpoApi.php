@@ -276,6 +276,7 @@ class LpoApi extends Controller
             $response['supplier']                 = $model->find($lpo_id)->supplier;
             $response['currency']                 = $model->find($lpo_id)->currency;
             $response['quotations']               = $model->find($lpo_id)->quotations;
+            $response['preffered_quotation']      = $model->find($lpo_id)->preffered_quotation;
             $response['items']                    = $model->find($lpo_id)->items;
             $response['terms']                    = $model->find($lpo_id)->terms;
             $response['lpo_approvals']            = $model->find($lpo_id)->lpo_approvals;
@@ -365,7 +366,13 @@ class LpoApi extends Controller
     {   
         $lpo   = Lpo::findOrFail($lpo_id);
 
-        $pdf = PDF::loadView('pdf/lpo', $lpo);
+        $data = array(
+                'lpo'   => $lpo
+            );
+
+        // return view('pdf/lpo',$data);
+
+        $pdf = PDF::loadView('pdf/lpo', $data);
 
         $file_contents  = $pdf->stream();
 
@@ -625,6 +632,7 @@ class LpoApi extends Controller
             $data[$key]['supplier']                 = $model->find($data[$key]['id'])->supplier;
             $data[$key]['currency']                 = $model->find($data[$key]['id'])->currency;
             $data[$key]['quotations']               = $model->find($data[$key]['id'])->quotations;
+            $data[$key]['preffered_quotation']      = $model->find($data[$key]['id'])->preffered_quotation;
             $data[$key]['items']                    = $model->find($data[$key]['id'])->items;
             $data[$key]['terms']                    = $model->find($data[$key]['id'])->terms;
             $data[$key]['lpo_approvals']            = $model->find($data[$key]['id'])->lpo_approvals;

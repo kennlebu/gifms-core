@@ -86,6 +86,10 @@ class Lpo extends BaseModel
     {
         return $this->hasMany('App\Models\LPOModels\LpoQuotation');
     }
+    public function preffered_quotation()
+    {
+        return $this->belongsTo('App\Models\LPOModels\LpoQuotation','preffered_quotation_id');
+    }
     public function items()
     {
         return $this->hasMany('App\Models\LPOModels\LpoItem');
