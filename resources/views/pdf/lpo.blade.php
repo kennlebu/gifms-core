@@ -31,7 +31,7 @@
             <td style="border-width: 1px; border-style: solid; border-color: #000000 #000000 #c0c0c0; border-image: initial; text-align: right;" colspan="4" >{{$lpo->preffered_quotation->supplier->contact_name_1}}</td>
             <td colspan="1" ></td>
             <td colspan="1" ><strong>Date</strong></td>
-            <td style="text-align: right;" colspan="2">{{date('F d, Y', strtotime($lpo->created_at)) }}</td>
+            <td style="text-align: right;" colspan="2">{{date('d F, Y', strtotime($lpo->created_at)) }}</td>
           </tr>
           <tr>
             <td style="border: 1px solid #000000; border-bottom: 1px solid #c0c0c0; border-top: 1px solid #c0c0c0;" colspan="2"  ><strong>Your Ref</strong></td>
@@ -85,32 +85,35 @@
           @foreach ($lpo->items as $key => $item)
 
 
-            <tr>
-              <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #000000; border-right: 1px solid #000000;"  >{{$key+1}}</td>
-              <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #000000; border-right: 1px solid #000000;" colspan="3" >{{$item->item_description}}</td>
-              <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #000000; border-right: 1px solid #000000;" align="center">{{$item->qty_description}}</td>
-              <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #000000; border-right: 1px solid #000000;" align="right">[UNIT_PRICE]</td>
-              <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #000000; border-right: 1px solid #000000;" align="right"></td>
-              <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #000000; border-right: 1px solid #000000;" align="right">[SUBTOTAL]</td>
-              <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #000000; border-right: 1px solid #000000;" align="right">[VAT]</td>
-              <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #000000; border-right: 1px solid #000000;" align="right" bgcolor="#E4E8F3">[TOTAL]</td>
-            </tr>
+          <tr>
+            <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #000000; border-right: 1px solid #000000;"  >{{$key+1}}</td>
+            <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #000000; border-right: 1px solid #000000;" colspan="3" >{{$item->item_description}}</td>
+            <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #000000; border-right: 1px solid #000000;" align="center">{{$item->qty_description}}</td>
+            <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #000000; border-right: 1px solid #000000;" align="right">[UNIT_PRICE]</td>
+            <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #000000; border-right: 1px solid #000000;" align="right"></td>
+            <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #000000; border-right: 1px solid #000000;" align="right">[SUBTOTAL]</td>
+            <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #000000; border-right: 1px solid #000000;" align="right">[VAT]</td>
+            <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #000000; border-right: 1px solid #000000;" align="right" bgcolor="#E4E8F3">[TOTAL]</td>
+          </tr>
 
 
           @endforeach
 
 
           <tr>
-            <td style="border-top: 1px solid #000000;" ></td>
-            <td style="border-top: 1px solid #000000;" ></td>
-            <td style="border-top: 1px solid #000000;" ></td>
-            <td style="border-top: 1px solid #000000;" ></td>
-            <td style="border-top: 1px solid #000000;" ></td>
-            <td style="border-top: 1px solid #000000;" ></td>
-            <td style="border-top: 1px solid #000000;" ><span style="color: #ffffff;"></span></td>
-            <td style="border-top: 1px solid #000000;" colspan="1" >SUBTOTALS</td>
-            <td style="border-top: 1px solid #000000;" >[CUR]</td>
-            <td style="border-top: 1px solid #000000;" align="right" bgcolor="#E4E8F3">[SUBTOTALS]</td>
+            <td style="border-top: 1px solid #000000;" colspan="10" >&nbsp;</td>
+          </tr>
+          <tr>
+            <td ></td>
+            <td ></td>
+            <td ></td>
+            <td ></td>
+            <td ></td>
+            <td ></td>
+            <td ><span style="color: #ffffff;"></span></td>
+            <td colspan="1" >SUBTOTALS</td>
+            <td >[CUR]</td>
+            <td align="right" bgcolor="#E4E8F3">[SUBTOTALS]</td>
           </tr>
           <tr>
             <td style="border: 1px solid #666666;margin-right: 20px;" colspan="6"  bgcolor="#C0C0C0" ><strong>Terms And Conditions</strong></td>
@@ -123,67 +126,66 @@
             <td style="border: 1px solid #666666;margin-right: 20px;" colspan="6" rowspan="11"  valign="top" >
               <ul style="list-style-type: square;">
                @foreach ($lpo->terms as $term)
-                  <li>{{$term->terms}}</li>
-                @endforeach
-              </ul>
-            </td>
-            <td ></td>
-            <td >VAT</td>
-            <td >[CUR]</td>
-            <td align="right" bgcolor="#E4E8F3">[VAT]</td>
-          </tr>
-          <tr>
-            <td >&nbsp;</td>
-            <td style="border-bottom: 3px double #000000;" colspan="1" ></td>
-            <td style="border-bottom: 3px double #000000;" ></td>
-            <td style="border-bottom: 3px double #000000;" align="right"></td>
-          </tr>
-          <tr>
-            <td ></td>
-            <td colspan="1" ><strong>TOTALS</strong></td>
-            <td >[CUR]</td>
-            <td align="right" bgcolor="#E4E8F3"><strong>[TOTALS]</strong></td>
-          </tr>
-          <tr>
-            <td ></td>
-            <td ></td>
-            <td ></td>
-          </tr>
-          <tr>
-            <td ></td>
-            <td ></td>
-            <td ></td>
-          </tr>
-          <tr>
-            <td ></td>
-            <td ></td>
-            <td ></td>
-          </tr>
-          <tr>
-            <td ></td>
-            <td style="border-bottom: 2px solid #000000;" colspan="1" >Authorized by:</td>
-            <td style="border-bottom: 2px solid #000000;" ></td>
-            <td style="border-bottom: 2px solid #000000;" >Date:</td>
-          </tr>
-          <tr>
-            <td ></td>
-            <td colspan="2" >[NAME]</td>
-            <td >[Date]</td>
-          </tr>
-          <tr>
-            <td ></td>
-            <td colspan="4" rowspan="2" >[sign]</td>
-            <td ></td>
-          </tr>
-          <tr>
-            <td >&nbsp;</td>
-          </tr>
-          <tr>
-            <td >&nbsp;</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </main>
+               <li>{{$term->terms}}</li>
+               @endforeach
+             </ul>
+           </td>
+           <td ></td>
+           <td >VAT</td>
+           <td >[CUR]</td>
+           <td align="right" bgcolor="#E4E8F3">[VAT]</td>
+         </tr>
+         <tr>
+          <td >&nbsp;</td>
+          <td style="border-bottom: 3px double #000000;" colspan="1" ></td>
+          <td style="border-bottom: 3px double #000000;" ></td>
+          <td style="border-bottom: 3px double #000000;" align="right"></td>
+        </tr>
+        <tr>
+          <td ></td>
+          <td colspan="1" ><strong>TOTALS</strong></td>
+          <td >[CUR]</td>
+          <td align="right" bgcolor="#E4E8F3"><strong>[TOTALS]</strong></td>
+        </tr>
+        <tr>
+          <td >&nbsp;</td>
+          <td ></td>
+          <td ></td>
+        </tr>
+        <tr>
+          <td ></td>
+          <td style="border-bottom: 2px solid #000000;" colspan="1" >Authorized by:</td>
+          <td style="border-bottom: 2px solid #000000;" ></td>
+          <td style="border-bottom: 2px solid #000000;" >Date:</td>
+        </tr>
+        <tr>
+          <td ></td>
+          <td colspan="2" >[NAME]</td>
+          <td >[Date]</td>
+        </tr>
+        <tr>
+          <td ></td>
+          <td colspan="4" rowspan="5" >[sign]</td>
+          <td ></td>
+        </tr>
+        <tr>
+          <td >&nbsp;</td>
+        </tr>
+        <tr>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+        <td colspan="10">&nbsp;</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</main>
 </body>
 </html>
