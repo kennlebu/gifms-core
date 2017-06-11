@@ -14,3 +14,7 @@
 Route::get('/', function () {
     return view('welcome');
 });
+Route::get('test/pdf', function () {
+	$data = array();
+    return view('pdf/lpo',$data);
+});

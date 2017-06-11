@@ -363,22 +363,9 @@ class LpoApi extends Controller
      */
     public function getDocumentById($lpo_id)
     {   
-        $data = array();
+        $lpo   = Lpo::findOrFail($lpo_id);
 
-        $pdf = PDF::loadView('pdf/test', $data);
-
-        // $pdf = App::make('dompdf.wrapper');
-        // $pdf->loadHTML('<h1>Test</h1>');
-
-        // return $pdf->download('welcome.pdf');
-
-        // $ftp            = FTP::connection()->getDirListing();
-
-        // $quotation      = LpoQuotation::findOrFail($lpo_quotation_id);
-
-        // $path           = './lpos/'.$quotation->lpo_id.'/quotations/'.$quotation->id.'/'.$quotation->quotation_doc;
-
-        // $file_contents  = FTP::connection()->readFile($path);
+        $pdf = PDF::loadView('pdf/lpo', $lpo);
 
         $file_contents  = $pdf->stream();
 
