@@ -19,56 +19,56 @@
       <table style="width: 100%;font-size: smaller;" border="0" cellspacing="0">
         <tbody>
           <tr>
-            <td style="text-align: center;" colspan="9" align="left" height="30"><span style="text-decoration: underline;"><strong><span style="color: #092d50; font-size: x-large; text-decoration: underline;">LOCAL PURCHASE ORDER </span></strong></span></td>
+            <td style="text-align: center;" colspan="9"  height="30"><span style="text-decoration: underline;"><strong><span style="color: #092d50; font-size: x-large; text-decoration: underline;">LOCAL PURCHASE ORDER </span></strong></span></td>
           </tr>
           <tr>
-            <td colspan="6" align="left">&nbsp;</td>
-            <td colspan="1" align="left" bgcolor="#092d50" height="30"><strong><span style="color: #ffffff;">REF:</span></strong></td>
-            <td style="text-align: right;" bgcolor="#092d50" colspan="2" align="left"><strong><span style="color: #ffffff;">[REF]</span></strong></td>
+            <td colspan="6" ></td>
+            <td colspan="1"  bgcolor="#092d50" height="30"><strong><span style="color: #ffffff;">REF:</span></strong></td>
+            <td style="text-align: right;" bgcolor="#092d50" colspan="2" ><strong><span style="color: #ffffff;">[REF]</span></strong></td>
           </tr>
           <tr>
-            <td style="border: 1px solid #000000; border-bottom: 1px solid #c0c0c0;" colspan="2" align="left" height="15"><strong>Attn:</strong></td>
-            <td style="border-width: 1px; border-style: solid; border-color: #000000 #000000 #c0c0c0; border-image: initial; text-align: right;" colspan="3" align="left">&nbsp;[Attn:]</td>
-            <td colspan="1" align="left">&nbsp;</td>
-            <td colspan="1" align="left"><strong>Date</strong></td>
+            <td style="border: 1px solid #000000; border-bottom: 1px solid #c0c0c0;" colspan="2"  ><strong>Attn:</strong></td>
+            <td style="border-width: 1px; border-style: solid; border-color: #000000 #000000 #c0c0c0; border-image: initial; text-align: right;" colspan="3" >[Attn:]</td>
+            <td colspan="1" ></td>
+            <td colspan="1" ><strong>Date</strong></td>
             <td style="text-align: right;" colspan="2">[Date]</td>
           </tr>
           <tr>
-            <td style="border: 1px solid #000000; border-bottom: 1px solid #c0c0c0; border-top: 1px solid #c0c0c0;" colspan="2" align="left" height="15"><strong>Your Ref</strong></td>
-            <td style="border-width: 1px; border-style: solid; border-color: #c0c0c0 #000000; border-image: initial; text-align: right;" colspan="3" align="left">&nbsp;[Your Ref]</td>
-            <td colspan="1" align="left">&nbsp;</td>
-            <td colspan="5" align="left">&nbsp;</td>
+            <td style="border: 1px solid #000000; border-bottom: 1px solid #c0c0c0; border-top: 1px solid #c0c0c0;" colspan="2"  ><strong>Your Ref</strong></td>
+            <td style="border-width: 1px; border-style: solid; border-color: #c0c0c0 #000000; border-image: initial; text-align: right;" colspan="3" >[Your Ref]</td>
+            <td colspan="1" ></td>
+            <td colspan="5" ></td>
           </tr>
           <tr>
-            <td style="border: 1px solid #000000; border-bottom: 1px solid #c0c0c0; border-top: 1px solid #c0c0c0;" colspan="2" align="left" height="15"><strong>Company Name</strong></td>
-            <td style="border-width: 1px; border-style: solid; border-color: #c0c0c0 #000000; border-image: initial; text-align: right;" colspan="3" align="left">&nbsp;[Company Name]</td>
-            <td colspan="1" align="left">&nbsp;</td>
-            <td colspan="5" align="left">&nbsp;</td>
+            <td style="border: 1px solid #000000; border-bottom: 1px solid #c0c0c0; border-top: 1px solid #c0c0c0;" colspan="2"  ><strong>Company Name</strong></td>
+            <td style="border-width: 1px; border-style: solid; border-color: #c0c0c0 #000000; border-image: initial; text-align: right;" colspan="3" >[Company Name]</td>
+            <td colspan="1" ></td>
+            <td colspan="5" ></td>
           </tr>
           <tr>
-            <td style="border: 1px solid #000000; border-bottom: 1px solid #c0c0c0; border-top: 1px solid #c0c0c0;" colspan="2" align="left" height="15"><strong>Email</strong></td>
-            <td style="border-width: 1px; border-style: solid; border-color: #c0c0c0 #000000; border-image: initial; text-align: right;" colspan="3" align="left"><a href="mailto:mmm@gmail.com" target="_blank">[EMAIL]</a></td>
-            <td colspan="1" align="left">&nbsp;</td>
-            <td style="border: 1px solid #666666;" rowspan="3" align="left"><strong>Ordered By:</strong>&nbsp;&nbsp;</td>
-            <td style="text-align: right; border: 1px solid #666666; border-bottom: 1px solid #c0c0c0;" colspan="2" align="left">&nbsp;[Ordered By]</td>
+            <td style="border: 1px solid #000000; border-bottom: 1px solid #c0c0c0; border-top: 1px solid #c0c0c0;" colspan="2"  ><strong>Email</strong></td>
+            <td style="border-width: 1px; border-style: solid; border-color: #c0c0c0 #000000; border-image: initial; text-align: right;" colspan="3" ><a href="mailto:mmm@gmail.com" target="_blank">[EMAIL]</a></td>
+            <td colspan="1" ></td>
+            <td style="border: 1px solid #666666;" rowspan="3" ><strong>Ordered By:</strong></td>
+            <td style="text-align: right; border: 1px solid #666666; border-bottom: 1px solid #c0c0c0;" colspan="2" >[Ordered By]</td>
           </tr>
           <tr>
-            <td style="border: 1px solid #000000; border-bottom: 1px solid #c0c0c0; border-top: 1px solid #c0c0c0;" colspan="2" align="left" height="15"><strong>City/Town</strong></td>
-            <td style="border-width: 1px; border-style: solid; border-color: #c0c0c0 #000000; border-image: initial; text-align: right;" colspan="3" align="left">&nbsp;[City/Town]</td>
-            <td colspan="1" align="left">&nbsp;</td>
-            <td style="text-align: right; border: 1px solid #666666; border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0;" colspan="2" align="left"><a href="mailto:0700000000">[PHONE]</a></td>
+            <td style="border: 1px solid #000000; border-bottom: 1px solid #c0c0c0; border-top: 1px solid #c0c0c0;" colspan="2"  ><strong>City/Town</strong></td>
+            <td style="border-width: 1px; border-style: solid; border-color: #c0c0c0 #000000; border-image: initial; text-align: right;" colspan="3" >[City/Town]</td>
+            <td colspan="1" ></td>
+            <td style="text-align: right; border: 1px solid #666666; border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0;" colspan="2" ><a href="mailto:0700000000">[PHONE]</a></td>
           </tr>
           <tr>
-            <td style="border: 1px solid #000000; border-top: 1px solid #c0c0c0;" colspan="2" align="left" height="15"><strong>Phone</strong></td>
-            <td style="border-width: 1px; border-style: solid; border-color: #c0c0c0 #000000 #000000; border-image: initial; text-align: right;" colspan="3" align="left" height="15"><a href="mailto:0700000000">[PHONE]</a></td>
-            <td colspan="1" align="left">&nbsp;</td>
-            <td style="text-align: right; border: 1px solid #666666; border-top: 1px solid #c0c0c0;" colspan="2" align="left"><a href="mailto:mmm@gmail.com" target="_blank">[EMAIL]</a></td>
+            <td style="border: 1px solid #000000; border-top: 1px solid #c0c0c0;" colspan="2"  ><strong>Phone</strong></td>
+            <td style="border-width: 1px; border-style: solid; border-color: #c0c0c0 #000000 #000000; border-image: initial; text-align: right;" colspan="3"  ><a href="mailto:0700000000">[PHONE]</a></td>
+            <td colspan="1" ></td>
+            <td style="text-align: right; border: 1px solid #666666; border-top: 1px solid #c0c0c0;" colspan="2" ><a href="mailto:mmm@gmail.com" target="_blank">[EMAIL]</a></td>
           </tr>
           <tr>
-            <td colspan="9" align="left" height="15">&nbsp;</td>
+            <td colspan="9" >&nbsp;</td>
           </tr>
           <tr>
-            <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #c0c0c0;" bgcolor="#092d50" height="15"><strong><span style="color: #ffffff;">ITEM #</span></strong></td>
+            <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #c0c0c0;" bgcolor="#092d50" ><strong><span style="color: #ffffff;">ITEM #</span></strong></td>
             <td style="border: 1px solid #c0c0c0;" colspan="3" bgcolor="#092d50"><span style="color: #ffffff;"><strong>PARTICULARS</strong></span></td>
             <td style="border: 1px solid #c0c0c0;" bgcolor="#092d50"><strong><span style="color: #ffffff;">QTY</span></strong></td>
             <td style="border: 1px solid #c0c0c0;" bgcolor="#092d50"><strong><span style="color: #ffffff;">UNIT-PRICE</span></strong></td>
@@ -77,97 +77,96 @@
             <td style="border: 1px solid #c0c0c0;" bgcolor="#092d50"><strong><span style="color: #ffffff;">TOTAL([CUR])</span></strong></td>
           </tr>
           <tr>
-            <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #000000; border-right: 1px solid #000000;" align="left" height="15">&nbsp;[ITEM]</td>
-            <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #000000; border-right: 1px solid #000000;" colspan="3" align="left">&nbsp;[PARTICULARS]</td>
-            <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #000000; border-right: 1px solid #000000;" align="center">[QTY]&nbsp;</td>
-            <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #000000; border-right: 1px solid #000000;" align="right">[UNIT_PRICE]&nbsp;</td>
-            <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #000000; border-right: 1px solid #000000;" align="right">[SUBTOTAL]&nbsp;</td>
+            <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #000000; border-right: 1px solid #000000;"  >[ITEM]</td>
+            <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #000000; border-right: 1px solid #000000;" colspan="3" >[PARTICULARS]</td>
+            <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #000000; border-right: 1px solid #000000;" align="center">[QTY]</td>
+            <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #000000; border-right: 1px solid #000000;" align="right">[UNIT_PRICE]</td>
+            <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #000000; border-right: 1px solid #000000;" align="right">[SUBTOTAL]</td>
             <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #000000; border-right: 1px solid #000000;" align="right">[VAT]</td>
             <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #000000; border-right: 1px solid #000000;" align="right" bgcolor="#E4E8F3">[TOTAL]</td>
           </tr>
           <tr>
-            <td style="border-top: 1px solid #000000;" height="15">&nbsp;</td>
-            <td style="border-top: 1px solid #000000;" height="15">&nbsp;</td>
-            <td style="border-top: 1px solid #000000;" height="15">&nbsp;</td>
-            <td style="border-top: 1px solid #000000;" height="15">&nbsp;</td>
-            <td style="border-top: 1px solid #000000;" align="left"><span style="color: #ffffff;">[42]</span></td>
-            <td style="border-top: 1px solid #000000;" colspan="2" align="left">SUBTOTALS</td>
-            <td style="border-top: 1px solid #000000;" align="left">[CUR]</td>
+            <td style="border-top: 1px solid #000000;" ></td>
+            <td style="border-top: 1px solid #000000;" ></td>
+            <td style="border-top: 1px solid #000000;" ></td>
+            <td style="border-top: 1px solid #000000;" ></td>
+            <td style="border-top: 1px solid #000000;" ><span style="color: #ffffff;">[42]</span></td>
+            <td style="border-top: 1px solid #000000;" colspan="2" >SUBTOTALS</td>
+            <td style="border-top: 1px solid #000000;" >[CUR]</td>
             <td style="border-top: 1px solid #000000;" align="right" bgcolor="#E4E8F3">[SUBTOTALS]</td>
           </tr>
           <tr>
-            <td style="border: 1px solid #666666;" colspan="4" align="left" bgcolor="#C0C0C0" height="15"><strong>Terms And Conditions</strong>&nbsp;&nbsp;&nbsp;</td>
-            <td align="left">&nbsp;</td>
-            <td colspan="2" align="left">VAT RATE</td>
-            <td align="left">%</td>
-            <td align="right">[VATRATE]</td>
+            <td style="border: 1px solid #666666;" colspan="4"  bgcolor="#C0C0C0" ><strong>Terms And Conditions</strong></td>
+            <td ></td>
+            <td colspan="2" >VAT RATE</td>
+            <td ></td>
+            <td align="right">[VATRATE]%</td>
           </tr>
           <tr>
-            <td style="border: 1px solid #666666;" colspan="4" rowspan="11" align="left" valign="top" height="15">
+            <td style="border: 1px solid #666666;" colspan="4" rowspan="11"  valign="top" >
               <ul style="list-style-type: square;">
-                <li><em>[Term a]</em></li>
                 <li>Payment: 30 day upon delivery of goods/ services and Invoice to our offices.</li>
               </ul>
             </td>
-            <td align="left">&nbsp;</td>
-            <td colspan="2" align="left">VAT</td>
-            <td align="left">[CUR]</td>
-            <td align="right" bgcolor="#E4E8F3">[TVAT]</td>
+            <td ></td>
+            <td colspan="2" >VAT</td>
+            <td >[CUR]</td>
+            <td align="right" bgcolor="#E4E8F3">[VAT]</td>
           </tr>
           <tr>
-            <td align="left">&nbsp;</td>
-            <td style="border-bottom: 3px double #000000;" colspan="2" align="left"></td>
-            <td style="border-bottom: 3px double #000000;" align="left"></td>
+            <td >&nbsp;</td>
+            <td style="border-bottom: 3px double #000000;" colspan="2" ></td>
+            <td style="border-bottom: 3px double #000000;" ></td>
             <td style="border-bottom: 3px double #000000;" align="right"></td>
           </tr>
           <tr>
-            <td align="left">&nbsp;</td>
-            <td colspan="2" align="left"><strong>TOTALS</strong></td>
-            <td align="left">&nbsp;</td>
+            <td ></td>
+            <td colspan="2" ><strong>TOTALS</strong></td>
+            <td >[CUR]</td>
             <td align="right" bgcolor="#E4E8F3"><strong>[TOTALS]</strong></td>
           </tr>
           <tr>
-            <td align="left">&nbsp;</td>
-            <td colspan="2" align="left">&nbsp;&nbsp;</td>
-            <td align="left">&nbsp;</td>
-            <td align="left">&nbsp;</td>
+            <td ></td>
+            <td colspan="2" ></td>
+            <td ></td>
+            <td ></td>
           </tr>
           <tr>
-            <td align="left">&nbsp;</td>
-            <td colspan="2" align="left">&nbsp;&nbsp;</td>
-            <td align="left">&nbsp;</td>
-            <td align="left">&nbsp;</td>
+            <td ></td>
+            <td colspan="2" ></td>
+            <td ></td>
+            <td ></td>
           </tr>
           <tr>
-            <td align="left">&nbsp;</td>
-            <td colspan="2" align="left">&nbsp;&nbsp;</td>
-            <td align="left">&nbsp;</td>
-            <td align="left">&nbsp;</td>
+            <td ></td>
+            <td colspan="2" ></td>
+            <td ></td>
+            <td ></td>
           </tr>
           <tr>
-            <td align="left">&nbsp;</td>
-            <td style="border-bottom: 2px solid #000000;" colspan="2" align="left">&nbsp;[NAME]&nbsp;</td>
-            <td style="border-bottom: 2px solid #000000;" align="left">&nbsp;</td>
-            <td style="border-bottom: 2px solid #000000;" align="left">&nbsp;[DATE]</td>
+            <td ></td>
+            <td style="border-bottom: 2px solid #000000;" colspan="2" >[NAME]</td>
+            <td style="border-bottom: 2px solid #000000;" ></td>
+            <td style="border-bottom: 2px solid #000000;" >[DATE]</td>
           </tr>
           <tr>
-            <td align="left">&nbsp;</td>
-            <td colspan="2" align="left">Authorized by&nbsp;&nbsp;&nbsp;</td>
-            <td align="left">&nbsp;</td>
-            <td align="left">Date</td>
+            <td ></td>
+            <td colspan="2" >Authorized by</td>
+            <td ></td>
+            <td >Date</td>
           </tr>
           <tr>
-            <td align="left">&nbsp;</td>
-            <td colspan="3" rowspan="2" align="left">[sign]</td>
-            <td align="left">&nbsp;</td>
+            <td ></td>
+            <td colspan="3" rowspan="1" >[sign]</td>
+            <td ></td>
           </tr>
           <tr>
-            <td align="left">&nbsp;</td>
-            <td align="left">&nbsp;</td>
+            <td >&nbsp;</td>
+            <td ></td>
           </tr>
           <tr>
-            <td align="left">&nbsp;</td>
-            <td style="text-align: center;" colspan="5" height="15">If you have any questions about this purchase order, please contact [Name, <a href="mailto:0700000000">[PHONE]</a> #, <a href="mailto:mmm@gmail.com" target="_blank">[EMAIL]</a>]</td>
+            <td ></td>
+            <td style="text-align: center;" colspan="5" >If you have any questions about this purchase order, please contact [Name, <a href="mailto:0700000000">[PHONE]</a> #, <a href="mailto:mmm@gmail.com" target="_blank">[EMAIL]</a>]</td>
           </tr>
         </tbody>
       </table>
