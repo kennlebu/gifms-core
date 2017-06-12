@@ -234,11 +234,19 @@ class LPOQuotationApi extends Controller
      */
     public function getLpoQuotationById($lpo_quotation_id)
     {
-     $input = Request::all();
+       $input = Request::all();
 
-     try{
+       try{
 
         $response = LpoQuotation::findOrFail($lpo_quotation_id);
+
+        $model      = new LpoQuotation();
+
+        $response['supplier']               = $model->find($lpo_quotation_id)->supplier;
+        $response['uploaded_by']            = $model->find($lpo_quotation_id)->uploaded_by;
+
+
+
         return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
 
     }catch(Exception $e){
