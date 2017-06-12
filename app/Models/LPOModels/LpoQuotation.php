@@ -14,17 +14,31 @@ class LpoQuotation extends BaseModel
     //
     use SoftDeletes;
 
-    protected $appends = ['supplier','uploaded_by'];
+    // protected $appends = ['supplier','uploaded_by'];
 
 
-    public function getSupplierAttribute()
+    // public function getSupplierAttribute()
+    // {
+    //     return Supplier::find($this->attributes['supplier_id']);
+
+    // }
+    // public function getUploadedByAttribute()
+    // {
+    //     return Staff::find($this->attributes['uploaded_by_id']);
+
+    // }
+
+    public function supplier()
     {
-        return Supplier::find($this->attributes['supplier_id']);
+        return $this->belongsTo('App\Models\SuppliesModels\Supplier');
 
     }
-    public function getUploadedByAttribute()
+    public function uploaded_by()
     {
-        return Staff::find($this->attributes['uploaded_by_id']);
+        return $this->belongsTo('App\Models\StaffModels\Staff','uploaded_by_id');
 
     }
+
+
+
 }

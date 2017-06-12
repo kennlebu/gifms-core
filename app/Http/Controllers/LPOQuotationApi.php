@@ -271,23 +271,27 @@ class LPOQuotationApi extends Controller
     public function getLpoQuotationDocumentById($lpo_quotation_id)
     {
 
-        $ftp            = FTP::connection()->getDirListing();
-
         $quotation      = LpoQuotation::findOrFail($lpo_quotation_id);
 
         $path           = './lpos/'.$quotation->lpo_id.'/quotations/'.$quotation->id.'/'.$quotation->quotation_doc;
 
+        $path_info      = pathinfo($path);
+
+        $ext            = $path_info['extension'];
+        
+        $basename       = $path_info['basename'];
+
         $file_contents  = FTP::connection()->readFile($path);
 
-        Storage::put('lpo_quotation/'.$quotation->id.'.pdf', $file_contents);
+        Storage::put('lpo_quotation/'.$quotation->id.'.temp', $file_contents);
 
-        $url       = storage_path("app/lpo_quotation/".$quotation->id.'.pdf');
+        $url            = storage_path("app/lpo_quotation/".$quotation->id.'.temp');
 
-        $file = File::get($url);
+        $file           = File::get($url);
 
-        $response = Response::make($file, 200);
+        $response       = Response::make($file, 200);
 
-        $response->header('Content-Type', 'application/pdf');
+        $response->header('Content-Type', $this->get_mime_type($basename));
 
         return $response;
 
@@ -323,11 +327,6 @@ class LPOQuotationApi extends Controller
         $input = Request::all();
         $response;
 
-        //path params validation
-
-
-        //not path params validation
-        // $lpo_id = $input['lpo_id'];
 
         if(array_key_exists('lpo_id', $input)){
 
@@ -342,8 +341,84 @@ class LPOQuotationApi extends Controller
         }
 
 
+            $response    = $this->append_relationships_objects($response);
+            $response    = $this->append_relationships_nulls($response);
 
 
         return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public function append_relationships_objects($data = array()){
+
+        foreach ($data as $key => $value) {
+
+            $model = new LpoQuotation();
+
+            $data[$key]['supplier']             = $model->find($data[$key]['id'])->supplier;
+            $data[$key]['uploaded_by']          = $model->find($data[$key]['id'])->uploaded_by;
+
+        }
+
+        return $data;
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public function append_relationships_nulls($data = array()){
+
+
+        foreach ($data as $key => $value) {
+
+
+            if($data[$key]["supplier"]==null){
+                $data[$key]["supplier"] = array("supplier_name"=>"N/A");
+            }
+
+            if($data[$key]["uploaded_by"]==null){
+                $data[$key]["uploaded_by"] = array("full_name"=>"N/A");
+            }
+        }
+
+        return $data;
+
+
+    }
+
+
+
+
+
+
+
 }

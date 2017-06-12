@@ -23,7 +23,7 @@
           </tr>
           <tr>
             <td colspan="7" ></td>
-            <td colspan="1"  bgcolor="#092d50" height="30"><strong><span style="color: #ffffff;">REF:</span></strong></td>
+            <td colspan="1"  bgcolor="#092d50" height="20"><strong><span style="color: #ffffff;">REF:</span></strong></td>
             <td style="text-align: right;" bgcolor="#092d50" colspan="2" ><strong><span style="color: #ffffff;">{{$lpo->ref}}</span></strong></td>
           </tr>
           <tr>
