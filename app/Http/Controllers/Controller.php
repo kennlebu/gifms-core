@@ -38,6 +38,7 @@ class Controller extends BaseController
 
         $mimet = array( 
             'txt' => 'text/plain',
+            'csv' => 'text/x-csv',
             'htm' => 'text/html',
             'html' => 'text/html',
             'php' => 'text/html',
