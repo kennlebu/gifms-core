@@ -234,9 +234,9 @@ class LPOQuotationApi extends Controller
      */
     public function getLpoQuotationById($lpo_quotation_id)
     {
-       $input = Request::all();
+     $input = Request::all();
 
-       try{
+     try{
 
         $response = LpoQuotation::findOrFail($lpo_quotation_id);
         return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
@@ -269,31 +269,43 @@ class LPOQuotationApi extends Controller
      * @return Http response
      */
     public function getLpoQuotationDocumentById($lpo_quotation_id)
-    {
+    {   
+        try{
 
-        $quotation      = LpoQuotation::findOrFail($lpo_quotation_id);
 
-        $path           = './lpos/'.$quotation->lpo_id.'/quotations/'.$quotation->id.'/'.$quotation->quotation_doc;
+            $quotation      = LpoQuotation::findOrFail($lpo_quotation_id);
 
-        $path_info      = pathinfo($path);
+            $path           = './lpos/'.$quotation->lpo_id.'/quotations/'.$quotation->id.'/'.$quotation->quotation_doc;
 
-        $ext            = $path_info['extension'];
-        
-        $basename       = $path_info['basename'];
+            $path_info      = pathinfo($path);
 
-        $file_contents  = FTP::connection()->readFile($path);
+            $ext            = $path_info['extension'];
 
-        Storage::put('lpo_quotation/'.$quotation->id.'.temp', $file_contents);
+            $basename       = $path_info['basename'];
 
-        $url            = storage_path("app/lpo_quotation/".$quotation->id.'.temp');
+            $file_contents  = FTP::connection()->readFile($path);
 
-        $file           = File::get($url);
+            Storage::put('lpo_quotation/'.$quotation->id.'.temp', $file_contents);
 
-        $response       = Response::make($file, 200);
+            $url            = storage_path("app/lpo_quotation/".$quotation->id.'.temp');
 
-        $response->header('Content-Type', $this->get_mime_type($basename));
+            $file           = File::get($url);
 
-        return $response;
+            $response       = Response::make($file, 200);
+
+            $response->header('Content-Type', $this->get_mime_type($basename));
+
+            return $response;  
+        }catch (Exception $e ){            
+
+            $response       = Response::make("", 200);
+
+            $response->header('Content-Type', 'application/pdf');
+
+            return $response;  
+
+        }
+
 
     }
 
@@ -341,8 +353,8 @@ class LPOQuotationApi extends Controller
         }
 
 
-            $response    = $this->append_relationships_objects($response);
-            $response    = $this->append_relationships_nulls($response);
+        $response    = $this->append_relationships_objects($response);
+        $response    = $this->append_relationships_nulls($response);
 
 
         return response()->json($response, 200,array(),JSON_PRETTY_PRINT);

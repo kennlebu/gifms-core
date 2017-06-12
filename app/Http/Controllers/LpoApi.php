@@ -364,29 +364,39 @@ class LpoApi extends Controller
      */
     public function getDocumentById($lpo_id)
     {   
-        $lpo   = Lpo::findOrFail($lpo_id);
+        try{
+            $lpo   = Lpo::findOrFail($lpo_id);
 
-        $data = array(
+            $data = array(
                 'lpo'   => $lpo
-            );
+                );
 
         // return view('pdf/lpo',$data);
 
-        $pdf = PDF::loadView('pdf/lpo', $data);
+            $pdf = PDF::loadView('pdf/lpo', $data);
 
-        $file_contents  = $pdf->stream();
+            $file_contents  = $pdf->stream();
 
-        Storage::put('lpo/'.$lpo_id.'.temp', $file_contents);
+            Storage::put('lpo/'.$lpo_id.'.temp', $file_contents);
 
-        $url       = storage_path("app/lpo/".$lpo_id.'.temp');
+            $url       = storage_path("app/lpo/".$lpo_id.'.temp');
 
-        $file = File::get($url);
+            $file = File::get($url);
 
-        $response = Response::make($file, 200);
+            $response = Response::make($file, 200);
 
-        $response->header('Content-Type', 'application/pdf');
+            $response->header('Content-Type', 'application/pdf');
 
-        return $response;
+            return $response;
+        }catch (Exception $e ){            
+
+            $response       = Response::make("", 200);
+
+            $response->header('Content-Type', 'application/pdf');
+
+            return $response;  
+
+        }
 
     }
 
@@ -486,7 +496,7 @@ class LpoApi extends Controller
         //searching
         if(array_key_exists('searchval', $input)){
             $qb->where(function ($query) use ($input) {
-                    
+                
                 $query->orWhere('id','like', '\'%' . $input['searchval']. '%\'');
                 $query->orWhere('ref','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('expense_desc','like', '\'%' . $input['searchval']. '%\'');
@@ -513,7 +523,7 @@ class LpoApi extends Controller
 
             //searching
             $qb->where(function ($query) use ($input) {
-                    
+                
                 $query->orWhere('id','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('ref','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('expense_desc','like', '\'%' . $input['search']['value']. '%\'');
@@ -572,10 +582,10 @@ class LpoApi extends Controller
             $response_dt    = $this->append_relationships_objects($response_dt);
             $response_dt    = $this->append_relationships_nulls($response_dt);
             $response       = Lpo::arr_to_dt_response( 
-                                                $response_dt, $input['draw'],
-                                                $total_records,
-                                                $records_filtered
-                                                );
+                $response_dt, $input['draw'],
+                $total_records,
+                $records_filtered
+                );
 
 
         }else{
