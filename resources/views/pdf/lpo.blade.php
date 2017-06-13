@@ -79,7 +79,7 @@
             <td style="border: 1px solid #c0c0c0;" bgcolor="#092d50"><strong><span style="color: #ffffff;"></span></strong></td>
             <td style="border: 1px solid #c0c0c0;" bgcolor="#092d50"><span style="color: #ffffff;"><strong>SUBTOTAL</strong></span></td>
             <td style="border: 1px solid #c0c0c0;" bgcolor="#092d50"><span style="color: #ffffff;"><strong>VAT</strong></span></td>
-            <td style="border: 1px solid #c0c0c0;" bgcolor="#092d50"><strong><span style="color: #ffffff;">TOTAL([CUR])</span></strong></td>
+            <td style="border: 1px solid #c0c0c0;" bgcolor="#092d50"><strong><span style="color: #ffffff;">TOTAL({{$lpo->currency->currency_name}})</span></strong></td>
           </tr>
 
           @foreach ($lpo->items as $key => $item)
@@ -89,11 +89,11 @@
             <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #000000; border-right: 1px solid #000000;"  >{{$key+1}}</td>
             <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #000000; border-right: 1px solid #000000;" colspan="3" >{{$item->item_description}}</td>
             <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #000000; border-right: 1px solid #000000;" align="center">{{$item->qty_description}}</td>
-            <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #000000; border-right: 1px solid #000000;" align="right">[UNIT_PRICE]</td>
+            <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #000000; border-right: 1px solid #000000;" align="right">{{number_format($item->calculated_unit_price,2)}}</td>
             <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #000000; border-right: 1px solid #000000;" align="right"></td>
-            <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #000000; border-right: 1px solid #000000;" align="right">[SUBTOTAL]</td>
-            <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #000000; border-right: 1px solid #000000;" align="right">[VAT]</td>
-            <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #000000; border-right: 1px solid #000000;" align="right" bgcolor="#E4E8F3">[TOTAL]</td>
+            <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #000000; border-right: 1px solid #000000;" align="right">{{number_format($item->calculated_sub_total,2)}}</td>
+            <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #000000; border-right: 1px solid #000000;" align="right">{{number_format($item->calculated_vat,2)}}</td>
+            <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #000000; border-right: 1px solid #000000;" align="right" bgcolor="#E4E8F3">{{number_format($item->calculated_total,2)}}</td>
           </tr>
 
 
@@ -112,15 +112,15 @@
             <td ></td>
             <td ><span style="color: #ffffff;"></span></td>
             <td colspan="1" >SUBTOTALS</td>
-            <td >[CUR]</td>
-            <td align="right" bgcolor="#E4E8F3">[SUBTOTALS]</td>
+            <td >{{$lpo->currency->currency_name}}</td>
+            <td align="right" bgcolor="#E4E8F3">{{number_format($lpo->sub_totals,2)}}</td>
           </tr>
           <tr>
             <td style="border: 1px solid #666666;margin-right: 20px;" colspan="6"  bgcolor="#C0C0C0" ><strong>Terms And Conditions</strong></td>
             <td ></td>
             <td colspan="1" >VAT RATE</td>
             <td ></td>
-            <td align="right">[VATRATE]%</td>
+            <td align="right">16%</td>
           </tr>
           <tr>
             <td style="border: 1px solid #666666;margin-right: 20px;" colspan="6" rowspan="11"  valign="top" >
@@ -132,8 +132,8 @@
            </td>
            <td ></td>
            <td >VAT</td>
-           <td >[CUR]</td>
-           <td align="right" bgcolor="#E4E8F3">[VAT]</td>
+           <td >{{$lpo->currency->currency_name}}</td>
+           <td align="right" bgcolor="#E4E8F3">{{number_format($lpo->vats,2)}}</td>
          </tr>
          <tr>
           <td >&nbsp;</td>
@@ -144,8 +144,8 @@
         <tr>
           <td ></td>
           <td colspan="1" ><strong>TOTALS</strong></td>
-          <td >[CUR]</td>
-          <td align="right" bgcolor="#E4E8F3"><strong>[TOTALS]</strong></td>
+          <td >{{$lpo->currency->currency_name}}</td>
+          <td align="right" bgcolor="#E4E8F3"><strong>{{number_format($lpo->totals,2)}}</strong></td>
         </tr>
         <tr>
           <td >&nbsp;</td>
