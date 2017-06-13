@@ -2000,6 +2000,46 @@ Route::GET('/mobile_payment_types', 'MobilePaymentTypeApi@mobilePaymentTypesGet'
 
 
 
+/**
+ * POST addPayeesUploadMode
+ * Summary: Add a new payees_upload_mode
+ * Notes: new payees_upload_mode
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/payees_upload_mode', 'PayeesUploadModeApi@addPayeesUploadMode')->middleware('jwt.auth');
+/**
+ * PUT updatePayeesUploadMode
+ * Summary: Update an existing payees_upload_mode
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/payees_upload_mode', 'PayeesUploadModeApi@updatePayeesUploadMode')->middleware('jwt.auth');
+/**
+ * DELETE deletePayeesUploadMode
+ * Summary: Deletes an payees_upload_mode
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/payees_upload_mode/{payees_upload_mode_id}', 'PayeesUploadModeApi@deletePayeesUploadMode')->middleware('jwt.auth');
+/**
+ * GET getPayeesUploadModeById
+ * Summary: Find payees_upload_mode by ID
+ * Notes: Returns a single payees_upload_mode
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/payees_upload_mode/{payees_upload_mode_id}', 'PayeesUploadModeApi@getPayeesUploadModeById')->middleware('jwt.auth');
+/**
+ * GET getPayeesUploadModes
+ * Summary: payees_upload_modes List
+ * Notes: The payees_upload_mode endpoint returns multiple payees_upload_mode requested given the parameters injected.  
+
+ */
+Route::GET('/payees_upload_modes', 'PayeesUploadModeApi@getPayeesUploadModes')->middleware('jwt.auth');
+
+
+
+
+
 
 
 
