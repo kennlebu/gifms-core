@@ -30,7 +30,7 @@ class Lpo extends BaseModel
 
     protected $dates = ['created_at','updated_at','deleted_at'];
 
-    protected $appends = ['amount'];
+    protected $appends = ['amount','vats','sub_totals','totals'];
  
 
 
@@ -149,6 +149,48 @@ class Lpo extends BaseModel
     }
 
 
+    public function getVatsAttribute(){
+
+        $items  =   $this->items;
+        $vats   =   0;
+
+        foreach ($items as $key => $value) {
+            $vats   +=   (int)   $value->calculated_vat;
+        }
+
+        return $vats;
+
+    }
+
+    public function getSubTotalsAttribute(){
+
+        $items  =   $this->items;
+        $sub_totals   =   0;
+
+        foreach ($items as $key => $value) {
+            $sub_totals   +=   (int)   $value->calculated_sub_total;
+        }
+
+        return $sub_totals;
+
+
+
+    }
+
+    public function getTotalsAttribute(){
+
+        $items  =   $this->items;
+        $totals   =   0;
+
+        foreach ($items as $key => $value) {
+            $totals   +=   (int)   $value->calculated_total;
+        }
+
+        return $totals;
+
+
+
+    }
 
 
 }

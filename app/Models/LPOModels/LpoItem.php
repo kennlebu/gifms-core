@@ -19,10 +19,10 @@ class LpoItem extends BaseModel
     public function getCalculatedUnitPriceAttribute()
     {	
     	$up 			=	(float)		$this->attributes['unit_price'];
-    	$vat_inclusive 	=	(int)		$this->attributes['vat_inclusive'];
+    	$vat_charge 	=	(int)		$this->attributes['vat_charge'];
     	$cup 			=	$up;
 
-    	if($vat_inclusive==1){
+    	if($vat_charge==1){
     		$cup 	= 	(84/100)*$up;
     	}
 
@@ -32,15 +32,15 @@ class LpoItem extends BaseModel
     public function getCalculatedVatAttribute()
     {
     	$up 			=	(float)		$this->attributes['unit_price'];
-    	$vat_inclusive 	=	(int)		$this->attributes['vat_inclusive'];
+    	$vat_charge 	=	(int)		$this->attributes['vat_charge'];
     	$qty 			=	(int)		$this->attributes['qty'];
-    	$vat;
+    	$vat = "-" ;
     	$cup 			=	$up;
 
-    	if($vat_inclusive==0){
+    	if($vat_charge==0){
     		$vat 	= 	(16/100)*$up*$qty;
     	}
-    	if($vat_inclusive==1){
+    	if($vat_charge==1){
     		$vat 	= 	(16/100)*$up*$qty;
     		$cup 	= 	(84/100)*$up;
     	}
@@ -51,16 +51,16 @@ class LpoItem extends BaseModel
     public function getCalculatedSubTotalAttribute()
     {
     	$up 			=	(float)		$this->attributes['unit_price'];
-    	$vat_inclusive 	=	(int)		$this->attributes['vat_inclusive'];
+    	$vat_charge 	=	(int)		$this->attributes['vat_charge'];
     	$qty 			=	(int)		$this->attributes['qty'];
-    	$vat;
+    	$vat = 0;
     	$cup 			=	$up;
     	$st;
 
-    	if($vat_inclusive==0){
+    	if($vat_charge==0){
     		$vat 	= 	(16/100)*$up*$qty;
     	}
-    	if($vat_inclusive==1){
+    	if($vat_charge==1){
     		$vat 	= 	(16/100)*$up*$qty;
     		$cup 	= 	(84/100)*$up;
     	}
@@ -73,16 +73,16 @@ class LpoItem extends BaseModel
     public function getCalculatedTotalAttribute()
     {
     	$up 			=	(float)		$this->attributes['unit_price'];
-    	$vat_inclusive 	=	(int)		$this->attributes['vat_inclusive'];
+    	$vat_charge 	=	(int)		$this->attributes['vat_charge'];
     	$qty 			=	(int)		$this->attributes['qty'];
-    	$vat;
+    	$vat = 0;
     	$cup 			=	$up;
     	$st;
 
-    	if($vat_inclusive==0){
+    	if($vat_charge==0){
     		$vat 	= 	(16/100)*$up*$qty;
     	}
-    	if($vat_inclusive==1){
+    	if($vat_charge==1){
     		$vat 	= 	(16/100)*$up*$qty;
     		$cup 	= 	(84/100)*$up;
     	}
