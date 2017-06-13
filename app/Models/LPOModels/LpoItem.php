@@ -23,7 +23,7 @@ class LpoItem extends BaseModel
     	$cup 			=	$up;
 
     	if($vat_charge==1){
-    		$cup 	= 	(84/100)*$up;
+    		$cup 	= 	(100/116)*$up;
     	}
 
         return $cup;
@@ -41,8 +41,8 @@ class LpoItem extends BaseModel
     		$vat 	= 	(16/100)*$up*$qty;
     	}
     	if($vat_charge==1){
-    		$vat 	= 	(16/100)*$up*$qty;
-    		$cup 	= 	(84/100)*$up;
+    		$vat 	= 	(16/116)*$up*$qty;
+    		$cup 	= 	(100/116)*$up;
     	}
 
         return $vat;
@@ -61,8 +61,8 @@ class LpoItem extends BaseModel
     		$vat 	= 	(16/100)*$up*$qty;
     	}
     	if($vat_charge==1){
-    		$vat 	= 	(16/100)*$up*$qty;
-    		$cup 	= 	(84/100)*$up;
+    		$vat 	= 	(16/116)*$up*$qty;
+    		$cup 	= 	(100/116)*$up;
     	}
 
     	$st = ($cup*$qty) ;
@@ -83,8 +83,8 @@ class LpoItem extends BaseModel
     		$vat 	= 	(16/100)*$up*$qty;
     	}
     	if($vat_charge==1){
-    		$vat 	= 	(16/100)*$up*$qty;
-    		$cup 	= 	(84/100)*$up;
+    		$vat 	= 	(16/116)*$up*$qty;
+    		$cup 	= 	(100/116)*$up;
     	}
 
     	$st = ($cup*$qty) + $vat;
