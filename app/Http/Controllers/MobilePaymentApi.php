@@ -98,6 +98,9 @@ class MobilePaymentApi extends Controller
             $mobile_payment->rejected_by_id                 =   (int)   $form['rejected_by_id'];
 
 
+            $mobile_payment->status_id                      =   1 ;
+
+
             if($mobile_payment->save()) {
 
                 return Response()->json(array('msg' => 'Success: mobile payment added','mobile_payment' => $mobile_payment), 200);
@@ -160,7 +163,7 @@ class MobilePaymentApi extends Controller
         $mobile_payment->payment_desc                       =           $body['payment_desc'];
         $mobile_payment->payment_purpose                    =           $body['payment_purpose'];
         $mobile_payment->project_id                         =   (int)   $body['project_id'];
-        $mobile_payment->account_id                         =   (int)   $body['account_id'];
+        // $mobile_payment->account_id                         =   (int)   $body['account_id'];
         $mobile_payment->mobile_payment_id                  =   (int)   $body['mobile_payment_id'];
         $mobile_payment->invoice_id                         =   (int)   $body['invoice_id'];
         $mobile_payment->expense_desc                       =           $body['expense_desc'];
