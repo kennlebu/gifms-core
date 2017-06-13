@@ -59,7 +59,7 @@ class MobilePaymentApi extends Controller
 
         $form = Request::only(
             'requested_by_id',
-            'requested_action_by_id',
+            'request_action_by_id',
             'project_id',
             'account_id',
             'mobile_payment_type_id',
@@ -71,6 +71,7 @@ class MobilePaymentApi extends Controller
             'region_id',
             'county_id',
             'attentendance_sheet',
+            'payees_upload_mode_id',
             'rejection_reason',
             'rejected_by_id'
             );
@@ -80,9 +81,9 @@ class MobilePaymentApi extends Controller
             $mobile_payment = new MobilePayment;
 
             $mobile_payment->requested_by_id                =   (int)   $form['requested_by_id'];
-            $mobile_payment->requested_action_by_id         =   (int)   $form['requested_action_by_id'];
+            $mobile_payment->request_action_by_id           =   (int)   $form['request_action_by_id'];
             $mobile_payment->project_id                     =   (int)   $form['project_id'];
-            $mobile_payment->account_id                     =   (int)   $form['account_id'];
+            // $mobile_payment->account_id                     =   (int)   $form['account_id'];
             $mobile_payment->mobile_payment_type_id         =   (int)   $form['mobile_payment_type_id'];
             $mobile_payment->expense_desc                   =           $form['expense_desc'];
             $mobile_payment->expense_purpose                =           $form['expense_purpose'];
@@ -92,11 +93,12 @@ class MobilePaymentApi extends Controller
             $mobile_payment->region_id                      =   (int)   $form['region_id'];
             $mobile_payment->county_id                      =   (int)   $form['county_id'];
             $mobile_payment->attentendance_sheet            =           $form['attentendance_sheet'];
+            $mobile_payment->payees_upload_mode_id          =   (int)   $form['payees_upload_mode_id'];
             $mobile_payment->rejection_reason               =           $form['rejection_reason'];
             $mobile_payment->rejected_by_id                 =   (int)   $form['rejected_by_id'];
 
 
-            if($lpo->save()) {
+            if($mobile_payment->save()) {
 
                 return Response()->json(array('msg' => 'Success: mobile payment added','mobile_payment' => $mobile_payment), 200);
             }
