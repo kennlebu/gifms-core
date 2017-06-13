@@ -155,7 +155,7 @@ class Lpo extends BaseModel
         $vats   =   0;
 
         foreach ($items as $key => $value) {
-            $vats   +=   (int)   $value->calculated_vat;
+            $vats   +=   (float)   $value->calculated_vat;
         }
 
         return $vats;
@@ -168,7 +168,7 @@ class Lpo extends BaseModel
         $sub_totals   =   0;
 
         foreach ($items as $key => $value) {
-            $sub_totals   +=   (int)   $value->calculated_sub_total;
+            $sub_totals   +=   (float)   $value->calculated_sub_total;
         }
 
         return $sub_totals;
@@ -183,7 +183,7 @@ class Lpo extends BaseModel
         $totals   =   0;
 
         foreach ($items as $key => $value) {
-            $totals   +=   (int)   $value->calculated_total;
+            $totals   +=   (float)   $value->calculated_total;
         }
 
         return $totals;
