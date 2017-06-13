@@ -15,7 +15,7 @@ class CreateMobilePaymentPayeesTable extends Migration
     {
         Schema::create('mobile_payment_payees', function (Blueprint $table) {
             $table->increments('id');
-            $table->text('name')->nullable();
+            $table->text('full_name')->nullable();
             $table->text('registered_name')->nullable();
             $table->string('id_number')->nullable();
             $table->string('mobile_number')->nullable();

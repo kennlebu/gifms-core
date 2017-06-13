@@ -225,7 +225,7 @@ class migrate_mobile_payment_data extends Seeder
 
         foreach ($data as $key => $value) {
 
-            $data_to_migrate[$key]['name']                          = $data[$key]['Name'];
+            $data_to_migrate[$key]['full_name']                     = $data[$key]['Name'];
             $data_to_migrate[$key]['registered_name']               = $data[$key]['RegisteredName'];
             $data_to_migrate[$key]['id_number']                     = $data[$key]['IDNumber'];
             $data_to_migrate[$key]['mobile_number']                 = $data[$key]['MobileNumber'];

@@ -228,6 +228,7 @@ class MobilePaymentApi extends Controller
             $response['project_manager']             = $model->find($mobile_payment_id)->project_manager;
             $response['region']                      = $model->find($mobile_payment_id)->region;
             $response['county']                      = $model->find($mobile_payment_id)->county;
+            $response['currency']                    = $model->find($mobile_payment_id)->currency;
             $response['rejected_by']                 = $model->find($mobile_payment_id)->rejected_by;
             $response['payees_upload_mode']          = $model->find($mobile_payment_id)->payees_upload_mode;
             $response['payees']                      = $model->find($mobile_payment_id)->payees;
@@ -572,6 +573,7 @@ class MobilePaymentApi extends Controller
             $data[$key]['project_manager']             = $model->find($data[$key]['id'])->project_manager;
             $data[$key]['region']                      = $model->find($data[$key]['id'])->region;
             $data[$key]['county']                      = $model->find($data[$key]['id'])->county;
+            $data[$key]['currency']                    = $model->find($data[$key]['id'])->currency;
             $data[$key]['rejected_by']                 = $model->find($data[$key]['id'])->rejected_by;
             $data[$key]['payees_upload_mode']          = $model->find($data[$key]['id'])->payees_upload_mode;
             $data[$key]['payees']                      = $model->find($data[$key]['id'])->payees;
@@ -656,6 +658,9 @@ class MobilePaymentApi extends Controller
             if($value["payees_upload_mode"]==null){
                 $data[$key]['payees_upload_mode'] = array("desc"=>"N/A");
                 
+            }
+            if($data[$key]["currency"]==null){
+                $data[$key]["currency"] = array("currency_name"=>"N/A");
             }
         }
 

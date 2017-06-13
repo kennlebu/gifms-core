@@ -22,7 +22,7 @@ class MobilePayment extends BaseModel
     //
     use SoftDeletes;
 
-    protected $appends = [];
+    protected $appends = ['amounts','total_withdrawal_charges','totals'];
 
  
 
@@ -62,6 +62,10 @@ class MobilePayment extends BaseModel
     {
         return $this->belongsTo('App\Models\LookupModels\Region');
     }
+    public function currency()
+    {
+        return $this->belongsTo('App\Models\LookupModels\Currency');
+    }
     public function county()
     {
         return $this->belongsTo('App\Models\LookupModels\County');
@@ -87,6 +91,44 @@ class MobilePayment extends BaseModel
 
 
 
+    public function getAmountsAttribute(){
+
+        $payees     =   $this->payees;
+        $amounts    =   0;
+
+        foreach ($payees as $key => $value) {
+            $amounts    +=  (float) $value->amount;
+        }
+
+        return $amounts;
+
+    }
+
+    public function getTotalWithdrawalChargesAttribute(){
+
+        $payees     =   $this->payees;
+        $total_withdrawal_charges    =   0;
+
+        foreach ($payees as $key => $value) {
+            $total_withdrawal_charges    +=  (float) $value->withdrawal_charges;
+        }
+
+        return $total_withdrawal_charges;
+
+    }
+
+    public function getTotalsAttribute(){
+
+        $payees     =   $this->payees;
+        $totals    =   0;
+
+        foreach ($payees as $key => $value) {
+            $totals    +=  (float) $value->total;
+        }
+
+        return $totals;
+
+    }
 
 
 
