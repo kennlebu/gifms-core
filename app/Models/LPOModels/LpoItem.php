@@ -34,7 +34,7 @@ class LpoItem extends BaseModel
     	$up 			=	(float)		$this->attributes['unit_price'];
     	$vat_charge 	=	(int)		$this->attributes['vat_charge'];
     	$qty 			=	(int)		$this->attributes['qty'];
-    	$vat = "-" ;
+    	$vat = 0 ;
     	$cup 			=	$up;
 
     	if($vat_charge==0){
