@@ -70,6 +70,10 @@ class MobilePayment extends BaseModel
     {
         return $this->belongsTo('App\Models\StaffModels\Staff','rejected_by_id');
     }
+    public function payees_upload_mode()
+    {
+        return $this->belongsTo('App\Models\MobilePaymentModels\PayeesUploadMode');
+    }
     public function payees()
     {
         return $this->hasMany('App\Models\MobilePaymentModels\MobilePaymentPayee');

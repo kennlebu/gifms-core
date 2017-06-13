@@ -27,6 +27,7 @@ class CreateMobilePaymentsTable extends Migration
             $table->text('expense_desc')->nullable();
             $table->text('expense_purpose')->nullable();
             $table->string('payment_document')->nullable();
+            $table->integer('payees_upload_mode_id')->nullable();
             $table->integer('status_id')->nullable();
             $table->integer('project_manager_id')->nullable();
             $table->integer('brevity')->nullable();

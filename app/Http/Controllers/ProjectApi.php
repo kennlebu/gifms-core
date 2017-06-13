@@ -127,16 +127,8 @@ class ProjectApi extends Controller
     {
         $input = Request::all();
 
-        //path params validation
+        $response = Project::orderBy('project_code', 'desc')->get();
 
-
-        //not path params validation
-        // $project_id = $input['project_id'];
-
-
-
-         $response = Project::all();
-
-          return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+        return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
     }
 }

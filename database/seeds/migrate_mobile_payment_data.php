@@ -40,6 +40,7 @@ class migrate_mobile_payment_data extends Seeder
             $data_to_migrate[$key]['expense_desc']                          = $data[$key]['Title'];
             $data_to_migrate[$key]['expense_purpose']                       = $data[$key]['AllowanceDescription'];
             $data_to_migrate[$key]['payment_document']                      = $data[$key]['PayeeDocument'];
+            $data_to_migrate[$key]['payees_upload_mode_id']                 = $data[$key]['UploadMode'];
             $data_to_migrate[$key]['status_id']                             = $data[$key]['Status'];
             $data_to_migrate[$key]['brevity']                               = $data[$key]['Berevity'];
             $data_to_migrate[$key]['region_id']                             = $data[$key]['Region'];
@@ -422,6 +423,33 @@ class migrate_mobile_payment_data extends Seeder
 
         echo "\n-----------------------------------------------------------------------------------------------------\n";
 
+
+
+
+
+
+
+        /**
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         *                  payees upload modes
+         * 
+         * 
+         * 
+         * 
+         * 
+         */
+        echo "\payees upload modes -[ALL]---\n";
+
+        DB::table('payees_upload_modes')->insert([
+            ['desc' => 'Form Input'],
+            ['desc' => 'CSV Upload']
+        ]);
+        echo "\n-----------------------------------------------------------------------------------------------------\n";
 
 
 
