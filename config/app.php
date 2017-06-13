@@ -120,7 +120,9 @@ return [
     |
     */
 
-    'log' => env('APP_LOG', 'single'),
+    'log' => env('APP_LOG', 'daily'),
+
+    'log_max_files' => env('APP_LOG_MAX_FILES', 5),
 
     'log_level' => env('APP_LOG_LEVEL', 'debug'),
 
@@ -167,7 +169,8 @@ return [
          * Package Service Providers...
          */
 
-        //
+        Tymon\JWTAuth\Providers\JWTAuthServiceProvider::class,
+        Anchu\Ftp\FtpServiceProvider::class,
 
         /*
          * Application Service Providers...
@@ -225,6 +228,8 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
+
+        'JWTAuth' => Tymon\JWTAuth\Facades\JWTAuth::class,
 
     ],
 

@@ -1,0 +1,8946 @@
+{
+ "swagger": "2.0",
+ "info": {
+  "description": "Finance management sysytem",
+  "version": "1.0.0",
+  "title": "Grants Information Management System",
+  "termsOfService": "http://kefinance.clintonhealthaccess.org/terms/",
+  "contact": {
+   "email": "mwangikevinn@gmail.com"
+  },
+  "license": {
+   "name": "Apache 2.0",
+   "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+  }
+ },
+ "host": "localhost:8000",
+ "basePath": "/api",
+ "tags": [
+  {
+   "name": "Supplier",
+   "description": "Everything About Supplier",
+   "externalDocs": {
+    "description": "Find out more",
+    "url": "http://kefinance.clintonhealthaccess.org/api/Supplier/docs"
+   }
+  },
+  {
+   "name": "Supplier Rate",
+   "description": "Everything About Supplier Rate",
+   "externalDocs": {
+    "description": "Find out more",
+    "url": "http://kefinance.clintonhealthaccess.org/api/supplier_rate/docs"
+   }
+  },
+  {
+   "name": "Supply Category",
+   "description": "Everything About Supply Category",
+   "externalDocs": {
+    "description": "Find out more",
+    "url": "http://kefinance.clintonhealthaccess.org/api/supply_cath/docs"
+   }
+  },
+  {
+   "name": "Supply Category Item",
+   "description": "Everything About Supply Category Item",
+   "externalDocs": {
+    "description": "Find out more",
+    "url": "http://kefinance.clintonhealthaccess.org/api/supply_category_item/docs"
+   }
+  },
+  {
+   "name": "Project Master List",
+   "description": "Everything About Project Master List",
+   "externalDocs": {
+    "description": "Find out more",
+    "url": "http://kefinance.clintonhealthaccess.org/api/project_master_list/docs"
+   }
+  },
+  {
+   "name": "Project Objective",
+   "description": "Everything About Project Objective",
+   "externalDocs": {
+    "description": "Find out more",
+    "url": "http://kefinance.clintonhealthaccess.org/api/project_objective/docs"
+   }
+  },
+  {
+   "name": "Project Team",
+   "description": "Everything About Project Team",
+   "externalDocs": {
+    "description": "Find out more",
+    "url": "http://kefinance.clintonhealthaccess.org/api/project_team/docs"
+   }
+  },
+  {
+   "name": "LPO Approval",
+   "description": "Everything About LPO Approvals",
+   "externalDocs": {
+    "description": "Find out more",
+    "url": "http://kefinance.clintonhealthaccess.org/api/lpo_approvals/docs"
+   }
+  },
+  {
+   "name": "LPO Default Term",
+   "description": "Everything About LPO Default Term",
+   "externalDocs": {
+    "description": "Find out more",
+    "url": "http://kefinance.clintonhealthaccess.org/api/lpo_default_term/docs"
+   }
+  }
+ ],
+ "schemes": [
+  "http",
+  "https"
+ ],
+ "paths": {
+  "/currencies": {
+   "get": {
+    "summary": "currencies List",
+    "description": "The currency endpoint returns multiple currency requested given the parameters injected. \n",
+    "parameters": [
+     {
+      "name": "currency_id",
+      "in": "query",
+      "description": "currency id",
+      "required": false,
+      "type": "number",
+      "format": "integer"
+     }
+    ],
+    "tags": [
+     "Currency"
+    ],
+    "responses": {
+     "200": {
+      "description": "An array of currency returned",
+      "schema": {
+       "type": "array",
+       "items": {
+        "$ref": "#/definitions/currency"
+       }
+      }
+     },
+     "404": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Error"
+      }
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/currency": {
+   "post": {
+    "tags": [
+     "Currency"
+    ],
+    "summary": "Add a new currency",
+    "description": "new currency",
+    "operationId": "add_currency",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "currency object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/currency"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successfully added a new currency for approval"
+     },
+     "405": {
+      "description": "Invalid input,adding a new currency was unsuccessful"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "put": {
+    "tags": [
+     "Currency"
+    ],
+    "summary": "Update an existing currency",
+    "description": "",
+    "operationId": "update_currency",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "currency object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/currency"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Success"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "currency not found"
+     },
+     "405": {
+      "description": "Validation exception"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/currency/{currency_id}": {
+   "get": {
+    "tags": [
+     "Currency"
+    ],
+    "summary": "Find currency by ID",
+    "description": "Returns a single currency",
+    "operationId": "get_currency_by_id",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "currency_id",
+      "in": "path",
+      "description": "ID of currency to return object",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "successful operation",
+      "schema": {
+       "$ref": "#/definitions/currency"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "currency not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "delete": {
+    "tags": [
+     "Currency"
+    ],
+    "summary": "Deletes an currency",
+    "description": "",
+    "operationId": "delete_currency",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "api_key",
+      "in": "header",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "currency_id",
+      "in": "path",
+      "description": "currency id to delete",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "currency not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/lpos": {
+   "get": {
+    "summary": "lpo List",
+    "description": "The Lpos endpoint returns information about the LPO requested give the parameters injected. The response includes the Reference-No\nand other details about each lpo, and lists the products in the\nproper display order.\n",
+    "parameters": [
+     {
+      "name": "status",
+      "in": "query",
+      "description": "approval status",
+      "required": false,
+      "type": "number",
+      "format": "integer"
+     }
+    ],
+    "tags": [
+     "LPO"
+    ],
+    "responses": {
+     "200": {
+      "description": "An array of lpos returned",
+      "schema": {
+       "type": "array",
+       "items": {
+        "$ref": "#/definitions/lpo"
+       }
+      }
+     },
+     "404": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Error"
+      }
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/lpo": {
+   "post": {
+    "tags": [
+     "LPO"
+    ],
+    "summary": "Add a new lpo request t",
+    "description": "lpo awaits approvals from relevant parties",
+    "operationId": "add",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "lpo object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/lpo"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successfully requested a new LPO for approval"
+     },
+     "405": {
+      "description": "Invalid input,lpo request was unsuccessful"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "put": {
+    "tags": [
+     "LPO"
+    ],
+    "summary": "Update an existing LPO",
+    "description": "",
+    "operationId": "update_lpo",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "LPO object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/lpo"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Success"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo not found"
+     },
+     "405": {
+      "description": "Validation exception"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/lpo/{lpo_id}": {
+   "get": {
+    "tags": [
+     "LPO"
+    ],
+    "summary": "Find lpo by ID",
+    "description": "Returns a single lpo",
+    "operationId": "get_lpo_by_id",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "lpo_id",
+      "in": "path",
+      "description": "ID of lpo to return lpo object",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "successful operation",
+      "schema": {
+       "$ref": "#/definitions/lpo"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "patch": {
+    "tags": [
+     "LPO"
+    ],
+    "summary": "Submits or Approves Lpo",
+    "description": "Submits or Approves Lpo and returns the submitted/approved lpo",
+    "operationId": "submit_or_approve",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "lpo_id",
+      "in": "path",
+      "description": "ID of lpo to return lpo object",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "successful operation",
+      "schema": {
+       "$ref": "#/definitions/lpo"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "post": {
+    "tags": [
+     "LPO"
+    ],
+    "summary": "Updates a lpo with form data",
+    "description": "updates each field when not set as null",
+    "operationId": "update_lpo_with_form",
+    "consumes": [
+     "application/x-www-form-urlencoded"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "lpo_id",
+      "in": "path",
+      "description": "ID of lpo that needs to be updated",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     },
+     {
+      "name": "chai_ref",
+      "in": "formData",
+      "description": "Updated chai_ref of the lpo",
+      "required": false,
+      "type": "string"
+     },
+     {
+      "name": "lpo_date",
+      "in": "formData",
+      "description": "Updated lpo_date of the lpo",
+      "required": false,
+      "type": "string"
+     },
+     {
+      "name": "supplier_id",
+      "in": "formData",
+      "description": "Updated supplier_id of the lpo",
+      "required": false,
+      "type": "integer"
+     },
+     {
+      "name": "addressee",
+      "in": "formData",
+      "description": "Updated addressee of the lpo",
+      "required": false,
+      "type": "string"
+     },
+     {
+      "name": "title",
+      "in": "formData",
+      "description": "Updated title of the lpo",
+      "required": false,
+      "type": "string"
+     },
+     {
+      "name": "purpose",
+      "in": "formData",
+      "description": "Updated purpose of the lpo",
+      "required": false,
+      "type": "string"
+     },
+     {
+      "name": "requested_by",
+      "in": "formData",
+      "description": "Updated requested_by of the lpo",
+      "required": false,
+      "type": "integer"
+     },
+     {
+      "name": "request_date",
+      "in": "formData",
+      "description": "Updated request_date of the lpo",
+      "required": false,
+      "type": "string"
+     },
+     {
+      "name": "status",
+      "in": "formData",
+      "description": "Updated status of the lpo",
+      "required": false,
+      "type": "integer"
+     },
+     {
+      "name": "currency",
+      "in": "formData",
+      "description": "Updated currency of the lpo",
+      "required": false,
+      "type": "integer"
+     },
+     {
+      "name": "quotation",
+      "in": "formData",
+      "description": "Updated quotation of the lpo",
+      "required": false,
+      "type": "string"
+     },
+     {
+      "name": "supply_category",
+      "in": "formData",
+      "description": "Updated supply_category of the lpo",
+      "required": false,
+      "type": "integer"
+     },
+     {
+      "name": "delivery_document",
+      "in": "formData",
+      "description": "Updated delivery_document of the lpo",
+      "required": false,
+      "type": "string"
+     },
+     {
+      "name": "date_delivered",
+      "in": "formData",
+      "description": "Updated date_delivered of the lpo",
+      "required": false,
+      "type": "string"
+     },
+     {
+      "name": "received_by",
+      "in": "formData",
+      "description": "Updated received_by of the lpo",
+      "required": false,
+      "type": "integer"
+     },
+     {
+      "name": "meeting",
+      "in": "formData",
+      "description": "Updated meeting of the lpo",
+      "required": false,
+      "type": "integer"
+     },
+     {
+      "name": "comments",
+      "in": "formData",
+      "description": "Updated comments of the lpo",
+      "required": false,
+      "type": "string"
+     },
+     {
+      "name": "preffered_supplier",
+      "in": "formData",
+      "description": "Updated preffered_supplier of the lpo",
+      "required": false,
+      "type": "integer"
+     },
+     {
+      "name": "project_id",
+      "in": "formData",
+      "description": "Updated project_id of the lpo",
+      "required": false,
+      "type": "integer"
+     },
+     {
+      "name": "account_id",
+      "in": "formData",
+      "description": "Updated account_id of the lpo",
+      "required": false,
+      "type": "string"
+     },
+     {
+      "name": "attention",
+      "in": "formData",
+      "description": "Updated attention of the lpo",
+      "required": false,
+      "type": "string"
+     },
+     {
+      "name": "lpo_email",
+      "in": "formData",
+      "description": "Updated lpo_email of the lpo",
+      "required": false,
+      "type": "string"
+     },
+     {
+      "name": "project_manager_id",
+      "in": "formData",
+      "description": "Updated project_manager_id of the lpo",
+      "required": false,
+      "type": "integer"
+     },
+     {
+      "name": "quote_exempt",
+      "in": "formData",
+      "description": "Updated quote_exempt of the lpo",
+      "required": false,
+      "type": "integer"
+     },
+     {
+      "name": "quote_exempt_explanation",
+      "in": "formData",
+      "description": "Updated quote_exempt_explanation of the lpo",
+      "required": false,
+      "type": "string"
+     }
+    ],
+    "responses": {
+     "405": {
+      "description": "Invalid input"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "delete": {
+    "tags": [
+     "LPO"
+    ],
+    "summary": "Deletes an lpo",
+    "description": "",
+    "operationId": "delete_lpo",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "api_key",
+      "in": "header",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "lpo_id",
+      "in": "path",
+      "description": "lpo id to delete",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/lpo_statuses": {
+   "get": {
+    "summary": "lpo statuses List",
+    "description": "The Lpo Statuses endpoint returns information about the LPO statuses requested give the parameters injected. \n",
+    "parameters": [
+     {
+      "name": "staff_id",
+      "in": "query",
+      "description": "staff id",
+      "required": false,
+      "type": "number",
+      "format": "integer"
+     }
+    ],
+    "tags": [
+     "LPO Status"
+    ],
+    "responses": {
+     "200": {
+      "description": "An array of lpo_statuses returned",
+      "schema": {
+       "type": "array",
+       "items": {
+        "$ref": "#/definitions/lpo_status"
+       }
+      }
+     },
+     "404": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Error"
+      }
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/lpo_status": {
+   "post": {
+    "tags": [
+     "LPO Status"
+    ],
+    "summary": "Add a new lpo status",
+    "description": "lpo status",
+    "operationId": "add_lpo_status",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "lpo status object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/lpo_status"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successfully added a new Lpo status for approval"
+     },
+     "405": {
+      "description": "Invalid input,adding a new lpo status was unsuccessful"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "put": {
+    "tags": [
+     "LPO Status"
+    ],
+    "summary": "Update an existing LPO Status",
+    "description": "",
+    "operationId": "update_lpo_status",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "LPO Status object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/lpo_status"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Success"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo status not found"
+     },
+     "405": {
+      "description": "Validation exception"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/lpo_status/{lpo_status_id}": {
+   "get": {
+    "tags": [
+     "LPO Status"
+    ],
+    "summary": "Find lpo by ID",
+    "description": "Returns a single lpo",
+    "operationId": "get_lpo_status_by_id",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "lpo_status_id",
+      "in": "path",
+      "description": "ID of lpo status to return object",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "successful operation",
+      "schema": {
+       "$ref": "#/definitions/lpo_status"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "delete": {
+    "tags": [
+     "LPO Status"
+    ],
+    "summary": "Deletes an lpo_status",
+    "description": "",
+    "operationId": "delete_lpo_status",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "api_key",
+      "in": "header",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "lpo_status_id",
+      "in": "path",
+      "description": "lpo status id to delete",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo status not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/lpo_quotations": {
+   "get": {
+    "summary": "lpo quotations List",
+    "description": "The Lpo Quotations endpoint returns information about the LPO Quotation requested given the parameters injected. \n",
+    "parameters": [
+     {
+      "name": "lpo_id",
+      "in": "query",
+      "description": "staff id",
+      "required": false,
+      "type": "number",
+      "format": "integer"
+     }
+    ],
+    "tags": [
+     "LPO Quotation"
+    ],
+    "responses": {
+     "200": {
+      "description": "An array of lpo_quotations returned",
+      "schema": {
+       "type": "array",
+       "items": {
+        "$ref": "#/definitions/lpo_quotation"
+       }
+      }
+     },
+     "404": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Error"
+      }
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/lpo_quotation": {
+   "post": {
+    "tags": [
+     "LPO Quotation"
+    ],
+    "summary": "Add a new lpo quotation",
+    "description": "new lpo quotation",
+    "operationId": "add_lpo_quotation",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "lpo quotation object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/lpo_quotation"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successfully added a new Lpo quotation for approval"
+     },
+     "405": {
+      "description": "Invalid input,adding a new lpo quotation was unsuccessful"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "put": {
+    "tags": [
+     "LPO Quotation"
+    ],
+    "summary": "Update an existing LPO Quotation",
+    "description": "",
+    "operationId": "update_lpo_quotation",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "LPO Quotation object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/lpo_quotation"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Success"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo quotation not found"
+     },
+     "405": {
+      "description": "Validation exception"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/lpo_quotation/{lpo_quotation_id}": {
+   "get": {
+    "tags": [
+     "LPO Quotation"
+    ],
+    "summary": "Find lpo quotation by ID",
+    "description": "Returns a single lpo quotation",
+    "operationId": "get_lpo_quotation_by_id",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "lpo_quotation_id",
+      "in": "path",
+      "description": "ID of lpo quotation to return object",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "successful operation",
+      "schema": {
+       "$ref": "#/definitions/lpo_quotation"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo quotation not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "delete": {
+    "tags": [
+     "LPO Quotation"
+    ],
+    "summary": "Deletes an lpo_quotation",
+    "description": "",
+    "operationId": "delete_lpo_quotation",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "api_key",
+      "in": "header",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "lpo_quotation_id",
+      "in": "path",
+      "description": "lpo quotation id to delete",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo quotation not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/lpo_items": {
+   "get": {
+    "summary": "lpo items List",
+    "description": "The Lpo Items endpoint returns information about the LPO Item requested given the parameters injected. \n",
+    "parameters": [
+     {
+      "name": "lpo_id",
+      "in": "query",
+      "description": "staff id",
+      "required": false,
+      "type": "number",
+      "format": "integer"
+     }
+    ],
+    "tags": [
+     "LPO Item"
+    ],
+    "responses": {
+     "200": {
+      "description": "An array of lpo_items returned",
+      "schema": {
+       "type": "array",
+       "items": {
+        "$ref": "#/definitions/lpo_item"
+       }
+      }
+     },
+     "404": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Error"
+      }
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/lpo_item": {
+   "post": {
+    "tags": [
+     "LPO Item"
+    ],
+    "summary": "Add a new lpo item",
+    "description": "new lpo item",
+    "operationId": "add_lpo_item",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "lpo item object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/lpo_item"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successfully added a new Lpo item for approval"
+     },
+     "405": {
+      "description": "Invalid input,adding a new lpo item was unsuccessful"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "put": {
+    "tags": [
+     "LPO Item"
+    ],
+    "summary": "Update an existing LPO Item",
+    "description": "",
+    "operationId": "update_lpo_item",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "LPO Item object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/lpo_item"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Success"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo item not found"
+     },
+     "405": {
+      "description": "Validation exception"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/lpo_item/{lpo_item_id}": {
+   "get": {
+    "tags": [
+     "LPO Item"
+    ],
+    "summary": "Find lpo item by ID",
+    "description": "Returns a single lpo item",
+    "operationId": "get_lpo_item_by_id",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "lpo_item_id",
+      "in": "path",
+      "description": "ID of lpo item to return object",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "successful operation",
+      "schema": {
+       "$ref": "#/definitions/lpo_item"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo item not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "delete": {
+    "tags": [
+     "LPO Item"
+    ],
+    "summary": "Deletes an lpo_item",
+    "description": "",
+    "operationId": "delete_lpo_item",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "api_key",
+      "in": "header",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "lpo_item_id",
+      "in": "path",
+      "description": "lpo item id to delete",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo item not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/lpo_terms": {
+   "get": {
+    "summary": "lpo terms List",
+    "description": "The Lpo Terms endpoint returns information about the LPO Term requested given the parameters injected. \n",
+    "parameters": [
+     {
+      "name": "lpo_id",
+      "in": "query",
+      "description": "staff id",
+      "required": false,
+      "type": "number",
+      "format": "integer"
+     }
+    ],
+    "tags": [
+     "LPO Term"
+    ],
+    "responses": {
+     "200": {
+      "description": "An array of lpo_terms returned",
+      "schema": {
+       "type": "array",
+       "items": {
+        "$ref": "#/definitions/lpo_term"
+       }
+      }
+     },
+     "404": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Error"
+      }
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/lpo_term": {
+   "post": {
+    "tags": [
+     "LPO Term"
+    ],
+    "summary": "Add a new lpo term",
+    "description": "new lpo term",
+    "operationId": "add_lpo_term",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "lpo term object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/lpo_term"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successfully added a new Lpo term for approval"
+     },
+     "405": {
+      "description": "Invalid input,adding a new lpo term was unsuccessful"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "put": {
+    "tags": [
+     "LPO Term"
+    ],
+    "summary": "Update an existing LPO Term",
+    "description": "",
+    "operationId": "update_lpo_term",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "LPO Term object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/lpo_term"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Success"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo term not found"
+     },
+     "405": {
+      "description": "Validation exception"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/lpo_term/{lpo_term_id}": {
+   "get": {
+    "tags": [
+     "LPO Term"
+    ],
+    "summary": "Find lpo term by ID",
+    "description": "Returns a single lpo term",
+    "operationId": "get_lpo_term_by_id",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "lpo_term_id",
+      "in": "path",
+      "description": "ID of lpo term to return object",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "successful operation",
+      "schema": {
+       "$ref": "#/definitions/lpo_term"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo term not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "delete": {
+    "tags": [
+     "LPO Term"
+    ],
+    "summary": "Deletes an lpo_term",
+    "description": "",
+    "operationId": "delete_lpo_term",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "api_key",
+      "in": "header",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "lpo_term_id",
+      "in": "path",
+      "description": "lpo term id to delete",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo term not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/lpo_comments": {
+   "get": {
+    "summary": "lpo comments List",
+    "description": "The Lpo Comments endpoint returns information about the LPO Comment requested given the parameters injected. \n",
+    "parameters": [
+     {
+      "name": "lpo_id",
+      "in": "query",
+      "description": "staff id",
+      "required": false,
+      "type": "number",
+      "format": "integer"
+     }
+    ],
+    "tags": [
+     "LPO Comment"
+    ],
+    "responses": {
+     "200": {
+      "description": "An array of lpo_comments returned",
+      "schema": {
+       "type": "array",
+       "items": {
+        "$ref": "#/definitions/lpo_comment"
+       }
+      }
+     },
+     "404": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Error"
+      }
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/lpo_comment": {
+   "post": {
+    "tags": [
+     "LPO Comment"
+    ],
+    "summary": "Add a new lpo comment",
+    "description": "new lpo comment",
+    "operationId": "add_lpo_comment",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "lpo comment object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/lpo_comment"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successfully added a new Lpo comment for approval"
+     },
+     "405": {
+      "description": "Invalid input,adding a new lpo comment was unsuccessful"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "put": {
+    "tags": [
+     "LPO Comment"
+    ],
+    "summary": "Update an existing LPO Comment",
+    "description": "",
+    "operationId": "update_lpo_comment",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "LPO Comment object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/lpo_comment"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Success"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo comment not found"
+     },
+     "405": {
+      "description": "Validation exception"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/lpo_comment/{lpo_comment_id}": {
+   "get": {
+    "tags": [
+     "LPO Comment"
+    ],
+    "summary": "Find lpo comment by ID",
+    "description": "Returns a single lpo comment",
+    "operationId": "get_lpo_comment_by_id",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "lpo_comment_id",
+      "in": "path",
+      "description": "ID of lpo comment to return object",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "successful operation",
+      "schema": {
+       "$ref": "#/definitions/lpo_comment"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo comment not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "delete": {
+    "tags": [
+     "LPO Comment"
+    ],
+    "summary": "Deletes an lpo_comment",
+    "description": "",
+    "operationId": "delete_lpo_comment",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "api_key",
+      "in": "header",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "lpo_comment_id",
+      "in": "path",
+      "description": "lpo comment id to delete",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo comment not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/lpo_viewing_permissions": {
+   "get": {
+    "summary": "lpo viewing_permissions List",
+    "description": "The Lpo Viewing Permissions endpoint returns information about the LPO Viewing Permission requested given the parameters injected. \n",
+    "parameters": [
+     {
+      "name": "lpo_id",
+      "in": "query",
+      "description": "staff id",
+      "required": false,
+      "type": "number",
+      "format": "integer"
+     }
+    ],
+    "tags": [
+     "LPO Viewing Permission"
+    ],
+    "responses": {
+     "200": {
+      "description": "An array of lpo_viewing_permissions returned",
+      "schema": {
+       "type": "array",
+       "items": {
+        "$ref": "#/definitions/lpo_viewing_permission"
+       }
+      }
+     },
+     "404": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Error"
+      }
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/lpo_viewing_permission": {
+   "post": {
+    "tags": [
+     "LPO Viewing Permission"
+    ],
+    "summary": "Add a new lpo viewing_permission",
+    "description": "new lpo viewing_permission",
+    "operationId": "add_lpo_viewing_permission",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "lpo viewing_permission object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/lpo_viewing_permission"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successfully added a new Lpo viewing_permission for approval"
+     },
+     "405": {
+      "description": "Invalid input,adding a new lpo viewing_permission was unsuccessful"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "put": {
+    "tags": [
+     "LPO Viewing Permission"
+    ],
+    "summary": "Update an existing LPO Viewing Permission",
+    "description": "",
+    "operationId": "update_lpo_viewing_permission",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "LPO Viewing Permission object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/lpo_viewing_permission"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Success"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo viewing_permission not found"
+     },
+     "405": {
+      "description": "Validation exception"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/lpo_viewing_permission/{lpo_viewing_permission_id}": {
+   "get": {
+    "tags": [
+     "LPO Viewing Permission"
+    ],
+    "summary": "Find lpo viewing_permission by ID",
+    "description": "Returns a single lpo viewing_permission",
+    "operationId": "get_lpo_viewing_permission_by_id",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "lpo_viewing_permission_id",
+      "in": "path",
+      "description": "ID of lpo viewing_permission to return object",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "successful operation",
+      "schema": {
+       "$ref": "#/definitions/lpo_viewing_permission"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo viewing_permission not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "delete": {
+    "tags": [
+     "LPO Viewing Permission"
+    ],
+    "summary": "Deletes an lpo_viewing_permission",
+    "description": "",
+    "operationId": "delete_lpo_viewing_permission",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "api_key",
+      "in": "header",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "lpo_viewing_permission_id",
+      "in": "path",
+      "description": "lpo viewing_permission id to delete",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo viewing_permission not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/lpo_approvals": {
+   "get": {
+    "summary": "lpo approvals List",
+    "description": "The Lpo Approvals endpoint returns information about the LPO Approval requested given the parameters injected. \n",
+    "parameters": [
+     {
+      "name": "lpo_id",
+      "in": "query",
+      "description": "staff id",
+      "required": false,
+      "type": "number",
+      "format": "integer"
+     }
+    ],
+    "tags": [
+     "LPO Approval"
+    ],
+    "responses": {
+     "200": {
+      "description": "An array of lpo_approvals returned",
+      "schema": {
+       "type": "array",
+       "items": {
+        "$ref": "#/definitions/lpo_approval"
+       }
+      }
+     },
+     "404": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Error"
+      }
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/lpo_approval": {
+   "post": {
+    "tags": [
+     "LPO Approval"
+    ],
+    "summary": "Add a new lpo approval",
+    "description": "new lpo approval",
+    "operationId": "add_lpo_approval",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "lpo approval object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/lpo_approval"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successfully added a new Lpo approval for approval"
+     },
+     "405": {
+      "description": "Invalid input,adding a new lpo approval was unsuccessful"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "put": {
+    "tags": [
+     "LPO Approval"
+    ],
+    "summary": "Update an existing LPO Approval",
+    "description": "",
+    "operationId": "update_lpo_approval",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "LPO Approval object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/lpo_approval"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Success"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo approval not found"
+     },
+     "405": {
+      "description": "Validation exception"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/lpo_approval/{lpo_approval_id}": {
+   "get": {
+    "tags": [
+     "LPO Approval"
+    ],
+    "summary": "Find lpo approval by ID",
+    "description": "Returns a single lpo approval",
+    "operationId": "get_lpo_approval_by_id",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "lpo_approval_id",
+      "in": "path",
+      "description": "ID of lpo approval to return object",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "successful operation",
+      "schema": {
+       "$ref": "#/definitions/lpo_approval"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo approval not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "delete": {
+    "tags": [
+     "LPO Approval"
+    ],
+    "summary": "Deletes an lpo_approval",
+    "description": "",
+    "operationId": "delete_lpo_approval",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "api_key",
+      "in": "header",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "lpo_approval_id",
+      "in": "path",
+      "description": "lpo approval id to delete",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo approval not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/lpo_default_terms": {
+   "get": {
+    "summary": "lpo_default_terms List",
+    "description": "The lpo_default_term endpoint returns multiple lpo_default_term requested given the parameters injected. \n",
+    "parameters": [
+     {
+      "name": "lpo_default_term_id",
+      "in": "query",
+      "description": "lpo_default_term id",
+      "required": false,
+      "type": "number",
+      "format": "integer"
+     }
+    ],
+    "tags": [
+     "LPO Default Term"
+    ],
+    "responses": {
+     "200": {
+      "description": "An array of lpo_default_term returned",
+      "schema": {
+       "type": "array",
+       "items": {
+        "$ref": "#/definitions/lpo_default_term"
+       }
+      }
+     },
+     "404": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Error"
+      }
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/lpo_default_term": {
+   "post": {
+    "tags": [
+     "LPO Default Term"
+    ],
+    "summary": "Add a new lpo_default_term",
+    "description": "new lpo_default_term",
+    "operationId": "add_lpo_default_term",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "lpo_default_term object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/lpo_default_term"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successfully added a new lpo_default_term for approval"
+     },
+     "405": {
+      "description": "Invalid input,adding a new lpo_default_term was unsuccessful"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "put": {
+    "tags": [
+     "LPO Default Term"
+    ],
+    "summary": "Update an existing lpo_default_term",
+    "description": "",
+    "operationId": "update_lpo_default_term",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "lpo_default_term object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/lpo_default_term"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Success"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo_default_term not found"
+     },
+     "405": {
+      "description": "Validation exception"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/lpo_default_term/{lpo_default_term_id}": {
+   "get": {
+    "tags": [
+     "LPO Default Term"
+    ],
+    "summary": "Find lpo_default_term by ID",
+    "description": "Returns a single lpo_default_term",
+    "operationId": "get_lpo_default_term_by_id",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "lpo_default_term_id",
+      "in": "path",
+      "description": "ID of lpo_default_term to return object",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "successful operation",
+      "schema": {
+       "$ref": "#/definitions/lpo_default_term"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo_default_term not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "delete": {
+    "tags": [
+     "LPO Default Term"
+    ],
+    "summary": "Deletes an lpo_default_term",
+    "description": "",
+    "operationId": "delete_lpo_default_term",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "api_key",
+      "in": "header",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "lpo_default_term_id",
+      "in": "path",
+      "description": "lpo_default_term id to delete",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo_default_term not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/mobile_payments": {
+   "get": {
+    "summary": "mobile_payments List",
+    "description": "The mobile_payment endpoint returns multiple mobile_payment requested given the parameters injected. \n",
+    "parameters": [
+     {
+      "name": "mobile_payment_id",
+      "in": "query",
+      "description": "mobile_payment id",
+      "required": false,
+      "type": "number",
+      "format": "integer"
+     }
+    ],
+    "tags": [
+     "Mobile Payment"
+    ],
+    "responses": {
+     "200": {
+      "description": "An array of mobile_payment returned",
+      "schema": {
+       "type": "array",
+       "items": {
+        "$ref": "#/definitions/mobile_payment"
+       }
+      }
+     },
+     "404": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Error"
+      }
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/mobile_payment": {
+   "post": {
+    "tags": [
+     "Mobile Payment"
+    ],
+    "summary": "Add a new mobile_payment",
+    "description": "new mobile_payment",
+    "operationId": "add_mobile_payment",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "mobile_payment object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/mobile_payment"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successfully added a new mobile_payment for approval"
+     },
+     "405": {
+      "description": "Invalid input,adding a new mobile_payment was unsuccessful"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "put": {
+    "tags": [
+     "Mobile Payment"
+    ],
+    "summary": "Update an existing mobile_payment",
+    "description": "",
+    "operationId": "update_mobile_payment",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "mobile_payment object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/mobile_payment"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Success"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "mobile_payment not found"
+     },
+     "405": {
+      "description": "Validation exception"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/mobile_payment/{mobile_payment_id}": {
+   "get": {
+    "tags": [
+     "Mobile Payment"
+    ],
+    "summary": "Find mobile_payment by ID",
+    "description": "Returns a single mobile_payment",
+    "operationId": "get_mobile_payment_by_id",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "mobile_payment_id",
+      "in": "path",
+      "description": "ID of mobile_payment to return object",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "successful operation",
+      "schema": {
+       "$ref": "#/definitions/mobile_payment"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "mobile_payment not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/mobile_payment/{mobile_payment_id}/submit_for_approval": {
+   "patch": {
+    "tags": [
+     "Mobile Payment"
+    ],
+    "summary": "Submit mobile_payment by ID",
+    "description": "Submits",
+    "operationId": "submit_for_approval",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "mobile_payment_id",
+      "in": "path",
+      "description": "ID of mobile_payment to return object",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "successful operation",
+      "schema": {
+       "$ref": "#/definitions/mobile_payment"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "mobile_payment not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/mobile_payment/{mobile_payment_id}/approve": {
+   "patch": {
+    "tags": [
+     "Mobile Payment"
+    ],
+    "summary": "Submit/Approve mobile_payment by ID",
+    "description": "Approves Mobile Payment",
+    "operationId": "approve",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "mobile_payment_id",
+      "in": "path",
+      "description": "ID of mobile_payment to return object",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "successful operation",
+      "schema": {
+       "$ref": "#/definitions/mobile_payment"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "mobile_payment not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "delete": {
+    "tags": [
+     "Mobile Payment"
+    ],
+    "summary": "Deletes an mobile_payment",
+    "description": "",
+    "operationId": "delete_mobile_payment",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "api_key",
+      "in": "header",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "mobile_payment_id",
+      "in": "path",
+      "description": "mobile_payment id to delete",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "mobile_payment not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/mobile_payment_approvals": {
+   "get": {
+    "summary": "mobile_payment_approvals List",
+    "description": "The mobile_payment_approval endpoint returns multiple mobile_payment_approval requested given the parameters injected. \n",
+    "parameters": [
+     {
+      "name": "mobile_payment_approval_id",
+      "in": "query",
+      "description": "mobile_payment_approval id",
+      "required": false,
+      "type": "number",
+      "format": "integer"
+     }
+    ],
+    "tags": [
+     "Mobile Payment Approval"
+    ],
+    "responses": {
+     "200": {
+      "description": "An array of mobile_payment_approval returned",
+      "schema": {
+       "type": "array",
+       "items": {
+        "$ref": "#/definitions/mobile_payment_approval"
+       }
+      }
+     },
+     "404": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Error"
+      }
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/mobile_payment_approval": {
+   "post": {
+    "tags": [
+     "Mobile Payment Approval"
+    ],
+    "summary": "Add a new mobile_payment_approval",
+    "description": "new mobile_payment_approval",
+    "operationId": "add_mobile_payment_approval",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "mobile_payment_approval object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/mobile_payment_approval"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successfully added a new mobile_payment_approval for approval"
+     },
+     "405": {
+      "description": "Invalid input,adding a new mobile_payment_approval was unsuccessful"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "put": {
+    "tags": [
+     "Mobile Payment Approval"
+    ],
+    "summary": "Update an existing mobile_payment_approval",
+    "description": "",
+    "operationId": "update_mobile_payment_approval",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "mobile_payment_approval object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/mobile_payment_approval"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Success"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "mobile_payment_approval not found"
+     },
+     "405": {
+      "description": "Validation exception"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/mobile_payment_approval/{mobile_payment_approval_id}": {
+   "get": {
+    "tags": [
+     "Mobile Payment Approval"
+    ],
+    "summary": "Find mobile_payment_approval by ID",
+    "description": "Returns a single mobile_payment_approval",
+    "operationId": "get_mobile_payment_approval_by_id",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "mobile_payment_approval_id",
+      "in": "path",
+      "description": "ID of mobile_payment_approval to return object",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "successful operation",
+      "schema": {
+       "$ref": "#/definitions/mobile_payment_approval"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "mobile_payment_approval not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "delete": {
+    "tags": [
+     "Mobile Payment Approval"
+    ],
+    "summary": "Deletes an mobile_payment_approval",
+    "description": "",
+    "operationId": "delete_mobile_payment_approval",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "api_key",
+      "in": "header",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "mobile_payment_approval_id",
+      "in": "path",
+      "description": "mobile_payment_approval id to delete",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "mobile_payment_approval not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/mobile_payment_payees": {
+   "get": {
+    "summary": "mobile_payment_payees List",
+    "description": "The mobile_payment_payee endpoint returns multiple mobile_payment_payees requested given the parameters injected. \n",
+    "parameters": [
+     {
+      "name": "mobile_payment_payee_id",
+      "in": "query",
+      "description": "mobile_payment_payee id",
+      "required": false,
+      "type": "number",
+      "format": "integer"
+     }
+    ],
+    "tags": [
+     "Mobile Payment Payee"
+    ],
+    "responses": {
+     "200": {
+      "description": "An array of mobile_payment_payee returned",
+      "schema": {
+       "type": "array",
+       "items": {
+        "$ref": "#/definitions/mobile_payment_payee"
+       }
+      }
+     },
+     "404": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Error"
+      }
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/mobile_payment_payee": {
+   "post": {
+    "tags": [
+     "Mobile Payment Payee"
+    ],
+    "summary": "Add a new mobile_payment_payee",
+    "description": "new mobile_payment_payee",
+    "operationId": "add_mobile_payment_payee",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "mobile_payment_payee object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/mobile_payment_payee"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successfully added a new mobile_payment_payee for approval"
+     },
+     "405": {
+      "description": "Invalid input,adding a new mobile_payment_payee was unsuccessful"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "put": {
+    "tags": [
+     "Mobile Payment Payee"
+    ],
+    "summary": "Update an existing mobile_payment_payee",
+    "description": "",
+    "operationId": "update_mobile_payment_payee",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "mobile_payment_payee object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/mobile_payment_payee"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Success"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "mobile_payment_payee not found"
+     },
+     "405": {
+      "description": "Validation exception"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/mobile_payment_payee/{mobile_payment_payee_id}": {
+   "get": {
+    "tags": [
+     "Mobile Payment Payee"
+    ],
+    "summary": "Find mobile_payment_payee by ID",
+    "description": "Returns a single mobile_payment_payee",
+    "operationId": "get_mobile_payment_payee_by_id",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "mobile_payment_payee_id",
+      "in": "path",
+      "description": "ID of mobile_payment_payee to return object",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "successful operation",
+      "schema": {
+       "$ref": "#/definitions/mobile_payment_payee"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "mobile_payment_payee not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "delete": {
+    "tags": [
+     "Mobile Payment Payee"
+    ],
+    "summary": "Deletes an mobile_payment_payee",
+    "description": "",
+    "operationId": "delete_mobile_payment_payee",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "api_key",
+      "in": "header",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "mobile_payment_payee_id",
+      "in": "path",
+      "description": "mobile_payment_payee id to delete",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "mobile_payment_payee not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/mobile_payment_statuses": {
+   "get": {
+    "summary": "mobile_payment_statuses List",
+    "description": "The mobile_payment_status endpoint returns multiple mobile_payment_status requested given the parameters injected. \n",
+    "parameters": [
+     {
+      "name": "mobile_payment_status_id",
+      "in": "query",
+      "description": "mobile_payment_status id",
+      "required": false,
+      "type": "number",
+      "format": "integer"
+     }
+    ],
+    "tags": [
+     "Mobile Payment Status"
+    ],
+    "responses": {
+     "200": {
+      "description": "An array of mobile_payment_status returned",
+      "schema": {
+       "type": "array",
+       "items": {
+        "$ref": "#/definitions/mobile_payment_status"
+       }
+      }
+     },
+     "404": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Error"
+      }
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/mobile_payment_status": {
+   "post": {
+    "tags": [
+     "Mobile Payment Status"
+    ],
+    "summary": "Add a new mobile_payment_status",
+    "description": "new mobile_payment_status",
+    "operationId": "add_mobile_payment_status",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "mobile_payment_status object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/mobile_payment_status"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successfully added a new mobile_payment_status for approval"
+     },
+     "405": {
+      "description": "Invalid input,adding a new mobile_payment_status was unsuccessful"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "put": {
+    "tags": [
+     "Mobile Payment Status"
+    ],
+    "summary": "Update an existing mobile_payment_status",
+    "description": "",
+    "operationId": "update_mobile_payment_status",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "mobile_payment_status object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/mobile_payment_status"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Success"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "mobile_payment_status not found"
+     },
+     "405": {
+      "description": "Validation exception"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/mobile_payment_status/{mobile_payment_status_id}": {
+   "get": {
+    "tags": [
+     "Mobile Payment Status"
+    ],
+    "summary": "Find mobile_payment_status by ID",
+    "description": "Returns a single mobile_payment_status",
+    "operationId": "get_mobile_payment_status_by_id",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "mobile_payment_status_id",
+      "in": "path",
+      "description": "ID of mobile_payment_status to return object",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "successful operation",
+      "schema": {
+       "$ref": "#/definitions/mobile_payment_status"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "mobile_payment_status not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "delete": {
+    "tags": [
+     "Mobile Payment Status"
+    ],
+    "summary": "Deletes an mobile_payment_status",
+    "description": "",
+    "operationId": "delete_mobile_payment_status",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "api_key",
+      "in": "header",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "mobile_payment_status_id",
+      "in": "path",
+      "description": "mobile_payment_status id to delete",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "mobile_payment_status not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/mobile_payment_tariffs": {
+   "get": {
+    "summary": "mobile_payment_tariffs List",
+    "description": "The mobile_payment_tariff endpoint returns multiple mobile_payment_tariff requested given the parameters injected. \n",
+    "parameters": [
+     {
+      "name": "mobile_payment_tariff_id",
+      "in": "query",
+      "description": "mobile_payment_tariff id",
+      "required": false,
+      "type": "number",
+      "format": "integer"
+     }
+    ],
+    "tags": [
+     "Mobile Payment Tariff"
+    ],
+    "responses": {
+     "200": {
+      "description": "An array of mobile_payment_tariff returned",
+      "schema": {
+       "type": "array",
+       "items": {
+        "$ref": "#/definitions/mobile_payment_tariff"
+       }
+      }
+     },
+     "404": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Error"
+      }
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/mobile_payment_tariff": {
+   "post": {
+    "tags": [
+     "Mobile Payment Tariff"
+    ],
+    "summary": "Add a new mobile_payment_tariff",
+    "description": "new mobile_payment_tariff",
+    "operationId": "add_mobile_payment_tariff",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "mobile_payment_tariff object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/mobile_payment_tariff"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successfully added a new mobile_payment_tariff for approval"
+     },
+     "405": {
+      "description": "Invalid input,adding a new mobile_payment_tariff was unsuccessful"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "put": {
+    "tags": [
+     "Mobile Payment Tariff"
+    ],
+    "summary": "Update an existing mobile_payment_tariff",
+    "description": "",
+    "operationId": "update_mobile_payment_tariff",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "mobile_payment_tariff object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/mobile_payment_tariff"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Success"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "mobile_payment_tariff not found"
+     },
+     "405": {
+      "description": "Validation exception"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/mobile_payment_tariff/{mobile_payment_tariff_id}": {
+   "get": {
+    "tags": [
+     "Mobile Payment Tariff"
+    ],
+    "summary": "Find mobile_payment_tariff by ID",
+    "description": "Returns a single mobile_payment_tariff",
+    "operationId": "get_mobile_payment_tariff_by_id",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "mobile_payment_tariff_id",
+      "in": "path",
+      "description": "ID of mobile_payment_tariff to return object",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "successful operation",
+      "schema": {
+       "$ref": "#/definitions/mobile_payment_tariff"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "mobile_payment_tariff not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "delete": {
+    "tags": [
+     "Mobile Payment Tariff"
+    ],
+    "summary": "Deletes an mobile_payment_tariff",
+    "description": "",
+    "operationId": "delete_mobile_payment_tariff",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "api_key",
+      "in": "header",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "mobile_payment_tariff_id",
+      "in": "path",
+      "description": "mobile_payment_tariff id to delete",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "mobile_payment_tariff not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/mobile_payment_types": {
+   "get": {
+    "summary": "mobile_payment_types List",
+    "description": "The mobile_payment_type endpoint returns multiple mobile_payment_type requested given the parameters injected. \n",
+    "parameters": [
+     {
+      "name": "mobile_payment_type_id",
+      "in": "query",
+      "description": "mobile_payment_type id",
+      "required": false,
+      "type": "number",
+      "format": "integer"
+     }
+    ],
+    "tags": [
+     "Mobile Payment Type"
+    ],
+    "responses": {
+     "200": {
+      "description": "An array of mobile_payment_type returned",
+      "schema": {
+       "type": "array",
+       "items": {
+        "$ref": "#/definitions/mobile_payment_type"
+       }
+      }
+     },
+     "404": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Error"
+      }
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/mobile_payment_type": {
+   "post": {
+    "tags": [
+     "Mobile Payment Type"
+    ],
+    "summary": "Add a new mobile_payment_type",
+    "description": "new mobile_payment_type",
+    "operationId": "add_mobile_payment_type",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "mobile_payment_type object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/mobile_payment_type"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successfully added a new mobile_payment_type for approval"
+     },
+     "405": {
+      "description": "Invalid input,adding a new mobile_payment_type was unsuccessful"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "put": {
+    "tags": [
+     "Mobile Payment Type"
+    ],
+    "summary": "Update an existing mobile_payment_type",
+    "description": "",
+    "operationId": "update_mobile_payment_type",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "mobile_payment_type object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/mobile_payment_type"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Success"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "mobile_payment_type not found"
+     },
+     "405": {
+      "description": "Validation exception"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/mobile_payment_type/{mobile_payment_type_id}": {
+   "get": {
+    "tags": [
+     "Mobile Payment Type"
+    ],
+    "summary": "Find mobile_payment_type by ID",
+    "description": "Returns a single mobile_payment_type",
+    "operationId": "get_mobile_payment_type_by_id",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "mobile_payment_type_id",
+      "in": "path",
+      "description": "ID of mobile_payment_type to return object",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "successful operation",
+      "schema": {
+       "$ref": "#/definitions/mobile_payment_type"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "mobile_payment_type not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "delete": {
+    "tags": [
+     "Mobile Payment Type"
+    ],
+    "summary": "Deletes an mobile_payment_type",
+    "description": "",
+    "operationId": "delete_mobile_payment_type",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "api_key",
+      "in": "header",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "mobile_payment_type_id",
+      "in": "path",
+      "description": "mobile_payment_type id to delete",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "mobile_payment_type not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/mobile_payment_viewing_permissions": {
+   "get": {
+    "summary": "mobile_payment_viewing_permissions List",
+    "description": "The mobile_payment_viewing_permission endpoint returns multiple mobile_payment_viewing_permission requested given the parameters injected. \n",
+    "parameters": [
+     {
+      "name": "mobile_payment_viewing_permission_id",
+      "in": "query",
+      "description": "mobile_payment_viewing_permission id",
+      "required": false,
+      "type": "number",
+      "format": "integer"
+     }
+    ],
+    "tags": [
+     "Mobile Payment Viewing Permission"
+    ],
+    "responses": {
+     "200": {
+      "description": "An array of mobile_payment_viewing_permission returned",
+      "schema": {
+       "type": "array",
+       "items": {
+        "$ref": "#/definitions/mobile_payment_viewing_permission"
+       }
+      }
+     },
+     "404": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Error"
+      }
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/mobile_payment_viewing_permission": {
+   "post": {
+    "tags": [
+     "Mobile Payment Viewing Permission"
+    ],
+    "summary": "Add a new mobile_payment_viewing_permission",
+    "description": "new mobile_payment_viewing_permission",
+    "operationId": "add_mobile_payment_viewing_permission",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "mobile_payment_viewing_permission object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/mobile_payment_viewing_permission"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successfully added a new mobile_payment_viewing_permission for approval"
+     },
+     "405": {
+      "description": "Invalid input,adding a new mobile_payment_viewing_permission was unsuccessful"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "put": {
+    "tags": [
+     "Mobile Payment Viewing Permission"
+    ],
+    "summary": "Update an existing mobile_payment_viewing_permission",
+    "description": "",
+    "operationId": "update_mobile_payment_viewing_permission",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "mobile_payment_viewing_permission object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/mobile_payment_viewing_permission"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Success"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "mobile_payment_viewing_permission not found"
+     },
+     "405": {
+      "description": "Validation exception"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/mobile_payment_viewing_permission/{mobile_payment_viewing_permission_id}": {
+   "get": {
+    "tags": [
+     "Mobile Payment Viewing Permission"
+    ],
+    "summary": "Find mobile_payment_viewing_permission by ID",
+    "description": "Returns a single mobile_payment_viewing_permission",
+    "operationId": "get_mobile_payment_viewing_permission_by_id",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "mobile_payment_viewing_permission_id",
+      "in": "path",
+      "description": "ID of mobile_payment_viewing_permission to return object",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "successful operation",
+      "schema": {
+       "$ref": "#/definitions/mobile_payment_viewing_permission"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "mobile_payment_viewing_permission not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "delete": {
+    "tags": [
+     "Mobile Payment Viewing Permission"
+    ],
+    "summary": "Deletes an mobile_payment_viewing_permission",
+    "description": "",
+    "operationId": "delete_mobile_payment_viewing_permission",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "api_key",
+      "in": "header",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "mobile_payment_viewing_permission_id",
+      "in": "path",
+      "description": "mobile_payment_viewing_permission id to delete",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "mobile_payment_viewing_permission not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/projects": {
+   "get": {
+    "summary": "projects List",
+    "description": "The project endpoint returns multiple project requested given the parameters injected. \n",
+    "parameters": [
+     {
+      "name": "project_id",
+      "in": "query",
+      "description": "project id",
+      "required": false,
+      "type": "number",
+      "format": "integer"
+     }
+    ],
+    "tags": [
+     "Project"
+    ],
+    "responses": {
+     "200": {
+      "description": "An array of project returned",
+      "schema": {
+       "type": "array",
+       "items": {
+        "$ref": "#/definitions/project"
+       }
+      }
+     },
+     "404": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Error"
+      }
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/project": {
+   "post": {
+    "tags": [
+     "Project"
+    ],
+    "summary": "Add a new project",
+    "description": "new project",
+    "operationId": "add_project",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "project object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/project"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successfully added a new project for approval"
+     },
+     "405": {
+      "description": "Invalid input,adding a new project was unsuccessful"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "put": {
+    "tags": [
+     "Project"
+    ],
+    "summary": "Update an existing project",
+    "description": "",
+    "operationId": "update_project",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "project object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/project"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Success"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "project not found"
+     },
+     "405": {
+      "description": "Validation exception"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/project/{project_id}": {
+   "get": {
+    "tags": [
+     "Project"
+    ],
+    "summary": "Find project by ID",
+    "description": "Returns a single project",
+    "operationId": "get_project_by_id",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "project_id",
+      "in": "path",
+      "description": "ID of project to return object",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "successful operation",
+      "schema": {
+       "$ref": "#/definitions/project"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "project not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "delete": {
+    "tags": [
+     "Project"
+    ],
+    "summary": "Deletes an project",
+    "description": "",
+    "operationId": "delete_project",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "api_key",
+      "in": "header",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "project_id",
+      "in": "path",
+      "description": "project id to delete",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "project not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/project_activities": {
+   "get": {
+    "summary": "project_activities List",
+    "description": "The project_activity endpoint returns multiple project_activity requested given the parameters injected. \n",
+    "parameters": [
+     {
+      "name": "project_activity_id",
+      "in": "query",
+      "description": "project_activity id",
+      "required": false,
+      "type": "number",
+      "format": "integer"
+     }
+    ],
+    "tags": [
+     "Project Activity"
+    ],
+    "responses": {
+     "200": {
+      "description": "An array of project_activity returned",
+      "schema": {
+       "type": "array",
+       "items": {
+        "$ref": "#/definitions/project_activity"
+       }
+      }
+     },
+     "404": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Error"
+      }
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/project_activity": {
+   "post": {
+    "tags": [
+     "Project Activity"
+    ],
+    "summary": "Add a new project_activity",
+    "description": "new project_activity",
+    "operationId": "add_project_activity",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "project_activity object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/project_activity"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successfully added a new project_activity for approval"
+     },
+     "405": {
+      "description": "Invalid input,adding a new project_activity was unsuccessful"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "put": {
+    "tags": [
+     "Project Activity"
+    ],
+    "summary": "Update an existing project_activity",
+    "description": "",
+    "operationId": "update_project_activity",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "project_activity object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/project_activity"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Success"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "project_activity not found"
+     },
+     "405": {
+      "description": "Validation exception"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/project_activity/{project_activity_id}": {
+   "get": {
+    "tags": [
+     "Project Activity"
+    ],
+    "summary": "Find project_activity by ID",
+    "description": "Returns a single project_activity",
+    "operationId": "get_project_activity_by_id",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "project_activity_id",
+      "in": "path",
+      "description": "ID of project_activity to return object",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "successful operation",
+      "schema": {
+       "$ref": "#/definitions/project_activity"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "project_activity not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "delete": {
+    "tags": [
+     "Project Activity"
+    ],
+    "summary": "Deletes an project_activity",
+    "description": "",
+    "operationId": "delete_project_activity",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "api_key",
+      "in": "header",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "project_activity_id",
+      "in": "path",
+      "description": "project_activity id to delete",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "project_activity not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/project_budget_accounts": {
+   "get": {
+    "summary": "project_budget_accounts List",
+    "description": "The project_budget_account endpoint returns multiple project_budget_account requested given the parameters injected. \n",
+    "parameters": [
+     {
+      "name": "project_budget_account_id",
+      "in": "query",
+      "description": "project_budget_account id",
+      "required": false,
+      "type": "number",
+      "format": "integer"
+     }
+    ],
+    "tags": [
+     "Project Budget Account"
+    ],
+    "responses": {
+     "200": {
+      "description": "An array of project_budget_account returned",
+      "schema": {
+       "type": "array",
+       "items": {
+        "$ref": "#/definitions/project_budget_account"
+       }
+      }
+     },
+     "404": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Error"
+      }
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/project_budget_account": {
+   "post": {
+    "tags": [
+     "Project Budget Account"
+    ],
+    "summary": "Add a new project_budget_account",
+    "description": "new project_budget_account",
+    "operationId": "add_project_budget_account",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "project_budget_account object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/project_budget_account"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successfully added a new project_budget_account for approval"
+     },
+     "405": {
+      "description": "Invalid input,adding a new project_budget_account was unsuccessful"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "put": {
+    "tags": [
+     "Project Budget Account"
+    ],
+    "summary": "Update an existing project_budget_account",
+    "description": "",
+    "operationId": "update_project_budget_account",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "project_budget_account object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/project_budget_account"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Success"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "project_budget_account not found"
+     },
+     "405": {
+      "description": "Validation exception"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/project_budget_account/{project_budget_account_id}": {
+   "get": {
+    "tags": [
+     "Project Budget Account"
+    ],
+    "summary": "Find project_budget_account by ID",
+    "description": "Returns a single project_budget_account",
+    "operationId": "get_project_budget_account_by_id",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "project_budget_account_id",
+      "in": "path",
+      "description": "ID of project_budget_account to return object",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "successful operation",
+      "schema": {
+       "$ref": "#/definitions/project_budget_account"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "project_budget_account not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "delete": {
+    "tags": [
+     "Project Budget Account"
+    ],
+    "summary": "Deletes an project_budget_account",
+    "description": "",
+    "operationId": "delete_project_budget_account",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "api_key",
+      "in": "header",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "project_budget_account_id",
+      "in": "path",
+      "description": "project_budget_account id to delete",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "project_budget_account not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/project_cash_needs": {
+   "get": {
+    "summary": "project_cash_needs List",
+    "description": "The project_cash_need endpoint returns multiple project_cash_need requested given the parameters injected. \n",
+    "parameters": [
+     {
+      "name": "project_cash_need_id",
+      "in": "query",
+      "description": "project_cash_need id",
+      "required": false,
+      "type": "number",
+      "format": "integer"
+     }
+    ],
+    "tags": [
+     "Project Cash Needs"
+    ],
+    "responses": {
+     "200": {
+      "description": "An array of project_cash_need returned",
+      "schema": {
+       "type": "array",
+       "items": {
+        "$ref": "#/definitions/project_cash_need"
+       }
+      }
+     },
+     "404": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Error"
+      }
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/project_cash_need": {
+   "post": {
+    "tags": [
+     "Project Cash Needs"
+    ],
+    "summary": "Add a new project_cash_need",
+    "description": "new project_cash_need",
+    "operationId": "add_project_cash_need",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "project_cash_need object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/project_cash_need"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successfully added a new project_cash_need for approval"
+     },
+     "405": {
+      "description": "Invalid input,adding a new project_cash_need was unsuccessful"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "put": {
+    "tags": [
+     "Project Cash Needs"
+    ],
+    "summary": "Update an existing project_cash_need",
+    "description": "",
+    "operationId": "update_project_cash_need",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "project_cash_need object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/project_cash_need"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Success"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "project_cash_need not found"
+     },
+     "405": {
+      "description": "Validation exception"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/project_cash_need/{project_cash_need_id}": {
+   "get": {
+    "tags": [
+     "Project Cash Needs"
+    ],
+    "summary": "Find project_cash_need by ID",
+    "description": "Returns a single project_cash_need",
+    "operationId": "get_project_cash_need_by_id",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "project_cash_need_id",
+      "in": "path",
+      "description": "ID of project_cash_need to return object",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "successful operation",
+      "schema": {
+       "$ref": "#/definitions/project_cash_need"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "project_cash_need not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "delete": {
+    "tags": [
+     "Project Cash Needs"
+    ],
+    "summary": "Deletes an project_cash_need",
+    "description": "",
+    "operationId": "delete_project_cash_need",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "api_key",
+      "in": "header",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "project_cash_need_id",
+      "in": "path",
+      "description": "project_cash_need id to delete",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "project_cash_need not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/project_master_lists": {
+   "get": {
+    "summary": "project_master_lists List",
+    "description": "The project_master_list endpoint returns multiple project_master_list requested given the parameters injected. \n",
+    "parameters": [
+     {
+      "name": "project_master_list_id",
+      "in": "query",
+      "description": "project_master_list id",
+      "required": false,
+      "type": "number",
+      "format": "integer"
+     }
+    ],
+    "tags": [
+     "Project Master List"
+    ],
+    "responses": {
+     "200": {
+      "description": "An array of project_master_list returned",
+      "schema": {
+       "type": "array",
+       "items": {
+        "$ref": "#/definitions/project_master_list"
+       }
+      }
+     },
+     "404": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Error"
+      }
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/project_master_list": {
+   "post": {
+    "tags": [
+     "Project Master List"
+    ],
+    "summary": "Add a new project_master_list",
+    "description": "new project_master_list",
+    "operationId": "add_project_master_list",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "project_master_list object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/project_master_list"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successfully added a new project_master_list for approval"
+     },
+     "405": {
+      "description": "Invalid input,adding a new project_master_list was unsuccessful"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "put": {
+    "tags": [
+     "Project Master List"
+    ],
+    "summary": "Update an existing project_master_list",
+    "description": "",
+    "operationId": "update_project_master_list",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "project_master_list object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/project_master_list"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Success"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "project_master_list not found"
+     },
+     "405": {
+      "description": "Validation exception"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/project_master_list/{project_master_list_id}": {
+   "get": {
+    "tags": [
+     "Project Master List"
+    ],
+    "summary": "Find project_master_list by ID",
+    "description": "Returns a single project_master_list",
+    "operationId": "get_project_master_list_by_id",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "project_master_list_id",
+      "in": "path",
+      "description": "ID of project_master_list to return object",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "successful operation",
+      "schema": {
+       "$ref": "#/definitions/project_master_list"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "project_master_list not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "delete": {
+    "tags": [
+     "Project Master List"
+    ],
+    "summary": "Deletes an project_master_list",
+    "description": "",
+    "operationId": "delete_project_master_list",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "api_key",
+      "in": "header",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "project_master_list_id",
+      "in": "path",
+      "description": "project_master_list id to delete",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "project_master_list not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/project_objectives": {
+   "get": {
+    "summary": "project_objectives List",
+    "description": "The project_objective endpoint returns multiple project_objective requested given the parameters injected. \n",
+    "parameters": [
+     {
+      "name": "project_objective_id",
+      "in": "query",
+      "description": "project_objective id",
+      "required": false,
+      "type": "number",
+      "format": "integer"
+     }
+    ],
+    "tags": [
+     "Project Objective"
+    ],
+    "responses": {
+     "200": {
+      "description": "An array of project_objective returned",
+      "schema": {
+       "type": "array",
+       "items": {
+        "$ref": "#/definitions/project_objective"
+       }
+      }
+     },
+     "404": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Error"
+      }
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/project_objective": {
+   "post": {
+    "tags": [
+     "Project Objective"
+    ],
+    "summary": "Add a new project_objective",
+    "description": "new project_objective",
+    "operationId": "add_project_objective",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "project_objective object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/project_objective"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successfully added a new project_objective for approval"
+     },
+     "405": {
+      "description": "Invalid input,adding a new project_objective was unsuccessful"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "put": {
+    "tags": [
+     "Project Objective"
+    ],
+    "summary": "Update an existing project_objective",
+    "description": "",
+    "operationId": "update_project_objective",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "project_objective object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/project_objective"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Success"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "project_objective not found"
+     },
+     "405": {
+      "description": "Validation exception"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/project_objective/{project_objective_id}": {
+   "get": {
+    "tags": [
+     "Project Objective"
+    ],
+    "summary": "Find project_objective by ID",
+    "description": "Returns a single project_objective",
+    "operationId": "get_project_objective_by_id",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "project_objective_id",
+      "in": "path",
+      "description": "ID of project_objective to return object",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "successful operation",
+      "schema": {
+       "$ref": "#/definitions/project_objective"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "project_objective not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "delete": {
+    "tags": [
+     "Project Objective"
+    ],
+    "summary": "Deletes an project_objective",
+    "description": "",
+    "operationId": "delete_project_objective",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "api_key",
+      "in": "header",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "project_objective_id",
+      "in": "path",
+      "description": "project_objective id to delete",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "project_objective not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/project_teams": {
+   "get": {
+    "summary": "project_teams List",
+    "description": "The project_team endpoint returns multiple project_team requested given the parameters injected. \n",
+    "parameters": [
+     {
+      "name": "project_team_id",
+      "in": "query",
+      "description": "project_team id",
+      "required": false,
+      "type": "number",
+      "format": "integer"
+     }
+    ],
+    "tags": [
+     "Project Team"
+    ],
+    "responses": {
+     "200": {
+      "description": "An array of project_team returned",
+      "schema": {
+       "type": "array",
+       "items": {
+        "$ref": "#/definitions/project_team"
+       }
+      }
+     },
+     "404": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Error"
+      }
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/project_team": {
+   "post": {
+    "tags": [
+     "Project Team"
+    ],
+    "summary": "Add a new project_team",
+    "description": "new project_team",
+    "operationId": "add_project_team",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "project_team object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/project_team"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successfully added a new project_team for approval"
+     },
+     "405": {
+      "description": "Invalid input,adding a new project_team was unsuccessful"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "put": {
+    "tags": [
+     "Project Team"
+    ],
+    "summary": "Update an existing project_team",
+    "description": "",
+    "operationId": "update_project_team",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "project_team object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/project_team"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Success"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "project_team not found"
+     },
+     "405": {
+      "description": "Validation exception"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/project_team/{project_team_id}": {
+   "get": {
+    "tags": [
+     "Project Team"
+    ],
+    "summary": "Find project_team by ID",
+    "description": "Returns a single project_team",
+    "operationId": "get_project_team_by_id",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "project_team_id",
+      "in": "path",
+      "description": "ID of project_team to return object",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "successful operation",
+      "schema": {
+       "$ref": "#/definitions/project_team"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "project_team not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "delete": {
+    "tags": [
+     "Project Team"
+    ],
+    "summary": "Deletes an project_team",
+    "description": "",
+    "operationId": "delete_project_team",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "api_key",
+      "in": "header",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "project_team_id",
+      "in": "path",
+      "description": "project_team id to delete",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "project_team not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/staffs": {
+   "get": {
+    "summary": "staffs List",
+    "description": "The staff endpoint returns multiple staff requested given the parameters injected. \n",
+    "parameters": [
+     {
+      "name": "staff_id",
+      "in": "query",
+      "description": "staff id",
+      "required": false,
+      "type": "number",
+      "format": "integer"
+     }
+    ],
+    "tags": [
+     "Staff"
+    ],
+    "responses": {
+     "200": {
+      "description": "An array of staff returned",
+      "schema": {
+       "type": "array",
+       "items": {
+        "$ref": "#/definitions/staff"
+       }
+      }
+     },
+     "404": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Error"
+      }
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/staff": {
+   "post": {
+    "tags": [
+     "Staff"
+    ],
+    "summary": "Add a new staff",
+    "description": "new staff",
+    "operationId": "add_staff",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "staff object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/staff"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successfully added a new staff for approval"
+     },
+     "405": {
+      "description": "Invalid input,adding a new staff was unsuccessful"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "put": {
+    "tags": [
+     "Staff"
+    ],
+    "summary": "Update an existing staff",
+    "description": "",
+    "operationId": "update_staff",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "staff object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/staff"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Success"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "staff not found"
+     },
+     "405": {
+      "description": "Validation exception"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/staff/{staff_id}": {
+   "get": {
+    "tags": [
+     "Staff"
+    ],
+    "summary": "Find staff by ID",
+    "description": "Returns a single staff",
+    "operationId": "get_staff_by_id",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "staff_id",
+      "in": "path",
+      "description": "ID of staff to return object",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "successful operation",
+      "schema": {
+       "$ref": "#/definitions/staff"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "staff not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "delete": {
+    "tags": [
+     "Staff"
+    ],
+    "summary": "Deletes an staff",
+    "description": "",
+    "operationId": "delete_staff",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "api_key",
+      "in": "header",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "staff_id",
+      "in": "path",
+      "description": "staff id to delete",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "staff not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/departments": {
+   "get": {
+    "summary": "departments List",
+    "description": "The department endpoint returns multiple department requested given the parameters injected. \n",
+    "parameters": [
+     {
+      "name": "department_id",
+      "in": "query",
+      "description": "department id",
+      "required": false,
+      "type": "number",
+      "format": "integer"
+     }
+    ],
+    "tags": [
+     "Department"
+    ],
+    "responses": {
+     "200": {
+      "description": "An array of department returned",
+      "schema": {
+       "type": "array",
+       "items": {
+        "$ref": "#/definitions/department"
+       }
+      }
+     },
+     "404": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Error"
+      }
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/department": {
+   "post": {
+    "tags": [
+     "Department"
+    ],
+    "summary": "Add a new department",
+    "description": "new department",
+    "operationId": "add_department",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "department object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/department"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successfully added a new department for approval"
+     },
+     "405": {
+      "description": "Invalid input,adding a new department was unsuccessful"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "put": {
+    "tags": [
+     "Department"
+    ],
+    "summary": "Update an existing department",
+    "description": "",
+    "operationId": "update_department",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "department object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/department"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Success"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "department not found"
+     },
+     "405": {
+      "description": "Validation exception"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/department/{department_id}": {
+   "get": {
+    "tags": [
+     "Department"
+    ],
+    "summary": "Find department by ID",
+    "description": "Returns a single department",
+    "operationId": "get_department_by_id",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "department_id",
+      "in": "path",
+      "description": "ID of department to return object",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "successful operation",
+      "schema": {
+       "$ref": "#/definitions/department"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "department not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "delete": {
+    "tags": [
+     "Department"
+    ],
+    "summary": "Deletes an department",
+    "description": "",
+    "operationId": "delete_department",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "api_key",
+      "in": "header",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "department_id",
+      "in": "path",
+      "description": "department id to delete",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "department not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/roles": {
+   "get": {
+    "summary": "roles List",
+    "description": "The role endpoint returns multiple role requested given the parameters injected. \n",
+    "parameters": [
+     {
+      "name": "role_id",
+      "in": "query",
+      "description": "role id",
+      "required": false,
+      "type": "number",
+      "format": "integer"
+     }
+    ],
+    "tags": [
+     "Roles"
+    ],
+    "responses": {
+     "200": {
+      "description": "An array of role returned",
+      "schema": {
+       "type": "array",
+       "items": {
+        "$ref": "#/definitions/role"
+       }
+      }
+     },
+     "404": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Error"
+      }
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/role": {
+   "post": {
+    "tags": [
+     "Roles"
+    ],
+    "summary": "Add a new role",
+    "description": "new role",
+    "operationId": "add_role",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "role object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/role"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successfully added a new role for approval"
+     },
+     "405": {
+      "description": "Invalid input,adding a new role was unsuccessful"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "put": {
+    "tags": [
+     "Roles"
+    ],
+    "summary": "Update an existing role",
+    "description": "",
+    "operationId": "update_role",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "role object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/role"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Success"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "role not found"
+     },
+     "405": {
+      "description": "Validation exception"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/role/{role_id}": {
+   "get": {
+    "tags": [
+     "Roles"
+    ],
+    "summary": "Find role by ID",
+    "description": "Returns a single role",
+    "operationId": "get_role_by_id",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "role_id",
+      "in": "path",
+      "description": "ID of role to return object",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "successful operation",
+      "schema": {
+       "$ref": "#/definitions/role"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "role not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "delete": {
+    "tags": [
+     "Roles"
+    ],
+    "summary": "Deletes an role",
+    "description": "",
+    "operationId": "delete_role",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "api_key",
+      "in": "header",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "role_id",
+      "in": "path",
+      "description": "role id to delete",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "role not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/rights": {
+   "get": {
+    "summary": "rights List",
+    "description": "The right endpoint returns multiple right requested given the parameters injected. \n",
+    "parameters": [
+     {
+      "name": "right_id",
+      "in": "query",
+      "description": "right id",
+      "required": false,
+      "type": "number",
+      "format": "integer"
+     }
+    ],
+    "tags": [
+     "Rights"
+    ],
+    "responses": {
+     "200": {
+      "description": "An array of right returned",
+      "schema": {
+       "type": "array",
+       "items": {
+        "$ref": "#/definitions/right"
+       }
+      }
+     },
+     "404": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Error"
+      }
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/right": {
+   "post": {
+    "tags": [
+     "Rights"
+    ],
+    "summary": "Add a new right",
+    "description": "new right",
+    "operationId": "add_right",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "right object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/right"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successfully added a new right for approval"
+     },
+     "405": {
+      "description": "Invalid input,adding a new right was unsuccessful"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "put": {
+    "tags": [
+     "Rights"
+    ],
+    "summary": "Update an existing right",
+    "description": "",
+    "operationId": "update_right",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "right object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/right"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Success"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "right not found"
+     },
+     "405": {
+      "description": "Validation exception"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/right/{right_id}": {
+   "get": {
+    "tags": [
+     "Rights"
+    ],
+    "summary": "Find right by ID",
+    "description": "Returns a single right",
+    "operationId": "get_right_by_id",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "right_id",
+      "in": "path",
+      "description": "ID of right to return object",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "successful operation",
+      "schema": {
+       "$ref": "#/definitions/right"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "right not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "delete": {
+    "tags": [
+     "Rights"
+    ],
+    "summary": "Deletes an right",
+    "description": "",
+    "operationId": "delete_right",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "api_key",
+      "in": "header",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "right_id",
+      "in": "path",
+      "description": "right id to delete",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "right not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/suppliers": {
+   "get": {
+    "summary": "suppliers List",
+    "description": "The supplier endpoint returns multiple supplier requested given the parameters injected. \n",
+    "parameters": [
+     {
+      "name": "supplier_id",
+      "in": "query",
+      "description": "supplier id",
+      "required": false,
+      "type": "number",
+      "format": "integer"
+     }
+    ],
+    "tags": [
+     "Supplier"
+    ],
+    "responses": {
+     "200": {
+      "description": "An array of supplier returned",
+      "schema": {
+       "type": "array",
+       "items": {
+        "$ref": "#/definitions/supplier"
+       }
+      }
+     },
+     "404": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Error"
+      }
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/supplier": {
+   "post": {
+    "tags": [
+     "Supplier"
+    ],
+    "summary": "Add a new supplier",
+    "description": "new supplier",
+    "operationId": "add_supplier",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "supplier object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/supplier"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successfully added a new supplier for approval"
+     },
+     "405": {
+      "description": "Invalid input,adding a new supplier was unsuccessful"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "put": {
+    "tags": [
+     "Supplier"
+    ],
+    "summary": "Update an existing supplier",
+    "description": "",
+    "operationId": "update_supplier",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "supplier object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/supplier"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Success"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "supplier not found"
+     },
+     "405": {
+      "description": "Validation exception"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/supplier/{supplier_id}": {
+   "get": {
+    "tags": [
+     "Supplier"
+    ],
+    "summary": "Find supplier by ID",
+    "description": "Returns a single supplier",
+    "operationId": "get_supplier_by_id",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "supplier_id",
+      "in": "path",
+      "description": "ID of supplier to return object",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "successful operation",
+      "schema": {
+       "$ref": "#/definitions/supplier"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "supplier not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "delete": {
+    "tags": [
+     "Supplier"
+    ],
+    "summary": "Deletes an supplier",
+    "description": "",
+    "operationId": "delete_supplier",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "api_key",
+      "in": "header",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "supplier_id",
+      "in": "path",
+      "description": "supplier id to delete",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "supplier not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/supplier_rates": {
+   "get": {
+    "summary": "supplier_rates List",
+    "description": "The supplier_rate endpoint returns multiple supplier_rate requested given the parameters injected. \n",
+    "parameters": [
+     {
+      "name": "supplier_rate_id",
+      "in": "query",
+      "description": "supplier_rate id",
+      "required": false,
+      "type": "number",
+      "format": "integer"
+     }
+    ],
+    "tags": [
+     "Supplier Rate"
+    ],
+    "responses": {
+     "200": {
+      "description": "An array of supplier_rate returned",
+      "schema": {
+       "type": "array",
+       "items": {
+        "$ref": "#/definitions/supplier_rate"
+       }
+      }
+     },
+     "404": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Error"
+      }
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/supplier_rate": {
+   "post": {
+    "tags": [
+     "Supplier Rate"
+    ],
+    "summary": "Add a new supplier_rate",
+    "description": "new supplier_rate",
+    "operationId": "add_supplier_rate",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "supplier_rate object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/supplier_rate"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successfully added a new supplier_rate for approval"
+     },
+     "405": {
+      "description": "Invalid input,adding a new supplier_rate was unsuccessful"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "put": {
+    "tags": [
+     "Supplier Rate"
+    ],
+    "summary": "Update an existing supplier_rate",
+    "description": "",
+    "operationId": "update_supplier_rate",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "supplier_rate object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/supplier_rate"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Success"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "supplier_rate not found"
+     },
+     "405": {
+      "description": "Validation exception"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/supplier_rate/{supplier_rate_id}": {
+   "get": {
+    "tags": [
+     "Supplier Rate"
+    ],
+    "summary": "Find supplier_rate by ID",
+    "description": "Returns a single supplier_rate",
+    "operationId": "get_supplier_rate_by_id",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "supplier_rate_id",
+      "in": "path",
+      "description": "ID of supplier_rate to return object",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "successful operation",
+      "schema": {
+       "$ref": "#/definitions/supplier_rate"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "supplier_rate not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "delete": {
+    "tags": [
+     "Supplier Rate"
+    ],
+    "summary": "Deletes an supplier_rate",
+    "description": "",
+    "operationId": "delete_supplier_rate",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "api_key",
+      "in": "header",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "supplier_rate_id",
+      "in": "path",
+      "description": "supplier_rate id to delete",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "supplier_rate not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/supply_categories": {
+   "get": {
+    "summary": "supply_categories List",
+    "description": "The supply_category endpoint returns multiple supply_category requested given the parameters injected. \n",
+    "parameters": [
+     {
+      "name": "supply_category_id",
+      "in": "query",
+      "description": "supply_category id",
+      "required": false,
+      "type": "number",
+      "format": "integer"
+     }
+    ],
+    "tags": [
+     "Supply Category"
+    ],
+    "responses": {
+     "200": {
+      "description": "An array of supply_category returned",
+      "schema": {
+       "type": "array",
+       "items": {
+        "$ref": "#/definitions/supply_category"
+       }
+      }
+     },
+     "404": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Error"
+      }
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/supply_category": {
+   "post": {
+    "tags": [
+     "Supply Category"
+    ],
+    "summary": "Add a new supply_category",
+    "description": "new supply_category",
+    "operationId": "add_supply_category",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "supply_category object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/supply_category"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successfully added a new supply_category for approval"
+     },
+     "405": {
+      "description": "Invalid input,adding a new supply_category was unsuccessful"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "put": {
+    "tags": [
+     "Supply Category"
+    ],
+    "summary": "Update an existing supply_category",
+    "description": "",
+    "operationId": "update_supply_category",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "supply_category object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/supply_category"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Success"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "supply_category not found"
+     },
+     "405": {
+      "description": "Validation exception"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/supply_category/{supply_category_id}": {
+   "get": {
+    "tags": [
+     "Supply Category"
+    ],
+    "summary": "Find supply_category by ID",
+    "description": "Returns a single supply_category",
+    "operationId": "get_supply_category_by_id",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "supply_category_id",
+      "in": "path",
+      "description": "ID of supply_category to return object",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "successful operation",
+      "schema": {
+       "$ref": "#/definitions/supply_category"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "supply_category not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "delete": {
+    "tags": [
+     "Supply Category"
+    ],
+    "summary": "Deletes an supply_category",
+    "description": "",
+    "operationId": "delete_supply_category",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "api_key",
+      "in": "header",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "supply_category_id",
+      "in": "path",
+      "description": "supply_category id to delete",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "supply_category not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/supply_category_items": {
+   "get": {
+    "summary": "supply_category_items List",
+    "description": "The supply_category_item endpoint returns multiple supply_category_item requested given the parameters injected. \n",
+    "parameters": [
+     {
+      "name": "supply_category_item_id",
+      "in": "query",
+      "description": "supply_category_item id",
+      "required": false,
+      "type": "number",
+      "format": "integer"
+     }
+    ],
+    "tags": [
+     "Supply Category Item"
+    ],
+    "responses": {
+     "200": {
+      "description": "An array of supply_category_item returned",
+      "schema": {
+       "type": "array",
+       "items": {
+        "$ref": "#/definitions/supply_category_item"
+       }
+      }
+     },
+     "404": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Error"
+      }
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/supply_category_item": {
+   "post": {
+    "tags": [
+     "Supply Category Item"
+    ],
+    "summary": "Add a new supply_category_item",
+    "description": "new supply_category_item",
+    "operationId": "add_supply_category_item",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "supply_category_item object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/supply_category_item"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successfully added a new supply_category_item for approval"
+     },
+     "405": {
+      "description": "Invalid input,adding a new supply_category_item was unsuccessful"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "put": {
+    "tags": [
+     "Supply Category Item"
+    ],
+    "summary": "Update an existing supply_category_item",
+    "description": "",
+    "operationId": "update_supply_category_item",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "supply_category_item object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/supply_category_item"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Success"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "supply_category_item not found"
+     },
+     "405": {
+      "description": "Validation exception"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/supply_category_item/{supply_category_item_id}": {
+   "get": {
+    "tags": [
+     "Supply Category Item"
+    ],
+    "summary": "Find supply_category_item by ID",
+    "description": "Returns a single supply_category_item",
+    "operationId": "get_supply_category_item_by_id",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "supply_category_item_id",
+      "in": "path",
+      "description": "ID of supply_category_item to return object",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "successful operation",
+      "schema": {
+       "$ref": "#/definitions/supply_category_item"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "supply_category_item not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "delete": {
+    "tags": [
+     "Supply Category Item"
+    ],
+    "summary": "Deletes an supply_category_item",
+    "description": "",
+    "operationId": "delete_supply_category_item",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "api_key",
+      "in": "header",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "supply_category_item_id",
+      "in": "path",
+      "description": "supply_category_item id to delete",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "supply_category_item not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  }
+ },
+ "securityDefinitions": {
+  "api_key": {
+   "type": "apiKey",
+   "name": "Authorization",
+   "in": "header"
+  }
+ },
+ "definitions": {
+  "currency": {
+   "type": "object",
+   "required": [
+    "id",
+    "created_at"
+   ],
+   "properties": {
+    "id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "num": {
+     "type": "number",
+     "format": "int64",
+     "example": 20000
+    },
+    "str": {
+     "type": "string",
+     "example": "PayPal.pdf"
+    },
+    "date": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "created_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "updated_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    }
+   },
+   "xml": {
+    "name": "currency"
+   }
+  },
+  "Error": {
+   "type": "object",
+   "properties": {
+    "error": {
+     "type": "string",
+     "example": "object not found"
+    }
+   }
+  },
+  "Success": {
+   "type": "object",
+   "properties": {
+    "msg": {
+     "type": "string",
+     "example": "object not found"
+    }
+   }
+  },
+  "lpo": {
+   "type": "object",
+   "required": [
+    "id",
+    "chai_ref",
+    "lpo_date",
+    "addressee",
+    "title",
+    "purpose",
+    "request_date",
+    "status",
+    "currency",
+    "quotation",
+    "supply_category",
+    "delivery_document",
+    "date_delivered",
+    "meeting",
+    "comments",
+    "preffered_supplier",
+    "attention",
+    "lpo_email",
+    "reject_reason",
+    "quote_exempt",
+    "quote_exempt_explanation",
+    "account_id",
+    "project_manager_id",
+    "received_by",
+    "project_id",
+    "requested_by",
+    "supplier_id",
+    "created_at",
+    "updated_at"
+   ],
+   "properties": {
+    "id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "chai_ref": {
+     "type": "string",
+     "example": "REF-100001"
+    },
+    "lpo_date": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "addressee": {
+     "type": "string",
+     "example": "Kevin Mwangi"
+    },
+    "title": {
+     "type": "string",
+     "example": "Print Paper"
+    },
+    "purpose": {
+     "type": "string",
+     "example": "Office Supplies"
+    },
+    "request_date": {
+     "type": "string",
+     "example": "REF-100001"
+    },
+    "status": {
+     "type": "integer",
+     "format": "int64",
+     "description": "lpo status",
+     "example": 2
+    },
+    "currency": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "quotation": {
+     "type": "integer",
+     "format": "int64",
+     "example": 123
+    },
+    "supply_category": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "delivery_document": {
+     "type": "string",
+     "description": "delivery document scanned and stored",
+     "example": "delivered.pdf"
+    },
+    "date_delivered": {
+     "type": "string",
+     "format": "date",
+     "example": "2017-01-01"
+    },
+    "meeting": {
+     "type": "integer",
+     "format": "int64",
+     "example": 23
+    },
+    "comments": {
+     "type": "string",
+     "example": "Everything seems fine"
+    },
+    "preffered_supplier": {
+     "type": "integer",
+     "format": "int64",
+     "example": 25
+    },
+    "attention": {
+     "type": "string",
+     "example": "Sir"
+    },
+    "lpo_email": {
+     "type": "string",
+     "example": "mwangikevinn@gmail.com"
+    },
+    "reject_reason": {
+     "type": "string",
+     "example": "No currency indicated"
+    },
+    "quote_exempt": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "quote_exempt_explanation": {
+     "type": "string",
+     "example": "Short delivery time required"
+    },
+    "account_id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 43
+    },
+    "project_manager_id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 23
+    },
+    "received_by": {
+     "type": "integer",
+     "format": "int64",
+     "example": 23
+    },
+    "project_id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 2
+    },
+    "requested_by": {
+     "type": "integer",
+     "format": "int64",
+     "example": 23
+    },
+    "supplier_id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 2
+    },
+    "created_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "updated_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    }
+   },
+   "xml": {
+    "name": "lpo"
+   }
+  },
+  "lpo_status": {
+   "type": "object",
+   "required": [
+    "id",
+    "lpo_status",
+    "next_status",
+    "status_security_level",
+    "created_at",
+    "updated_at"
+   ],
+   "properties": {
+    "id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "lpo_status": {
+     "type": "string",
+     "example": "Pending management approval"
+    },
+    "next_status": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "status_security_level": {
+     "type": "integer",
+     "format": "int64",
+     "example": 2
+    },
+    "created_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "updated_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    }
+   },
+   "xml": {
+    "name": "lpo"
+   }
+  },
+  "lpo_quotation": {
+   "type": "object",
+   "required": [
+    "id",
+    "lpo_id",
+    "supplier_id",
+    "created_at",
+    "updated_at"
+   ],
+   "properties": {
+    "id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "lpo_id": {
+     "type": "integer",
+     "example": 10
+    },
+    "supplier_id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 2
+    },
+    "amount": {
+     "type": "number",
+     "format": "int64",
+     "example": 20000
+    },
+    "quote_description": {
+     "type": "string",
+     "example": "Trial"
+    },
+    "quotation_doc": {
+     "type": "string",
+     "example": "PayPal.pdf"
+    },
+    "quote_date": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "uploaded_by_id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 2
+    },
+    "created_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "updated_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    }
+   },
+   "xml": {
+    "name": "lpo_quotation"
+   }
+  },
+  "lpo_item": {
+   "type": "object",
+   "required": [
+    "id",
+    "lpo_id",
+    "created_at",
+    "updated_at"
+   ],
+   "properties": {
+    "id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "lpo_id": {
+     "type": "integer",
+     "example": 10
+    },
+    "item_description": {
+     "type": "string",
+     "example": "Trial"
+    },
+    "unit_price": {
+     "type": "number",
+     "format": "int64",
+     "example": 20000
+    },
+    "vat_inclusive": {
+     "type": "integer",
+     "example": 0
+    },
+    "vat_charge": {
+     "type": "number",
+     "format": "int64",
+     "example": 200.1
+    },
+    "qty": {
+     "type": "integer",
+     "example": 10
+    },
+    "qty_description": {
+     "type": "integer",
+     "example": 10
+    },
+    "quotation": {
+     "type": "integer",
+     "example": 1
+    },
+    "item_name": {
+     "type": "string",
+     "example": "HP Pro 3500 Microtower PC, IntelÂ® Coreâ„¢ i3- 3240"
+    },
+    "uploaded_by_id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 2
+    },
+    "created_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "updated_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    }
+   },
+   "xml": {
+    "name": "lpo_item"
+   }
+  },
+  "lpo_term": {
+   "type": "object",
+   "required": [
+    "id",
+    "lpo_id",
+    "created_at",
+    "updated_at"
+   ],
+   "properties": {
+    "id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "lpo_id": {
+     "type": "integer",
+     "example": 10
+    },
+    "term": {
+     "type": "string",
+     "example": "Delivered at 12:00"
+    },
+    "uploaded_by_id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 2
+    },
+    "created_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "updated_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    }
+   },
+   "xml": {
+    "name": "lpo_term"
+   }
+  },
+  "lpo_comment": {
+   "type": "object",
+   "required": [
+    "id",
+    "lpo_id",
+    "created_at",
+    "updated_at"
+   ],
+   "properties": {
+    "id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "lpo_id": {
+     "type": "integer",
+     "example": 10
+    },
+    "comment": {
+     "type": "string",
+     "example": "Trial"
+    },
+    "comment_doc": {
+     "type": "string",
+     "example": "Needs 3 quotations"
+    },
+    "commentor_id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 2
+    },
+    "at_status_id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 2
+    },
+    "created_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "updated_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    }
+   },
+   "xml": {
+    "name": "lpo_comment"
+   }
+  },
+  "lpo_viewing_permission": {
+   "type": "object",
+   "required": [
+    "id",
+    "created_at",
+    "updated_at"
+   ],
+   "properties": {
+    "id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "lpo_status": {
+     "type": "string",
+     "example": "Trial"
+    },
+    "security_level_id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "display_color": {
+     "type": "string",
+     "example": "#000"
+    },
+    "created_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "updated_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    }
+   },
+   "xml": {
+    "name": "lpo_viewing_permission"
+   }
+  },
+  "lpo_approval": {
+   "type": "object",
+   "required": [
+    "id",
+    "lpo_id",
+    "created_at",
+    "updated_at"
+   ],
+   "properties": {
+    "id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "lpo_id": {
+     "type": "integer",
+     "example": 10
+    },
+    "approval_level_id": {
+     "type": "integer",
+     "example": 10
+    },
+    "approver_id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 2
+    },
+    "created_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "updated_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    }
+   },
+   "xml": {
+    "name": "lpo_approval"
+   }
+  },
+  "lpo_default_term": {
+   "type": "object",
+   "required": [
+    "id",
+    "created_at"
+   ],
+   "properties": {
+    "id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "terms": {
+     "type": "string",
+     "example": "PayPal.pdf"
+    },
+    "created_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "updated_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    }
+   },
+   "xml": {
+    "name": "lpo_default_term"
+   }
+  },
+  "mobile_payment": {
+   "type": "object",
+   "required": [
+    "id",
+    "created_at"
+   ],
+   "properties": {
+    "id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "num": {
+     "type": "number",
+     "format": "int64",
+     "example": 20000
+    },
+    "str": {
+     "type": "string",
+     "example": "PayPal.pdf"
+    },
+    "date": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "created_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "updated_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    }
+   },
+   "xml": {
+    "name": "mobile_payment"
+   }
+  },
+  "mobile_payment_approval": {
+   "type": "object",
+   "required": [
+    "id",
+    "created_at"
+   ],
+   "properties": {
+    "id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "num": {
+     "type": "number",
+     "format": "int64",
+     "example": 20000
+    },
+    "str": {
+     "type": "string",
+     "example": "PayPal.pdf"
+    },
+    "date": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "created_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "updated_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    }
+   },
+   "xml": {
+    "name": "mobile_payment_approval"
+   }
+  },
+  "mobile_payment_payee": {
+   "type": "object",
+   "required": [
+    "id",
+    "created_at"
+   ],
+   "properties": {
+    "id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "num": {
+     "type": "number",
+     "format": "int64",
+     "example": 20000
+    },
+    "str": {
+     "type": "string",
+     "example": "PayPal.pdf"
+    },
+    "date": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "created_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "updated_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    }
+   },
+   "xml": {
+    "name": "mobile_payment_payee"
+   }
+  },
+  "mobile_payment_status": {
+   "type": "object",
+   "required": [
+    "id",
+    "created_at"
+   ],
+   "properties": {
+    "id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "num": {
+     "type": "number",
+     "format": "int64",
+     "example": 20000
+    },
+    "str": {
+     "type": "string",
+     "example": "PayPal.pdf"
+    },
+    "date": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "created_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "updated_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    }
+   },
+   "xml": {
+    "name": "mobile_payment_status"
+   }
+  },
+  "mobile_payment_tariff": {
+   "type": "object",
+   "required": [
+    "id",
+    "created_at"
+   ],
+   "properties": {
+    "id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "num": {
+     "type": "number",
+     "format": "int64",
+     "example": 20000
+    },
+    "str": {
+     "type": "string",
+     "example": "PayPal.pdf"
+    },
+    "date": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "created_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "updated_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    }
+   },
+   "xml": {
+    "name": "mobile_payment_tariff"
+   }
+  },
+  "mobile_payment_type": {
+   "type": "object",
+   "required": [
+    "id",
+    "created_at"
+   ],
+   "properties": {
+    "id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "num": {
+     "type": "number",
+     "format": "int64",
+     "example": 20000
+    },
+    "str": {
+     "type": "string",
+     "example": "PayPal.pdf"
+    },
+    "date": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "created_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "updated_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    }
+   },
+   "xml": {
+    "name": "mobile_payment_type"
+   }
+  },
+  "mobile_payment_viewing_permission": {
+   "type": "object",
+   "required": [
+    "id",
+    "created_at"
+   ],
+   "properties": {
+    "id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "num": {
+     "type": "number",
+     "format": "int64",
+     "example": 20000
+    },
+    "str": {
+     "type": "string",
+     "example": "PayPal.pdf"
+    },
+    "date": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "created_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "updated_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    }
+   },
+   "xml": {
+    "name": "mobile_payment_viewing_permission"
+   }
+  },
+  "project": {
+   "type": "object",
+   "required": [
+    "id",
+    "created_at"
+   ],
+   "properties": {
+    "id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "num": {
+     "type": "number",
+     "format": "int64",
+     "example": 20000
+    },
+    "str": {
+     "type": "string",
+     "example": "PayPal.pdf"
+    },
+    "date": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "created_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "updated_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    }
+   },
+   "xml": {
+    "name": "project"
+   }
+  },
+  "project_activity": {
+   "type": "object",
+   "required": [
+    "id",
+    "created_at"
+   ],
+   "properties": {
+    "id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "num": {
+     "type": "number",
+     "format": "int64",
+     "example": 20000
+    },
+    "str": {
+     "type": "string",
+     "example": "PayPal.pdf"
+    },
+    "date": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "created_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "updated_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    }
+   },
+   "xml": {
+    "name": "project_activity"
+   }
+  },
+  "project_budget_account": {
+   "type": "object",
+   "required": [
+    "id",
+    "created_at"
+   ],
+   "properties": {
+    "id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "num": {
+     "type": "number",
+     "format": "int64",
+     "example": 20000
+    },
+    "str": {
+     "type": "string",
+     "example": "PayPal.pdf"
+    },
+    "date": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "created_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "updated_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    }
+   },
+   "xml": {
+    "name": "project_budget_account"
+   }
+  },
+  "project_cash_need": {
+   "type": "object",
+   "required": [
+    "id",
+    "created_at"
+   ],
+   "properties": {
+    "id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "num": {
+     "type": "number",
+     "format": "int64",
+     "example": 20000
+    },
+    "str": {
+     "type": "string",
+     "example": "PayPal.pdf"
+    },
+    "date": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "created_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "updated_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    }
+   },
+   "xml": {
+    "name": "project_cash_need"
+   }
+  },
+  "project_master_list": {
+   "type": "object",
+   "required": [
+    "id",
+    "created_at"
+   ],
+   "properties": {
+    "id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "num": {
+     "type": "number",
+     "format": "int64",
+     "example": 20000
+    },
+    "str": {
+     "type": "string",
+     "example": "PayPal.pdf"
+    },
+    "date": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "created_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "updated_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    }
+   },
+   "xml": {
+    "name": "project_master_list"
+   }
+  },
+  "project_objective": {
+   "type": "object",
+   "required": [
+    "id",
+    "created_at"
+   ],
+   "properties": {
+    "id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "num": {
+     "type": "number",
+     "format": "int64",
+     "example": 20000
+    },
+    "str": {
+     "type": "string",
+     "example": "PayPal.pdf"
+    },
+    "date": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "created_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "updated_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    }
+   },
+   "xml": {
+    "name": "project_objective"
+   }
+  },
+  "project_team": {
+   "type": "object",
+   "required": [
+    "id",
+    "created_at"
+   ],
+   "properties": {
+    "id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "num": {
+     "type": "number",
+     "format": "int64",
+     "example": 20000
+    },
+    "str": {
+     "type": "string",
+     "example": "PayPal.pdf"
+    },
+    "date": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "created_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "updated_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    }
+   },
+   "xml": {
+    "name": "project_team"
+   }
+  },
+  "staff": {
+   "type": "object",
+   "required": [
+    "id",
+    "created_at",
+    "updated_at"
+   ],
+   "properties": {
+    "id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "username": {
+     "type": "string",
+     "example": "kevin"
+    },
+    "f_name": {
+     "type": "string",
+     "example": "kevin"
+    },
+    "l_name": {
+     "type": "string",
+     "example": "mwangi"
+    },
+    "department_id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "email": {
+     "type": "string",
+     "example": "kevin@mail.com"
+    },
+    "role_id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "roles": {
+     "title": "Array Of Roles",
+     "type": "array",
+     "items": {
+      "$ref": "#/definitions/role"
+     }
+    },
+    "is_admin": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "post": {
+     "type": "string",
+     "example": "program manager"
+    },
+    "mobile_no": {
+     "type": "string",
+     "example": "+254723568945"
+    },
+    "bank_account": {
+     "type": "string",
+     "example": "23132165465"
+    },
+    "cheque_addresse": {
+     "type": "string",
+     "example": "kevin"
+    },
+    "payment_mode_id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "bank_id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "bank_branch_id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "station_id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "swift_code": {
+     "type": "string",
+     "example": "45645"
+    },
+    "signature": {
+     "type": "string",
+     "example": "kevin.pdf"
+    },
+    "active": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "created_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "updated_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    }
+   },
+   "xml": {
+    "name": "staff"
+   }
+  },
+  "department": {
+   "type": "object",
+   "required": [
+    "id",
+    "created_at",
+    "updated_at"
+   ],
+   "properties": {
+    "id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "department_name": {
+     "type": "string",
+     "example": "Finance"
+    },
+    "desc": {
+     "type": "string",
+     "example": "Finance Dpt"
+    },
+    "acronym": {
+     "type": "string",
+     "example": "Fin"
+    },
+    "HOD_id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 12
+    },
+    "created_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "updated_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    }
+   },
+   "xml": {
+    "name": "department"
+   }
+  },
+  "role": {
+   "type": "object",
+   "required": [
+    "id",
+    "created_at",
+    "updated_at"
+   ],
+   "properties": {
+    "id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "role_name": {
+     "type": "string",
+     "example": "Finance Manager"
+    },
+    "desc": {
+     "type": "string",
+     "example": "Financial Controller"
+    },
+    "created_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "updated_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    }
+   },
+   "xml": {
+    "name": "role"
+   }
+  },
+  "right": {
+   "type": "object",
+   "required": [
+    "id",
+    "created_at",
+    "updated_at"
+   ],
+   "properties": {
+    "id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "right_name": {
+     "type": "string",
+     "example": "Approve LPO "
+    },
+    "desc": {
+     "type": "string",
+     "example": "Approve LPO Finance Level"
+    },
+    "created_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "updated_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    }
+   },
+   "xml": {
+    "name": "role"
+   }
+  },
+  "supplier": {
+   "type": "object",
+   "required": [
+    "id",
+    "created_at"
+   ],
+   "properties": {
+    "id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "num": {
+     "type": "number",
+     "format": "int64",
+     "example": 20000
+    },
+    "str": {
+     "type": "string",
+     "example": "PayPal.pdf"
+    },
+    "date": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "created_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "updated_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    }
+   },
+   "xml": {
+    "name": "Supplier"
+   }
+  },
+  "supplier_rate": {
+   "type": "object",
+   "required": [
+    "id",
+    "created_at"
+   ],
+   "properties": {
+    "id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "num": {
+     "type": "number",
+     "format": "int64",
+     "example": 20000
+    },
+    "str": {
+     "type": "string",
+     "example": "PayPal.pdf"
+    },
+    "date": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "created_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "updated_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    }
+   },
+   "xml": {
+    "name": "supplier_rate"
+   }
+  },
+  "supply_category": {
+   "type": "object",
+   "required": [
+    "id",
+    "created_at"
+   ],
+   "properties": {
+    "id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "num": {
+     "type": "number",
+     "format": "int64",
+     "example": 20000
+    },
+    "str": {
+     "type": "string",
+     "example": "PayPal.pdf"
+    },
+    "date": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "created_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "updated_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    }
+   },
+   "xml": {
+    "name": "supply_category"
+   }
+  },
+  "supply_category_item": {
+   "type": "object",
+   "required": [
+    "id",
+    "created_at"
+   ],
+   "properties": {
+    "id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "num": {
+     "type": "number",
+     "format": "int64",
+     "example": 20000
+    },
+    "str": {
+     "type": "string",
+     "example": "PayPal.pdf"
+    },
+    "date": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "created_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "updated_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    }
+   },
+   "xml": {
+    "name": "supply_category_item"
+   }
+  }
+ }
+}

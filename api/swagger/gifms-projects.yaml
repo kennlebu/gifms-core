@@ -1,0 +1,1912 @@
+swagger: '2.0'
+info:
+  description: Finance management sysytem
+  version: 1.0.0
+  title: Grants Information Management System
+  termsOfService: 'http://kefinance.clintonhealthaccess.org/terms/'
+  contact:
+    email: mwangikevinn@gmail.com
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+host: 'localhost:8000'
+basePath: /api
+tags:
+  - name: Project
+    description: Everything About Project
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/project/docs'
+  - name: Project Activity
+    description: Everything About Project Activity
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/project_activity/docs'
+  - name: Project Budget Account
+    description: Everything About Project Budget Account
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/project_budget_account/docs'
+  - name: Project Cash Needs
+    description: Everything About Project Cash Needs
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/project_cash_need/docs'
+  - name: Project Master List
+    description: Everything About Project Master List
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/project_master_list/docs'
+  - name: Project Objective
+    description: Everything About Project Objective
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/project_objective/docs'
+  - name: Project Team
+    description: Everything About Project Team
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/project_team/docs'
+schemes:
+  - http
+  - https
+paths:
+
+
+
+
+
+
+
+
+
+
+
+  /projects:
+    get:
+      summary: projects List
+      description: |
+        The project endpoint returns multiple project requested given the parameters injected. 
+      parameters:
+        - name: project_id
+          in: query
+          description: project id 
+          required: false
+          type: number
+          format: integer
+      tags:
+        - Project
+      responses:
+        200:
+          description: An array of project returned
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/project'
+        404:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+        - api_key: []
+
+
+
+
+
+
+
+  /project:    
+    post:
+      tags:
+        - Project
+      summary: Add a new project
+      description: new project  
+      operationId: add_project
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: project object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/project'
+      responses:
+        '200':
+          description: Successfully added a new project for approval 
+        '405':
+          description: Invalid input,adding a new project was unsuccessful
+      security:
+        - api_key: []
+            
+            
+            
+
+            
+    put:
+      tags:
+        - Project
+      summary: Update an existing project
+      description: ''
+      operationId: update_project
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: project object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/project'
+      responses:
+        200:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Success'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: project not found
+        '405':
+          description: Validation exception
+      security:
+        - api_key: []
+        
+        
+        
+        
+        
+        
+  '/project/{project_id}':
+    get:
+      tags:
+        - Project
+      summary: Find project by ID
+      description: Returns a single project
+      operationId: get_project_by_id
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: project_id
+          in: path
+          description: ID of project to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/project'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: project not found
+      security:
+        - api_key: []
+        
+        
+     
+            
+            
+            
+    delete:
+      tags:
+        - Project
+      summary: Deletes an project
+      description: ''
+      operationId: delete_project
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: api_key
+          in: header
+          required: true
+          type: string
+        - name: project_id
+          in: path
+          description: project id to delete
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: project not found
+      security:
+        - api_key: []
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  /project_activities:
+    get:
+      summary: project_activities List
+      description: |
+        The project_activity endpoint returns multiple project_activity requested given the parameters injected. 
+      parameters:
+        - name: project_activity_id
+          in: query
+          description: project_activity id 
+          required: false
+          type: number
+          format: integer
+      tags:
+        - Project Activity
+      responses:
+        200:
+          description: An array of project_activity returned
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/project_activity'
+        404:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+        - api_key: []
+
+
+
+
+
+
+
+  /project_activity:    
+    post:
+      tags:
+        - Project Activity
+      summary: Add a new project_activity
+      description: new project_activity  
+      operationId: add_project_activity
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: project_activity object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/project_activity'
+      responses:
+        '200':
+          description: Successfully added a new project_activity for approval 
+        '405':
+          description: Invalid input,adding a new project_activity was unsuccessful
+      security:
+        - api_key: []
+            
+            
+            
+
+            
+    put:
+      tags:
+        - Project Activity
+      summary: Update an existing project_activity
+      description: ''
+      operationId: update_project_activity
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: project_activity object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/project_activity'
+      responses:
+        200:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Success'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: project_activity not found
+        '405':
+          description: Validation exception
+      security:
+        - api_key: []
+        
+        
+        
+        
+        
+        
+  '/project_activity/{project_activity_id}':
+    get:
+      tags:
+        - Project Activity
+      summary: Find project_activity by ID
+      description: Returns a single project_activity
+      operationId: get_project_activity_by_id
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: project_activity_id
+          in: path
+          description: ID of project_activity to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/project_activity'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: project_activity not found
+      security:
+        - api_key: []
+        
+        
+     
+            
+            
+            
+    delete:
+      tags:
+        - Project Activity
+      summary: Deletes an project_activity
+      description: ''
+      operationId: delete_project_activity
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: api_key
+          in: header
+          required: true
+          type: string
+        - name: project_activity_id
+          in: path
+          description: project_activity id to delete
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: project_activity not found
+      security:
+        - api_key: []
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  /project_budget_accounts:
+    get:
+      summary: project_budget_accounts List
+      description: |
+        The project_budget_account endpoint returns multiple project_budget_account requested given the parameters injected. 
+      parameters:
+        - name: project_budget_account_id
+          in: query
+          description: project_budget_account id 
+          required: false
+          type: number
+          format: integer
+      tags:
+        - Project Budget Account
+      responses:
+        200:
+          description: An array of project_budget_account returned
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/project_budget_account'
+        404:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+        - api_key: []
+
+
+
+
+
+
+
+  /project_budget_account:    
+    post:
+      tags:
+        - Project Budget Account
+      summary: Add a new project_budget_account
+      description: new project_budget_account  
+      operationId: add_project_budget_account
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: project_budget_account object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/project_budget_account'
+      responses:
+        '200':
+          description: Successfully added a new project_budget_account for approval 
+        '405':
+          description: Invalid input,adding a new project_budget_account was unsuccessful
+      security:
+        - api_key: []
+            
+            
+            
+
+            
+    put:
+      tags:
+        - Project Budget Account
+      summary: Update an existing project_budget_account
+      description: ''
+      operationId: update_project_budget_account
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: project_budget_account object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/project_budget_account'
+      responses:
+        200:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Success'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: project_budget_account not found
+        '405':
+          description: Validation exception
+      security:
+        - api_key: []
+        
+        
+        
+        
+        
+        
+  '/project_budget_account/{project_budget_account_id}':
+    get:
+      tags:
+        - Project Budget Account
+      summary: Find project_budget_account by ID
+      description: Returns a single project_budget_account
+      operationId: get_project_budget_account_by_id
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: project_budget_account_id
+          in: path
+          description: ID of project_budget_account to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/project_budget_account'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: project_budget_account not found
+      security:
+        - api_key: []
+        
+        
+     
+            
+            
+            
+    delete:
+      tags:
+        - Project Budget Account
+      summary: Deletes an project_budget_account
+      description: ''
+      operationId: delete_project_budget_account
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: api_key
+          in: header
+          required: true
+          type: string
+        - name: project_budget_account_id
+          in: path
+          description: project_budget_account id to delete
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: project_budget_account not found
+      security:
+        - api_key: []
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  /project_cash_needs:
+    get:
+      summary: project_cash_needs List
+      description: |
+        The project_cash_need endpoint returns multiple project_cash_need requested given the parameters injected. 
+      parameters:
+        - name: project_cash_need_id
+          in: query
+          description: project_cash_need id 
+          required: false
+          type: number
+          format: integer
+      tags:
+        - Project Cash Needs
+      responses:
+        200:
+          description: An array of project_cash_need returned
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/project_cash_need'
+        404:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+        - api_key: []
+
+
+
+
+
+
+
+  /project_cash_need:    
+    post:
+      tags:
+        - Project Cash Needs
+      summary: Add a new project_cash_need
+      description: new project_cash_need  
+      operationId: add_project_cash_need
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: project_cash_need object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/project_cash_need'
+      responses:
+        '200':
+          description: Successfully added a new project_cash_need for approval 
+        '405':
+          description: Invalid input,adding a new project_cash_need was unsuccessful
+      security:
+        - api_key: []
+            
+            
+            
+
+            
+    put:
+      tags:
+        - Project Cash Needs
+      summary: Update an existing project_cash_need
+      description: ''
+      operationId: update_project_cash_need
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: project_cash_need object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/project_cash_need'
+      responses:
+        200:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Success'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: project_cash_need not found
+        '405':
+          description: Validation exception
+      security:
+        - api_key: []
+        
+        
+        
+        
+        
+        
+  '/project_cash_need/{project_cash_need_id}':
+    get:
+      tags:
+        - Project Cash Needs
+      summary: Find project_cash_need by ID
+      description: Returns a single project_cash_need
+      operationId: get_project_cash_need_by_id
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: project_cash_need_id
+          in: path
+          description: ID of project_cash_need to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/project_cash_need'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: project_cash_need not found
+      security:
+        - api_key: []
+        
+        
+     
+            
+            
+            
+    delete:
+      tags:
+        - Project Cash Needs
+      summary: Deletes an project_cash_need
+      description: ''
+      operationId: delete_project_cash_need
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: api_key
+          in: header
+          required: true
+          type: string
+        - name: project_cash_need_id
+          in: path
+          description: project_cash_need id to delete
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: project_cash_need not found
+      security:
+        - api_key: []
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  /project_master_lists:
+    get:
+      summary: project_master_lists List
+      description: |
+        The project_master_list endpoint returns multiple project_master_list requested given the parameters injected. 
+      parameters:
+        - name: project_master_list_id
+          in: query
+          description: project_master_list id 
+          required: false
+          type: number
+          format: integer
+      tags:
+        - Project Master List
+      responses:
+        200:
+          description: An array of project_master_list returned
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/project_master_list'
+        404:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+        - api_key: []
+
+
+
+
+
+
+
+  /project_master_list:    
+    post:
+      tags:
+        - Project Master List
+      summary: Add a new project_master_list
+      description: new project_master_list  
+      operationId: add_project_master_list
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: project_master_list object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/project_master_list'
+      responses:
+        '200':
+          description: Successfully added a new project_master_list for approval 
+        '405':
+          description: Invalid input,adding a new project_master_list was unsuccessful
+      security:
+        - api_key: []
+            
+            
+            
+
+            
+    put:
+      tags:
+        - Project Master List
+      summary: Update an existing project_master_list
+      description: ''
+      operationId: update_project_master_list
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: project_master_list object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/project_master_list'
+      responses:
+        200:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Success'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: project_master_list not found
+        '405':
+          description: Validation exception
+      security:
+        - api_key: []
+        
+        
+        
+        
+        
+        
+  '/project_master_list/{project_master_list_id}':
+    get:
+      tags:
+        - Project Master List
+      summary: Find project_master_list by ID
+      description: Returns a single project_master_list
+      operationId: get_project_master_list_by_id
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: project_master_list_id
+          in: path
+          description: ID of project_master_list to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/project_master_list'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: project_master_list not found
+      security:
+        - api_key: []
+        
+        
+     
+            
+            
+            
+    delete:
+      tags:
+        - Project Master List
+      summary: Deletes an project_master_list
+      description: ''
+      operationId: delete_project_master_list
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: api_key
+          in: header
+          required: true
+          type: string
+        - name: project_master_list_id
+          in: path
+          description: project_master_list id to delete
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: project_master_list not found
+      security:
+        - api_key: []
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  /project_objectives:
+    get:
+      summary: project_objectives List
+      description: |
+        The project_objective endpoint returns multiple project_objective requested given the parameters injected. 
+      parameters:
+        - name: project_objective_id
+          in: query
+          description: project_objective id 
+          required: false
+          type: number
+          format: integer
+      tags:
+        - Project Objective
+      responses:
+        200:
+          description: An array of project_objective returned
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/project_objective'
+        404:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+        - api_key: []
+
+
+
+
+
+
+
+  /project_objective:    
+    post:
+      tags:
+        - Project Objective
+      summary: Add a new project_objective
+      description: new project_objective  
+      operationId: add_project_objective
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: project_objective object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/project_objective'
+      responses:
+        '200':
+          description: Successfully added a new project_objective for approval 
+        '405':
+          description: Invalid input,adding a new project_objective was unsuccessful
+      security:
+        - api_key: []
+            
+            
+            
+
+            
+    put:
+      tags:
+        - Project Objective
+      summary: Update an existing project_objective
+      description: ''
+      operationId: update_project_objective
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: project_objective object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/project_objective'
+      responses:
+        200:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Success'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: project_objective not found
+        '405':
+          description: Validation exception
+      security:
+        - api_key: []
+        
+        
+        
+        
+        
+        
+  '/project_objective/{project_objective_id}':
+    get:
+      tags:
+        - Project Objective
+      summary: Find project_objective by ID
+      description: Returns a single project_objective
+      operationId: get_project_objective_by_id
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: project_objective_id
+          in: path
+          description: ID of project_objective to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/project_objective'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: project_objective not found
+      security:
+        - api_key: []
+        
+        
+     
+            
+            
+            
+    delete:
+      tags:
+        - Project Objective
+      summary: Deletes an project_objective
+      description: ''
+      operationId: delete_project_objective
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: api_key
+          in: header
+          required: true
+          type: string
+        - name: project_objective_id
+          in: path
+          description: project_objective id to delete
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: project_objective not found
+      security:
+        - api_key: []
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  /project_teams:
+    get:
+      summary: project_teams List
+      description: |
+        The project_team endpoint returns multiple project_team requested given the parameters injected. 
+      parameters:
+        - name: project_team_id
+          in: query
+          description: project_team id 
+          required: false
+          type: number
+          format: integer
+      tags:
+        - Project Team
+      responses:
+        200:
+          description: An array of project_team returned
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/project_team'
+        404:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+        - api_key: []
+
+
+
+
+
+
+
+  /project_team:    
+    post:
+      tags:
+        - Project Team
+      summary: Add a new project_team
+      description: new project_team  
+      operationId: add_project_team
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: project_team object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/project_team'
+      responses:
+        '200':
+          description: Successfully added a new project_team for approval 
+        '405':
+          description: Invalid input,adding a new project_team was unsuccessful
+      security:
+        - api_key: []
+            
+            
+            
+
+            
+    put:
+      tags:
+        - Project Team
+      summary: Update an existing project_team
+      description: ''
+      operationId: update_project_team
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: project_team object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/project_team'
+      responses:
+        200:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Success'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: project_team not found
+        '405':
+          description: Validation exception
+      security:
+        - api_key: []
+        
+        
+        
+        
+        
+        
+  '/project_team/{project_team_id}':
+    get:
+      tags:
+        - Project Team
+      summary: Find project_team by ID
+      description: Returns a single project_team
+      operationId: get_project_team_by_id
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: project_team_id
+          in: path
+          description: ID of project_team to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/project_team'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: project_team not found
+      security:
+        - api_key: []
+        
+        
+     
+            
+            
+            
+    delete:
+      tags:
+        - Project Team
+      summary: Deletes an project_team
+      description: ''
+      operationId: delete_project_team
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: api_key
+          in: header
+          required: true
+          type: string
+        - name: project_team_id
+          in: path
+          description: project_team id to delete
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: project_team not found
+      security:
+        - api_key: []
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+          
+          
+securityDefinitions:
+  api_key:
+    type: apiKey
+    name: Authorization
+    in: header
+     
+     
+     
+definitions:
+
+
+      
+      
+  project:
+    type: object
+    required:
+      - id
+      - created_at
+    properties:
+      id:
+        type: integer
+        format: int64
+        example: 1
+      num:
+        type: number
+        format: int64
+        example: 20000
+      str:
+        type: string
+        example: 'PayPal.pdf'
+      date:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      created_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      updated_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+    xml:
+      name: project
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+      
+  project_activity:
+    type: object
+    required:
+      - id
+      - created_at
+    properties:
+      id:
+        type: integer
+        format: int64
+        example: 1
+      num:
+        type: number
+        format: int64
+        example: 20000
+      str:
+        type: string
+        example: 'PayPal.pdf'
+      date:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      created_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      updated_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+    xml:
+      name: project_activity
+    
+  
+    
+  
+
+
+
+
+
+
+
+
+      
+      
+  project_budget_account:
+    type: object
+    required:
+      - id
+      - created_at
+    properties:
+      id:
+        type: integer
+        format: int64
+        example: 1
+      num:
+        type: number
+        format: int64
+        example: 20000
+      str:
+        type: string
+        example: 'PayPal.pdf'
+      date:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      created_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      updated_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+    xml:
+      name: project_budget_account
+    
+  
+    
+  
+
+
+
+
+
+
+
+
+
+
+      
+      
+  project_cash_need:
+    type: object
+    required:
+      - id
+      - created_at
+    properties:
+      id:
+        type: integer
+        format: int64
+        example: 1
+      num:
+        type: number
+        format: int64
+        example: 20000
+      str:
+        type: string
+        example: 'PayPal.pdf'
+      date:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      created_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      updated_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+    xml:
+      name: project_cash_need
+    
+  
+    
+  
+    
+
+
+
+
+
+
+
+
+
+
+      
+      
+  project_master_list:
+    type: object
+    required:
+      - id
+      - created_at
+    properties:
+      id:
+        type: integer
+        format: int64
+        example: 1
+      num:
+        type: number
+        format: int64
+        example: 20000
+      str:
+        type: string
+        example: 'PayPal.pdf'
+      date:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      created_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      updated_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+    xml:
+      name: project_master_list
+    
+  
+    
+  
+  
+  
+
+
+
+
+
+
+      
+      
+  project_objective:
+    type: object
+    required:
+      - id
+      - created_at
+    properties:
+      id:
+        type: integer
+        format: int64
+        example: 1
+      num:
+        type: number
+        format: int64
+        example: 20000
+      str:
+        type: string
+        example: 'PayPal.pdf'
+      date:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      created_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      updated_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+    xml:
+      name: project_objective
+    
+  
+    
+  
+  
+
+
+
+
+
+
+
+
+
+
+      
+      
+  project_team:
+    type: object
+    required:
+      - id
+      - created_at
+    properties:
+      id:
+        type: integer
+        format: int64
+        example: 1
+      num:
+        type: number
+        format: int64
+        example: 20000
+      str:
+        type: string
+        example: 'PayPal.pdf'
+      date:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      created_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      updated_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+    xml:
+      name: project_team
+    
+  
+    
+  
+  
+  
+
+
+  
+
+
+
+  
+  
+  
+  
+  Error:
+    type: object
+    properties:
+      error:
+        type: string
+        example: object not found
+
+
+  
+  Success:
+    type: object
+    properties:
+      msg:
+        type: string
+        example: object not found
+
+      
+      
+      
+      

@@ -1,0 +1,308 @@
+swagger: '2.0'
+info:
+  description: Finance management sysytem
+  version: 1.0.0
+  title: Grants Information Management System
+  termsOfService: 'http://kefinance.clintonhealthaccess.org/terms/'
+  contact:
+    email: mwangikevinn@gmail.com
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+host: 'localhost:8000'
+basePath: /api
+tags:
+  - name: Mobile Payment Viewing Permission
+    description: Everything About Mobile Payment Viewing Permission
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/mobile_payment_viewing_permission/docs'
+schemes:
+  - http
+  - https
+paths:
+
+
+
+
+
+
+
+
+
+
+
+  /mobile_payment_viewing_permissions:
+    get:
+      summary: mobile_payment_viewing_permissions List
+      description: |
+        The mobile_payment_viewing_permission endpoint returns multiple mobile_payment_viewing_permission requested given the parameters injected. 
+      parameters:
+        - name: mobile_payment_viewing_permission_id
+          in: query
+          description: mobile_payment_viewing_permission id 
+          required: false
+          type: number
+          format: integer
+      tags:
+        - Mobile Payment Viewing Permission
+      responses:
+        200:
+          description: An array of mobile_payment_viewing_permission returned
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/mobile_payment_viewing_permission'
+        404:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+        - api_key: []
+
+
+
+
+
+
+
+  /mobile_payment_viewing_permission:    
+    post:
+      tags:
+        - Mobile Payment Viewing Permission
+      summary: Add a new mobile_payment_viewing_permission
+      description: new mobile_payment_viewing_permission  
+      operationId: add_mobile_payment_viewing_permission
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: mobile_payment_viewing_permission object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/mobile_payment_viewing_permission'
+      responses:
+        '200':
+          description: Successfully added a new mobile_payment_viewing_permission for approval 
+        '405':
+          description: Invalid input,adding a new mobile_payment_viewing_permission was unsuccessful
+      security:
+        - api_key: []
+            
+            
+            
+
+            
+    put:
+      tags:
+        - Mobile Payment Viewing Permission
+      summary: Update an existing mobile_payment_viewing_permission
+      description: ''
+      operationId: update_mobile_payment_viewing_permission
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: mobile_payment_viewing_permission object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/mobile_payment_viewing_permission'
+      responses:
+        200:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Success'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: mobile_payment_viewing_permission not found
+        '405':
+          description: Validation exception
+      security:
+        - api_key: []
+        
+        
+        
+        
+        
+        
+  '/mobile_payment_viewing_permission/{mobile_payment_viewing_permission_id}':
+    get:
+      tags:
+        - Mobile Payment Viewing Permission
+      summary: Find mobile_payment_viewing_permission by ID
+      description: Returns a single mobile_payment_viewing_permission
+      operationId: get_mobile_payment_viewing_permission_by_id
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: mobile_payment_viewing_permission_id
+          in: path
+          description: ID of mobile_payment_viewing_permission to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/mobile_payment_viewing_permission'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: mobile_payment_viewing_permission not found
+      security:
+        - api_key: []
+        
+        
+     
+            
+            
+            
+    delete:
+      tags:
+        - Mobile Payment Viewing Permission
+      summary: Deletes an mobile_payment_viewing_permission
+      description: ''
+      operationId: delete_mobile_payment_viewing_permission
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: api_key
+          in: header
+          required: true
+          type: string
+        - name: mobile_payment_viewing_permission_id
+          in: path
+          description: mobile_payment_viewing_permission id to delete
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: mobile_payment_viewing_permission not found
+      security:
+        - api_key: []
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+          
+          
+securityDefinitions:
+  api_key:
+    type: apiKey
+    name: Authorization
+    in: header
+     
+     
+     
+definitions:
+
+
+      
+      
+  mobile_payment_viewing_permission:
+    type: object
+    required:
+      - id
+      - created_at
+    properties:
+      id:
+        type: integer
+        format: int64
+        example: 1
+      num:
+        type: number
+        format: int64
+        example: 20000
+      str:
+        type: string
+        example: 'PayPal.pdf'
+      date:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      created_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      updated_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+    xml:
+      name: mobile_payment_viewing_permission
+    
+  
+    
+  
+  
+  
+  
+  Error:
+    type: object
+    properties:
+      error:
+        type: string
+        example: object not found
+
+
+  
+  Success:
+    type: object
+    properties:
+      msg:
+        type: string
+        example: object not found
+
+      
+      
+      
+      

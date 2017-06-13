@@ -1,0 +1,1113 @@
+{
+ "swagger": "2.0",
+ "info": {
+  "description": "Finance management sysytem",
+  "version": "1.0.0",
+  "title": "Grants Information Management System",
+  "termsOfService": "http://kefinance.clintonhealthaccess.org/terms/",
+  "contact": {
+   "email": "mwangikevinn@gmail.com"
+  },
+  "license": {
+   "name": "Apache 2.0",
+   "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+  }
+ },
+ "host": "localhost:8000",
+ "basePath": "/api",
+ "tags": [
+  {
+   "name": "Supplier",
+   "description": "Everything About Supplier",
+   "externalDocs": {
+    "description": "Find out more",
+    "url": "http://kefinance.clintonhealthaccess.org/api/Supplier/docs"
+   }
+  },
+  {
+   "name": "Supplier Rate",
+   "description": "Everything About Supplier Rate",
+   "externalDocs": {
+    "description": "Find out more",
+    "url": "http://kefinance.clintonhealthaccess.org/api/supplier_rate/docs"
+   }
+  },
+  {
+   "name": "Supply Category",
+   "description": "Everything About Supply Category",
+   "externalDocs": {
+    "description": "Find out more",
+    "url": "http://kefinance.clintonhealthaccess.org/api/supply_cath/docs"
+   }
+  },
+  {
+   "name": "Supply Category Item",
+   "description": "Everything About Supply Category Item",
+   "externalDocs": {
+    "description": "Find out more",
+    "url": "http://kefinance.clintonhealthaccess.org/api/supply_category_item/docs"
+   }
+  }
+ ],
+ "schemes": [
+  "http",
+  "https"
+ ],
+ "paths": {
+  "/suppliers": {
+   "get": {
+    "summary": "suppliers List",
+    "description": "The supplier endpoint returns multiple supplier requested given the parameters injected. \n",
+    "parameters": [
+     {
+      "name": "supplier_id",
+      "in": "query",
+      "description": "supplier id",
+      "required": false,
+      "type": "number",
+      "format": "integer"
+     }
+    ],
+    "tags": [
+     "Supplier"
+    ],
+    "responses": {
+     "200": {
+      "description": "An array of supplier returned",
+      "schema": {
+       "type": "array",
+       "items": {
+        "$ref": "#/definitions/supplier"
+       }
+      }
+     },
+     "404": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Error"
+      }
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/supplier": {
+   "post": {
+    "tags": [
+     "Supplier"
+    ],
+    "summary": "Add a new supplier",
+    "description": "new supplier",
+    "operationId": "add_supplier",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "supplier object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/supplier"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successfully added a new supplier for approval"
+     },
+     "405": {
+      "description": "Invalid input,adding a new supplier was unsuccessful"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "put": {
+    "tags": [
+     "Supplier"
+    ],
+    "summary": "Update an existing supplier",
+    "description": "",
+    "operationId": "update_supplier",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "supplier object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/supplier"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Success"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "supplier not found"
+     },
+     "405": {
+      "description": "Validation exception"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/supplier/{supplier_id}": {
+   "get": {
+    "tags": [
+     "Supplier"
+    ],
+    "summary": "Find supplier by ID",
+    "description": "Returns a single supplier",
+    "operationId": "get_supplier_by_id",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "supplier_id",
+      "in": "path",
+      "description": "ID of supplier to return object",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "successful operation",
+      "schema": {
+       "$ref": "#/definitions/supplier"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "supplier not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "delete": {
+    "tags": [
+     "Supplier"
+    ],
+    "summary": "Deletes an supplier",
+    "description": "",
+    "operationId": "delete_supplier",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "api_key",
+      "in": "header",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "supplier_id",
+      "in": "path",
+      "description": "supplier id to delete",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "supplier not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/supplier_rates": {
+   "get": {
+    "summary": "supplier_rates List",
+    "description": "The supplier_rate endpoint returns multiple supplier_rate requested given the parameters injected. \n",
+    "parameters": [
+     {
+      "name": "supplier_rate_id",
+      "in": "query",
+      "description": "supplier_rate id",
+      "required": false,
+      "type": "number",
+      "format": "integer"
+     }
+    ],
+    "tags": [
+     "Supplier Rate"
+    ],
+    "responses": {
+     "200": {
+      "description": "An array of supplier_rate returned",
+      "schema": {
+       "type": "array",
+       "items": {
+        "$ref": "#/definitions/supplier_rate"
+       }
+      }
+     },
+     "404": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Error"
+      }
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/supplier_rate": {
+   "post": {
+    "tags": [
+     "Supplier Rate"
+    ],
+    "summary": "Add a new supplier_rate",
+    "description": "new supplier_rate",
+    "operationId": "add_supplier_rate",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "supplier_rate object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/supplier_rate"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successfully added a new supplier_rate for approval"
+     },
+     "405": {
+      "description": "Invalid input,adding a new supplier_rate was unsuccessful"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "put": {
+    "tags": [
+     "Supplier Rate"
+    ],
+    "summary": "Update an existing supplier_rate",
+    "description": "",
+    "operationId": "update_supplier_rate",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "supplier_rate object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/supplier_rate"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Success"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "supplier_rate not found"
+     },
+     "405": {
+      "description": "Validation exception"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/supplier_rate/{supplier_rate_id}": {
+   "get": {
+    "tags": [
+     "Supplier Rate"
+    ],
+    "summary": "Find supplier_rate by ID",
+    "description": "Returns a single supplier_rate",
+    "operationId": "get_supplier_rate_by_id",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "supplier_rate_id",
+      "in": "path",
+      "description": "ID of supplier_rate to return object",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "successful operation",
+      "schema": {
+       "$ref": "#/definitions/supplier_rate"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "supplier_rate not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "delete": {
+    "tags": [
+     "Supplier Rate"
+    ],
+    "summary": "Deletes an supplier_rate",
+    "description": "",
+    "operationId": "delete_supplier_rate",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "api_key",
+      "in": "header",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "supplier_rate_id",
+      "in": "path",
+      "description": "supplier_rate id to delete",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "supplier_rate not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/supply_categories": {
+   "get": {
+    "summary": "supply_categories List",
+    "description": "The supply_category endpoint returns multiple supply_category requested given the parameters injected. \n",
+    "parameters": [
+     {
+      "name": "supply_category_id",
+      "in": "query",
+      "description": "supply_category id",
+      "required": false,
+      "type": "number",
+      "format": "integer"
+     }
+    ],
+    "tags": [
+     "Supply Category"
+    ],
+    "responses": {
+     "200": {
+      "description": "An array of supply_category returned",
+      "schema": {
+       "type": "array",
+       "items": {
+        "$ref": "#/definitions/supply_category"
+       }
+      }
+     },
+     "404": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Error"
+      }
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/supply_category": {
+   "post": {
+    "tags": [
+     "Supply Category"
+    ],
+    "summary": "Add a new supply_category",
+    "description": "new supply_category",
+    "operationId": "add_supply_category",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "supply_category object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/supply_category"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successfully added a new supply_category for approval"
+     },
+     "405": {
+      "description": "Invalid input,adding a new supply_category was unsuccessful"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "put": {
+    "tags": [
+     "Supply Category"
+    ],
+    "summary": "Update an existing supply_category",
+    "description": "",
+    "operationId": "update_supply_category",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "supply_category object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/supply_category"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Success"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "supply_category not found"
+     },
+     "405": {
+      "description": "Validation exception"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/supply_category/{supply_category_id}": {
+   "get": {
+    "tags": [
+     "Supply Category"
+    ],
+    "summary": "Find supply_category by ID",
+    "description": "Returns a single supply_category",
+    "operationId": "get_supply_category_by_id",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "supply_category_id",
+      "in": "path",
+      "description": "ID of supply_category to return object",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "successful operation",
+      "schema": {
+       "$ref": "#/definitions/supply_category"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "supply_category not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "delete": {
+    "tags": [
+     "Supply Category"
+    ],
+    "summary": "Deletes an supply_category",
+    "description": "",
+    "operationId": "delete_supply_category",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "api_key",
+      "in": "header",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "supply_category_id",
+      "in": "path",
+      "description": "supply_category id to delete",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "supply_category not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/supply_category_items": {
+   "get": {
+    "summary": "supply_category_items List",
+    "description": "The supply_category_item endpoint returns multiple supply_category_item requested given the parameters injected. \n",
+    "parameters": [
+     {
+      "name": "supply_category_item_id",
+      "in": "query",
+      "description": "supply_category_item id",
+      "required": false,
+      "type": "number",
+      "format": "integer"
+     }
+    ],
+    "tags": [
+     "Supply Category Item"
+    ],
+    "responses": {
+     "200": {
+      "description": "An array of supply_category_item returned",
+      "schema": {
+       "type": "array",
+       "items": {
+        "$ref": "#/definitions/supply_category_item"
+       }
+      }
+     },
+     "404": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Error"
+      }
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/supply_category_item": {
+   "post": {
+    "tags": [
+     "Supply Category Item"
+    ],
+    "summary": "Add a new supply_category_item",
+    "description": "new supply_category_item",
+    "operationId": "add_supply_category_item",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "supply_category_item object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/supply_category_item"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successfully added a new supply_category_item for approval"
+     },
+     "405": {
+      "description": "Invalid input,adding a new supply_category_item was unsuccessful"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "put": {
+    "tags": [
+     "Supply Category Item"
+    ],
+    "summary": "Update an existing supply_category_item",
+    "description": "",
+    "operationId": "update_supply_category_item",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "supply_category_item object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/supply_category_item"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Success"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "supply_category_item not found"
+     },
+     "405": {
+      "description": "Validation exception"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/supply_category_item/{supply_category_item_id}": {
+   "get": {
+    "tags": [
+     "Supply Category Item"
+    ],
+    "summary": "Find supply_category_item by ID",
+    "description": "Returns a single supply_category_item",
+    "operationId": "get_supply_category_item_by_id",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "supply_category_item_id",
+      "in": "path",
+      "description": "ID of supply_category_item to return object",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "successful operation",
+      "schema": {
+       "$ref": "#/definitions/supply_category_item"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "supply_category_item not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "delete": {
+    "tags": [
+     "Supply Category Item"
+    ],
+    "summary": "Deletes an supply_category_item",
+    "description": "",
+    "operationId": "delete_supply_category_item",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "api_key",
+      "in": "header",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "supply_category_item_id",
+      "in": "path",
+      "description": "supply_category_item id to delete",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "supply_category_item not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  }
+ },
+ "securityDefinitions": {
+  "api_key": {
+   "type": "apiKey",
+   "name": "Authorization",
+   "in": "header"
+  }
+ },
+ "definitions": {
+  "supplier": {
+   "type": "object",
+   "required": [
+    "id",
+    "created_at"
+   ],
+   "properties": {
+    "id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "num": {
+     "type": "number",
+     "format": "int64",
+     "example": 20000
+    },
+    "str": {
+     "type": "string",
+     "example": "PayPal.pdf"
+    },
+    "date": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "created_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "updated_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    }
+   },
+   "xml": {
+    "name": "Supplier"
+   }
+  },
+  "supplier_rate": {
+   "type": "object",
+   "required": [
+    "id",
+    "created_at"
+   ],
+   "properties": {
+    "id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "num": {
+     "type": "number",
+     "format": "int64",
+     "example": 20000
+    },
+    "str": {
+     "type": "string",
+     "example": "PayPal.pdf"
+    },
+    "date": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "created_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "updated_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    }
+   },
+   "xml": {
+    "name": "supplier_rate"
+   }
+  },
+  "supply_category": {
+   "type": "object",
+   "required": [
+    "id",
+    "created_at"
+   ],
+   "properties": {
+    "id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "num": {
+     "type": "number",
+     "format": "int64",
+     "example": 20000
+    },
+    "str": {
+     "type": "string",
+     "example": "PayPal.pdf"
+    },
+    "date": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "created_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "updated_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    }
+   },
+   "xml": {
+    "name": "supply_category"
+   }
+  },
+  "supply_category_item": {
+   "type": "object",
+   "required": [
+    "id",
+    "created_at"
+   ],
+   "properties": {
+    "id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "num": {
+     "type": "number",
+     "format": "int64",
+     "example": 20000
+    },
+    "str": {
+     "type": "string",
+     "example": "PayPal.pdf"
+    },
+    "date": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "created_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "updated_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    }
+   },
+   "xml": {
+    "name": "supply_category_item"
+   }
+  },
+  "Error": {
+   "type": "object",
+   "properties": {
+    "error": {
+     "type": "string",
+     "example": "object not found"
+    }
+   }
+  },
+  "Success": {
+   "type": "object",
+   "properties": {
+    "msg": {
+     "type": "string",
+     "example": "object not found"
+    }
+   }
+  }
+ }
+}

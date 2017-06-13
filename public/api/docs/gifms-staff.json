@@ -1,0 +1,1181 @@
+{
+ "swagger": "2.0",
+ "info": {
+  "description": "Finance management sysytem",
+  "version": "1.0.0",
+  "title": "Grants Information Management System",
+  "termsOfService": "http://kefinance.clintonhealthaccess.org/terms/",
+  "contact": {
+   "email": "mwangikevinn@gmail.com"
+  },
+  "license": {
+   "name": "Apache 2.0",
+   "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+  }
+ },
+ "host": "localhost:8000",
+ "basePath": "/api",
+ "tags": [
+  {
+   "name": "Staff",
+   "description": "Everything About Staff",
+   "externalDocs": {
+    "description": "Find out more",
+    "url": "http://kefinance.clintonhealthaccess.org/api/staff/docs"
+   }
+  },
+  {
+   "name": "Department",
+   "description": "Everything About Department",
+   "externalDocs": {
+    "description": "Find out more",
+    "url": "http://kefinance.clintonhealthaccess.org/api/departments/docs"
+   }
+  },
+  {
+   "name": "Roles",
+   "description": "Everything About Roles",
+   "externalDocs": {
+    "description": "Find out more",
+    "url": "http://kefinance.clintonhealthaccess.org/api/roles/docs"
+   }
+  },
+  {
+   "name": "Rights",
+   "description": "Everything About Rights",
+   "externalDocs": {
+    "description": "Find out more",
+    "url": "http://kefinance.clintonhealthaccess.org/api/right/docs"
+   }
+  }
+ ],
+ "schemes": [
+  "http",
+  "https"
+ ],
+ "paths": {
+  "/staffs": {
+   "get": {
+    "summary": "staffs List",
+    "description": "The staff endpoint returns multiple staff requested given the parameters injected. \n",
+    "parameters": [
+     {
+      "name": "staff_id",
+      "in": "query",
+      "description": "staff id",
+      "required": false,
+      "type": "number",
+      "format": "integer"
+     }
+    ],
+    "tags": [
+     "Staff"
+    ],
+    "responses": {
+     "200": {
+      "description": "An array of staff returned",
+      "schema": {
+       "type": "array",
+       "items": {
+        "$ref": "#/definitions/staff"
+       }
+      }
+     },
+     "404": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Error"
+      }
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/staff": {
+   "post": {
+    "tags": [
+     "Staff"
+    ],
+    "summary": "Add a new staff",
+    "description": "new staff",
+    "operationId": "add_staff",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "staff object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/staff"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successfully added a new staff for approval"
+     },
+     "405": {
+      "description": "Invalid input,adding a new staff was unsuccessful"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "put": {
+    "tags": [
+     "Staff"
+    ],
+    "summary": "Update an existing staff",
+    "description": "",
+    "operationId": "update_staff",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "staff object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/staff"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Success"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "staff not found"
+     },
+     "405": {
+      "description": "Validation exception"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/staff/{staff_id}": {
+   "get": {
+    "tags": [
+     "Staff"
+    ],
+    "summary": "Find staff by ID",
+    "description": "Returns a single staff",
+    "operationId": "get_staff_by_id",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "staff_id",
+      "in": "path",
+      "description": "ID of staff to return object",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "successful operation",
+      "schema": {
+       "$ref": "#/definitions/staff"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "staff not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "delete": {
+    "tags": [
+     "Staff"
+    ],
+    "summary": "Deletes an staff",
+    "description": "",
+    "operationId": "delete_staff",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "api_key",
+      "in": "header",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "staff_id",
+      "in": "path",
+      "description": "staff id to delete",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "staff not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/departments": {
+   "get": {
+    "summary": "departments List",
+    "description": "The department endpoint returns multiple department requested given the parameters injected. \n",
+    "parameters": [
+     {
+      "name": "department_id",
+      "in": "query",
+      "description": "department id",
+      "required": false,
+      "type": "number",
+      "format": "integer"
+     }
+    ],
+    "tags": [
+     "Department"
+    ],
+    "responses": {
+     "200": {
+      "description": "An array of department returned",
+      "schema": {
+       "type": "array",
+       "items": {
+        "$ref": "#/definitions/department"
+       }
+      }
+     },
+     "404": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Error"
+      }
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/department": {
+   "post": {
+    "tags": [
+     "Department"
+    ],
+    "summary": "Add a new department",
+    "description": "new department",
+    "operationId": "add_department",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "department object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/department"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successfully added a new department for approval"
+     },
+     "405": {
+      "description": "Invalid input,adding a new department was unsuccessful"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "put": {
+    "tags": [
+     "Department"
+    ],
+    "summary": "Update an existing department",
+    "description": "",
+    "operationId": "update_department",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "department object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/department"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Success"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "department not found"
+     },
+     "405": {
+      "description": "Validation exception"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/department/{department_id}": {
+   "get": {
+    "tags": [
+     "Department"
+    ],
+    "summary": "Find department by ID",
+    "description": "Returns a single department",
+    "operationId": "get_department_by_id",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "department_id",
+      "in": "path",
+      "description": "ID of department to return object",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "successful operation",
+      "schema": {
+       "$ref": "#/definitions/department"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "department not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "delete": {
+    "tags": [
+     "Department"
+    ],
+    "summary": "Deletes an department",
+    "description": "",
+    "operationId": "delete_department",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "api_key",
+      "in": "header",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "department_id",
+      "in": "path",
+      "description": "department id to delete",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "department not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/roles": {
+   "get": {
+    "summary": "roles List",
+    "description": "The role endpoint returns multiple role requested given the parameters injected. \n",
+    "parameters": [
+     {
+      "name": "role_id",
+      "in": "query",
+      "description": "role id",
+      "required": false,
+      "type": "number",
+      "format": "integer"
+     }
+    ],
+    "tags": [
+     "Roles"
+    ],
+    "responses": {
+     "200": {
+      "description": "An array of role returned",
+      "schema": {
+       "type": "array",
+       "items": {
+        "$ref": "#/definitions/role"
+       }
+      }
+     },
+     "404": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Error"
+      }
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/role": {
+   "post": {
+    "tags": [
+     "Roles"
+    ],
+    "summary": "Add a new role",
+    "description": "new role",
+    "operationId": "add_role",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "role object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/role"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successfully added a new role for approval"
+     },
+     "405": {
+      "description": "Invalid input,adding a new role was unsuccessful"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "put": {
+    "tags": [
+     "Roles"
+    ],
+    "summary": "Update an existing role",
+    "description": "",
+    "operationId": "update_role",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "role object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/role"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Success"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "role not found"
+     },
+     "405": {
+      "description": "Validation exception"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/role/{role_id}": {
+   "get": {
+    "tags": [
+     "Roles"
+    ],
+    "summary": "Find role by ID",
+    "description": "Returns a single role",
+    "operationId": "get_role_by_id",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "role_id",
+      "in": "path",
+      "description": "ID of role to return object",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "successful operation",
+      "schema": {
+       "$ref": "#/definitions/role"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "role not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "delete": {
+    "tags": [
+     "Roles"
+    ],
+    "summary": "Deletes an role",
+    "description": "",
+    "operationId": "delete_role",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "api_key",
+      "in": "header",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "role_id",
+      "in": "path",
+      "description": "role id to delete",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "role not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/rights": {
+   "get": {
+    "summary": "rights List",
+    "description": "The right endpoint returns multiple right requested given the parameters injected. \n",
+    "parameters": [
+     {
+      "name": "right_id",
+      "in": "query",
+      "description": "right id",
+      "required": false,
+      "type": "number",
+      "format": "integer"
+     }
+    ],
+    "tags": [
+     "Rights"
+    ],
+    "responses": {
+     "200": {
+      "description": "An array of right returned",
+      "schema": {
+       "type": "array",
+       "items": {
+        "$ref": "#/definitions/right"
+       }
+      }
+     },
+     "404": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Error"
+      }
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/right": {
+   "post": {
+    "tags": [
+     "Rights"
+    ],
+    "summary": "Add a new right",
+    "description": "new right",
+    "operationId": "add_right",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "right object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/right"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successfully added a new right for approval"
+     },
+     "405": {
+      "description": "Invalid input,adding a new right was unsuccessful"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "put": {
+    "tags": [
+     "Rights"
+    ],
+    "summary": "Update an existing right",
+    "description": "",
+    "operationId": "update_right",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "right object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/right"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Success"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "right not found"
+     },
+     "405": {
+      "description": "Validation exception"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/right/{right_id}": {
+   "get": {
+    "tags": [
+     "Rights"
+    ],
+    "summary": "Find right by ID",
+    "description": "Returns a single right",
+    "operationId": "get_right_by_id",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "right_id",
+      "in": "path",
+      "description": "ID of right to return object",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "successful operation",
+      "schema": {
+       "$ref": "#/definitions/right"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "right not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "delete": {
+    "tags": [
+     "Rights"
+    ],
+    "summary": "Deletes an right",
+    "description": "",
+    "operationId": "delete_right",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "api_key",
+      "in": "header",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "right_id",
+      "in": "path",
+      "description": "right id to delete",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "right not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  }
+ },
+ "securityDefinitions": {
+  "api_key": {
+   "type": "apiKey",
+   "name": "Authorization",
+   "in": "header"
+  }
+ },
+ "definitions": {
+  "staff": {
+   "type": "object",
+   "required": [
+    "id",
+    "created_at",
+    "updated_at"
+   ],
+   "properties": {
+    "id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "username": {
+     "type": "string",
+     "example": "kevin"
+    },
+    "f_name": {
+     "type": "string",
+     "example": "kevin"
+    },
+    "l_name": {
+     "type": "string",
+     "example": "mwangi"
+    },
+    "department_id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "email": {
+     "type": "string",
+     "example": "kevin@mail.com"
+    },
+    "role_id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "roles": {
+     "title": "Array Of Roles",
+     "type": "array",
+     "items": {
+      "$ref": "#/definitions/role"
+     }
+    },
+    "is_admin": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "post": {
+     "type": "string",
+     "example": "program manager"
+    },
+    "mobile_no": {
+     "type": "string",
+     "example": "+254723568945"
+    },
+    "bank_account": {
+     "type": "string",
+     "example": "23132165465"
+    },
+    "cheque_addresse": {
+     "type": "string",
+     "example": "kevin"
+    },
+    "payment_mode_id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "bank_id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "bank_branch_id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "station_id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "swift_code": {
+     "type": "string",
+     "example": "45645"
+    },
+    "signature": {
+     "type": "string",
+     "example": "kevin.pdf"
+    },
+    "active": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "created_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "updated_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    }
+   },
+   "xml": {
+    "name": "staff"
+   }
+  },
+  "department": {
+   "type": "object",
+   "required": [
+    "id",
+    "created_at",
+    "updated_at"
+   ],
+   "properties": {
+    "id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "department_name": {
+     "type": "string",
+     "example": "Finance"
+    },
+    "desc": {
+     "type": "string",
+     "example": "Finance Dpt"
+    },
+    "acronym": {
+     "type": "string",
+     "example": "Fin"
+    },
+    "HOD_id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 12
+    },
+    "created_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "updated_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    }
+   },
+   "xml": {
+    "name": "department"
+   }
+  },
+  "role": {
+   "type": "object",
+   "required": [
+    "id",
+    "created_at",
+    "updated_at"
+   ],
+   "properties": {
+    "id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "role_name": {
+     "type": "string",
+     "example": "Finance Manager"
+    },
+    "desc": {
+     "type": "string",
+     "example": "Financial Controller"
+    },
+    "created_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "updated_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    }
+   },
+   "xml": {
+    "name": "role"
+   }
+  },
+  "right": {
+   "type": "object",
+   "required": [
+    "id",
+    "created_at",
+    "updated_at"
+   ],
+   "properties": {
+    "id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "right_name": {
+     "type": "string",
+     "example": "Approve LPO "
+    },
+    "desc": {
+     "type": "string",
+     "example": "Approve LPO Finance Level"
+    },
+    "created_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "updated_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    }
+   },
+   "xml": {
+    "name": "role"
+   }
+  },
+  "Error": {
+   "type": "object",
+   "properties": {
+    "error": {
+     "type": "string",
+     "example": "object not found"
+    }
+   }
+  },
+  "Success": {
+   "type": "object",
+   "properties": {
+    "msg": {
+     "type": "string",
+     "example": "object not found"
+    }
+   }
+  }
+ }
+}

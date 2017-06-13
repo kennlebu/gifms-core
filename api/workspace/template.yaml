@@ -1,0 +1,308 @@
+swagger: '2.0'
+info:
+  description: Finance management sysytem
+  version: 1.0.0
+  title: Grants Information Management System
+  termsOfService: 'http://kefinance.clintonhealthaccess.org/terms/'
+  contact:
+    email: mwangikevinn@gmail.com
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+host: 'localhost:8000'
+basePath: /api
+tags:
+  - name: Test
+    description: Everything About Test
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/test/docs'
+schemes:
+  - http
+  - https
+paths:
+
+
+
+
+
+
+
+
+
+
+
+  /tests:
+    get:
+      summary: tests List
+      description: |
+        The test endpoint returns multiple test requested given the parameters injected. 
+      parameters:
+        - name: test_id
+          in: query
+          description: test id 
+          required: false
+          type: number
+          format: integer
+      tags:
+        - Test
+      responses:
+        200:
+          description: An array of test returned
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/test'
+        404:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+        - api_key: []
+
+
+
+
+
+
+
+  /test:    
+    post:
+      tags:
+        - Test
+      summary: Add a new test
+      description: new test  
+      operationId: add_test
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: test object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/test'
+      responses:
+        '200':
+          description: Successfully added a new test for approval 
+        '405':
+          description: Invalid input,adding a new test was unsuccessful
+      security:
+        - api_key: []
+            
+            
+            
+
+            
+    put:
+      tags:
+        - Test
+      summary: Update an existing test
+      description: ''
+      operationId: update_test
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: test object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/test'
+      responses:
+        200:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Success'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: test not found
+        '405':
+          description: Validation exception
+      security:
+        - api_key: []
+        
+        
+        
+        
+        
+        
+  '/test/{test_id}':
+    get:
+      tags:
+        - Test
+      summary: Find test by ID
+      description: Returns a single test
+      operationId: get_test_by_id
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: test_id
+          in: path
+          description: ID of test to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/test'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: test not found
+      security:
+        - api_key: []
+        
+        
+     
+            
+            
+            
+    delete:
+      tags:
+        - Test
+      summary: Deletes an test
+      description: ''
+      operationId: delete_test
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: api_key
+          in: header
+          required: true
+          type: string
+        - name: test_id
+          in: path
+          description: test id to delete
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: test not found
+      security:
+        - api_key: []
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+          
+          
+securityDefinitions:
+  api_key:
+    type: apiKey
+    name: Authorization
+    in: header
+     
+     
+     
+definitions:
+
+
+      
+      
+  test:
+    type: object
+    required:
+      - id
+      - created_at
+    properties:
+      id:
+        type: integer
+        format: int64
+        example: 1
+      num:
+        type: number
+        format: int64
+        example: 20000
+      str:
+        type: string
+        example: 'PayPal.pdf'
+      date:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      created_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      updated_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+    xml:
+      name: test
+    
+  
+    
+  
+  
+  
+  
+  Error:
+    type: object
+    properties:
+      error:
+        type: string
+        example: object not found
+
+
+  
+  Success:
+    type: object
+    properties:
+      msg:
+        type: string
+        example: object not found
+
+      
+      
+      
+      

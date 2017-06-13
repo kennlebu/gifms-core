@@ -1,0 +1,2881 @@
+{
+ "swagger": "2.0",
+ "info": {
+  "description": "Finance management sysytem",
+  "version": "1.0.0",
+  "title": "Grants Information Management System",
+  "termsOfService": "http://kefinance.clintonhealthaccess.org/terms/",
+  "contact": {
+   "email": "mwangikevinn@gmail.com"
+  },
+  "license": {
+   "name": "Apache 2.0",
+   "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+  }
+ },
+ "host": "localhost:8000",
+ "basePath": "/api",
+ "tags": [
+  {
+   "name": "LPO",
+   "description": "Everything About Local Purchase Orders",
+   "externalDocs": {
+    "description": "Find out more",
+    "url": "http://kefinance.clintonhealthaccess.org/api/lpos/docs"
+   }
+  },
+  {
+   "name": "LPO Status",
+   "description": "Everything About LPO Statuses",
+   "externalDocs": {
+    "description": "Find out more",
+    "url": "http://kefinance.clintonhealthaccess.org/api/lpo_statuses/docs"
+   }
+  },
+  {
+   "name": "LPO Quotation",
+   "description": "Everything About LPO Quotations",
+   "externalDocs": {
+    "description": "Find out more",
+    "url": "http://kefinance.clintonhealthaccess.org/api/lpo_quotations/docs"
+   }
+  },
+  {
+   "name": "LPO Item",
+   "description": "Everything About LPO Items",
+   "externalDocs": {
+    "description": "Find out more",
+    "url": "http://kefinance.clintonhealthaccess.org/api/lpo_items/docs"
+   }
+  },
+  {
+   "name": "LPO Term",
+   "description": "Everything About LPO Terms",
+   "externalDocs": {
+    "description": "Find out more",
+    "url": "http://kefinance.clintonhealthaccess.org/api/lpo_terms/docs"
+   }
+  },
+  {
+   "name": "LPO Comment",
+   "description": "Everything About LPO Comments",
+   "externalDocs": {
+    "description": "Find out more",
+    "url": "http://kefinance.clintonhealthaccess.org/api/lpo_comments/docs"
+   }
+  },
+  {
+   "name": "LPO Viewing Permission",
+   "description": "Everything About LPO Viewing Permissions",
+   "externalDocs": {
+    "description": "Find out more",
+    "url": "http://kefinance.clintonhealthaccess.org/api/lpo_viewing_permissions/docs"
+   }
+  },
+  {
+   "name": "LPO Approval",
+   "description": "Everything About LPO Approvals",
+   "externalDocs": {
+    "description": "Find out more",
+    "url": "http://kefinance.clintonhealthaccess.org/api/lpo_approvals/docs"
+   }
+  },
+  {
+   "name": "LPO Default Term",
+   "description": "Everything About LPO Default Term",
+   "externalDocs": {
+    "description": "Find out more",
+    "url": "http://kefinance.clintonhealthaccess.org/api/lpo_default_term/docs"
+   }
+  }
+ ],
+ "schemes": [
+  "http",
+  "https"
+ ],
+ "paths": {
+  "/lpos": {
+   "get": {
+    "summary": "lpo List",
+    "description": "The Lpos endpoint returns information about the LPO requested give the parameters injected. The response includes the Reference-No\nand other details about each lpo, and lists the products in the\nproper display order.\n",
+    "parameters": [
+     {
+      "name": "status",
+      "in": "query",
+      "description": "approval status",
+      "required": false,
+      "type": "number",
+      "format": "integer"
+     }
+    ],
+    "tags": [
+     "LPO"
+    ],
+    "responses": {
+     "200": {
+      "description": "An array of lpos returned",
+      "schema": {
+       "type": "array",
+       "items": {
+        "$ref": "#/definitions/lpo"
+       }
+      }
+     },
+     "404": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Error"
+      }
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/lpo": {
+   "post": {
+    "tags": [
+     "LPO"
+    ],
+    "summary": "Add a new lpo request t",
+    "description": "lpo awaits approvals from relevant parties",
+    "operationId": "add",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "lpo object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/lpo"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successfully requested a new LPO for approval"
+     },
+     "405": {
+      "description": "Invalid input,lpo request was unsuccessful"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "put": {
+    "tags": [
+     "LPO"
+    ],
+    "summary": "Update an existing LPO",
+    "description": "",
+    "operationId": "update_lpo",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "LPO object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/lpo"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Success"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo not found"
+     },
+     "405": {
+      "description": "Validation exception"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/lpo/{lpo_id}": {
+   "get": {
+    "tags": [
+     "LPO"
+    ],
+    "summary": "Find lpo by ID",
+    "description": "Returns a single lpo",
+    "operationId": "get_lpo_by_id",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "lpo_id",
+      "in": "path",
+      "description": "ID of lpo to return lpo object",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "successful operation",
+      "schema": {
+       "$ref": "#/definitions/lpo"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "patch": {
+    "tags": [
+     "LPO"
+    ],
+    "summary": "Submits or Approves Lpo",
+    "description": "Submits or Approves Lpo and returns the submitted/approved lpo",
+    "operationId": "submit_or_approve",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "lpo_id",
+      "in": "path",
+      "description": "ID of lpo to return lpo object",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "successful operation",
+      "schema": {
+       "$ref": "#/definitions/lpo"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "post": {
+    "tags": [
+     "LPO"
+    ],
+    "summary": "Updates a lpo with form data",
+    "description": "updates each field when not set as null",
+    "operationId": "update_lpo_with_form",
+    "consumes": [
+     "application/x-www-form-urlencoded"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "lpo_id",
+      "in": "path",
+      "description": "ID of lpo that needs to be updated",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     },
+     {
+      "name": "chai_ref",
+      "in": "formData",
+      "description": "Updated chai_ref of the lpo",
+      "required": false,
+      "type": "string"
+     },
+     {
+      "name": "lpo_date",
+      "in": "formData",
+      "description": "Updated lpo_date of the lpo",
+      "required": false,
+      "type": "string"
+     },
+     {
+      "name": "supplier_id",
+      "in": "formData",
+      "description": "Updated supplier_id of the lpo",
+      "required": false,
+      "type": "integer"
+     },
+     {
+      "name": "addressee",
+      "in": "formData",
+      "description": "Updated addressee of the lpo",
+      "required": false,
+      "type": "string"
+     },
+     {
+      "name": "title",
+      "in": "formData",
+      "description": "Updated title of the lpo",
+      "required": false,
+      "type": "string"
+     },
+     {
+      "name": "purpose",
+      "in": "formData",
+      "description": "Updated purpose of the lpo",
+      "required": false,
+      "type": "string"
+     },
+     {
+      "name": "requested_by",
+      "in": "formData",
+      "description": "Updated requested_by of the lpo",
+      "required": false,
+      "type": "integer"
+     },
+     {
+      "name": "request_date",
+      "in": "formData",
+      "description": "Updated request_date of the lpo",
+      "required": false,
+      "type": "string"
+     },
+     {
+      "name": "status",
+      "in": "formData",
+      "description": "Updated status of the lpo",
+      "required": false,
+      "type": "integer"
+     },
+     {
+      "name": "currency",
+      "in": "formData",
+      "description": "Updated currency of the lpo",
+      "required": false,
+      "type": "integer"
+     },
+     {
+      "name": "quotation",
+      "in": "formData",
+      "description": "Updated quotation of the lpo",
+      "required": false,
+      "type": "string"
+     },
+     {
+      "name": "supply_category",
+      "in": "formData",
+      "description": "Updated supply_category of the lpo",
+      "required": false,
+      "type": "integer"
+     },
+     {
+      "name": "delivery_document",
+      "in": "formData",
+      "description": "Updated delivery_document of the lpo",
+      "required": false,
+      "type": "string"
+     },
+     {
+      "name": "date_delivered",
+      "in": "formData",
+      "description": "Updated date_delivered of the lpo",
+      "required": false,
+      "type": "string"
+     },
+     {
+      "name": "received_by",
+      "in": "formData",
+      "description": "Updated received_by of the lpo",
+      "required": false,
+      "type": "integer"
+     },
+     {
+      "name": "meeting",
+      "in": "formData",
+      "description": "Updated meeting of the lpo",
+      "required": false,
+      "type": "integer"
+     },
+     {
+      "name": "comments",
+      "in": "formData",
+      "description": "Updated comments of the lpo",
+      "required": false,
+      "type": "string"
+     },
+     {
+      "name": "preffered_supplier",
+      "in": "formData",
+      "description": "Updated preffered_supplier of the lpo",
+      "required": false,
+      "type": "integer"
+     },
+     {
+      "name": "project_id",
+      "in": "formData",
+      "description": "Updated project_id of the lpo",
+      "required": false,
+      "type": "integer"
+     },
+     {
+      "name": "account_id",
+      "in": "formData",
+      "description": "Updated account_id of the lpo",
+      "required": false,
+      "type": "string"
+     },
+     {
+      "name": "attention",
+      "in": "formData",
+      "description": "Updated attention of the lpo",
+      "required": false,
+      "type": "string"
+     },
+     {
+      "name": "lpo_email",
+      "in": "formData",
+      "description": "Updated lpo_email of the lpo",
+      "required": false,
+      "type": "string"
+     },
+     {
+      "name": "project_manager_id",
+      "in": "formData",
+      "description": "Updated project_manager_id of the lpo",
+      "required": false,
+      "type": "integer"
+     },
+     {
+      "name": "quote_exempt",
+      "in": "formData",
+      "description": "Updated quote_exempt of the lpo",
+      "required": false,
+      "type": "integer"
+     },
+     {
+      "name": "quote_exempt_explanation",
+      "in": "formData",
+      "description": "Updated quote_exempt_explanation of the lpo",
+      "required": false,
+      "type": "string"
+     }
+    ],
+    "responses": {
+     "405": {
+      "description": "Invalid input"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "delete": {
+    "tags": [
+     "LPO"
+    ],
+    "summary": "Deletes an lpo",
+    "description": "",
+    "operationId": "delete_lpo",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "api_key",
+      "in": "header",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "lpo_id",
+      "in": "path",
+      "description": "lpo id to delete",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/lpo_statuses": {
+   "get": {
+    "summary": "lpo statuses List",
+    "description": "The Lpo Statuses endpoint returns information about the LPO statuses requested give the parameters injected. \n",
+    "parameters": [
+     {
+      "name": "staff_id",
+      "in": "query",
+      "description": "staff id",
+      "required": false,
+      "type": "number",
+      "format": "integer"
+     }
+    ],
+    "tags": [
+     "LPO Status"
+    ],
+    "responses": {
+     "200": {
+      "description": "An array of lpo_statuses returned",
+      "schema": {
+       "type": "array",
+       "items": {
+        "$ref": "#/definitions/lpo_status"
+       }
+      }
+     },
+     "404": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Error"
+      }
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/lpo_status": {
+   "post": {
+    "tags": [
+     "LPO Status"
+    ],
+    "summary": "Add a new lpo status",
+    "description": "lpo status",
+    "operationId": "add_lpo_status",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "lpo status object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/lpo_status"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successfully added a new Lpo status for approval"
+     },
+     "405": {
+      "description": "Invalid input,adding a new lpo status was unsuccessful"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "put": {
+    "tags": [
+     "LPO Status"
+    ],
+    "summary": "Update an existing LPO Status",
+    "description": "",
+    "operationId": "update_lpo_status",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "LPO Status object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/lpo_status"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Success"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo status not found"
+     },
+     "405": {
+      "description": "Validation exception"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/lpo_status/{lpo_status_id}": {
+   "get": {
+    "tags": [
+     "LPO Status"
+    ],
+    "summary": "Find lpo by ID",
+    "description": "Returns a single lpo",
+    "operationId": "get_lpo_status_by_id",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "lpo_status_id",
+      "in": "path",
+      "description": "ID of lpo status to return object",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "successful operation",
+      "schema": {
+       "$ref": "#/definitions/lpo_status"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "delete": {
+    "tags": [
+     "LPO Status"
+    ],
+    "summary": "Deletes an lpo_status",
+    "description": "",
+    "operationId": "delete_lpo_status",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "api_key",
+      "in": "header",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "lpo_status_id",
+      "in": "path",
+      "description": "lpo status id to delete",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo status not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/lpo_quotations": {
+   "get": {
+    "summary": "lpo quotations List",
+    "description": "The Lpo Quotations endpoint returns information about the LPO Quotation requested given the parameters injected. \n",
+    "parameters": [
+     {
+      "name": "lpo_id",
+      "in": "query",
+      "description": "staff id",
+      "required": false,
+      "type": "number",
+      "format": "integer"
+     }
+    ],
+    "tags": [
+     "LPO Quotation"
+    ],
+    "responses": {
+     "200": {
+      "description": "An array of lpo_quotations returned",
+      "schema": {
+       "type": "array",
+       "items": {
+        "$ref": "#/definitions/lpo_quotation"
+       }
+      }
+     },
+     "404": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Error"
+      }
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/lpo_quotation": {
+   "post": {
+    "tags": [
+     "LPO Quotation"
+    ],
+    "summary": "Add a new lpo quotation",
+    "description": "new lpo quotation",
+    "operationId": "add_lpo_quotation",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "lpo quotation object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/lpo_quotation"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successfully added a new Lpo quotation for approval"
+     },
+     "405": {
+      "description": "Invalid input,adding a new lpo quotation was unsuccessful"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "put": {
+    "tags": [
+     "LPO Quotation"
+    ],
+    "summary": "Update an existing LPO Quotation",
+    "description": "",
+    "operationId": "update_lpo_quotation",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "LPO Quotation object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/lpo_quotation"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Success"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo quotation not found"
+     },
+     "405": {
+      "description": "Validation exception"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/lpo_quotation/{lpo_quotation_id}": {
+   "get": {
+    "tags": [
+     "LPO Quotation"
+    ],
+    "summary": "Find lpo quotation by ID",
+    "description": "Returns a single lpo quotation",
+    "operationId": "get_lpo_quotation_by_id",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "lpo_quotation_id",
+      "in": "path",
+      "description": "ID of lpo quotation to return object",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "successful operation",
+      "schema": {
+       "$ref": "#/definitions/lpo_quotation"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo quotation not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "delete": {
+    "tags": [
+     "LPO Quotation"
+    ],
+    "summary": "Deletes an lpo_quotation",
+    "description": "",
+    "operationId": "delete_lpo_quotation",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "api_key",
+      "in": "header",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "lpo_quotation_id",
+      "in": "path",
+      "description": "lpo quotation id to delete",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo quotation not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/lpo_items": {
+   "get": {
+    "summary": "lpo items List",
+    "description": "The Lpo Items endpoint returns information about the LPO Item requested given the parameters injected. \n",
+    "parameters": [
+     {
+      "name": "lpo_id",
+      "in": "query",
+      "description": "staff id",
+      "required": false,
+      "type": "number",
+      "format": "integer"
+     }
+    ],
+    "tags": [
+     "LPO Item"
+    ],
+    "responses": {
+     "200": {
+      "description": "An array of lpo_items returned",
+      "schema": {
+       "type": "array",
+       "items": {
+        "$ref": "#/definitions/lpo_item"
+       }
+      }
+     },
+     "404": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Error"
+      }
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/lpo_item": {
+   "post": {
+    "tags": [
+     "LPO Item"
+    ],
+    "summary": "Add a new lpo item",
+    "description": "new lpo item",
+    "operationId": "add_lpo_item",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "lpo item object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/lpo_item"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successfully added a new Lpo item for approval"
+     },
+     "405": {
+      "description": "Invalid input,adding a new lpo item was unsuccessful"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "put": {
+    "tags": [
+     "LPO Item"
+    ],
+    "summary": "Update an existing LPO Item",
+    "description": "",
+    "operationId": "update_lpo_item",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "LPO Item object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/lpo_item"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Success"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo item not found"
+     },
+     "405": {
+      "description": "Validation exception"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/lpo_item/{lpo_item_id}": {
+   "get": {
+    "tags": [
+     "LPO Item"
+    ],
+    "summary": "Find lpo item by ID",
+    "description": "Returns a single lpo item",
+    "operationId": "get_lpo_item_by_id",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "lpo_item_id",
+      "in": "path",
+      "description": "ID of lpo item to return object",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "successful operation",
+      "schema": {
+       "$ref": "#/definitions/lpo_item"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo item not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "delete": {
+    "tags": [
+     "LPO Item"
+    ],
+    "summary": "Deletes an lpo_item",
+    "description": "",
+    "operationId": "delete_lpo_item",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "api_key",
+      "in": "header",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "lpo_item_id",
+      "in": "path",
+      "description": "lpo item id to delete",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo item not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/lpo_terms": {
+   "get": {
+    "summary": "lpo terms List",
+    "description": "The Lpo Terms endpoint returns information about the LPO Term requested given the parameters injected. \n",
+    "parameters": [
+     {
+      "name": "lpo_id",
+      "in": "query",
+      "description": "staff id",
+      "required": false,
+      "type": "number",
+      "format": "integer"
+     }
+    ],
+    "tags": [
+     "LPO Term"
+    ],
+    "responses": {
+     "200": {
+      "description": "An array of lpo_terms returned",
+      "schema": {
+       "type": "array",
+       "items": {
+        "$ref": "#/definitions/lpo_term"
+       }
+      }
+     },
+     "404": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Error"
+      }
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/lpo_term": {
+   "post": {
+    "tags": [
+     "LPO Term"
+    ],
+    "summary": "Add a new lpo term",
+    "description": "new lpo term",
+    "operationId": "add_lpo_term",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "lpo term object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/lpo_term"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successfully added a new Lpo term for approval"
+     },
+     "405": {
+      "description": "Invalid input,adding a new lpo term was unsuccessful"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "put": {
+    "tags": [
+     "LPO Term"
+    ],
+    "summary": "Update an existing LPO Term",
+    "description": "",
+    "operationId": "update_lpo_term",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "LPO Term object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/lpo_term"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Success"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo term not found"
+     },
+     "405": {
+      "description": "Validation exception"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/lpo_term/{lpo_term_id}": {
+   "get": {
+    "tags": [
+     "LPO Term"
+    ],
+    "summary": "Find lpo term by ID",
+    "description": "Returns a single lpo term",
+    "operationId": "get_lpo_term_by_id",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "lpo_term_id",
+      "in": "path",
+      "description": "ID of lpo term to return object",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "successful operation",
+      "schema": {
+       "$ref": "#/definitions/lpo_term"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo term not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "delete": {
+    "tags": [
+     "LPO Term"
+    ],
+    "summary": "Deletes an lpo_term",
+    "description": "",
+    "operationId": "delete_lpo_term",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "api_key",
+      "in": "header",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "lpo_term_id",
+      "in": "path",
+      "description": "lpo term id to delete",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo term not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/lpo_comments": {
+   "get": {
+    "summary": "lpo comments List",
+    "description": "The Lpo Comments endpoint returns information about the LPO Comment requested given the parameters injected. \n",
+    "parameters": [
+     {
+      "name": "lpo_id",
+      "in": "query",
+      "description": "staff id",
+      "required": false,
+      "type": "number",
+      "format": "integer"
+     }
+    ],
+    "tags": [
+     "LPO Comment"
+    ],
+    "responses": {
+     "200": {
+      "description": "An array of lpo_comments returned",
+      "schema": {
+       "type": "array",
+       "items": {
+        "$ref": "#/definitions/lpo_comment"
+       }
+      }
+     },
+     "404": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Error"
+      }
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/lpo_comment": {
+   "post": {
+    "tags": [
+     "LPO Comment"
+    ],
+    "summary": "Add a new lpo comment",
+    "description": "new lpo comment",
+    "operationId": "add_lpo_comment",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "lpo comment object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/lpo_comment"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successfully added a new Lpo comment for approval"
+     },
+     "405": {
+      "description": "Invalid input,adding a new lpo comment was unsuccessful"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "put": {
+    "tags": [
+     "LPO Comment"
+    ],
+    "summary": "Update an existing LPO Comment",
+    "description": "",
+    "operationId": "update_lpo_comment",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "LPO Comment object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/lpo_comment"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Success"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo comment not found"
+     },
+     "405": {
+      "description": "Validation exception"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/lpo_comment/{lpo_comment_id}": {
+   "get": {
+    "tags": [
+     "LPO Comment"
+    ],
+    "summary": "Find lpo comment by ID",
+    "description": "Returns a single lpo comment",
+    "operationId": "get_lpo_comment_by_id",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "lpo_comment_id",
+      "in": "path",
+      "description": "ID of lpo comment to return object",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "successful operation",
+      "schema": {
+       "$ref": "#/definitions/lpo_comment"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo comment not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "delete": {
+    "tags": [
+     "LPO Comment"
+    ],
+    "summary": "Deletes an lpo_comment",
+    "description": "",
+    "operationId": "delete_lpo_comment",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "api_key",
+      "in": "header",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "lpo_comment_id",
+      "in": "path",
+      "description": "lpo comment id to delete",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo comment not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/lpo_viewing_permissions": {
+   "get": {
+    "summary": "lpo viewing_permissions List",
+    "description": "The Lpo Viewing Permissions endpoint returns information about the LPO Viewing Permission requested given the parameters injected. \n",
+    "parameters": [
+     {
+      "name": "lpo_id",
+      "in": "query",
+      "description": "staff id",
+      "required": false,
+      "type": "number",
+      "format": "integer"
+     }
+    ],
+    "tags": [
+     "LPO Viewing Permission"
+    ],
+    "responses": {
+     "200": {
+      "description": "An array of lpo_viewing_permissions returned",
+      "schema": {
+       "type": "array",
+       "items": {
+        "$ref": "#/definitions/lpo_viewing_permission"
+       }
+      }
+     },
+     "404": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Error"
+      }
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/lpo_viewing_permission": {
+   "post": {
+    "tags": [
+     "LPO Viewing Permission"
+    ],
+    "summary": "Add a new lpo viewing_permission",
+    "description": "new lpo viewing_permission",
+    "operationId": "add_lpo_viewing_permission",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "lpo viewing_permission object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/lpo_viewing_permission"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successfully added a new Lpo viewing_permission for approval"
+     },
+     "405": {
+      "description": "Invalid input,adding a new lpo viewing_permission was unsuccessful"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "put": {
+    "tags": [
+     "LPO Viewing Permission"
+    ],
+    "summary": "Update an existing LPO Viewing Permission",
+    "description": "",
+    "operationId": "update_lpo_viewing_permission",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "LPO Viewing Permission object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/lpo_viewing_permission"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Success"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo viewing_permission not found"
+     },
+     "405": {
+      "description": "Validation exception"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/lpo_viewing_permission/{lpo_viewing_permission_id}": {
+   "get": {
+    "tags": [
+     "LPO Viewing Permission"
+    ],
+    "summary": "Find lpo viewing_permission by ID",
+    "description": "Returns a single lpo viewing_permission",
+    "operationId": "get_lpo_viewing_permission_by_id",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "lpo_viewing_permission_id",
+      "in": "path",
+      "description": "ID of lpo viewing_permission to return object",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "successful operation",
+      "schema": {
+       "$ref": "#/definitions/lpo_viewing_permission"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo viewing_permission not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "delete": {
+    "tags": [
+     "LPO Viewing Permission"
+    ],
+    "summary": "Deletes an lpo_viewing_permission",
+    "description": "",
+    "operationId": "delete_lpo_viewing_permission",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "api_key",
+      "in": "header",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "lpo_viewing_permission_id",
+      "in": "path",
+      "description": "lpo viewing_permission id to delete",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo viewing_permission not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/lpo_approvals": {
+   "get": {
+    "summary": "lpo approvals List",
+    "description": "The Lpo Approvals endpoint returns information about the LPO Approval requested given the parameters injected. \n",
+    "parameters": [
+     {
+      "name": "lpo_id",
+      "in": "query",
+      "description": "staff id",
+      "required": false,
+      "type": "number",
+      "format": "integer"
+     }
+    ],
+    "tags": [
+     "LPO Approval"
+    ],
+    "responses": {
+     "200": {
+      "description": "An array of lpo_approvals returned",
+      "schema": {
+       "type": "array",
+       "items": {
+        "$ref": "#/definitions/lpo_approval"
+       }
+      }
+     },
+     "404": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Error"
+      }
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/lpo_approval": {
+   "post": {
+    "tags": [
+     "LPO Approval"
+    ],
+    "summary": "Add a new lpo approval",
+    "description": "new lpo approval",
+    "operationId": "add_lpo_approval",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "lpo approval object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/lpo_approval"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successfully added a new Lpo approval for approval"
+     },
+     "405": {
+      "description": "Invalid input,adding a new lpo approval was unsuccessful"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "put": {
+    "tags": [
+     "LPO Approval"
+    ],
+    "summary": "Update an existing LPO Approval",
+    "description": "",
+    "operationId": "update_lpo_approval",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "LPO Approval object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/lpo_approval"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Success"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo approval not found"
+     },
+     "405": {
+      "description": "Validation exception"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/lpo_approval/{lpo_approval_id}": {
+   "get": {
+    "tags": [
+     "LPO Approval"
+    ],
+    "summary": "Find lpo approval by ID",
+    "description": "Returns a single lpo approval",
+    "operationId": "get_lpo_approval_by_id",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "lpo_approval_id",
+      "in": "path",
+      "description": "ID of lpo approval to return object",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "successful operation",
+      "schema": {
+       "$ref": "#/definitions/lpo_approval"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo approval not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "delete": {
+    "tags": [
+     "LPO Approval"
+    ],
+    "summary": "Deletes an lpo_approval",
+    "description": "",
+    "operationId": "delete_lpo_approval",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "api_key",
+      "in": "header",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "lpo_approval_id",
+      "in": "path",
+      "description": "lpo approval id to delete",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo approval not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/lpo_default_terms": {
+   "get": {
+    "summary": "lpo_default_terms List",
+    "description": "The lpo_default_term endpoint returns multiple lpo_default_term requested given the parameters injected. \n",
+    "parameters": [
+     {
+      "name": "lpo_default_term_id",
+      "in": "query",
+      "description": "lpo_default_term id",
+      "required": false,
+      "type": "number",
+      "format": "integer"
+     }
+    ],
+    "tags": [
+     "LPO Default Term"
+    ],
+    "responses": {
+     "200": {
+      "description": "An array of lpo_default_term returned",
+      "schema": {
+       "type": "array",
+       "items": {
+        "$ref": "#/definitions/lpo_default_term"
+       }
+      }
+     },
+     "404": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Error"
+      }
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/lpo_default_term": {
+   "post": {
+    "tags": [
+     "LPO Default Term"
+    ],
+    "summary": "Add a new lpo_default_term",
+    "description": "new lpo_default_term",
+    "operationId": "add_lpo_default_term",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "lpo_default_term object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/lpo_default_term"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successfully added a new lpo_default_term for approval"
+     },
+     "405": {
+      "description": "Invalid input,adding a new lpo_default_term was unsuccessful"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "put": {
+    "tags": [
+     "LPO Default Term"
+    ],
+    "summary": "Update an existing lpo_default_term",
+    "description": "",
+    "operationId": "update_lpo_default_term",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "lpo_default_term object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/lpo_default_term"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Success"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo_default_term not found"
+     },
+     "405": {
+      "description": "Validation exception"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/lpo_default_term/{lpo_default_term_id}": {
+   "get": {
+    "tags": [
+     "LPO Default Term"
+    ],
+    "summary": "Find lpo_default_term by ID",
+    "description": "Returns a single lpo_default_term",
+    "operationId": "get_lpo_default_term_by_id",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "lpo_default_term_id",
+      "in": "path",
+      "description": "ID of lpo_default_term to return object",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "successful operation",
+      "schema": {
+       "$ref": "#/definitions/lpo_default_term"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo_default_term not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "delete": {
+    "tags": [
+     "LPO Default Term"
+    ],
+    "summary": "Deletes an lpo_default_term",
+    "description": "",
+    "operationId": "delete_lpo_default_term",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "api_key",
+      "in": "header",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "lpo_default_term_id",
+      "in": "path",
+      "description": "lpo_default_term id to delete",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo_default_term not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  }
+ },
+ "securityDefinitions": {
+  "api_key": {
+   "type": "apiKey",
+   "name": "Authorization",
+   "in": "header"
+  }
+ },
+ "definitions": {
+  "lpo": {
+   "type": "object",
+   "required": [
+    "id",
+    "chai_ref",
+    "lpo_date",
+    "addressee",
+    "title",
+    "purpose",
+    "request_date",
+    "status",
+    "currency",
+    "quotation",
+    "supply_category",
+    "delivery_document",
+    "date_delivered",
+    "meeting",
+    "comments",
+    "preffered_supplier",
+    "attention",
+    "lpo_email",
+    "reject_reason",
+    "quote_exempt",
+    "quote_exempt_explanation",
+    "account_id",
+    "project_manager_id",
+    "received_by",
+    "project_id",
+    "requested_by",
+    "supplier_id",
+    "created_at",
+    "updated_at"
+   ],
+   "properties": {
+    "id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "chai_ref": {
+     "type": "string",
+     "example": "REF-100001"
+    },
+    "lpo_date": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "addressee": {
+     "type": "string",
+     "example": "Kevin Mwangi"
+    },
+    "title": {
+     "type": "string",
+     "example": "Print Paper"
+    },
+    "purpose": {
+     "type": "string",
+     "example": "Office Supplies"
+    },
+    "request_date": {
+     "type": "string",
+     "example": "REF-100001"
+    },
+    "status": {
+     "type": "integer",
+     "format": "int64",
+     "description": "lpo status",
+     "example": 2
+    },
+    "currency": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "quotation": {
+     "type": "integer",
+     "format": "int64",
+     "example": 123
+    },
+    "supply_category": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "delivery_document": {
+     "type": "string",
+     "description": "delivery document scanned and stored",
+     "example": "delivered.pdf"
+    },
+    "date_delivered": {
+     "type": "string",
+     "format": "date",
+     "example": "2017-01-01"
+    },
+    "meeting": {
+     "type": "integer",
+     "format": "int64",
+     "example": 23
+    },
+    "comments": {
+     "type": "string",
+     "example": "Everything seems fine"
+    },
+    "preffered_supplier": {
+     "type": "integer",
+     "format": "int64",
+     "example": 25
+    },
+    "attention": {
+     "type": "string",
+     "example": "Sir"
+    },
+    "lpo_email": {
+     "type": "string",
+     "example": "mwangikevinn@gmail.com"
+    },
+    "reject_reason": {
+     "type": "string",
+     "example": "No currency indicated"
+    },
+    "quote_exempt": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "quote_exempt_explanation": {
+     "type": "string",
+     "example": "Short delivery time required"
+    },
+    "account_id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 43
+    },
+    "project_manager_id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 23
+    },
+    "received_by": {
+     "type": "integer",
+     "format": "int64",
+     "example": 23
+    },
+    "project_id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 2
+    },
+    "requested_by": {
+     "type": "integer",
+     "format": "int64",
+     "example": 23
+    },
+    "supplier_id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 2
+    },
+    "created_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "updated_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    }
+   },
+   "xml": {
+    "name": "lpo"
+   }
+  },
+  "lpo_status": {
+   "type": "object",
+   "required": [
+    "id",
+    "lpo_status",
+    "next_status",
+    "status_security_level",
+    "created_at",
+    "updated_at"
+   ],
+   "properties": {
+    "id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "lpo_status": {
+     "type": "string",
+     "example": "Pending management approval"
+    },
+    "next_status": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "status_security_level": {
+     "type": "integer",
+     "format": "int64",
+     "example": 2
+    },
+    "created_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "updated_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    }
+   },
+   "xml": {
+    "name": "lpo"
+   }
+  },
+  "lpo_quotation": {
+   "type": "object",
+   "required": [
+    "id",
+    "lpo_id",
+    "supplier_id",
+    "created_at",
+    "updated_at"
+   ],
+   "properties": {
+    "id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "lpo_id": {
+     "type": "integer",
+     "example": 10
+    },
+    "supplier_id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 2
+    },
+    "amount": {
+     "type": "number",
+     "format": "int64",
+     "example": 20000
+    },
+    "quote_description": {
+     "type": "string",
+     "example": "Trial"
+    },
+    "quotation_doc": {
+     "type": "string",
+     "example": "PayPal.pdf"
+    },
+    "quote_date": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "uploaded_by_id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 2
+    },
+    "created_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "updated_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    }
+   },
+   "xml": {
+    "name": "lpo_quotation"
+   }
+  },
+  "lpo_item": {
+   "type": "object",
+   "required": [
+    "id",
+    "lpo_id",
+    "created_at",
+    "updated_at"
+   ],
+   "properties": {
+    "id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "lpo_id": {
+     "type": "integer",
+     "example": 10
+    },
+    "item_description": {
+     "type": "string",
+     "example": "Trial"
+    },
+    "unit_price": {
+     "type": "number",
+     "format": "int64",
+     "example": 20000
+    },
+    "vat_inclusive": {
+     "type": "integer",
+     "example": 0
+    },
+    "vat_charge": {
+     "type": "number",
+     "format": "int64",
+     "example": 200.1
+    },
+    "qty": {
+     "type": "integer",
+     "example": 10
+    },
+    "qty_description": {
+     "type": "integer",
+     "example": 10
+    },
+    "quotation": {
+     "type": "integer",
+     "example": 1
+    },
+    "item_name": {
+     "type": "string",
+     "example": "HP Pro 3500 Microtower PC, IntelÂ® Coreâ„¢ i3- 3240"
+    },
+    "uploaded_by_id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 2
+    },
+    "created_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "updated_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    }
+   },
+   "xml": {
+    "name": "lpo_item"
+   }
+  },
+  "lpo_term": {
+   "type": "object",
+   "required": [
+    "id",
+    "lpo_id",
+    "created_at",
+    "updated_at"
+   ],
+   "properties": {
+    "id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "lpo_id": {
+     "type": "integer",
+     "example": 10
+    },
+    "term": {
+     "type": "string",
+     "example": "Delivered at 12:00"
+    },
+    "uploaded_by_id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 2
+    },
+    "created_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "updated_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    }
+   },
+   "xml": {
+    "name": "lpo_term"
+   }
+  },
+  "lpo_comment": {
+   "type": "object",
+   "required": [
+    "id",
+    "lpo_id",
+    "created_at",
+    "updated_at"
+   ],
+   "properties": {
+    "id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "lpo_id": {
+     "type": "integer",
+     "example": 10
+    },
+    "comment": {
+     "type": "string",
+     "example": "Trial"
+    },
+    "comment_doc": {
+     "type": "string",
+     "example": "Needs 3 quotations"
+    },
+    "commentor_id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 2
+    },
+    "at_status_id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 2
+    },
+    "created_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "updated_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    }
+   },
+   "xml": {
+    "name": "lpo_comment"
+   }
+  },
+  "lpo_viewing_permission": {
+   "type": "object",
+   "required": [
+    "id",
+    "created_at",
+    "updated_at"
+   ],
+   "properties": {
+    "id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "lpo_status": {
+     "type": "string",
+     "example": "Trial"
+    },
+    "security_level_id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "display_color": {
+     "type": "string",
+     "example": "#000"
+    },
+    "created_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "updated_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    }
+   },
+   "xml": {
+    "name": "lpo_viewing_permission"
+   }
+  },
+  "lpo_approval": {
+   "type": "object",
+   "required": [
+    "id",
+    "lpo_id",
+    "created_at",
+    "updated_at"
+   ],
+   "properties": {
+    "id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "lpo_id": {
+     "type": "integer",
+     "example": 10
+    },
+    "approval_level_id": {
+     "type": "integer",
+     "example": 10
+    },
+    "approver_id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 2
+    },
+    "created_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "updated_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    }
+   },
+   "xml": {
+    "name": "lpo_approval"
+   }
+  },
+  "lpo_default_term": {
+   "type": "object",
+   "required": [
+    "id",
+    "created_at"
+   ],
+   "properties": {
+    "id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "terms": {
+     "type": "string",
+     "example": "PayPal.pdf"
+    },
+    "created_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "updated_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    }
+   },
+   "xml": {
+    "name": "lpo_default_term"
+   }
+  },
+  "Error": {
+   "type": "object",
+   "properties": {
+    "error": {
+     "type": "string",
+     "example": "object not found"
+    }
+   }
+  },
+  "Success": {
+   "type": "object",
+   "properties": {
+    "msg": {
+     "type": "string",
+     "example": "object not found"
+    }
+   }
+  }
+ }
+}
