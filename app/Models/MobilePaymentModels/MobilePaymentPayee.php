@@ -14,28 +14,4 @@ class MobilePaymentPayee extends BaseModel
     //
     use SoftDeletes;
 
-
-    protected $appends = [
-                            'region',
-                            'county'
-                        ];
-
-
-
-    public function getRegionAttribute()
-    {
-        
-
-	        return Region::find($this->attributes['region_id']);
-	    
-
-    }
-    public function getCountyAttribute()
-    {
-        
-
-	        return County::find($this->attributes['county_id']);
-	    
-
-    }
 }

@@ -16,6 +16,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Request;
+use App\Models\MobilePaymentModels\MobilePaymentPayee;
 
 class MobilePaymentPayeeApi extends Controller
 {
@@ -25,6 +26,37 @@ class MobilePaymentPayeeApi extends Controller
     public function __construct()
     {
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     /**
      * Operation addMobilePaymentPayee
@@ -38,18 +70,78 @@ class MobilePaymentPayeeApi extends Controller
     {
         $input = Request::all();
 
-        //path params validation
+
+        $mobile_payment_payee = new MobilePaymentPayee;
 
 
-        //not path params validation
-        if (!isset($input['body'])) {
-            throw new \InvalidArgumentException('Missing the required parameter $body when calling addMobilePaymentPayee');
+        try{
+
+
+            $form = Request::only(
+                        'mobile_payment_id',
+                        'full_name',
+                        'registered_name',
+                        'id_number',
+                        'mobile_number',
+                        'amount',
+                        'email'
+                    );
+
+
+            $mobile_payment_payee->mobile_payment_id          =               $form['mobile_payment_id'];
+            $mobile_payment_payee->full_name                  =               $form['full_name'];
+            $mobile_payment_payee->registered_name            =               $form['registered_name'];
+            $mobile_payment_payee->id_number                  =               $form['id_number'];
+            $mobile_payment_payee->mobile_number              =               $form['mobile_number'];
+            $mobile_payment_payee->amount                     =   (double)    $form['amount'];
+            $mobile_payment_payee->email                      =               $form['email'];
+            $mobile_payment_payee->withdrawal_charges         =               $this->get_withdrawal_charges((double) $form['amount']);
+            $mobile_payment_payee->total                      =               $this->get_total((double) $form['amount']);
+
+
+            if($mobile_payment_payee->save()) {
+                return Response()->json(array('success' => 'mobile payment payee added','mobile_payment_payee' => $mobile_payment_payee), 200);
+            }
+
+
+        }catch (JWTException $e){
+
+                return response()->json(['error'=>'You are not Authenticated'], 500);
+
         }
-        $body = $input['body'];
 
-
-        return response('How about implementing addMobilePaymentPayee as a POST method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /**
      * Operation updateMobilePaymentPayee
      *
@@ -74,6 +166,37 @@ class MobilePaymentPayeeApi extends Controller
 
         return response('How about implementing updateMobilePaymentPayee as a PUT method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /**
      * Operation deleteMobilePaymentPayee
      *
@@ -87,13 +210,47 @@ class MobilePaymentPayeeApi extends Controller
     {
         $input = Request::all();
 
-        //path params validation
+
+        $deleted_mobile_payment_payee = MobilePaymentPayee::destroy($mobile_payment_payee_id);
 
 
-        //not path params validation
-
-        return response('How about implementing deleteMobilePaymentPayee as a DELETE method ?');
+        if($deleted_mobile_payment_payee){
+            return response()->json(['msg'=>"Mobile payment payee deleted"], 200,array(),JSON_PRETTY_PRINT);
+        }else{
+            return response()->json(['error'=>"Mobile payment payee not found"], 404,array(),JSON_PRETTY_PRINT);
+        }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /**
      * Operation getMobilePaymentPayeeById
      *
@@ -114,6 +271,37 @@ class MobilePaymentPayeeApi extends Controller
 
         return response('How about implementing getMobilePaymentPayeeById as a GET method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /**
      * Operation mobilePaymentPayeesGet
      *
@@ -125,14 +313,70 @@ class MobilePaymentPayeeApi extends Controller
     public function mobilePaymentPayeesGet()
     {
         $input = Request::all();
-
-        //path params validation
-
-
-        //not path params validation
-        $mobile_payment_payee_id = $input['mobile_payment_payee_id'];
-
-
-        return response('How about implementing mobilePaymentPayeesGet as a GET method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    private function get_withdrawal_charges($amount){
+        return 0;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    private function get_total($amount){
+
+        return  $amount + $this->get_withdrawal_charges($amount);
+    }
+
 }
