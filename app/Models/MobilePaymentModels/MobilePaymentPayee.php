@@ -8,10 +8,56 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\BaseModels\BaseModel;
 use App\Models\LookupModels\Region;
 use App\Models\LookupModels\County;
+use DB;
 
 class MobilePaymentPayee extends BaseModel
 {
     //
     use SoftDeletes;
+
+
+
+
+
+    protected $appends = ['calculated_withdrawal_charges','calculated_total'];
+
+
+
+
+    public function getCalculatedWithdrawalChargesAttribute(){
+
+    	$amount = (double) $this->attributes['amount'];
+
+        $withdrawal_charges = 0 ;
+
+
+        $tariff_res = DB::table('mobile_payment_tariffs')
+                     ->select(DB::raw('tariff'))
+                     ->where('min_limit', '<=', $amount)
+                     ->where('max_limit', '>=', $amount)
+                     ->get();
+
+        foreach ($tariff_res as $key => $value) {
+            
+            $withdrawal_charges = (double)  $value->tariff ;
+
+        }
+
+        return $withdrawal_charges;
+        
+    }
+
+
+
+
+
+
+
+    public function getCalculatedTotalAttribute(){
+
+    	$amount = (double) $this->attributes['amount'];
+
+        return  $amount + (double)	$this->calculated_withdrawal_charges;
+    }
 
 }

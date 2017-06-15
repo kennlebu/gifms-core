@@ -17,6 +17,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Request;
 use App\Models\MobilePaymentModels\MobilePaymentPayee;
+use DB;
 
 class MobilePaymentPayeeApi extends Controller
 {
@@ -78,14 +79,14 @@ class MobilePaymentPayeeApi extends Controller
 
 
             $form = Request::only(
-                        'mobile_payment_id',
-                        'full_name',
-                        'registered_name',
-                        'id_number',
-                        'mobile_number',
-                        'amount',
-                        'email'
-                    );
+                'mobile_payment_id',
+                'full_name',
+                'registered_name',
+                'id_number',
+                'mobile_number',
+                'amount',
+                'email'
+                );
 
 
             $mobile_payment_payee->mobile_payment_id          =               $form['mobile_payment_id'];
@@ -95,18 +96,21 @@ class MobilePaymentPayeeApi extends Controller
             $mobile_payment_payee->mobile_number              =               $form['mobile_number'];
             $mobile_payment_payee->amount                     =   (double)    $form['amount'];
             $mobile_payment_payee->email                      =               $form['email'];
-            $mobile_payment_payee->withdrawal_charges         =               $this->get_withdrawal_charges((double) $form['amount']);
-            $mobile_payment_payee->total                      =               $this->get_total((double) $form['amount']);
+            $mobile_payment_payee->withdrawal_charges         =               $mobile_payment_payee->calculated_withdrawal_charges;
+            $mobile_payment_payee->total                      =               $mobile_payment_payee->calculated_total;
 
 
             if($mobile_payment_payee->save()) {
+
+
+                $mobile_payment_payee->save();
                 return Response()->json(array('success' => 'mobile payment payee added','mobile_payment_payee' => $mobile_payment_payee), 200);
             }
 
 
         }catch (JWTException $e){
 
-                return response()->json(['error'=>'You are not Authenticated'], 500);
+            return response()->json(['error'=>'You are not Authenticated'], 500);
 
         }
 
@@ -344,7 +348,24 @@ class MobilePaymentPayeeApi extends Controller
 
 
     private function get_withdrawal_charges($amount){
-        return 0;
+
+        $withdrawal_charges = 0 ;
+
+
+        $tariff_res = DB::table('mobile_payment_tariffs')
+        ->select(DB::raw('tariff'))
+        ->where('min_limit', '<=', $amount)
+        ->where('max_limit', '>=', $amount)
+        ->get();
+
+        foreach ($tariff_res as $key => $value) {
+
+            $withdrawal_charges = (double)  $value->tariff ;
+
+        }
+
+        return $withdrawal_charges;
+        
     }
 
 

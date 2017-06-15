@@ -90,8 +90,12 @@ class MobilePayment extends BaseModel
 
 
 
-
+    /**
+     * @deprecated 
+     */
     public function getAmountsAttribute(){
+
+        // trigger_error("This function is deprecated [getAmountsAttribute()]. Use getTotalsAttribute() instead",E_USER_NOTICE);
 
         $payees     =   $this->payees;
         $amounts    =   0;
