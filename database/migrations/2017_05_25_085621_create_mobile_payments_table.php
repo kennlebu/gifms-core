@@ -19,7 +19,7 @@ class CreateMobilePaymentsTable extends Migration
             $table->integer('meeting')->nullable();
             $table->date('requested_date')->nullable();
             $table->integer('requested_by_id')->nullable();
-            $table->integer('requested_action_by_id')->nullable();
+            $table->integer('request_action_by_id')->nullable();
             $table->integer('project_id')->nullable();
             $table->integer('account_id')->nullable();
             $table->integer('mobile_payment_type_id')->nullable();
@@ -27,7 +27,9 @@ class CreateMobilePaymentsTable extends Migration
             $table->text('expense_desc')->nullable();
             $table->text('expense_purpose')->nullable();
             $table->string('payment_document')->nullable();
+            $table->integer('payees_upload_mode_id')->nullable();
             $table->integer('status_id')->nullable();
+            $table->integer('currency_id')->nullable()->default(1);
             $table->integer('project_manager_id')->nullable();
             $table->integer('brevity')->nullable();
             $table->integer('region_id')->nullable();

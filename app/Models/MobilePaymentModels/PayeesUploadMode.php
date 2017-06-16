@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Models\StaffModels;
+namespace App\Models\MobilePaymentModels;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\BaseModels\BaseModel;
+use Illuminate\Database\Eloquent\Model;
 
-class Right extends BaseModel
+class PayeesUploadMode extends BaseModel
 {
     //
     use SoftDeletes;

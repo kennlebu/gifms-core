@@ -22,9 +22,9 @@ class MobilePayment extends BaseModel
     //
     use SoftDeletes;
 
-    protected $appends = [];
+    protected $appends = ['amounts','total_withdrawal_charges','totals'];
 
-
+ 
 
     public function requested_by()
     {
@@ -62,6 +62,10 @@ class MobilePayment extends BaseModel
     {
         return $this->belongsTo('App\Models\LookupModels\Region');
     }
+    public function currency()
+    {
+        return $this->belongsTo('App\Models\LookupModels\Currency');
+    }
     public function county()
     {
         return $this->belongsTo('App\Models\LookupModels\County');
@@ -69,6 +73,10 @@ class MobilePayment extends BaseModel
     public function rejected_by()
     {
         return $this->belongsTo('App\Models\StaffModels\Staff','rejected_by_id');
+    }
+    public function payees_upload_mode()
+    {
+        return $this->belongsTo('App\Models\MobilePaymentModels\PayeesUploadMode');
     }
     public function payees()
     {
@@ -82,7 +90,49 @@ class MobilePayment extends BaseModel
 
 
 
+    /**
+     * @deprecated 
+     */
+    public function getAmountsAttribute(){
 
+        // trigger_error("This function is deprecated [getAmountsAttribute()]. Use getTotalsAttribute() instead",E_USER_NOTICE);
+
+        $payees     =   $this->payees;
+        $amounts    =   0;
+
+        foreach ($payees as $key => $value) {
+            $amounts    +=  (float) $value->amount;
+        }
+
+        return $amounts;
+
+    }
+
+    public function getTotalWithdrawalChargesAttribute(){
+
+        $payees     =   $this->payees;
+        $total_withdrawal_charges    =   0;
+
+        foreach ($payees as $key => $value) {
+            $total_withdrawal_charges    +=  (float) $value->withdrawal_charges;
+        }
+
+        return $total_withdrawal_charges;
+
+    }
+
+    public function getTotalsAttribute(){
+
+        $payees     =   $this->payees;
+        $totals    =   0;
+
+        foreach ($payees as $key => $value) {
+            $totals    +=  (float) $value->total;
+        }
+
+        return $totals;
+
+    }
 
 
 

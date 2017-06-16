@@ -59,7 +59,7 @@ class MobilePaymentApi extends Controller
 
         $form = Request::only(
             'requested_by_id',
-            'requested_action_by_id',
+            'request_action_by_id',
             'project_id',
             'account_id',
             'mobile_payment_type_id',
@@ -71,6 +71,7 @@ class MobilePaymentApi extends Controller
             'region_id',
             'county_id',
             'attentendance_sheet',
+            'payees_upload_mode_id',
             'rejection_reason',
             'rejected_by_id'
             );
@@ -80,9 +81,9 @@ class MobilePaymentApi extends Controller
             $mobile_payment = new MobilePayment;
 
             $mobile_payment->requested_by_id                =   (int)   $form['requested_by_id'];
-            $mobile_payment->requested_action_by_id         =   (int)   $form['requested_action_by_id'];
+            $mobile_payment->request_action_by_id           =   (int)   $form['request_action_by_id'];
             $mobile_payment->project_id                     =   (int)   $form['project_id'];
-            $mobile_payment->account_id                     =   (int)   $form['account_id'];
+            // $mobile_payment->account_id                     =   (int)   $form['account_id'];
             $mobile_payment->mobile_payment_type_id         =   (int)   $form['mobile_payment_type_id'];
             $mobile_payment->expense_desc                   =           $form['expense_desc'];
             $mobile_payment->expense_purpose                =           $form['expense_purpose'];
@@ -92,11 +93,15 @@ class MobilePaymentApi extends Controller
             $mobile_payment->region_id                      =   (int)   $form['region_id'];
             $mobile_payment->county_id                      =   (int)   $form['county_id'];
             $mobile_payment->attentendance_sheet            =           $form['attentendance_sheet'];
+            $mobile_payment->payees_upload_mode_id          =   (int)   $form['payees_upload_mode_id'];
             $mobile_payment->rejection_reason               =           $form['rejection_reason'];
             $mobile_payment->rejected_by_id                 =   (int)   $form['rejected_by_id'];
 
 
-            if($lpo->save()) {
+            $mobile_payment->status_id                      =   1 ;
+
+
+            if($mobile_payment->save()) {
 
                 return Response()->json(array('msg' => 'Success: mobile payment added','mobile_payment' => $mobile_payment), 200);
             }
@@ -158,7 +163,7 @@ class MobilePaymentApi extends Controller
         $mobile_payment->payment_desc                       =           $body['payment_desc'];
         $mobile_payment->payment_purpose                    =           $body['payment_purpose'];
         $mobile_payment->project_id                         =   (int)   $body['project_id'];
-        $mobile_payment->account_id                         =   (int)   $body['account_id'];
+        // $mobile_payment->account_id                         =   (int)   $body['account_id'];
         $mobile_payment->mobile_payment_id                  =   (int)   $body['mobile_payment_id'];
         $mobile_payment->invoice_id                         =   (int)   $body['invoice_id'];
         $mobile_payment->expense_desc                       =           $body['expense_desc'];
@@ -223,7 +228,9 @@ class MobilePaymentApi extends Controller
             $response['project_manager']             = $model->find($mobile_payment_id)->project_manager;
             $response['region']                      = $model->find($mobile_payment_id)->region;
             $response['county']                      = $model->find($mobile_payment_id)->county;
+            $response['currency']                    = $model->find($mobile_payment_id)->currency;
             $response['rejected_by']                 = $model->find($mobile_payment_id)->rejected_by;
+            $response['payees_upload_mode']          = $model->find($mobile_payment_id)->payees_upload_mode;
             $response['payees']                      = $model->find($mobile_payment_id)->payees;
             $response['mobile_payment_approvals']    = $model->find($mobile_payment_id)->mobile_payment_approvals;
 
@@ -307,7 +314,7 @@ class MobilePaymentApi extends Controller
     {
         $input = Request::all();
 
-        $deleted = MobilePayment::destroy($lpo_id);
+        $deleted = MobilePayment::destroy($mobile_payment_id);
 
         if($deleted){
             return response()->json(['msg'=>"Mobile Payment deleted"], 200,array(),JSON_PRETTY_PRINT);
@@ -393,8 +400,10 @@ class MobilePaymentApi extends Controller
     public function mobilePaymentsGet()
     {
         $input = Request::all();
-
+        //query builder
         $qb = DB::table('mobile_payments');
+
+        $qb->whereNull('deleted_at');
 
         $response;
         $response_dt;
@@ -422,6 +431,7 @@ class MobilePaymentApi extends Controller
             $qb->where(function ($query) use ($input) {
                     
                 $query->orWhere('id','like', '\'%' . $input['searchval']. '%\'');
+                $query->orWhere('ref','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('expense_desc','like', '\'%' . $input['searchval']. '%\'');
                 $query->orWhere('expense_purpose','like', '\'%' . $input['searchval']. '%\'');
 
@@ -465,15 +475,15 @@ class MobilePaymentApi extends Controller
 
             //ordering
             $order_column_id    = (int) $input['order'][0]['column'];
-            $order_column_name  = $input['columns'][$order_column_id]['data'];
+            $order_column_name  = $input['columns'][$order_column_id]['order_by'];
             $order_direction    = $input['order'][0]['dir'];
 
-            if ($order_column_id == 0){
-                $order_column_name = "created_at";
-            }
-            if ($order_column_id == 1){
-                $order_column_name = "id";
-            }
+            // if ($order_column_id == 0){
+            //     $order_column_name = "created_at";
+            // }
+            // if ($order_column_id == 1){
+            //     $order_column_name = "id";
+            // }
 
             if($order_column_name!=''){
 
@@ -522,27 +532,53 @@ class MobilePaymentApi extends Controller
         return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     public function append_relationships_objects($data = array()){
 
         // print_r($data);
 
         foreach ($data as $key => $value) {
 
-            $model = new MobilePayment();
+            $mobile_payment =MobilePayment::find($data[$key]['id']);
 
-            $data[$key]['requested_by']                = $model->find($data[$key]['id'])->requested_by;
-            $data[$key]['requested_action_by']         = $model->find($data[$key]['id'])->requested_action_by;
-            $data[$key]['project']                     = $model->find($data[$key]['id'])->project;
-            $data[$key]['account']                     = $model->find($data[$key]['id'])->account;
-            $data[$key]['mobile_payment_type']         = $model->find($data[$key]['id'])->mobile_payment_type;
-            $data[$key]['invoice']                     = $model->find($data[$key]['id'])->invoice;
-            $data[$key]['status']                      = $model->find($data[$key]['id'])->status;
-            $data[$key]['project_manager']             = $model->find($data[$key]['id'])->project_manager;
-            $data[$key]['region']                      = $model->find($data[$key]['id'])->region;
-            $data[$key]['county']                      = $model->find($data[$key]['id'])->county;
-            $data[$key]['rejected_by']                 = $model->find($data[$key]['id'])->rejected_by;
-            $data[$key]['payees']                      = $model->find($data[$key]['id'])->payees;
-            $data[$key]['mobile_payment_approvals']    = $model->find($data[$key]['id'])->mobile_payment_approvals;
+            $data[$key]['requested_by']                = $mobile_payment->requested_by;
+            $data[$key]['requested_action_by']         = $mobile_payment->requested_action_by;
+            $data[$key]['project']                     = $mobile_payment->project;
+            $data[$key]['account']                     = $mobile_payment->account;
+            $data[$key]['mobile_payment_type']         = $mobile_payment->mobile_payment_type;
+            $data[$key]['invoice']                     = $mobile_payment->invoice;
+            $data[$key]['status']                      = $mobile_payment->status;
+            $data[$key]['project_manager']             = $mobile_payment->project_manager;
+            $data[$key]['region']                      = $mobile_payment->region;
+            $data[$key]['county']                      = $mobile_payment->county;
+            $data[$key]['currency']                    = $mobile_payment->currency;
+            $data[$key]['rejected_by']                 = $mobile_payment->rejected_by;
+            $data[$key]['payees_upload_mode']          = $mobile_payment->payees_upload_mode;
+            $data[$key]['payees']                      = $mobile_payment->payees;
+            $data[$key]['mobile_payment_approvals']    = $mobile_payment->mobile_payment_approvals;
+            $data[$key]['totals']                      = $mobile_payment->totals;
 
         }
 
@@ -550,6 +586,23 @@ class MobilePaymentApi extends Controller
 
 
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
 
 
 
@@ -602,6 +655,13 @@ class MobilePaymentApi extends Controller
             if($value["rejected_by"]==null){
                 $data[$key]['rejected_by'] = array("full_name"=>"N/A");
                 
+            }
+            if($value["payees_upload_mode"]==null){
+                $data[$key]['payees_upload_mode'] = array("desc"=>"N/A");
+                
+            }
+            if($data[$key]["currency"]==null){
+                $data[$key]["currency"] = array("currency_name"=>"N/A");
             }
         }
 

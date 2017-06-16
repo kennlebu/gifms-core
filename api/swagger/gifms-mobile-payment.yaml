@@ -47,6 +47,11 @@ tags:
     externalDocs:
       description: Find out more
       url: 'http://kefinance.clintonhealthaccess.org/api/mobile_payment_viewing_permission/docs'
+  - name: Payees Upload Mode
+    description: Everything About Payees Upload Mode
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/payees_upload_mode/docs'
 schemes:
   - http
   - https
@@ -244,6 +249,43 @@ paths:
      
      
 
+            
+            
+            
+    delete:
+      tags:
+        - Mobile Payment
+      summary: Deletes an mobile_payment
+      description: ''
+      operationId: delete_mobile_payment
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: api_key
+          in: header
+          required: true
+          type: string
+        - name: mobile_payment_id
+          in: path
+          description: mobile_payment id to delete
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: mobile_payment not found
+      security:
+        - api_key: []
+
+
+
+
+
+
+
         
         
         
@@ -315,43 +357,6 @@ paths:
         
         
      
-            
-            
-            
-    delete:
-      tags:
-        - Mobile Payment
-      summary: Deletes an mobile_payment
-      description: ''
-      operationId: delete_mobile_payment
-      produces:
-        - application/json
-        - application/xml
-      parameters:
-        - name: api_key
-          in: header
-          required: true
-          type: string
-        - name: mobile_payment_id
-          in: path
-          description: mobile_payment id to delete
-          required: true
-          type: integer
-          format: int64
-      responses:
-        '400':
-          description: Invalid ID supplied
-        '404':
-          description: mobile_payment not found
-      security:
-        - api_key: []
-
-
-
-
-
-
-
 
 
 
@@ -1698,6 +1703,217 @@ paths:
 
 
 
+  /payees_upload_modes:
+    get:
+      summary: payees_upload_modes List
+      description: |
+        The payees_upload_mode endpoint returns multiple payees_upload_mode requested given the parameters injected. 
+      parameters:
+        - name: payees_upload_mode_id
+          in: query
+          description: payees_upload_mode id 
+          required: false
+          type: number
+          format: integer
+      tags:
+        - Payees Upload Mode
+      responses:
+        200:
+          description: An array of payees_upload_mode returned
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/payees_upload_mode'
+        404:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+        - api_key: []
+
+
+
+
+
+
+
+  /payees_upload_mode:    
+    post:
+      tags:
+        - Payees Upload Mode
+      summary: Add a new payees_upload_mode
+      description: new payees_upload_mode  
+      operationId: add_payees_upload_mode
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: payees_upload_mode object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/payees_upload_mode'
+      responses:
+        '200':
+          description: Successfully added a new payees_upload_mode for approval 
+        '405':
+          description: Invalid input,adding a new payees_upload_mode was unsuccessful
+      security:
+        - api_key: []
+            
+            
+            
+
+            
+    put:
+      tags:
+        - Payees Upload Mode
+      summary: Update an existing payees_upload_mode
+      description: ''
+      operationId: update_payees_upload_mode
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: payees_upload_mode object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/payees_upload_mode'
+      responses:
+        200:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Success'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: payees_upload_mode not found
+        '405':
+          description: Validation exception
+      security:
+        - api_key: []
+        
+        
+        
+        
+        
+        
+  '/payees_upload_mode/{payees_upload_mode_id}':
+    get:
+      tags:
+        - Payees Upload Mode
+      summary: Find payees_upload_mode by ID
+      description: Returns a single payees_upload_mode
+      operationId: get_payees_upload_mode_by_id
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: payees_upload_mode_id
+          in: path
+          description: ID of payees_upload_mode to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/payees_upload_mode'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: payees_upload_mode not found
+      security:
+        - api_key: []
+        
+        
+     
+            
+            
+            
+    delete:
+      tags:
+        - Payees Upload Mode
+      summary: Deletes an payees_upload_mode
+      description: ''
+      operationId: delete_payees_upload_mode
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: api_key
+          in: header
+          required: true
+          type: string
+        - name: payees_upload_mode_id
+          in: path
+          description: payees_upload_mode id to delete
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: payees_upload_mode not found
+      security:
+        - api_key: []
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+          
+
+
+
+
+
+
+
+
+
 
 
 
@@ -2012,6 +2228,45 @@ definitions:
     
   
     
+  
+      
+      
+  payees_upload_mode:
+    type: object
+    required:
+      - id
+      - created_at
+    properties:
+      id:
+        type: integer
+        format: int64
+        example: 1
+      num:
+        type: number
+        format: int64
+        example: 20000
+      str:
+        type: string
+        example: 'PayPal.pdf'
+      date:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      created_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      updated_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+    xml:
+      name: payees_upload_mode
+    
+  
+    
+  
+  
   
   
   

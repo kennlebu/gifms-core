@@ -7,10 +7,14 @@
     "require": {
         "php": ">=5.6.4",
         "anchu/ftp": "^2.0",
+        "barryvdh/laravel-dompdf": "^0.8.0",
         "doctrine/dbal": "^2.5",
         "laravel/framework": "5.3.*",
+        "maatwebsite/excel": "~2.1.0",
+        "niklasravnsborg/laravel-pdf": "^1.5",
         "tymon/jwt-auth": "^0.5.11",
-        "venturecraft/revisionable": "^1.28"
+        "venturecraft/revisionable": "^1.28",
+        "wn/lumen-generators": "^1.3"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

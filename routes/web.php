@@ -14,3 +14,13 @@
 Route::get('/', function () {
     return view('welcome');
 });
+Route::get('test/pdf', function () {
+
+	$lpo   = App\Models\LPOModels\Lpo::findOrFail(128);
+
+    $data = array(
+            'lpo'   => $lpo
+        );
+
+    return view('pdf/lpo',$data);
+});

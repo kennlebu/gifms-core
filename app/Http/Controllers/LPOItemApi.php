@@ -27,6 +27,34 @@ class LPOItemApi extends Controller
     {
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
     /**
      * Operation addLpoItem
      *
@@ -82,6 +110,34 @@ class LPOItemApi extends Controller
         }
      
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation updateLpoItem
      *
@@ -106,6 +162,34 @@ class LPOItemApi extends Controller
 
         return response('How about implementing updateLpoItem as a PUT method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation deleteLpoItem
      *
@@ -128,6 +212,34 @@ class LPOItemApi extends Controller
             return response()->json(['error'=>"lpo item not found"], 404,array(),JSON_PRETTY_PRINT);
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation getLpoItemById
      *
@@ -148,6 +260,34 @@ class LPOItemApi extends Controller
 
         return response('How about implementing getLpoItemById as a GET method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation lpoItemsGet
      *
@@ -184,4 +324,32 @@ class LPOItemApi extends Controller
 
         return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
 }

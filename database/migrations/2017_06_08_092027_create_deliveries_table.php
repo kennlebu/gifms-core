@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateRoleRightsTable extends Migration
+class CreateDeliveriesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,15 @@ class CreateRoleRightsTable extends Migration
      */
     public function up()
     {
-        Schema::create('role_rights', function (Blueprint $table) {
+        Schema::create('deliveries', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('role_id')->nullable();
-            $table->integer('right_id')->nullable();
+            $table->string('internal_ref')->nullable();
+            $table->string('external_ref')->nullable();
+            $table->integer('lpo_id')->nullable();
+            $table->integer('received_by')->nullable();
+            $table->string('delivery_document')->nullable();
+            $table->string('receipt')->nullable();
+            $table->text('comment')->nullable();
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
             $table->softDeletes();
@@ -30,6 +35,6 @@ class CreateRoleRightsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('role_rights');
+        Schema::dropIfExists('deliveries');
     }
 }

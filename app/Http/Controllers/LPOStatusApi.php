@@ -16,7 +16,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\DB;
 use App\Models\LPOModels\LpoStatus;
+use App\Models\LPOModels\Lpo;
 
 class LPOStatusApi extends Controller
 {
@@ -244,31 +246,107 @@ class LPOStatusApi extends Controller
      */
     public function lpoStatusesGet()
     {
-        $input = Request::all();
+        // $input = Request::all();
 
-        //path params validation
-        $response;
+        // $response;
 
-        //path params validation
+        // //path params validation
 
 
-        //if status is set
+        // //if status is set
 
-        if(array_key_exists('staff_id', $input)){
+        // if(array_key_exists('staff_id', $input)){
 
      
 
-        }else{
+        // }else{
 
-             $response = LpoStatus::where("deleted_at",null)
-                ->orderBy('lpo_status', 'desc')
-                ->get();
-        }
+        //      $response = LpoStatus::where("deleted_at",null)
+        //         ->orderBy('lpo_status', 'desc')
+        //         ->get();
+        // }
 
 
            
 
 
-            return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+        //     return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+
+
+
+        $input = Request::all();
+        $response;
+        $qb = DB::table('lpo_statuses');
+        $qb->whereNull('deleted_at');
+
+
+        if(array_key_exists('allowed_only', $input)){
+
+            $qb = $this->get_my_allowed_statuses($qb);
+
+        }else{
+
+            $qb->orderBy('lpo_status', 'DESC');
+        }
+
+
+        $response = $qb->get();
+        $response = json_decode(json_encode($response),true);
+
+      
+
+
+        //count lpos on each status
+        foreach ($response as $key => $value) {
+            // $response[$key]['lpo_count'] = LpoStatus::find($value['id'])->lpo_count;
+
+
+            $response[$key]['lpo_count'] = Lpo::where('requested_by_id',$this->current_user()->id)
+                                            ->where('status_id', $value['id'] )
+                                            ->count();
+
+
+        }
+
+        //add -1 and -2 statuses
+
+        if(array_key_exists('allowed_only', $input)){
+
+            //-1
+            $response[]=array(
+                    "id"=> -1,
+                    "lpo_status"=> "My Lpos",
+                    "order_priority"=> 999,
+                    "display_color"=> "#db6ad7",
+                    "lpo_count"=> LPO::where('requested_by_id',$this->current_user()->id)->count()
+                  );
+
+
+
+            //-1
+            $response[]=array(
+                    "id"=> -2,
+                    "lpo_status"=> "All Lpos",
+                    "order_priority"=> 1000,
+                    "display_color"=> "#d4a93a",
+                    "lpo_count"=> LPO::count()
+                  );
+
+        }
+
+        return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+
+    }
+
+
+
+
+
+    private function get_my_allowed_statuses($qb){
+
+
+        $qb->orderBy('order_priority', 'ASC');
+
+        return $qb;
     }
 }

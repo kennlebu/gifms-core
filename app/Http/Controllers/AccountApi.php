@@ -16,9 +16,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Request;
-use App\Models\ProjectsModels\Project;
+use Illuminate\Support\Facades\DB;
 
-class ProjectApi extends Controller
+class AccountApi extends Controller
 {
     /**
      * Constructor
@@ -28,14 +28,14 @@ class ProjectApi extends Controller
     }
 
     /**
-     * Operation addProject
+     * Operation addAccount
      *
-     * Add a new project.
+     * Add a new account.
      *
      *
      * @return Http response
      */
-    public function addProject()
+    public function addAccount()
     {
         $input = Request::all();
 
@@ -44,22 +44,22 @@ class ProjectApi extends Controller
 
         //not path params validation
         if (!isset($input['body'])) {
-            throw new \InvalidArgumentException('Missing the required parameter $body when calling addProject');
+            throw new \InvalidArgumentException('Missing the required parameter $body when calling addAccount');
         }
         $body = $input['body'];
 
 
-        return response('How about implementing addProject as a POST method ?');
+        return response('How about implementing addAccount as a POST method ?');
     }
     /**
-     * Operation updateProject
+     * Operation updateAccount
      *
-     * Update an existing project.
+     * Update an existing account.
      *
      *
      * @return Http response
      */
-    public function updateProject()
+    public function updateAccount()
     {
         $input = Request::all();
 
@@ -68,23 +68,23 @@ class ProjectApi extends Controller
 
         //not path params validation
         if (!isset($input['body'])) {
-            throw new \InvalidArgumentException('Missing the required parameter $body when calling updateProject');
+            throw new \InvalidArgumentException('Missing the required parameter $body when calling updateAccount');
         }
         $body = $input['body'];
 
 
-        return response('How about implementing updateProject as a PUT method ?');
+        return response('How about implementing updateAccount as a PUT method ?');
     }
     /**
-     * Operation deleteProject
+     * Operation deleteAccount
      *
-     * Deletes an project.
+     * Deletes an account.
      *
-     * @param int $project_id project id to delete (required)
+     * @param int $account_id account id to delete (required)
      *
      * @return Http response
      */
-    public function deleteProject($project_id)
+    public function deleteAccount($account_id)
     {
         $input = Request::all();
 
@@ -93,18 +93,18 @@ class ProjectApi extends Controller
 
         //not path params validation
 
-        return response('How about implementing deleteProject as a DELETE method ?');
+        return response('How about implementing deleteAccount as a DELETE method ?');
     }
     /**
-     * Operation getProjectById
+     * Operation getAccountById
      *
-     * Find project by ID.
+     * Find account by ID.
      *
-     * @param int $project_id ID of project to return object (required)
+     * @param int $account_id ID of account to return object (required)
      *
      * @return Http response
      */
-    public function getProjectById($project_id)
+    public function getAccountById($account_id)
     {
         $input = Request::all();
 
@@ -113,21 +113,52 @@ class ProjectApi extends Controller
 
         //not path params validation
 
-        return response('How about implementing getProjectById as a GET method ?');
+        return response('How about implementing getAccountById as a GET method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /**
-     * Operation projectsGet
+     * Operation accountsGet
      *
-     * projects List.
+     * accounts List.
      *
      *
      * @return Http response
      */
-    public function projectsGet()
+    public function accountsGet()
     {
         $input = Request::all();
 
-        $response = Project::orderBy('project_code', 'desc')->get();
+
+        //query builder
+        $qb = DB::table('accounts');
+
+        if(array_key_exists('account_format', $input)){
+            $qb->where('account_format', $input['account_format']);
+        }
+
+        $qb->orderBy('account_name', 'asc');
+
+        $response = $qb->get();
+ 
 
         return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
     }

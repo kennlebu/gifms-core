@@ -12,7 +12,7 @@ return [
     | any other location as required by the application or its packages.
     */
 
-    'name' => 'Laravel',
+    'name' => 'GIFMS-CORE',
 
     /*
     |--------------------------------------------------------------------------
@@ -171,6 +171,9 @@ return [
 
         Tymon\JWTAuth\Providers\JWTAuthServiceProvider::class,
         Anchu\Ftp\FtpServiceProvider::class,
+        Barryvdh\DomPDF\ServiceProvider::class,
+        niklasravnsborg\LaravelPdf\PdfServiceProvider::class,
+        Maatwebsite\Excel\ExcelServiceProvider::class,
 
         /*
          * Application Service Providers...
@@ -230,6 +233,9 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
 
         'JWTAuth' => Tymon\JWTAuth\Facades\JWTAuth::class,
+        'PDF' => Barryvdh\DomPDF\Facade::class,
+        'mPDF' => niklasravnsborg\LaravelPdf\Facades\Pdf::class,
+        'Excel' => Maatwebsite\Excel\Facades\Excel::class,
 
     ],
 

@@ -102,6 +102,14 @@ Route::POST('/lpo/{lpo_id}', 'LpoApi@updateLpoWithForm')->middleware('jwt.auth')
  */
 Route::GET('/lpos', 'LpoApi@lposGet')->middleware('jwt.auth');
 
+/**
+ * GET getDocumentById
+ * Summary: preview LPO document ID
+ * Notes: Returns a single lpo document
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/lpo/{lpo_id}/get_document', 'LPOApi@getDocumentById')->middleware('jwt.auth');
+
 
 
 
@@ -283,6 +291,13 @@ Route::GET('/lpo_quotation/{lpo_quotation_id}', 'LPOQuotationApi@getLpoQuotation
 
  */
 Route::GET('/lpo_quotations', 'LPOQuotationApi@lpoQuotationsGet')->middleware('jwt.auth');
+/**
+ * GET getLpoQuotationDocumentById
+ * Summary: Find lpo quotation document by ID
+ * Notes: Returns a single lpo quotation document
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/lpo_quotation/{lpo_quotation_id}/get_document', 'LPOQuotationApi@getLpoQuotationDocumentById')->middleware('jwt.auth');
 
 
 
@@ -1618,7 +1633,7 @@ Route::PATCH('/mobile_payment/{mobile_payment_id}/approve', 'MobilePaymentApi@ap
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::DELETE('/mobile_payment/{mobile_payment_id}/approve', 'MobilePaymentApi@deleteMobilePayment')->middleware('jwt.auth');
+Route::DELETE('/mobile_payment/{mobile_payment_id}', 'MobilePaymentApi@deleteMobilePayment')->middleware('jwt.auth');
 /**
  * PATCH submitForApproval
  * Summary: Submit mobile_payment by ID
@@ -1985,12 +2000,87 @@ Route::GET('/mobile_payment_types', 'MobilePaymentTypeApi@mobilePaymentTypesGet'
 
 
 
+/**
+ * POST addPayeesUploadMode
+ * Summary: Add a new payees_upload_mode
+ * Notes: new payees_upload_mode
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/payees_upload_mode', 'PayeesUploadModeApi@addPayeesUploadMode')->middleware('jwt.auth');
+/**
+ * PUT updatePayeesUploadMode
+ * Summary: Update an existing payees_upload_mode
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/payees_upload_mode', 'PayeesUploadModeApi@updatePayeesUploadMode')->middleware('jwt.auth');
+/**
+ * DELETE deletePayeesUploadMode
+ * Summary: Deletes an payees_upload_mode
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/payees_upload_mode/{payees_upload_mode_id}', 'PayeesUploadModeApi@deletePayeesUploadMode')->middleware('jwt.auth');
+/**
+ * GET getPayeesUploadModeById
+ * Summary: Find payees_upload_mode by ID
+ * Notes: Returns a single payees_upload_mode
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/payees_upload_mode/{payees_upload_mode_id}', 'PayeesUploadModeApi@getPayeesUploadModeById')->middleware('jwt.auth');
+/**
+ * GET getPayeesUploadModes
+ * Summary: payees_upload_modes List
+ * Notes: The payees_upload_mode endpoint returns multiple payees_upload_mode requested given the parameters injected.  
+
+ */
+Route::GET('/payees_upload_modes', 'PayeesUploadModeApi@getPayeesUploadModes')->middleware('jwt.auth');
 
 
 
 
 
 
+
+
+
+
+
+/**
+ * POST addAccount
+ * Summary: Add a new account
+ * Notes: new account
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/account', 'AccountApi@addAccount')->middleware('jwt.auth');
+/**
+ * PUT updateAccount
+ * Summary: Update an existing account
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/account', 'AccountApi@updateAccount')->middleware('jwt.auth');
+/**
+ * DELETE deleteAccount
+ * Summary: Deletes an account
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/account/{account_id}', 'AccountApi@deleteAccount')->middleware('jwt.auth');
+/**
+ * GET getAccountById
+ * Summary: Find account by ID
+ * Notes: Returns a single account
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/account/{account_id}', 'AccountApi@getAccountById')->middleware('jwt.auth');
+/**
+ * GET accountsGet
+ * Summary: accounts List
+ * Notes: The account endpoint returns multiple account requested given the parameters injected.  
+
+ */
+Route::GET('/accounts', 'AccountApi@accountsGet')->middleware('jwt.auth');
 
 
 

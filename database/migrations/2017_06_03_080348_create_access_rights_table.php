@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateMpesaPaymentApprovalsTable extends Migration
+class CreateAccessRightsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,14 @@ class CreateMpesaPaymentApprovalsTable extends Migration
      */
     public function up()
     {
-        Schema::create('mpesa_payment_approvals', function (Blueprint $table) {
-            
+        Schema::create('access_rights', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('mpesa_payment_id')->nullable();
+            $table->text('right_name');
+            $table->text('operation_type')->nullable();
+            $table->text('operation_type_abbr')->nullable();
+            $table->text('entity')->nullable();
             $table->integer('approval_level_id')->nullable();
-            $table->integer('approver')->nullable();
-            $table->integer('migration_approver')->nullable();
+            $table->integer('at_status_id')->nullable();
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
             $table->softDeletes();
@@ -33,6 +34,6 @@ class CreateMpesaPaymentApprovalsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('mpesa_payment_approvals');
+        Schema::dropIfExists('access_rights');
     }
 }

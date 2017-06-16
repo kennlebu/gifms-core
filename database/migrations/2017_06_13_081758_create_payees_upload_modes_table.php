@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateMpesaTarrifsTable extends Migration
+class CreatePayeesUploadModesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,9 @@ class CreateMpesaTarrifsTable extends Migration
      */
     public function up()
     {
-        Schema::create('mpesa_tarrifs', function (Blueprint $table) {
+        Schema::create('payees_upload_modes', function (Blueprint $table) {
             $table->increments('id');
-            $table->double('min_limit',30,2)->nullable();
-            $table->double('max_limit',30,2)->nullable();
-            $table->double('tarrif',30,2)->nullable();
-            $table->integer('migration_id')->nullable();
+            $table->string('desc');
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
             $table->softDeletes();
@@ -32,6 +29,6 @@ class CreateMpesaTarrifsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('mpesa_tarrifs');
+        Schema::dropIfExists('payees_upload_modes');
     }
 }

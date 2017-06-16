@@ -45,6 +45,7 @@ class migrate_lpo_keys extends Seeder
                                     SET     l.project_manager_id            =   pm.id ,
                                             l.received_by_id                =   rcb.id,
                                             l.requested_by_id               =   rq.id,
+                                            l.request_action_by_id          =   rq.id,
                                             l.project_id                    =   p.id,
                                             l.supplier_id                   =   s.id,
                                             l.account_id                    =   a.id,
