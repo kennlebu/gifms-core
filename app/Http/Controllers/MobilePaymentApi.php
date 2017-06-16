@@ -561,23 +561,24 @@ class MobilePaymentApi extends Controller
 
         foreach ($data as $key => $value) {
 
-            $model = new MobilePayment();
+            $mobile_payment =MobilePayment::find($data[$key]['id']);
 
-            $data[$key]['requested_by']                = $model->find($data[$key]['id'])->requested_by;
-            $data[$key]['requested_action_by']         = $model->find($data[$key]['id'])->requested_action_by;
-            $data[$key]['project']                     = $model->find($data[$key]['id'])->project;
-            $data[$key]['account']                     = $model->find($data[$key]['id'])->account;
-            $data[$key]['mobile_payment_type']         = $model->find($data[$key]['id'])->mobile_payment_type;
-            $data[$key]['invoice']                     = $model->find($data[$key]['id'])->invoice;
-            $data[$key]['status']                      = $model->find($data[$key]['id'])->status;
-            $data[$key]['project_manager']             = $model->find($data[$key]['id'])->project_manager;
-            $data[$key]['region']                      = $model->find($data[$key]['id'])->region;
-            $data[$key]['county']                      = $model->find($data[$key]['id'])->county;
-            $data[$key]['currency']                    = $model->find($data[$key]['id'])->currency;
-            $data[$key]['rejected_by']                 = $model->find($data[$key]['id'])->rejected_by;
-            $data[$key]['payees_upload_mode']          = $model->find($data[$key]['id'])->payees_upload_mode;
-            $data[$key]['payees']                      = $model->find($data[$key]['id'])->payees;
-            $data[$key]['mobile_payment_approvals']    = $model->find($data[$key]['id'])->mobile_payment_approvals;
+            $data[$key]['requested_by']                = $mobile_payment->requested_by;
+            $data[$key]['requested_action_by']         = $mobile_payment->requested_action_by;
+            $data[$key]['project']                     = $mobile_payment->project;
+            $data[$key]['account']                     = $mobile_payment->account;
+            $data[$key]['mobile_payment_type']         = $mobile_payment->mobile_payment_type;
+            $data[$key]['invoice']                     = $mobile_payment->invoice;
+            $data[$key]['status']                      = $mobile_payment->status;
+            $data[$key]['project_manager']             = $mobile_payment->project_manager;
+            $data[$key]['region']                      = $mobile_payment->region;
+            $data[$key]['county']                      = $mobile_payment->county;
+            $data[$key]['currency']                    = $mobile_payment->currency;
+            $data[$key]['rejected_by']                 = $mobile_payment->rejected_by;
+            $data[$key]['payees_upload_mode']          = $mobile_payment->payees_upload_mode;
+            $data[$key]['payees']                      = $mobile_payment->payees;
+            $data[$key]['mobile_payment_approvals']    = $mobile_payment->mobile_payment_approvals;
+            $data[$key]['totals']                      = $mobile_payment->totals;
 
         }
 

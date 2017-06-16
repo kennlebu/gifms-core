@@ -627,26 +627,27 @@ class LpoApi extends Controller
 
         foreach ($data as $key => $value) {
 
-            $model = new Lpo();
+            $lpo = Lpo::find($data[$key]['id']);
 
-            $data[$key]['requested_by']             = $model->find($data[$key]['id'])->requested_by;
-            $data[$key]['request_action_by']        = $model->find($data[$key]['id'])->request_action_by;
-            $data[$key]['project']                  = $model->find($data[$key]['id'])->project;
-            $data[$key]['account']                  = $model->find($data[$key]['id'])->account;
-            $data[$key]['invoice']                  = $model->find($data[$key]['id'])->invoice;
-            $data[$key]['status']                   = $model->find($data[$key]['id'])->status;
-            $data[$key]['project_manager']          = $model->find($data[$key]['id'])->project_manager;
-            $data[$key]['rejected_by']              = $model->find($data[$key]['id'])->rejected_by;
-            $data[$key]['cancelled_by']             = $model->find($data[$key]['id'])->cancelled_by;
-            $data[$key]['received_by']              = $model->find($data[$key]['id'])->received_by;
-            $data[$key]['supplier']                 = $model->find($data[$key]['id'])->supplier;
-            $data[$key]['currency']                 = $model->find($data[$key]['id'])->currency;
-            $data[$key]['quotations']               = $model->find($data[$key]['id'])->quotations;
-            $data[$key]['preffered_quotation']      = $model->find($data[$key]['id'])->preffered_quotation;
-            $data[$key]['items']                    = $model->find($data[$key]['id'])->items;
-            $data[$key]['terms']                    = $model->find($data[$key]['id'])->terms;
-            $data[$key]['lpo_approvals']            = $model->find($data[$key]['id'])->lpo_approvals;
-            $data[$key]['deliveries']               = $model->find($data[$key]['id'])->deliveries;
+            $data[$key]['requested_by']             = $lpo->requested_by;
+            $data[$key]['request_action_by']        = $lpo->request_action_by;
+            $data[$key]['project']                  = $lpo->project;
+            $data[$key]['account']                  = $lpo->account;
+            $data[$key]['invoice']                  = $lpo->invoice;
+            $data[$key]['status']                   = $lpo->status;
+            $data[$key]['project_manager']          = $lpo->project_manager;
+            $data[$key]['rejected_by']              = $lpo->rejected_by;
+            $data[$key]['cancelled_by']             = $lpo->cancelled_by;
+            $data[$key]['received_by']              = $lpo->received_by;
+            $data[$key]['supplier']                 = $lpo->supplier;
+            $data[$key]['currency']                 = $lpo->currency;
+            $data[$key]['quotations']               = $lpo->quotations;
+            $data[$key]['preffered_quotation']      = $lpo->preffered_quotation;
+            $data[$key]['items']                    = $lpo->items;
+            $data[$key]['terms']                    = $lpo->terms;
+            $data[$key]['lpo_approvals']            = $lpo->lpo_approvals;
+            $data[$key]['deliveries']               = $lpo->deliveries;
+            $data[$key]['totals']                   = $lpo->totals;
 
         }
 
