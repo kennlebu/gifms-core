@@ -3,6 +3,8 @@
 namespace App\Models\ClaimsModels;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\BaseModels\BaseModel;
 use App\Models\StaffModels\Staff;
 use App\Models\ProjectsModels\Project;
 use App\Models\AccountingModels\Account;
@@ -10,8 +12,11 @@ use App\Models\ClaimsModels\ClaimApproval;
 use App\Models\ClaimsModels\ClaimStatus;
 use App\Models\LookupModels\Currency;
 
-class Claim extends Model
+class Claim extends BaseModel
 {
+    
+    use SoftDeletes;
+
     
     public function requested_by()
     {
@@ -27,7 +32,7 @@ class Claim extends Model
     }
     public function status()
     {
-        return $this->belongsTo('App\Models\LPOModels\LpoStatus');
+        return $this->belongsTo('App\Models\ClaimsModels\ClaimStatus');
     }
     public function project_manager()
     {

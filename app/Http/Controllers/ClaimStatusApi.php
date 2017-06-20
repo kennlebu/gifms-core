@@ -274,7 +274,7 @@ class ClaimStatusApi extends Controller
         foreach ($response as $key => $value) {
 
 
-            $response[$key]['lpo_count'] = Claim::where('requested_by_id',$this->current_user()->id)
+            $response[$key]['claims_count'] = Claim::where('requested_by_id',$this->current_user()->id)
                                             ->where('status_id', $value['id'] )
                                             ->count();
 
@@ -288,10 +288,10 @@ class ClaimStatusApi extends Controller
             //-1
             $response[]=array(
                     "id"=> -1,
-                    "claim_status"=> "My Lpos",
+                    "claim_status"=> "My Claims",
                     "order_priority"=> 999,
                     "display_color"=> "#db6ad7",
-                    "lpo_count"=> LPO::where('requested_by_id',$this->current_user()->id)->count()
+                    "claims_count"=> Claim::where('requested_by_id',$this->current_user()->id)->count()
                   );
 
 
@@ -299,10 +299,10 @@ class ClaimStatusApi extends Controller
             //-1
             $response[]=array(
                     "id"=> -2,
-                    "claim_status"=> "All Lpos",
+                    "claim_status"=> "All Claims",
                     "order_priority"=> 1000,
                     "display_color"=> "#d4a93a",
-                    "lpo_count"=> LPO::count()
+                    "claims_count"=> Claim::count()
                   );
 
         }

@@ -350,7 +350,8 @@ class ClaimApi extends Controller
      */
     public function getClaims()
     {
-        
+
+
         $input = Request::all();
         //query builder
         $qb = DB::table('claims');
@@ -371,7 +372,21 @@ class ClaimApi extends Controller
         //if status is set
 
         if(array_key_exists('status', $input)){
-            $qb->where('status_id', $input['status']);
+
+            $status_ = (int) $input['status'];
+
+            if($status_ >-1){
+                $qb->where('status_id', $input['status']);
+                $qb->where('requested_by_id',$this->current_user()->id);
+            }elseif ($status_==-1) {
+                $qb->where('requested_by_id',$this->current_user()->id);
+            }elseif ($status_==-2) {
+                
+            }
+
+
+
+
             // $total_records          = $qb->count();     //may need this
         }
 
@@ -381,7 +396,7 @@ class ClaimApi extends Controller
         //searching
         if(array_key_exists('searchval', $input)){
             $qb->where(function ($query) use ($input) {
-                    
+                
                 $query->orWhere('id','like', '\'%' . $input['searchval']. '%\'');
                 $query->orWhere('ref','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('expense_desc','like', '\'%' . $input['searchval']. '%\'');
@@ -391,7 +406,7 @@ class ClaimApi extends Controller
 
             // $records_filtered       =  $qb->count(); //doesn't work
 
-            $sql = MobilePayment::bind_presql($qb->toSql(),$qb->getBindings());
+            $sql = Claim::bind_presql($qb->toSql(),$qb->getBindings());
             $sql = str_replace("*"," count(*) AS count ", $sql);
             $dt = json_decode(json_encode(DB::select($sql)), true);
 
@@ -408,8 +423,9 @@ class ClaimApi extends Controller
 
             //searching
             $qb->where(function ($query) use ($input) {
-                    
+                
                 $query->orWhere('id','like', '\'%' . $input['search']['value']. '%\'');
+                $query->orWhere('ref','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('expense_desc','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('expense_purpose','like', '\'%' . $input['search']['value']. '%\'');
 
@@ -418,7 +434,7 @@ class ClaimApi extends Controller
 
 
 
-            $sql = MobilePayment::bind_presql($qb->toSql(),$qb->getBindings());
+            $sql = Claim::bind_presql($qb->toSql(),$qb->getBindings());
             $sql = str_replace("*"," count(*) AS count ", $sql);
             $dt = json_decode(json_encode(DB::select($sql)), true);
 
@@ -455,7 +471,7 @@ class ClaimApi extends Controller
 
 
 
-            $sql = MobilePayment::bind_presql($qb->toSql(),$qb->getBindings());
+            $sql = Claim::bind_presql($qb->toSql(),$qb->getBindings());
 
             // $response_dt = DB::select($qb->toSql(),$qb->getBindings());         //pseudo
             $response_dt = DB::select($sql);
@@ -465,16 +481,16 @@ class ClaimApi extends Controller
 
             $response_dt    = $this->append_relationships_objects($response_dt);
             $response_dt    = $this->append_relationships_nulls($response_dt);
-            $response       = MobilePayment::arr_to_dt_response( 
-                                                $response_dt, $input['draw'],
-                                                $total_records,
-                                                $records_filtered
-                                                );
+            $response       = Claim::arr_to_dt_response( 
+                $response_dt, $input['draw'],
+                $total_records,
+                $records_filtered
+                );
 
 
         }else{
 
-            $sql            = MobilePayment::bind_presql($qb->toSql(),$qb->getBindings());
+            $sql            = Claim::bind_presql($qb->toSql(),$qb->getBindings());
             $response       = json_decode(json_encode(DB::select($sql)), true);
         }
 
@@ -573,7 +589,7 @@ class ClaimApi extends Controller
                 
             }
             if($value["status"]==null){
-                $data[$key]['status'] = array("mobile_payment_status"=>"N/A");
+                $data[$key]['status'] = array("claim_status"=>"N/A");
                 
             }
             if($value["project_manager"]==null){
