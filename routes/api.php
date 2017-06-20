@@ -57,7 +57,7 @@ Route::get('/get_authenticated_user', [	'uses' => 'ApiAuthController@getAuthenti
  * Notes: lpo awaits approvals from relevant parties
  * Output-Formats: [application/json, application/xml]
  */
-Route::POST('/lpo', 'LpoApi@add')->middleware('jwt.auth');
+Route::POST('/lpo', 'LPOApi@add')->middleware('jwt.auth');
 ;
 /**
  * PUT updateLpo
@@ -65,21 +65,21 @@ Route::POST('/lpo', 'LpoApi@add')->middleware('jwt.auth');
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::PUT('/lpo', 'LpoApi@updateLpo')->middleware('jwt.auth');
+Route::PUT('/lpo', 'LPOApi@updateLpo')->middleware('jwt.auth');
 /**
  * DELETE deleteLpo
  * Summary: Deletes an lpo
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::DELETE('/lpo/{lpo_id}', 'LpoApi@deleteLpo')->middleware('jwt.auth');
+Route::DELETE('/lpo/{lpo_id}', 'LPOApi@deleteLpo')->middleware('jwt.auth');
 /**
  * GET getLpoById
  * Summary: Find lpo by ID
  * Notes: Returns a single lpo
  * Output-Formats: [application/json, application/xml]
  */
-Route::GET('/lpo/{lpo_id}', 'LpoApi@getLpoById')->middleware('jwt.auth');
+Route::GET('/lpo/{lpo_id}', 'LPOApi@getLpoById')->middleware('jwt.auth');
 /**
  * PATCH submitOrApprove
  * Summary: Submits or Approves Lpo
@@ -93,14 +93,14 @@ Route::PATCH('lpo/{lpo_id}', 'LPOApi@submitOrApprove')->middleware('jwt.auth');
  * Notes: updates each field when not set as null
  * Output-Formats: [application/json, application/xml]
  */
-Route::POST('/lpo/{lpo_id}', 'LpoApi@updateLpoWithForm')->middleware('jwt.auth');
+Route::POST('/lpo/{lpo_id}', 'LPOApi@updateLpoWithForm')->middleware('jwt.auth');
 /**
  * GET lposGet
  * Summary: lpo List
  * Notes: The Lpos endpoint returns information about the LPO requested give the parameters injected. The response includes the Reference-No and other details about each lpo, and lists the products in the proper display order. 
 
  */
-Route::GET('/lpos', 'LpoApi@lposGet')->middleware('jwt.auth');
+Route::GET('/lpos', 'LPOApi@lposGet')->middleware('jwt.auth');
 
 /**
  * GET getDocumentById
