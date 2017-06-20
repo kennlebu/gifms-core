@@ -47,11 +47,11 @@ tags:
     externalDocs:
       description: Find out more
       url: 'http://kefinance.clintonhealthaccess.org/api/project_team/docs'
-  - name: LPO Approval
-    description: Everything About LPO Approvals
+  - name: Payees Upload Mode
+    description: Everything About Payees Upload Mode
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/lpo_approvals/docs'
+      url: 'http://kefinance.clintonhealthaccess.org/api/payees_upload_mode/docs'
   - name: LPO Default Term
     description: Everything About LPO Default Term
     externalDocs:
@@ -201,6 +201,714 @@ paths:
           description: Invalid ID supplied
         '404':
           description: account not found
+      security:
+        - api_key: []
+  /advances:
+    get:
+      summary: advances List
+      description: >
+        The advance endpoint returns multiple advance requested given the
+        parameters injected. 
+      parameters:
+        - name: advance_id
+          in: query
+          description: advance id
+          required: false
+          type: number
+          format: integer
+      tags:
+        - Advance
+      responses:
+        '200':
+          description: An array of advance returned
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/advance'
+        '404':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+        - api_key: []
+  /advance:
+    post:
+      tags:
+        - Advance
+      summary: Add a new advance
+      description: new advance
+      operationId: add_advance
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: advance object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/advance'
+      responses:
+        '200':
+          description: Successfully added a new advance for approval
+        '405':
+          description: 'Invalid input,adding a new advance was unsuccessful'
+      security:
+        - api_key: []
+    put:
+      tags:
+        - Advance
+      summary: Update an existing advance
+      description: ''
+      operationId: update_advance
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: advance object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/advance'
+      responses:
+        '200':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Success'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: advance not found
+        '405':
+          description: Validation exception
+      security:
+        - api_key: []
+  '/advance/{advance_id}':
+    get:
+      tags:
+        - Advance
+      summary: Find advance by ID
+      description: Returns a single advance
+      operationId: get_advance_by_id
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: advance_id
+          in: path
+          description: ID of advance to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/advance'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: advance not found
+      security:
+        - api_key: []
+    delete:
+      tags:
+        - Advance
+      summary: Deletes an advance
+      description: ''
+      operationId: delete_advance
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: api_key
+          in: header
+          required: true
+          type: string
+        - name: advance_id
+          in: path
+          description: advance id to delete
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: advance not found
+      security:
+        - api_key: []
+  '/advance/{advance_id}/submit_for_approval':
+    patch:
+      tags:
+        - Advance
+      summary: Submit advance by ID
+      description: Submits advance for approval
+      operationId: submit_advance_for_approval
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: advance_id
+          in: path
+          description: ID of advance to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/advance'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: advance not found
+      security:
+        - api_key: []
+  '/advance/{advance_id}/approve':
+    patch:
+      tags:
+        - Advance
+      summary: Approve advance by ID
+      description: Approves Advance
+      operationId: approve_advance
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: advance_id
+          in: path
+          description: ID of advance to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/advance'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: advance not found
+      security:
+        - api_key: []
+  /advance_statuses:
+    get:
+      summary: advance_statuses List
+      description: >
+        The advance_status endpoint returns multiple advance_status requested
+        given the parameters injected. 
+      parameters:
+        - name: advance_status_id
+          in: query
+          description: advance_status id
+          required: false
+          type: number
+          format: integer
+      tags:
+        - Advance Status
+      responses:
+        '200':
+          description: An array of advance_status returned
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/advance_status'
+        '404':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+        - api_key: []
+  /advance_status:
+    post:
+      tags:
+        - Advance Status
+      summary: Add a new advance_status
+      description: new advance_status
+      operationId: add_advance_status
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: advance_status object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/advance_status'
+      responses:
+        '200':
+          description: Successfully added a new advance_status for approval
+        '405':
+          description: 'Invalid input,adding a new advance_status was unsuccessful'
+      security:
+        - api_key: []
+    put:
+      tags:
+        - Advance Status
+      summary: Update an existing advance_status
+      description: ''
+      operationId: update_advance_status
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: advance_status object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/advance_status'
+      responses:
+        '200':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Success'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: advance_status not found
+        '405':
+          description: Validation exception
+      security:
+        - api_key: []
+  '/advance_status/{advance_status_id}':
+    get:
+      tags:
+        - Advance Status
+      summary: Find advance_status by ID
+      description: Returns a single advance_status
+      operationId: get_advance_status_by_id
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: advance_status_id
+          in: path
+          description: ID of advance_status to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/advance_status'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: advance_status not found
+      security:
+        - api_key: []
+    delete:
+      tags:
+        - Advance Status
+      summary: Deletes an advance_status
+      description: ''
+      operationId: delete_advance_status
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: api_key
+          in: header
+          required: true
+          type: string
+        - name: advance_status_id
+          in: path
+          description: advance_status id to delete
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: advance_status not found
+      security:
+        - api_key: []
+  /claims:
+    get:
+      summary: claims List
+      description: >
+        The claim endpoint returns multiple claim requested given the parameters
+        injected. 
+      parameters:
+        - name: claim_id
+          in: query
+          description: claim id
+          required: false
+          type: number
+          format: integer
+      tags:
+        - Claim
+      responses:
+        '200':
+          description: An array of claim returned
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/claim'
+        '404':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+        - api_key: []
+  /claim:
+    post:
+      tags:
+        - Claim
+      summary: Add a new claim
+      description: new claim
+      operationId: add_claim
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: claim object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/claim'
+      responses:
+        '200':
+          description: Successfully added a new claim for approval
+        '405':
+          description: 'Invalid input,adding a new claim was unsuccessful'
+      security:
+        - api_key: []
+    put:
+      tags:
+        - Claim
+      summary: Update an existing claim
+      description: ''
+      operationId: update_claim
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: claim object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/claim'
+      responses:
+        '200':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Success'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: claim not found
+        '405':
+          description: Validation exception
+      security:
+        - api_key: []
+  '/claim/{claim_id}':
+    get:
+      tags:
+        - Claim
+      summary: Find claim by ID
+      description: Returns a single claim
+      operationId: get_claim_by_id
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: claim_id
+          in: path
+          description: ID of claim to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/claim'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: claim not found
+      security:
+        - api_key: []
+    delete:
+      tags:
+        - Claim
+      summary: Deletes an claim
+      description: ''
+      operationId: delete_claim
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: api_key
+          in: header
+          required: true
+          type: string
+        - name: claim_id
+          in: path
+          description: claim id to delete
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: claim not found
+      security:
+        - api_key: []
+  '/claim/{claim_id}/submit_for_approval':
+    patch:
+      tags:
+        - Claim
+      summary: Submit claim by ID
+      description: Submits claim for approval
+      operationId: submit_claim_for_approval
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: claim_id
+          in: path
+          description: ID of claim to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/claim'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: claim not found
+      security:
+        - api_key: []
+  '/claim/{claim_id}/approve':
+    patch:
+      tags:
+        - Claim
+      summary: Approve claim by ID
+      description: Approves Claim
+      operationId: approve_claim
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: claim_id
+          in: path
+          description: ID of claim to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/claim'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: claim not found
+      security:
+        - api_key: []
+  '/claim/{claim_id}/allocate':
+    patch:
+      tags:
+        - Claim
+      summary: Allocate claim by ID
+      description: Allocate Claim
+      operationId: allocate_claim
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: claim_id
+          in: path
+          description: ID of claim to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/claim'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: claim not found
+      security:
+        - api_key: []
+  /claim_statuses:
+    get:
+      summary: claim_statuses List
+      description: >
+        The claim_status endpoint returns multiple claim_status requested given
+        the parameters injected. 
+      parameters:
+        - name: claim_status_id
+          in: query
+          description: claim_status id
+          required: false
+          type: number
+          format: integer
+      tags:
+        - Claim Status
+      responses:
+        '200':
+          description: An array of claim_status returned
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/claim_status'
+        '404':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+        - api_key: []
+  /claim_status:
+    post:
+      tags:
+        - Claim Status
+      summary: Add a new claim_status
+      description: new claim_status
+      operationId: add_claim_status
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: claim_status object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/claim_status'
+      responses:
+        '200':
+          description: Successfully added a new claim_status for approval
+        '405':
+          description: 'Invalid input,adding a new claim_status was unsuccessful'
+      security:
+        - api_key: []
+    put:
+      tags:
+        - Claim Status
+      summary: Update an existing claim_status
+      description: ''
+      operationId: update_claim_status
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: claim_status object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/claim_status'
+      responses:
+        '200':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Success'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: claim_status not found
+        '405':
+          description: Validation exception
+      security:
+        - api_key: []
+  '/claim_status/{claim_status_id}':
+    get:
+      tags:
+        - Claim Status
+      summary: Find claim_status by ID
+      description: Returns a single claim_status
+      operationId: get_claim_status_by_id
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: claim_status_id
+          in: path
+          description: ID of claim_status to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/claim_status'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: claim_status not found
+      security:
+        - api_key: []
+    delete:
+      tags:
+        - Claim Status
+      summary: Deletes an claim_status
+      description: ''
+      operationId: delete_claim_status
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: api_key
+          in: header
+          required: true
+          type: string
+        - name: claim_status_id
+          in: path
+          description: claim_status id to delete
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: claim_status not found
       security:
         - api_key: []
   /currencies:
@@ -2050,33 +2758,6 @@ paths:
           description: successful operation
           schema:
             $ref: '#/definitions/mobile_payment'
-        '400':
-          description: Invalid ID supplied
-        '404':
-          description: mobile_payment not found
-      security:
-        - api_key: []
-    delete:
-      tags:
-        - Mobile Payment
-      summary: Deletes an mobile_payment
-      description: ''
-      operationId: delete_mobile_payment
-      produces:
-        - application/json
-        - application/xml
-      parameters:
-        - name: api_key
-          in: header
-          required: true
-          type: string
-        - name: mobile_payment_id
-          in: path
-          description: mobile_payment id to delete
-          required: true
-          type: integer
-          format: int64
-      responses:
         '400':
           description: Invalid ID supplied
         '404':
@@ -5261,6 +5942,130 @@ definitions:
       msg:
         type: string
         example: object not found
+  advance:
+    type: object
+    required:
+      - id
+      - created_at
+    properties:
+      id:
+        type: integer
+        format: int64
+        example: 1
+      num:
+        type: number
+        format: int64
+        example: 20000
+      str:
+        type: string
+        example: PayPal.pdf
+      date:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      created_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      updated_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+    xml:
+      name: advance
+  advance_status:
+    type: object
+    required:
+      - id
+      - created_at
+    properties:
+      id:
+        type: integer
+        format: int64
+        example: 1
+      num:
+        type: number
+        format: int64
+        example: 20000
+      str:
+        type: string
+        example: PayPal.pdf
+      date:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      created_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      updated_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+    xml:
+      name: advance_status
+  claim:
+    type: object
+    required:
+      - id
+      - created_at
+    properties:
+      id:
+        type: integer
+        format: int64
+        example: 1
+      num:
+        type: number
+        format: int64
+        example: 20000
+      str:
+        type: string
+        example: PayPal.pdf
+      date:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      created_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      updated_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+    xml:
+      name: claim
+  claim_status:
+    type: object
+    required:
+      - id
+      - created_at
+    properties:
+      id:
+        type: integer
+        format: int64
+        example: 1
+      num:
+        type: number
+        format: int64
+        example: 20000
+      str:
+        type: string
+        example: PayPal.pdf
+      date:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      created_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      updated_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+    xml:
+      name: claim_status
   currency:
     type: object
     required:
