@@ -23,6 +23,7 @@ class CreateClaimsTable extends Migration
             $table->date('allocated_at')->nullable();
             $table->integer('allocated_by_id')->nullable();
             $table->integer('status_id')->nullable();
+            $table->integer('rejected_by_id')->nullable();
             $table->text('rejection_reason')->nullable();
             $table->integer('currency_id')->nullable();
             $table->integer('payment_mode_id')->nullable();

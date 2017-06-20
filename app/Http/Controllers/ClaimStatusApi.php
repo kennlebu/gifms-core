@@ -16,6 +16,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\DB;
+use App\Models\ClaimsModels\ClaimStatus;
+use App\Models\ClaimsModels\Claim;
 
 class ClaimStatusApi extends Controller
 {
@@ -25,6 +28,30 @@ class ClaimStatusApi extends Controller
     public function __construct()
     {
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     /**
      * Operation addClaimStatus
@@ -50,6 +77,30 @@ class ClaimStatusApi extends Controller
 
         return response('How about implementing addClaimStatus as a POST method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /**
      * Operation updateClaimStatus
      *
@@ -74,6 +125,30 @@ class ClaimStatusApi extends Controller
 
         return response('How about implementing updateClaimStatus as a PUT method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /**
      * Operation deleteClaimStatus
      *
@@ -94,6 +169,30 @@ class ClaimStatusApi extends Controller
 
         return response('How about implementing deleteClaimStatus as a DELETE method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /**
      * Operation getClaimStatusById
      *
@@ -114,6 +213,30 @@ class ClaimStatusApi extends Controller
 
         return response('How about implementing getClaimStatusById as a GET method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /**
      * Operation getClaimStatuses
      *
@@ -124,15 +247,76 @@ class ClaimStatusApi extends Controller
      */
     public function getClaimStatuses()
     {
+        
         $input = Request::all();
-
-        //path params validation
-
-
-        //not path params validation
-        $claim_status_id = $input['claim_status_id'];
+        $response;
+        $qb = DB::table('claim_statuses');
+        $qb->whereNull('deleted_at');
 
 
-        return response('How about implementing getClaimStatuses as a GET method ?');
+        if(array_key_exists('allowed_only', $input)){
+
+            $qb = $this->get_my_allowed_statuses($qb);
+
+        }else{
+
+            $qb->orderBy('claim_status', 'DESC');
+        }
+
+
+        $response = $qb->get();
+        $response = json_decode(json_encode($response),true);
+
+      
+
+
+        //count lpos on each status
+        foreach ($response as $key => $value) {
+
+
+            $response[$key]['lpo_count'] = Claim::where('requested_by_id',$this->current_user()->id)
+                                            ->where('status_id', $value['id'] )
+                                            ->count();
+
+
+        }
+
+        //add -1 and -2 statuses
+
+        if(array_key_exists('allowed_only', $input)){
+
+            //-1
+            $response[]=array(
+                    "id"=> -1,
+                    "claim_status"=> "My Lpos",
+                    "order_priority"=> 999,
+                    "display_color"=> "#db6ad7",
+                    "lpo_count"=> LPO::where('requested_by_id',$this->current_user()->id)->count()
+                  );
+
+
+
+            //-1
+            $response[]=array(
+                    "id"=> -2,
+                    "claim_status"=> "All Lpos",
+                    "order_priority"=> 1000,
+                    "display_color"=> "#d4a93a",
+                    "lpo_count"=> LPO::count()
+                  );
+
+        }
+
+        return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+
+    }
+
+
+    private function get_my_allowed_statuses($qb){
+
+
+        $qb->orderBy('order_priority', 'ASC');
+
+        return $qb;
     }
 }

@@ -26,6 +26,29 @@ class AdvanceApi extends Controller
     {
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
     /**
      * Operation addAdvance
      *
@@ -50,6 +73,29 @@ class AdvanceApi extends Controller
 
         return response('How about implementing addAdvance as a POST method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation updateAdvance
      *
@@ -74,6 +120,29 @@ class AdvanceApi extends Controller
 
         return response('How about implementing updateAdvance as a PUT method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation deleteAdvance
      *
@@ -94,6 +163,29 @@ class AdvanceApi extends Controller
 
         return response('How about implementing deleteAdvance as a DELETE method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation getAdvanceById
      *
@@ -114,6 +206,29 @@ class AdvanceApi extends Controller
 
         return response('How about implementing getAdvanceById as a GET method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation approveAdvance
      *
@@ -134,6 +249,29 @@ class AdvanceApi extends Controller
 
         return response('How about implementing approveAdvance as a PATCH method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation submitAdvanceForApproval
      *
@@ -154,6 +292,29 @@ class AdvanceApi extends Controller
 
         return response('How about implementing submitAdvanceForApproval as a PATCH method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation getAdvances
      *
