@@ -155,6 +155,26 @@ class ClaimApi extends Controller
         return response('How about implementing approveClaim as a PATCH method ?');
     }
     /**
+     * Operation getDocumentById
+     *
+     * get claim document by ID.
+     *
+     * @param int $claim_id ID of claim to return object (required)
+     *
+     * @return Http response
+     */
+    public function getDocumentById($claim_id)
+    {
+        $input = Request::all();
+
+        //path params validation
+
+
+        //not path params validation
+
+        return response('How about implementing getDocumentById as a GET method ?');
+    }
+    /**
      * Operation submitClaimForApproval
      *
      * Submit claim by ID.

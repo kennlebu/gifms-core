@@ -22,6 +22,11 @@ tags:
     externalDocs:
       description: Find out more
       url: 'http://kefinance.clintonhealthaccess.org/api/advance_status/docs'
+  - name: Advance Approval
+    description: Everything About Advance Approval
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/advance_approval/docs'
 schemes:
   - http
   - https
@@ -282,6 +287,9 @@ paths:
 
 
 
+      
+
+
 
 
 
@@ -512,6 +520,213 @@ paths:
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  /advance_approvals:
+    get:
+      summary: advance_approvals List
+      description: |
+        The advance_approval endpoint returns multiple advance_approval requested given the parameters injected. 
+      parameters:
+        - name: advance_approval_id
+          in: query
+          description: advance_approval id 
+          required: false
+          type: number
+          format: integer
+      tags:
+        - Advance Approval
+      responses:
+        200:
+          description: An array of advance_approval returned
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/advance_approval'
+        404:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+        - api_key: []
+
+
+
+
+
+
+
+  /advance_approval:    
+    post:
+      tags:
+        - Advance Approval
+      summary: Add a new advance_approval
+      description: new advance_approval  
+      operationId: add_advance_approval
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: advance_approval object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/advance_approval'
+      responses:
+        '200':
+          description: Successfully added a new advance_approval for approval 
+        '405':
+          description: Invalid input,adding a new advance_approval was unsuccessful
+      security:
+        - api_key: []
+            
+            
+            
+
+            
+    put:
+      tags:
+        - Advance Approval
+      summary: Update an existing advance_approval
+      description: ''
+      operationId: update_advance_approval
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: advance_approval object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/advance_approval'
+      responses:
+        200:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Success'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: advance_approval not found
+        '405':
+          description: Validation exception
+      security:
+        - api_key: []
+        
+        
+        
+        
+        
+        
+  '/advance_approval/{advance_approval_id}':
+    get:
+      tags:
+        - Advance Approval
+      summary: Find advance_approval by ID
+      description: Returns a single advance_approval
+      operationId: get_advance_approval_by_id
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: advance_approval_id
+          in: path
+          description: ID of advance_approval to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/advance_approval'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: advance_approval not found
+      security:
+        - api_key: []
+        
+        
+     
+            
+            
+            
+    delete:
+      tags:
+        - Advance Approval
+      summary: Deletes an advance_approval
+      description: ''
+      operationId: delete_advance_approval
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: api_key
+          in: header
+          required: true
+          type: string
+        - name: advance_approval_id
+          in: path
+          description: advance_approval id to delete
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: advance_approval not found
+      security:
+        - api_key: []
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
           
           
 securityDefinitions:
@@ -599,6 +814,47 @@ definitions:
     
   
     
+
+
+    
+      
+      
+  advance_approval:
+    type: object
+    required:
+      - id
+      - created_at
+    properties:
+      id:
+        type: integer
+        format: int64
+        example: 1
+      num:
+        type: number
+        format: int64
+        example: 20000
+      str:
+        type: string
+        example: 'PayPal.pdf'
+      date:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      created_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      updated_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+    xml:
+      name: advance_approval
+    
+  
+    
+  
+  
   
   
   

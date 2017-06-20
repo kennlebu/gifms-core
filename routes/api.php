@@ -2149,6 +2149,13 @@ Route::PATCH('/claim/{claim_id}/allocate', 'ClaimApi@allocateClaim')->middleware
  */
 Route::PATCH('/claim/{claim_id}/approve', 'ClaimApi@approveClaim')->middleware('jwt.auth');
 /**
+ * GET getDocumentById
+ * Summary: get claim document by ID
+ * Notes: get Claim document
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PATCH('/claim/{claim_id}/get_document', 'ClaimApi@getDocumentById')->middleware('jwt.auth');
+/**
  * PATCH submitClaimForApproval
  * Summary: Submit claim by ID
  * Notes: Submits claim for approval
@@ -2237,6 +2244,52 @@ Route::GET('/claim_statuses', 'ClaimStatusApi@getClaimStatuses')->middleware('jw
 
 
 
+/**
+ * POST addClaimApproval
+ * Summary: Add a new claim_approval
+ * Notes: new claim_approval
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/claim_approval', 'ClaimApprovalApi@addClaimApproval')->middleware('jwt.auth');
+/**
+ * PUT updateClaimApproval
+ * Summary: Update an existing claim_approval
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/claim_approval', 'ClaimApprovalApi@updateClaimApproval')->middleware('jwt.auth');
+/**
+ * DELETE deleteClaimApproval
+ * Summary: Deletes an claim_approval
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/claim_approval/{claim_approval_id}', 'ClaimApprovalApi@deleteClaimApproval')->middleware('jwt.auth');
+/**
+ * GET getClaimApprovalById
+ * Summary: Find claim_approval by ID
+ * Notes: Returns a single claim_approval
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/claim_approval/{claim_approval_id}', 'ClaimApprovalApi@getClaimApprovalById')->middleware('jwt.auth');
+/**
+ * GET getClaimApprovals
+ * Summary: claim_approvals List
+ * Notes: The claim_approval endpoint returns multiple claim_approval requested given the parameters injected.  
+
+ */
+Route::GET('/claim_approvals', 'ClaimApprovalApi@getClaimApprovals')->middleware('jwt.auth');
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -2307,6 +2360,59 @@ Route::GET('/advances', 'AdvanceApi@getAdvances')->middleware('jwt.auth');
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * POST addAdvanceApproval
+ * Summary: Add a new advance_approval
+ * Notes: new advance_approval
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/advance_approval', 'AdvanceApprovalApi@addAdvanceApproval')->middleware('jwt.auth');
+/**
+ * PUT updateAdvanceApproval
+ * Summary: Update an existing advance_approval
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/advance_approval', 'AdvanceApprovalApi@updateAdvanceApproval')->middleware('jwt.auth');
+/**
+ * DELETE deleteAdvanceApproval
+ * Summary: Deletes an advance_approval
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/advance_approval/{advance_approval_id}', 'AdvanceApprovalApi@deleteAdvanceApproval')->middleware('jwt.auth');
+/**
+ * GET getAdvanceApprovalById
+ * Summary: Find advance_approval by ID
+ * Notes: Returns a single advance_approval
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/advance_approval/{advance_approval_id}', 'AdvanceApprovalApi@getAdvanceApprovalById')->middleware('jwt.auth');
+/**
+ * GET getAdvanceApprovals
+ * Summary: advance_approvals List
+ * Notes: The advance_approval endpoint returns multiple advance_approval requested given the parameters injected.  
+
+ */
+Route::GET('/advance_approvals', 'AdvanceApprovalApi@getAdvanceApprovals')->middleware('jwt.auth');
 
 
 
