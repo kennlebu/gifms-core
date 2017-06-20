@@ -15,7 +15,7 @@ class CreateAdvanceStatusesTable extends Migration
     {
         Schema::create('advance_statuses', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('advance_status');
+            $table->string('advance_status')->nullable();
             $table->integer('next_status_id')->nullable();
             $table->integer('status_security_level')->nullable();
             $table->string('display_color')->nullable();
