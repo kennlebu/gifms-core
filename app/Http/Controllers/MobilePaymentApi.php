@@ -153,7 +153,7 @@ class MobilePaymentApi extends Controller
         
         $body = $input['body'];
 
-        $mobile_payment = Lpo::find($body['id']);
+        $mobile_payment = MobilePayment::find($body['id']);
 
 
 
@@ -399,6 +399,8 @@ class MobilePaymentApi extends Controller
      */
     public function mobilePaymentsGet()
     {
+
+
         $input = Request::all();
         //query builder
         $qb = DB::table('mobile_payments');
@@ -419,7 +421,21 @@ class MobilePaymentApi extends Controller
         //if status is set
 
         if(array_key_exists('status', $input)){
-            $qb->where('status_id', $input['status']);
+
+            $status_ = (int) $input['status'];
+
+            if($status_ >-1){
+                $qb->where('status_id', $input['status']);
+                $qb->where('requested_by_id',$this->current_user()->id);
+            }elseif ($status_==-1) {
+                $qb->where('requested_by_id',$this->current_user()->id);
+            }elseif ($status_==-2) {
+                
+            }
+
+
+
+
             // $total_records          = $qb->count();     //may need this
         }
 
@@ -429,7 +445,7 @@ class MobilePaymentApi extends Controller
         //searching
         if(array_key_exists('searchval', $input)){
             $qb->where(function ($query) use ($input) {
-                    
+                
                 $query->orWhere('id','like', '\'%' . $input['searchval']. '%\'');
                 $query->orWhere('ref','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('expense_desc','like', '\'%' . $input['searchval']. '%\'');
@@ -456,8 +472,9 @@ class MobilePaymentApi extends Controller
 
             //searching
             $qb->where(function ($query) use ($input) {
-                    
+                
                 $query->orWhere('id','like', '\'%' . $input['search']['value']. '%\'');
+                $query->orWhere('ref','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('expense_desc','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('expense_purpose','like', '\'%' . $input['search']['value']. '%\'');
 
@@ -514,10 +531,10 @@ class MobilePaymentApi extends Controller
             $response_dt    = $this->append_relationships_objects($response_dt);
             $response_dt    = $this->append_relationships_nulls($response_dt);
             $response       = MobilePayment::arr_to_dt_response( 
-                                                $response_dt, $input['draw'],
-                                                $total_records,
-                                                $records_filtered
-                                                );
+                $response_dt, $input['draw'],
+                $total_records,
+                $records_filtered
+                );
 
 
         }else{
@@ -530,6 +547,8 @@ class MobilePaymentApi extends Controller
 
 
         return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+
+
     }
 
 

@@ -16,7 +16,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\DB;
 use App\Models\MobilePaymentModels\MobilePaymentStatus;
+use App\Models\MobilePaymentModels\MobilePayment;
 
 class MobilePaymentStatusApi extends Controller
 {
@@ -26,6 +28,34 @@ class MobilePaymentStatusApi extends Controller
     public function __construct()
     {
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
 
     /**
      * Operation addMobilePaymentStatus
@@ -51,6 +81,34 @@ class MobilePaymentStatusApi extends Controller
 
         return response('How about implementing addMobilePaymentStatus as a POST method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation updateMobilePaymentStatus
      *
@@ -75,6 +133,34 @@ class MobilePaymentStatusApi extends Controller
 
         return response('How about implementing updateMobilePaymentStatus as a PUT method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation deleteMobilePaymentStatus
      *
@@ -95,6 +181,34 @@ class MobilePaymentStatusApi extends Controller
 
         return response('How about implementing deleteMobilePaymentStatus as a DELETE method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation getMobilePaymentStatusById
      *
@@ -160,33 +274,77 @@ class MobilePaymentStatusApi extends Controller
      * @return Http response
      */
     public function mobilePaymentStatusesGet()
-    { 
-
+    {
+        
         $input = Request::all();
-
-        //path params validation
         $response;
+        $qb = DB::table('mobile_payment_statuses');
+        $qb->whereNull('deleted_at');
 
-        //path params validation
 
+        if(array_key_exists('allowed_only', $input)){
 
-        //if status is set
-
-        if(array_key_exists('staff_id', $input)){
-
-     
+            $qb = $this->get_my_allowed_statuses($qb);
 
         }else{
 
-             $response = MobilePaymentStatus::where("deleted_at",null)
-                ->orderBy('mobile_payment_status', 'desc')
-                ->get();
+            $qb->orderBy('mobile_payment_status', 'DESC');
         }
 
 
-           
+        $response = $qb->get();
+        $response = json_decode(json_encode($response),true);
+
+      
 
 
-            return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+        //count lpos on each status
+        foreach ($response as $key => $value) {
+
+
+            $response[$key]['mobile_payments_count'] = MobilePayment::where('requested_by_id',$this->current_user()->id)
+                                            ->where('status_id', $value['id'] )
+                                            ->count();
+
+
+        }
+
+        //add -1 and -2 statuses
+
+        if(array_key_exists('allowed_only', $input)){
+
+            //-1
+            $response[]=array(
+                    "id"=> -1,
+                    "mobile_payment_status"=> "My Mobile Payments",
+                    "order_priority"=> 999,
+                    "display_color"=> "#db6ad7",
+                    "mobile_payments_count"=> MobilePayment::where('requested_by_id',$this->current_user()->id)->count()
+                  );
+
+
+
+            //-1
+            $response[]=array(
+                    "id"=> -2,
+                    "mobile_payment_status"=> "All Mobile Payments",
+                    "order_priority"=> 1000,
+                    "display_color"=> "#d4a93a",
+                    "mobile_payments_count"=> MobilePayment::count()
+                  );
+
+        }
+
+        return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+
+    }
+
+
+    private function get_my_allowed_statuses($qb){
+
+
+        $qb->orderBy('order_priority', 'ASC');
+
+        return $qb;
     }
 }

@@ -18,6 +18,7 @@ class CreateMobilePaymentStatusesTable extends Migration
             $table->string('mobile_payment_status');
             $table->integer('next_status_id')->nullable();
             $table->integer('status_security_level')->nullable();
+            $table->integer('order_priority')->nullable();
             $table->string('display_color')->nullable();
             $table->integer('default_status')->nullable();
             $table->integer('migration_status_security_level')->nullable();

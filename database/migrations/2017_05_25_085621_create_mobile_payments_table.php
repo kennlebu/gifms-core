@@ -16,6 +16,7 @@ class CreateMobilePaymentsTable extends Migration
 
         Schema::create('mobile_payments', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('ref')->nullable();
             $table->integer('meeting')->nullable();
             $table->date('requested_date')->nullable();
             $table->integer('requested_by_id')->nullable();
