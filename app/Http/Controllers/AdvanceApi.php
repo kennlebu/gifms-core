@@ -219,7 +219,7 @@ class AdvanceApi extends Controller
 
         }catch(Exception $e){
 
-            $response =  ["error"=>"lpo could not be found"];
+            $response =  ["error"=>"Advance could not be found"];
             return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
         }
     }
