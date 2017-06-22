@@ -14,6 +14,7 @@
         "niklasravnsborg/laravel-pdf": "^1.5",
         "spatie/eloquent-sortable": "^3.3",
         "spatie/laravel-backup": "3.0.0",
+        "spatie/laravel-activitylog": "^1.15",
         "tymon/jwt-auth": "^0.5.11",
         "venturecraft/revisionable": "^1.28",
         "wn/lumen-generators": "^1.3"
