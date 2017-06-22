@@ -176,6 +176,7 @@ return [
         Maatwebsite\Excel\ExcelServiceProvider::class,
         Spatie\Backup\BackupServiceProvider::class,
         Spatie\Activitylog\ActivitylogServiceProvider::class,
+        Zizaco\Entrust\EntrustServiceProvider::class,
 
         /*
          * Application Service Providers...
@@ -238,6 +239,7 @@ return [
         'PDF' => Barryvdh\DomPDF\Facade::class,
         'mPDF' => niklasravnsborg\LaravelPdf\Facades\Pdf::class,
         'Excel' => Maatwebsite\Excel\Facades\Excel::class,
+        'Entrust'   => Zizaco\Entrust\EntrustFacade::class,
 
     ],
 
