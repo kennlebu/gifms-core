@@ -67,7 +67,7 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => App\StaffModels\Staff::class,
+            'model' => App\Models\StaffModels\Staff::class,
             'table' => 'staff',
         ],
 
