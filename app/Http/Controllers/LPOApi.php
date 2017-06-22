@@ -259,31 +259,28 @@ class LPOApi extends Controller
         $input = Request::all();
 
         try{
-            $model      = new Lpo();
 
-            $response   = Lpo::findOrFail($lpo_id);
-
-            $response['requested_by']             = $model->find($lpo_id)->requested_by;
-            $response['request_action_by']        = $model->find($lpo_id)->request_action_by;
-            $response['project']                  = $model->find($lpo_id)->project;
-            $response['account']                  = $model->find($lpo_id)->account;
-            $response['invoice']                  = $model->find($lpo_id)->invoice;
-            $response['status']                   = $model->find($lpo_id)->status;
-            $response['project_manager']          = $model->find($lpo_id)->project_manager;
-            $response['rejected_by']              = $model->find($lpo_id)->rejected_by;
-            $response['cancelled_by']             = $model->find($lpo_id)->cancelled_by;
-            $response['received_by']              = $model->find($lpo_id)->received_by;
-            $response['supplier']                 = $model->find($lpo_id)->supplier;
-            $response['currency']                 = $model->find($lpo_id)->currency;
-            $response['quotations']               = $model->find($lpo_id)->quotations;
-            $response['preffered_quotation']      = $model->find($lpo_id)->preffered_quotation;
-            $response['items']                    = $model->find($lpo_id)->items;
-            $response['terms']                    = $model->find($lpo_id)->terms;
-            $response['lpo_approvals']            = $model->find($lpo_id)->lpo_approvals;
-            $response['deliveries']               = $model->find($lpo_id)->deliveries;
-
-
-
+            $response   = LPO::with(
+                                            'requested_by',
+                                            'request_action_by',
+                                            'project',
+                                            'account',
+                                            'invoice',
+                                            'status',
+                                            'project_manager',
+                                            'rejected_by',
+                                            'cancelled_by',
+                                            'received_by',
+                                            'supplier',
+                                            'currency',
+                                            'quotations',
+                                            'preffered_quotation',
+                                            'items',
+                                            'terms',
+                                            'lpo_approvals',
+                                            'deliveries'
+                                )->findOrFail($lpo_id);
+           
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
 
         }catch(Exception $e){

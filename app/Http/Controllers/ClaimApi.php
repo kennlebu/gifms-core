@@ -161,14 +161,27 @@ class ClaimApi extends Controller
      */
     public function getClaimById($claim_id)
     {
-        $input = Request::all();
+        $response = [];
 
-        //path params validation
+        try{
+            $response   = Claim::with( 
+                                        'requested_by',
+                                        'request_action_by',
+                                        'project',
+                                        'status',
+                                        'project_manager',
+                                        'currency',
+                                        'rejected_by',
+                                        'claim_approvals'
+                                    )->findOrFail($claim_id);
 
+            return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
 
-        //not path params validation
+        }catch(Exception $e){
 
-        return response('How about implementing getClaimById as a GET method ?');
+            $response =  ["error"=>"Claim could not be found"];
+            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+        }
     }
 
 

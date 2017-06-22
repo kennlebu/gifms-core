@@ -199,14 +199,29 @@ class AdvanceApi extends Controller
      */
     public function getAdvanceById($advance_id)
     {
+
         $input = Request::all();
 
-        //path params validation
+        try{
 
+            $response   = Advance::with(
+                                    'requested_by',
+                                    'request_action_by',
+                                    'project',
+                                    'status',
+                                    'project_manager',
+                                    'currency',
+                                    'rejected_by',
+                                    'advance_approvals'
+                                )->findOrFail($advance_id);
+           
+            return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
 
-        //not path params validation
+        }catch(Exception $e){
 
-        return response('How about implementing getAdvanceById as a GET method ?');
+            $response =  ["error"=>"lpo could not be found"];
+            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+        }
     }
 
 
@@ -514,7 +529,7 @@ class AdvanceApi extends Controller
             $data[$key]['project_manager']              = $mobile_payment->project_manager;
             $data[$key]['currency']                     = $mobile_payment->currency;
             $data[$key]['rejected_by']                  = $mobile_payment->rejected_by;
-            $data[$key]['claim_approvals']              = $mobile_payment->claim_approvals;
+            $data[$key]['advance_approvals']            = $mobile_payment->advance_approvals;
 
         }
 
@@ -561,7 +576,7 @@ class AdvanceApi extends Controller
                 
             }
             if($value["status"]==null){
-                $data[$key]['status'] = array("claim_status"=>"N/A");
+                $data[$key]['status'] = array("advance_status"=>"N/A");
                 
             }
             if($value["project_manager"]==null){

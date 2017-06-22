@@ -216,29 +216,29 @@ class MobilePaymentApi extends Controller
         $response = [];
 
         try{
-            $model      = new MobilePayment();
-            $response   = $model::findOrFail($mobile_payment_id);
-            $response['requested_by']                = $model->find($mobile_payment_id)->requested_by;
-            $response['requested_action_by']         = $model->find($mobile_payment_id)->requested_action_by;
-            $response['project']                     = $model->find($mobile_payment_id)->project;
-            $response['account']                     = $model->find($mobile_payment_id)->account;
-            $response['mobile_payment_type']         = $model->find($mobile_payment_id)->mobile_payment_type;
-            $response['invoice']                     = $model->find($mobile_payment_id)->invoice;
-            $response['status']                      = $model->find($mobile_payment_id)->status;
-            $response['project_manager']             = $model->find($mobile_payment_id)->project_manager;
-            $response['region']                      = $model->find($mobile_payment_id)->region;
-            $response['county']                      = $model->find($mobile_payment_id)->county;
-            $response['currency']                    = $model->find($mobile_payment_id)->currency;
-            $response['rejected_by']                 = $model->find($mobile_payment_id)->rejected_by;
-            $response['payees_upload_mode']          = $model->find($mobile_payment_id)->payees_upload_mode;
-            $response['payees']                      = $model->find($mobile_payment_id)->payees;
-            $response['mobile_payment_approvals']    = $model->find($mobile_payment_id)->mobile_payment_approvals;
+            $response   = MobilePayment::with(
+                                    'requested_by',
+                                    'requested_action_by',
+                                    'project',
+                                    'account',
+                                    'mobile_payment_type',
+                                    'invoice',
+                                    'status',
+                                    'project_manager',
+                                    'region',
+                                    'county',
+                                    'currency',
+                                    'rejected_by',
+                                    'payees_upload_mode',
+                                    'payees',
+                                    'mobile_payment_approvals'
+                                )->findOrFail($mobile_payment_id);
 
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
 
         }catch(Exception $e){
 
-            $response =  ["error"=>"lpo could not be found"];
+            $response =  ["error"=>"Mobile Payment could not be found"];
             return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
         }
     }
