@@ -153,7 +153,7 @@ class MobilePaymentApi extends Controller
         
         $body = $input['body'];
 
-        $mobile_payment = Lpo::find($body['id']);
+        $mobile_payment = MobilePayment::find($body['id']);
 
 
 
@@ -216,29 +216,29 @@ class MobilePaymentApi extends Controller
         $response = [];
 
         try{
-            $model      = new MobilePayment();
-            $response   = $model::findOrFail($mobile_payment_id);
-            $response['requested_by']                = $model->find($mobile_payment_id)->requested_by;
-            $response['requested_action_by']         = $model->find($mobile_payment_id)->requested_action_by;
-            $response['project']                     = $model->find($mobile_payment_id)->project;
-            $response['account']                     = $model->find($mobile_payment_id)->account;
-            $response['mobile_payment_type']         = $model->find($mobile_payment_id)->mobile_payment_type;
-            $response['invoice']                     = $model->find($mobile_payment_id)->invoice;
-            $response['status']                      = $model->find($mobile_payment_id)->status;
-            $response['project_manager']             = $model->find($mobile_payment_id)->project_manager;
-            $response['region']                      = $model->find($mobile_payment_id)->region;
-            $response['county']                      = $model->find($mobile_payment_id)->county;
-            $response['currency']                    = $model->find($mobile_payment_id)->currency;
-            $response['rejected_by']                 = $model->find($mobile_payment_id)->rejected_by;
-            $response['payees_upload_mode']          = $model->find($mobile_payment_id)->payees_upload_mode;
-            $response['payees']                      = $model->find($mobile_payment_id)->payees;
-            $response['mobile_payment_approvals']    = $model->find($mobile_payment_id)->mobile_payment_approvals;
+            $response   = MobilePayment::with(
+                                    'requested_by',
+                                    'requested_action_by',
+                                    'project',
+                                    'account',
+                                    'mobile_payment_type',
+                                    'invoice',
+                                    'status',
+                                    'project_manager',
+                                    'region',
+                                    'county',
+                                    'currency',
+                                    'rejected_by',
+                                    'payees_upload_mode',
+                                    'payees',
+                                    'mobile_payment_approvals'
+                                )->findOrFail($mobile_payment_id);
 
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
 
         }catch(Exception $e){
 
-            $response =  ["error"=>"lpo could not be found"];
+            $response =  ["error"=>"Mobile Payment could not be found"];
             return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
         }
     }
@@ -399,6 +399,8 @@ class MobilePaymentApi extends Controller
      */
     public function mobilePaymentsGet()
     {
+
+
         $input = Request::all();
         //query builder
         $qb = DB::table('mobile_payments');
@@ -419,7 +421,21 @@ class MobilePaymentApi extends Controller
         //if status is set
 
         if(array_key_exists('status', $input)){
-            $qb->where('status_id', $input['status']);
+
+            $status_ = (int) $input['status'];
+
+            if($status_ >-1){
+                $qb->where('status_id', $input['status']);
+                $qb->where('requested_by_id',$this->current_user()->id);
+            }elseif ($status_==-1) {
+                $qb->where('requested_by_id',$this->current_user()->id);
+            }elseif ($status_==-2) {
+                
+            }
+
+
+
+
             // $total_records          = $qb->count();     //may need this
         }
 
@@ -429,7 +445,7 @@ class MobilePaymentApi extends Controller
         //searching
         if(array_key_exists('searchval', $input)){
             $qb->where(function ($query) use ($input) {
-                    
+                
                 $query->orWhere('id','like', '\'%' . $input['searchval']. '%\'');
                 $query->orWhere('ref','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('expense_desc','like', '\'%' . $input['searchval']. '%\'');
@@ -456,8 +472,9 @@ class MobilePaymentApi extends Controller
 
             //searching
             $qb->where(function ($query) use ($input) {
-                    
+                
                 $query->orWhere('id','like', '\'%' . $input['search']['value']. '%\'');
+                $query->orWhere('ref','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('expense_desc','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('expense_purpose','like', '\'%' . $input['search']['value']. '%\'');
 
@@ -514,10 +531,10 @@ class MobilePaymentApi extends Controller
             $response_dt    = $this->append_relationships_objects($response_dt);
             $response_dt    = $this->append_relationships_nulls($response_dt);
             $response       = MobilePayment::arr_to_dt_response( 
-                                                $response_dt, $input['draw'],
-                                                $total_records,
-                                                $records_filtered
-                                                );
+                $response_dt, $input['draw'],
+                $total_records,
+                $records_filtered
+                );
 
 
         }else{
@@ -530,6 +547,8 @@ class MobilePaymentApi extends Controller
 
 
         return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+
+
     }
 
 

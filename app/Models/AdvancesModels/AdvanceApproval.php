@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Models\StaffModels;
+namespace App\Models\AdvancesModels;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\BaseModels\BaseModel;
 
-class StaffRole extends BaseModel
+class AdvanceApproval extends BaseModel
 {
     //
     use SoftDeletes;

@@ -17,10 +17,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\DB;
-use App\Models\MobilePaymentModels\MobilePaymentStatus;
-use App\Models\MobilePaymentModels\MobilePayment;
+use App\Models\ClaimsModels\ClaimStatus;
+use App\Models\ClaimsModels\Claim;
 
-class MobilePaymentStatusApi extends Controller
+class ClaimStatusApi extends Controller
 {
     /**
      * Constructor
@@ -53,19 +53,15 @@ class MobilePaymentStatusApi extends Controller
 
 
 
-
-
-    
-
     /**
-     * Operation addMobilePaymentStatus
+     * Operation addClaimStatus
      *
-     * Add a new mobile_payment_status.
+     * Add a new claim_status.
      *
      *
      * @return Http response
      */
-    public function addMobilePaymentStatus()
+    public function addClaimStatus()
     {
         $input = Request::all();
 
@@ -74,12 +70,12 @@ class MobilePaymentStatusApi extends Controller
 
         //not path params validation
         if (!isset($input['body'])) {
-            throw new \InvalidArgumentException('Missing the required parameter $body when calling addMobilePaymentStatus');
+            throw new \InvalidArgumentException('Missing the required parameter $body when calling addClaimStatus');
         }
         $body = $input['body'];
 
 
-        return response('How about implementing addMobilePaymentStatus as a POST method ?');
+        return response('How about implementing addClaimStatus as a POST method ?');
     }
 
 
@@ -105,19 +101,15 @@ class MobilePaymentStatusApi extends Controller
 
 
 
-
-
-
-    
     /**
-     * Operation updateMobilePaymentStatus
+     * Operation updateClaimStatus
      *
-     * Update an existing mobile_payment_status.
+     * Update an existing claim_status.
      *
      *
      * @return Http response
      */
-    public function updateMobilePaymentStatus()
+    public function updateClaimStatus()
     {
         $input = Request::all();
 
@@ -126,12 +118,12 @@ class MobilePaymentStatusApi extends Controller
 
         //not path params validation
         if (!isset($input['body'])) {
-            throw new \InvalidArgumentException('Missing the required parameter $body when calling updateMobilePaymentStatus');
+            throw new \InvalidArgumentException('Missing the required parameter $body when calling updateClaimStatus');
         }
         $body = $input['body'];
 
 
-        return response('How about implementing updateMobilePaymentStatus as a PUT method ?');
+        return response('How about implementing updateClaimStatus as a PUT method ?');
     }
 
 
@@ -157,20 +149,16 @@ class MobilePaymentStatusApi extends Controller
 
 
 
-
-
-
-    
     /**
-     * Operation deleteMobilePaymentStatus
+     * Operation deleteClaimStatus
      *
-     * Deletes an mobile_payment_status.
+     * Deletes an claim_status.
      *
-     * @param int $mobile_payment_status_id mobile_payment_status id to delete (required)
+     * @param int $claim_status_id claim_status id to delete (required)
      *
      * @return Http response
      */
-    public function deleteMobilePaymentStatus($mobile_payment_status_id)
+    public function deleteClaimStatus($claim_status_id)
     {
         $input = Request::all();
 
@@ -179,7 +167,7 @@ class MobilePaymentStatusApi extends Controller
 
         //not path params validation
 
-        return response('How about implementing deleteMobilePaymentStatus as a DELETE method ?');
+        return response('How about implementing deleteClaimStatus as a DELETE method ?');
     }
 
 
@@ -205,20 +193,16 @@ class MobilePaymentStatusApi extends Controller
 
 
 
-
-
-
-    
     /**
-     * Operation getMobilePaymentStatusById
+     * Operation getClaimStatusById
      *
-     * Find mobile_payment_status by ID.
+     * Find claim_status by ID.
      *
-     * @param int $mobile_payment_status_id ID of mobile_payment_status to return object (required)
+     * @param int $claim_status_id ID of claim_status to return object (required)
      *
      * @return Http response
      */
-    public function getMobilePaymentStatusById($mobile_payment_status_id)
+    public function getClaimStatusById($claim_status_id)
     {
         $input = Request::all();
 
@@ -227,7 +211,7 @@ class MobilePaymentStatusApi extends Controller
 
         //not path params validation
 
-        return response('How about implementing getMobilePaymentStatusById as a GET method ?');
+        return response('How about implementing getClaimStatusById as a GET method ?');
     }
 
 
@@ -253,32 +237,20 @@ class MobilePaymentStatusApi extends Controller
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
     /**
-     * Operation mobilePaymentStatusesGet
+     * Operation getClaimStatuses
      *
-     * mobile_payment_statuses List.
+     * claim_statuses List.
      *
      *
      * @return Http response
      */
-    public function mobilePaymentStatusesGet()
+    public function getClaimStatuses()
     {
         
         $input = Request::all();
         $response;
-        $qb = DB::table('mobile_payment_statuses');
+        $qb = DB::table('claim_statuses');
         $qb->whereNull('deleted_at');
 
 
@@ -288,7 +260,7 @@ class MobilePaymentStatusApi extends Controller
 
         }else{
 
-            $qb->orderBy('mobile_payment_status', 'DESC');
+            $qb->orderBy('claim_status', 'DESC');
         }
 
 
@@ -302,7 +274,7 @@ class MobilePaymentStatusApi extends Controller
         foreach ($response as $key => $value) {
 
 
-            $response[$key]['mobile_payments_count'] = MobilePayment::where('requested_by_id',$this->current_user()->id)
+            $response[$key]['claims_count'] = Claim::where('requested_by_id',$this->current_user()->id)
                                             ->where('status_id', $value['id'] )
                                             ->count();
 
@@ -316,10 +288,10 @@ class MobilePaymentStatusApi extends Controller
             //-1
             $response[]=array(
                     "id"=> -1,
-                    "mobile_payment_status"=> "My Mobile Payments",
+                    "claim_status"=> "My Claims",
                     "order_priority"=> 999,
                     "display_color"=> "#db6ad7",
-                    "mobile_payments_count"=> MobilePayment::where('requested_by_id',$this->current_user()->id)->count()
+                    "claims_count"=> Claim::where('requested_by_id',$this->current_user()->id)->count()
                   );
 
 
@@ -327,10 +299,10 @@ class MobilePaymentStatusApi extends Controller
             //-1
             $response[]=array(
                     "id"=> -2,
-                    "mobile_payment_status"=> "All Mobile Payments",
+                    "claim_status"=> "All Claims",
                     "order_priority"=> 1000,
                     "display_color"=> "#d4a93a",
-                    "mobile_payments_count"=> MobilePayment::count()
+                    "claims_count"=> Claim::count()
                   );
 
         }

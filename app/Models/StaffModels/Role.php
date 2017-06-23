@@ -2,12 +2,8 @@
 
 namespace App\Models\StaffModels;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Models\BaseModels\BaseModel;
+use Zizaco\Entrust\EntrustRole;
 
-class Role extends BaseModel
+class Role extends EntrustRole
 {
-    //
-    use SoftDeletes;
 }

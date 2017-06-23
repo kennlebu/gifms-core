@@ -17,10 +17,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\DB;
-use App\Models\MobilePaymentModels\MobilePaymentStatus;
-use App\Models\MobilePaymentModels\MobilePayment;
+use App\Models\AdvancesModels\AdvanceStatus;
+use App\Models\AdvancesModels\Advance;
 
-class MobilePaymentStatusApi extends Controller
+class AdvanceStatusApi extends Controller
 {
     /**
      * Constructor
@@ -53,19 +53,15 @@ class MobilePaymentStatusApi extends Controller
 
 
 
-
-
-    
-
     /**
-     * Operation addMobilePaymentStatus
+     * Operation addAdvanceStatus
      *
-     * Add a new mobile_payment_status.
+     * Add a new advance_status.
      *
      *
      * @return Http response
      */
-    public function addMobilePaymentStatus()
+    public function addAdvanceStatus()
     {
         $input = Request::all();
 
@@ -74,12 +70,12 @@ class MobilePaymentStatusApi extends Controller
 
         //not path params validation
         if (!isset($input['body'])) {
-            throw new \InvalidArgumentException('Missing the required parameter $body when calling addMobilePaymentStatus');
+            throw new \InvalidArgumentException('Missing the required parameter $body when calling addAdvanceStatus');
         }
         $body = $input['body'];
 
 
-        return response('How about implementing addMobilePaymentStatus as a POST method ?');
+        return response('How about implementing addAdvanceStatus as a POST method ?');
     }
 
 
@@ -105,19 +101,15 @@ class MobilePaymentStatusApi extends Controller
 
 
 
-
-
-
-    
     /**
-     * Operation updateMobilePaymentStatus
+     * Operation updateAdvanceStatus
      *
-     * Update an existing mobile_payment_status.
+     * Update an existing advance_status.
      *
      *
      * @return Http response
      */
-    public function updateMobilePaymentStatus()
+    public function updateAdvanceStatus()
     {
         $input = Request::all();
 
@@ -126,12 +118,12 @@ class MobilePaymentStatusApi extends Controller
 
         //not path params validation
         if (!isset($input['body'])) {
-            throw new \InvalidArgumentException('Missing the required parameter $body when calling updateMobilePaymentStatus');
+            throw new \InvalidArgumentException('Missing the required parameter $body when calling updateAdvanceStatus');
         }
         $body = $input['body'];
 
 
-        return response('How about implementing updateMobilePaymentStatus as a PUT method ?');
+        return response('How about implementing updateAdvanceStatus as a PUT method ?');
     }
 
 
@@ -157,20 +149,16 @@ class MobilePaymentStatusApi extends Controller
 
 
 
-
-
-
-    
     /**
-     * Operation deleteMobilePaymentStatus
+     * Operation deleteAdvanceStatus
      *
-     * Deletes an mobile_payment_status.
+     * Deletes an advance_status.
      *
-     * @param int $mobile_payment_status_id mobile_payment_status id to delete (required)
+     * @param int $advance_status_id advance_status id to delete (required)
      *
      * @return Http response
      */
-    public function deleteMobilePaymentStatus($mobile_payment_status_id)
+    public function deleteAdvanceStatus($advance_status_id)
     {
         $input = Request::all();
 
@@ -179,7 +167,7 @@ class MobilePaymentStatusApi extends Controller
 
         //not path params validation
 
-        return response('How about implementing deleteMobilePaymentStatus as a DELETE method ?');
+        return response('How about implementing deleteAdvanceStatus as a DELETE method ?');
     }
 
 
@@ -205,20 +193,16 @@ class MobilePaymentStatusApi extends Controller
 
 
 
-
-
-
-    
     /**
-     * Operation getMobilePaymentStatusById
+     * Operation getAdvanceStatusById
      *
-     * Find mobile_payment_status by ID.
+     * Find advance_status by ID.
      *
-     * @param int $mobile_payment_status_id ID of mobile_payment_status to return object (required)
+     * @param int $advance_status_id ID of advance_status to return object (required)
      *
      * @return Http response
      */
-    public function getMobilePaymentStatusById($mobile_payment_status_id)
+    public function getAdvanceStatusById($advance_status_id)
     {
         $input = Request::all();
 
@@ -227,7 +211,7 @@ class MobilePaymentStatusApi extends Controller
 
         //not path params validation
 
-        return response('How about implementing getMobilePaymentStatusById as a GET method ?');
+        return response('How about implementing getAdvanceStatusById as a GET method ?');
     }
 
 
@@ -253,32 +237,20 @@ class MobilePaymentStatusApi extends Controller
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
     /**
-     * Operation mobilePaymentStatusesGet
+     * Operation getAdvanceStatuses
      *
-     * mobile_payment_statuses List.
+     * advance_statuses List.
      *
      *
      * @return Http response
      */
-    public function mobilePaymentStatusesGet()
+    public function getAdvanceStatuses()
     {
         
         $input = Request::all();
         $response;
-        $qb = DB::table('mobile_payment_statuses');
+        $qb = DB::table('advance_statuses');
         $qb->whereNull('deleted_at');
 
 
@@ -288,7 +260,7 @@ class MobilePaymentStatusApi extends Controller
 
         }else{
 
-            $qb->orderBy('mobile_payment_status', 'DESC');
+            $qb->orderBy('advance_status', 'DESC');
         }
 
 
@@ -302,7 +274,7 @@ class MobilePaymentStatusApi extends Controller
         foreach ($response as $key => $value) {
 
 
-            $response[$key]['mobile_payments_count'] = MobilePayment::where('requested_by_id',$this->current_user()->id)
+            $response[$key]['advances_count'] = Advance::where('requested_by_id',$this->current_user()->id)
                                             ->where('status_id', $value['id'] )
                                             ->count();
 
@@ -316,10 +288,10 @@ class MobilePaymentStatusApi extends Controller
             //-1
             $response[]=array(
                     "id"=> -1,
-                    "mobile_payment_status"=> "My Mobile Payments",
+                    "advance_status"=> "My Advances",
                     "order_priority"=> 999,
                     "display_color"=> "#db6ad7",
-                    "mobile_payments_count"=> MobilePayment::where('requested_by_id',$this->current_user()->id)->count()
+                    "advances_count"=> Advance::where('requested_by_id',$this->current_user()->id)->count()
                   );
 
 
@@ -327,10 +299,10 @@ class MobilePaymentStatusApi extends Controller
             //-1
             $response[]=array(
                     "id"=> -2,
-                    "mobile_payment_status"=> "All Mobile Payments",
+                    "advance_status"=> "All Advances",
                     "order_priority"=> 1000,
                     "display_color"=> "#d4a93a",
-                    "mobile_payments_count"=> MobilePayment::count()
+                    "advances_count"=> Advance::count()
                   );
 
         }
@@ -338,6 +310,24 @@ class MobilePaymentStatusApi extends Controller
         return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
 
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
 
 
     private function get_my_allowed_statuses($qb){

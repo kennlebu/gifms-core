@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateMobilePaymentStatusesTable extends Migration
+class CreateAdvanceStatusesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,9 @@ class CreateMobilePaymentStatusesTable extends Migration
      */
     public function up()
     {
-        Schema::create('mobile_payment_statuses', function (Blueprint $table) {
+        Schema::create('advance_statuses', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('mobile_payment_status');
+            $table->string('advance_status')->nullable();
             $table->integer('next_status_id')->nullable();
             $table->integer('status_security_level')->nullable();
             $table->integer('order_priority')->nullable();
@@ -36,6 +36,6 @@ class CreateMobilePaymentStatusesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('mobile_payment_statuses');
+        Schema::dropIfExists('advance_statuses');
     }
 }
