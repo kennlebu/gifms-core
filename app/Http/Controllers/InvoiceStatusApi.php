@@ -154,7 +154,7 @@ class InvoiceStatusApi extends Controller
         foreach ($response as $key => $value) {
 
 
-            $response[$key]['invoices_count'] = Invoice::where('raised_by',$this->current_user()->id)
+            $response[$key]['invoices_count'] = Invoice::where('raised_by_id',$this->current_user()->id)
                                             ->where('status_id', $value['id'] )
                                             ->count();
 
@@ -171,7 +171,7 @@ class InvoiceStatusApi extends Controller
                     "invoice_status"=> "My Invoices",
                     "order_priority"=> 999,
                     "display_color"=> "#db6ad7",
-                    "invoices_count"=> Invoice::where('raised_by',$this->current_user()->id)->count()
+                    "invoices_count"=> Invoice::where('raised_by_id',$this->current_user()->id)->count()
                   );
 
 

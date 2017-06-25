@@ -15,12 +15,14 @@ class CreateInvoicesTable extends Migration
     {
         Schema::create('invoices', function (Blueprint $table) {
             $table->increments('id');
-            $table->text('invoice_title')->nullable();
+            $table->string('ref')->nullable();
+            $table->text('expense_desc')->nullable();
+            $table->text('expense_purpose')->nullable();
             $table->string('invoice_number')->nullable();
             $table->date('invoice_date')->nullable();
             $table->date('date_raised')->nullable();
-            $table->integer('raised_by')->nullable();
-            $table->integer('raise_action_by')->nullable();
+            $table->integer('raised_by_id')->nullable();
+            $table->integer('raise_action_by_id')->nullable();
             $table->double('invoice_amount',30,5)->nullable();
             $table->string('invoice_document')->nullable();
             $table->integer('project_manager')->nullable();
@@ -41,9 +43,8 @@ class CreateInvoicesTable extends Migration
             $table->integer('invoice_payment_mode')->nullable();
             $table->integer('invoice_country')->nullable();
             $table->string('voucher_no')->nullable();
-            $table->text('invoice_purpose')->nullable();
             $table->integer('management_approval')->nullable();
-            $table->integer('uploaded_by')->nullable();
+            // $table->integer('uploaded_by')->nullable();
             $table->integer('approver_id')->nullable();
             $table->integer('claim_id')->nullable();
             $table->integer('lpo_id')->nullable();
@@ -62,7 +63,7 @@ class CreateInvoicesTable extends Migration
             $table->double('other_levies',30,5)->nullable();
             $table->double('other_amounts',30,5)->nullable();
             $table->integer('migration_management_approval')->nullable();
-            $table->integer('migration_uploaded_by')->nullable();
+            $table->integer('migration_raised_by_id')->nullable();
             $table->integer('migration_approver_id')->nullable();
             $table->integer('migration_claim_id')->nullable();
             $table->integer('migration_lpo_id')->nullable();

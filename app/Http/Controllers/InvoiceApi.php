@@ -16,6 +16,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\DB;
+use App\Models\InvoicesModels\Invoice;
 
 class InvoiceApi extends Controller
 {
@@ -25,6 +27,30 @@ class InvoiceApi extends Controller
     public function __construct()
     {
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     /**
      * Operation addInvoice
@@ -50,6 +76,30 @@ class InvoiceApi extends Controller
 
         return response('How about implementing addInvoice as a POST method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /**
      * Operation updateInvoice
      *
@@ -74,6 +124,30 @@ class InvoiceApi extends Controller
 
         return response('How about implementing updateInvoice as a PUT method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /**
      * Operation deleteInvoice
      *
@@ -94,6 +168,30 @@ class InvoiceApi extends Controller
 
         return response('How about implementing deleteInvoice as a DELETE method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /**
      * Operation getInvoiceById
      *
@@ -114,6 +212,30 @@ class InvoiceApi extends Controller
 
         return response('How about implementing getInvoiceById as a GET method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /**
      * Operation allocateInvoice
      *
@@ -134,6 +256,30 @@ class InvoiceApi extends Controller
 
         return response('How about implementing allocateInvoice as a PATCH method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /**
      * Operation approveInvoice
      *
@@ -154,6 +300,30 @@ class InvoiceApi extends Controller
 
         return response('How about implementing approveInvoice as a PATCH method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /**
      * Operation getDocumentById
      *
@@ -174,6 +344,30 @@ class InvoiceApi extends Controller
 
         return response('How about implementing getDocumentById as a GET method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /**
      * Operation submitInvoiceForApproval
      *
@@ -194,6 +388,30 @@ class InvoiceApi extends Controller
 
         return response('How about implementing submitInvoiceForApproval as a PATCH method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /**
      * Operation getInvoices
      *
@@ -204,15 +422,274 @@ class InvoiceApi extends Controller
      */
     public function getInvoices()
     {
+
+
         $input = Request::all();
+        //query builder
+        $qb = DB::table('invoices');
 
-        //path params validation
+        $qb->whereNull('deleted_at');
+
+        $response;
+        $response_dt;
+
+        $total_records          = $qb->count();
+        $records_filtered       = 0;
 
 
-        //not path params validation
-        $invoice_id = $input['invoice_id'];
 
 
-        return response('How about implementing getInvoices as a GET method ?');
+
+
+        //if status is set
+
+        if(array_key_exists('status', $input)){
+
+            $status_ = (int) $input['status'];
+
+            if($status_ >-1){
+                $qb->where('status_id', $input['status']);
+                $qb->where('raised_by_id',$this->current_user()->id);
+            }elseif ($status_==-1) {
+                $qb->where('raised_by_id',$this->current_user()->id);
+            }elseif ($status_==-2) {
+                
+            }
+
+
+
+
+            // $total_records          = $qb->count();     //may need this
+        }
+
+
+
+
+        //searching
+        if(array_key_exists('searchval', $input)){
+            $qb->where(function ($query) use ($input) {
+                
+                $query->orWhere('id','like', '\'%' . $input['searchval']. '%\'');
+                $query->orWhere('ref','like', '\'%' . $input['search']['value']. '%\'');
+                $query->orWhere('expense_desc','like', '\'%' . $input['searchval']. '%\'');
+                $query->orWhere('expense_purpose','like', '\'%' . $input['searchval']. '%\'');
+
+            });
+
+            // $records_filtered       =  $qb->count(); //doesn't work
+
+            $sql = Invoice::bind_presql($qb->toSql(),$qb->getBindings());
+            $sql = str_replace("*"," count(*) AS count ", $sql);
+            $dt = json_decode(json_encode(DB::select($sql)), true);
+
+            $records_filtered = (int) $dt[0]['count'];
+            // $records_filtered = 30;
+
+
+        }
+
+
+
+
+        if(array_key_exists('datatables', $input)){
+
+            //searching
+            $qb->where(function ($query) use ($input) {
+                
+                $query->orWhere('id','like', '\'%' . $input['search']['value']. '%\'');
+                $query->orWhere('ref','like', '\'%' . $input['search']['value']. '%\'');
+                $query->orWhere('expense_desc','like', '\'%' . $input['search']['value']. '%\'');
+                $query->orWhere('expense_purpose','like', '\'%' . $input['search']['value']. '%\'');
+
+            });
+
+
+
+
+            $sql = Invoice::bind_presql($qb->toSql(),$qb->getBindings());
+            $sql = str_replace("*"," count(*) AS count ", $sql);
+            $dt = json_decode(json_encode(DB::select($sql)), true);
+
+            $records_filtered = (int) $dt[0]['count'];
+
+
+            //ordering
+            $order_column_id    = (int) $input['order'][0]['column'];
+            $order_column_name  = $input['columns'][$order_column_id]['order_by'];
+            $order_direction    = $input['order'][0]['dir'];
+
+            // if ($order_column_id == 0){
+            //     $order_column_name = "created_at";
+            // }
+            // if ($order_column_id == 1){
+            //     $order_column_name = "id";
+            // }
+
+            if($order_column_name!=''){
+
+                $qb->orderBy($order_column_name, $order_direction);
+
+            }
+
+
+
+
+
+
+            //limit $ offset
+            $response_dt    =   $qb->limit($input['length'])->offset($input['start']);
+
+
+
+
+
+            $sql = Invoice::bind_presql($qb->toSql(),$qb->getBindings());
+
+            // $response_dt = DB::select($qb->toSql(),$qb->getBindings());         //pseudo
+            $response_dt = DB::select($sql);
+
+
+            $response_dt = json_decode(json_encode($response_dt), true);
+
+            $response_dt    = $this->append_relationships_objects($response_dt);
+            $response_dt    = $this->append_relationships_nulls($response_dt);
+            $response       = Invoice::arr_to_dt_response( 
+                $response_dt, $input['draw'],
+                $total_records,
+                $records_filtered
+                );
+
+
+        }else{
+
+            $sql            = Invoice::bind_presql($qb->toSql(),$qb->getBindings());
+            $response       = json_decode(json_encode(DB::select($sql)), true);
+        }
+
+
+
+
+        return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public function append_relationships_objects($data = array()){
+
+        // print_r($data);
+
+        foreach ($data as $key => $value) {
+
+            $mobile_payment = Invoice::find($data[$key]['id']);
+
+            // $data[$key]['requested_by']                 = $mobile_payment->requested_by;
+            // $data[$key]['request_action_by']            = $mobile_payment->requested_action_by;
+            // $data[$key]['project']                      = $mobile_payment->project;
+            // $data[$key]['status']                       = $mobile_payment->status;
+            // $data[$key]['project_manager']              = $mobile_payment->project_manager;
+            // $data[$key]['currency']                     = $mobile_payment->currency;
+            // $data[$key]['rejected_by']                  = $mobile_payment->rejected_by;
+            // $data[$key]['invoice_approvals']            = $mobile_payment->invoice_approvals;
+
+        }
+
+        return $data;
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+    public function append_relationships_nulls($data = array()){
+
+
+        foreach ($data as $key => $value) {
+
+
+            // if($value["requested_by"]==null){
+            //     $data[$key]['requested_by'] = array("full_name"=>"N/A");
+                
+            // }
+            // if($value["request_action_by"]==null){
+            //     $data[$key]['request_action_by'] = array("full_name"=>"N/A");
+                
+            // }
+            // if($value["project"]==null){
+            //     $data[$key]['project'] = array("project_name"=>"N/A");
+                
+            // }
+            // if($value["status"]==null){
+            //     $data[$key]['status'] = array("invoice_status"=>"N/A");
+                
+            // }
+            // if($value["project_manager"]==null){
+            //     $data[$key]['project_manager'] = array("full_name"=>"N/A");
+                
+            // }
+            // if($value["rejected_by"]==null){
+            //     $data[$key]['rejected_by'] = array("full_name"=>"N/A");
+                
+            // }
+            // if($data[$key]["currency"]==null){
+            //     $data[$key]["currency"] = array("currency_name"=>"N/A");
+            // }
+        }
+
+        return $data;
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

@@ -38,12 +38,12 @@ class migrate_invoice_data extends Seeder
 
         foreach ($data as $key => $value) {
 
-            $data_to_migrate[$key]['invoice_title']  				= $data[$key]['InvoiceTitle'];
+            $data_to_migrate[$key]['expense_desc']  				= $data[$key]['InvoiceTitle'];
             $data_to_migrate[$key]['invoice_number']  				= $data[$key]['InvoiceNumber'];
             $data_to_migrate[$key]['invoice_date']  				= $data[$key]['InvoiceDate'];
             $data_to_migrate[$key]['date_raised']  				    = $data[$key]['DateReceived'];
-            $data_to_migrate[$key]['raised_by']                     = $data[$key]['ReceivedBy'];
-            $data_to_migrate[$key]['raise_action_by']               = $data[$key]['ReceivedBy'];
+            // $data_to_migrate[$key]['raised_by_id']                  = $data[$key]['ReceivedBy'];
+            // $data_to_migrate[$key]['raise_action_by_id']            = $data[$key]['ReceivedBy'];
             $data_to_migrate[$key]['invoice_amount']  				= $data[$key]['InvoiceAmount'];
             $data_to_migrate[$key]['invoice_document']  			= $data[$key]['InvoiceDocument'];
             $data_to_migrate[$key]['project_manager']  				= $data[$key]['ProjectManager'];
@@ -64,9 +64,9 @@ class migrate_invoice_data extends Seeder
             $data_to_migrate[$key]['invoice_payment_mode']			= $data[$key]['InvoicePaymentMode'];
             $data_to_migrate[$key]['invoice_country']  				= $data[$key]['InvoiceCountry'];
             $data_to_migrate[$key]['voucher_no']	  				= $data[$key]['VoucherNumber'];
-            $data_to_migrate[$key]['invoice_purpose']  				= $data[$key]['InvoicePurpose'];
+            $data_to_migrate[$key]['expense_purpose']  				= $data[$key]['InvoicePurpose'];
             $data_to_migrate[$key]['migration_management_approval']	= $data[$key]['ManagementApproval'];
-            $data_to_migrate[$key]['migration_uploaded_by']			= $data[$key]['UploadedBy'];
+            $data_to_migrate[$key]['migration_raised_by_id']		= $data[$key]['ReceivedBy'];
             $data_to_migrate[$key]['migration_approver_id']  		= $data[$key]['Approver'];
             $data_to_migrate[$key]['migration_claim_id']			= $data[$key]['Claim'];
             $data_to_migrate[$key]['migration_lpo_id'] 				= $data[$key]['LPO'];

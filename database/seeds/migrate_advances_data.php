@@ -215,7 +215,7 @@ class migrate_advances_data extends Seeder
          */
 
 
-        DB::table('advance_statuses')->insert([]
+        DB::table('advance_statuses')->insert([
             ['advance_status'   => 'Requested Pending Submission',
             'next_status_id'    =>2,
             'migration_status_security_level'=> 0,
