@@ -2482,3 +2482,196 @@ Route::GET('/advance_statuses', 'AdvanceStatusApi@getAdvanceStatuses')->middlewa
 
 
 
+
+
+
+
+
+
+
+
+/**
+ * POST addInvoice
+ * Summary: Add a new invoice
+ * Notes: new invoice
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/invoice', 'InvoiceApi@addInvoice')->middleware('jwt.auth');
+/**
+ * PUT updateInvoice
+ * Summary: Update an existing invoice
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/invoice', 'InvoiceApi@updateInvoice')->middleware('jwt.auth');
+/**
+ * DELETE deleteInvoice
+ * Summary: Deletes an invoice
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/invoice/{invoice_id}', 'InvoiceApi@deleteInvoice')->middleware('jwt.auth');
+/**
+ * GET getInvoiceById
+ * Summary: Find invoice by ID
+ * Notes: Returns a single invoice
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/invoice/{invoice_id}', 'InvoiceApi@getInvoiceById')->middleware('jwt.auth');
+/**
+ * PATCH allocateInvoice
+ * Summary: Allocate invoice by ID
+ * Notes: Allocate Invoice
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PATCH('/invoice/{invoice_id}/allocate', 'InvoiceApi@allocateInvoice')->middleware('jwt.auth');
+/**
+ * PATCH approveInvoice
+ * Summary: Approve invoice by ID
+ * Notes: Approves Invoice
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PATCH('/invoice/{invoice_id}/approve', 'InvoiceApi@approveInvoice')->middleware('jwt.auth');
+/**
+ * GET getDocumentById
+ * Summary: get invoice document by ID
+ * Notes: get Invoice document
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/invoice/{invoice_id}/get_document', 'InvoiceApi@getDocumentById')->middleware('jwt.auth');
+/**
+ * PATCH submitInvoiceForApproval
+ * Summary: Submit invoice by ID
+ * Notes: Submits invoice for approval
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PATCH('/invoice/{invoice_id}/submit_for_approval', 'InvoiceApi@submitInvoiceForApproval')->middleware('jwt.auth');
+/**
+ * GET getInvoices
+ * Summary: invoices List
+ * Notes: The invoice endpoint returns multiple invoice requested given the parameters injected.  
+
+ */
+Route::GET('/invoices', 'InvoiceApi@getInvoices')->middleware('jwt.auth');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * POST addInvoiceApproval
+ * Summary: Add a new invoice_approval
+ * Notes: new invoice_approval
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/invoice_approval', 'InvoiceApprovalApi@addInvoiceApproval')->middleware('jwt.auth');
+/**
+ * PUT updateInvoiceApproval
+ * Summary: Update an existing invoice_approval
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/invoice_approval', 'InvoiceApprovalApi@updateInvoiceApproval')->middleware('jwt.auth');
+/**
+ * DELETE deleteInvoiceApproval
+ * Summary: Deletes an invoice_approval
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/invoice_approval/{invoice_approval_id}', 'InvoiceApprovalApi@deleteInvoiceApproval')->middleware('jwt.auth');
+/**
+ * GET getInvoiceApprovalById
+ * Summary: Find invoice_approval by ID
+ * Notes: Returns a single invoice_approval
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/invoice_approval/{invoice_approval_id}', 'InvoiceApprovalApi@getInvoiceApprovalById')->middleware('jwt.auth');
+/**
+ * GET getInvoiceApprovals
+ * Summary: invoice_approvals List
+ * Notes: The invoice_approval endpoint returns multiple invoice_approval requested given the parameters injected.  
+
+ */
+Route::GET('/invoice_approvals', 'InvoiceApprovalApi@getInvoiceApprovals')->middleware('jwt.auth');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * POST addInvoiceStatus
+ * Summary: Add a new invoice_status
+ * Notes: new invoice_status
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/invoice_status', 'InvoiceStatusApi@addInvoiceStatus')->middleware('jwt.auth');
+/**
+ * PUT updateInvoiceStatus
+ * Summary: Update an existing invoice_status
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/invoice_status', 'InvoiceStatusApi@updateInvoiceStatus')->middleware('jwt.auth');
+/**
+ * DELETE deleteInvoiceStatus
+ * Summary: Deletes an invoice_status
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/invoice_status/{invoice_status_id}', 'InvoiceStatusApi@deleteInvoiceStatus')->middleware('jwt.auth');
+/**
+ * GET getInvoiceStatusById
+ * Summary: Find invoice_status by ID
+ * Notes: Returns a single invoice_status
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/invoice_status/{invoice_status_id}', 'InvoiceStatusApi@getInvoiceStatusById')->middleware('jwt.auth');
+/**
+ * GET getInvoiceStatuses
+ * Summary: invoice_statuses List
+ * Notes: The invoice_status endpoint returns multiple invoice_status requested given the parameters injected.  
+
+ */
+Route::GET('/invoice_statuses', 'InvoiceStatusApi@getInvoiceStatuses')->middleware('jwt.auth');
+
+
+
+

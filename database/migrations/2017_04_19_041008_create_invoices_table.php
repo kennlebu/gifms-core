@@ -18,13 +18,14 @@ class CreateInvoicesTable extends Migration
             $table->text('invoice_title')->nullable();
             $table->string('invoice_number')->nullable();
             $table->date('invoice_date')->nullable();
-            $table->date('date_received')->nullable();
-            $table->integer('received_by')->nullable();
+            $table->date('date_raised')->nullable();
+            $table->integer('raised_by')->nullable();
+            $table->integer('raise_action_by')->nullable();
             $table->double('invoice_amount',30,5)->nullable();
             $table->string('invoice_document')->nullable();
             $table->integer('project_manager')->nullable();
             $table->integer('supplier')->nullable();
-            $table->integer('invoice_status')->nullable();
+            $table->integer('status_id')->nullable();
             $table->dateTime('accountant_approval_date')->nullable();
             $table->dateTime('management_approval_date')->nullable();
             $table->integer('allocated')->nullable();

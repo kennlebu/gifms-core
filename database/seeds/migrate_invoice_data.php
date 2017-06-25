@@ -41,13 +41,14 @@ class migrate_invoice_data extends Seeder
             $data_to_migrate[$key]['invoice_title']  				= $data[$key]['InvoiceTitle'];
             $data_to_migrate[$key]['invoice_number']  				= $data[$key]['InvoiceNumber'];
             $data_to_migrate[$key]['invoice_date']  				= $data[$key]['InvoiceDate'];
-            $data_to_migrate[$key]['date_received']  				= $data[$key]['DateReceived'];
-            $data_to_migrate[$key]['received_by']  					= $data[$key]['ReceivedBy'];
+            $data_to_migrate[$key]['date_raised']  				    = $data[$key]['DateReceived'];
+            $data_to_migrate[$key]['raised_by']                     = $data[$key]['ReceivedBy'];
+            $data_to_migrate[$key]['raise_action_by']               = $data[$key]['ReceivedBy'];
             $data_to_migrate[$key]['invoice_amount']  				= $data[$key]['InvoiceAmount'];
             $data_to_migrate[$key]['invoice_document']  			= $data[$key]['InvoiceDocument'];
             $data_to_migrate[$key]['project_manager']  				= $data[$key]['ProjectManager'];
             $data_to_migrate[$key]['supplier']  					= $data[$key]['Supplier'];
-            $data_to_migrate[$key]['invoice_status']  				= $data[$key]['InvoiceStatus'];
+            $data_to_migrate[$key]['status_id']  				    = $data[$key]['InvoiceStatus'];
             $data_to_migrate[$key]['accountant_approval_date']  	= $data[$key]['AccountsApprovalDate'];
             $data_to_migrate[$key]['management_approval_date']		= $data[$key]['ManagementApprovalDate'];
             $data_to_migrate[$key]['allocated']  					= $data[$key]['Allocated'];
