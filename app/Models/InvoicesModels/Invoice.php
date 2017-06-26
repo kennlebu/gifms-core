@@ -11,4 +11,38 @@ class Invoice extends BaseModel
 {
     //
     use SoftDeletes;
+
+    
+    public function raised_by()
+    {
+        return $this->belongsTo('App\Models\StaffModels\Staff','raised_by_id');
+    }
+    public function raise_action_by()
+    {
+        return $this->belongsTo('App\Models\StaffModels\Staff','raise_action_by_id');
+    }
+    public function project()
+    {
+        return $this->belongsTo('App\Models\ProjectsModels\Project');
+    }
+    public function status()
+    {
+        return $this->belongsTo('App\Models\InvoicesModels\InvoiceStatus');
+    }
+    public function project_manager()
+    {
+        return $this->belongsTo('App\Models\StaffModels\Staff','project_manager_id');
+    }
+    public function rejected_by()
+    {
+        return $this->belongsTo('App\Models\StaffModels\Staff','rejected_by_id');
+    }
+    public function currency()
+    {
+        return $this->belongsTo('App\Models\LookupModels\Currency');
+    }
+    public function invoice_approvals()
+    {
+        return $this->hasMany('App\Models\InvoicesModels\InvoiceApproval');
+    }
 }
