@@ -50,5 +50,12 @@ class Claim extends BaseModel
     {
         return $this->hasMany('App\Models\ClaimsModels\ClaimApproval');
     }
-
+    public function allocations()
+    {
+        return $this->hasMany('App\Models\ClaimsModels\ClaimProjectAccountAllocation');
+    }
+    public function comments()
+    {
+        return $this->morphMany('App\OtherModels\Comment', 'commentable');
+    }
 }

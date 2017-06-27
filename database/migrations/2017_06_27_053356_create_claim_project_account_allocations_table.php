@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateCommentsTable extends Migration
+class CreateClaimProjectAccountAllocationsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,15 @@ class CreateCommentsTable extends Migration
      */
     public function up()
     {
-        Schema::create('comments', function (Blueprint $table) {
+        Schema::create('claim_project_account_allocations', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('commentable_id')->nullable();
-            $table->text('commentable_type')->nullable();
-            $table->integer('at_status_id')->nullable();
-            $table->text('comment');   
-            $table->integer('commentor_id')->nullable();
+            $table->text('allocation_purpose')->nullable();
+            $table->double('amount_allocated',30,4)->nullable();
+            $table->double('percentage_allocated',7,4)->nullable();
+            $table->integer('allocated_by_id')->nullable();
+            $table->integer('claim_id')->nullable();
+            $table->integer('project_id')->nullable();
+            $table->integer('account_id')->nullable();
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
             $table->softDeletes();
@@ -33,6 +35,6 @@ class CreateCommentsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('comments');
+        Schema::dropIfExists('claim_project_account_allocations');
     }
 }

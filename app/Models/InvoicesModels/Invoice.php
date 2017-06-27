@@ -45,4 +45,12 @@ class Invoice extends BaseModel
     {
         return $this->hasMany('App\Models\InvoicesModels\InvoiceApproval');
     }
+    public function allocations()
+    {
+        return $this->hasMany('App\Models\InvoicesModels\InvoiceProjectAccountAllocation');
+    }
+    public function comments()
+    {
+        return $this->morphMany('App\OtherModels\Comment', 'commentable');
+    }
 }

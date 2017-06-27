@@ -318,7 +318,7 @@ class MobilePaymentStatusApi extends Controller
                     "id"=> -1,
                     "mobile_payment_status"=> "My Mobile Payments",
                     "order_priority"=> 999,
-                    "display_color"=> "#db6ad7",
+                    "display_color"=> "#9053A6",
                     "mobile_payments_count"=> MobilePayment::where('requested_by_id',$this->current_user()->id)->count()
                   );
 
@@ -329,7 +329,7 @@ class MobilePaymentStatusApi extends Controller
                     "id"=> -2,
                     "mobile_payment_status"=> "All Mobile Payments",
                     "order_priority"=> 1000,
-                    "display_color"=> "#d4a93a",
+                    "display_color"=> "#BD755C",
                     "mobile_payments_count"=> MobilePayment::count()
                   );
 
