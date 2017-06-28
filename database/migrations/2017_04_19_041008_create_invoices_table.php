@@ -25,7 +25,7 @@ class CreateInvoicesTable extends Migration
             $table->integer('raise_action_by_id')->nullable();
             $table->double('total',30,5)->nullable();
             $table->string('invoice_document')->nullable();
-            $table->integer('project_manager')->nullable();
+            $table->integer('project_manager_id')->nullable();
             $table->integer('supplier_id')->nullable();
             $table->integer('status_id')->nullable();
             $table->dateTime('accountant_approval_date')->nullable();
@@ -37,12 +37,12 @@ class CreateInvoicesTable extends Migration
             $table->integer('staff_advance')->nullable();
             $table->date('reconcilliation_date')->nullable();
             $table->text('comments')->nullable();
-            $table->integer('invoice_type')->nullable();
-            $table->integer('currency')->nullable();
+            $table->integer('invoice_type_id')->nullable();
+            $table->integer('currency_id')->nullable();
             $table->text('reject_reason')->nullable();
             $table->integer('withholding_tax')->nullable();
-            $table->integer('invoice_payment_mode')->nullable();
-            $table->integer('invoice_country')->nullable();
+            $table->integer('payment_mode_id')->nullable();
+            $table->integer('country_id')->nullable();
             $table->string('voucher_no')->nullable();
             // $table->integer('uploaded_by')->nullable();
             $table->integer('approver_id')->nullable();
