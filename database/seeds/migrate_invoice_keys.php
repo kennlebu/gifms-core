@@ -29,7 +29,7 @@ class migrate_invoice_keys extends Seeder
         $migrate_keys_sql = "
                                 UPDATE invoices i 
                                     LEFT JOIN staff ma 
-                                    ON ma.migration_id = i.migration_management_approval
+                                    ON ma.migration_id = i.migration_management_approval_id
                                     LEFT JOIN staff rb 
                                     ON rb.migration_id = i.migration_raised_by_id
                                     LEFT JOIN staff ap 
@@ -43,14 +43,14 @@ class migrate_invoice_keys extends Seeder
                                     LEFT JOIN staff mp 
                                     ON mp.migration_id = i.migration_mpesa_id
 
-                                    SET     i.management_approval   =   ma.id, 
-                                            i.raised_by_id          =   rb.id, 
-                                            i.raise_action_by_id    =   rb.id, 
-                                            i.approver_id           =   ap.id, 
-                                            i.claim_id              =   c.id, 
-                                            i.lpo_id                =   l.id, 
-                                            i.advance_id            =   sa.id, 
-                                            i.mpesa_id              =   mp.id
+                                    SET     i.management_approval_id        =   ma.id, 
+                                            i.raised_by_id                  =   rb.id, 
+                                            i.raise_action_by_id            =   rb.id, 
+                                            i.approver_id                   =   ap.id, 
+                                            i.claim_id                      =   c.id, 
+                                            i.lpo_id                        =   l.id, 
+                                            i.advance_id                    =   sa.id, 
+                                            i.mpesa_id                      =   mp.id
                              ";
 
         // DB::statement($migrate_keys_sql);
