@@ -11,4 +11,10 @@ class Payment extends BaseModel
 {
     //
     use SoftDeletes;
+
+    
+    public function payable()
+    {
+        return $this->morphTo();
+    }
 }

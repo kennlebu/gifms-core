@@ -38,5 +38,20 @@ class post_keys_migration_migration extends Seeder
         DB::statement("UPDATE `lpo_statuses` SET `next_status_id` = '14' WHERE `id` = '10' ");
 
 
+        //currencies color
+
+        DB::statement("
+            UPDATE `gifms`.`currencies` SET `display_color`='#B01500' WHERE `id`='2';
+            UPDATE `gifms`.`currencies` SET `display_color`='#18468A' WHERE `id`='1';
+            ");
+
+
+        //payments payable migration
+
+        DB::statement("
+            UPDATE `gifms`.`payments` SET `payable_id`=`invoice_id`, `payable_type` = 'APP\\Models\\InvoiceModels\\Invoice' WHERE `invoice_id`<>'';
+            ");
+
+
     }
 }

@@ -31,15 +31,15 @@ class migrate_payment_keys extends Seeder
                                     ON pb.migration_id = p.migration_payment_batch_id
                                     LEFT JOIN invoices i 
                                     ON i.migration_id = p.migration_invoice_id
-                                    LEFT JOIN staff_advances sa 
-                                    ON sa.migration_id = p.migration_advance_id
+                                    LEFT JOIN advances adv 
+                                    ON adv.migration_id = p.migration_advance_id
 
                                     SET     p.payment_batch_id              =   pb.id ,
                                             p.invoice_id                    =   i.id ,
-                                            p.advance_id                    =   sa.id
+                                            p.advance_id                    =   adv.id
                              ";
 
-        //DB::statement($migrate_keys_sql);
+        DB::statement($migrate_keys_sql);
 
        echo "\n __________Migrated payments Foreign keys ---------- payment_batch_id, invoice_id, advance_id,\n";
 
