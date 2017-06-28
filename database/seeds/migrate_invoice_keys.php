@@ -34,28 +34,22 @@ class migrate_invoice_keys extends Seeder
                                     ON rb.migration_id = i.migration_raised_by_id
                                     LEFT JOIN staff ap 
                                     ON ap.migration_id = i.migration_approver_id
-                                    LEFT JOIN claims c 
-                                    ON c.migration_id = i.migration_claim_id
+                                    LEFT JOIN staff pm 
+                                    ON pm.migration_id = i.migration_project_manager_id
                                     LEFT JOIN lpos l 
                                     ON l.migration_id = i.migration_lpo_id
-                                    LEFT JOIN advances sa 
-                                    ON sa.migration_id = i.migration_advance_id
-                                    LEFT JOIN staff mp 
-                                    ON mp.migration_id = i.migration_mpesa_id
 
                                     SET     i.management_approval_id        =   ma.id, 
                                             i.raised_by_id                  =   rb.id, 
                                             i.raise_action_by_id            =   rb.id, 
                                             i.approver_id                   =   ap.id, 
-                                            i.claim_id                      =   c.id, 
-                                            i.lpo_id                        =   l.id, 
-                                            i.advance_id                    =   sa.id, 
-                                            i.mpesa_id                      =   mp.id
+                                            i.project_manager_id            =   pm.id, 
+                                            i.lpo_id                        =   l.id
                              ";
 
-        // DB::statement($migrate_keys_sql);
+        DB::statement($migrate_keys_sql);
 
-        echo "\n __________Migrated invoices Foreign keys ---------- banks,bank_branches \n";
+        echo "\n __________Migrated invoices Foreign keys ---------- pm,lpos \n";
 
       /**
          * 
