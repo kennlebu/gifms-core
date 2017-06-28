@@ -37,6 +37,8 @@ class post_keys_migration_migration extends Seeder
 
         DB::statement("UPDATE `lpo_statuses` SET `next_status_id` = '14' WHERE `id` = '10' ");
 
+        echo "\n lpo_statuses add ---";
+
 
         //currencies color
 
@@ -48,6 +50,8 @@ class post_keys_migration_migration extends Seeder
             UPDATE `gifms`.`currencies` SET `display_color`='#B01500' WHERE `id`='2'
             ");
 
+        echo "\n currencies display_color ---";
+
 
         //payments payable migration
 
@@ -57,6 +61,8 @@ class post_keys_migration_migration extends Seeder
         DB::statement("
             UPDATE `gifms`.`payments` SET `payable_id`=`advance_id`, `payable_type` = 'APP\\Models\\AdvancesModels\\Advance' WHERE `advance_id`<>''
             ");
+        
+        echo "\n payments payable_id, payable_type---";
 
 
     }
