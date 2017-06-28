@@ -203,14 +203,28 @@ class InvoiceApi extends Controller
      */
     public function getInvoiceById($invoice_id)
     {
-        $input = Request::all();
+        $response = [];
 
-        //path params validation
+        try{
+            $response   = Invoice::with( 
+                                        'raised_by',
+                                        'raise_action_by',
+                                        'status',
+                                        'project_manager',
+                                        'currency',
+                                        'rejected_by',
+                                        'invoice_approvals',
+                                        'allocations',
+                                        'comments'
+                                    )->findOrFail($invoice_id);
 
+            return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
 
-        //not path params validation
+        }catch(Exception $e){
 
-        return response('How about implementing getInvoiceById as a GET method ?');
+            $response =  ["error"=>"Invoice could not be found"];
+            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+        }
     }
 
 

@@ -56,6 +56,6 @@ class Claim extends BaseModel
     }
     public function comments()
     {
-        return $this->morphMany('App\OtherModels\Comment', 'commentable');
+        return $this->morphMany('App\Models\OtherModels\Comment', 'commentable');
     }
 }
