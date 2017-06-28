@@ -21,10 +21,10 @@ class Invoice extends BaseModel
     {
         return $this->belongsTo('App\Models\StaffModels\Staff','raise_action_by_id');
     }
-    public function project()
-    {
-        return $this->belongsTo('App\Models\ProjectsModels\Project');
-    }
+    // public function project()
+    // {
+    //     return $this->belongsTo('App\Models\ProjectsModels\Project');
+    // }
     public function status()
     {
         return $this->belongsTo('App\Models\InvoicesModels\InvoiceStatus');

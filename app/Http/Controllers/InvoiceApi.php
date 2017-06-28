@@ -607,7 +607,7 @@ class InvoiceApi extends Controller
 
             $data[$key]['raised_by']                    = $mobile_payment->raised_by;
             $data[$key]['raise_action_by']              = $mobile_payment->raise_action_by;
-            $data[$key]['project']                      = $mobile_payment->project;
+            // $data[$key]['project']                      = $mobile_payment->project;
             $data[$key]['status']                       = $mobile_payment->status;
             $data[$key]['project_manager']              = $mobile_payment->project_manager;
             $data[$key]['currency']                     = $mobile_payment->currency;
@@ -656,10 +656,10 @@ class InvoiceApi extends Controller
                 $data[$key]['raise_action_by'] = array("full_name"=>"N/A");
                 
             }
-            if($value["project"]==null){
-                $data[$key]['project'] = array("project_name"=>"N/A");
+            // if($value["project"]==null){
+            //     $data[$key]['project'] = array("project_name"=>"N/A");
                 
-            }
+            // }
             if($value["status"]==null){
                 $data[$key]['status'] = array("invoice_status"=>"N/A");
                 
