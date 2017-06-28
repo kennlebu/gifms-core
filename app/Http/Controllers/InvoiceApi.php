@@ -605,14 +605,16 @@ class InvoiceApi extends Controller
 
             $mobile_payment = Invoice::find($data[$key]['id']);
 
-            // $data[$key]['requested_by']                 = $mobile_payment->requested_by;
-            // $data[$key]['request_action_by']            = $mobile_payment->requested_action_by;
-            // $data[$key]['project']                      = $mobile_payment->project;
-            // $data[$key]['status']                       = $mobile_payment->status;
-            // $data[$key]['project_manager']              = $mobile_payment->project_manager;
-            // $data[$key]['currency']                     = $mobile_payment->currency;
-            // $data[$key]['rejected_by']                  = $mobile_payment->rejected_by;
-            // $data[$key]['invoice_approvals']            = $mobile_payment->invoice_approvals;
+            $data[$key]['raised_by']                    = $mobile_payment->raised_by;
+            $data[$key]['raise_action_by']              = $mobile_payment->raise_action_by;
+            $data[$key]['project']                      = $mobile_payment->project;
+            $data[$key]['status']                       = $mobile_payment->status;
+            $data[$key]['project_manager']              = $mobile_payment->project_manager;
+            $data[$key]['currency']                     = $mobile_payment->currency;
+            $data[$key]['rejected_by']                  = $mobile_payment->rejected_by;
+            $data[$key]['invoice_approvals']            = $mobile_payment->invoice_approvals;
+            $data[$key]['allocations']                  = $mobile_payment->allocations;
+            $data[$key]['comments']                     = $mobile_payment->comments;
 
         }
 
@@ -646,33 +648,33 @@ class InvoiceApi extends Controller
         foreach ($data as $key => $value) {
 
 
-            // if($value["requested_by"]==null){
-            //     $data[$key]['requested_by'] = array("full_name"=>"N/A");
+            if($value["raised_by"]==null){
+                $data[$key]['raised_by'] = array("full_name"=>"N/A");
                 
-            // }
-            // if($value["request_action_by"]==null){
-            //     $data[$key]['request_action_by'] = array("full_name"=>"N/A");
+            }
+            if($value["raise_action_by"]==null){
+                $data[$key]['raise_action_by'] = array("full_name"=>"N/A");
                 
-            // }
-            // if($value["project"]==null){
-            //     $data[$key]['project'] = array("project_name"=>"N/A");
+            }
+            if($value["project"]==null){
+                $data[$key]['project'] = array("project_name"=>"N/A");
                 
-            // }
-            // if($value["status"]==null){
-            //     $data[$key]['status'] = array("invoice_status"=>"N/A");
+            }
+            if($value["status"]==null){
+                $data[$key]['status'] = array("invoice_status"=>"N/A");
                 
-            // }
-            // if($value["project_manager"]==null){
-            //     $data[$key]['project_manager'] = array("full_name"=>"N/A");
+            }
+            if($value["project_manager"]==null){
+                $data[$key]['project_manager'] = array("full_name"=>"N/A");
                 
-            // }
-            // if($value["rejected_by"]==null){
-            //     $data[$key]['rejected_by'] = array("full_name"=>"N/A");
+            }
+            if($value["rejected_by"]==null){
+                $data[$key]['rejected_by'] = array("full_name"=>"N/A");
                 
-            // }
-            // if($data[$key]["currency"]==null){
-            //     $data[$key]["currency"] = array("currency_name"=>"N/A");
-            // }
+            }
+            if($data[$key]["currency"]==null){
+                $data[$key]["currency"] = array("currency_name"=>"N/A");
+            }
         }
 
         return $data;
