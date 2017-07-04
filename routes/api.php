@@ -2675,3 +2675,224 @@ Route::GET('/invoice_statuses', 'InvoiceStatusApi@getInvoiceStatuses')->middlewa
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * POST addPayment
+ * Summary: Add a new payment
+ * Notes: new payment
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/payment', 'PaymentApi@addPayment')->middleware('jwt.auth');
+/**
+ * PUT updatePayment
+ * Summary: Update an existing payment
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/payment', 'PaymentApi@updatePayment')->middleware('jwt.auth');
+/**
+ * GET getPaymentById
+ * Summary: Find payment by ID
+ * Notes: Returns a single payment
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/payment/{payment_id}', 'PaymentApi@getPaymentById')->middleware('jwt.auth');
+/**
+ * DELETE deletePayment
+ * Summary: Deletes an payment
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/payment/{payment_id}/get_voucher', 'PaymentApi@deletePayment')->middleware('jwt.auth');
+/**
+ * GET getDocumentById
+ * Summary: get payment document by ID
+ * Notes: get Payment document
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/payment/{payment_id}/get_voucher', 'PaymentApi@getDocumentById')->middleware('jwt.auth');
+/**
+ * GET getPayments
+ * Summary: payments List
+ * Notes: The payment endpoint returns multiple payment requested given the parameters injected.  
+
+ */
+Route::GET('/payments', 'PaymentApi@getPayments')->middleware('jwt.auth');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * POST addPaymentBatch
+ * Summary: Add a new payment_batch
+ * Notes: new payment_batch
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/payment_batch', 'PaymentBatchApi@addPaymentBatch')->middleware('jwt.auth');
+/**
+ * PUT updatePaymentBatch
+ * Summary: Update an existing payment_batch
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/payment_batch', 'PaymentBatchApi@updatePaymentBatch')->middleware('jwt.auth');
+/**
+ * DELETE deletePaymentBatch
+ * Summary: Deletes an payment_batch
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/payment_batch/{payment_batch_id}', 'PaymentBatchApi@deletePaymentBatch')->middleware('jwt.auth');
+/**
+ * GET getPaymentBatchById
+ * Summary: Find payment_batch by ID
+ * Notes: Returns a single payment_batch
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/payment_batch/{payment_batch_id}', 'PaymentBatchApi@getPaymentBatchById')->middleware('jwt.auth');
+/**
+ * GET getPaymentBatches
+ * Summary: payment_batches List
+ * Notes: The payment_batch endpoint returns multiple payment_batch requested given the parameters injected.  
+
+ */
+Route::GET('/payment_batches', 'PaymentBatchApi@getPaymentBatches')->middleware('jwt.auth');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * POST addPaymentMode
+ * Summary: Add a new payment_mode
+ * Notes: new payment_mode
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/payment_mode', 'PaymentModeApi@addPaymentMode')->middleware('jwt.auth');
+/**
+ * PUT updatePaymentMode
+ * Summary: Update an existing payment_mode
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/payment_mode', 'PaymentModeApi@updatePaymentMode')->middleware('jwt.auth');
+/**
+ * DELETE deletePaymentMode
+ * Summary: Deletes an payment_mode
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/payment_mode/{payment_mode_id}', 'PaymentModeApi@deletePaymentMode')->middleware('jwt.auth');
+/**
+ * GET getPaymentModeById
+ * Summary: Find payment_mode by ID
+ * Notes: Returns a single payment_mode
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/payment_mode/{payment_mode_id}', 'PaymentModeApi@getPaymentModeById')->middleware('jwt.auth');
+/**
+ * GET getPaymentModes
+ * Summary: payment_modes List
+ * Notes: The payment_mode endpoint returns multiple payment_mode requested given the parameters injected.  
+
+ */
+Route::GET('/payment_modes', 'PaymentModeApi@getPaymentModes')->middleware('jwt.auth');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * POST addPaymentType
+ * Summary: Add a new payment_type
+ * Notes: new payment_type
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/payment_type', 'PaymentTypeApi@addPaymentType')->middleware('jwt.auth');
+/**
+ * PUT updatePaymentType
+ * Summary: Update an existing payment_type
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/payment_type', 'PaymentTypeApi@updatePaymentType')->middleware('jwt.auth');
+/**
+ * DELETE deletePaymentType
+ * Summary: Deletes an payment_type
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/payment_type/{payment_type_id}', 'PaymentTypeApi@deletePaymentType')->middleware('jwt.auth');
+/**
+ * GET getPaymentTypeById
+ * Summary: Find payment_type by ID
+ * Notes: Returns a single payment_type
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/payment_type/{payment_type_id}', 'PaymentTypeApi@getPaymentTypeById')->middleware('jwt.auth');
+/**
+ * GET getPaymentTypes
+ * Summary: payment_types List
+ * Notes: The payment_type endpoint returns multiple payment_type requested given the parameters injected.  
+
+ */
+Route::GET('/payment_types', 'PaymentTypeApi@getPaymentTypes')->middleware('jwt.auth');
+

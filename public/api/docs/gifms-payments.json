@@ -17,11 +17,35 @@
  "basePath": "/api",
  "tags": [
   {
-   "name": "LPO Quotation",
-   "description": "Everything About LPO Quotations",
+   "name": "Payment",
+   "description": "Everything About Payment",
    "externalDocs": {
     "description": "Find out more",
-    "url": "http://kefinance.clintonhealthaccess.org/api/lpo_quotations/docs"
+    "url": "http://kefinance.clintonhealthaccess.org/api/payment/docs"
+   }
+  },
+  {
+   "name": "Payment Batch",
+   "description": "Everything About Payment Batch",
+   "externalDocs": {
+    "description": "Find out more",
+    "url": "http://kefinance.clintonhealthaccess.org/api/payment_batch/docs"
+   }
+  },
+  {
+   "name": "Payment Mode",
+   "description": "Everything About Payment Mode",
+   "externalDocs": {
+    "description": "Find out more",
+    "url": "http://kefinance.clintonhealthaccess.org/api/payment_mode/docs"
+   }
+  },
+  {
+   "name": "Payment Type",
+   "description": "Everything About Payment Type",
+   "externalDocs": {
+    "description": "Find out more",
+    "url": "http://kefinance.clintonhealthaccess.org/api/payment_type/docs"
    }
   }
  ],
@@ -30,30 +54,30 @@
   "https"
  ],
  "paths": {
-  "/lpo_quotations": {
+  "/payments": {
    "get": {
-    "summary": "lpo quotations List",
-    "description": "The Lpo Quotations endpoint returns information about the LPO Quotation requested given the parameters injected. \n",
+    "summary": "payments List",
+    "description": "The payment endpoint returns multiple payment requested given the parameters injected. \n",
     "parameters": [
      {
-      "name": "lpo_id",
+      "name": "payment_id",
       "in": "query",
-      "description": "staff id",
+      "description": "payment id",
       "required": false,
       "type": "number",
       "format": "integer"
      }
     ],
     "tags": [
-     "LPO Quotation"
+     "Payment"
     ],
     "responses": {
      "200": {
-      "description": "An array of lpo_quotations returned",
+      "description": "An array of payment returned",
       "schema": {
        "type": "array",
        "items": {
-        "$ref": "#/definitions/lpo_quotation"
+        "$ref": "#/definitions/payment"
        }
       }
      },
@@ -71,14 +95,14 @@
     ]
    }
   },
-  "/lpo_quotation": {
+  "/payment": {
    "post": {
     "tags": [
-     "LPO Quotation"
+     "Payment"
     ],
-    "summary": "Add a new lpo quotation",
-    "description": "new lpo quotation",
-    "operationId": "add_lpo_quotation",
+    "summary": "Add a new payment",
+    "description": "new payment",
+    "operationId": "add_payment",
     "consumes": [
      "application/json",
      "application/xml"
@@ -91,19 +115,19 @@
      {
       "in": "body",
       "name": "body",
-      "description": "lpo quotation object that needs to be added",
+      "description": "payment object that needs to be added",
       "required": true,
       "schema": {
-       "$ref": "#/definitions/lpo_quotation"
+       "$ref": "#/definitions/payment"
       }
      }
     ],
     "responses": {
      "200": {
-      "description": "Successfully added a new Lpo quotation for approval"
+      "description": "Successfully added a new payment for approval"
      },
      "405": {
-      "description": "Invalid input,adding a new lpo quotation was unsuccessful"
+      "description": "Invalid input,adding a new payment was unsuccessful"
      }
     },
     "security": [
@@ -114,11 +138,11 @@
    },
    "put": {
     "tags": [
-     "LPO Quotation"
+     "Payment"
     ],
-    "summary": "Update an existing LPO Quotation",
+    "summary": "Update an existing payment",
     "description": "",
-    "operationId": "update_lpo_quotation",
+    "operationId": "update_payment",
     "consumes": [
      "application/json",
      "application/xml"
@@ -131,10 +155,10 @@
      {
       "in": "body",
       "name": "body",
-      "description": "LPO Quotation object that needs to be added",
+      "description": "payment object that needs to be added",
       "required": true,
       "schema": {
-       "$ref": "#/definitions/lpo_quotation"
+       "$ref": "#/definitions/payment"
       }
      }
     ],
@@ -149,7 +173,7 @@
       "description": "Invalid ID supplied"
      },
      "404": {
-      "description": "lpo quotation not found"
+      "description": "payment not found"
      },
      "405": {
       "description": "Validation exception"
@@ -162,23 +186,23 @@
     ]
    }
   },
-  "/lpo_quotation/{lpo_quotation_id}": {
+  "/payment/{payment_id}": {
    "get": {
     "tags": [
-     "LPO Quotation"
+     "Payment"
     ],
-    "summary": "Find lpo quotation by ID",
-    "description": "Returns a single lpo quotation",
-    "operationId": "get_lpo_quotation_by_id",
+    "summary": "Find payment by ID",
+    "description": "Returns a single payment",
+    "operationId": "get_payment_by_id",
     "produces": [
      "application/json",
      "application/xml"
     ],
     "parameters": [
      {
-      "name": "lpo_quotation_id",
+      "name": "payment_id",
       "in": "path",
-      "description": "ID of lpo quotation to return object",
+      "description": "ID of payment to return object",
       "required": true,
       "type": "integer",
       "format": "int64"
@@ -188,14 +212,57 @@
      "200": {
       "description": "successful operation",
       "schema": {
-       "$ref": "#/definitions/lpo_quotation"
+       "$ref": "#/definitions/payment"
       }
      },
      "400": {
       "description": "Invalid ID supplied"
      },
      "404": {
-      "description": "lpo quotation not found"
+      "description": "payment not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/payment/{payment_id}/get_voucher": {
+   "get": {
+    "tags": [
+     "Payment"
+    ],
+    "summary": "get payment document by ID",
+    "description": "get Payment document",
+    "operationId": "get_document_by_id",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "payment_id",
+      "in": "path",
+      "description": "ID of payment to return object",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "successful operation",
+      "schema": {
+       "$ref": "#/definitions/payment"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "payment not found"
      }
     },
     "security": [
@@ -206,11 +273,11 @@
    },
    "delete": {
     "tags": [
-     "LPO Quotation"
+     "Payment"
     ],
-    "summary": "Deletes an lpo_quotation",
+    "summary": "Deletes an payment",
     "description": "",
-    "operationId": "delete_lpo_quotation",
+    "operationId": "delete_payment",
     "produces": [
      "application/json",
      "application/xml"
@@ -223,9 +290,9 @@
       "type": "string"
      },
      {
-      "name": "lpo_quotation_id",
+      "name": "payment_id",
       "in": "path",
-      "description": "lpo quotation id to delete",
+      "description": "payment id to delete",
       "required": true,
       "type": "integer",
       "format": "int64"
@@ -236,7 +303,655 @@
       "description": "Invalid ID supplied"
      },
      "404": {
-      "description": "lpo quotation not found"
+      "description": "payment not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/payment_batches": {
+   "get": {
+    "summary": "payment_batches List",
+    "description": "The payment_batch endpoint returns multiple payment_batch requested given the parameters injected. \n",
+    "parameters": [
+     {
+      "name": "payment_batch_id",
+      "in": "query",
+      "description": "payment_batch id",
+      "required": false,
+      "type": "number",
+      "format": "integer"
+     }
+    ],
+    "tags": [
+     "Payment Batch"
+    ],
+    "responses": {
+     "200": {
+      "description": "An array of payment_batch returned",
+      "schema": {
+       "type": "array",
+       "items": {
+        "$ref": "#/definitions/payment_batch"
+       }
+      }
+     },
+     "404": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Error"
+      }
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/payment_batch": {
+   "post": {
+    "tags": [
+     "Payment Batch"
+    ],
+    "summary": "Add a new payment_batch",
+    "description": "new payment_batch",
+    "operationId": "add_payment_batch",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "payment_batch object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/payment_batch"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successfully added a new payment_batch for approval"
+     },
+     "405": {
+      "description": "Invalid input,adding a new payment_batch was unsuccessful"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "put": {
+    "tags": [
+     "Payment Batch"
+    ],
+    "summary": "Update an existing payment_batch",
+    "description": "",
+    "operationId": "update_payment_batch",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "payment_batch object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/payment_batch"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Success"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "payment_batch not found"
+     },
+     "405": {
+      "description": "Validation exception"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/payment_batch/{payment_batch_id}": {
+   "get": {
+    "tags": [
+     "Payment Batch"
+    ],
+    "summary": "Find payment_batch by ID",
+    "description": "Returns a single payment_batch",
+    "operationId": "get_payment_batch_by_id",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "payment_batch_id",
+      "in": "path",
+      "description": "ID of payment_batch to return object",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "successful operation",
+      "schema": {
+       "$ref": "#/definitions/payment_batch"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "payment_batch not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "delete": {
+    "tags": [
+     "Payment Batch"
+    ],
+    "summary": "Deletes an payment_batch",
+    "description": "",
+    "operationId": "delete_payment_batch",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "api_key",
+      "in": "header",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "payment_batch_id",
+      "in": "path",
+      "description": "payment_batch id to delete",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "payment_batch not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/payment_modes": {
+   "get": {
+    "summary": "payment_modes List",
+    "description": "The payment_mode endpoint returns multiple payment_mode requested given the parameters injected. \n",
+    "parameters": [
+     {
+      "name": "payment_mode_id",
+      "in": "query",
+      "description": "payment_mode id",
+      "required": false,
+      "type": "number",
+      "format": "integer"
+     }
+    ],
+    "tags": [
+     "Payment Mode"
+    ],
+    "responses": {
+     "200": {
+      "description": "An array of payment_mode returned",
+      "schema": {
+       "type": "array",
+       "items": {
+        "$ref": "#/definitions/payment_mode"
+       }
+      }
+     },
+     "404": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Error"
+      }
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/payment_mode": {
+   "post": {
+    "tags": [
+     "Payment Mode"
+    ],
+    "summary": "Add a new payment_mode",
+    "description": "new payment_mode",
+    "operationId": "add_payment_mode",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "payment_mode object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/payment_mode"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successfully added a new payment_mode for approval"
+     },
+     "405": {
+      "description": "Invalid input,adding a new payment_mode was unsuccessful"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "put": {
+    "tags": [
+     "Payment Mode"
+    ],
+    "summary": "Update an existing payment_mode",
+    "description": "",
+    "operationId": "update_payment_mode",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "payment_mode object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/payment_mode"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Success"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "payment_mode not found"
+     },
+     "405": {
+      "description": "Validation exception"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/payment_mode/{payment_mode_id}": {
+   "get": {
+    "tags": [
+     "Payment Mode"
+    ],
+    "summary": "Find payment_mode by ID",
+    "description": "Returns a single payment_mode",
+    "operationId": "get_payment_mode_by_id",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "payment_mode_id",
+      "in": "path",
+      "description": "ID of payment_mode to return object",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "successful operation",
+      "schema": {
+       "$ref": "#/definitions/payment_mode"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "payment_mode not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "delete": {
+    "tags": [
+     "Payment Mode"
+    ],
+    "summary": "Deletes an payment_mode",
+    "description": "",
+    "operationId": "delete_payment_mode",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "api_key",
+      "in": "header",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "payment_mode_id",
+      "in": "path",
+      "description": "payment_mode id to delete",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "payment_mode not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/payment_types": {
+   "get": {
+    "summary": "payment_types List",
+    "description": "The payment_type endpoint returns multiple payment_type requested given the parameters injected. \n",
+    "parameters": [
+     {
+      "name": "payment_type_id",
+      "in": "query",
+      "description": "payment_type id",
+      "required": false,
+      "type": "number",
+      "format": "integer"
+     }
+    ],
+    "tags": [
+     "Payment Type"
+    ],
+    "responses": {
+     "200": {
+      "description": "An array of payment_type returned",
+      "schema": {
+       "type": "array",
+       "items": {
+        "$ref": "#/definitions/payment_type"
+       }
+      }
+     },
+     "404": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Error"
+      }
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/payment_type": {
+   "post": {
+    "tags": [
+     "Payment Type"
+    ],
+    "summary": "Add a new payment_type",
+    "description": "new payment_type",
+    "operationId": "add_payment_type",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "payment_type object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/payment_type"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Successfully added a new payment_type for approval"
+     },
+     "405": {
+      "description": "Invalid input,adding a new payment_type was unsuccessful"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "put": {
+    "tags": [
+     "Payment Type"
+    ],
+    "summary": "Update an existing payment_type",
+    "description": "",
+    "operationId": "update_payment_type",
+    "consumes": [
+     "application/json",
+     "application/xml"
+    ],
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "in": "body",
+      "name": "body",
+      "description": "payment_type object that needs to be added",
+      "required": true,
+      "schema": {
+       "$ref": "#/definitions/payment_type"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Unexpected error",
+      "schema": {
+       "$ref": "#/definitions/Success"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "payment_type not found"
+     },
+     "405": {
+      "description": "Validation exception"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/payment_type/{payment_type_id}": {
+   "get": {
+    "tags": [
+     "Payment Type"
+    ],
+    "summary": "Find payment_type by ID",
+    "description": "Returns a single payment_type",
+    "operationId": "get_payment_type_by_id",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "payment_type_id",
+      "in": "path",
+      "description": "ID of payment_type to return object",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "successful operation",
+      "schema": {
+       "$ref": "#/definitions/payment_type"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "payment_type not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   },
+   "delete": {
+    "tags": [
+     "Payment Type"
+    ],
+    "summary": "Deletes an payment_type",
+    "description": "",
+    "operationId": "delete_payment_type",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "api_key",
+      "in": "header",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "name": "payment_type_id",
+      "in": "path",
+      "description": "payment_type id to delete",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "payment_type not found"
      }
     },
     "security": [
@@ -255,13 +970,11 @@
   }
  },
  "definitions": {
-  "lpo_quotation": {
+  "payment": {
    "type": "object",
    "required": [
     "id",
-    "lpo_id",
-    "created_at",
-    "updated_at"
+    "created_at"
    ],
    "properties": {
     "id": {
@@ -269,28 +982,19 @@
      "format": "int64",
      "example": 1
     },
-    "lpo_id": {
-     "type": "integer",
-     "example": 10
-    },
-    "amount": {
+    "num": {
      "type": "number",
      "format": "int64",
      "example": 20000
     },
-    "quotation_doc": {
+    "str": {
      "type": "string",
      "example": "PayPal.pdf"
     },
-    "quote_date": {
+    "date": {
      "type": "string",
      "format": "date-time",
      "example": "2010-02-11"
-    },
-    "uploaded_by_id": {
-     "type": "integer",
-     "format": "int64",
-     "example": 2
     },
     "created_at": {
      "type": "string",
@@ -304,7 +1008,130 @@
     }
    },
    "xml": {
-    "name": "lpo_quotation"
+    "name": "payment"
+   }
+  },
+  "payment_batch": {
+   "type": "object",
+   "required": [
+    "id",
+    "created_at"
+   ],
+   "properties": {
+    "id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "num": {
+     "type": "number",
+     "format": "int64",
+     "example": 20000
+    },
+    "str": {
+     "type": "string",
+     "example": "PayPal.pdf"
+    },
+    "date": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "created_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "updated_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    }
+   },
+   "xml": {
+    "name": "payment_batch"
+   }
+  },
+  "payment_mode": {
+   "type": "object",
+   "required": [
+    "id",
+    "created_at"
+   ],
+   "properties": {
+    "id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "num": {
+     "type": "number",
+     "format": "int64",
+     "example": 20000
+    },
+    "str": {
+     "type": "string",
+     "example": "PayPal.pdf"
+    },
+    "date": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "created_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "updated_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    }
+   },
+   "xml": {
+    "name": "payment_mode"
+   }
+  },
+  "payment_type": {
+   "type": "object",
+   "required": [
+    "id",
+    "created_at"
+   ],
+   "properties": {
+    "id": {
+     "type": "integer",
+     "format": "int64",
+     "example": 1
+    },
+    "num": {
+     "type": "number",
+     "format": "int64",
+     "example": 20000
+    },
+    "str": {
+     "type": "string",
+     "example": "PayPal.pdf"
+    },
+    "date": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "created_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    },
+    "updated_at": {
+     "type": "string",
+     "format": "date-time",
+     "example": "2010-02-11"
+    }
+   },
+   "xml": {
+    "name": "payment_type"
    }
   },
   "Error": {
