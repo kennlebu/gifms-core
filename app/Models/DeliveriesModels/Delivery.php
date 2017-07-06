@@ -10,4 +10,9 @@ class Delivery extends BaseModel
 {
     //
     use SoftDeletes;
+    
+    public function comments()
+    {
+        return $this->morphMany('App\Models\OtherModels\Comment', 'commentable');
+    }
 }

@@ -50,5 +50,13 @@ class Advance extends BaseModel
     {
         return $this->hasMany('App\Models\AdvancesModels\AdvanceApproval');
     }
+    public function comments()
+    {
+        return $this->morphMany('App\Models\OtherModels\Comment', 'commentable');
+    }
+    public function payments()
+    {
+        return $this->morphMany('App\Models\PaymentModels\Payment', 'payable');
+    }
 //
 }

@@ -34,6 +34,7 @@ class CreateInvoicesTable extends Migration
             $table->dateTime('pm_approval_date')->nullable();
             $table->integer('allocated')->nullable();
             $table->dateTime('payment_date')->nullable();
+            $table->integer('payment_mode_id')->nullable();
             $table->integer('staff_advance')->nullable();
             $table->date('reconcilliation_date')->nullable();
             $table->text('comments')->nullable();
@@ -41,7 +42,6 @@ class CreateInvoicesTable extends Migration
             $table->integer('currency_id')->nullable();
             $table->text('reject_reason')->nullable();
             $table->integer('withholding_tax')->nullable();
-            $table->integer('payment_mode_id')->nullable();
             $table->integer('country_id')->nullable();
             $table->string('voucher_no')->nullable();
             // $table->integer('uploaded_by')->nullable();

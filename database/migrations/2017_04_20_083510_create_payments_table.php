@@ -20,9 +20,12 @@ class CreatePaymentsTable extends Migration
             $table->text('payable_type')->nullable();
             $table->integer('invoice_id')->nullable();
             $table->integer('advance_id')->nullable();
+            $table->integer('bank_account_id')->nullable();
+            $table->integer('currency_id')->nullable();
+            $table->text('payment_mobile_phone_no')->nullable();
             $table->integer('payment_mode_id')->nullable();
             $table->double('amount',30,5)->nullable();
-            $table->string('payment_batch_id')->nullable();
+            $table->integer('payment_batch_id')->nullable();
             $table->double('bank_charges',26,2)->nullable();
             $table->string('migration_payment_batch_id')->nullable();
             $table->integer('migration_invoice_id')->nullable();
