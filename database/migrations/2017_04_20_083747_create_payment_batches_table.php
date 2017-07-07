@@ -15,6 +15,7 @@ class CreatePaymentBatchesTable extends Migration
     {
         Schema::create('payment_batches', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('ref')->nullable();
             $table->date('payment_date')->nullable();
             $table->date('upload_date')->nullable();
             $table->integer('upload_status')->nullable();
