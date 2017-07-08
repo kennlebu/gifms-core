@@ -58,7 +58,7 @@ class migrate_suppliers_data extends Seeder
             $data_to_migrate[$key]['tax_pin']                       = $data[$key]['TaxPIN'];
             $data_to_migrate[$key]['migration_staff_id']            = $data[$key]['Staff'];
             $data_to_migrate[$key]['migration_bank_id']             = (int)$data[$key]['Bank'];
-            $data_to_migrate[$key]['migration_bank_branch_id']      = (int)$data[$key]['BankBranch'];
+            $data_to_migrate[$key]['migration_bank_branch_code']    = (int)$data[$key]['BankBranch'];
             $data_to_migrate[$key]['migration_id']                  = $data[$key]['ID'];
 
 

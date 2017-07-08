@@ -55,14 +55,249 @@ class post_keys_migration_migration extends Seeder
 
         //payments payable migration
 
-        DB::statement("
-            UPDATE `gifms`.`payments` SET `payable_id`=`invoice_id`, `payable_type` = 'APP\\Models\\InvoiceModels\\Invoice' WHERE `invoice_id`<>''
-            ");
-        DB::statement("
-            UPDATE `gifms`.`payments` SET `payable_id`=`advance_id`, `payable_type` = 'APP\\Models\\AdvancesModels\\Advance' WHERE `advance_id`<>''
-            ");
+        DB::statement('
+            UPDATE `gifms`.`payments` SET `payable_id`=`invoice_id`, `payable_type` = "APP\\\Models\\\InvoiceModels\\\Invoice" WHERE `invoice_id`<>""
+            ');
+        DB::statement('
+            UPDATE `gifms`.`payments` SET `payable_id`=`advance_id`, `payable_type` = "APP\\\Models\\\AdvancesModels\\\Advance" WHERE `advance_id`<>""
+            ');
         
         echo "\n payments payable_id, payable_type---";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        //Invoices
+        $sql = "
+                UPDATE `invoices` 
+                    SET `created_at`  = `date_raised`,
+                        `updated_at`  = `date_raised`,
+                        `ref`         = CONCAT('CHAI/INV/#',`id`,'/',DATE_FORMAT(`date_raised`,'%Y/%m/%d'))
+
+                ";
+
+
+        DB::statement($sql);
+
+        echo "\n invoices date data updated ---";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        //mobile_payments
+        $sql = "
+                UPDATE `mobile_payments` 
+                    SET `created_at`  = `requested_date`,
+                        `updated_at`  = `requested_date`,
+                        `ref`         = CONCAT('CHAI/MPYMT/#',`id`,'/',DATE_FORMAT(`requested_date`,'%Y/%m/%d'))
+
+                ";
+
+
+        DB::statement($sql);
+
+        echo "\n mobile_payments date data updated ---";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        //claims
+        $sql = "
+                UPDATE `claims` 
+                    SET `created_at`  = `requested_date`,
+                        `updated_at`  = `requested_date`,
+                        `ref`         = CONCAT('CHAI/CLM/#',`id`,'/',DATE_FORMAT(`requested_date`,'%Y/%m/%d'))
+
+                ";
+
+
+        DB::statement($sql);
+
+        echo "\n claims date data updated ---";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        //advances
+        $sql = "
+                UPDATE `advances` 
+                    SET `created_at`  = `requested_date`,
+                        `updated_at`  = `requested_date`,
+                        `ref`         = CONCAT('CHAI/ADV/#',`id`,'/',DATE_FORMAT(`requested_date`,'%Y/%m/%d'))
+
+                ";
+
+
+        DB::statement($sql);
+
+        echo "\n advances date data updated ---";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        //payments
+        $sql = "
+                UPDATE `payments` `p`
+                LEFT JOIN `payment_batches` `b`
+                ON `b`.`id` = `p`.`payment_batch_id`
+                    SET `p`.`created_at`  = `b`.`payment_date`,
+                        `p`.`updated_at`  = `b`.`payment_date`,
+                        `p`.`ref`         = CONCAT('CHAI/PYMT/#',`p`.`id`,'/',DATE_FORMAT(`b`.`payment_date`,'%Y/%m/%d'))
+
+                ";
+
+
+        DB::statement($sql);
+
+        echo "\n payments date data updated ---";
+
+
+
+        //payments
+        $sql = "
+                UPDATE `payments` `p`
+                RIGHT JOIN `invoices` `i`
+                ON `i`.`id` = `p`.`invoice_id`
+                    LEFT JOIN `suppliers` `s`
+                    ON `s`.`id`=`i`.`supplier_id`
+                        LEFT JOIN `banks` `b`
+                        ON `b`.`id` =`s`.`bank_code`
+                        LEFT JOIN `bank_branches` `br`
+                        ON `br`.`id` =`s`.`bank_branch_id`
+                    SET `p`.`currency_id`  = `i`.`currency_id`,
+                        `p`.`paid_to_bank_account_no`  = `s`.`bank_account`
+
+                ";
+
+
+        DB::statement($sql);
+
+        echo "\n payments date data updated ---";
 
 
     }
