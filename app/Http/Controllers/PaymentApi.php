@@ -483,7 +483,7 @@ class PaymentApi extends Controller
         foreach ($data as $key => $value) {
 
             if($value["payable"]==null){
-                $data[$key]['payable'] = array("full_name"=>"N/A");
+                $data[$key]['payable'] = array("expense_desc"=>"N/A");
                 
             }
             if($value["debit_bank_account"]==null){

@@ -286,11 +286,14 @@ class post_keys_migration_migration extends Seeder
                     LEFT JOIN `suppliers` `s`
                     ON `s`.`id`=`i`.`supplier_id`
                         LEFT JOIN `banks` `b`
-                        ON `b`.`id` =`s`.`bank_code`
+                        ON `b`.`id` =`s`.`bank_id`
                         LEFT JOIN `bank_branches` `br`
                         ON `br`.`id` =`s`.`bank_branch_id`
                     SET `p`.`currency_id`  = `i`.`currency_id`,
+                        `p`.`payment_desc`  = `i`.`expense_desc`,
                         `p`.`paid_to_bank_account_no`  = `s`.`bank_account`,
+                        `p`.`paid_to_bank_account_no`  = CASE WHEN `i`.`currency_id` = 2 THEN `s`.`usd_account` ELSE `s`.`bank_account` END,
+                        `p`.`paid_to_name`  = `s`.`supplier_name`,
                         `p`.`paid_to_bank_id`  = `b`.`id`,
                         `p`.`paid_to_bank_branch_id`  = `br`.`id`,
                         `p`.`debit_bank_account_id`  = `i`.`currency_id`
