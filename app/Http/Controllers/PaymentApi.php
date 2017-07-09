@@ -443,7 +443,13 @@ class PaymentApi extends Controller
 
             $mobile_payment = Payment::find($data[$key]['id']);
 
-            // $data[$key]['project']                      = $mobile_payment->project;
+            $data[$key]['payable']                      = $mobile_payment->payable;
+            $data[$key]['debit_bank_account']           = $mobile_payment->debit_bank_account;
+            $data[$key]['currency']                     = $mobile_payment->currency;
+            $data[$key]['paid_to_bank']                 = $mobile_payment->paid_to_bank;
+            $data[$key]['paid_to_bank_branch']          = $mobile_payment->paid_to_bank_branch;
+            $data[$key]['payment_mode']                 = $mobile_payment->payment_mode;
+            $data[$key]['payment_batch']                = $mobile_payment->payment_batch;
 
         }
 
@@ -475,6 +481,35 @@ class PaymentApi extends Controller
 
 
         foreach ($data as $key => $value) {
+
+            if($value["payable"]==null){
+                $data[$key]['payable'] = array("full_name"=>"N/A");
+                
+            }
+            if($value["debit_bank_account"]==null){
+                $data[$key]['debit_bank_account'] = array("title"=>"N/A","account_number"=>"N/A");
+                
+            }
+            if($value["currency"]==null){
+                $data[$key]['currency'] = array("currency_name"=>"N/A");
+                
+            }
+            if($value["paid_to_bank"]==null){
+                $data[$key]['paid_to_bank'] = array("bank_name"=>"N/A");
+                
+            }
+            if($value["paid_to_bank_branch"]==null){
+                $data[$key]['paid_to_bank_branch'] = array("branch_name"=>"N/A");
+                
+            }
+            if($value["payment_mode"]==null){
+                $data[$key]['payment_mode'] = array("payment_mode_description"=>"N/A");
+                
+            }
+            if($value["payment_batch"]==null){
+                $data[$key]['payment_batch'] = array("ref"=>"N/A");
+                
+            }
 
 
         }

@@ -303,5 +303,49 @@ class post_keys_migration_migration extends Seeder
         echo "\n payments date data updated ---";
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        //payment_batches
+        $sql = "
+                UPDATE `payment_batches` 
+                    SET `created_at`  = `payment_date`,
+                        `updated_at`  = `payment_date`,
+                        `ref`         = CONCAT('CHAI/PYTBT/#',`id`,'/',DATE_FORMAT(`payment_date`,'%Y/%m/%d'))
+
+                ";
+
+
+        DB::statement($sql);
+
+        echo "\n payment_batches date data updated ---";
+
+
     }
 }
