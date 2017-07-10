@@ -29,6 +29,36 @@ class InvoiceStatusApi extends Controller
     {
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
     /**
      * Operation addInvoiceStatus
      *
@@ -53,6 +83,36 @@ class InvoiceStatusApi extends Controller
 
         return response('How about implementing addInvoiceStatus as a POST method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation updateInvoiceStatus
      *
@@ -77,6 +137,36 @@ class InvoiceStatusApi extends Controller
 
         return response('How about implementing updateInvoiceStatus as a PUT method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation deleteInvoiceStatus
      *
@@ -97,6 +187,36 @@ class InvoiceStatusApi extends Controller
 
         return response('How about implementing deleteInvoiceStatus as a DELETE method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation getInvoiceStatusById
      *
@@ -117,6 +237,36 @@ class InvoiceStatusApi extends Controller
 
         return response('How about implementing getInvoiceStatusById as a GET method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation getInvoiceStatuses
      *

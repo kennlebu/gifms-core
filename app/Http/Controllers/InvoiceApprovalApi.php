@@ -26,6 +26,36 @@ class InvoiceApprovalApi extends Controller
     {
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
     /**
      * Operation addInvoiceApproval
      *
@@ -50,6 +80,36 @@ class InvoiceApprovalApi extends Controller
 
         return response('How about implementing addInvoiceApproval as a POST method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation updateInvoiceApproval
      *
@@ -74,6 +134,36 @@ class InvoiceApprovalApi extends Controller
 
         return response('How about implementing updateInvoiceApproval as a PUT method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation deleteInvoiceApproval
      *
@@ -94,6 +184,36 @@ class InvoiceApprovalApi extends Controller
 
         return response('How about implementing deleteInvoiceApproval as a DELETE method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation getInvoiceApprovalById
      *
@@ -114,6 +234,36 @@ class InvoiceApprovalApi extends Controller
 
         return response('How about implementing getInvoiceApprovalById as a GET method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation getInvoiceApprovals
      *

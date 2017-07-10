@@ -26,6 +26,29 @@ class ClaimApprovalApi extends Controller
     {
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
     /**
      * Operation addClaimApproval
      *
@@ -50,6 +73,29 @@ class ClaimApprovalApi extends Controller
 
         return response('How about implementing addClaimApproval as a POST method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation updateClaimApproval
      *
@@ -74,6 +120,29 @@ class ClaimApprovalApi extends Controller
 
         return response('How about implementing updateClaimApproval as a PUT method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation deleteClaimApproval
      *
@@ -94,6 +163,29 @@ class ClaimApprovalApi extends Controller
 
         return response('How about implementing deleteClaimApproval as a DELETE method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation getClaimApprovalById
      *
@@ -114,6 +206,29 @@ class ClaimApprovalApi extends Controller
 
         return response('How about implementing getClaimApprovalById as a GET method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation getClaimApprovals
      *

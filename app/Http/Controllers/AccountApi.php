@@ -27,6 +27,29 @@ class AccountApi extends Controller
     {
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
     /**
      * Operation addAccount
      *
@@ -51,6 +74,25 @@ class AccountApi extends Controller
 
         return response('How about implementing addAccount as a POST method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /**
      * Operation updateAccount
      *
@@ -75,6 +117,25 @@ class AccountApi extends Controller
 
         return response('How about implementing updateAccount as a PUT method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /**
      * Operation deleteAccount
      *
@@ -95,6 +156,25 @@ class AccountApi extends Controller
 
         return response('How about implementing deleteAccount as a DELETE method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /**
      * Operation getAccountById
      *

@@ -26,6 +26,38 @@ class AdvanceApprovalApi extends Controller
     {
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
     /**
      * Operation addAdvanceApproval
      *
@@ -50,6 +82,38 @@ class AdvanceApprovalApi extends Controller
 
         return response('How about implementing addAdvanceApproval as a POST method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation updateAdvanceApproval
      *
@@ -74,6 +138,38 @@ class AdvanceApprovalApi extends Controller
 
         return response('How about implementing updateAdvanceApproval as a PUT method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation deleteAdvanceApproval
      *
@@ -94,6 +190,38 @@ class AdvanceApprovalApi extends Controller
 
         return response('How about implementing deleteAdvanceApproval as a DELETE method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation getAdvanceApprovalById
      *
@@ -114,6 +242,38 @@ class AdvanceApprovalApi extends Controller
 
         return response('How about implementing getAdvanceApprovalById as a GET method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation getAdvanceApprovals
      *

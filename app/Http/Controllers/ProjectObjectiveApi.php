@@ -26,6 +26,36 @@ class ProjectObjectiveApi extends Controller
     {
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
     /**
      * Operation addProjectObjective
      *
@@ -50,6 +80,36 @@ class ProjectObjectiveApi extends Controller
 
         return response('How about implementing addProjectObjective as a POST method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation updateProjectObjective
      *
@@ -74,6 +134,36 @@ class ProjectObjectiveApi extends Controller
 
         return response('How about implementing updateProjectObjective as a PUT method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation deleteProjectObjective
      *
@@ -94,6 +184,36 @@ class ProjectObjectiveApi extends Controller
 
         return response('How about implementing deleteProjectObjective as a DELETE method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation getProjectObjectiveById
      *
@@ -114,6 +234,36 @@ class ProjectObjectiveApi extends Controller
 
         return response('How about implementing getProjectObjectiveById as a GET method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation projectObjectivesGet
      *

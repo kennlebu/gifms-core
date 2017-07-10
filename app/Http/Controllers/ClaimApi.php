@@ -478,7 +478,13 @@ class ClaimApi extends Controller
 
 
             //limit $ offset
-            $response_dt    =   $qb->limit($input['length'])->offset($input['start']);
+            if((int)$input['start']!= 0 ){
+
+                $response_dt    =   $qb->limit($input['length'])->offset($input['start']);
+
+            }else{
+                $qb->limit($input['length']);
+            }
 
 
 

@@ -26,6 +26,37 @@ class ProjectCashNeedsApi extends Controller
     {
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
     /**
      * Operation addProjectCashNeed
      *
@@ -50,6 +81,37 @@ class ProjectCashNeedsApi extends Controller
 
         return response('How about implementing addProjectCashNeed as a POST method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation updateProjectCashNeed
      *
@@ -74,6 +136,37 @@ class ProjectCashNeedsApi extends Controller
 
         return response('How about implementing updateProjectCashNeed as a PUT method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation deleteProjectCashNeed
      *
@@ -94,6 +187,37 @@ class ProjectCashNeedsApi extends Controller
 
         return response('How about implementing deleteProjectCashNeed as a DELETE method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation getProjectCashNeedById
      *
@@ -114,6 +238,37 @@ class ProjectCashNeedsApi extends Controller
 
         return response('How about implementing getProjectCashNeedById as a GET method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation projectCashNeedsGet
      *

@@ -26,6 +26,37 @@ class SupplyCategoryApi extends Controller
     {
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
     /**
      * Operation supplyCategoriesGet
      *
@@ -47,6 +78,37 @@ class SupplyCategoryApi extends Controller
 
         return response('How about implementing supplyCategoriesGet as a GET method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation addSupplyCategory
      *
@@ -71,6 +133,37 @@ class SupplyCategoryApi extends Controller
 
         return response('How about implementing addSupplyCategory as a POST method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation updateSupplyCategory
      *
@@ -95,6 +188,37 @@ class SupplyCategoryApi extends Controller
 
         return response('How about implementing updateSupplyCategory as a PUT method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation deleteSupplyCategory
      *
@@ -115,6 +239,37 @@ class SupplyCategoryApi extends Controller
 
         return response('How about implementing deleteSupplyCategory as a DELETE method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation getSupplyCategoryById
      *

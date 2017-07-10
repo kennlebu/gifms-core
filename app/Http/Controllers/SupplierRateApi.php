@@ -26,6 +26,35 @@ class SupplierRateApi extends Controller
     {
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
     /**
      * Operation addSupplierRate
      *
@@ -50,6 +79,35 @@ class SupplierRateApi extends Controller
 
         return response('How about implementing addSupplierRate as a POST method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation updateSupplierRate
      *
@@ -74,6 +132,35 @@ class SupplierRateApi extends Controller
 
         return response('How about implementing updateSupplierRate as a PUT method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation deleteSupplierRate
      *
@@ -94,6 +181,35 @@ class SupplierRateApi extends Controller
 
         return response('How about implementing deleteSupplierRate as a DELETE method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation getSupplierRateById
      *
@@ -114,6 +230,35 @@ class SupplierRateApi extends Controller
 
         return response('How about implementing getSupplierRateById as a GET method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation supplierRatesGet
      *

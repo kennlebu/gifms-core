@@ -26,6 +26,37 @@ class LPOApprovalApi extends Controller
     {
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
     /**
      * Operation addLpoApproval
      *
@@ -50,6 +81,37 @@ class LPOApprovalApi extends Controller
 
         return response('How about implementing addLpoApproval as a POST method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation updateLpoApproval
      *
@@ -74,6 +136,37 @@ class LPOApprovalApi extends Controller
 
         return response('How about implementing updateLpoApproval as a PUT method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation deleteLpoApproval
      *
@@ -94,6 +187,37 @@ class LPOApprovalApi extends Controller
 
         return response('How about implementing deleteLpoApproval as a DELETE method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation getLpoApprovalById
      *
@@ -114,6 +238,37 @@ class LPOApprovalApi extends Controller
 
         return response('How about implementing getLpoApprovalById as a GET method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation lpoApprovalsGet
      *

@@ -26,6 +26,34 @@ class DepartmentApi extends Controller
     {
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
     /**
      * Operation addDepartment
      *
@@ -50,6 +78,34 @@ class DepartmentApi extends Controller
 
         return response('How about implementing addDepartment as a POST method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation updateDepartment
      *
@@ -74,6 +130,34 @@ class DepartmentApi extends Controller
 
         return response('How about implementing updateDepartment as a PUT method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation deleteDepartment
      *
@@ -94,6 +178,34 @@ class DepartmentApi extends Controller
 
         return response('How about implementing deleteDepartment as a DELETE method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation getDepartmentById
      *
@@ -114,6 +226,34 @@ class DepartmentApi extends Controller
 
         return response('How about implementing getDepartmentById as a GET method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation departmentsGet
      *

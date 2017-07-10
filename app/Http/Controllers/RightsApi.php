@@ -26,6 +26,35 @@ class RightsApi extends Controller
     {
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
     /**
      * Operation addRight
      *
@@ -50,6 +79,35 @@ class RightsApi extends Controller
 
         return response('How about implementing addRight as a POST method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation updateRight
      *
@@ -74,6 +132,35 @@ class RightsApi extends Controller
 
         return response('How about implementing updateRight as a PUT method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation deleteRight
      *
@@ -94,6 +181,35 @@ class RightsApi extends Controller
 
         return response('How about implementing deleteRight as a DELETE method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation getRightById
      *
@@ -114,6 +230,35 @@ class RightsApi extends Controller
 
         return response('How about implementing getRightById as a GET method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation rightsGet
      *

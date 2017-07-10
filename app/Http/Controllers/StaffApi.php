@@ -27,6 +27,36 @@ class StaffApi extends Controller
     {
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
     /**
      * Operation addStaff
      *
@@ -51,6 +81,36 @@ class StaffApi extends Controller
 
         return response('How about implementing addStaff as a POST method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation updateStaff
      *
@@ -75,6 +135,36 @@ class StaffApi extends Controller
 
         return response('How about implementing updateStaff as a PUT method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation deleteStaff
      *
@@ -95,6 +185,36 @@ class StaffApi extends Controller
 
         return response('How about implementing deleteStaff as a DELETE method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation getStaffById
      *
@@ -115,6 +235,36 @@ class StaffApi extends Controller
 
         return response('How about implementing getStaffById as a GET method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation staffsGet
      *
