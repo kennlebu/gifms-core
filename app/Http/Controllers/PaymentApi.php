@@ -310,8 +310,10 @@ class PaymentApi extends Controller
                 
                 $query->orWhere('id','like', '\'%' . $input['searchval']. '%\'');
                 $query->orWhere('ref','like', '\'%' . $input['search']['value']. '%\'');
-                // $query->orWhere('expense_desc','like', '\'%' . $input['searchval']. '%\'');
-                // $query->orWhere('expense_purpose','like', '\'%' . $input['searchval']. '%\'');
+                $query->orWhere('payable_type','like', '\'%' . $input['searchval']. '%\'');
+                $query->orWhere('paid_to_bank_account_no','like', '\'%' . $input['searchval']. '%\'');
+                $query->orWhere('paid_to_name','like', '\'%' . $input['searchval']. '%\'');
+                $query->orWhere('payment_desc','like', '\'%' . $input['searchval']. '%\'');
 
             });
 
@@ -337,8 +339,10 @@ class PaymentApi extends Controller
                 
                 $query->orWhere('id','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('ref','like', '\'%' . $input['search']['value']. '%\'');
-                // $query->orWhere('expense_desc','like', '\'%' . $input['search']['value']. '%\'');
-                // $query->orWhere('expense_purpose','like', '\'%' . $input['search']['value']. '%\'');
+                $query->orWhere('payable_type','like', '\'%' . $input['search']['value']. '%\'');
+                $query->orWhere('paid_to_bank_account_no','like', '\'%' . $input['search']['value']. '%\'');
+                $query->orWhere('paid_to_name','like', '\'%' . $input['search']['value']. '%\'');
+                $query->orWhere('payment_desc','like', '\'%' . $input['search']['value']. '%\'');
 
             });
 
