@@ -56,10 +56,10 @@ class post_keys_migration_migration extends Seeder
         //payments payable migration
 
         DB::statement('
-            UPDATE `gifms`.`payments` SET `payable_id`=`invoice_id`, `payable_type` = "App\\\Models\\\InvoicesModels\\\Invoice" WHERE `invoice_id`<>""
+            UPDATE `gifms`.`payments` SET `payable_id`=`invoice_id`, `payable_type` = "invoices" WHERE `invoice_id`<>""
             ');
         DB::statement('
-            UPDATE `gifms`.`payments` SET `payable_id`=`advance_id`, `payable_type` = "App\\\Models\\\AdvancesModels\\\Advance" WHERE `advance_id`<>""
+            UPDATE `gifms`.`payments` SET `payable_id`=`advance_id`, `payable_type` = "advances" WHERE `advance_id`<>""
             ');
         
         echo "\n payments payable_id, payable_type---";
