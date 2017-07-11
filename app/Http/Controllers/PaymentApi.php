@@ -300,6 +300,27 @@ class PaymentApi extends Controller
 
 
 
+
+
+        //if batch is set
+
+        if(array_key_exists('batch', $input)){
+
+            $batch_ = (int) $input['batch'];
+
+            if($batch_ >0){
+                $qb->where('payment_batch_id', $input['batch']);
+            }
+
+
+
+
+            // $total_records          = $qb->count();     //may need this
+        }
+
+
+
+
         // $qb->where('requested_by_id',$this->current_user()->id);
 
 

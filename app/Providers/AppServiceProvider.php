@@ -19,7 +19,9 @@ class AppServiceProvider extends ServiceProvider
             'advances'              =>      'App\Models\AdvancesModels\Advance',
             'mobile_payments'       =>      'App\Models\MobilePaymentModels\MobilePayment',
             'claims'                =>      'App\Models\ClaimsModels\Claim',
-            'advances'              =>      'App\Models\AdvancesModels\Advance',
+            'lpos'                  =>      'App\Models\LPOModels\Lpo',
+            'payments'              =>      'App\Models\PaymentModels\Payment',
+            'deliveries'            =>      'App\Models\DeliveriesModels\Delivery',
             ]);
     }
 
