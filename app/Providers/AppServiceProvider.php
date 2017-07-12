@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Events\Dispatcher;
+use Illuminate\Database\Events\StatementPrepared;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -23,6 +25,10 @@ class AppServiceProvider extends ServiceProvider
             'payments'              =>      'App\Models\PaymentModels\Payment',
             'deliveries'            =>      'App\Models\DeliveriesModels\Delivery',
             ]);
+        // $dispatcher = new Dispatcher;
+        // $dispatcher->listen(Illuminate\Database\Events\StatementPrepared::class, function ($event) {
+        //     $event->statement->setFetchMode(PDO::FETCH_ASSOC);
+        // });
     }
 
     /**

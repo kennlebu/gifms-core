@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateApprovalsTable extends Migration
+class CreateApprovalTypesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateApprovalsTable extends Migration
      */
     public function up()
     {
-        Schema::create('approvals', function (Blueprint $table) {
+        Schema::create('approval_types', function (Blueprint $table) {
             $table->increments('id');            
             $table->string('approval')->nullable();
             $table->string('status_table')->nullable();
@@ -37,6 +37,6 @@ class CreateApprovalsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('approvals');
+        Schema::dropIfExists('approval_types');
     }
 }

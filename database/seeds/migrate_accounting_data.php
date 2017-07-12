@@ -79,7 +79,7 @@ class migrate_accounting_data extends Seeder
          * 
          */
 
-        DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->setFetchMode(PDO::FETCH_ASSOC);
+        DB::connection(env('DB_MIGRATE_FROM','sqlsrv'));
 
         $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('Accounts2016')->get();
 
@@ -127,7 +127,7 @@ class migrate_accounting_data extends Seeder
          * 
          */
 
-        DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->setFetchMode(PDO::FETCH_ASSOC);
+        DB::connection(env('DB_MIGRATE_FROM','sqlsrv'));
 
         $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('AccountClassifications')->get();
 
@@ -169,7 +169,7 @@ class migrate_accounting_data extends Seeder
          * 
          */
 
-        DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->setFetchMode(PDO::FETCH_ASSOC);
+        DB::connection(env('DB_MIGRATE_FROM','sqlsrv'));
 
         $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('QBAccounts')->get();
 
@@ -218,7 +218,7 @@ class migrate_accounting_data extends Seeder
          * 
          */
 
-        DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->setFetchMode(PDO::FETCH_ASSOC);
+        DB::connection(env('DB_MIGRATE_FROM','sqlsrv'));
 
         $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('AccountTypes')->get();
 

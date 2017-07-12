@@ -56,7 +56,9 @@ class migrate_lookup_data extends Seeder
          */
 
 
-        $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('Countrys')->get();
+        $data = (array) DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('Countrys')->get()->toArray();
+
+        print_r($data);
 
         $data_to_migrate=array();
 

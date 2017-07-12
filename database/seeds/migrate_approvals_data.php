@@ -19,7 +19,7 @@ class migrate_approvals_data extends Seeder
 	     * 
 	     * 
 	     * 
-	     *					Approvals
+	     *					approval_types
 	     * 
 	     * 
 	     * 
@@ -50,7 +50,7 @@ class migrate_approvals_data extends Seeder
         }
 
         
-        DB::table('approvals')->insert($data_to_migrate);
+        DB::table('approval_types')->insert($data_to_migrate);
         
         echo "\n-----------------------------------------------------------------------------------------------------\n";
 

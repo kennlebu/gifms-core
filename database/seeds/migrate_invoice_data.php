@@ -557,7 +557,7 @@ class migrate_invoice_data extends Seeder
          * 
          */
 
-        DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->setFetchMode(PDO::FETCH_ASSOC);
+        DB::connection(env('DB_MIGRATE_FROM','sqlsrv'));
 
         $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('InvoiceTypes')->get();
 
@@ -601,7 +601,7 @@ class migrate_invoice_data extends Seeder
          * 
          */
 
-        DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->setFetchMode(PDO::FETCH_ASSOC);
+        DB::connection(env('DB_MIGRATE_FROM','sqlsrv'));
 
         $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('InvoiceLog')->get();
 

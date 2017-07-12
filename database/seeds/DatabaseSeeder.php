@@ -13,7 +13,7 @@ class DatabaseSeeder extends Seeder
     {
 
 
-        DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->setFetchMode(PDO::FETCH_ASSOC);
+        DB::connection(env('DB_MIGRATE_FROM','sqlsrv'));
 
         
         //refferences
