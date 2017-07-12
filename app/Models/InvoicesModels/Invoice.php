@@ -57,4 +57,8 @@ class Invoice extends BaseModel
     {
         return $this->morphMany('App\Models\PaymentModels\Payment', 'payable');
     }
+    public function approvals()
+    {
+        return $this->morphMany('App\Models\ApprovalsModels\Approval', 'approvable');
+    }
 }

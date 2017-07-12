@@ -172,7 +172,7 @@ class ClaimApi extends Controller
                                         'project_manager',
                                         'currency',
                                         'rejected_by',
-                                        'claim_approvals'
+                                        'approvals'
                                     )->findOrFail($claim_id);
 
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
@@ -561,7 +561,7 @@ class ClaimApi extends Controller
             $data[$key]['project_manager']              = $mobile_payment->project_manager;
             $data[$key]['currency']                     = $mobile_payment->currency;
             $data[$key]['rejected_by']                  = $mobile_payment->rejected_by;
-            $data[$key]['claim_approvals']              = $mobile_payment->claim_approvals;
+            $data[$key]['approvals']              = $mobile_payment->approvals;
 
         }
 

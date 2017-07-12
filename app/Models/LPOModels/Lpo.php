@@ -110,6 +110,10 @@ class Lpo extends BaseModel
     {
         return $this->morphMany('App\Models\OtherModels\Comment', 'commentable');
     }
+    public function approvals()
+    {
+        return $this->morphMany('App\Models\ApprovalsModels\Approval', 'approvable');
+    }
 
 
 

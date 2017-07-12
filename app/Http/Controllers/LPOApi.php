@@ -308,7 +308,7 @@ class LPOApi extends Controller
                                             'preffered_quotation',
                                             'items',
                                             'terms',
-                                            'lpo_approvals',
+                                            'approvals',
                                             'deliveries'
                                 )->findOrFail($lpo_id);
            
@@ -679,7 +679,7 @@ class LPOApi extends Controller
             $data[$key]['preffered_quotation']      = $lpo->preffered_quotation;
             $data[$key]['items']                    = $lpo->items;
             $data[$key]['terms']                    = $lpo->terms;
-            $data[$key]['lpo_approvals']            = $lpo->lpo_approvals;
+            $data[$key]['approvals']                = $lpo->approvals;
             $data[$key]['deliveries']               = $lpo->deliveries;
             $data[$key]['totals']                   = $lpo->totals;
 

@@ -212,7 +212,7 @@ class AdvanceApi extends Controller
                                     'project_manager',
                                     'currency',
                                     'rejected_by',
-                                    'advance_approvals'
+                                    'approvals'
                                 )->findOrFail($advance_id);
            
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
@@ -535,7 +535,7 @@ class AdvanceApi extends Controller
             $data[$key]['project_manager']              = $mobile_payment->project_manager;
             $data[$key]['currency']                     = $mobile_payment->currency;
             $data[$key]['rejected_by']                  = $mobile_payment->rejected_by;
-            $data[$key]['advance_approvals']            = $mobile_payment->advance_approvals;
+            $data[$key]['approvals']            = $mobile_payment->approvals;
 
         }
 

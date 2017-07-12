@@ -213,7 +213,7 @@ class InvoiceApi extends Controller
                                         'project_manager',
                                         'currency',
                                         'rejected_by',
-                                        'invoice_approvals',
+                                        'approvals',
                                         'allocations',
                                         'comments'
                                     )->findOrFail($invoice_id);
@@ -632,7 +632,7 @@ class InvoiceApi extends Controller
             $data[$key]['project_manager']              = $mobile_payment->project_manager;
             $data[$key]['currency']                     = $mobile_payment->currency;
             $data[$key]['rejected_by']                  = $mobile_payment->rejected_by;
-            $data[$key]['invoice_approvals']            = $mobile_payment->invoice_approvals;
+            $data[$key]['approvals']            = $mobile_payment->approvals;
             $data[$key]['allocations']                  = $mobile_payment->allocations;
             $data[$key]['comments']                     = $mobile_payment->comments;
 

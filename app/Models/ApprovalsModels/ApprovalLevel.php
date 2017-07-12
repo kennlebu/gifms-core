@@ -3,8 +3,11 @@
 namespace App\Models\ApprovalsModels;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\BaseModels\BaseModel;
 
-class ApprovalLevel extends Model
+class ApprovalLevel extends BaseModel
 {
     //
+    use SoftDeletes;
 }

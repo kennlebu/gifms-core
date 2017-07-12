@@ -231,7 +231,7 @@ class MobilePaymentApi extends Controller
                                     'rejected_by',
                                     'payees_upload_mode',
                                     'payees',
-                                    'mobile_payment_approvals'
+                                    'approvals'
                                 )->findOrFail($mobile_payment_id);
 
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
@@ -602,7 +602,7 @@ class MobilePaymentApi extends Controller
             $data[$key]['rejected_by']                 = $mobile_payment->rejected_by;
             $data[$key]['payees_upload_mode']          = $mobile_payment->payees_upload_mode;
             $data[$key]['payees']                      = $mobile_payment->payees;
-            $data[$key]['mobile_payment_approvals']    = $mobile_payment->mobile_payment_approvals;
+            $data[$key]['approvals']                   = $mobile_payment->approvals;
             $data[$key]['totals']                      = $mobile_payment->totals;
 
         }
