@@ -170,7 +170,7 @@ class migrate_invoice_data extends Seeder
         foreach ($data_to_migrate_pm as $key => $value) {
 
             if($value){
-                array_push($pm_approval,['approval_level_id' => 2,'created_at' => $value['pm_approval_date'],'invoice_id' => $value['id'],'migration_approver_id' => $value['pm_approval']]);
+                array_push($pm_approval,['approval_level_id' => 2,'created_at' => $value['pm_approval_date'],'approvable_id' => $value['id'],'migration_approver_id' => $value['pm_approval'],'approvable_type'=>"invoices"]);
             }
 
             echo "\n Claim Approval-$key---";
@@ -181,7 +181,7 @@ class migrate_invoice_data extends Seeder
 
         $insertBatchs = array_chunk($pm_approval, 500);
         foreach ($insertBatchs as $batch) {
-            DB::table('invoice_approvals')->insert($batch);
+            DB::table('approvals')->insert($batch);
              echo "\n-------------------------------------------------------Batch inserted\n";
         }
 
@@ -195,7 +195,7 @@ class migrate_invoice_data extends Seeder
         foreach ($data_to_migrate_man as $key => $value) {
 
             if($value){
-                array_push($man_approval,['approval_level_id' => 4,'created_at' => $value['management_approval_date'],'invoice_id' => $value['id'],'migration_approver_id' => $value['management_approval']]);
+                array_push($man_approval,['approval_level_id' => 4,'created_at' => $value['management_approval_date'],'approvable_id' => $value['id'],'migration_approver_id' => $value['management_approval'],'approvable_type'=>"invoices"]);
             }
 
             echo "\n Claim Approval-$key---";
@@ -206,7 +206,7 @@ class migrate_invoice_data extends Seeder
 
         $insertBatchs = array_chunk($man_approval, 500);
         foreach ($insertBatchs as $batch) {
-            DB::table('invoice_approvals')->insert($batch);
+            DB::table('approvals')->insert($batch);
              echo "\n-------------------------------------------------------Batch inserted\n";
         }
 
@@ -220,7 +220,7 @@ class migrate_invoice_data extends Seeder
         // foreach ($data_to_migrate_fin as $key => $value) {
 
         //     if($value){
-        //         array_push($fin_approval,['approval_level_id' => 3,'created_at' => $value['finance_approval_date'],'invoice_id' => $value['id'],'migration_approver_id' => $value['finance_approval']]);
+        //         array_push($fin_approval,['approval_level_id' => 3,'created_at' => $value['finance_approval_date'],'approvable_id' => $value['id'],'migration_approver_id' => $value['finance_approval'],'approvable_type'=>"invoices"]);
         //     }
 
         //     echo "\n Claim Approval-$key---";
@@ -231,7 +231,7 @@ class migrate_invoice_data extends Seeder
 
         // $insertBatchs = array_chunk($fin_approval, 500);
         // foreach ($insertBatchs as $batch) {
-        //     DB::table('invoice_approvals')->insert($batch);
+        //     DB::table('approvals')->insert($batch);
         //      echo "\n-------------------------------------------------------Batch inserted\n";
         // }
 
@@ -250,7 +250,7 @@ class migrate_invoice_data extends Seeder
         foreach ($data_to_migrate_acc as $key => $value) {
 
             if($value){
-                array_push($acc_approval,['approval_level_id' => 1,'created_at' => $value['accounts_approval_date'],'invoice_id' => $value['id'],'migration_approver_id' => $value['accounts_approval']]);
+                array_push($acc_approval,['approval_level_id' => 1,'created_at' => $value['accounts_approval_date'],'approvable_id' => $value['id'],'migration_approver_id' => $value['accounts_approval'],'approvable_type'=>"invoices"]);
             }
 
             echo "\n Claim Approval-$key---";
@@ -261,7 +261,7 @@ class migrate_invoice_data extends Seeder
 
         $insertBatchs = array_chunk($acc_approval, 500);
         foreach ($insertBatchs as $batch) {
-            DB::table('invoice_approvals')->insert($batch);
+            DB::table('approvals')->insert($batch);
              echo "\n-------------------------------------------------------Batch inserted\n";
         }
 
