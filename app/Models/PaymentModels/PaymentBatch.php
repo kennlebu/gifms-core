@@ -28,11 +28,13 @@ class PaymentBatch extends BaseModel
 
 
         $tariff_res = DB::table('payments')
-                     ->select(DB::raw(' payment_modes.id, payment_modes.abrv '))
+                     ->select(DB::raw(' payment_modes.id, payment_modes.abrv,payments.currency_id, currencies.currency_sign, currencies.display_color, currencies.default_currency '))
                      ->leftJoin('payment_modes', 'payments.payment_mode_id', '=', 'payment_modes.id')
+                     ->leftJoin('currencies', 'payments.currency_id', '=', 'currencies.id')
                      ->where('payments.payment_batch_id', $id)
-		             ->groupBy('payment_modes.abrv')
-		             ->orderBy('payment_modes.abrv', 'desc')
+                     ->whereNotNull('payments.currency_id')
+		             ->groupBy('payment_modes.abrv','payments.currency_id')
+		             ->orderBy('payment_modes.abrv', 'ASC')
                      ->get();
 
 

@@ -47,7 +47,7 @@ class post_keys_migration_migration extends Seeder
             ");
 
         DB::statement("
-            UPDATE `gifms`.`currencies` SET `display_color`='#B01500' WHERE `id`='2'
+            UPDATE `gifms`.`currencies` SET `display_color`='#B01500' ,`currency_sign`='$' WHERE `id`='2'
             ");
 
         echo "\n currencies display_color ---";
