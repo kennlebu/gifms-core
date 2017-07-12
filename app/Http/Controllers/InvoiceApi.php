@@ -212,6 +212,7 @@ class InvoiceApi extends Controller
                                         'status',
                                         'project_manager',
                                         'currency',
+                                        'lpo',
                                         'rejected_by',
                                         'approvals',
                                         'allocations',
@@ -631,8 +632,9 @@ class InvoiceApi extends Controller
             $data[$key]['status']                       = $mobile_payment->status;
             $data[$key]['project_manager']              = $mobile_payment->project_manager;
             $data[$key]['currency']                     = $mobile_payment->currency;
+            $data[$key]['lpo']                          = $mobile_payment->lpo;
             $data[$key]['rejected_by']                  = $mobile_payment->rejected_by;
-            $data[$key]['approvals']            = $mobile_payment->approvals;
+            $data[$key]['approvals']                    = $mobile_payment->approvals;
             $data[$key]['allocations']                  = $mobile_payment->allocations;
             $data[$key]['comments']                     = $mobile_payment->comments;
 

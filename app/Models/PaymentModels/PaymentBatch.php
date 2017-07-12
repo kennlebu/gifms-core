@@ -11,4 +11,9 @@ class PaymentBatch extends BaseModel
 {
     //
     use SoftDeletes;
+
+    public function processed_by()
+    {
+        return $this->belongsTo('App\Models\StaffModels\Staff','processed_by_id');
+    }
 }

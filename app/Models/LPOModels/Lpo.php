@@ -98,10 +98,6 @@ class Lpo extends BaseModel
     {
         return $this->hasMany('App\Models\LPOModels\LpoTerm');
     }
-    public function lpo_approvals()
-    {
-        return $this->hasMany('App\Models\LPOModels\LpoApproval');
-    }
     public function deliveries()
     {
         return $this->hasMany('App\Models\DeliveriesModels\Delivery');

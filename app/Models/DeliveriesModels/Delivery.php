@@ -15,4 +15,8 @@ class Delivery extends BaseModel
     {
         return $this->morphMany('App\Models\OtherModels\Comment', 'commentable');
     }
+    public function received_by()
+    {
+        return $this->belongsTo('App\Models\StaffModels\Staff','received_by_id');
+    }
 }

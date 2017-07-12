@@ -41,9 +41,9 @@ class Invoice extends BaseModel
     {
         return $this->belongsTo('App\Models\LookupModels\Currency');
     }
-    public function invoice_approvals()
+    public function lpo()
     {
-        return $this->hasMany('App\Models\InvoicesModels\InvoiceApproval');
+        return $this->belongsTo('App\Models\LPOModels\Lpo');
     }
     public function allocations()
     {

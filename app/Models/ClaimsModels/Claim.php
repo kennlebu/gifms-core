@@ -46,10 +46,6 @@ class Claim extends BaseModel
     {
         return $this->belongsTo('App\Models\LookupModels\Currency');
     }
-    public function claim_approvals()
-    {
-        return $this->hasMany('App\Models\ClaimsModels\ClaimApproval');
-    }
     public function allocations()
     {
         return $this->hasMany('App\Models\ClaimsModels\ClaimProjectAccountAllocation');

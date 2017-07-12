@@ -46,10 +46,6 @@ class Advance extends BaseModel
     {
         return $this->belongsTo('App\Models\LookupModels\Currency');
     }
-    public function advance_approvals()
-    {
-        return $this->hasMany('App\Models\AdvancesModels\AdvanceApproval');
-    }
     public function comments()
     {
         return $this->morphMany('App\Models\OtherModels\Comment', 'commentable');
