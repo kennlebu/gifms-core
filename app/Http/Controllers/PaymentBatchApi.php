@@ -409,7 +409,9 @@ class PaymentBatchApi extends Controller
         foreach ($data as $key => $value) {
 
             $mobile_payment = PaymentBatch::find($data[$key]['id']);
+            
 
+            $data[$key]['payment_modes']                      = $mobile_payment->payment_modes;
             // $data[$key]['payable']                      = $mobile_payment->payable;
             // $data[$key]['debit_bank_account']           = $mobile_payment->debit_bank_account;
             // $data[$key]['currency']                     = $mobile_payment->currency;
