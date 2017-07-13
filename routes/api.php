@@ -2896,3 +2896,130 @@ Route::GET('/payment_type/{payment_type_id}', 'PaymentTypeApi@getPaymentTypeById
  */
 Route::GET('/payment_types', 'PaymentTypeApi@getPaymentTypes')->middleware('jwt.auth');
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * POST addApproval
+ * Summary: Add a new approval
+ * Notes: new approval
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/approval', 'ApprovalApi@addApproval')->middleware('jwt.auth');
+/**
+ * PUT updateApproval
+ * Summary: Update an existing approval
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/approval', 'ApprovalApi@updateApproval')->middleware('jwt.auth');
+/**
+ * DELETE deleteApproval
+ * Summary: Deletes an approval
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/approval/{approval_id}', 'ApprovalApi@deleteApproval')->middleware('jwt.auth');
+/**
+ * GET getApprovalById
+ * Summary: Find approval by ID
+ * Notes: Returns a single approval
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/approval/{approval_id}', 'ApprovalApi@getApprovalById')->middleware('jwt.auth');
+/**
+ * GET getApprovals
+ * Summary: approvals List
+ * Notes: The approval endpoint returns multiple approval requested given the parameters injected.  
+
+ */
+Route::GET('/approvals', 'ApprovalApi@getApprovals')->middleware('jwt.auth');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * POST addAllocation
+ * Summary: Add a new allocation
+ * Notes: new allocation
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/allocation', 'AllocationApi@addAllocation')->middleware('jwt.auth');
+/**
+ * PUT updateAllocation
+ * Summary: Update an existing allocation
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/allocation', 'AllocationApi@updateAllocation')->middleware('jwt.auth');
+/**
+ * DELETE deleteAllocation
+ * Summary: Deletes an allocation
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/allocation/{allocation_id}', 'AllocationApi@deleteAllocation')->middleware('jwt.auth');
+/**
+ * GET getAllocationById
+ * Summary: Find allocation by ID
+ * Notes: Returns a single allocation
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/allocation/{allocation_id}', 'AllocationApi@getAllocationById')->middleware('jwt.auth');
+/**
+ * GET getAllocations
+ * Summary: allocations List
+ * Notes: The allocation endpoint returns multiple allocation requested given the parameters injected.  
+
+ */
+Route::GET('/allocations', 'AllocationApi@getAllocations')->middleware('jwt.auth');
+
+
+

@@ -219,3 +219,13 @@
     externalDocs:
       description: Find out more
       url: 'http://kefinance.clintonhealthaccess.org/api/payment_type/docs'
+  - name: Approval
+    description: Everything About Approval
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/approval/docs'
+  - name: Allocation
+    description: Everything About Allocation
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/allocation/docs'
