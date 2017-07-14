@@ -417,20 +417,20 @@ class migrate_invoice_data extends Seeder
         foreach ($data as $key => $value) {
 
             $data_to_migrate[$key]['amount_allocated']                  =        $data[$key]['AmountAllocated'];
-            $data_to_migrate[$key]['invoice_allocation_month']          =        $data[$key]['InvoiceAllocationMonth'];
-            $data_to_migrate[$key]['invoice_allocation_year']           =        $data[$key]['InvoiceAllocationYear'];
+            $data_to_migrate[$key]['allocation_month']                  =        $data[$key]['InvoiceAllocationMonth'];
+            $data_to_migrate[$key]['allocation_year']                   =        $data[$key]['InvoiceAllocationYear'];
             $data_to_migrate[$key]['allocation_purpose']                =        $data[$key]['AllocationPurpose'];
             $data_to_migrate[$key]['percentage_allocated']              =        $data[$key]['PercentageAllocated'];
-            $data_to_migrate[$key]['brevity']                           =        $data[$key]['Berevity'];
-            $data_to_migrate[$key]['migration_allocated_by']            =        $data[$key]['AllocatedBy'];
-            $data_to_migrate[$key]['migration_invoice_id']              =        $data[$key]['Invoice'];
+            $data_to_migrate[$key]['migration_allocated_by_id']         =        $data[$key]['AllocatedBy'];
+            $data_to_migrate[$key]['migration_allocatable_id']          =        $data[$key]['Invoice'];
             $data_to_migrate[$key]['migration_project_id']              =        $data[$key]['Project'];
-            $data_to_migrate[$key]['migration_project_account']         =        $data[$key]['ProjectAccount'];
-            $data_to_migrate[$key]['migration_project_account_2016']    =        $data[$key]['ProjectAccount2016'];
+            $data_to_migrate[$key]['migration_account_2013_code']       =        $data[$key]['ProjectAccount'];
+            $data_to_migrate[$key]['migration_account_2016_code']       =        $data[$key]['ProjectAccount2016'];
             $data_to_migrate[$key]['migration_id']                      =        $data[$key]['ID'];
+            $data_to_migrate[$key]['allocatable_type']                  =        "invoices";
 
 
-            echo "\n InvoiceProjectAccountAllocation-$key---";
+            echo "\n Allocations-$key---";
             echo $data[$key]['Invoice'];
         }
 
@@ -438,7 +438,7 @@ class migrate_invoice_data extends Seeder
 
         $insertBatchs = array_chunk($data_to_migrate, 500);
         foreach ($insertBatchs as $batch) {
-            DB::table('invoice_project_account_allocations')->insert($batch);
+            DB::table('allocations')->insert($batch);
              echo "\n-------------------------------------------------------Batch inserted\n";
         }
         

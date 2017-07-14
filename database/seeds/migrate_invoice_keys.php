@@ -57,7 +57,7 @@ class migrate_invoice_keys extends Seeder
          * 
          * 
          * 
-         *                  invoice_project_account_allocations
+         *                  allocations
          * 
          * 
          * 
@@ -65,23 +65,28 @@ class migrate_invoice_keys extends Seeder
          */
 
         $migrate_keys_sql = "
-                                UPDATE invoice_project_account_allocations ipaa 
+                                UPDATE allocations al 
                                     LEFT JOIN staff ab 
-                                    ON ab.migration_id = ipaa.migration_allocated_by
+                                    ON ab.migration_id = al.migration_allocated_by_id
                                     LEFT JOIN invoices i 
-                                    ON i.migration_id = ipaa.migration_invoice_id
+                                    ON i.migration_id = al.migration_allocatable_id
                                     LEFT JOIN projects p 
-                                    ON p.migration_id = ipaa.migration_project_id
-                                    LEFT JOIN accounts a 
-                                    ON a.account_code = ipaa.migration_project_account
+                                    ON p.migration_id = al.migration_project_id
+                                    LEFT JOIN accounts a13 
+                                    ON a13.account_code = al.migration_account_2013_code
                                     LEFT JOIN accounts a16 
-                                    ON a16.account_code = ipaa.migration_project_account_2016
+                                    ON a16.account_code = al.migration_account_2016_code
 
-                                    SET     ipaa.allocated_by              =   ab.id, 
-                                            ipaa.invoice_id                =   i.id, 
-                                            ipaa.project_id                =   p.id, 
-                                            ipaa.project_account           =   a.id, 
-                                            ipaa.project_account_2016      =   a16.id
+                                    SET     al.allocated_by_id           =   ab.id, 
+                                            al.allocatable_id            =   i.id, 
+                                            al.project_id                =   p.id, 
+                                            al.account_2013_id           =   a13.id, 
+                                            al.account_2016_id           =   a16.id,
+                                            al.account_id                =   CASE WHEN migration_account_2016_code <> '' THEN a16.id
+                                                                                  WHEN migration_account_2013_code <> '' THEN a13.id
+                                                                                  ELSE NULL
+                                                                             END
+
                              ";
 
         DB::statement($migrate_keys_sql);
