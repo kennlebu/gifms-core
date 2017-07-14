@@ -472,15 +472,15 @@ class PaymentApi extends Controller
 
         foreach ($data as $key => $value) {
 
-            $mobile_payment = Payment::find($data[$key]['id']);
+            $payment = Payment::find($data[$key]['id']);
 
-            $data[$key]['payable']                      = $mobile_payment->payable;
-            $data[$key]['debit_bank_account']           = $mobile_payment->debit_bank_account;
-            $data[$key]['currency']                     = $mobile_payment->currency;
-            $data[$key]['paid_to_bank']                 = $mobile_payment->paid_to_bank;
-            $data[$key]['paid_to_bank_branch']          = $mobile_payment->paid_to_bank_branch;
-            $data[$key]['payment_mode']                 = $mobile_payment->payment_mode;
-            $data[$key]['payment_batch']                = $mobile_payment->payment_batch;
+            $data[$key]['payable']                      = $payment->payable;
+            $data[$key]['debit_bank_account']           = $payment->debit_bank_account;
+            $data[$key]['currency']                     = $payment->currency;
+            $data[$key]['paid_to_bank']                 = $payment->paid_to_bank;
+            $data[$key]['paid_to_bank_branch']          = $payment->paid_to_bank_branch;
+            $data[$key]['payment_mode']                 = $payment->payment_mode;
+            $data[$key]['payment_batch']                = $payment->payment_batch;
 
         }
 

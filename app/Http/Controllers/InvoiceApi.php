@@ -624,19 +624,19 @@ class InvoiceApi extends Controller
 
         foreach ($data as $key => $value) {
 
-            $mobile_payment = Invoice::find($data[$key]['id']);
+            $invoice = Invoice::find($data[$key]['id']);
 
-            $data[$key]['raised_by']                    = $mobile_payment->raised_by;
-            $data[$key]['raise_action_by']              = $mobile_payment->raise_action_by;
-            // $data[$key]['project']                      = $mobile_payment->project;
-            $data[$key]['status']                       = $mobile_payment->status;
-            $data[$key]['project_manager']              = $mobile_payment->project_manager;
-            $data[$key]['currency']                     = $mobile_payment->currency;
-            $data[$key]['lpo']                          = $mobile_payment->lpo;
-            $data[$key]['rejected_by']                  = $mobile_payment->rejected_by;
-            $data[$key]['approvals']                    = $mobile_payment->approvals;
-            $data[$key]['allocations']                  = $mobile_payment->allocations;
-            $data[$key]['comments']                     = $mobile_payment->comments;
+            $data[$key]['raised_by']                    = $invoice->raised_by;
+            $data[$key]['raise_action_by']              = $invoice->raise_action_by;
+            // $data[$key]['project']                      = $invoice->project;
+            $data[$key]['status']                       = $invoice->status;
+            $data[$key]['project_manager']              = $invoice->project_manager;
+            $data[$key]['currency']                     = $invoice->currency;
+            $data[$key]['lpo']                          = $invoice->lpo;
+            $data[$key]['rejected_by']                  = $invoice->rejected_by;
+            $data[$key]['approvals']                    = $invoice->approvals;
+            $data[$key]['allocations']                  = $invoice->allocations;
+            $data[$key]['comments']                     = $invoice->comments;
 
         }
 

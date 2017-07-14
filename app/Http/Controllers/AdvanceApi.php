@@ -527,17 +527,17 @@ class AdvanceApi extends Controller
 
         foreach ($data as $key => $value) {
 
-            $mobile_payment = Advance::find($data[$key]['id']);
+            $advance = Advance::find($data[$key]['id']);
 
-            $data[$key]['requested_by']                 = $mobile_payment->requested_by;
-            $data[$key]['request_action_by']            = $mobile_payment->requested_action_by;
-            $data[$key]['project']                      = $mobile_payment->project;
-            $data[$key]['status']                       = $mobile_payment->status;
-            $data[$key]['project_manager']              = $mobile_payment->project_manager;
-            $data[$key]['currency']                     = $mobile_payment->currency;
-            $data[$key]['rejected_by']                  = $mobile_payment->rejected_by;
-            $data[$key]['approvals']                    = $mobile_payment->approvals;
-            $data[$key]['allocations']                  = $mobile_payment->allocations;
+            $data[$key]['requested_by']                 = $advance->requested_by;
+            $data[$key]['request_action_by']            = $advance->requested_action_by;
+            $data[$key]['project']                      = $advance->project;
+            $data[$key]['status']                       = $advance->status;
+            $data[$key]['project_manager']              = $advance->project_manager;
+            $data[$key]['currency']                     = $advance->currency;
+            $data[$key]['rejected_by']                  = $advance->rejected_by;
+            $data[$key]['approvals']                    = $advance->approvals;
+            $data[$key]['allocations']                  = $advance->allocations;
 
         }
 

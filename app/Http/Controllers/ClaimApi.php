@@ -553,17 +553,17 @@ class ClaimApi extends Controller
 
         foreach ($data as $key => $value) {
 
-            $mobile_payment = Claim::find($data[$key]['id']);
+            $claim = Claim::find($data[$key]['id']);
 
-            $data[$key]['requested_by']                 = $mobile_payment->requested_by;
-            $data[$key]['request_action_by']            = $mobile_payment->requested_action_by;
-            $data[$key]['project']                      = $mobile_payment->project;
-            $data[$key]['status']                       = $mobile_payment->status;
-            $data[$key]['project_manager']              = $mobile_payment->project_manager;
-            $data[$key]['currency']                     = $mobile_payment->currency;
-            $data[$key]['rejected_by']                  = $mobile_payment->rejected_by;
-            $data[$key]['approvals']                    = $mobile_payment->approvals;
-            $data[$key]['allocations']                  = $mobile_payment->allocations;
+            $data[$key]['requested_by']                 = $claim->requested_by;
+            $data[$key]['request_action_by']            = $claim->requested_action_by;
+            $data[$key]['project']                      = $claim->project;
+            $data[$key]['status']                       = $claim->status;
+            $data[$key]['project_manager']              = $claim->project_manager;
+            $data[$key]['currency']                     = $claim->currency;
+            $data[$key]['rejected_by']                  = $claim->rejected_by;
+            $data[$key]['approvals']                    = $claim->approvals;
+            $data[$key]['allocations']                  = $claim->allocations;
 
         }
 

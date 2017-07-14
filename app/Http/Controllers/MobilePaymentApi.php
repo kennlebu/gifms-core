@@ -604,6 +604,7 @@ class MobilePaymentApi extends Controller
             $data[$key]['payees_upload_mode']          = $mobile_payment->payees_upload_mode;
             $data[$key]['payees']                      = $mobile_payment->payees;
             $data[$key]['approvals']                   = $mobile_payment->approvals;
+            $data[$key]['allocations']                 = $mobile_payment->allocations;
             $data[$key]['totals']                      = $mobile_payment->totals;
 
         }
