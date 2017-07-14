@@ -21,10 +21,6 @@ class Invoice extends BaseModel
     {
         return $this->belongsTo('App\Models\StaffModels\Staff','raise_action_by_id');
     }
-    // public function project()
-    // {
-    //     return $this->belongsTo('App\Models\ProjectsModels\Project');
-    // }
     public function status()
     {
         return $this->belongsTo('App\Models\InvoicesModels\InvoiceStatus');
@@ -45,10 +41,6 @@ class Invoice extends BaseModel
     {
         return $this->belongsTo('App\Models\LPOModels\Lpo');
     }
-    public function allocations()
-    {
-        return $this->hasMany('App\Models\InvoicesModels\InvoiceProjectAccountAllocation');
-    }
     public function comments()
     {
         return $this->morphMany('App\Models\OtherModels\Comment', 'commentable');
@@ -60,5 +52,9 @@ class Invoice extends BaseModel
     public function approvals()
     {
         return $this->morphMany('App\Models\ApprovalsModels\Approval', 'approvable');
+    }
+    public function allocations()
+    {
+        return $this->morphMany('App\Models\AllocationModels\Allocation', 'allocatable');
     }
 }

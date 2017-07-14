@@ -46,10 +46,6 @@ class Claim extends BaseModel
     {
         return $this->belongsTo('App\Models\LookupModels\Currency');
     }
-    public function allocations()
-    {
-        return $this->hasMany('App\Models\ClaimsModels\ClaimProjectAccountAllocation');
-    }
     public function comments()
     {
         return $this->morphMany('App\Models\OtherModels\Comment', 'commentable');
@@ -61,5 +57,9 @@ class Claim extends BaseModel
     public function approvals()
     {
         return $this->morphMany('App\Models\ApprovalsModels\Approval', 'approvable');
+    }
+    public function allocations()
+    {
+        return $this->morphMany('App\Models\AllocationModels\Allocation', 'allocatable');
     }
 }
