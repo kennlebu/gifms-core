@@ -58,5 +58,9 @@ class Advance extends BaseModel
     {
         return $this->morphMany('App\Models\ApprovalsModels\Approval', 'approvable');
     }
+    public function allocations()
+    {
+        return $this->morphMany('App\Models\AllocationModels\Allocation', 'allocatable');
+    }
 //
 }

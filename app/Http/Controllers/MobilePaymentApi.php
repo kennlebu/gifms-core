@@ -231,7 +231,8 @@ class MobilePaymentApi extends Controller
                                     'rejected_by',
                                     'payees_upload_mode',
                                     'payees',
-                                    'approvals'
+                                    'approvals',
+                                    'allocations'
                                 )->findOrFail($mobile_payment_id);
 
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
