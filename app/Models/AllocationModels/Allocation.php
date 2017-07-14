@@ -15,4 +15,16 @@ class Allocation extends BaseModel
     {
         return $this->morphTo();
     }
+    public function allocated_by()
+    {
+        return $this->belongsTo('App\Models\StaffModels\Staff','allocated_by_id');
+    }
+    public function project()
+    {
+        return $this->belongsTo('App\Models\ProjectsModels\Project');
+    }
+    public function account()
+    {
+        return $this->belongsTo('App\Models\AccountingModels\Account');
+    }
 }

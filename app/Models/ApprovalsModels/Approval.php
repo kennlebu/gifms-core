@@ -15,4 +15,12 @@ class Approval extends BaseModel
     {
         return $this->morphTo();
     }
+    public function approver()
+    {
+        return $this->belongsTo('App\Models\StaffModels\Staff','approver_id');
+    }
+    public function approval_level()
+    {
+        return $this->belongsTo('App\Models\ApprovalsModels\ApprovalLevel','approval_level_id');
+    }
 }
