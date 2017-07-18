@@ -1,0 +1,956 @@
+swagger: '2.0'
+info:
+  description: Finance management sysytem
+  version: 1.0.0
+  title: Grants Information Management System
+  termsOfService: 'http://kefinance.clintonhealthaccess.org/terms/'
+  contact:
+    email: mwangikevinn@gmail.com
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+host: 'localhost:8000'
+basePath: /api
+tags:
+  - name: Delivery
+    description: Everything About Delivery
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/delivery/docs'
+  - name: Delivery Status
+    description: Everything About Delivery Status
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/delivery_status/docs'
+  - name: Delivery Approval
+    description: Everything About Delivery Approval
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/delivery_approval/docs'
+schemes:
+  - http
+  - https
+paths:
+
+
+
+
+
+
+
+
+
+
+
+  /deliveries:
+    get:
+      summary: deliveries List
+      description: |
+        The delivery endpoint returns multiple delivery requested given the parameters injected. 
+      parameters:
+        - name: delivery_id
+          in: query
+          description: delivery id 
+          required: false
+          type: number
+          format: integer
+      tags:
+        - Delivery
+      responses:
+        200:
+          description: An array of delivery returned
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/delivery'
+        404:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+        - api_key: []
+
+
+
+
+
+
+
+  /delivery:    
+    post:
+      tags:
+        - Delivery
+      summary: Add a new delivery
+      description: new delivery  
+      operationId: add_delivery
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: delivery object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/delivery'
+      responses:
+        '200':
+          description: Successfully added a new delivery for approval 
+        '405':
+          description: Invalid input,adding a new delivery was unsuccessful
+      security:
+        - api_key: []
+            
+            
+            
+
+            
+    put:
+      tags:
+        - Delivery
+      summary: Update an existing delivery
+      description: ''
+      operationId: update_delivery
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: delivery object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/delivery'
+      responses:
+        200:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Success'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: delivery not found
+        '405':
+          description: Validation exception
+      security:
+        - api_key: []
+        
+        
+        
+        
+        
+        
+  '/delivery/{delivery_id}':
+    get:
+      tags:
+        - Delivery
+      summary: Find delivery by ID
+      description: Returns a single delivery
+      operationId: get_delivery_by_id
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: delivery_id
+          in: path
+          description: ID of delivery to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/delivery'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: delivery not found
+      security:
+        - api_key: []
+        
+        
+     
+            
+            
+            
+    delete:
+      tags:
+        - Delivery
+      summary: Deletes an delivery
+      description: ''
+      operationId: delete_delivery
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: api_key
+          in: header
+          required: true
+          type: string
+        - name: delivery_id
+          in: path
+          description: delivery id to delete
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: delivery not found
+      security:
+        - api_key: []
+
+
+
+
+
+        
+        
+        
+  '/delivery/{delivery_id}/submit_for_approval':
+    patch:
+      tags:
+        - Delivery
+      summary: Submit delivery by ID
+      description: Submits delivery for approval
+      operationId: submit_delivery_for_approval
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: delivery_id
+          in: path
+          description: ID of delivery to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/delivery'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: delivery not found
+      security:
+        - api_key: []
+        
+        
+
+
+
+
+
+
+        
+        
+        
+  '/delivery/{delivery_id}/approve':
+    patch:
+      tags:
+        - Delivery
+      summary: Approve delivery by ID
+      description: Approves Delivery
+      operationId: approve_delivery
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: delivery_id
+          in: path
+          description: ID of delivery to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/delivery'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: delivery not found
+      security:
+        - api_key: []
+        
+        
+
+
+
+        
+        
+        
+  '/delivery/{delivery_id}/allocate':
+    patch:
+      tags:
+        - Delivery
+      summary: Allocate delivery by ID
+      description: Allocate Delivery
+      operationId: allocate_delivery
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: delivery_id
+          in: path
+          description: ID of delivery to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/delivery'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: delivery not found
+      security:
+        - api_key: []
+        
+        
+
+
+        
+
+
+
+        
+        
+        
+  '/delivery/{delivery_id}/get_document':
+    get:
+      tags:
+        - Delivery
+      summary: get delivery document by ID
+      description: get Delivery document
+      operationId: get_document_by_id
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: delivery_id
+          in: path
+          description: ID of delivery to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/delivery'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: delivery not found
+      security:
+        - api_key: []
+        
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  /delivery_statuses:
+    get:
+      summary: delivery_statuses List
+      description: |
+        The delivery_status endpoint returns multiple delivery_status requested given the parameters injected. 
+      parameters:
+        - name: delivery_status_id
+          in: query
+          description: delivery_status id 
+          required: false
+          type: number
+          format: integer
+      tags:
+        - Delivery Status
+      responses:
+        200:
+          description: An array of delivery_status returned
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/delivery_status'
+        404:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+        - api_key: []
+
+
+
+
+
+
+
+  /delivery_status:    
+    post:
+      tags:
+        - Delivery Status
+      summary: Add a new delivery_status
+      description: new delivery_status  
+      operationId: add_delivery_status
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: delivery_status object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/delivery_status'
+      responses:
+        '200':
+          description: Successfully added a new delivery_status for approval 
+        '405':
+          description: Invalid input,adding a new delivery_status was unsuccessful
+      security:
+        - api_key: []
+            
+            
+            
+
+            
+    put:
+      tags:
+        - Delivery Status
+      summary: Update an existing delivery_status
+      description: ''
+      operationId: update_delivery_status
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: delivery_status object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/delivery_status'
+      responses:
+        200:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Success'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: delivery_status not found
+        '405':
+          description: Validation exception
+      security:
+        - api_key: []
+        
+        
+        
+        
+        
+        
+  '/delivery_status/{delivery_status_id}':
+    get:
+      tags:
+        - Delivery Status
+      summary: Find delivery_status by ID
+      description: Returns a single delivery_status
+      operationId: get_delivery_status_by_id
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: delivery_status_id
+          in: path
+          description: ID of delivery_status to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/delivery_status'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: delivery_status not found
+      security:
+        - api_key: []
+        
+        
+     
+            
+            
+            
+    delete:
+      tags:
+        - Delivery Status
+      summary: Deletes an delivery_status
+      description: ''
+      operationId: delete_delivery_status
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: api_key
+          in: header
+          required: true
+          type: string
+        - name: delivery_status_id
+          in: path
+          description: delivery_status id to delete
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: delivery_status not found
+      security:
+        - api_key: []
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  /delivery_approvals:
+    get:
+      summary: delivery_approvals List
+      description: |
+        The delivery_approval endpoint returns multiple delivery_approval requested given the parameters injected. 
+      parameters:
+        - name: delivery_approval_id
+          in: query
+          description: delivery_approval id 
+          required: false
+          type: number
+          format: integer
+      tags:
+        - Delivery Approval
+      responses:
+        200:
+          description: An array of delivery_approval returned
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/delivery_approval'
+        404:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+        - api_key: []
+
+
+
+
+
+
+
+  /delivery_approval:    
+    post:
+      tags:
+        - Delivery Approval
+      summary: Add a new delivery_approval
+      description: new delivery_approval  
+      operationId: add_delivery_approval
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: delivery_approval object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/delivery_approval'
+      responses:
+        '200':
+          description: Successfully added a new delivery_approval for approval 
+        '405':
+          description: Invalid input,adding a new delivery_approval was unsuccessful
+      security:
+        - api_key: []
+            
+            
+            
+
+            
+    put:
+      tags:
+        - Delivery Approval
+      summary: Update an existing delivery_approval
+      description: ''
+      operationId: update_delivery_approval
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: delivery_approval object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/delivery_approval'
+      responses:
+        200:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Success'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: delivery_approval not found
+        '405':
+          description: Validation exception
+      security:
+        - api_key: []
+        
+        
+        
+        
+        
+        
+  '/delivery_approval/{delivery_approval_id}':
+    get:
+      tags:
+        - Delivery Approval
+      summary: Find delivery_approval by ID
+      description: Returns a single delivery_approval
+      operationId: get_delivery_approval_by_id
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: delivery_approval_id
+          in: path
+          description: ID of delivery_approval to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/delivery_approval'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: delivery_approval not found
+      security:
+        - api_key: []
+        
+        
+     
+            
+            
+            
+    delete:
+      tags:
+        - Delivery Approval
+      summary: Deletes an delivery_approval
+      description: ''
+      operationId: delete_delivery_approval
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: api_key
+          in: header
+          required: true
+          type: string
+        - name: delivery_approval_id
+          in: path
+          description: delivery_approval id to delete
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: delivery_approval not found
+      security:
+        - api_key: []
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+          
+          
+securityDefinitions:
+  api_key:
+    type: apiKey
+    name: Authorization
+    in: header
+     
+     
+     
+definitions:
+
+
+      
+      
+  delivery:
+    type: object
+    required:
+      - id
+      - created_at
+    properties:
+      id:
+        type: integer
+        format: int64
+        example: 1
+      num:
+        type: number
+        format: int64
+        example: 20000
+      str:
+        type: string
+        example: 'PayPal.pdf'
+      date:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      created_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      updated_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+    xml:
+      name: delivery
+    
+  
+    
+
+
+         
+      
+  delivery_status:
+    type: object
+    required:
+      - id
+      - created_at
+    properties:
+      id:
+        type: integer
+        format: int64
+        example: 1
+      num:
+        type: number
+        format: int64
+        example: 20000
+      str:
+        type: string
+        example: 'PayPal.pdf'
+      date:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      created_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      updated_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+    xml:
+      name: delivery_status
+    
+  
+    
+
+
+    
+      
+      
+  delivery_approval:
+    type: object
+    required:
+      - id
+      - created_at
+    properties:
+      id:
+        type: integer
+        format: int64
+        example: 1
+      num:
+        type: number
+        format: int64
+        example: 20000
+      str:
+        type: string
+        example: 'PayPal.pdf'
+      date:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      created_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      updated_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+    xml:
+      name: delivery_approval
+    
+  
+    
+  
+  
+  
+  
+  
+  
+  
+  Error:
+    type: object
+    properties:
+      error:
+        type: string
+        example: object not found
+
+
+  
+  Success:
+    type: object
+    properties:
+      msg:
+        type: string
+        example: object not found
+
+      
+      
+      
+      

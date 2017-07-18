@@ -3023,3 +3023,250 @@ Route::GET('/allocations', 'AllocationApi@getAllocations')->middleware('jwt.auth
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * GET getDeliveries
+ * Summary: deliveries List
+ * Notes: The delivery endpoint returns multiple delivery requested given the parameters injected.  
+
+ */
+Route::GET('/deliveries', 'DeliveryApi@getDeliveries')->middleware('jwt.auth');
+/**
+ * POST addDelivery
+ * Summary: Add a new delivery
+ * Notes: new delivery
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/delivery', 'DeliveryApi@addDelivery')->middleware('jwt.auth');
+/**
+ * PUT updateDelivery
+ * Summary: Update an existing delivery
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/delivery', 'DeliveryApi@updateDelivery')->middleware('jwt.auth');
+/**
+ * DELETE deleteDelivery
+ * Summary: Deletes an delivery
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/delivery/{delivery_id}', 'DeliveryApi@deleteDelivery')->middleware('jwt.auth');
+/**
+ * GET getDeliveryById
+ * Summary: Find delivery by ID
+ * Notes: Returns a single delivery
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/delivery/{delivery_id}', 'DeliveryApi@getDeliveryById')->middleware('jwt.auth');
+/**
+ * PATCH allocateDelivery
+ * Summary: Allocate delivery by ID
+ * Notes: Allocate Delivery
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PATCH('/delivery/{delivery_id}/allocate', 'DeliveryApi@allocateDelivery')->middleware('jwt.auth');
+/**
+ * PATCH approveDelivery
+ * Summary: Approve delivery by ID
+ * Notes: Approves Delivery
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PATCH('/delivery/{delivery_id}/approve', 'DeliveryApi@approveDelivery')->middleware('jwt.auth');
+/**
+ * GET getDocumentById
+ * Summary: get delivery document by ID
+ * Notes: get Delivery document
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/delivery/{delivery_id}/get_document', 'DeliveryApi@getDocumentById')->middleware('jwt.auth');
+/**
+ * PATCH submitDeliveryForApproval
+ * Summary: Submit delivery by ID
+ * Notes: Submits delivery for approval
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PATCH('/delivery/{delivery_id}/submit_for_approval', 'DeliveryApi@submitDeliveryForApproval')->middleware('jwt.auth');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * POST addDeliveryApproval
+ * Summary: Add a new delivery_approval
+ * Notes: new delivery_approval
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/delivery_approval', 'DeliveryApprovalApi@addDeliveryApproval')->middleware('jwt.auth');
+/**
+ * PUT updateDeliveryApproval
+ * Summary: Update an existing delivery_approval
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/delivery_approval', 'DeliveryApprovalApi@updateDeliveryApproval')->middleware('jwt.auth');
+/**
+ * DELETE deleteDeliveryApproval
+ * Summary: Deletes an delivery_approval
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/delivery_approval/{delivery_approval_id}', 'DeliveryApprovalApi@deleteDeliveryApproval')->middleware('jwt.auth');
+/**
+ * GET getDeliveryApprovalById
+ * Summary: Find delivery_approval by ID
+ * Notes: Returns a single delivery_approval
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/delivery_approval/{delivery_approval_id}', 'DeliveryApprovalApi@getDeliveryApprovalById')->middleware('jwt.auth');
+/**
+ * GET getDeliveryApprovals
+ * Summary: delivery_approvals List
+ * Notes: The delivery_approval endpoint returns multiple delivery_approval requested given the parameters injected.  
+
+ */
+Route::GET('/delivery_approvals', 'DeliveryApprovalApi@getDeliveryApprovals')->middleware('jwt.auth');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * POST addDeliveryStatus
+ * Summary: Add a new delivery_status
+ * Notes: new delivery_status
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/delivery_status', 'DeliveryStatusApi@addDeliveryStatus')->middleware('jwt.auth');
+/**
+ * PUT updateDeliveryStatus
+ * Summary: Update an existing delivery_status
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/delivery_status', 'DeliveryStatusApi@updateDeliveryStatus')->middleware('jwt.auth');
+/**
+ * DELETE deleteDeliveryStatus
+ * Summary: Deletes an delivery_status
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/delivery_status/{delivery_status_id}', 'DeliveryStatusApi@deleteDeliveryStatus')->middleware('jwt.auth');
+/**
+ * GET getDeliveryStatusById
+ * Summary: Find delivery_status by ID
+ * Notes: Returns a single delivery_status
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/delivery_status/{delivery_status_id}', 'DeliveryStatusApi@getDeliveryStatusById')->middleware('jwt.auth');
+/**
+ * GET getDeliveryStatuses
+ * Summary: delivery_statuses List
+ * Notes: The delivery_status endpoint returns multiple delivery_status requested given the parameters injected.  
+
+ */
+Route::GET('/delivery_statuses', 'DeliveryStatusApi@getDeliveryStatuses')->middleware('jwt.auth');
+
+
+
+
+

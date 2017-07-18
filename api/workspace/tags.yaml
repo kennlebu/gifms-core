@@ -229,3 +229,18 @@
     externalDocs:
       description: Find out more
       url: 'http://kefinance.clintonhealthaccess.org/api/allocation/docs'
+  - name: Delivery
+    description: Everything About Delivery
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/delivery/docs'
+  - name: Delivery Status
+    description: Everything About Delivery Status
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/delivery_status/docs'
+  - name: Delivery Approval
+    description: Everything About Delivery Approval
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/delivery_approval/docs'
