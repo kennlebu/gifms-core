@@ -115,7 +115,7 @@ class DeliveryApi extends Controller
         $form = Request::only(
             'received_by_id',
             'comment',
-            'ref',
+            'external_ref',
             'lpo_id'
             );
 
@@ -125,7 +125,7 @@ class DeliveryApi extends Controller
 
             $delivery->received_by_id                    =   (int)   $form['received_by_id'];
             $delivery->comment                           =           $form['comment'];
-            $delivery->ref                               =           $form['ref'];
+            $delivery->external_ref                      =           $form['external_ref'];
             $delivery->lpo_id                            =   (int)   $form['lpo_id'];
             // $delivery->status_id                         =   2;
 
