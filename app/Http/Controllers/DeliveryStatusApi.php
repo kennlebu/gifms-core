@@ -26,6 +26,34 @@ class DeliveryStatusApi extends Controller
     {
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
     /**
      * Operation addDeliveryStatus
      *
@@ -50,6 +78,34 @@ class DeliveryStatusApi extends Controller
 
         return response('How about implementing addDeliveryStatus as a POST method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation updateDeliveryStatus
      *
@@ -74,6 +130,34 @@ class DeliveryStatusApi extends Controller
 
         return response('How about implementing updateDeliveryStatus as a PUT method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation deleteDeliveryStatus
      *
@@ -94,6 +178,34 @@ class DeliveryStatusApi extends Controller
 
         return response('How about implementing deleteDeliveryStatus as a DELETE method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation getDeliveryStatusById
      *
@@ -114,6 +226,34 @@ class DeliveryStatusApi extends Controller
 
         return response('How about implementing getDeliveryStatusById as a GET method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation getDeliveryStatuses
      *

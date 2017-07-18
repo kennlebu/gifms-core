@@ -16,6 +16,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\DB;
+use App\Models\DeliveriesModels\Delivery;
 
 class DeliveryApi extends Controller
 {
@@ -25,6 +27,30 @@ class DeliveryApi extends Controller
     public function __construct()
     {
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     /**
      * Operation getDeliveries
@@ -47,6 +73,30 @@ class DeliveryApi extends Controller
 
         return response('How about implementing getDeliveries as a GET method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /**
      * Operation addDelivery
      *
@@ -57,20 +107,71 @@ class DeliveryApi extends Controller
      */
     public function addDelivery()
     {
+
         $input = Request::all();
 
-        //path params validation
 
 
-        //not path params validation
-        if (!isset($input['body'])) {
-            throw new \InvalidArgumentException('Missing the required parameter $body when calling addDelivery');
+        $form = Request::only(
+            'received_by_id',
+            'comment',
+            'ref',
+            'lpo_id'
+            );
+
+        try{
+
+            $delivery = new Delivery;
+
+            $delivery->received_by_id                    =   (int)   $form['received_by_id'];
+            $delivery->comment                           =           $form['comment'];
+            $delivery->ref                               =           $form['ref'];
+            $delivery->lpo_id                            =   (int)   $form['lpo_id'];
+            // $delivery->status_id                         =   2;
+
+            // $user = JWTAuth::parseToken()->authenticate();
+            // $delivery->request_action_by_id            =   (int)   $user->id;
+
+
+
+            if($delivery->save()) {
+
+                $delivery->ref = "CHAI/DLV/#$delivery->id/".date_format($delivery->created_at,"Y/m/d");
+                $delivery->save();
+
+                return Response()->json(array('msg' => 'Success: delivery added','delivery' => Delivery::find((int)$delivery->id)), 200);
+            }
+
+        }catch (JWTException $e){
+
+            return response()->json(['error'=>'something went wrong'], 500);
+
         }
-        $body = $input['body'];
-
-
-        return response('How about implementing addDelivery as a POST method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /**
      * Operation updateDelivery
      *
@@ -95,6 +196,30 @@ class DeliveryApi extends Controller
 
         return response('How about implementing updateDelivery as a PUT method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /**
      * Operation deleteDelivery
      *
@@ -115,6 +240,30 @@ class DeliveryApi extends Controller
 
         return response('How about implementing deleteDelivery as a DELETE method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /**
      * Operation getDeliveryById
      *
@@ -135,6 +284,30 @@ class DeliveryApi extends Controller
 
         return response('How about implementing getDeliveryById as a GET method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /**
      * Operation allocateDelivery
      *
@@ -155,6 +328,30 @@ class DeliveryApi extends Controller
 
         return response('How about implementing allocateDelivery as a PATCH method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /**
      * Operation approveDelivery
      *
@@ -175,6 +372,30 @@ class DeliveryApi extends Controller
 
         return response('How about implementing approveDelivery as a PATCH method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /**
      * Operation getDocumentById
      *
@@ -195,6 +416,30 @@ class DeliveryApi extends Controller
 
         return response('How about implementing getDocumentById as a GET method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /**
      * Operation submitDeliveryForApproval
      *

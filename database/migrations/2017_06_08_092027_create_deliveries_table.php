@@ -15,10 +15,10 @@ class CreateDeliveriesTable extends Migration
     {
         Schema::create('deliveries', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('internal_ref')->nullable();
+            $table->string('ref')->nullable();
             $table->string('external_ref')->nullable();
             $table->integer('lpo_id')->nullable();
-            $table->integer('received_by')->nullable();
+            $table->integer('received_by_id')->nullable();
             $table->string('delivery_document')->nullable();
             $table->string('receipt')->nullable();
             $table->text('comment')->nullable();

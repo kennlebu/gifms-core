@@ -26,6 +26,28 @@ class DeliveryApprovalApi extends Controller
     {
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
     /**
      * Operation addDeliveryApproval
      *
@@ -50,6 +72,28 @@ class DeliveryApprovalApi extends Controller
 
         return response('How about implementing addDeliveryApproval as a POST method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation updateDeliveryApproval
      *
@@ -74,6 +118,28 @@ class DeliveryApprovalApi extends Controller
 
         return response('How about implementing updateDeliveryApproval as a PUT method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation deleteDeliveryApproval
      *
@@ -94,6 +160,28 @@ class DeliveryApprovalApi extends Controller
 
         return response('How about implementing deleteDeliveryApproval as a DELETE method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation getDeliveryApprovalById
      *
@@ -114,6 +202,28 @@ class DeliveryApprovalApi extends Controller
 
         return response('How about implementing getDeliveryApprovalById as a GET method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation getDeliveryApprovals
      *
