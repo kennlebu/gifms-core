@@ -380,7 +380,9 @@ class post_keys_migration_migration extends Seeder
                     'default_status' =>'1'
                 ],
                 [
-                    'invoice_status' =>'Allocated Pending Accountant Approval'
+                    'invoice_status' =>'Allocated Pending Accountant Approval',
+                    'default_status' =>''
+
                 ]
             ]);
 
@@ -410,7 +412,7 @@ class post_keys_migration_migration extends Seeder
 
 
 
-        
+
 
         //advance_statuses
         DB::table('advance_statuses')->insert([
