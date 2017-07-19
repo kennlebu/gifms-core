@@ -350,5 +350,77 @@ class post_keys_migration_migration extends Seeder
         echo "\n payment_batches date data updated ---";
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        //invoice_statuses
+        DB::table('invoice_statuses')->insert([
+                [
+                    'invoice_status' =>'Received pending upload',
+                    'default_status' =>'1'
+                ],
+                [
+                    'invoice_status' =>'Allocated Pending Accountant Approval'
+                ]
+            ]);
+
+        echo "\n invoice_statuses  updated ---";
+
+
+
+
+
+
+
+
+        //claim_statuses
+        DB::table('claim_statuses')->insert([
+                [
+                    'claim_status' =>'Pending Accountant Approval'
+                ]
+            ]);
+
+        echo "\n claim_statuses  updated ---";
+
+
+
+
+
+
+
+
+
+        
+
+        //advance_statuses
+        DB::table('advance_statuses')->insert([
+                [
+                    'advance_status' =>'Pending Accountant Approval'
+                ]
+            ]);
+
+        echo "\n advance_statuses  updated ---";
+
+
     }
 }
