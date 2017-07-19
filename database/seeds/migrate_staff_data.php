@@ -1,6 +1,10 @@
 <?php
 
 use Illuminate\Database\Seeder;
+use App\Models\StaffModels\EntrustPermission;
+use App\Models\StaffModels\EntrustRole;
+use App\Models\StaffModels\Staff;
+use App\Models\StaffModels\User;
 
 class migrate_staff_data extends Seeder
 {
@@ -180,55 +184,77 @@ class migrate_staff_data extends Seeder
          * 
          * 
          */
-        // echo "\nRoles -[ALL]---\n";
+        echo "\nRoles -[ALL]---\n";
 
-        // DB::table('roles')->insert([
-        //     [
-        //         'role_name'             => 'Super Administrator',
-        //         'acronym'               => 's-admin'
-        //     ],
-        //     [
-        //         'role_name'             => 'Administrator',
-        //         'acronym'               => 'admin'
-        //     ],
-        //     [
-        //         'role_name'             => 'Director',
-        //         'acronym'               => 'dir'
-        //     ],
-        //     [
-        //         'role_name'             => 'Associate Director',
-        //         'acronym'               => 'a-dir'
-        //     ],
-        //     [
-        //         'role_name'             => 'Financial Controller',
-        //         'acronym'               => 'fin'
-        //     ],
-        //     [
-        //         'role_name'             => 'Program Manager',
-        //         'acronym'               => 'pm'
-        //     ],
-        //     [
-        //         'role_name'             => 'Program Analyst',
-        //         'acronym'               => 'pa'
-        //     ],
-        //     [
-        //         'role_name'             => 'Accountant',
-        //         'acronym'               => 'ac'
-        //     ],
-        //     [
-        //         'role_name'             => 'Assistant Accountant',
-        //         'acronym'               => 'a-ac'
-        //     ],
-        //     [
-        //         'role_name'             => 'Office Manager',
-        //         'acronym'               => 'om'
-        //     ],
-        //     [
-        //         'role_name'             => 'Auditor',
-        //         'acronym'               => 'a-ac'
-        //     ]
-        // ]);
-        // echo "\n-----------------------------------------------------------------------------------------------------\n";
+        DB::table('roles')->insert([
+            [
+                'display_name'       => 'Super Administrator',
+                'description'        => '',
+                'acronym'            => 's-admin',
+                'name'               => 'super-admin'
+            ],
+            [
+                'display_name'       => 'Administrator',
+                'description'        => '',
+                'acronym'            => 'admin',
+                'name'               => 'admin'
+            ],
+            [
+                'display_name'       => 'Director',
+                'description'        => '',
+                'acronym'            => 'dir',
+                'name'               => 'director'
+            ],
+            [
+                'display_name'       => 'Associate Director',
+                'description'        => '',
+                'acronym'            => 'a-dir',
+                'name'               => 'associate-director'
+            ],
+            [
+                'display_name'       => 'Financial Controller',
+                'description'        => '',
+                'acronym'            => 'fin',
+                'name'               => 'financial-controller'
+            ],
+            [
+                'display_name'       => 'Program Manager',
+                'description'        => '',
+                'acronym'            => 'pm',
+                'name'               => 'program-manager'
+            ],
+            [
+                'display_name'       => 'Program Analyst',
+                'description'        => '',
+                'acronym'            => 'pa',
+                'name'               => 'program-analyst'
+            ],
+            [
+                'display_name'       => 'Accountant',
+                'description'        => '',
+                'acronym'            => 'ac',
+                'name'               => 'accountant'
+            ],
+            [
+                'display_name'       => 'Assistant Accountant',
+                'description'        => '',
+                'acronym'            => 'a-ac',
+                'name'               => 'assistant-account'
+            ],
+            [
+                'display_name'       => 'Office Manager',
+                'description'        => '',
+                'acronym'            => 'om',
+                'name'               => 'office-manager'
+            ],
+            [
+                'display_name'       => 'Auditor',
+                'description'        => '',
+                'acronym'            => 'au',
+                'name'               => 'auditor'
+            ]
+        ]);
+        echo "\n-----------------------------------------------------------------------------------------------------\n";
 
 
 
@@ -273,364 +299,356 @@ class migrate_staff_data extends Seeder
          * 
          * 
          * 
-         *                 Access Rights
+         *                 Permissions LPO
          * 
          * 
          * 
          * 
          * 
          */
-        // echo "\nRights -[ALL]---\n";
+        echo "\nPermissions LPO -[ALL]---\n";
 
-        // DB::table('access_rights')->insert([
+        DB::table('permissions')->insert([
 
-        //     //viewing
-        //    [
-        //         'right_name'            => 'View All My LPOS',
-        //         'operation_type'        => 'Read',
-        //         'operation_type_abbr'   => 'READ_LPO_-1',
-        //         'entity'                => 'Lpo',
-        //         'at_status_id'          => '-1',
-        //         'approval_level_id'     => '0'
-        //     ],
-        //     [
-        //         'right_name'            => 'View All LPOS',
-        //         'operation_type'        => 'Read',
-        //         'operation_type_abbr'   => 'READ_LPO_-2',
-        //         'entity'                => 'Lpo',
-        //         'at_status_id'          => '-2',
-        //         'approval_level_id'     => '0'
-        //     ],
-
-
-
-
-        //     [
-        //         'right_name'            => 'View My LPOS Uploaded Pending Quotations',
-        //         'operation_type'        => 'Read',
-        //         'operation_type_abbr'   => 'READ_LPO_1',
-        //         'entity'                => 'Lpo',
-        //         'at_status_id'          => '1',
-        //         'approval_level_id'     => '0'
-        //     ],
-        //     [
-        //         'right_name'            => 'View My LPOS Uploaded Pending Submission',
-        //         'operation_type'        => 'Read',
-        //         'operation_type_abbr'   => 'READ_LPO_2',
-        //         'entity'                => 'Lpo',
-        //         'at_status_id'          => '2',
-        //         'approval_level_id'     => '0'
-        //     ],
-        //     [
-        //         'right_name'            => 'View My LPOS Uploaded Pending PM Approval',
-        //         'operation_type'        => 'Read',
-        //         'operation_type_abbr'   => 'READ_LPO_3',
-        //         'entity'                => 'Lpo',
-        //         'at_status_id'          => '3',
-        //         'approval_level_id'     => '2'
-        //     ],
-        //     [
-        //         'right_name'            => 'View My LPOS Uploaded Pending Finance Approval',
-        //         'operation_type'        => 'Read',
-        //         'operation_type_abbr'   => 'READ_LPO_4',
-        //         'entity'                => 'Lpo',
-        //         'at_status_id'          => '4',
-        //         'approval_level_id'     => '3'
-        //     ],
-        //     [
-        //         'right_name'            => 'View My LPOS Uploaded Pending Management Approval',
-        //         'operation_type'        => 'Read',
-        //         'operation_type_abbr'   => 'READ_LPO_5',
-        //         'entity'                => 'Lpo',
-        //         'at_status_id'          => '5',
-        //         'approval_level_id'     => '4'
-        //     ],
-        //     [
-        //         'right_name'            => 'View My Approved LPOS Pending Dispatch',
-        //         'operation_type'        => 'Read',
-        //         'operation_type_abbr'   => 'READ_LPO_6',
-        //         'entity'                => 'Lpo',
-        //         'at_status_id'          => '6',
-        //         'approval_level_id'     => '0'
-        //     ],
-        //     [
-        //         'right_name'            => 'View My Approved LPOS Pending Delivery',
-        //         'operation_type'        => 'Read',
-        //         'operation_type_abbr'   => 'READ_LPO_7',
-        //         'entity'                => 'Lpo',
-        //         'at_status_id'          => '7',
-        //         'approval_level_id'     => '0'
-        //     ],
-        //     [
-        //         'right_name'            => 'View My Approved LPOS Pending Invoicing',
-        //         'operation_type'        => 'Read',
-        //         'operation_type_abbr'   => 'READ_LPO_8',
-        //         'entity'                => 'Lpo',
-        //         'at_status_id'          => '8',
-        //         'approval_level_id'     => '0'
-        //     ],
-        //     [
-        //         'right_name'            => 'View My LPOS With Invoice Matched & Accepted',
-        //         'operation_type'        => 'Read',
-        //         'operation_type_abbr'   => 'READ_LPO_9',
-        //         'entity'                => 'Lpo',
-        //         'at_status_id'          => '9',
-        //         'approval_level_id'     => '0'
-        //     ],
-        //     [
-        //         'right_name'            => 'View My LPOS Payment In Process',
-        //         'operation_type'        => 'Read',
-        //         'operation_type_abbr'   => 'READ_LPO_10',
-        //         'entity'                => 'Lpo',
-        //         'at_status_id'          => '10',
-        //         'approval_level_id'     => '0'
-        //     ],
-
-        //     [
-        //         'right_name'            => 'View My Cancelled LPOS',
-        //         'operation_type'        => 'Read',
-        //         'operation_type_abbr'   => 'READ_LPO_11',
-        //         'entity'                => 'Lpo',
-        //         'at_status_id'          => '11',
-        //         'approval_level_id'     => '0'
-        //     ],
-
-        //     [
-        //         'right_name'            => 'View My Rejected LPOS',
-        //         'operation_type'        => 'Read',
-        //         'operation_type_abbr'   => 'READ_LPO_12',
-        //         'entity'                => 'Lpo',
-        //         'at_status_id'          => '12',
-        //         'approval_level_id'     => '0'
-        //     ],
-
-        //     [
-        //         'right_name'            => 'View My LPOS Uploaded Pending Management Approval',
-        //         'operation_type'        => 'Read',
-        //         'operation_type_abbr'   => 'READ_LPO_13',
-        //         'entity'                => 'Lpo',
-        //         'at_status_id'          => '13',
-        //         'approval_level_id'     => '0'
-        //     ],
+            //viewing
+           [
+                'display_name'            => 'View All My LPOS',
+                'operation_type'        => 'Read',
+                'name'   => 'READ_LPO_-1',
+                'entity'                => 'Lpo',
+                'at_status_id'          => '-1',
+                'approval_level_id'     => '0'
+            ],
+            [
+                'display_name'            => 'View All LPOS',
+                'operation_type'        => 'Read',
+                'name'   => 'READ_LPO_-2',
+                'entity'                => 'Lpo',
+                'at_status_id'          => '-2',
+                'approval_level_id'     => '0'
+            ],
 
 
 
 
+            [
+                'display_name'            => 'View My LPOS Uploaded Pending Quotations',
+                'operation_type'        => 'Read',
+                'name'   => 'READ_LPO_1',
+                'entity'                => 'Lpo',
+                'at_status_id'          => '1',
+                'approval_level_id'     => '0'
+            ],
+            [
+                'display_name'            => 'View My LPOS Uploaded Pending Submission',
+                'operation_type'        => 'Read',
+                'name'   => 'READ_LPO_2',
+                'entity'                => 'Lpo',
+                'at_status_id'          => '2',
+                'approval_level_id'     => '0'
+            ],
+            [
+                'display_name'            => 'View My LPOS Uploaded Pending PM Approval',
+                'operation_type'        => 'Read',
+                'name'   => 'READ_LPO_3',
+                'entity'                => 'Lpo',
+                'at_status_id'          => '3',
+                'approval_level_id'     => '2'
+            ],
+            [
+                'display_name'            => 'View My LPOS Uploaded Pending Finance Approval',
+                'operation_type'        => 'Read',
+                'name'   => 'READ_LPO_4',
+                'entity'                => 'Lpo',
+                'at_status_id'          => '4',
+                'approval_level_id'     => '3'
+            ],
+            [
+                'display_name'            => 'View My LPOS Uploaded Pending Management Approval',
+                'operation_type'        => 'Read',
+                'name'   => 'READ_LPO_5',
+                'entity'                => 'Lpo',
+                'at_status_id'          => '5',
+                'approval_level_id'     => '4'
+            ],
+            [
+                'display_name'            => 'View My Approved LPOS Pending Dispatch',
+                'operation_type'        => 'Read',
+                'name'   => 'READ_LPO_6',
+                'entity'                => 'Lpo',
+                'at_status_id'          => '6',
+                'approval_level_id'     => '0'
+            ],
+            [
+                'display_name'            => 'View My Approved LPOS Pending Delivery',
+                'operation_type'        => 'Read',
+                'name'   => 'READ_LPO_7',
+                'entity'                => 'Lpo',
+                'at_status_id'          => '7',
+                'approval_level_id'     => '0'
+            ],
+            [
+                'display_name'            => 'View My Approved LPOS Pending Invoicing',
+                'operation_type'        => 'Read',
+                'name'   => 'READ_LPO_8',
+                'entity'                => 'Lpo',
+                'at_status_id'          => '8',
+                'approval_level_id'     => '0'
+            ],
+            [
+                'display_name'            => 'View My LPOS With Invoice Matched & Accepted',
+                'operation_type'        => 'Read',
+                'name'   => 'READ_LPO_9',
+                'entity'                => 'Lpo',
+                'at_status_id'          => '9',
+                'approval_level_id'     => '0'
+            ],
+            [
+                'display_name'            => 'View My LPOS Payment In Process',
+                'operation_type'        => 'Read',
+                'name'   => 'READ_LPO_10',
+                'entity'                => 'Lpo',
+                'at_status_id'          => '10',
+                'approval_level_id'     => '0'
+            ],
 
-        //     [
-        //         'right_name'            => 'Create LPO',
-        //         'operation_type'        => 'Create',
-        //         'operation_type_abbr'   => 'CREATE_LPO',
-        //         'entity'                => 'Lpo',
-        //         'at_status_id'          => '0',
-        //         'approval_level_id'     => '0'
-        //     ],
-        //     [
-        //         'right_name'            => 'Create LPO On Behalf of',
-        //         'operation_type'        => 'Create',
-        //         'operation_type_abbr'   => 'CREATE_LPO_OBO',
-        //         'entity'                => 'Lpo',
-        //         'at_status_id'          => '0',
-        //         'approval_level_id'     => '0'
-        //     ],
+            [
+                'display_name'            => 'View My Cancelled LPOS',
+                'operation_type'        => 'Read',
+                'name'   => 'READ_LPO_11',
+                'entity'                => 'Lpo',
+                'at_status_id'          => '11',
+                'approval_level_id'     => '0'
+            ],
+
+            [
+                'display_name'            => 'View My Rejected LPOS',
+                'operation_type'        => 'Read',
+                'name'   => 'READ_LPO_12',
+                'entity'                => 'Lpo',
+                'at_status_id'          => '12',
+                'approval_level_id'     => '0'
+            ],
+
+            [
+                'display_name'            => 'View My LPOS Uploaded Pending Management Approval',
+                'operation_type'        => 'Read',
+                'name'   => 'READ_LPO_13',
+                'entity'                => 'Lpo',
+                'at_status_id'          => '13',
+                'approval_level_id'     => '0'
+            ],
 
 
 
 
-        //     [
-        //         'right_name'            => 'Request LPO',
-        //         'operation_type'        => 'Update',
-        //         'operation_type_abbr'   => 'REQUEST_LPO',
-        //         'entity'                => 'Lpo',
-        //         'at_status_id'          => '2',
-        //         'approval_level_id'     => '0'
-        //     ],
-        //     [
-        //         'right_name'            => 'Request LPO On Behalf of',
-        //         'operation_type'        => 'Update',
-        //         'operation_type_abbr'   => 'REQUEST_LPO_OBO',
-        //         'entity'                => 'Lpo',
-        //         'at_status_id'          => '2',
-        //         'approval_level_id'     => '0'
-        //     ],
+
+            [
+                'display_name'            => 'Create LPO',
+                'operation_type'        => 'Create',
+                'name'   => 'CREATE_LPO',
+                'entity'                => 'Lpo',
+                'at_status_id'          => '0',
+                'approval_level_id'     => '0'
+            ],
+            [
+                'display_name'            => 'Create LPO On Behalf of',
+                'operation_type'        => 'Create',
+                'name'   => 'CREATE_LPO_OBO',
+                'entity'                => 'Lpo',
+                'at_status_id'          => '0',
+                'approval_level_id'     => '0'
+            ],
+
+
+
+
+            [
+                'display_name'            => 'Request LPO',
+                'operation_type'        => 'Update',
+                'name'   => 'REQUEST_LPO',
+                'entity'                => 'Lpo',
+                'at_status_id'          => '2',
+                'approval_level_id'     => '0'
+            ],
+            [
+                'display_name'            => 'Request LPO On Behalf of',
+                'operation_type'        => 'Update',
+                'name'   => 'REQUEST_LPO_OBO',
+                'entity'                => 'Lpo',
+                'at_status_id'          => '2',
+                'approval_level_id'     => '0'
+            ],
 
 
 
 
          
-        //    [
-        //         'right_name'            => 'Update All My LPOS',
-        //         'operation_type'        => 'Update',
-        //         'operation_type_abbr'   => 'UPDATE_LPO_-1',
-        //         'entity'                => 'Lpo',
-        //         'at_status_id'          => '-1',
-        //         'approval_level_id'     => '0'
-        //     ],
-        //     [
-        //         'right_name'            => 'Update All LPOS',
-        //         'operation_type'        => 'Update',
-        //         'operation_type_abbr'   => 'UPDATE_LPO_-2',
-        //         'entity'                => 'Lpo',
-        //         'at_status_id'          => '-2',
-        //         'approval_level_id'     => '0'
-        //     ],
+           [
+                'display_name'            => 'Update All My LPOS',
+                'operation_type'        => 'Update',
+                'name'   => 'UPDATE_LPO_-1',
+                'entity'                => 'Lpo',
+                'at_status_id'          => '-1',
+                'approval_level_id'     => '0'
+            ],
+            [
+                'display_name'            => 'Update All LPOS',
+                'operation_type'        => 'Update',
+                'name'   => 'UPDATE_LPO_-2',
+                'entity'                => 'Lpo',
+                'at_status_id'          => '-2',
+                'approval_level_id'     => '0'
+            ],
 
 
 
 
-        //     [
-        //         'right_name'            => 'Update My LPOS Uploaded Pending Quotations',
-        //         'operation_type'        => 'Update',
-        //         'operation_type_abbr'   => 'UPDATE_LPO_1',
-        //         'entity'                => 'Lpo',
-        //         'at_status_id'          => '1',
-        //         'approval_level_id'     => '0'
-        //     ],
-        //     [
-        //         'right_name'            => 'Update My LPOS Uploaded Pending Submission',
-        //         'operation_type'        => 'Update',
-        //         'operation_type_abbr'   => 'UPDATE_LPO_2',
-        //         'entity'                => 'Lpo',
-        //         'at_status_id'          => '2',
-        //         'approval_level_id'     => '0'
-        //     ],
-        //     [
-        //         'right_name'            => 'Update My LPOS Uploaded Pending PM Approval',
-        //         'operation_type'        => 'Update',
-        //         'operation_type_abbr'   => 'UPDATE_LPO_3',
-        //         'entity'                => 'Lpo',
-        //         'at_status_id'          => '3',
-        //         'approval_level_id'     => '2'
-        //     ],
-        //     [
-        //         'right_name'            => 'Update My LPOS Uploaded Pending Finance Approval',
-        //         'operation_type'        => 'Update',
-        //         'operation_type_abbr'   => 'UPDATE_LPO_4',
-        //         'entity'                => 'Lpo',
-        //         'at_status_id'          => '4',
-        //         'approval_level_id'     => '3'
-        //     ],
-        //     [
-        //         'right_name'            => 'Update My LPOS Uploaded Pending Management Approval',
-        //         'operation_type'        => 'Update',
-        //         'operation_type_abbr'   => 'UPDATE_LPO_5',
-        //         'entity'                => 'Lpo',
-        //         'at_status_id'          => '5',
-        //         'approval_level_id'     => '4'
-        //     ],
-        //     [
-        //         'right_name'            => 'Update My Approved LPOS Pending Dispatch',
-        //         'operation_type'        => 'Update',
-        //         'operation_type_abbr'   => 'UPDATE_LPO_6',
-        //         'entity'                => 'Lpo',
-        //         'at_status_id'          => '6',
-        //         'approval_level_id'     => '0'
-        //     ],
-        //     [
-        //         'right_name'            => 'Update My Approved LPOS Pending Delivery',
-        //         'operation_type'        => 'Update',
-        //         'operation_type_abbr'   => 'UPDATE_LPO_7',
-        //         'entity'                => 'Lpo',
-        //         'at_status_id'          => '7',
-        //         'approval_level_id'     => '0'
-        //     ],
-        //     [
-        //         'right_name'            => 'Update My Approved LPOS Pending Invoicing',
-        //         'operation_type'        => 'Update',
-        //         'operation_type_abbr'   => 'UPDATE_LPO_8',
-        //         'entity'                => 'Lpo',
-        //         'at_status_id'          => '8',
-        //         'approval_level_id'     => '0'
-        //     ],
-        //     [
-        //         'right_name'            => 'Update My LPOS With Invoice Matched & Accepted',
-        //         'operation_type'        => 'Update',
-        //         'operation_type_abbr'   => 'UPDATE_LPO_9',
-        //         'entity'                => 'Lpo',
-        //         'at_status_id'          => '9',
-        //         'approval_level_id'     => '0'
-        //     ],
-        //     [
-        //         'right_name'            => 'Update My LPOS Payment In Process',
-        //         'operation_type'        => 'Update',
-        //         'operation_type_abbr'   => 'UPDATE_LPO_10',
-        //         'entity'                => 'Lpo',
-        //         'at_status_id'          => '10',
-        //         'approval_level_id'     => '0'
-        //     ],
+            [
+                'display_name'            => 'Update My LPOS Uploaded Pending Quotations',
+                'operation_type'        => 'Update',
+                'name'   => 'UPDATE_LPO_1',
+                'entity'                => 'Lpo',
+                'at_status_id'          => '1',
+                'approval_level_id'     => '0'
+            ],
+            [
+                'display_name'            => 'Update My LPOS Uploaded Pending Submission',
+                'operation_type'        => 'Update',
+                'name'   => 'UPDATE_LPO_2',
+                'entity'                => 'Lpo',
+                'at_status_id'          => '2',
+                'approval_level_id'     => '0'
+            ],
+            [
+                'display_name'            => 'Update My LPOS Uploaded Pending PM Approval',
+                'operation_type'        => 'Update',
+                'name'   => 'UPDATE_LPO_3',
+                'entity'                => 'Lpo',
+                'at_status_id'          => '3',
+                'approval_level_id'     => '2'
+            ],
+            [
+                'display_name'            => 'Update My LPOS Uploaded Pending Finance Approval',
+                'operation_type'        => 'Update',
+                'name'   => 'UPDATE_LPO_4',
+                'entity'                => 'Lpo',
+                'at_status_id'          => '4',
+                'approval_level_id'     => '3'
+            ],
+            [
+                'display_name'            => 'Update My LPOS Uploaded Pending Management Approval',
+                'operation_type'        => 'Update',
+                'name'   => 'UPDATE_LPO_5',
+                'entity'                => 'Lpo',
+                'at_status_id'          => '5',
+                'approval_level_id'     => '4'
+            ],
+            [
+                'display_name'            => 'Update My Approved LPOS Pending Dispatch',
+                'operation_type'        => 'Update',
+                'name'   => 'UPDATE_LPO_6',
+                'entity'                => 'Lpo',
+                'at_status_id'          => '6',
+                'approval_level_id'     => '0'
+            ],
+            [
+                'display_name'            => 'Update My Approved LPOS Pending Delivery',
+                'operation_type'        => 'Update',
+                'name'   => 'UPDATE_LPO_7',
+                'entity'                => 'Lpo',
+                'at_status_id'          => '7',
+                'approval_level_id'     => '0'
+            ],
+            [
+                'display_name'            => 'Update My Approved LPOS Pending Invoicing',
+                'operation_type'        => 'Update',
+                'name'   => 'UPDATE_LPO_8',
+                'entity'                => 'Lpo',
+                'at_status_id'          => '8',
+                'approval_level_id'     => '0'
+            ],
+            [
+                'display_name'            => 'Update My LPOS With Invoice Matched & Accepted',
+                'operation_type'        => 'Update',
+                'name'   => 'UPDATE_LPO_9',
+                'entity'                => 'Lpo',
+                'at_status_id'          => '9',
+                'approval_level_id'     => '0'
+            ],
+            [
+                'display_name'            => 'Update My LPOS Payment In Process',
+                'operation_type'        => 'Update',
+                'name'   => 'UPDATE_LPO_10',
+                'entity'                => 'Lpo',
+                'at_status_id'          => '10',
+                'approval_level_id'     => '0'
+            ],
 
-        //     [
-        //         'right_name'            => 'Update My Cancelled LPOS',
-        //         'operation_type'        => 'Update',
-        //         'operation_type_abbr'   => 'UPDATE_LPO_11',
-        //         'entity'                => 'Lpo',
-        //         'at_status_id'          => '11',
-        //         'approval_level_id'     => '0'
-        //     ],
+            [
+                'display_name'            => 'Update My Cancelled LPOS',
+                'operation_type'        => 'Update',
+                'name'   => 'UPDATE_LPO_11',
+                'entity'                => 'Lpo',
+                'at_status_id'          => '11',
+                'approval_level_id'     => '0'
+            ],
 
-        //     [
-        //         'right_name'            => 'Update My Rejected LPOS',
-        //         'operation_type'        => 'Update',
-        //         'operation_type_abbr'   => 'UPDATE_LPO_12',
-        //         'entity'                => 'Lpo',
-        //         'at_status_id'          => '12',
-        //         'approval_level_id'     => '0'
-        //     ],
+            [
+                'display_name'            => 'Update My Rejected LPOS',
+                'operation_type'        => 'Update',
+                'name'   => 'UPDATE_LPO_12',
+                'entity'                => 'Lpo',
+                'at_status_id'          => '12',
+                'approval_level_id'     => '0'
+            ],
 
-        //     [
-        //         'right_name'            => 'Update My LPOS Uploaded Pending Management Approval',
-        //         'operation_type'        => 'Update',
-        //         'operation_type_abbr'   => 'UPDATE_LPO_13',
-        //         'entity'                => 'Lpo',
-        //         'at_status_id'          => '13',
-        //         'approval_level_id'     => '0'
-        //     ],
-
-
+            [
+                'display_name'            => 'Update My LPOS Uploaded Pending Management Approval',
+                'operation_type'        => 'Update',
+                'name'   => 'UPDATE_LPO_13',
+                'entity'                => 'Lpo',
+                'at_status_id'          => '13',
+                'approval_level_id'     => '0'
+            ],
 
 
-        //     [
-        //         'right_name'            => 'LPO PM Approval',
-        //         'operation_type'        => 'Approval',
-        //         'operation_type_abbr'   => 'Approve_LPO_4',
-        //         'entity'                => 'Lpo',
-        //         'at_status_id'          => '4',
-        //         'approval_level_id'     => '2'
-        //     ],
-        //     [
-        //         'right_name'            => 'LPO PM Approval',
-        //         'operation_type'        => 'Approval',
-        //         'operation_type_abbr'   => 'Approve_LPO_3',
-        //         'entity'                => 'Lpo',
-        //         'at_status_id'          => '3',
-        //         'approval_level_id'     => '2'
-        //     ],
-        //     [
-        //         'right_name'            => 'LPO Accountant Approval',
-        //         'operation_type'        => 'Approval',
-        //         'operation_type_abbr'   => 'Approve_LPO_13',
-        //         'entity'                => 'Lpo',
-        //         'at_status_id'          => '13',
-        //         'approval_level_id'     => '1'
-        //     ],
-        //     [
-        //         'right_name'            => 'LPO Finance Approval',
-        //         'operation_type'        => 'Approval',
-        //         'operation_type_abbr'   => 'Approve_LPO_4',
-        //         'entity'                => 'Lpo',
-        //         'at_status_id'          => '4',
-        //         'approval_level_id'     => '3'
-        //     ],
-        //     [
-        //         'right_name'            => 'LPO Management Approval',
-        //         'operation_type'        => 'Approval',
-        //         'operation_type_abbr'   => 'Approve_LPO_5',
-        //         'entity'                => 'Lpo',
-        //         'at_status_id'          => '5',
-        //         'approval_level_id'     => '4'
-        //     ]
-        // ]);
-        // echo "\n-----------------------------------------------------------------------------------------------------\n";
+
+
+            [
+                'display_name'            => 'LPO PM Approval',
+                'operation_type'        => 'Approval',
+                'name'   => 'APPROVE_LPO_3',
+                'entity'                => 'Lpo',
+                'at_status_id'          => '3',
+                'approval_level_id'     => '2'
+            ],
+            [
+                'display_name'            => 'LPO Accountant Approval',
+                'operation_type'        => 'Approval',
+                'name'   => 'APPROVE_LPO_13',
+                'entity'                => 'Lpo',
+                'at_status_id'          => '13',
+                'approval_level_id'     => '1'
+            ],
+            [
+                'display_name'            => 'LPO Finance Approval',
+                'operation_type'        => 'Approval',
+                'name'   => 'APPROVE_LPO_4',
+                'entity'                => 'Lpo',
+                'at_status_id'          => '4',
+                'approval_level_id'     => '3'
+            ],
+            [
+                'display_name'            => 'LPO Management Approval',
+                'operation_type'        => 'Approval',
+                'name'   => 'APPROVE_LPO_5',
+                'entity'                => 'Lpo',
+                'at_status_id'          => '5',
+                'approval_level_id'     => '4'
+            ]
+        ]);
+        echo "\n-----------------------------------------------------------------------------------------------------\n";
 
 
 
