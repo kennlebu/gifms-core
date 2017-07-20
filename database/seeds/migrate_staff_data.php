@@ -120,56 +120,6 @@ class migrate_staff_data extends Seeder
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         /**
          * 
          * 
@@ -290,8 +240,6 @@ class migrate_staff_data extends Seeder
 
 
 
-
-
         /**
          * 
          * 
@@ -299,153 +247,149 @@ class migrate_staff_data extends Seeder
          * 
          * 
          * 
-         *                 Permissions LPO
+         *                 Permissions Lpo
          * 
          * 
          * 
          * 
          * 
          */
-        echo "\nPermissions LPO -[ALL]---\n";
+        echo "\nPermissions Lpo -[ALL]---\n";
 
         DB::table('permissions')->insert([
 
             //viewing
            [
-                'display_name'            => 'View All My LPOS',
-                'operation_type'        => 'Read',
-                'name'   => 'READ_LPO_-1',
-                'entity'                => 'Lpo',
-                'at_status_id'          => '-1',
-                'approval_level_id'     => '0'
+                'display_name'              => 'View All My Lpos',
+                'operation_type'            => 'Read',
+                'name'                      => 'READ_LPO_-1',
+                'entity'                    => 'Lpo',
+                'at_status_id'              => '-1',
+                'approval_level_id'         => '0'
             ],
             [
-                'display_name'            => 'View All LPOS',
-                'operation_type'        => 'Read',
-                'name'   => 'READ_LPO_-2',
-                'entity'                => 'Lpo',
-                'at_status_id'          => '-2',
-                'approval_level_id'     => '0'
+                'display_name'              => 'View All Lpos',
+                'operation_type'            => 'Read',
+                'name'                      => 'READ_LPO_-2',
+                'entity'                    => 'Lpo',
+                'at_status_id'              => '-2',
+                'approval_level_id'         => '0'
             ],
+
 
 
 
-
             [
-                'display_name'            => 'View My LPOS Uploaded Pending Quotations',
-                'operation_type'        => 'Read',
-                'name'   => 'READ_LPO_1',
-                'entity'                => 'Lpo',
-                'at_status_id'          => '1',
-                'approval_level_id'     => '0'
+                'display_name'              => 'View My Lpos - Requested Pending Quotations',
+                'operation_type'            => 'Read',
+                'name'                      => 'READ_LPO_1',
+                'entity'                    => 'Lpo',
+                'at_status_id'              => '1',
+                'approval_level_id'         => '0'
             ],
             [
-                'display_name'            => 'View My LPOS Uploaded Pending Submission',
-                'operation_type'        => 'Read',
-                'name'   => 'READ_LPO_2',
-                'entity'                => 'Lpo',
-                'at_status_id'          => '2',
-                'approval_level_id'     => '0'
+                'display_name'              => 'View My Lpos - Request Uploaded Pending Submission',
+                'operation_type'            => 'Read',
+                'name'                      => 'READ_LPO_2',
+                'entity'                    => 'Lpo',
+                'at_status_id'              => '2',
+                'approval_level_id'         => '0'
             ],
             [
-                'display_name'            => 'View My LPOS Uploaded Pending PM Approval',
-                'operation_type'        => 'Read',
-                'name'   => 'READ_LPO_3',
-                'entity'                => 'Lpo',
-                'at_status_id'          => '3',
-                'approval_level_id'     => '2'
+                'display_name'              => 'View My Lpos - LPO Requested Pending PM Approval ',
+                'operation_type'            => 'Read',
+                'name'                      => 'READ_LPO_3',
+                'entity'                    => 'Lpo',
+                'at_status_id'              => '3',
+                'approval_level_id'         => '2'
             ],
             [
-                'display_name'            => 'View My LPOS Uploaded Pending Finance Approval',
-                'operation_type'        => 'Read',
-                'name'   => 'READ_LPO_4',
-                'entity'                => 'Lpo',
-                'at_status_id'          => '4',
-                'approval_level_id'     => '3'
+                'display_name'              => 'View My Lpos - Pending Finance Approval',
+                'operation_type'            => 'Read',
+                'name'                      => 'READ_LPO_4',
+                'entity'                    => 'Lpo',
+                'at_status_id'              => '4',
+                'approval_level_id'         => '3'
             ],
             [
-                'display_name'            => 'View My LPOS Uploaded Pending Management Approval',
-                'operation_type'        => 'Read',
-                'name'   => 'READ_LPO_5',
-                'entity'                => 'Lpo',
-                'at_status_id'          => '5',
-                'approval_level_id'     => '4'
+                'display_name'              => 'View My Lpos - Pending Management Approval',
+                'operation_type'            => 'Read',
+                'name'                      => 'READ_LPO_5',
+                'entity'                    => 'Lpo',
+                'at_status_id'              => '5',
+                'approval_level_id'         => '4'
             ],
             [
-                'display_name'            => 'View My Approved LPOS Pending Dispatch',
-                'operation_type'        => 'Read',
-                'name'   => 'READ_LPO_6',
-                'entity'                => 'Lpo',
-                'at_status_id'          => '6',
-                'approval_level_id'     => '0'
+                'display_name'              => 'View My Lpos - Approved Pending Dispatch',
+                'operation_type'            => 'Read',
+                'name'                      => 'READ_LPO_6',
+                'entity'                    => 'Lpo',
+                'at_status_id'              => '6',
+                'approval_level_id'         => '0'
             ],
             [
-                'display_name'            => 'View My Approved LPOS Pending Delivery',
-                'operation_type'        => 'Read',
-                'name'   => 'READ_LPO_7',
-                'entity'                => 'Lpo',
-                'at_status_id'          => '7',
-                'approval_level_id'     => '0'
+                'display_name'              => 'View My Lpos - Dispatched Pending Delivery',
+                'operation_type'            => 'Read',
+                'name'                      => 'READ_LPO_7',
+                'entity'                    => 'Lpo',
+                'at_status_id'              => '7',
+                'approval_level_id'         => '0'
             ],
             [
-                'display_name'            => 'View My Approved LPOS Pending Invoicing',
-                'operation_type'        => 'Read',
-                'name'   => 'READ_LPO_8',
-                'entity'                => 'Lpo',
-                'at_status_id'          => '8',
-                'approval_level_id'     => '0'
+                'display_name'              => 'View My Lpos - Delivered Pending Invoicing',
+                'operation_type'            => 'Read',
+                'name'                      => 'READ_LPO_8',
+                'entity'                    => 'Lpo',
+                'at_status_id'              => '8',
+                'approval_level_id'         => '0'
             ],
             [
-                'display_name'            => 'View My LPOS With Invoice Matched & Accepted',
-                'operation_type'        => 'Read',
-                'name'   => 'READ_LPO_9',
-                'entity'                => 'Lpo',
-                'at_status_id'          => '9',
-                'approval_level_id'     => '0'
+                'display_name'              => 'View My Lpos - Invoice Matched & Accepted',
+                'operation_type'            => 'Read',
+                'name'                      => 'READ_LPO_9',
+                'entity'                    => 'Lpo',
+                'at_status_id'              => '9',
+                'approval_level_id'         => '0'
             ],
             [
-                'display_name'            => 'View My LPOS Payment In Process',
-                'operation_type'        => 'Read',
-                'name'   => 'READ_LPO_10',
-                'entity'                => 'Lpo',
-                'at_status_id'          => '10',
-                'approval_level_id'     => '0'
+                'display_name'              => 'View My Lpos - Payment In Process',
+                'operation_type'            => 'Read',
+                'name'                      => 'READ_LPO_10',
+                'entity'                    => 'Lpo',
+                'at_status_id'              => '10',
+                'approval_level_id'         => '0'
             ],
-
             [
-                'display_name'            => 'View My Cancelled LPOS',
-                'operation_type'        => 'Read',
-                'name'   => 'READ_LPO_11',
-                'entity'                => 'Lpo',
-                'at_status_id'          => '11',
-                'approval_level_id'     => '0'
+                'display_name'              => 'View My Lpos - Cancelled',
+                'operation_type'            => 'Read',
+                'name'                      => 'READ_LPO_11',
+                'entity'                    => 'Lpo',
+                'at_status_id'              => '11',
+                'approval_level_id'         => '0'
             ],
-
             [
-                'display_name'            => 'View My Rejected LPOS',
-                'operation_type'        => 'Read',
-                'name'   => 'READ_LPO_12',
-                'entity'                => 'Lpo',
-                'at_status_id'          => '12',
-                'approval_level_id'     => '0'
+                'display_name'              => 'View My Lpos - Rejected',
+                'operation_type'            => 'Read',
+                'name'                      => 'READ_LPO_12',
+                'entity'                    => 'Lpo',
+                'at_status_id'              => '12',
+                'approval_level_id'         => '0'
             ],
-
             [
-                'display_name'            => 'View My LPOS Uploaded Pending Accountant Approval',
-                'operation_type'        => 'Read',
-                'name'   => 'READ_LPO_13',
-                'entity'                => 'Lpo',
-                'at_status_id'          => '13',
-                'approval_level_id'     => '1'
+                'display_name'              => 'View My Lpos - LPO Requested Pending Accountant Approval',
+                'operation_type'            => 'Read',
+                'name'                      => 'READ_LPO_13',
+                'entity'                    => 'Lpo',
+                'at_status_id'              => '13',
+                'approval_level_id'         => '1'
             ],
-
             [
-                'display_name'            => 'View My LPOS Paid and Completed',
-                'operation_type'        => 'Read',
-                'name'   => 'READ_LPO_14',
-                'entity'                => 'Lpo',
-                'at_status_id'          => '14',
-                'approval_level_id'     => '0'
+                'display_name'              => 'View My Lpos - Paid and completed',
+                'operation_type'            => 'Read',
+                'name'                      => 'READ_LPO_14',
+                'entity'                    => 'Lpo',
+                'at_status_id'              => '14',
+                'approval_level_id'         => '0'
             ],
 
 
@@ -453,40 +397,40 @@ class migrate_staff_data extends Seeder
 
 
             [
-                'display_name'            => 'Create LPO',
-                'operation_type'        => 'Create',
-                'name'   => 'CREATE_LPO',
-                'entity'                => 'Lpo',
-                'at_status_id'          => '0',
-                'approval_level_id'     => '0'
+                'display_name'              => 'Create Lpo',
+                'operation_type'            => 'Create',
+                'name'                      => 'CREATE_LPO',
+                'entity'                    => 'Lpo',
+                'at_status_id'              => '0',
+                'approval_level_id'         => '0'
             ],
             [
-                'display_name'            => 'Create LPO On Behalf of',
-                'operation_type'        => 'Create',
-                'name'   => 'CREATE_LPO_OBO',
-                'entity'                => 'Lpo',
-                'at_status_id'          => '0',
-                'approval_level_id'     => '0'
+                'display_name'              => 'Create Lpo On Behalf of',
+                'operation_type'            => 'Create',
+                'name'                      => 'CREATE_LPO_OBO',
+                'entity'                    => 'Lpo',
+                'at_status_id'              => '0',
+                'approval_level_id'         => '0'
             ],
 
 
 
 
             [
-                'display_name'            => 'Request LPO',
-                'operation_type'        => 'Update',
-                'name'   => 'REQUEST_LPO',
-                'entity'                => 'Lpo',
-                'at_status_id'          => '2',
-                'approval_level_id'     => '0'
+                'display_name'              => 'Request Lpo',
+                'operation_type'            => 'Update',
+                'name'                      => 'REQUEST_LPO',
+                'entity'                    => 'Lpo',
+                'at_status_id'              => '2',
+                'approval_level_id'         => '0'
             ],
             [
-                'display_name'            => 'Request LPO On Behalf of',
-                'operation_type'        => 'Update',
-                'name'   => 'REQUEST_LPO_OBO',
-                'entity'                => 'Lpo',
-                'at_status_id'          => '2',
-                'approval_level_id'     => '0'
+                'display_name'              => 'Request Lpo On Behalf of',
+                'operation_type'            => 'Update',
+                'name'                      => 'REQUEST_LPO_OBO',
+                'entity'                    => 'Lpo',
+                'at_status_id'              => '2',
+                'approval_level_id'         => '0'
             ],
 
 
@@ -494,179 +438,299 @@ class migrate_staff_data extends Seeder
 
          
            [
-                'display_name'            => 'Update All My LPOS',
-                'operation_type'        => 'Update',
-                'name'   => 'UPDATE_LPO_-1',
-                'entity'                => 'Lpo',
-                'at_status_id'          => '-1',
-                'approval_level_id'     => '0'
+                'display_name'              => 'Update All My Lpos',
+                'operation_type'            => 'Update',
+                'name'                      => 'UPDATE_LPO_-1',
+                'entity'                    => 'Lpo',
+                'at_status_id'              => '-1',
+                'approval_level_id'         => '0'
             ],
             [
-                'display_name'            => 'Update All LPOS',
-                'operation_type'        => 'Update',
-                'name'   => 'UPDATE_LPO_-2',
-                'entity'                => 'Lpo',
-                'at_status_id'          => '-2',
-                'approval_level_id'     => '0'
-            ],
-
-
-
-
-            [
-                'display_name'            => 'Update My LPOS Uploaded Pending Quotations',
-                'operation_type'        => 'Update',
-                'name'   => 'UPDATE_LPO_1',
-                'entity'                => 'Lpo',
-                'at_status_id'          => '1',
-                'approval_level_id'     => '0'
-            ],
-            [
-                'display_name'            => 'Update My LPOS Uploaded Pending Submission',
-                'operation_type'        => 'Update',
-                'name'   => 'UPDATE_LPO_2',
-                'entity'                => 'Lpo',
-                'at_status_id'          => '2',
-                'approval_level_id'     => '0'
-            ],
-            [
-                'display_name'            => 'Update My LPOS Uploaded Pending PM Approval',
-                'operation_type'        => 'Update',
-                'name'   => 'UPDATE_LPO_3',
-                'entity'                => 'Lpo',
-                'at_status_id'          => '3',
-                'approval_level_id'     => '2'
-            ],
-            [
-                'display_name'            => 'Update My LPOS Uploaded Pending Finance Approval',
-                'operation_type'        => 'Update',
-                'name'   => 'UPDATE_LPO_4',
-                'entity'                => 'Lpo',
-                'at_status_id'          => '4',
-                'approval_level_id'     => '3'
-            ],
-            [
-                'display_name'            => 'Update My LPOS Uploaded Pending Management Approval',
-                'operation_type'        => 'Update',
-                'name'   => 'UPDATE_LPO_5',
-                'entity'                => 'Lpo',
-                'at_status_id'          => '5',
-                'approval_level_id'     => '4'
-            ],
-            [
-                'display_name'            => 'Update My Approved LPOS Pending Dispatch',
-                'operation_type'        => 'Update',
-                'name'   => 'UPDATE_LPO_6',
-                'entity'                => 'Lpo',
-                'at_status_id'          => '6',
-                'approval_level_id'     => '0'
-            ],
-            [
-                'display_name'            => 'Update My Approved LPOS Pending Delivery',
-                'operation_type'        => 'Update',
-                'name'   => 'UPDATE_LPO_7',
-                'entity'                => 'Lpo',
-                'at_status_id'          => '7',
-                'approval_level_id'     => '0'
-            ],
-            [
-                'display_name'            => 'Update My Approved LPOS Pending Invoicing',
-                'operation_type'        => 'Update',
-                'name'   => 'UPDATE_LPO_8',
-                'entity'                => 'Lpo',
-                'at_status_id'          => '8',
-                'approval_level_id'     => '0'
-            ],
-            [
-                'display_name'            => 'Update My LPOS With Invoice Matched & Accepted',
-                'operation_type'        => 'Update',
-                'name'   => 'UPDATE_LPO_9',
-                'entity'                => 'Lpo',
-                'at_status_id'          => '9',
-                'approval_level_id'     => '0'
-            ],
-            [
-                'display_name'            => 'Update My LPOS Payment In Process',
-                'operation_type'        => 'Update',
-                'name'   => 'UPDATE_LPO_10',
-                'entity'                => 'Lpo',
-                'at_status_id'          => '10',
-                'approval_level_id'     => '0'
-            ],
-
-            [
-                'display_name'            => 'Update My Cancelled LPOS',
-                'operation_type'        => 'Update',
-                'name'   => 'UPDATE_LPO_11',
-                'entity'                => 'Lpo',
-                'at_status_id'          => '11',
-                'approval_level_id'     => '0'
-            ],
-
-            [
-                'display_name'            => 'Update My Rejected LPOS',
-                'operation_type'        => 'Update',
-                'name'   => 'UPDATE_LPO_12',
-                'entity'                => 'Lpo',
-                'at_status_id'          => '12',
-                'approval_level_id'     => '0'
-            ],
-
-            [
-                'display_name'            => 'Update My LPOS Uploaded Pending Accountant Approval',
-                'operation_type'        => 'Update',
-                'name'   => 'UPDATE_LPO_13',
-                'entity'                => 'Lpo',
-                'at_status_id'          => '13',
-                'approval_level_id'     => '1'
-            ],
-
-            [
-                'display_name'            => 'Update My LPOS Paid and Completed',
-                'operation_type'        => 'Update',
-                'name'   => 'UPDATE_LPO_14',
-                'entity'                => 'Lpo',
-                'at_status_id'          => '14',
-                'approval_level_id'     => '0'
+                'display_name'              => 'Update All Lpos',
+                'operation_type'            => 'Update',
+                'name'                      => 'UPDATE_LPO_-2',
+                'entity'                    => 'Lpo',
+                'at_status_id'              => '-2',
+                'approval_level_id'         => '0'
             ],
 
 
 
 
             [
-                'display_name'            => 'LPO PM Approval',
-                'operation_type'        => 'Approval',
-                'name'   => 'APPROVE_LPO_3',
-                'entity'                => 'Lpo',
-                'at_status_id'          => '3',
-                'approval_level_id'     => '2'
+                'display_name'              => 'Update My Lpos - Requested Pending Quotations',
+                'operation_type'            => 'Update',
+                'name'                      => 'UPDATE_LPO_1',
+                'entity'                    => 'Lpo',
+                'at_status_id'              => '1',
+                'approval_level_id'         => '0'
             ],
             [
-                'display_name'            => 'LPO Accountant Approval',
-                'operation_type'        => 'Approval',
-                'name'   => 'APPROVE_LPO_13',
-                'entity'                => 'Lpo',
-                'at_status_id'          => '13',
-                'approval_level_id'     => '1'
+                'display_name'              => 'Update My Lpos - Request Uploaded Pending Submission',
+                'operation_type'            => 'Update',
+                'name'                      => 'UPDATE_LPO_2',
+                'entity'                    => 'Lpo',
+                'at_status_id'              => '2',
+                'approval_level_id'         => '0'
             ],
             [
-                'display_name'            => 'LPO Finance Approval',
-                'operation_type'        => 'Approval',
-                'name'   => 'APPROVE_LPO_4',
-                'entity'                => 'Lpo',
-                'at_status_id'          => '4',
-                'approval_level_id'     => '3'
+                'display_name'              => 'Update My Lpos - LPO Requested Pending PM Approval ',
+                'operation_type'            => 'Update',
+                'name'                      => 'UPDATE_LPO_3',
+                'entity'                    => 'Lpo',
+                'at_status_id'              => '3',
+                'approval_level_id'         => '2'
             ],
             [
-                'display_name'            => 'LPO Management Approval',
-                'operation_type'        => 'Approval',
-                'name'   => 'APPROVE_LPO_5',
-                'entity'                => 'Lpo',
-                'at_status_id'          => '5',
-                'approval_level_id'     => '4'
+                'display_name'              => 'Update My Lpos - Pending Finance Approval',
+                'operation_type'            => 'Update',
+                'name'                      => 'UPDATE_LPO_4',
+                'entity'                    => 'Lpo',
+                'at_status_id'              => '4',
+                'approval_level_id'         => '3'
+            ],
+            [
+                'display_name'              => 'Update My Lpos - Pending Management Approval',
+                'operation_type'            => 'Update',
+                'name'                      => 'UPDATE_LPO_5',
+                'entity'                    => 'Lpo',
+                'at_status_id'              => '5',
+                'approval_level_id'         => '4'
+            ],
+            [
+                'display_name'              => 'Update My Lpos - Approved Pending Dispatch',
+                'operation_type'            => 'Update',
+                'name'                      => 'UPDATE_LPO_6',
+                'entity'                    => 'Lpo',
+                'at_status_id'              => '6',
+                'approval_level_id'         => '0'
+            ],
+            [
+                'display_name'              => 'Update My Lpos - Dispatched Pending Delivery',
+                'operation_type'            => 'Update',
+                'name'                      => 'UPDATE_LPO_7',
+                'entity'                    => 'Lpo',
+                'at_status_id'              => '7',
+                'approval_level_id'         => '0'
+            ],
+            [
+                'display_name'              => 'Update My Lpos - Delivered Pending Invoicing',
+                'operation_type'            => 'Update',
+                'name'                      => 'UPDATE_LPO_8',
+                'entity'                    => 'Lpo',
+                'at_status_id'              => '8',
+                'approval_level_id'         => '0'
+            ],
+            [
+                'display_name'              => 'Update My Lpos - Invoice Matched & Accepted',
+                'operation_type'            => 'Update',
+                'name'                      => 'UPDATE_LPO_9',
+                'entity'                    => 'Lpo',
+                'at_status_id'              => '9',
+                'approval_level_id'         => '0'
+            ],
+            [
+                'display_name'              => 'Update My Lpos - Payment In Process',
+                'operation_type'            => 'Update',
+                'name'                      => 'UPDATE_LPO_10',
+                'entity'                    => 'Lpo',
+                'at_status_id'              => '10',
+                'approval_level_id'         => '0'
+            ],
+            [
+                'display_name'              => 'Update My Lpos - Cancelled',
+                'operation_type'            => 'Update',
+                'name'                      => 'UPDATE_LPO_11',
+                'entity'                    => 'Lpo',
+                'at_status_id'              => '11',
+                'approval_level_id'         => '0'
+            ],
+            [
+                'display_name'              => 'Update My Lpos - Rejected',
+                'operation_type'            => 'Update',
+                'name'                      => 'UPDATE_LPO_12',
+                'entity'                    => 'Lpo',
+                'at_status_id'              => '12',
+                'approval_level_id'         => '0'
+            ],
+            [
+                'display_name'              => 'Update My Lpos - LPO Requested Pending Accountant Approval',
+                'operation_type'            => 'Update',
+                'name'                      => 'UPDATE_LPO_13',
+                'entity'                    => 'Lpo',
+                'at_status_id'              => '13',
+                'approval_level_id'         => '1'
+            ],
+            [
+                'display_name'              => 'Update My Lpos - Paid and completed',
+                'operation_type'            => 'Update',
+                'name'                      => 'UPDATE_LPO_14',
+                'entity'                    => 'Lpo',
+                'at_status_id'              => '14',
+                'approval_level_id'         => '0'
+            ],
+
+
+
+
+            [
+                'display_name'              => 'Lpo PM Approval',
+                'operation_type'            => 'Approval',
+                'name'                      => 'APPROVE_LPO_3',
+                'entity'                    => 'Lpo',
+                'at_status_id'              => '3',
+                'approval_level_id'         => '2'
+            ],
+            [
+                'display_name'              => 'Lpo Accountant Approval',
+                'operation_type'            => 'Approval',
+                'name'                      => 'APPROVE_LPO_13',
+                'entity'                    => 'Lpo',
+                'at_status_id'              => '13',
+                'approval_level_id'         => '1'
+            ],
+            [
+                'display_name'              => 'Lpo Finance Approval',
+                'operation_type'            => 'Approval',
+                'name'                      => 'APPROVE_LPO_4',
+                'entity'                    => 'Lpo',
+                'at_status_id'              => '4',
+                'approval_level_id'         => '3'
+            ],
+            [
+                'display_name'              => 'Lpo Management Approval',
+                'operation_type'            => 'Approval',
+                'name'                      => 'APPROVE_LPO_5',
+                'entity'                    => 'Lpo',
+                'at_status_id'              => '5',
+                'approval_level_id'         => '4'
+            ],
+
+
+
+
+
+
+
+
+            [
+                'display_name'              => 'Delete My Lpos - Requested Pending Quotations',
+                'operation_type'            => 'Delete',
+                'name'                      => 'DELETE_LPO_1',
+                'entity'                    => 'Lpo',
+                'at_status_id'              => '1',
+                'approval_level_id'         => '0'
+            ],
+            [
+                'display_name'              => 'Delete My Lpos - Request Uploaded Pending Submission',
+                'operation_type'            => 'Delete',
+                'name'                      => 'DELETE_LPO_2',
+                'entity'                    => 'Lpo',
+                'at_status_id'              => '2',
+                'approval_level_id'         => '0'
+            ],
+            [
+                'display_name'              => 'Delete My Lpos - LPO Requested Pending PM Approval ',
+                'operation_type'            => 'Delete',
+                'name'                      => 'DELETE_LPO_3',
+                'entity'                    => 'Lpo',
+                'at_status_id'              => '3',
+                'approval_level_id'         => '2'
+            ],
+            [
+                'display_name'              => 'Delete My Lpos - Pending Finance Approval',
+                'operation_type'            => 'Delete',
+                'name'                      => 'DELETE_LPO_4',
+                'entity'                    => 'Lpo',
+                'at_status_id'              => '4',
+                'approval_level_id'         => '3'
+            ],
+            [
+                'display_name'              => 'Delete My Lpos - Pending Management Approval',
+                'operation_type'            => 'Delete',
+                'name'                      => 'DELETE_LPO_5',
+                'entity'                    => 'Lpo',
+                'at_status_id'              => '5',
+                'approval_level_id'         => '4'
+            ],
+            [
+                'display_name'              => 'Delete My Lpos - Approved Pending Dispatch',
+                'operation_type'            => 'Delete',
+                'name'                      => 'DELETE_LPO_6',
+                'entity'                    => 'Lpo',
+                'at_status_id'              => '6',
+                'approval_level_id'         => '0'
+            ],
+            [
+                'display_name'              => 'Delete My Lpos - Dispatched Pending Delivery',
+                'operation_type'            => 'Delete',
+                'name'                      => 'DELETE_LPO_7',
+                'entity'                    => 'Lpo',
+                'at_status_id'              => '7',
+                'approval_level_id'         => '0'
+            ],
+            [
+                'display_name'              => 'Delete My Lpos - Delivered Pending Invoicing',
+                'operation_type'            => 'Delete',
+                'name'                      => 'DELETE_LPO_8',
+                'entity'                    => 'Lpo',
+                'at_status_id'              => '8',
+                'approval_level_id'         => '0'
+            ],
+            [
+                'display_name'              => 'Delete My Lpos - Invoice Matched & Accepted',
+                'operation_type'            => 'Delete',
+                'name'                      => 'DELETE_LPO_9',
+                'entity'                    => 'Lpo',
+                'at_status_id'              => '9',
+                'approval_level_id'         => '0'
+            ],
+            [
+                'display_name'              => 'Delete My Lpos - Payment In Process',
+                'operation_type'            => 'Delete',
+                'name'                      => 'DELETE_LPO_10',
+                'entity'                    => 'Lpo',
+                'at_status_id'              => '10',
+                'approval_level_id'         => '0'
+            ],
+            [
+                'display_name'              => 'Delete My Lpos - Cancelled',
+                'operation_type'            => 'Delete',
+                'name'                      => 'DELETE_LPO_11',
+                'entity'                    => 'Lpo',
+                'at_status_id'              => '11',
+                'approval_level_id'         => '0'
+            ],
+            [
+                'display_name'              => 'Delete My Lpos - Rejected',
+                'operation_type'            => 'Delete',
+                'name'                      => 'DELETE_LPO_12',
+                'entity'                    => 'Lpo',
+                'at_status_id'              => '12',
+                'approval_level_id'         => '0'
+            ],
+            [
+                'display_name'              => 'Delete My Lpos - LPO Requested Pending Accountant Approval',
+                'operation_type'            => 'Delete',
+                'name'                      => 'DELETE_LPO_13',
+                'entity'                    => 'Lpo',
+                'at_status_id'              => '13',
+                'approval_level_id'         => '1'
+            ],
+            [
+                'display_name'              => 'Delete My Lpos - Paid and completed',
+                'operation_type'            => 'Delete',
+                'name'                      => 'DELETE_LPO_14',
+                'entity'                    => 'Lpo',
+                'at_status_id'              => '14',
+                'approval_level_id'         => '0'
             ]
+
+
+
         ]);
         echo "\n-----------------------------------------------------------------------------------------------------\n";
+
 
 
 
@@ -1100,9 +1164,137 @@ class migrate_staff_data extends Seeder
                 'entity'                    => 'Invoice',
                 'at_status_id'              => '5',
                 'approval_level_id'         => '4'
+            ],
+
+
+
+
+            [
+                'display_name'              => 'Delete My Invoices - Allocated Pending PM Approval',
+                'operation_type'            => 'Delete',
+                'name'                      => 'DELETE_INVOICE_1',
+                'entity'                    => 'Invoice',
+                'at_status_id'              => '1',
+                'approval_level_id'         => '2'
+            ],
+            [
+                'display_name'              => 'Delete My Invoices - Allocated Pending Finance Approval',
+                'operation_type'            => 'Delete',
+                'name'                      => 'DELETE_INVOICE_2',
+                'entity'                    => 'Invoice',
+                'at_status_id'              => '2',
+                'approval_level_id'         => '3'
+            ],
+            [
+                'display_name'              => 'Delete My Invoices - Approved by Finance Pending Management Approval',
+                'operation_type'            => 'Delete',
+                'name'                      => 'DELETE_INVOICE_3',
+                'entity'                    => 'Invoice',
+                'at_status_id'              => '3',
+                'approval_level_id'         => '4'
+            ],
+            [
+                'display_name'              => 'Delete My Invoices - Approved by Director Pending Finance CSV Creation',
+                'operation_type'            => 'Delete',
+                'name'                      => 'DELETE_INVOICE_4',
+                'entity'                    => 'Invoice',
+                'at_status_id'              => '4',
+                'approval_level_id'         => '3'
+            ],
+            [
+                'display_name'              => 'Delete My Invoices - CSV Generated for Upload',
+                'operation_type'            => 'Delete',
+                'name'                      => 'DELETE_INVOICE_5',
+                'entity'                    => 'Invoice',
+                'at_status_id'              => '5',
+                'approval_level_id'         => '0'
+            ],
+            [
+                'display_name'              => 'Delete My Invoices - CSV At Office Admin/Accounts for Upload',
+                'operation_type'            => 'Delete',
+                'name'                      => 'DELETE_INVOICE_6',
+                'entity'                    => 'Invoice',
+                'at_status_id'              => '6',
+                'approval_level_id'         => '0'
+            ],
+            [
+                'display_name'              => 'Delete My Invoices - CSV Uploaded to Bank',
+                'operation_type'            => 'Delete',
+                'name'                      => 'DELETE_INVOICE_7',
+                'entity'                    => 'Invoice',
+                'at_status_id'              => '7',
+                'approval_level_id'         => '0'
+            ],
+            [
+                'display_name'              => 'Delete My Invoices - Paid',
+                'operation_type'            => 'Delete',
+                'name'                      => 'DELETE_INVOICE_8',
+                'entity'                    => 'Invoice',
+                'at_status_id'              => '8',
+                'approval_level_id'         => '0'
+            ],
+            [
+                'display_name'              => 'Delete My Invoices - Rejected',
+                'operation_type'            => 'Delete',
+                'name'                      => 'DELETE_INVOICE_9',
+                'entity'                    => 'Invoice',
+                'at_status_id'              => '9',
+                'approval_level_id'         => '0'
+            ],
+            [
+                'display_name'              => 'Delete My Invoices - Uploaded Pending Submission',
+                'operation_type'            => 'Delete',
+                'name'                      => 'DELETE_INVOICE_10',
+                'entity'                    => 'Invoice',
+                'at_status_id'              => '10',
+                'approval_level_id'         => '0'
+            ],
+            [
+                'display_name'              => 'Delete My Invoices - Received pending upload',
+                'operation_type'            => 'Delete',
+                'name'                      => 'DELETE_INVOICE_11',
+                'entity'                    => 'Invoice',
+                'at_status_id'              => '11',
+                'approval_level_id'         => '0'
+            ],
+            [
+                'display_name'              => 'Delete My Invoices - Allocated Pending Accountant Approval',
+                'operation_type'            => 'Delete',
+                'name'                      => 'DELETE_INVOICE_12',
+                'entity'                    => 'Invoice',
+                'at_status_id'              => '12',
+                'approval_level_id'         => '1'
             ]
         ]);
         echo "\n-----------------------------------------------------------------------------------------------------\n";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1480,36 +1672,93 @@ class migrate_staff_data extends Seeder
                 'entity'                    => 'Claim',
                 'at_status_id'              => '5',
                 'approval_level_id'         => '4'
+            ],
+
+
+
+
+            [
+                'display_name'              => 'Delete My Claims - Compiled Pending Submission',
+                'operation_type'            => 'Delete',
+                'name'                      => 'DELETE_CLAIM_1',
+                'entity'                    => 'Claim',
+                'at_status_id'              => '1',
+                'approval_level_id'         => '0'
+            ],
+            [
+                'display_name'              => 'Delete My Claims - Submitted Pending PM Approval',
+                'operation_type'            => 'Delete',
+                'name'                      => 'DELETE_CLAIM_2',
+                'entity'                    => 'Claim',
+                'at_status_id'              => '2',
+                'approval_level_id'         => '2'
+            ],
+            [
+                'display_name'              => 'Delete My Claims - Approved by PM Pending Finance Approval',
+                'operation_type'            => 'Delete',
+                'name'                      => 'DELETE_CLAIM_3',
+                'entity'                    => 'Claim',
+                'at_status_id'              => '3',
+                'approval_level_id'         => '3'
+            ],
+            [
+                'display_name'              => 'Delete My Claims - Approved by Finance Pending Directors Approval',
+                'operation_type'            => 'Delete',
+                'name'                      => 'DELETE_CLAIM_4',
+                'entity'                    => 'Claim',
+                'at_status_id'              => '4',
+                'approval_level_id'         => '4'
+            ],
+            [
+                'display_name'              => 'Delete My Claims - Approved by Director Pending Payment',
+                'operation_type'            => 'Delete',
+                'name'                      => 'DELETE_CLAIM_5',
+                'entity'                    => 'Claim',
+                'at_status_id'              => '5',
+                'approval_level_id'         => '0'
+            ],
+            [
+                'display_name'              => 'Delete My Claims - CSV Generated for Payment',
+                'operation_type'            => 'Delete',
+                'name'                      => 'DELETE_CLAIM_6',
+                'entity'                    => 'Claim',
+                'at_status_id'              => '6',
+                'approval_level_id'         => '0'
+            ],
+            [
+                'display_name'              => 'Delete My Claims - Uploaded to Bank And Paid',
+                'operation_type'            => 'Delete',
+                'name'                      => 'DELETE_CLAIM_7',
+                'entity'                    => 'Claim',
+                'at_status_id'              => '7',
+                'approval_level_id'         => '0'
+            ],
+            [
+                'display_name'              => 'Delete My Claims - Verified, Documented and Archived',
+                'operation_type'            => 'Delete',
+                'name'                      => 'DELETE_CLAIM_8',
+                'entity'                    => 'Claim',
+                'at_status_id'              => '8',
+                'approval_level_id'         => '0'
+            ],
+            [
+                'display_name'              => 'Delete My Claims - Rejected',
+                'operation_type'            => 'Delete',
+                'name'                      => 'DELETE_CLAIM_9',
+                'entity'                    => 'Claim',
+                'at_status_id'              => '9',
+                'approval_level_id'         => '0'
+            ],
+            [
+                'display_name'              => 'Delete My Claims - Pending Accountant Approval',
+                'operation_type'            => 'Delete',
+                'name'                      => 'DELETE_CLAIM_10',
+                'entity'                    => 'Claim',
+                'at_status_id'              => '10',
+                'approval_level_id'         => '1'
             ]
         ]);
         echo "\n-----------------------------------------------------------------------------------------------------\n";
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -1935,44 +2184,117 @@ class migrate_staff_data extends Seeder
                 'entity'                    => 'MobilePayment',
                 'at_status_id'              => '5',
                 'approval_level_id'         => '4'
+            ],
+
+
+
+
+            [
+                'display_name'              => 'Delete My Mobile Payments - Mobile Payment Requested Pending Submission',
+                'operation_type'            => 'Delete',
+                'name'                      => 'DELETE_MOBILE_PAYMENT_1',
+                'entity'                    => 'MobilePayment',
+                'at_status_id'              => '1',
+                'approval_level_id'         => '0'
+            ],
+            [
+                'display_name'              => 'Delete My Mobile Payments - Mobile Payment Requested Pending PM Approval',
+                'operation_type'            => 'Delete',
+                'name'                      => 'DELETE_MOBILE_PAYMENT_2',
+                'entity'                    => 'MobilePayment',
+                'at_status_id'              => '2',
+                'approval_level_id'         => '2'
+            ],
+            [
+                'display_name'              => 'Delete My Mobile Payments - Approved By PM Pending Finance Approval',
+                'operation_type'            => 'Delete',
+                'name'                      => 'DELETE_MOBILE_PAYMENT_3',
+                'entity'                    => 'MobilePayment',
+                'at_status_id'              => '3',
+                'approval_level_id'         => '3'
+            ],
+            [
+                'display_name'              => 'Delete My Mobile Payments - Approved by Management And Sent',
+                'operation_type'            => 'Delete',
+                'name'                      => 'DELETE_MOBILE_PAYMENT_4',
+                'entity'                    => 'MobilePayment',
+                'at_status_id'              => '4',
+                'approval_level_id'         => '0'
+            ],
+            [
+                'display_name'              => 'Delete My Mobile Payments - Pending Documentation & Verification',
+                'operation_type'            => 'Delete',
+                'name'                      => 'DELETE_MOBILE_PAYMENT_5',
+                'entity'                    => 'MobilePayment',
+                'at_status_id'              => '5',
+                'approval_level_id'         => '0'
+            ],
+            [
+                'display_name'              => 'Delete My Mobile Payments - Verified, Documented and Archived',
+                'operation_type'            => 'Delete',
+                'name'                      => 'DELETE_MOBILE_PAYMENT_6',
+                'entity'                    => 'MobilePayment',
+                'at_status_id'              => '6',
+                'approval_level_id'         => '0'
+            ],
+            [
+                'display_name'              => 'Delete My Mobile Payments - Rejected',
+                'operation_type'            => 'Delete',
+                'name'                      => 'DELETE_MOBILE_PAYMENT_7',
+                'entity'                    => 'MobilePayment',
+                'at_status_id'              => '7',
+                'approval_level_id'         => '0'
+            ],
+            [
+                'display_name'              => 'Delete My Mobile Payments - Approved by Finance Pending Management Approval',
+                'operation_type'            => 'Delete',
+                'name'                      => 'DELETE_MOBILE_PAYMENT_8',
+                'entity'                    => 'MobilePayment',
+                'at_status_id'              => '8',
+                'approval_level_id'         => '4'
+            ],
+            [
+                'display_name'              => 'Delete My Mobile Payments - Mobile Payment Requested Pending Accountant Approval',
+                'operation_type'            => 'Delete',
+                'name'                      => 'DELETE_MOBILE_PAYMENT_9',
+                'entity'                    => 'MobilePayment',
+                'at_status_id'              => '9',
+                'approval_level_id'         => '1'
+            ],
+            [
+                'display_name'              => 'Delete My Mobile Payments - Rejected by bank Awaiting Accountant Confirmation',
+                'operation_type'            => 'Delete',
+                'name'                      => 'DELETE_MOBILE_PAYMENT_10',
+                'entity'                    => 'MobilePayment',
+                'at_status_id'              => '10',
+                'approval_level_id'         => '1'
+            ],
+            [
+                'display_name'              => 'Delete My Mobile Payments - Rejected By Bank Awaiting Corrections',
+                'operation_type'            => 'Delete',
+                'name'                      => 'DELETE_MOBILE_PAYMENT_11',
+                'entity'                    => 'MobilePayment',
+                'at_status_id'              => '11',
+                'approval_level_id'         => '0'
+            ],
+            [
+                'display_name'              => 'Delete My Mobile Payments - Corrected Awaiting Accountant Approval',
+                'operation_type'            => 'Delete',
+                'name'                      => 'DELETE_MOBILE_PAYMENT_12',
+                'entity'                    => 'MobilePayment',
+                'at_status_id'              => '12',
+                'approval_level_id'         => '1'
+            ],
+            [
+                'display_name'              => 'Delete My Mobile Payments - Corrected And Resent to Bank',
+                'operation_type'            => 'Delete',
+                'name'                      => 'DELETE_MOBILE_PAYMENT_13',
+                'entity'                    => 'MobilePayment',
+                'at_status_id'              => '13',
+                'approval_level_id'         => '0'
             ]
         ]);
         echo "\n-----------------------------------------------------------------------------------------------------\n";
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -2163,7 +2485,7 @@ class migrate_staff_data extends Seeder
             [
                 'display_name'              => 'Create Advance',
                 'operation_type'            => 'Create',
-                'name'                      => 'CREATE_ADVANCE_',
+                'name'                      => 'CREATE_ADVANCE',
                 'entity'                    => 'Advance',
                 'at_status_id'              => '0',
                 'approval_level_id'         => '0'
@@ -2360,6 +2682,114 @@ class migrate_staff_data extends Seeder
                 'entity'                    => 'Advance',
                 'at_status_id'              => '5',
                 'approval_level_id'         => '4'
+            ],
+
+
+
+
+            [
+                'display_name'              => 'Delete My Advances - Requested Pending Submission',
+                'operation_type'            => 'Delete',
+                'name'                      => 'DELETE_ADVANCE_1',
+                'entity'                    => 'Advance',
+                'at_status_id'              => '1',
+                'approval_level_id'         => '0'
+            ],
+            [
+                'display_name'              => 'Delete My Advances - Requested Pending PM Approval',
+                'operation_type'            => 'Delete',
+                'name'                      => 'DELETE_ADVANCE_2',
+                'entity'                    => 'Advance',
+                'at_status_id'              => '2',
+                'approval_level_id'         => '2'
+            ],
+            [
+                'display_name'              => 'Delete My Advances - Pending Finance Approval',
+                'operation_type'            => 'Delete',
+                'name'                      => 'DELETE_ADVANCE_3',
+                'entity'                    => 'Advance',
+                'at_status_id'              => '3',
+                'approval_level_id'         => '3'
+            ],
+            [
+                'display_name'              => 'Delete My Advances - Approved by Director',
+                'operation_type'            => 'Delete',
+                'name'                      => 'DELETE_ADVANCE_4',
+                'entity'                    => 'Advance',
+                'at_status_id'              => '4',
+                'approval_level_id'         => '0'
+            ],
+            [
+                'display_name'              => 'Delete My Advances - CSV Generated for Upload',
+                'operation_type'            => 'Delete',
+                'name'                      => 'DELETE_ADVANCE_5',
+                'entity'                    => 'Advance',
+                'at_status_id'              => '5',
+                'approval_level_id'         => '0'
+            ],
+            [
+                'display_name'              => 'Delete My Advances - Issued & Paid',
+                'operation_type'            => 'Delete',
+                'name'                      => 'DELETE_ADVANCE_6',
+                'entity'                    => 'Advance',
+                'at_status_id'              => '6',
+                'approval_level_id'         => '0'
+            ],
+            [
+                'display_name'              => 'Delete My Advances - Open',
+                'operation_type'            => 'Delete',
+                'name'                      => 'DELETE_ADVANCE_7',
+                'entity'                    => 'Advance',
+                'at_status_id'              => '7',
+                'approval_level_id'         => '0'
+            ],
+            [
+                'display_name'              => 'Delete My Advances - Submitted Pending Approval By PM',
+                'operation_type'            => 'Delete',
+                'name'                      => 'DELETE_ADVANCE_8',
+                'entity'                    => 'Advance',
+                'at_status_id'              => '8',
+                'approval_level_id'         => '0'
+            ],
+            [
+                'display_name'              => 'Delete My Advances - Submitted Pending Directors Approval ',
+                'operation_type'            => 'Delete',
+                'name'                      => 'DELETE_ADVANCE_9',
+                'entity'                    => 'Advance',
+                'at_status_id'              => '9',
+                'approval_level_id'         => '4'
+            ],
+            [
+                'display_name'              => 'Delete My Advances - Reconciled',
+                'operation_type'            => 'Delete',
+                'name'                      => 'DELETE_ADVANCE_10',
+                'entity'                    => 'Advance',
+                'at_status_id'              => '10',
+                'approval_level_id'         => '0'
+            ],
+            [
+                'display_name'              => 'Delete My Advances - Rejected',
+                'operation_type'            => 'Delete',
+                'name'                      => 'DELETE_ADVANCE_11',
+                'entity'                    => 'Advance',
+                'at_status_id'              => '11',
+                'approval_level_id'         => '0'
+            ],
+            [
+                'display_name'              => 'Delete My Advances - Pending Management Approval',
+                'operation_type'            => 'Delete',
+                'name'                      => 'DELETE_ADVANCE_12',
+                'entity'                    => 'Advance',
+                'at_status_id'              => '12',
+                'approval_level_id'         => '4'
+            ],
+            [
+                'display_name'              => 'Delete My Advances - Pending Accountant Approval',
+                'operation_type'            => 'Delete',
+                'name'                      => 'DELETE_ADVANCE_13',
+                'entity'                    => 'Advance',
+                'at_status_id'              => '13',
+                'approval_level_id'         => '1'
             ]
         ]);
         echo "\n-----------------------------------------------------------------------------------------------------\n";
@@ -2404,6 +2834,125 @@ class migrate_staff_data extends Seeder
 
 
 
+
+
+
+
+
+
+
+        /**
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         *                 Permissions Lookup data
+         * 
+         * 
+         * 
+         * 
+         * 
+         */
+        echo "\nPermissions Lookup data -[ALL]---\n";
+
+        DB::table('permissions')->insert([
+
+            //generel lookup data
+
+            [
+                'display_name'              => 'View Lookup Data',
+                'operation_type'            => 'Read',
+                'name'                      => 'READ_LOOKUP_DATA',
+                'entity'                    => 'lookup',
+                'at_status_id'              => '1',
+                'approval_level_id'         => '0'
+            ],
+            [
+                'display_name'              => 'Create Lookup Data',
+                'operation_type'            => 'Create',
+                'name'                      => 'CREATE_LOOKUP_DATA',
+                'entity'                    => 'lookup',
+                'at_status_id'              => '0',
+                'approval_level_id'         => '0'
+            ],
+            [
+                'display_name'              => 'Update Lookup Data',
+                'operation_type'            => 'Update',
+                'name'                      => 'UPDATE_LOOKUP_DATA',
+                'entity'                    => 'lookup',
+                'at_status_id'              => '0',
+                'approval_level_id'         => '0'
+            ],
+            [
+                'display_name'              => 'Delete Lookup Data',
+                'operation_type'            => 'Delete',
+                'name'                      => 'DELETE_LOOKUP_DATA',
+                'entity'                    => 'lookup',
+                'at_status_id'              => '0',
+                'approval_level_id'         => '0'
+            ],
+
+
+
+            [
+                'display_name'              => 'Create Suppliers Data',
+                'operation_type'            => 'Create',
+                'name'                      => 'CREATE_SUPPLIERS_DATA',
+                'entity'                    => 'lookup',
+                'at_status_id'              => '0',
+                'approval_level_id'         => '0'
+            ],
+            [
+                'display_name'              => 'Update Suppliers Data',
+                'operation_type'            => 'Update',
+                'name'                      => 'UPDATE_SUPPLIERS_DATA',
+                'entity'                    => 'lookup',
+                'at_status_id'              => '0',
+                'approval_level_id'         => '0'
+            ],
+            [
+                'display_name'              => 'Delete Suppliers Data',
+                'operation_type'            => 'Delete',
+                'name'                      => 'DELETE_SUPPLIERS_DATA',
+                'entity'                    => 'lookup',
+                'at_status_id'              => '0',
+                'approval_level_id'         => '0'
+            ]
+        ]);
+        echo "\n-----------------------------------------------------------------------------------------------------\n";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         $data = DB::table('permissions')->get();
 
         $data_to_migrate=array();
@@ -2412,19 +2961,12 @@ class migrate_staff_data extends Seeder
 
         foreach ($data as $key => $value) {
 
-            // $data_to_migrate[$key]['city_name']      = $data[$key]['City'];
-            // $data_to_migrate[$key]['migration_id']      = $data[$key]['CityIDD'];
-
             $permision = Permission::findOrFail($value['id']);
             $s_admin->attachPermission($permision);
-
-
 
             echo "\n Permissions-$key---";
             echo $data[$key]['display_name'];
         }
-        
-        // DB::table('cities')->insert($data_to_migrate);
         
         echo "\n migrate super admin permissions------------------------------------------------------------------------------\n";
 
