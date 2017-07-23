@@ -350,6 +350,15 @@ class PaymentApi extends Controller
 
         }
 
+        //limit
+        if(array_key_exists('limit', $input)){
+
+
+            $qb->limit($input['limit']);
+
+
+        }
+
 
 
 
