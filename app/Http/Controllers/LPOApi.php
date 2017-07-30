@@ -573,7 +573,9 @@ class LPOApi extends Controller
             $del = (int) $input['with_no_deliveries'];
 
             if($del==1){
-                $qb->rightJoin('deliveries', 'lpos.id', '<>', 'deliveries.lpo_id');
+                $qb->leftJoin('deliveries', 'lpos.id', '=', 'deliveries.lpo_id');
+                $qb->whereNull('deliveries.lpo_id');
+                $qb->orderBy('lpos.id', 'desc');
                 $qb->select('lpos.*');
             }
 
@@ -585,7 +587,9 @@ class LPOApi extends Controller
             $inv = (int) $input['with_no_invoices'];
 
             if($inv==1){
-                $qb->rightJoin('invoices', 'lpos.id', '<>', 'invoices.lpo_id');
+                $qb->leftJoin('invoices', 'lpos.id', '=', 'invoices.lpo_id');
+                $qb->whereNull('invoices.lpo_id');
+                $qb->orderBy('lpos.id', 'desc');
                 $qb->select('lpos.*');
             }
 
