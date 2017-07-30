@@ -553,6 +553,43 @@ class LPOApi extends Controller
 
         }
 
+        //migrated
+        if(array_key_exists('migrated', $input)){
+
+            $mig = (int) $input['migrated'];
+
+            if($mig==1){
+                $qb->where('migration_id', '<', 1);
+            }else if($mig==0){
+                $qb->where('migration_id', '>', 0);
+            }
+
+
+        }
+
+        //with_no_deliveries
+        if(array_key_exists('with_no_deliveries', $input)){
+
+            $del = (int) $input['with_no_deliveries'];
+
+            if($del==1){
+                $qb->rightJoin('deliveries', 'lpo.id', '<>', 'deliveries.lpo_id');
+            }
+
+        }
+
+        //with_no_invoices
+        if(array_key_exists('with_no_invoices', $input)){
+
+            $inv = (int) $input['with_no_invoices'];
+
+            if($inv==1){
+                $qb->rightJoin('invoices', 'lpo.id', '<>', 'invoices.lpo_id');
+            }
+
+
+        }
+
 
 
         if(array_key_exists('datatables', $input)){
