@@ -517,10 +517,10 @@ class InvoiceApi extends Controller
 
             $mig = (int) $input['migrated'];
 
-            if($mig==1){
-                $qb->where('migration_id', '<', 1);
-            }else if($mig==0){
-                $qb->where('migration_id', '>', 0);
+            if($mig==0){
+                $qb->whereNull('migration_id');
+            }else if($mig==1){
+                $qb->whereNotNull('migration_id');
             }
 
 

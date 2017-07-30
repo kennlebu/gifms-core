@@ -484,7 +484,7 @@ class LPOApi extends Controller
         //query builder
         $qb = DB::table('lpos');
 
-        $qb->whereNull('deleted_at');
+        $qb->whereNull('lpos.deleted_at');
 
         $response;
         $response_dt;
@@ -504,10 +504,10 @@ class LPOApi extends Controller
             $status_ = (int) $input['status'];
 
             if($status_ >-1){
-                $qb->where('status_id', $input['status']);
-                $qb->where('requested_by_id',$this->current_user()->id);
+                $qb->where('lpos.status_id', $input['status']);
+                $qb->where('lpos.requested_by_id',$this->current_user()->id);
             }elseif ($status_==-1) {
-                $qb->where('requested_by_id',$this->current_user()->id);
+                $qb->where('lpos.requested_by_id',$this->current_user()->id);
             }elseif ($status_==-2) {
                 
             }
@@ -525,10 +525,10 @@ class LPOApi extends Controller
         if(array_key_exists('searchval', $input)){
             $qb->where(function ($query) use ($input) {
                 
-                $query->orWhere('id','like', '\'%' . $input['searchval']. '%\'');
-                $query->orWhere('ref','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('expense_desc','like', '\'%' . $input['searchval']. '%\'');
-                $query->orWhere('expense_purpose','like', '\'%' . $input['searchval']. '%\'');
+                $query->orWhere('lpos.id','like', '\'%' . $input['searchval']. '%\'');
+                $query->orWhere('lpos.ref','like', '\'%' . $input['search']['value']. '%\'');
+                $query->orWhere('lpos.expense_desc','like', '\'%' . $input['searchval']. '%\'');
+                $query->orWhere('lpos.expense_purpose','like', '\'%' . $input['searchval']. '%\'');
 
             });
 
@@ -558,10 +558,10 @@ class LPOApi extends Controller
 
             $mig = (int) $input['migrated'];
 
-            if($mig==1){
-                $qb->where('migration_id', '<', 1);
-            }else if($mig==0){
-                $qb->where('migration_id', '>', 0);
+            if($mig==0){
+                $qb->whereNull('migration_id');
+            }else if($mig==1){
+                $qb->whereNotNull('migration_id');
             }
 
 
@@ -573,7 +573,8 @@ class LPOApi extends Controller
             $del = (int) $input['with_no_deliveries'];
 
             if($del==1){
-                $qb->rightJoin('deliveries', 'lpo.id', '<>', 'deliveries.lpo_id');
+                $qb->rightJoin('deliveries', 'lpos.id', '<>', 'deliveries.lpo_id');
+                $qb->select('lpos.*');
             }
 
         }
@@ -584,7 +585,8 @@ class LPOApi extends Controller
             $inv = (int) $input['with_no_invoices'];
 
             if($inv==1){
-                $qb->rightJoin('invoices', 'lpo.id', '<>', 'invoices.lpo_id');
+                $qb->rightJoin('invoices', 'lpos.id', '<>', 'invoices.lpo_id');
+                $qb->select('lpos.*');
             }
 
 
@@ -597,10 +599,10 @@ class LPOApi extends Controller
             //searching
             $qb->where(function ($query) use ($input) {
                 
-                $query->orWhere('id','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('ref','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('expense_desc','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('expense_purpose','like', '\'%' . $input['search']['value']. '%\'');
+                $query->orWhere('lpos.id','like', '\'%' . $input['search']['value']. '%\'');
+                $query->orWhere('lpos.ref','like', '\'%' . $input['search']['value']. '%\'');
+                $query->orWhere('lpos.expense_desc','like', '\'%' . $input['search']['value']. '%\'');
+                $query->orWhere('lpos.expense_purpose','like', '\'%' . $input['search']['value']. '%\'');
 
             });
 
