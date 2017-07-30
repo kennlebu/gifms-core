@@ -512,6 +512,20 @@ class InvoiceApi extends Controller
 
         }
 
+        //migrated
+        if(array_key_exists('migrated', $input)){
+
+            $mig = (int) $input['migrated'];
+
+            if($mig==1){
+                $qb->where('migration_id', '<', 1);
+            }else if($mig==0){
+                $qb->where('migration_id', '>', 0);
+            }
+
+
+        }
+
 
 
 
