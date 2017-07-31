@@ -392,7 +392,6 @@ class LPOApi extends Controller
      */
     public function getDocumentById($lpo_id)
     {   
-        try{
             $lpo   = Lpo::findOrFail($lpo_id);
 
             $data = array(
@@ -416,15 +415,16 @@ class LPOApi extends Controller
             $response->header('Content-Type', 'application/pdf');
 
             return $response;
-        }catch (Exception $e ){            
+        // try{
+        // }catch (Exception $e ){            
 
-            $response       = Response::make("", 200);
+        //     $response       = Response::make("", 200);
 
-            $response->header('Content-Type', 'application/pdf');
+        //     $response->header('Content-Type', 'application/pdf');
 
-            return $response;  
+        //     return $response;  
 
-        }
+        // }
 
     }
 
