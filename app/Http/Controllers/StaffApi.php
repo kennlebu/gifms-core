@@ -295,7 +295,7 @@ class StaffApi extends Controller
             ->get();
         }
 
-        $data    = $this->append_relationships_objects($data);
+        $response    = $this->append_relationships_objects($response);
 
 
         return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
