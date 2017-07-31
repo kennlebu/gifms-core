@@ -295,7 +295,37 @@ class StaffApi extends Controller
             ->get();
         }
 
+        $data    = $this->append_relationships_objects($data);
 
-          return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+
+        return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+    }
+
+
+
+
+
+
+
+
+
+
+
+    public function append_relationships_objects($data = array()){
+
+        // print_r($data);
+
+        foreach ($data as $key => $value) {
+
+            $staff = Staff::find($data[$key]['id']);
+
+            $data[$key]['roles']                   = $staff->roles;
+
+        }
+
+
+        return $data;
+
+
     }
 }

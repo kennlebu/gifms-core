@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use JWTAuth;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Exceptions\JWTException;
+use App\Models\StaffModels\Staff;
 
 class ApiAuthController extends Controller{
 
@@ -124,7 +125,9 @@ class ApiAuthController extends Controller{
     }
 
     // the token is valid and we have found the user via the sub claim
+
+    $user = Staff::with(['roles'])->find($user['id']);
     
     return response()->json(compact('user'));
-}
+  }
 }
