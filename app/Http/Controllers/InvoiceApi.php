@@ -113,9 +113,9 @@ class InvoiceApi extends Controller
 
             if($invoice->save()) {
 
-                FTP::connection()->makeDir('./invoice/'.$invoice->id);
-                FTP::connection()->makeDir('./invoice/'.$invoice->id);
-                FTP::connection()->uploadFile($file->getPathname(), './invoice/'.$invoice->id.'/'.$invoice->id.'.'.$file->getClientOriginalExtension());
+                FTP::connection()->makeDir('./invoices/'.$invoice->id);
+                FTP::connection()->makeDir('./invoices/'.$invoice->id);
+                FTP::connection()->uploadFile($file->getPathname(), './invoices/'.$invoice->id.'/'.$invoice->id.'.'.$file->getClientOriginalExtension());
 
                 $invoice->invoice_document           =   $invoice->id.'.'.$file->getClientOriginalExtension();
                 $invoice->ref                        = "CHAI/INV/#$invoice->id/".date_format($invoice->created_at,"Y/m/d");
