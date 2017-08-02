@@ -18,6 +18,10 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\InvoicesModels\Invoice;
+use Anchu\Ftp\Facades\Ftp;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Response;
 
 class InvoiceApi extends Controller
 {
@@ -62,19 +66,68 @@ class InvoiceApi extends Controller
      */
     public function addInvoice()
     {
-        $input = Request::all();
 
-        //path params validation
+        // $input = Request::all();
+
+        $invoice = new Invoice;
 
 
-        //not path params validation
-        if (!isset($input['body'])) {
-            throw new \InvalidArgumentException('Missing the required parameter $body when calling addInvoice');
+        try{
+
+
+            $form = Request::only(
+                'raised_by_id',
+                'expense_desc',
+                'expense_purpose',
+                'invoice_date',
+                'lpo_id',
+                'supplier_id',
+                'project_id',
+                'project_manager_id',
+                'currency_id',
+                'file'
+                );
+
+
+            // FTP::connection()->changeDir('./lpos');
+
+            $ftp = FTP::connection()->getDirListing();
+
+            // print_r($form['file']);
+
+            $file = $form['file'];
+
+
+            $invoice->raised_by_id                      =   (int)       $form['raised_by_id'];
+            $invoice->expense_desc                      =               $form['expense_desc'];
+            $invoice->expense_purpose                   =               $form['expense_purpose'];
+            $invoice->invoice_date                      =               $form['invoice_date'];
+            $invoice->lpo_id                            =   (int)       $form['lpo_id'];
+            $invoice->supplier_id                       =   (int)       $form['supplier_id'];
+            // $invoice->project_id                        =   (int)       $form['project_id'];
+            $invoice->project_manager_id                =   (int)       $form['project_manager_id'];
+            $invoice->currency_id                       =   (int)       $form['currency_id'];
+
+
+            if($invoice->save()) {
+
+                FTP::connection()->makeDir('./invoice/'.$invoice->id);
+                FTP::connection()->makeDir('./invoice/'.$invoice->id);
+                FTP::connection()->uploadFile($file->getPathname(), './invoice/'.$invoice->id.'/'.$invoice->id.'.'.$file->getClientOriginalExtension());
+
+                $invoice->invoice_document                   =   $invoice->id.'.'.$file->getClientOriginalExtension();
+                $invoice->save();
+                
+                return Response()->json(array('success' => 'Invoice Added','invoice' => $invoice), 200);
+            }
+
+
+        }catch (JWTException $e){
+
+            return response()->json(['error'=>'You are not Authenticated'], 500);
+
         }
-        $body = $input['body'];
 
-
-        return response('How about implementing addInvoice as a POST method ?');
     }
 
 
