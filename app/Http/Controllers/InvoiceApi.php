@@ -82,8 +82,8 @@ class InvoiceApi extends Controller
                 'invoice_date',
                 'lpo_id',
                 'supplier_id',
-                'project_id',
                 'project_manager_id',
+                'total',
                 'currency_id',
                 'file'
                 );
@@ -104,9 +104,11 @@ class InvoiceApi extends Controller
             $invoice->invoice_date                      =               $form['invoice_date'];
             $invoice->lpo_id                            =   (int)       $form['lpo_id'];
             $invoice->supplier_id                       =   (int)       $form['supplier_id'];
-            // $invoice->project_id                        =   (int)       $form['project_id'];
             $invoice->project_manager_id                =   (int)       $form['project_manager_id'];
+            $invoice->total                             =   (double)    $form['total'];
             $invoice->currency_id                       =   (int)       $form['currency_id'];
+
+            $invoice->status_id                         =   10;
 
 
             if($invoice->save()) {
@@ -115,7 +117,8 @@ class InvoiceApi extends Controller
                 FTP::connection()->makeDir('./invoice/'.$invoice->id);
                 FTP::connection()->uploadFile($file->getPathname(), './invoice/'.$invoice->id.'/'.$invoice->id.'.'.$file->getClientOriginalExtension());
 
-                $invoice->invoice_document                   =   $invoice->id.'.'.$file->getClientOriginalExtension();
+                $invoice->invoice_document           =   $invoice->id.'.'.$file->getClientOriginalExtension();
+                $invoice->ref                        = "CHAI/INV/#$invoice->id/".date_format($invoice->created_at,"Y/m/d");
                 $invoice->save();
                 
                 return Response()->json(array('success' => 'Invoice Added','invoice' => $invoice), 200);

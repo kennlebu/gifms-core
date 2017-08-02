@@ -18,6 +18,10 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\ClaimsModels\Claim;
+use Anchu\Ftp\Facades\Ftp;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Response;
 
 class ClaimApi extends Controller
 {
@@ -38,19 +42,66 @@ class ClaimApi extends Controller
      */
     public function addClaim()
     {
-        $input = Request::all();
-
-        //path params validation
 
 
-        //not path params validation
-        if (!isset($input['body'])) {
-            throw new \InvalidArgumentException('Missing the required parameter $body when calling addClaim');
+        // $input = Request::all();
+
+        $claim = new Claim;
+
+
+        try{
+
+
+            $form = Request::only(
+                'requested_by_id',
+                'expense_desc',
+                'expense_purpose',
+                'project_manager_id',
+                'total',
+                'currency_id',
+                'file'
+                );
+
+
+            // FTP::connection()->changeDir('./lpos');
+
+            $ftp = FTP::connection()->getDirListing();
+
+            // print_r($form['file']);
+
+            $file = $form['file'];
+
+
+            $claim->requested_by_id                   =   (int)       $form['requested_by_id'];
+            $claim->expense_desc                      =               $form['expense_desc'];
+            $claim->expense_purpose                   =               $form['expense_purpose'];
+            $claim->project_manager_id                =   (int)       $form['project_manager_id'];
+            $claim->total                             =   (double)    $form['total'];
+            $claim->currency_id                       =   (int)       $form['currency_id'];           
+
+            $claim->status_id                         =   1;
+
+
+            if($claim->save()) {
+
+                FTP::connection()->makeDir('./claim/'.$claim->id);
+                FTP::connection()->makeDir('./claim/'.$claim->id);
+                FTP::connection()->uploadFile($file->getPathname(), './claim/'.$claim->id.'/'.$claim->id.'.'.$file->getClientOriginalExtension());
+
+                $claim->claim_document           =   $claim->id.'.'.$file->getClientOriginalExtension();
+                $claim->ref                        = "CHAI/CLM/#$claim->id/".date_format($claim->created_at,"Y/m/d");
+                $claim->save();
+                
+                return Response()->json(array('success' => 'Claim Added','claim' => $claim), 200);
+            }
+
+
+        }catch (JWTException $e){
+
+            return response()->json(['error'=>'You are not Authenticated'], 500);
+
         }
-        $body = $input['body'];
 
-
-        return response('How about implementing addClaim as a POST method ?');
     }
 
 
