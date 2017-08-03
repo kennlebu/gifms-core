@@ -77,8 +77,6 @@ class MigrateFiles extends Command
             if ($value["invoice_document"]!='') {
 
 
-
-
                 FTP::connection()->makeDir("./$invoice_folder/".$value["id"]);
                 FTP::connection()->makeDir("./$invoice_folder/".$value["id"]);
                 $file_contents   =   FTP::connection("connection_migration")
@@ -120,8 +118,6 @@ class MigrateFiles extends Command
             if ($value["claim_document"]!='') {
 
 
-
-
                 FTP::connection()->makeDir("./$claim_folder/".$value["id"]);
                 FTP::connection()->makeDir("./$claim_folder/".$value["id"]);
                 $file_contents   =   FTP::connection("connection_migration")
@@ -134,6 +130,47 @@ class MigrateFiles extends Command
                 FTP::connection()->uploadFile(storage_path("app/$claim_folder"."/".$value["claim_document"]), './claims/'.$value["id"].'/'.$value["claim_document"]);
 
                 echo "Claim Document ---------- ".$value["id"]."------".$value["claim_document"]."\n";
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        //lpo_quotations
+        $lpo_quotations               =   LpoQuotation::all();
+        $lpo_quotation_mig_folder     =   "quotations";
+        $lpo_quotation_folder         =   "lpo_quotations";
+
+        foreach ($lpo_quotations as $key => $value) {
+            if ($value["quotation_doc"]!=''&&$value["lpo_id"]!='' ) {
+
+
+                FTP::connection()->makeDir("./lpos/".$value["lpo_id"]."/quotations/".$value["id"]);
+                FTP::connection()->makeDir("./lpos/".$value["lpo_id"]."/quotations/".$value["id"]);
+                $file_contents   =   FTP::connection("connection_migration")
+                                    ->readFile("$lpo_quotation_mig_folder"."/".$value["quotation_doc"]);
+
+                Storage::put("$lpo_quotation_folder"."/".$value["quotation_doc"], $file_contents);
+
+                // echo storage_path("$lpo_quotation_folder"."/".$value["quotation_doc"])."\n";
+
+                FTP::connection()->uploadFile(storage_path("app/$lpo_quotation_folder"."/".$value["quotation_doc"]), './lpos/'.$value["lpo_id"].'/quotations/'.$value["id"].'/'.$value["quotation_doc"]);
+
+                echo "LpoQuotation Document -----lpo-".$value["lpo_id"]."----- ".$value["id"]."------".$value["quotation_doc"]."\n";
             }
         }
 
