@@ -18,6 +18,10 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\MobilePaymentModels\MobilePayment;
+use Anchu\Ftp\Facades\Ftp;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Response;
 
 class MobilePaymentApi extends Controller
 {
@@ -283,6 +287,152 @@ class MobilePaymentApi extends Controller
 
         return response('How about implementing approve as a PATCH method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /**
+     * Operation allocateMobilePayment
+     *
+     * Allocate mobile_payment by ID.
+     *
+     * @param int $mobile_payment_id ID of mobile_payment to return object (required)
+     *
+     * @return Http response
+     */
+    public function allocateMobilePayment($mobile_payment_id)
+    {
+        $input = Request::all();
+
+        //path params validation
+
+
+        //not path params validation
+
+        return response('How about implementing allocateMobilePayment as a PATCH method ?');
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /**
+     * Operation getDocumentById
+     *
+     * get mobile_payment document by ID.
+     *
+     * @param int $mobile_payment_id ID of mobile_payment to return object (required)
+     *
+     * @return Http response
+     */
+    public function getDocumentById($mobile_payment_id)
+    {
+        $input = Request::all();
+
+        //path params validation
+
+
+        //not path params validation
+
+        return response('How about implementing getDocumentById as a GET method ?');
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /**
+     * Operation getAttendanceSheetById
+     *
+     * get mobile_payment attendance sheet by ID.
+     *
+     * @param int $mobile_payment_id ID of mobile_payment to return object (required)
+     *
+     * @return Http response
+     */
+    public function getAttendanceSheetById($mobile_payment_id)
+    {
+
+        try{
+
+
+            $mobile_payment      = MobilePayment::findOrFail($mobile_payment_id);
+
+            $path           = './mobile_payments/'.$mobile_payment->id.'/signsheet/'.$mobile_payment->attendance_sheet;
+
+            $path_info      = pathinfo($path);
+
+            $ext            = $path_info['extension'];
+
+            $basename       = $path_info['basename'];
+
+            $file_contents  = FTP::connection()->readFile($path);
+
+            Storage::put('signsheets/'.$mobile_payment->id.'.temp', $file_contents);
+
+            $url            = storage_path("app/signsheets/".$mobile_payment->id.'.temp');
+
+            $file           = File::get($url);
+
+            $response       = Response::make($file, 200);
+
+            $response->header('Content-Type', $this->get_mime_type($basename));
+
+            return $response;  
+        }catch (Exception $e ){            
+
+            $response       = Response::make("", 200);
+
+            $response->header('Content-Type', 'application/pdf');
+
+            return $response;  
+
+        }
+    }
+
 
 
 

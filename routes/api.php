@@ -1648,6 +1648,27 @@ Route::PATCH('/mobile_payment/{mobile_payment_id}/submit_for_approval', 'MobileP
 
  */
 Route::GET('/mobile_payments', 'MobilePaymentApi@mobilePaymentsGet')->middleware('jwt.auth');
+/**
+ * PATCH allocateMobilePayment
+ * Summary: Allocate mobile_payment by ID
+ * Notes: Allocate Mobile Payment
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PATCH('/mobile_payment/{mobile_payment_id}/allocate', 'MobilePaymentApi@allocateMobilePayment')->middleware('jwt.auth');
+/**
+ * GET getDocumentById
+ * Summary: get mobile_payment document by ID
+ * Notes: get Mobile Payment Document
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/mobile_payment/{mobile_payment_id}/get_document', 'MobilePaymentApi@getDocumentById')->middleware('jwt.auth');
+/**
+ * GET getAttendanceSheetById
+ * Summary: get mobile_payment document by ID
+ * Notes: get Mobile Payment Attendance Sheet
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/mobile_payment/{mobile_payment_id}/get_attendance_sheet', 'MobilePaymentApi@getAttendanceSheetById')->middleware('jwt.auth');
 
 
 
