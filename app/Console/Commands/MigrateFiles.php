@@ -170,7 +170,51 @@ class MigrateFiles extends Command
 
                 FTP::connection()->uploadFile(storage_path("app/$lpo_quotation_folder"."/".$value["quotation_doc"]), './lpos/'.$value["lpo_id"].'/quotations/'.$value["id"].'/'.$value["quotation_doc"]);
 
-                echo "LpoQuotation Document -----lpo-".$value["lpo_id"]."----- ".$value["id"]."------".$value["quotation_doc"]."\n";
+                echo "Lpo Quotation Document -----lpo-".$value["lpo_id"]."----- ".$value["id"]."------".$value["quotation_doc"]."\n";
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        //mobile_payments
+        $mobile_payments               =   MobilePayment::all();
+        $mobile_payment_mig_folder     =   "signsheets";
+        $mobile_payment_folder         =   "mobile_payments";
+
+        foreach ($mobile_payments as $key => $value) {
+            if ($value["attendance_sheet"]!='') {
+
+
+                FTP::connection()->makeDir("./$mobile_payment_folder/".$value["id"]."/signsheet/");
+                FTP::connection()->makeDir("./$mobile_payment_folder/".$value["id"]."/signsheet/");
+                $file_contents   =   FTP::connection("connection_migration")
+                                    ->readFile("$mobile_payment_mig_folder"."/".$value["attendance_sheet"]);
+
+                Storage::put("$mobile_payment_folder"."/".$value["attendance_sheet"], $file_contents);
+
+                // echo storage_path("$mobile_payment_folder"."/".$value["attendance_sheet"])."\n";
+
+                // FTP::connection()->uploadFile(storage_path("app/$mobile_payment_folder"."/".$value["attendance_sheet"]), './mobile_payments/'.$value["id"].'/'.$value["attendance_sheet"]);
+
+
+                FTP::connection()->uploadFile(storage_path("app/$mobile_payment_folder"."/".$value["attendance_sheet"]), './mobile_payments/'.$value["id"].'/signsheet/'.$value["attendance_sheet"]);
+
+                echo "Mobile Payments Signsheet ---------- ".$value["id"]."------".$value["attendance_sheet"]."\n";
             }
         }
 
