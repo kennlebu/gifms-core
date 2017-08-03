@@ -209,9 +209,6 @@ class MigrateFiles extends Command
 
                 // echo storage_path("$mobile_payment_folder"."/".$value["attendance_sheet"])."\n";
 
-                // FTP::connection()->uploadFile(storage_path("app/$mobile_payment_folder"."/".$value["attendance_sheet"]), './mobile_payments/'.$value["id"].'/'.$value["attendance_sheet"]);
-
-
                 FTP::connection()->uploadFile(storage_path("app/$mobile_payment_folder"."/".$value["attendance_sheet"]), './mobile_payments/'.$value["id"].'/signsheet/'.$value["attendance_sheet"]);
 
                 echo "Mobile Payments Signsheet ---------- ".$value["id"]."------".$value["attendance_sheet"]."\n";
