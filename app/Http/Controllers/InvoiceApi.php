@@ -406,14 +406,42 @@ class InvoiceApi extends Controller
      */
     public function getDocumentById($invoice_id)
     {
-        $input = Request::all();
 
-        //path params validation
+        try{
 
 
-        //not path params validation
+            $invoice      = Invoice::findOrFail($invoice_id);
 
-        return response('How about implementing getDocumentById as a GET method ?');
+            $path           = './invoices/'.$invoice->id.'/'.$invoice->invoice_document;
+
+            $path_info      = pathinfo($path);
+
+            $ext            = $path_info['extension'];
+
+            $basename       = $path_info['basename'];
+
+            $file_contents  = FTP::connection()->readFile($path);
+
+            Storage::put('invoices/'.$invoice->id.'.temp', $file_contents);
+
+            $url            = storage_path("app/invoices/".$invoice->id.'.temp');
+
+            $file           = File::get($url);
+
+            $response       = Response::make($file, 200);
+
+            $response->header('Content-Type', $this->get_mime_type($basename));
+
+            return $response;  
+        }catch (Exception $e ){            
+
+            $response       = Response::make("", 200);
+
+            $response->header('Content-Type', 'application/pdf');
+
+            return $response;  
+
+        }
     }
 
 
