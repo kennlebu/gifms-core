@@ -13,7 +13,8 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        Commands\MigrateFiles::class
+        Commands\MigrateFiles::class.
+        Commands\GenerateTransactionDocuments::class
     ];
 
     /**
