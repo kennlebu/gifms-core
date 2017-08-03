@@ -3,6 +3,17 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
+use Anchu\Ftp\Facades\Ftp;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Response;
+
+use App\Models\MobilePaymentModels\MobilePayment;
+use App\Models\ClaimsModels\Claim;
+use App\Models\InvoicesModels\Invoice;
+use App\Models\LPOModels\Lpo; //signsheets
+use App\Models\LPOModels\LpoQuotation;
 
 class MigrateFiles extends Command
 {
