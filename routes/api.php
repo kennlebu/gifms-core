@@ -2175,7 +2175,7 @@ Route::PATCH('/claim/{claim_id}/approve', 'ClaimApi@approveClaim')->middleware('
  * Notes: get Claim document
  * Output-Formats: [application/json, application/xml]
  */
-Route::PATCH('/claim/{claim_id}/get_document', 'ClaimApi@getDocumentById')->middleware('jwt.auth');
+Route::GET('/claim/{claim_id}/get_document', 'ClaimApi@getDocumentById')->middleware('jwt.auth');
 /**
  * PATCH submitClaimForApproval
  * Summary: Submit claim by ID

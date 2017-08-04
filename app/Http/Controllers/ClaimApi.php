@@ -340,14 +340,43 @@ class ClaimApi extends Controller
      */
     public function getDocumentById($claim_id)
     {
-        $input = Request::all();
-
-        //path params validation
 
 
-        //not path params validation
+        try{
 
-        return response('How about implementing getDocumentById as a GET method ?');
+
+            $claim          = Claim::findOrFail($claim_id);
+
+            $path           = './claims/'.$claim->id.'/'.$claim->claim_document;
+
+            $path_info      = pathinfo($path);
+
+            $ext            = $path_info['extension'];
+
+            $basename       = $path_info['basename'];
+
+            $file_contents  = FTP::connection()->readFile($path);
+
+            Storage::put('claims/'.$claim->id.'.temp', $file_contents);
+
+            $url            = storage_path("app/claims/".$claim->id.'.temp');
+
+            $file           = File::get($url);
+
+            $response       = Response::make($file, 200);
+
+            $response->header('Content-Type', $this->get_mime_type($basename));
+
+            return $response;  
+        }catch (Exception $e ){            
+
+            $response       = Response::make("", 200);
+
+            $response->header('Content-Type', 'application/pdf');
+
+            return $response;  
+
+        }
     }
 
 
