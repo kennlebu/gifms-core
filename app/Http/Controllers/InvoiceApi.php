@@ -563,6 +563,22 @@ class InvoiceApi extends Controller
 
 
 
+        $approvable_statuses =[1,2,3,12];
+        //if approvable is set
+
+        if(array_key_exists('approvable', $input)){
+
+            $qb->where(function ($query) use ($approvable_statuses) {
+                    
+                foreach ($approvable_statuses as $key => $value) {
+                    $query->orWhere('status_id',$value);
+                }
+
+            });
+        }
+
+
+
 
         //searching
         if(array_key_exists('searchval', $input)){
