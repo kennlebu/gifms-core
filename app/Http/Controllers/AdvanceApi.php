@@ -61,19 +61,68 @@ class AdvanceApi extends Controller
      */
     public function addAdvance()
     {
-        $input = Request::all();
-
-        //path params validation
+        
 
 
-        //not path params validation
-        if (!isset($input['body'])) {
-            throw new \InvalidArgumentException('Missing the required parameter $body when calling addAdvance');
+        // $input = Request::all();
+
+        $advance = new Advance;
+
+
+        try{
+
+
+            $form = Request::only(
+                'requested_by_id',
+                'expense_desc',
+                'expense_purpose',
+                'project_manager_id',
+                'total',
+                'currency_id',
+                'file'
+                );
+
+
+            // FTP::connection()->changeDir('./lpos');
+
+            // $ftp = FTP::connection()->getDirListing();
+
+            // print_r($form['file']);
+
+            // $file = $form['file'];
+
+
+            $advance->requested_by_id                   =   (int)       $form['requested_by_id'];
+            // $advance->request_action_by_id              =   (int)      $body['request_action_by_id'];
+            $advance->expense_desc                      =               $form['expense_desc'];
+            $advance->expense_purpose                   =               $form['expense_purpose'];
+            $advance->project_manager_id                =   (int)       $form['project_manager_id'];
+            $advance->total                             =   (double)    $form['total'];
+            $advance->currency_id                       =   (int)       $form['currency_id'];           
+
+            $advance->status_id                         =   1;
+
+
+            if($advance->save()) {
+
+                // FTP::connection()->makeDir('./advances/'.$advance->id);
+                // FTP::connection()->makeDir('./advances/'.$advance->id);
+                // FTP::connection()->uploadFile($file->getPathname(), './advances/'.$advance->id.'/'.$advance->id.'.'.$file->getClientOriginalExtension());
+
+                // $advance->advance_document           =   $advance->id.'.'.$file->getClientOriginalExtension();
+                $advance->ref                        = "CHAI/ADV/#$advance->id/".date_format($advance->created_at,"Y/m/d");
+                $advance->save();
+                
+                return Response()->json(array('success' => 'Advance Added','advance' => $advance), 200);
+            }
+
+
+        }catch (JWTException $e){
+
+            return response()->json(['error'=>'You are not Authenticated'], 500);
+
         }
-        $body = $input['body'];
 
-
-        return response('How about implementing addAdvance as a POST method ?');
     }
 
 
@@ -258,14 +307,36 @@ class AdvanceApi extends Controller
      */
     public function approveAdvance($advance_id)
     {
+
         $input = Request::all();
 
-        //path params validation
+        try{
+
+            $advance   = Advance::with(
+                                    'requested_by',
+                                    'request_action_by',
+                                    'project',
+                                    'status',
+                                    'project_manager',
+                                    'currency',
+                                    'rejected_by',
+                                    'approvals',
+                                    'allocations'
+                                )->findOrFail($advance_id);
+           
+            $advance->status_id = $advance->status->next_status_id;
+
+            if($advance->save()) {
+
+                return Response()->json(array('msg' => 'Success: advance approved','advance' => $advance), 200);
+            }
 
 
-        //not path params validation
+        }catch(Exception $e){
 
-        return response('How about implementing approveAdvance as a PATCH method ?');
+            $response =  ["error"=>"Advance could not be found"];
+            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+        }
     }
 
 
