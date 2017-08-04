@@ -302,14 +302,34 @@ class ClaimApi extends Controller
      */
     public function approveClaim($claim_id)
     {
-        $input = Request::all();
+        $claim = [];
 
-        //path params validation
+        try{
+            $claim   = Claim::with( 
+                                        'requested_by',
+                                        'request_action_by',
+                                        'project',
+                                        'status',
+                                        'project_manager',
+                                        'currency',
+                                        'rejected_by',
+                                        'approvals',
+                                        'allocations'
+                                    )->findOrFail($claim_id);
 
+           
+            $claim->status_id = $claim->status->next_status_id;
 
-        //not path params validation
+            if($claim->save()) {
 
-        return response('How about implementing approveClaim as a PATCH method ?');
+                return Response()->json(array('msg' => 'Success: claim approved','claim' => $claim), 200);
+            }
+
+        }catch(Exception $e){
+
+            $response =  ["error"=>"Claim could not be found"];
+            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+        }
     }
 
 

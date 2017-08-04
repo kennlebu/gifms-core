@@ -109,6 +109,27 @@ Route::GET('/lpos', 'LPOApi@lposGet')->middleware('jwt.auth');
  * Output-Formats: [application/json, application/xml]
  */
 Route::GET('/lpo/{lpo_id}/get_document', 'LPOApi@getDocumentById')->middleware('jwt.auth');
+/**
+ * PATCH allocateLpo
+ * Summary: Allocate lpo by ID
+ * Notes: Allocate LPO
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PATCH('lpo/{lpo_id}/allocate', 'LPOApi@allocateLpo');
+/**
+ * PATCH approveLpo
+ * Summary: Approve lpo by ID
+ * Notes: Approves LPO
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PATCH('lpo/{lpo_id}/approve', 'LPOApi@approveLpo');
+/**
+ * PATCH submitLpoForApproval
+ * Summary: Submit lpo by ID
+ * Notes: Submits lpo for approval
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PATCH('lpo/{lpo_id}/submit_for_approval', 'LPOApi@submitLpoForApproval');
 
 
 

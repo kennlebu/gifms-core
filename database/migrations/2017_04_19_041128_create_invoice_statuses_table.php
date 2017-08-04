@@ -16,7 +16,7 @@ class CreateInvoiceStatusesTable extends Migration
         Schema::create('invoice_statuses', function (Blueprint $table) {
             $table->increments('id');
             $table->string('invoice_status');
-            $table->integer('next_status')->nullable();
+            $table->integer('next_status_id')->nullable();
             $table->integer('status_security_level')->nullable();
             $table->integer('order_priority')->nullable();
             $table->string('display_color')->nullable();

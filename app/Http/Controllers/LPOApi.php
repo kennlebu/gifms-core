@@ -270,6 +270,144 @@ class LPOApi extends Controller
 
 
 
+    /**
+     * Operation allocateLpo
+     *
+     * Allocate lpo by ID.
+     *
+     * @param int $lpo_id ID of lpo to return object (required)
+     *
+     * @return Http response
+     */
+    public function allocateLpo($lpo_id)
+    {
+        $input = Request::all();
+
+        //path params validation
+
+
+        //not path params validation
+
+        return response('How about implementing allocateLpo as a PATCH method ?');
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /**
+     * Operation approveLpo
+     *
+     * Approve lpo by ID.
+     *
+     * @param int $lpo_id ID of lpo to return object (required)
+     *
+     * @return Http response
+     */
+    public function approveLpo($lpo_id)
+    {
+        $input = Request::all();
+
+        try{
+
+            $lpo   = LPO::with(
+                                            'requested_by',
+                                            'request_action_by',
+                                            'project',
+                                            'account',
+                                            'invoice',
+                                            'status',
+                                            'project_manager',
+                                            'rejected_by',
+                                            'cancelled_by',
+                                            'received_by',
+                                            'supplier',
+                                            'currency',
+                                            'quotations',
+                                            'preffered_quotation',
+                                            'items',
+                                            'terms',
+                                            'approvals',
+                                            'deliveries'
+                                )->findOrFail($lpo_id);
+           
+           
+            $lpo->status_id = $lpo->status->next_status_id;
+
+            if($lpo->save()) {
+
+                return Response()->json(array('msg' => 'Success: lpo approved','lpo' => $lpo), 200);
+            }
+
+        }catch(Exception $e){
+
+            $response =  ["error"=>"lpo could not be found"];
+            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /**
+     * Operation submitLpoForApproval
+     *
+     * Submit lpo by ID.
+     *
+     * @param int $lpo_id ID of lpo to return object (required)
+     *
+     * @return Http response
+     */
+    public function submitLpoForApproval($lpo_id)
+    {
+        $input = Request::all();
+
+        //path params validation
+
+
+        //not path params validation
+
+        return response('How about implementing submitLpoForApproval as a PATCH method ?');
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
