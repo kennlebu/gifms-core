@@ -410,7 +410,7 @@ class InvoiceApi extends Controller
         try{
 
 
-            $invoice      = Invoice::findOrFail($invoice_id);
+            $invoice        = Invoice::findOrFail($invoice_id);
 
             $path           = './invoices/'.$invoice->id.'/'.$invoice->invoice_document;
 
