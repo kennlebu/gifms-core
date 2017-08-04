@@ -18,6 +18,9 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\MobilePaymentModels\MobilePayment;
+use Exception;
+use PDF;
+use App;
 use Anchu\Ftp\Facades\Ftp;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
@@ -356,14 +359,40 @@ class MobilePaymentApi extends Controller
      */
     public function getDocumentById($mobile_payment_id)
     {
-        $input = Request::all();
+        
+        try{
+            $mobile_payment   = MobilePayment::findOrFail($mobile_payment_id);
 
-        //path params validation
+            $data = array(
+                'mobile_payment'   => $mobile_payment
+                );
 
+        // return view('pdf/mobile_payment',$data);
 
-        //not path params validation
+            $pdf = PDF::loadView('pdf/mobile_payment', $data);
 
-        return response('How about implementing getDocumentById as a GET method ?');
+            $file_contents  = $pdf->stream();
+
+            Storage::put('mobile_payment/'.$mobile_payment_id.'.temp', $file_contents);
+
+            $url       = storage_path("app/mobile_payment/".$mobile_payment_id.'.temp');
+
+            $file = File::get($url);
+
+            $response = Response::make($file, 200);
+
+            $response->header('Content-Type', 'application/pdf');
+
+            return $response;
+        }catch (Exception $e ){            
+
+            $response       = Response::make("", 200);
+
+            $response->header('Content-Type', 'application/pdf');
+
+            return $response;  
+
+        }
     }
 
 

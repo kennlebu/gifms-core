@@ -14,7 +14,9 @@
 Route::get('/', function () {
     return view('welcome');
 });
-Route::get('test/pdf', function () {
+
+
+Route::get('test/pdf_lpo', function () {
 
 	$lpo   = App\Models\LPOModels\Lpo::findOrFail(128);
 
@@ -23,4 +25,17 @@ Route::get('test/pdf', function () {
         );
 
     return view('pdf/lpo',$data);
+});
+
+
+
+Route::get('test/pdf_mobile_payment', function () {
+
+	$mp   = App\Models\MobilePaymentModels\MobilePayment::findOrFail(128);
+
+    $data = array(
+            'mobile_payment'   => $mp
+        );
+
+    return view('pdf/mobile_payment',$data);
 });
