@@ -5901,6 +5901,49 @@
     ]
    }
   },
+  "/lpo/{lpo_id}/reject": {
+   "patch": {
+    "tags": [
+     "LPO"
+    ],
+    "summary": "Approve lpo by ID",
+    "description": "Reject LPO",
+    "operationId": "reject_lpo",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "lpo_id",
+      "in": "path",
+      "description": "ID of lpo to return object",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "successful operation",
+      "schema": {
+       "$ref": "#/definitions/lpo"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "lpo not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
   "/lpo/{lpo_id}/allocate": {
    "patch": {
     "tags": [
@@ -7982,6 +8025,49 @@
     "summary": "Submit/Approve mobile_payment by ID",
     "description": "Approves Mobile Payment",
     "operationId": "approve",
+    "produces": [
+     "application/json",
+     "application/xml"
+    ],
+    "parameters": [
+     {
+      "name": "mobile_payment_id",
+      "in": "path",
+      "description": "ID of mobile_payment to return object",
+      "required": true,
+      "type": "integer",
+      "format": "int64"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "successful operation",
+      "schema": {
+       "$ref": "#/definitions/mobile_payment"
+      }
+     },
+     "400": {
+      "description": "Invalid ID supplied"
+     },
+     "404": {
+      "description": "mobile_payment not found"
+     }
+    },
+    "security": [
+     {
+      "api_key": []
+     }
+    ]
+   }
+  },
+  "/mobile_payment/{mobile_payment_id}/reject": {
+   "patch": {
+    "tags": [
+     "Mobile Payment"
+    ],
+    "summary": "Submit/Approve mobile_payment by ID",
+    "description": "Reject Mobile Payment",
+    "operationId": "reject",
     "produces": [
      "application/json",
      "application/xml"

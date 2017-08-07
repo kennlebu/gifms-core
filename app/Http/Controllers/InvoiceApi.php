@@ -411,6 +411,43 @@ class InvoiceApi extends Controller
 
 
 
+    /**
+     * Operation rejectInvoice
+     *
+     * Reject invoice by ID.
+     *
+     * @param int $invoice_id ID of invoice to return object (required)
+     *
+     * @return Http response
+     */
+    public function rejectInvoice($invoice_id)
+    {
+        $input = Request::all();
+
+        //path params validation
+
+
+        //not path params validation
+
+        return response('How about implementing rejectInvoice as a PATCH method ?');
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

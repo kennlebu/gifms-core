@@ -88,6 +88,13 @@ Route::GET('/lpo/{lpo_id}', 'LPOApi@getLpoById')->middleware('jwt.auth');
  */
 Route::PATCH('lpo/{lpo_id}', 'LPOApi@submitOrApprove')->middleware('jwt.auth');
 /**
+ * PATCH rejectLpo
+ * Summary: Approve lpo by ID
+ * Notes: Reject LPO
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PATCH('/lpo/{lpo_id}/reject', 'LPOApi@rejectLpo')->middleware('jwt.auth');
+/**
  * POST updateLpoWithForm
  * Summary: Updates a lpo with form data
  * Notes: updates each field when not set as null
@@ -1649,6 +1656,13 @@ Route::GET('/mobile_payment/{mobile_payment_id}', 'MobilePaymentApi@getMobilePay
  */
 Route::PATCH('/mobile_payment/{mobile_payment_id}/approve', 'MobilePaymentApi@approve')->middleware('jwt.auth');
 /**
+ * PATCH reject
+ * Summary: Submit/Approve mobile_payment by ID
+ * Notes: Reject Mobile Payment
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PATCH('/mobile_payment/{mobile_payment_id}/reject', 'MobilePaymentApi@reject')->middleware('jwt.auth');
+/**
  * DELETE deleteMobilePayment
  * Summary: Deletes an mobile_payment
  * Notes: 
@@ -1758,6 +1772,52 @@ Route::GET('/mobile_payment_approvals', 'MobilePaymentApprovalApi@mobilePaymentA
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * POST addMobilePaymentAllocation
+ * Summary: Add a new mobile_payment_allocation
+ * Notes: new mobile_payment_allocation
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/mobile_payment_allocation', 'MobilePaymentAllocationApi@addMobilePaymentAllocation')->middleware('jwt.auth');
+/**
+ * PUT updateMobilePaymentAllocation
+ * Summary: Update an existing mobile_payment_allocation
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/mobile_payment_allocation', 'MobilePaymentAllocationApi@updateMobilePaymentAllocation')->middleware('jwt.auth');
+/**
+ * DELETE deleteMobilePaymentAllocation
+ * Summary: Deletes an mobile_payment_allocation
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/mobile_payment_allocation/{mobile_payment_allocation_id}', 'MobilePaymentAllocationApi@deleteMobilePaymentAllocation')->middleware('jwt.auth');
+/**
+ * GET getMobilePaymentAllocationById
+ * Summary: Find mobile_payment_allocation by ID
+ * Notes: Returns a single mobile_payment_allocation
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/mobile_payment_allocation/{mobile_payment_allocation_id}', 'MobilePaymentAllocationApi@getMobilePaymentAllocationById')->middleware('jwt.auth');
+/**
+ * GET mobilePaymentAllocationsGet
+ * Summary: mobile_payment_allocations List
+ * Notes: The mobile_payment_allocation endpoint returns multiple mobile_payment_allocation requested given the parameters injected.  
+
+ */
+Route::GET('/mobile_payment_allocations', 'MobilePaymentAllocationApi@mobilePaymentAllocationsGet')->middleware('jwt.auth');
 
 
 
@@ -2191,6 +2251,13 @@ Route::PATCH('/claim/{claim_id}/allocate', 'ClaimApi@allocateClaim')->middleware
  */
 Route::PATCH('/claim/{claim_id}/approve', 'ClaimApi@approveClaim')->middleware('jwt.auth');
 /**
+ * PATCH rejectClaim
+ * Summary: Reject claim by ID
+ * Notes: Approves Claim
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PATCH('/claim/{claim_id}/reject', 'ClaimApi@rejectClaim')->middleware('jwt.auth');
+/**
  * GET getDocumentById
  * Summary: get claim document by ID
  * Notes: get Claim document
@@ -2343,6 +2410,63 @@ Route::GET('/claim_approvals', 'ClaimApprovalApi@getClaimApprovals')->middleware
 
 
 
+/**
+ * POST addClaimAllocation
+ * Summary: Add a new claim_allocation
+ * Notes: new claim_allocation
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/claim_allocation', 'ClaimAllocationApi@addClaimAllocation')->middleware('jwt.auth');
+/**
+ * PUT updateClaimAllocation
+ * Summary: Update an existing claim_allocation
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/claim_allocation', 'ClaimAllocationApi@updateClaimAllocation')->middleware('jwt.auth');
+/**
+ * DELETE deleteClaimAllocation
+ * Summary: Deletes an claim_allocation
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/claim_allocation/{claim_allocation_id}', 'ClaimAllocationApi@deleteClaimAllocation')->middleware('jwt.auth');
+/**
+ * GET getClaimAllocationById
+ * Summary: Find claim_allocation by ID
+ * Notes: Returns a single claim_allocation
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/claim_allocation/{claim_allocation_id}', 'ClaimAllocationApi@getClaimAllocationById')->middleware('jwt.auth');
+/**
+ * GET claimAllocationsGet
+ * Summary: claim_allocations List
+ * Notes: The claim_allocation endpoint returns multiple claim_allocation requested given the parameters injected.  
+
+ */
+Route::GET('/claim_allocations', 'ClaimAllocationApi@claimAllocationsGet')->middleware('jwt.auth');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -2383,6 +2507,13 @@ Route::GET('/advance/{advance_id}', 'AdvanceApi@getAdvanceById')->middleware('jw
  * Output-Formats: [application/json, application/xml]
  */
 Route::PATCH('/advance/{advance_id}/approve', 'AdvanceApi@approveAdvance')->middleware('jwt.auth');
+/**
+ * PATCH rejectAdvance
+ * Summary: Approve advance by ID
+ * Notes: Rejects Advance
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PATCH('/advance/{advance_id}/reject', 'AdvanceApi@rejectAdvance')->middleware('jwt.auth');
 /**
  * PATCH submitAdvanceForApproval
  * Summary: Submit advance by ID
@@ -2463,6 +2594,56 @@ Route::GET('/advance_approvals', 'AdvanceApprovalApi@getAdvanceApprovals')->midd
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * POST addAdvanceAllocation
+ * Summary: Add a new advance_allocation
+ * Notes: new advance_allocation
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/advance_allocation', 'AdvanceAllocationApi@addAdvanceAllocation')->middleware('jwt.auth');
+/**
+ * PUT updateAdvanceAllocation
+ * Summary: Update an existing advance_allocation
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/advance_allocation', 'AdvanceAllocationApi@updateAdvanceAllocation')->middleware('jwt.auth');
+/**
+ * DELETE deleteAdvanceAllocation
+ * Summary: Deletes an advance_allocation
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/advance_allocation/{advance_allocation_id}', 'AdvanceAllocationApi@deleteAdvanceAllocation')->middleware('jwt.auth');
+/**
+ * GET getAdvanceAllocationById
+ * Summary: Find advance_allocation by ID
+ * Notes: Returns a single advance_allocation
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/advance_allocation/{advance_allocation_id}', 'AdvanceAllocationApi@getAdvanceAllocationById')->middleware('jwt.auth');
+/**
+ * GET advanceAllocationsGet
+ * Summary: advance_allocations List
+ * Notes: The advance_allocation endpoint returns multiple advance_allocation requested given the parameters injected.  
+
+ */
+Route::GET('/advance_allocations', 'AdvanceAllocationApi@advanceAllocationsGet')->middleware('jwt.auth');
 
 
 
@@ -2568,6 +2749,13 @@ Route::GET('/invoice/{invoice_id}', 'InvoiceApi@getInvoiceById')->middleware('jw
  */
 Route::PATCH('/invoice/{invoice_id}/allocate', 'InvoiceApi@allocateInvoice')->middleware('jwt.auth');
 /**
+ * PATCH rejectInvoice
+ * Summary: Reject invoice by ID
+ * Notes: Approves Invoice
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PATCH('/invoice/{invoice_id}/reject', 'InvoiceApi@rejectInvoice')->middleware('jwt.auth');
+/**
  * PATCH approveInvoice
  * Summary: Approve invoice by ID
  * Notes: Approves Invoice
@@ -2658,6 +2846,61 @@ Route::GET('/invoice_approval/{invoice_approval_id}', 'InvoiceApprovalApi@getInv
  */
 Route::GET('/invoice_approvals', 'InvoiceApprovalApi@getInvoiceApprovals')->middleware('jwt.auth');
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * POST addInvoiceAllocation
+ * Summary: Add a new invoice_allocation
+ * Notes: new invoice_allocation
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/invoice_allocation', 'InvoiceAllocationApi@addInvoiceAllocation')->middleware('jwt.auth');
+/**
+ * PUT updateInvoiceAllocation
+ * Summary: Update an existing invoice_allocation
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/invoice_allocation', 'InvoiceAllocationApi@updateInvoiceAllocation')->middleware('jwt.auth');
+/**
+ * DELETE deleteInvoiceAllocation
+ * Summary: Deletes an invoice_allocation
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/invoice_allocation/{invoice_allocation_id}', 'InvoiceAllocationApi@deleteInvoiceAllocation')->middleware('jwt.auth');
+/**
+ * GET getInvoiceAllocationById
+ * Summary: Find invoice_allocation by ID
+ * Notes: Returns a single invoice_allocation
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/invoice_allocation/{invoice_allocation_id}', 'InvoiceAllocationApi@getInvoiceAllocationById')->middleware('jwt.auth');
+/**
+ * GET invoiceAllocationsGet
+ * Summary: invoice_allocations List
+ * Notes: The invoice_allocation endpoint returns multiple invoice_allocation requested given the parameters injected.  
+
+ */
+Route::GET('/invoice_allocations', 'InvoiceApprovalApi@invoiceAllocationsGet')->middleware('jwt.auth');
 
 
 

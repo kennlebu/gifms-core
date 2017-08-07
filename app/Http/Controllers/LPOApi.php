@@ -372,6 +372,47 @@ class LPOApi extends Controller
 
 
 
+
+
+    /**
+     * Operation rejectLpo
+     *
+     * Approve lpo by ID.
+     *
+     * @param int $lpo_id ID of lpo to return object (required)
+     *
+     * @return Http response
+     */
+    public function rejectLpo($lpo_id)
+    {
+        $input = Request::all();
+
+        //path params validation
+
+
+        //not path params validation
+
+        return response('How about implementing rejectLpo as a PATCH method ?');
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /**
      * Operation submitLpoForApproval
      *

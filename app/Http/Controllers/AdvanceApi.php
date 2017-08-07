@@ -354,6 +354,42 @@ class AdvanceApi extends Controller
 
 
 
+    /**
+     * Operation rejectAdvance
+     *
+     * Approve advance by ID.
+     *
+     * @param int $advance_id ID of advance to return object (required)
+     *
+     * @return Http response
+     */
+    public function rejectAdvance($advance_id)
+    {
+        $input = Request::all();
+
+        //path params validation
+
+
+        //not path params validation
+
+        return response('How about implementing rejectAdvance as a PATCH method ?');
+    }
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
 
 
 

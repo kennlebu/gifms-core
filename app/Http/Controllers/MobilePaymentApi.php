@@ -338,6 +338,51 @@ class MobilePaymentApi extends Controller
 
 
 
+    /**
+     * Operation reject
+     *
+     * Submit/Approve mobile_payment by ID.
+     *
+     * @param int $mobile_payment_id ID of mobile_payment to return object (required)
+     *
+     * @return Http response
+     */
+    public function reject($mobile_payment_id)
+    {
+        $input = Request::all();
+
+        //path params validation
+
+
+        //not path params validation
+
+        return response('How about implementing reject as a PATCH method ?');
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     /**
@@ -360,6 +405,14 @@ class MobilePaymentApi extends Controller
 
         return response('How about implementing allocateMobilePayment as a PATCH method ?');
     }
+
+
+
+
+
+
+
+
 
 
 

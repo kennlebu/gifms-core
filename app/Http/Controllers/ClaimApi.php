@@ -349,6 +349,55 @@ class ClaimApi extends Controller
 
 
 
+
+
+
+
+
+
+
+
+    
+    /**
+     * Operation rejectClaim
+     *
+     * Reject claim by ID.
+     *
+     * @param int $claim_id ID of claim to return object (required)
+     *
+     * @return Http response
+     */
+    public function rejectClaim($claim_id)
+    {
+        $input = Request::all();
+
+        //path params validation
+
+
+        //not path params validation
+
+        return response('How about implementing rejectClaim as a PATCH method ?');
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /**
      * Operation getDocumentById
      *
