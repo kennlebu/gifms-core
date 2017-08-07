@@ -15,7 +15,16 @@ class CreateClaimAllocationsTable extends Migration
     {
         Schema::create('claim_allocations', function (Blueprint $table) {
             $table->increments('id');
-            $table->timestamps();
+            $table->text('allocation_purpose')->nullable();
+            $table->double('amount_allocated',30,4)->nullable();
+            $table->double('percentage_allocated',7,4)->nullable();
+            $table->integer('allocated_by_id')->nullable();
+            $table->integer('claim_id')->nullable();
+            $table->integer('project_id')->nullable();
+            $table->integer('account_id')->nullable();
+            $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
+            $table->softDeletes();
         });
     }
 
