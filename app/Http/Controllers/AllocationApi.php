@@ -16,6 +16,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Request;
+use App\Models\AllocationModels\Allocation;
 
 class AllocationApi extends Controller
 {
@@ -55,19 +56,54 @@ class AllocationApi extends Controller
      */
     public function addAllocation()
     {
+
         $input = Request::all();
 
-        //path params validation
+
+        $allocation = new Allocation;
 
 
-        //not path params validation
-        if (!isset($input['body'])) {
-            throw new \InvalidArgumentException('Missing the required parameter $body when calling addAllocation');
+        try{
+
+
+            $form = Request::only(
+                'account_id',
+                'allocatable_id',
+                'allocatable_type',
+                'amount',
+                'month',
+                'percentage',
+                'project_id',
+                'purpose',
+                'year'
+                );
+
+
+            $allocation->account_id             =               $form['account_id'];
+            $allocation->allocatable_id         =               $form['allocatable_id'];
+            $allocation->allocatable_type       =               $form['allocatable_type'];
+            $allocation->amount_allocated       =               $form['amount'];
+            $allocation->allocation_month       =               $form['month'];
+            $allocation->percentage_allocated   =               $form['percentage'];
+            $allocation->project_id             =               $form['project_id'];
+            $allocation->allocation_purpose     =               $form['purpose'];
+            $allocation->allocation_year        =               $form['year'];
+
+
+            if($allocation->save()) {
+
+
+                $allocation->save();
+                return Response()->json(array('success' => 'allocation added','allocation' => $allocation), 200);
+            }
+
+
+        }catch (JWTException $e){
+
+            return response()->json(['error'=>'You are not Authenticated'], 500);
+
         }
-        $body = $input['body'];
 
-
-        return response('How about implementing addAllocation as a POST method ?');
     }
 
 
@@ -142,14 +178,18 @@ class AllocationApi extends Controller
      */
     public function deleteAllocation($allocation_id)
     {
+
         $input = Request::all();
 
-        //path params validation
+
+        $deleted_allocation = Allocation::destroy($allocation_id);
 
 
-        //not path params validation
-
-        return response('How about implementing deleteAllocation as a DELETE method ?');
+        if($deleted_allocation){
+            return response()->json(['msg'=>"Allocation deleted"], 200,array(),JSON_PRETTY_PRINT);
+        }else{
+            return response()->json(['error'=>"Allocation not found"], 404,array(),JSON_PRETTY_PRINT);
+        }
     }
 
 
