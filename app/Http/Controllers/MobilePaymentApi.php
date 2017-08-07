@@ -18,6 +18,8 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\MobilePaymentModels\MobilePayment;
+use App\Models\ProjectsModels\Project;
+use App\Models\AccountingModels\Account;
 use Exception;
 use PDF;
 use App;
@@ -241,6 +243,14 @@ class MobilePaymentApi extends Controller
                                     'approvals',
                                     'allocations'
                                 )->findOrFail($mobile_payment_id);
+
+
+            foreach ($response->allocations as $key => $value) {
+                $project = Project::find((int)$value['project_id']);
+                $account = Account::find((int)$value['account_id']);
+                $response['allocations'][$key]['project']  =   $project;
+                $response['allocations'][$key]['account']  =   $account;
+            }
 
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
 
@@ -907,6 +917,13 @@ class MobilePaymentApi extends Controller
             $data[$key]['approvals']                   = $mobile_payment->approvals;
             $data[$key]['allocations']                 = $mobile_payment->allocations;
             $data[$key]['totals']                      = $mobile_payment->totals;
+
+            foreach ($mobile_payment->allocations as $key1 => $value1) {
+                $project = Project::find((int)$value1['project_id']);
+                $account = Account::find((int)$value1['account_id']);
+                $data[$key]['allocations'][$key1]['project']  =   $project;
+                $data[$key]['allocations'][$key1]['account']  =   $account;
+            }
 
         }
 

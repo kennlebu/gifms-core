@@ -26,6 +26,25 @@ class AllocationApi extends Controller
     {
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
     /**
      * Operation addAllocation
      *
@@ -50,6 +69,25 @@ class AllocationApi extends Controller
 
         return response('How about implementing addAllocation as a POST method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation updateAllocation
      *
@@ -74,6 +112,25 @@ class AllocationApi extends Controller
 
         return response('How about implementing updateAllocation as a PUT method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation deleteAllocation
      *
@@ -94,6 +151,25 @@ class AllocationApi extends Controller
 
         return response('How about implementing deleteAllocation as a DELETE method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation getAllocationById
      *
@@ -114,6 +190,25 @@ class AllocationApi extends Controller
 
         return response('How about implementing getAllocationById as a GET method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation getAllocations
      *

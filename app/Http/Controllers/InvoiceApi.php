@@ -18,6 +18,8 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\InvoicesModels\Invoice;
+use App\Models\ProjectsModels\Project;
+use App\Models\AccountingModels\Account;
 use Anchu\Ftp\Facades\Ftp;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
@@ -274,6 +276,14 @@ class InvoiceApi extends Controller
                                         'allocations',
                                         'comments'
                                     )->findOrFail($invoice_id);
+
+
+            foreach ($response->allocations as $key => $value) {
+                $project = Project::find((int)$value['project_id']);
+                $account = Account::find((int)$value['account_id']);
+                $response['allocations'][$key]['project']  =   $project;
+                $response['allocations'][$key]['account']  =   $account;
+            }
 
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
 
@@ -820,6 +830,13 @@ class InvoiceApi extends Controller
             $data[$key]['approvals']                    = $invoice->approvals;
             $data[$key]['allocations']                  = $invoice->allocations;
             $data[$key]['comments']                     = $invoice->comments;
+
+            foreach ($invoice->allocations as $key1 => $value1) {
+                $project = Project::find((int)$value1['project_id']);
+                $account = Account::find((int)$value1['account_id']);
+                $data[$key]['allocations'][$key1]['project']  =   $project;
+                $data[$key]['allocations'][$key1]['account']  =   $account;
+            }
 
         }
 

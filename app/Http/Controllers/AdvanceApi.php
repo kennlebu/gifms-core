@@ -18,6 +18,8 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\AdvancesModels\Advance;
+use App\Models\ProjectsModels\Project;
+use App\Models\AccountingModels\Account;
 
 class AdvanceApi extends Controller
 {
@@ -264,6 +266,14 @@ class AdvanceApi extends Controller
                                     'approvals',
                                     'allocations'
                                 )->findOrFail($advance_id);
+
+
+            foreach ($response->allocations as $key => $value) {
+                $project = Project::find((int)$value['project_id']);
+                $account = Account::find((int)$value['account_id']);
+                $response['allocations'][$key]['project']  =   $project;
+                $response['allocations'][$key]['account']  =   $account;
+            }
            
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
 
@@ -688,6 +698,14 @@ class AdvanceApi extends Controller
             $data[$key]['rejected_by']                  = $advance->rejected_by;
             $data[$key]['approvals']                    = $advance->approvals;
             $data[$key]['allocations']                  = $advance->allocations;
+            
+
+            foreach ($advance->allocations as $key1 => $value1) {
+                $project = Project::find((int)$value1['project_id']);
+                $account = Account::find((int)$value1['account_id']);
+                $data[$key]['allocations'][$key1]['project']  =   $project;
+                $data[$key]['allocations'][$key1]['account']  =   $account;
+            }
 
         }
 
