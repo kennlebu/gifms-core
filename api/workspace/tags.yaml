@@ -84,6 +84,11 @@
     externalDocs:
       description: Find out more
       url: 'http://kefinance.clintonhealthaccess.org/api/mobile_payment_approval/docs'
+  - name: Mobile Payment Allocation
+    description: Everything About Mobile Payment Allocation
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/mobile_payment_allocation/docs'
   - name: Mobile Payment Payee
     description: Everything About Mobile Payment Payee
     externalDocs:
@@ -179,6 +184,11 @@
     externalDocs:
       description: Find out more
       url: 'http://kefinance.clintonhealthaccess.org/api/claim_approval/docs'
+  - name: Claim Allocation
+    description: Everything About Claim Allocation
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/claim_allocation/docs'
   - name: Advance
     description: Everything About Advance
     externalDocs:
@@ -194,6 +204,11 @@
     externalDocs:
       description: Find out more
       url: 'http://kefinance.clintonhealthaccess.org/api/advance_approval/docs'
+  - name: Advance Allocation
+    description: Everything About Advance Allocation
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/advance_allocation/docs'
   - name: Account
     description: Everything About Account
     externalDocs:
@@ -244,3 +259,23 @@
     externalDocs:
       description: Find out more
       url: 'http://kefinance.clintonhealthaccess.org/api/delivery_approval/docs'
+  - name: Invoice
+    description: Everything About Invoice
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/invoice/docs'
+  - name: Invoice Status
+    description: Everything About Invoice Status
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/invoice_status/docs'
+  - name: Invoice Approval
+    description: Everything About Invoice Approval
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/invoice_approval/docs'
+  - name: Invoice Allocation
+    description: Everything About Invoice Allocation
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/invoice_allocation/docs'
