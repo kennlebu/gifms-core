@@ -14,7 +14,7 @@
 
 
 namespace App\Http\Controllers;
-
+use JWTAuth;
 use Illuminate\Support\Facades\Request;
 use App\Models\AllocationModels\Allocation;
 
@@ -88,6 +88,9 @@ class AllocationApi extends Controller
             $allocation->project_id             =               $form['project_id'];
             $allocation->allocation_purpose     =               $form['purpose'];
             $allocation->allocation_year        =               $form['year'];
+
+            $user = JWTAuth::parseToken()->authenticate();
+            $allocation->allocated_by_id            =   (int)   $user->id;
 
 
             if($allocation->save()) {

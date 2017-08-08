@@ -23,6 +23,7 @@ use App\Models\AccountingModels\Account;
 use Exception;
 use PDF;
 use App;
+use JWTAuth;
 use Anchu\Ftp\Facades\Ftp;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
@@ -108,6 +109,10 @@ class MobilePaymentApi extends Controller
 
 
             $mobile_payment->status_id                      =   1 ;
+
+            
+            $user = JWTAuth::parseToken()->authenticate();
+            $allocation->request_action_by_id            =   (int)   $user->id;
 
 
             if($mobile_payment->save()) {
