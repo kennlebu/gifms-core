@@ -117,6 +117,9 @@ class MobilePaymentApi extends Controller
 
             if($mobile_payment->save()) {
 
+                $mobile_payment->ref = "CHAI/MPYMT/#$mobile_payment->id/".date_format($mobile_payment->created_at,"Y/m/d");
+                $mobile_payment->save();
+
                 return Response()->json(array('msg' => 'Success: mobile payment added','mobile_payment' => $mobile_payment), 200);
             }
 
