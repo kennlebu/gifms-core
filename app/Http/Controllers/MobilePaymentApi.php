@@ -80,7 +80,7 @@ class MobilePaymentApi extends Controller
             'project_manager_id',
             'region_id',
             'county_id',
-            'attentendance_sheet',
+            'attendance_sheet',
             'payees_upload_mode_id',
             'rejection_reason',
             'rejected_by_id'
@@ -102,7 +102,7 @@ class MobilePaymentApi extends Controller
             $mobile_payment->project_manager_id             =   (int)   $form['project_manager_id'];
             $mobile_payment->region_id                      =   (int)   $form['region_id'];
             $mobile_payment->county_id                      =   (int)   $form['county_id'];
-            $mobile_payment->attentendance_sheet            =           $form['attentendance_sheet'];
+            $mobile_payment->attendance_sheet               =           $form['attendance_sheet'];
             $mobile_payment->payees_upload_mode_id          =   (int)   $form['payees_upload_mode_id'];
             $mobile_payment->rejection_reason               =           $form['rejection_reason'];
             $mobile_payment->rejected_by_id                 =   (int)   $form['rejected_by_id'];
@@ -112,7 +112,7 @@ class MobilePaymentApi extends Controller
 
             
             $user = JWTAuth::parseToken()->authenticate();
-            $allocation->request_action_by_id            =   (int)   $user->id;
+            $mobile_payment->request_action_by_id            =   (int)   $user->id;
 
 
             if($mobile_payment->save()) {
