@@ -115,7 +115,7 @@ class MobilePaymentApi extends Controller
             $mobile_payment->rejected_by_id                 =   (int)   $form['rejected_by_id'];
 
 
-            $mobile_payment->status_id                      =   1 ;
+            $mobile_payment->status_id                      =   $this->default_status;
 
             
             $user = JWTAuth::parseToken()->authenticate();

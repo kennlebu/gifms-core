@@ -88,7 +88,7 @@ class ClaimApi extends Controller
             $claim->total                             =   (double)    $form['total'];
             $claim->currency_id                       =   (int)       $form['currency_id'];           
 
-            $claim->status_id                         =   1;
+            $claim->status_id                         =   $this->default_status;
 
 
             if($claim->save()) {

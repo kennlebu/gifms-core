@@ -117,7 +117,7 @@ class InvoiceApi extends Controller
             $invoice->total                             =   (double)    $form['total'];
             $invoice->currency_id                       =   (int)       $form['currency_id'];
 
-            $invoice->status_id                         =   10;
+            $invoice->status_id                         =   $this->default_status;
 
 
             if($invoice->save()) {

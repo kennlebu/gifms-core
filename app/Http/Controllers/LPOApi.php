@@ -109,7 +109,7 @@ class LPOApi extends Controller
             $lpo->account_id                        =   (int)   $form['account_id'];
             $lpo->currency_id                       =   (int)   $form['currency_id'];
             $lpo->project_manager_id                =   (int)   $form['project_manager_id'];
-            $lpo->status_id                         =   2;
+            $lpo->status_id                         =   $this->default_status;
 
             $user = JWTAuth::parseToken()->authenticate();
             $lpo->request_action_by_id            =   (int)   $user->id;

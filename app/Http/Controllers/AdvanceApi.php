@@ -109,7 +109,7 @@ class AdvanceApi extends Controller
             $advance->total                             =   (double)    $form['total'];
             $advance->currency_id                       =   (int)       $form['currency_id'];           
 
-            $advance->status_id                         =   1;
+            $advance->status_id                         =   $this->default_status;
 
 
             if($advance->save()) {
