@@ -31,13 +31,14 @@ class ClaimApi extends Controller
 
 
     private $default_status = '';
-    private $approvabble_statuses = [];
+    private $approvable_statuses = [];
     /**
      * Constructor
      */
     public function __construct()
     {
         $status = ClaimStatus::where('default_status','1')->first();
+        $this->approvable_statuses = ClaimStatus::where('approvable','1')->get();
         $this->default_status = $status->id;
     }
 
@@ -571,16 +572,15 @@ class ClaimApi extends Controller
         }
 
 
-
-        $approvable_statuses =[2,3,4,10];
+        $app_stat = $this->approvable_statuses ;
         //if approvable is set
 
         if(array_key_exists('approvable', $input)){
 
-            $qb->where(function ($query) use ($approvable_statuses) {
+            $qb->where(function ($query) use ($app_stat) {
                     
-                foreach ($approvable_statuses as $key => $value) {
-                    $query->orWhere('status_id',$value);
+                foreach ($app_stat as $key => $value) {
+                    $query->orWhere('status_id',$value['id']);
                 }
 
             });
