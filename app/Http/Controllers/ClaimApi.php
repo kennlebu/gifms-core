@@ -18,6 +18,7 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\ClaimsModels\Claim;
+use App\Models\ClaimsModels\ClaimStatus;
 use App\Models\ProjectsModels\Project;
 use App\Models\AccountingModels\Account;
 use Anchu\Ftp\Facades\Ftp;
@@ -27,11 +28,17 @@ use Illuminate\Support\Facades\Response;
 
 class ClaimApi extends Controller
 {
+
+
+    private $default_status = '';
+    private $approvabble_statuses = [];
     /**
      * Constructor
      */
     public function __construct()
     {
+        $status = ClaimStatus::where('default_status','1')->first();
+        $this->default_status = $status->id;
     }
 
     /**

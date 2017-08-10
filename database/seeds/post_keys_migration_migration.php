@@ -424,5 +424,55 @@ class post_keys_migration_migration extends Seeder
         echo "\n advance_statuses  updated ---";
 
 
+
+
+
+
+
+
+
+
+
+
+        //advances default statuses
+        
+        $sql = "
+                UPDATE `advance_statuses`           SET `default_status`  = '1'     WHERE `id`='1'
+
+                ";
+
+
+        DB::statement($sql);
+        $sql = "
+                UPDATE `claim_statuses`             SET `default_status`  = '1'     WHERE `id`='1'
+
+                ";
+
+
+        DB::statement($sql);
+        $sql = "
+                UPDATE `invoice_statuses`           SET `default_status`  = '1'     WHERE `id`='10'
+
+                ";
+
+
+        DB::statement($sql);
+        $sql = "
+                UPDATE `lpo_statuses`               SET `default_status`  = '1'     WHERE `id`='2'
+
+                ";
+
+
+        DB::statement($sql);
+        $sql = "
+                UPDATE `mobile_payment_statuses`    SET `default_status`  = '1'     WHERE `id`='1'
+
+                ";
+
+        DB::statement($sql);
+
+        echo "\n default statuses updated ---";
+
+
     }
 }

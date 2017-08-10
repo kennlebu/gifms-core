@@ -19,6 +19,7 @@ use JWTAuth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\LPOModels\Lpo;
+use App\Models\LPOModels\LpoStatus;
 use Exception;
 use PDF;
 use App;
@@ -29,11 +30,17 @@ use Illuminate\Support\Facades\Response;
 
 class LPOApi extends Controller
 {
+
+
+    private $default_status = '';
+    private $approvabble_statuses = [];
     /**
     * Constructor
     */
     public function __construct()
     {
+        $status = LpoStatus::where('default_status','1')->first();
+        $this->default_status = $status->id;
     }
 
 
