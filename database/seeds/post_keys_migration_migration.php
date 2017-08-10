@@ -434,7 +434,7 @@ class post_keys_migration_migration extends Seeder
 
 
 
-        //advances default statuses
+        //default statuses
         
         $sql = "
                 UPDATE `advance_statuses`           SET `default_status`  = '1'     WHERE `id`='1'
@@ -472,6 +472,51 @@ class post_keys_migration_migration extends Seeder
         DB::statement($sql);
 
         echo "\n default statuses updated ---";
+
+
+
+
+
+
+
+        //approvable statuses
+        
+        $sql = "
+                UPDATE `advance_statuses`           SET `approvable`  = '1'     WHERE `id` IN (2,3,4,8,9,12,13)
+
+                ";
+
+
+        DB::statement($sql);
+        $sql = "
+                UPDATE `claim_statuses`             SET `approvable`  = '1'     WHERE `id` IN (2,3,4,10)
+
+                ";
+
+
+        DB::statement($sql);
+        $sql = "
+                UPDATE `invoice_statuses`           SET `approvable`  = '1'     WHERE `id` IN (1,2,3,12)
+
+                ";
+
+
+        DB::statement($sql);
+        $sql = "
+                UPDATE `lpo_statuses`               SET `approvable`  = '1'     WHERE `id` IN (3,4,5,13)
+
+                ";
+
+
+        DB::statement($sql);
+        $sql = "
+                UPDATE `mobile_payment_statuses`    SET `approvable`  = '1'     WHERE `id` IN (2,3,8,12)
+
+                ";
+
+        DB::statement($sql);
+
+        echo "\n approvable statuses updated ---";
 
 
     }
