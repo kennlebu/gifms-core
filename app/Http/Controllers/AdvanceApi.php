@@ -426,14 +426,37 @@ class AdvanceApi extends Controller
      */
     public function submitAdvanceForApproval($advance_id)
     {
+
+
         $input = Request::all();
 
-        //path params validation
+        try{
+
+            $advance   = Advance::with(
+                                    'requested_by',
+                                    'request_action_by',
+                                    'project',
+                                    'status',
+                                    'project_manager',
+                                    'currency',
+                                    'rejected_by',
+                                    'approvals',
+                                    'allocations'
+                                )->findOrFail($advance_id);
+           
+            $advance->status_id = $advance->status->next_status_id;
+
+            if($advance->save()) {
+
+                return Response()->json(array('msg' => 'Success: advance submitted','advance' => $advance), 200);
+            }
 
 
-        //not path params validation
+        }catch(Exception $e){
 
-        return response('How about implementing submitAdvanceForApproval as a PATCH method ?');
+            $response =  ["error"=>"Advance could not be found"];
+            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+        }
     }
 
 

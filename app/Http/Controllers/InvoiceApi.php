@@ -554,14 +554,36 @@ class InvoiceApi extends Controller
      */
     public function submitInvoiceForApproval($invoice_id)
     {
-        $input = Request::all();
 
-        //path params validation
+        $invoice = [];
 
+        try{
+            $invoice   = Invoice::with( 
+                                        'raised_by',
+                                        'raise_action_by',
+                                        'status',
+                                        'project_manager',
+                                        'currency',
+                                        'lpo',
+                                        'rejected_by',
+                                        'approvals',
+                                        'allocations',
+                                        'comments'
+                                    )->findOrFail($invoice_id);
 
-        //not path params validation
+           
+            $invoice->status_id = $invoice->status->next_status_id;
 
-        return response('How about implementing submitInvoiceForApproval as a PATCH method ?');
+            if($invoice->save()) {
+
+                return Response()->json(array('msg' => 'Success: invoice submitted','invoice' => $invoice), 200);
+            }
+
+        }catch(Exception $e){
+
+            $response =  ["error"=>"Invoice could not be found"];
+            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+        }
     }
 
 

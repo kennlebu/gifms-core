@@ -644,14 +644,43 @@ class MobilePaymentApi extends Controller
      */
     public function submitForApproval($mobile_payment_id)
     {
-        $input = Request::all();
-
-        //path params validation
 
 
-        //not path params validation
+        $response = [];
 
-        return response('How about implementing submitForApproval as a PATCH method ?');
+        try{
+            $mobile_payment   = MobilePayment::with(
+                                    'requested_by',
+                                    'requested_action_by',
+                                    'project',
+                                    'account',
+                                    'mobile_payment_type',
+                                    'invoice',
+                                    'status',
+                                    'project_manager',
+                                    'region',
+                                    'county',
+                                    'currency',
+                                    'rejected_by',
+                                    'payees_upload_mode',
+                                    'payees',
+                                    'approvals',
+                                    'allocations'
+                                )->findOrFail($mobile_payment_id);
+
+           
+            $mobile_payment->status_id = $mobile_payment->status->next_status_id;
+
+            if($mobile_payment->save()) {
+
+                return Response()->json(array('msg' => 'Success: mobile_payment submitted','mobile_payment' => $mobile_payment), 200);
+            }
+
+        }catch(Exception $e){
+
+            $response =  ["error"=>"Mobile Payment could not be found"];
+            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+        }
     }
 
 

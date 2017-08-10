@@ -432,14 +432,45 @@ class LPOApi extends Controller
      */
     public function submitLpoForApproval($lpo_id)
     {
+        
         $input = Request::all();
 
-        //path params validation
+        try{
 
+            $lpo   = LPO::with(
+                                            'requested_by',
+                                            'request_action_by',
+                                            'project',
+                                            'account',
+                                            'invoice',
+                                            'status',
+                                            'project_manager',
+                                            'rejected_by',
+                                            'cancelled_by',
+                                            'received_by',
+                                            'supplier',
+                                            'currency',
+                                            'quotations',
+                                            'preffered_quotation',
+                                            'items',
+                                            'terms',
+                                            'approvals',
+                                            'deliveries'
+                                )->findOrFail($lpo_id);
+           
+           
+            $lpo->status_id = $lpo->status->next_status_id;
 
-        //not path params validation
+            if($lpo->save()) {
 
-        return response('How about implementing submitLpoForApproval as a PATCH method ?');
+                return Response()->json(array('msg' => 'Success: lpo submitted','lpo' => $lpo), 200);
+            }
+
+        }catch(Exception $e){
+
+            $response =  ["error"=>"lpo could not be found"];
+            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+        }
     }
 
 
