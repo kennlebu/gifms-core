@@ -32,7 +32,7 @@ class User extends Authenticatable
     ];
 
     
-    protected $appends = ['full_name','is_admin'];
+    protected $appends = ['full_name','name','is_admin'];
 
 
 
@@ -41,6 +41,13 @@ class User extends Authenticatable
 
 
     public function getFullNameAttribute()
+    {       
+
+        return $this->attributes['f_name'].' '.$this->attributes['l_name'];
+
+    }
+
+    public function getNameAttribute()
     {       
 
         return $this->attributes['f_name'].' '.$this->attributes['l_name'];

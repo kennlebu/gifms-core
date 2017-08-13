@@ -28,6 +28,6 @@ class SubmitAdvance extends Mailable
      */
     public function build()
     {
-        return $this->view('emails/submit.advance');
+        return $this->view('emails/submit_advance');
     }
 }

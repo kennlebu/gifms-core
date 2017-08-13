@@ -23,14 +23,14 @@ class CreateLposTable extends Migration
             $table->text('expense_purpose')->nullable();
             $table->integer('requested_by_id')->nullable();
             $table->integer('request_action_by_id')->nullable();
-            $table->date('request_date')->nullable();
+            $table->timestamp('request_date')->nullable();
             $table->integer('status_id')->nullable();
             $table->integer('currency_id')->nullable();
             $table->integer('preffered_quotation_id')->nullable();
             $table->integer('supply_category')->nullable();
             $table->string('delivery_document')->nullable();
             $table->text('delivery_Comment')->nullable();
-            $table->date('date_delivered')->nullable();
+            $table->timestamp('date_delivered')->nullable();
             $table->integer('received_by_id')->nullable();
             $table->integer('meeting')->nullable();
             $table->text('comments')->nullable();

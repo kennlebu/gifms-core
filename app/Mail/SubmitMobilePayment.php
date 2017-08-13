@@ -28,6 +28,6 @@ class SubmitMobilePayment extends Mailable
      */
     public function build()
     {
-        return $this->view('emails/submit.mobile.payment');
+        return $this->view('emails/submit_mobile_payment');
     }
 }

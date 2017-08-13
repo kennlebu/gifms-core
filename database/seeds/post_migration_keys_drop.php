@@ -24,7 +24,6 @@ class post_migration_keys_drop extends Seeder
 					DROP COLUMN `attention`,
 					DROP COLUMN `preffered_supplier`,
 					DROP COLUMN `supply_category`,
-					DROP COLUMN `request_date`,
                     DROP COLUMN `addressee`,
                     DROP COLUMN `lpo_email`,
 					DROP COLUMN `lpo_date`

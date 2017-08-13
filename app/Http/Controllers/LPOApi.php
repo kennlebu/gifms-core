@@ -27,6 +27,8 @@ use Anchu\Ftp\Facades\Ftp;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\SubmitLpo;
 
 class LPOApi extends Controller
 {
@@ -435,7 +437,7 @@ class LPOApi extends Controller
         
         $input = Request::all();
 
-        try{
+        // try{
 
             $lpo   = LPO::with(
                                             'requested_by',
@@ -460,17 +462,22 @@ class LPOApi extends Controller
            
            
             $lpo->status_id = $lpo->status->next_status_id;
+            $lpo->request_date = date('Y-m-d H:i:s');
 
             if($lpo->save()) {
+
+
+                Mail::to($lpo->project_manager)
+                    ->send(new SubmitLpo($lpo));
 
                 return Response()->json(array('msg' => 'Success: lpo submitted','lpo' => $lpo), 200);
             }
 
-        }catch(Exception $e){
+        // }catch(Exception $e){
 
-            $response =  ["error"=>"lpo could not be found"];
-            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
-        }
+        //     $response =  ["error"=>"lpo could not be found"];
+        //     return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+        // }
     }
 
 

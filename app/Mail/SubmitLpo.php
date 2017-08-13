@@ -6,19 +6,24 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use App\Models\LPOModels\Lpo;
 
 class SubmitLpo extends Mailable
 {
     use Queueable, SerializesModels;
+
+
+    protected $lpo;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(LPO $lpo)
     {
         //
+        $this->lpo = $lpo;
     }
 
     /**
@@ -28,6 +33,10 @@ class SubmitLpo extends Mailable
      */
     public function build()
     {
-        return $this->view('emails/submit.lpo');
+        return $this->view('emails/submit_lpo')
+                ->with([
+                        'lpo' => $this->lpo,
+                    ])
+                ->subject("LPO Approval Request ".$this->lpo->ref);
     }
 }
