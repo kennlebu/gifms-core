@@ -28,6 +28,6 @@ class SubmitClaim extends Mailable
      */
     public function build()
     {
-        return $this->view('mail/submit.claim');
+        return $this->view('emails/submit.claim');
     }
 }
