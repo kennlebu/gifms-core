@@ -56,6 +56,18 @@
         <tr>
           <td colspan="1"  bgcolor="#ffffff" height="20">
             <strong>
+              <span style="color: #7c7c7c;">Project Manager:</span>
+            </strong>
+          </td>
+          <td style="text-align: left;" bgcolor="#ffffff" colspan="2" >
+            <strong>
+              <span style="color: #092d50;">{{$lpo->project_manager->name}}</span>
+            </strong>
+          </td>
+        </tr> 
+        <tr>
+          <td colspan="1"  bgcolor="#ffffff" height="20">
+            <strong>
               <span style="color: #7c7c7c;">Amount:</span>
             </strong>
           </td>
