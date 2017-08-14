@@ -15,6 +15,9 @@ class NotifyLpo extends Mailable
     use Queueable, SerializesModels;
 
     protected $lpo;
+    protected $accountant;
+    protected $financial_controller;
+    protected $director;
     /**
      * Create a new message instance.
      *
@@ -46,6 +49,12 @@ class NotifyLpo extends Mailable
         foreach ($this->lpo->approvals as $key => $value) {
             $this->lpo->approvals[$key]['approver'] = Staff::findOrFail($this->lpo->approvals[$key]['approver_id']);
         }
+
+
+        $this->accountant           = Staff::findOrFail(    (int)   Config::get('app.accountant_id'));
+        $this->financial_controller = Staff::findOrFail(    (int)   Config::get('app.financial_controller_id'));
+        $this->director             = Staff::findOrFail(    (int)   Config::get('app.director_id'));
+
     }
 
     /**
@@ -55,19 +64,106 @@ class NotifyLpo extends Mailable
      */
     public function build()
     {
-        return $this->view('emails/notify_lpo')
-                ->to($this->lpo->project_manager)
-                ->cc($this->lpo->requested_by)
-                ->replyTo([
-                        'email' => Config::get('mail.reply_to')['address'],
-                        // 'name'  => Config::get('mail.reply_to')['name'],
 
-                    ])
-                ->with([
-                        'lpo' => $this->lpo,
-                        'addressed_to' => $this->lpo->project_manager,
-                        'js_url' => Config::get('app.js_url'),
-                    ])
-                ->subject("LPO Approval Request ".$this->lpo->ref);
+        $bccs = [] ;
+        $bccs[0] = $this->accountant;
+        $bccs[1] = $this->financial_controller;
+        $bccs[2] = $this->director;
+
+
+        $this->view('emails/notify_lpo')         
+            ->replyTo([
+                    'email' => Config::get('mail.reply_to')['address'],
+
+                ])           
+            ->cc($this->lpo->requested_by)       
+            ->bcc($bccs);
+
+
+
+
+
+
+
+
+
+
+
+        if($this->lpo->status_id = 13){
+
+
+
+            return $this->to($this->accountant)
+                    ->with([
+                            'lpo' => $this->lpo,
+                            'addressed_to' => $this->accountant,
+                            'js_url' => Config::get('app.js_url'),
+                        ])
+                    ->subject("LPO Approval Request ".$this->lpo->ref);
+        }else if($this->lpo->status_id = 3){
+
+
+
+            return $this->to($this->lpo->project_manager)
+                    ->with([
+                            'lpo' => $this->lpo,
+                            'addressed_to' => $this->lpo->project_manager,
+                            'js_url' => Config::get('app.js_url'),
+                        ])
+                    ->subject("LPO Approval Request ".$this->lpo->ref);
+        }else if($this->lpo->status_id = 4){
+
+
+
+            return $this->to($this->financial_controller)
+                    ->with([
+                            'lpo' => $this->lpo,
+                            'addressed_to' => $this->financial_controller,
+                            'js_url' => Config::get('app.js_url'),
+                        ])
+                    ->subject("LPO Approval Request ".$this->lpo->ref);
+        }else if($this->lpo->status_id = 5){
+
+
+
+            return $this->to($this->director)
+                    ->with([
+                            'lpo' => $this->lpo,
+                            'addressed_to' => $this->director,
+                            'js_url' => Config::get('app.js_url'),
+                        ])
+                    ->subject("LPO Approval Request ".$this->lpo->ref);
+        }
+
+
+
+
+
+
+
+        else if($this->lpo->status_id = 11){
+
+
+
+            return $this->to($this->lpo->requested_by)
+                    ->with([
+                            'lpo' => $this->lpo,
+                            'addressed_to' => $this->lpo->requested_by,
+                            'js_url' => Config::get('app.js_url'),
+                        ])
+                    ->subject("LPO Cancelled ".$this->lpo->ref);
+        }else if($this->lpo->status_id = 12){
+
+
+
+            return $this->to($this->lpo->requested_by)
+                    ->with([
+                            'lpo' => $this->lpo,
+                            'addressed_to' => $this->lpo->requested_by,
+                            'js_url' => Config::get('app.js_url'),
+                        ])
+                    ->subject("LPO Rejected ".$this->lpo->ref);
+        }
+
     }
 }

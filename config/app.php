@@ -244,4 +244,23 @@ return [
 
     ],
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    'accountant_id'             => env('ACCOUNTANT_ID'),
+    'financial_controller_id'   => env('FINANCIAL_CONTROLLER_ID'),
+    'director_id'               => env('DIRECTOR_ID'),
+
 ];
