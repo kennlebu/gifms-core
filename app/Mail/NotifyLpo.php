@@ -57,6 +57,7 @@ class NotifyLpo extends Mailable
     {
         return $this->view('emails/notify_lpo')
                 ->to($this->lpo->project_manager)
+                ->cc($this->lpo->requested_by)
                 ->with([
                         'lpo' => $this->lpo,
                         'addressed_to' => $this->lpo->project_manager,
