@@ -28,7 +28,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Mail;
-use App\Mail\SubmitLpo;
+use App\Mail\NotifyLpo;
 
 class LPOApi extends Controller
 {
@@ -467,8 +467,7 @@ class LPOApi extends Controller
             if($lpo->save()) {
 
 
-                Mail::to($lpo->project_manager)
-                    ->send(new SubmitLpo($lpo));
+                Mail::send(new NotifyLpo($lpo));
 
                 return Response()->json(array('msg' => 'Success: lpo submitted','lpo' => $lpo), 200);
             }
