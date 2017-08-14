@@ -8,6 +8,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use App\Models\LPOModels\Lpo;
 use App\Models\StaffModels\Staff;
+use Config;
 
 class NotifyLpo extends Mailable
 {
@@ -58,6 +59,8 @@ class NotifyLpo extends Mailable
                 ->to($this->lpo->project_manager)
                 ->with([
                         'lpo' => $this->lpo,
+                        'addressed_to' => $this->lpo->project_manager,
+                        'js_url' => Config::get('app.js_url'),
                     ])
                 ->subject("LPO Approval Request ".$this->lpo->ref);
     }

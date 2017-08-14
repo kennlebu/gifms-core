@@ -4,6 +4,12 @@
 <body  style="font-family: monospace;">
   <main>
     <div>
+      Dear {{$addressed_to->f_name}},
+      <br/>
+      <br/>
+      The below detailed LPO has been posted and awaits your approval.
+      <br/>
+
     </div>
 
     <table style="width: 100%;font-size: smaller;border: 1px solid #c0c0c0;"  cellspacing="0">
@@ -119,6 +125,11 @@
         </tr>     
       </tbody>
     </table>
+
+    <div>
+      Login <a href="{{$js_url}}">here</a> to proceed
+
+    </div>
   </main>
 </body>
 </html>
