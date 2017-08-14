@@ -58,6 +58,11 @@ class NotifyLpo extends Mailable
         return $this->view('emails/notify_lpo')
                 ->to($this->lpo->project_manager)
                 ->cc($this->lpo->requested_by)
+                ->replyTo([
+                        'email' => Config::get('mail.reply_to')['address'],
+                        // 'name'  => Config::get('mail.reply_to')['name'],
+
+                    ])
                 ->with([
                         'lpo' => $this->lpo,
                         'addressed_to' => $this->lpo->project_manager,
