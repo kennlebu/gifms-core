@@ -357,6 +357,9 @@ class LPOApi extends Controller
 
             if($lpo->save()) {
 
+                
+                Mail::send(new NotifyLpo($lpo));
+
                 return Response()->json(array('msg' => 'Success: lpo approved','lpo' => $lpo), 200);
             }
 
