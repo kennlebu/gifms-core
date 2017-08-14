@@ -89,7 +89,7 @@ class NotifyLpo extends Mailable
 
 
 
-        if($this->lpo->status_id = 13){
+        if($this->lpo->status_id == 13){
 
 
 
@@ -100,7 +100,7 @@ class NotifyLpo extends Mailable
                             'js_url' => Config::get('app.js_url'),
                         ])
                     ->subject("LPO Approval Request ".$this->lpo->ref);
-        }else if($this->lpo->status_id = 3){
+        }else if($this->lpo->status_id == 3){
 
 
 
@@ -111,7 +111,7 @@ class NotifyLpo extends Mailable
                             'js_url' => Config::get('app.js_url'),
                         ])
                     ->subject("LPO Approval Request ".$this->lpo->ref);
-        }else if($this->lpo->status_id = 4){
+        }else if($this->lpo->status_id == 4){
 
 
 
@@ -122,7 +122,7 @@ class NotifyLpo extends Mailable
                             'js_url' => Config::get('app.js_url'),
                         ])
                     ->subject("LPO Approval Request ".$this->lpo->ref);
-        }else if($this->lpo->status_id = 5){
+        }else if($this->lpo->status_id == 5){
 
 
 
@@ -141,7 +141,7 @@ class NotifyLpo extends Mailable
 
 
 
-        else if($this->lpo->status_id = 11){
+        else if($this->lpo->status_id == 11){
 
 
 
@@ -152,7 +152,7 @@ class NotifyLpo extends Mailable
                             'js_url' => Config::get('app.js_url'),
                         ])
                     ->subject("LPO Cancelled ".$this->lpo->ref);
-        }else if($this->lpo->status_id = 12){
+        }else if($this->lpo->status_id == 12){
 
 
 

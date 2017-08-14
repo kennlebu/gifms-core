@@ -357,7 +357,7 @@ class LPOApi extends Controller
 
             if($lpo->save()) {
 
-                
+
                 Mail::send(new NotifyLpo($lpo));
 
                 return Response()->json(array('msg' => 'Success: lpo approved','lpo' => $lpo), 200);
@@ -400,12 +400,47 @@ class LPOApi extends Controller
     {
         $input = Request::all();
 
-        //path params validation
+        try{
 
+            $lpo   = LPO::with(
+                                            'requested_by',
+                                            'request_action_by',
+                                            'project',
+                                            'account',
+                                            'invoice',
+                                            'status',
+                                            'project_manager',
+                                            'rejected_by',
+                                            'cancelled_by',
+                                            'received_by',
+                                            'supplier',
+                                            'currency',
+                                            'quotations',
+                                            'preffered_quotation',
+                                            'items',
+                                            'terms',
+                                            'approvals',
+                                            'deliveries'
+                                )->findOrFail($lpo_id);
+           
+           
+            $lpo->status_id = 12;
+            $user = JWTAuth::parseToken()->authenticate();
+            $lpo->rejected_by_id            =   (int)   $user->id;
 
-        //not path params validation
+            if($lpo->save()) {
 
-        return response('How about implementing rejectLpo as a PATCH method ?');
+                
+                Mail::send(new NotifyLpo($lpo));
+
+                return Response()->json(array('msg' => 'Success: lpo rejected','lpo' => $lpo), 200);
+            }
+
+        }catch(Exception $e){
+
+            $response =  ["error"=>"lpo could not be found"];
+            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+        }
     }
 
 

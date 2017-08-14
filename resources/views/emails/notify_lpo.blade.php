@@ -7,7 +7,13 @@
       Dear {{$addressed_to->f_name}},
       <br/>
       <br/>
-      The below detailed LPO has been posted and awaits your approval.
+      @if ($lpo->status_id==13||$lpo->status_id==3||$lpo->status_id==4||$lpo->status_id==5)
+        The below detailed LPO has been posted and awaits your approval. {{$lpo->status_id}}
+      @elseif ($lpo->status_id==11)
+        The below detailed LPO has been Cancelled by {{$lpo->cancelled_by->name}}
+      @elseif ($lpo->status_id==12)
+        The below detailed LPO has been Rejected by {{$lpo->rejected_by->name}}
+      @endif
       <br/>
 
     </div>
