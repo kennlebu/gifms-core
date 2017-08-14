@@ -100,6 +100,22 @@
               <span style="color: #092d50;">{{$lpo->request_date}}</span>
             </strong>
           </td>
+        </tr> 
+        <tr>
+          <td colspan="1"  bgcolor="#ffffff" height="20">
+            <strong>
+              <span style="color: #7c7c7c;">Approved By:</span>
+            </strong>
+          </td>
+          <td style="text-align: left;" bgcolor="#ffffff" colspan="2" >
+            <strong>
+              @foreach ($lpo->approvals as $key => $item)
+                <span style="color: #092d50;">{{$item->approver->name}}</span>
+                <span style="color: #092d50;">{{$item->created_at}}</span>
+                <br/>
+              @endforeach
+            </strong>
+          </td>
         </tr>     
       </tbody>
     </table>

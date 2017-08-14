@@ -39,3 +39,39 @@ Route::get('test/pdf_mobile_payment', function () {
 
     return view('pdf/mobile_payment',$data);
 });
+
+
+
+Route::get('test/email_lpo', function () {
+
+        $lpo = App\Models\LPOModels\LPO::with(
+                                            'requested_by',
+                                            'request_action_by',
+                                            'project',
+                                            'account',
+                                            'invoice',
+                                            'status',
+                                            'project_manager',
+                                            'rejected_by',
+                                            'cancelled_by',
+                                            'received_by',
+                                            'supplier',
+                                            'currency',
+                                            'quotations',
+                                            'preffered_quotation',
+                                            'items',
+                                            'terms',
+                                            'approvals',
+                                            'deliveries'
+                                )->findOrFail(128);
+
+        foreach ($lpo->approvals as $key => $value) {
+            $lpo->approvals[$key]['approver'] = App\Models\StaffModels\Staff::findOrFail($lpo->approvals[$key]['approver_id']);
+        }
+
+    $data = array(
+            'lpo'   => $lpo
+        );
+
+    return view('emails/notify_lpo',$data);
+});

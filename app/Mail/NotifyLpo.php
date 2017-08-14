@@ -7,6 +7,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use App\Models\LPOModels\Lpo;
+use App\Models\StaffModels\Staff;
 
 class NotifyLpo extends Mailable
 {
@@ -21,7 +22,29 @@ class NotifyLpo extends Mailable
     public function __construct(LPO $lpo)
     {
         //
-        $this->lpo = $lpo;
+        $this->lpo = LPO::with(
+                                            'requested_by',
+                                            'request_action_by',
+                                            'project',
+                                            'account',
+                                            'invoice',
+                                            'status',
+                                            'project_manager',
+                                            'rejected_by',
+                                            'cancelled_by',
+                                            'received_by',
+                                            'supplier',
+                                            'currency',
+                                            'quotations',
+                                            'preffered_quotation',
+                                            'items',
+                                            'terms',
+                                            'approvals',
+                                            'deliveries'
+                                )->findOrFail($lpo->id);
+        foreach ($this->lpo->approvals as $key => $value) {
+            $this->lpo->approvals[$key]['approver'] = Staff::findOrFail($this->lpo->approvals[$key]['approver_id']);
+        }
     }
 
     /**
@@ -31,7 +54,7 @@ class NotifyLpo extends Mailable
      */
     public function build()
     {
-        return $this->view('emails/submit_lpo')
+        return $this->view('emails/notify_lpo')
                 ->to($this->lpo->project_manager)
                 ->with([
                         'lpo' => $this->lpo,
