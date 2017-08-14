@@ -8,7 +8,7 @@
       <br/>
       <br/>
       @if ($lpo->status_id==13||$lpo->status_id==3||$lpo->status_id==4||$lpo->status_id==5)
-        The below detailed LPO has been posted and awaits your approval. {{$lpo->status_id}}
+        The below detailed LPO has been posted and awaits your approval.
       @elseif ($lpo->status_id==11)
         The below detailed LPO has been Cancelled by {{$lpo->cancelled_by->name}}
       @elseif ($lpo->status_id==12)
