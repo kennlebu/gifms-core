@@ -440,7 +440,7 @@ class LPOApi extends Controller
         
         $input = Request::all();
 
-        // try{
+        try{
 
             $lpo   = LPO::with(
                                             'requested_by',
@@ -475,11 +475,11 @@ class LPOApi extends Controller
                 return Response()->json(array('msg' => 'Success: lpo submitted','lpo' => $lpo), 200);
             }
 
-        // }catch(Exception $e){
+        }catch(Exception $e){
 
-        //     $response =  ["error"=>"lpo could not be found"];
-        //     return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
-        // }
+            $response =  ["error"=>"lpo could not be found"];
+            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+        }
     }
 
 
