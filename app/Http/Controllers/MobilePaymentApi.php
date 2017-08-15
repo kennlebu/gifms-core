@@ -31,6 +31,8 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\NotifyMobilePayment;
+use App\Models\AllocationModels\Allocation;
+use App\Models\ApprovalsModels\Approval;
 
 class MobilePaymentApi extends Controller
 {

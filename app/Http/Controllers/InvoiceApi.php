@@ -28,6 +28,8 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\NotifyInvoice;
+use App\Models\AllocationModels\Allocation;
+use App\Models\ApprovalsModels\Approval;
 
 class InvoiceApi extends Controller
 {

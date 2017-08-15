@@ -24,6 +24,8 @@ use App\Models\ProjectsModels\Project;
 use App\Models\AccountingModels\Account;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\NotifyAdvance;
+use App\Models\AllocationModels\Allocation;
+use App\Models\ApprovalsModels\Approval;
 
 class AdvanceApi extends Controller
 {
