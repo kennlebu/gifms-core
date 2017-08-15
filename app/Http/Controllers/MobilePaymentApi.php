@@ -414,7 +414,7 @@ class MobilePaymentApi extends Controller
     {
 
         $form = Request::only(
-            'reject_reason'
+            'rejection_reason'
             );
 
         $response = [];
@@ -444,7 +444,7 @@ class MobilePaymentApi extends Controller
             $user = JWTAuth::parseToken()->authenticate();
             $mobile_payment->rejected_by_id            =   (int)   $user->id;
             $mobile_payment->requested_at              =   date('Y-m-d H:i:s');
-            $mobile_payment->reject_reason             =   $form['reject_reason'];
+            $mobile_payment->rejection_reason             =   $form['rejection_reason'];
 
             if($mobile_payment->save()) {
 

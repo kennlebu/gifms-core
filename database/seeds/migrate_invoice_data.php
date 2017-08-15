@@ -60,7 +60,7 @@ class migrate_invoice_data extends Seeder
             $data_to_migrate[$key]['comments']                      = $data[$key]['InvoiceComments'];
             $data_to_migrate[$key]['invoice_type_id']                  = $data[$key]['InvoiceType'];
             $data_to_migrate[$key]['currency_id']                      = $data[$key]['InvoiceCurrency'];
-            $data_to_migrate[$key]['reject_reason']                 = $data[$key]['RejectReason'];
+            $data_to_migrate[$key]['rejection_reason']                 = $data[$key]['RejectReason'];
             $data_to_migrate[$key]['withholding_tax']               = $data[$key]['WithHoldingTax'];
             $data_to_migrate[$key]['payment_mode_id']               = $data[$key]['InvoicePaymentMode'];
             $data_to_migrate[$key]['country_id']                    = $data[$key]['InvoiceCountry'];

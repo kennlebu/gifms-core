@@ -42,7 +42,7 @@ class CreateInvoicesTable extends Migration
             $table->text('comments')->nullable();
             $table->integer('invoice_type_id')->nullable();
             $table->integer('currency_id')->nullable();
-            $table->text('reject_reason')->nullable();
+            $table->text('rejection_reason')->nullable();
             $table->integer('rejected_by_id')->nullable();
             $table->timestamp('rejected_at')->nullable();
             $table->integer('withholding_tax')->nullable();

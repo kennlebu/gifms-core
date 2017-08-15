@@ -2337,7 +2337,7 @@ definitions:
       - preffered_supplier
       - attention
       - lpo_email
-      - reject_reason
+      - rejection_reason
       - quote_exempt
       - quote_exempt_explanation
       - account_id
@@ -2414,7 +2414,7 @@ definitions:
       lpo_email:
         type: string
         example: mwangikevinn@gmail.com
-      reject_reason:
+      rejection_reason:
         type: string
         example: "No currency indicated"
       quote_exempt:

@@ -415,7 +415,7 @@ class AdvanceApi extends Controller
     {
 
         $form = Request::only(
-            'reject_reason'
+            'rejection_reason'
             );
 
         try{
@@ -436,7 +436,7 @@ class AdvanceApi extends Controller
             $user = JWTAuth::parseToken()->authenticate();
             $advance->rejected_by_id            =   (int)   $user->id;
             $advance->requested_at              =   date('Y-m-d H:i:s');
-            $advance->reject_reason             =   $form['reject_reason'];
+            $advance->rejection_reason             =   $form['rejection_reason'];
 
             if($advance->save()) {
 

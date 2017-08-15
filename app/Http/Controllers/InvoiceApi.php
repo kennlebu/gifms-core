@@ -473,7 +473,7 @@ class InvoiceApi extends Controller
     {
 
         $form = Request::only(
-            'reject_reason'
+            'rejection_reason'
             );
         
         $invoice = [];
@@ -498,7 +498,7 @@ class InvoiceApi extends Controller
             $user = JWTAuth::parseToken()->authenticate();
             $invoice->rejected_by_id            =   (int)   $user->id;
             $invoice->raised_at                 =   date('Y-m-d H:i:s');
-            $invoice->reject_reason             =   $form['reject_reason'];
+            $invoice->rejection_reason             =   $form['rejection_reason'];
 
             if($invoice->save()) {
 
