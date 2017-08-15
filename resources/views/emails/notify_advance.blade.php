@@ -4,7 +4,7 @@
 <body  style="font-family: monospace;">
   <main>
     <div>
-      Dear {{$addressed_to->f_name}},
+      Attn. {{$addressed_to->f_name}},
       <br/>
       <br/>
       @if ($advance->status_id==9||$advance->status_id==2||$advance->status_id==3||$advance->status_id==4)
