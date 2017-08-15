@@ -20,7 +20,7 @@ class CreateAdvancesTable extends Migration
             $table->double('approved_total',30,4)->nullable();
             $table->string('expense_desc')->nullable();
             $table->text('expense_purpose')->nullable();
-            $table->date('requested_date')->nullable();
+            $table->timestamp('requested_at')->nullable();
             $table->string('advance_document')->nullable();
             $table->date('due_date')->nullable();
             $table->integer('status_id')->nullable();

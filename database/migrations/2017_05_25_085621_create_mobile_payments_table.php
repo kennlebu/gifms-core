@@ -18,7 +18,7 @@ class CreateMobilePaymentsTable extends Migration
             $table->increments('id');
             $table->string('ref')->nullable();
             $table->integer('meeting')->nullable();
-            $table->date('requested_date')->nullable();
+            $table->timestamp('requested_at')->nullable();
             $table->integer('requested_by_id')->nullable();
             $table->integer('request_action_by_id')->nullable();
             $table->integer('project_id')->nullable();

@@ -35,7 +35,7 @@ class migrate_mobile_payment_data extends Seeder
 
 
             $data_to_migrate[$key]['meeting']         						= $data[$key]['Meeting'];
-            $data_to_migrate[$key]['requested_date']         				= $data[$key]['RequestedDate'];
+            $data_to_migrate[$key]['requested_at']         				    = $data[$key]['RequestedDate'];
             $data_to_migrate[$key]['mobile_payment_type_id']                = $data[$key]['AllowanceType'];
             $data_to_migrate[$key]['expense_desc']                          = $data[$key]['Title'];
             $data_to_migrate[$key]['expense_purpose']                       = $data[$key]['AllowanceDescription'];

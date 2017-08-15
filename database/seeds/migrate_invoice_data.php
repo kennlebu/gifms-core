@@ -42,7 +42,8 @@ class migrate_invoice_data extends Seeder
             $data_to_migrate[$key]['expense_purpose']  				= $data[$key]['InvoicePurpose'];
             $data_to_migrate[$key]['external_ref']                  = $data[$key]['InvoiceNumber'];
             $data_to_migrate[$key]['invoice_date']                  = $data[$key]['InvoiceDate'];
-            $data_to_migrate[$key]['date_raised']                   = $data[$key]['DateReceived'];
+            $data_to_migrate[$key]['received_at']                   = $data[$key]['DateReceived'];
+            $data_to_migrate[$key]['raised_at']                     = $data[$key]['DateReceived'];
             // $data_to_migrate[$key]['raised_by_id']                  = $data[$key]['ReceivedBy'];
             // $data_to_migrate[$key]['raise_action_by_id']            = $data[$key]['ReceivedBy'];
             $data_to_migrate[$key]['total']                         = $data[$key]['InvoiceAmount'];

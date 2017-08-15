@@ -39,7 +39,7 @@ class migrate_advances_data extends Seeder
             $data_to_migrate[$key]['approved_total']         				= $data[$key]['AmountApproved'];
             $data_to_migrate[$key]['expense_desc']         					= $data[$key]['Description'];
             $data_to_migrate[$key]['expense_purpose']         				= $data[$key]['AdvancePurpose'];
-            $data_to_migrate[$key]['requested_date']         				= $data[$key]['AdvanceRequestDate'];
+            $data_to_migrate[$key]['requested_at']         				    = $data[$key]['AdvanceRequestDate'];
             $data_to_migrate[$key]['due_date']         						= $data[$key]['AdvanceEventDate'];
             $data_to_migrate[$key]['status_id']         					= $data[$key]['AdvanceStatus'];
             $data_to_migrate[$key]['comment']         						= $data[$key]['ApprovalComment'];

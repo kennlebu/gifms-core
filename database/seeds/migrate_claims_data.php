@@ -37,7 +37,7 @@ class migrate_claims_data extends Seeder
             $data_to_migrate[$key]['total']         						= $data[$key]['Amount'];
             $data_to_migrate[$key]['expense_desc']         					= $data[$key]['ClaimTitle'];
             $data_to_migrate[$key]['expense_purpose']         				= $data[$key]['Description'];
-            $data_to_migrate[$key]['requested_date']         				= $data[$key]['DateSubmitted'];
+            $data_to_migrate[$key]['requested_at']         				    = $data[$key]['DateSubmitted'];
             $data_to_migrate[$key]['claim_document']         				= $data[$key]['ClaimDocument'];
             $data_to_migrate[$key]['allocated_at']         					= $data[$key]['AllocationDate'];
             $data_to_migrate[$key]['allocated_by_id']         				= $data[$key]['AllocatedBy'];
