@@ -94,7 +94,7 @@
         <tr>
           <td colspan="1"  bgcolor="#ffffff" height="20">
             <strong>
-              <span style="color: #7c7c7c;">Requested By:</span>
+              <span style="color: #7c7c7c;">Raised By:</span>
             </strong>
           </td>
           <td style="text-align: left;" bgcolor="#ffffff" colspan="2" >
