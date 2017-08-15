@@ -347,6 +347,8 @@ class AdvanceApi extends Controller
             $advance->status_id = $advance->status->next_status_id;
 
             if($advance->save()) {
+                
+                Mail::send(new NotifyAdvance($advance));
 
                 return Response()->json(array('msg' => 'Success: advance approved','advance' => $advance), 200);
             }
@@ -475,6 +477,8 @@ class AdvanceApi extends Controller
             $advance->status_id = $advance->status->next_status_id;
 
             if($advance->save()) {
+                
+                Mail::send(new NotifyAdvance($advance));
 
                 return Response()->json(array('msg' => 'Success: advance submitted','advance' => $advance), 200);
             }

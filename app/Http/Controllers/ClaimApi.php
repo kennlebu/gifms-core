@@ -342,6 +342,8 @@ class ClaimApi extends Controller
 
             if($claim->save()) {
 
+                Mail::send(new NotifyClaims($claim));
+
                 return Response()->json(array('msg' => 'Success: claim approved','claim' => $claim), 200);
             }
 
@@ -540,6 +542,8 @@ class ClaimApi extends Controller
             $claim->status_id = $claim->status->next_status_id;
 
             if($claim->save()) {
+
+                Mail::send(new NotifyClaims($claim));
 
                 return Response()->json(array('msg' => 'Success: claim submitted','claim' => $claim), 200);
             }

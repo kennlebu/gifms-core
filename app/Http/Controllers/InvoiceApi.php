@@ -403,6 +403,8 @@ class InvoiceApi extends Controller
 
             if($invoice->save()) {
 
+                Mail::send(new NotifyInvoice($invoice));
+
                 return Response()->json(array('msg' => 'Success: invoice approved','invoice' => $invoice), 200);
             }
 
@@ -603,6 +605,8 @@ class InvoiceApi extends Controller
             $invoice->status_id = $invoice->status->next_status_id;
 
             if($invoice->save()) {
+
+                Mail::send(new NotifyInvoice($invoice));
 
                 return Response()->json(array('msg' => 'Success: invoice submitted','invoice' => $invoice), 200);
             }

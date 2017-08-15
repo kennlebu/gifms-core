@@ -337,6 +337,8 @@ class MobilePaymentApi extends Controller
 
             if($mobile_payment->save()) {
 
+                Mail::send(new NotifyMobilePayment($mobile_payment));
+
                 return Response()->json(array('msg' => 'Success: mobile_payment approved','mobile_payment' => $mobile_payment), 200);
             }
 
@@ -706,6 +708,8 @@ class MobilePaymentApi extends Controller
             $mobile_payment->status_id = $mobile_payment->status->next_status_id;
 
             if($mobile_payment->save()) {
+
+                Mail::send(new NotifyMobilePayment($mobile_payment));
 
                 return Response()->json(array('msg' => 'Success: mobile_payment submitted','mobile_payment' => $mobile_payment), 200);
             }
