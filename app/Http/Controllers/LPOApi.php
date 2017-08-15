@@ -434,7 +434,7 @@ class LPOApi extends Controller
     {
 
         $form = Request::only(
-            'reject_reason',
+            'reject_reason'
             );
 
         try{

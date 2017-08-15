@@ -473,7 +473,7 @@ class InvoiceApi extends Controller
     {
 
         $form = Request::only(
-            'reject_reason',
+            'reject_reason'
             );
         
         $invoice = [];

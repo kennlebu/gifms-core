@@ -419,7 +419,7 @@ class ClaimApi extends Controller
     {
 
         $form = Request::only(
-            'reject_reason',
+            'reject_reason'
             );
         
         $claim = [];
