@@ -398,7 +398,8 @@ class post_keys_migration_migration extends Seeder
         //claim_statuses
         DB::table('claim_statuses')->insert([
                 [
-                    'claim_status' =>'Pending Accountant Approval'
+                    'claim_status' =>'Pending Accountant Approval',
+                    'next_status_id' => '2'
                 ]
             ]);
 
