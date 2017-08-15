@@ -137,5 +137,4 @@ class MobilePaymentInstructBank extends Mailable
         }
 
     }
-    }
 }

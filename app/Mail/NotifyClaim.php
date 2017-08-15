@@ -158,5 +158,4 @@ class NotifyClaim extends Mailable
         }
 
     }
-    }
 }

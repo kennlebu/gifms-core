@@ -165,5 +165,4 @@ class NotifyMobilePayment extends Mailable
         }
 
     }
-    }
 }

@@ -158,5 +158,4 @@ class NotifyInvoice extends Mailable
         }
 
     }
-    }
 }

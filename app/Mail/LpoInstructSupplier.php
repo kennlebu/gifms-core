@@ -137,5 +137,4 @@ class LpoInstructSupplier extends Mailable
         }
 
     }
-    }
 }
