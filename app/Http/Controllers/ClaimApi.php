@@ -573,6 +573,7 @@ class ClaimApi extends Controller
 
            
             $claim->status_id = $claim->status->next_status_id;
+            $claim->request_date = date('Y-m-d H:i:s');
 
             if($claim->save()) {
 

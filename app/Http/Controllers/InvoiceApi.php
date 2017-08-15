@@ -637,6 +637,7 @@ class InvoiceApi extends Controller
 
            
             $invoice->status_id = $invoice->status->next_status_id;
+            $invoice->request_date = date('Y-m-d H:i:s');
 
             if($invoice->save()) {
 
