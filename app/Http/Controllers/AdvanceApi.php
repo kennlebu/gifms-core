@@ -414,7 +414,9 @@ class AdvanceApi extends Controller
     public function rejectAdvance($advance_id)
     {
 
-        $input = Request::all();
+        $form = Request::only(
+            'reject_reason',
+            );
 
         try{
 
@@ -433,6 +435,8 @@ class AdvanceApi extends Controller
             $advance->status_id = 11;
             $user = JWTAuth::parseToken()->authenticate();
             $advance->rejected_by_id            =   (int)   $user->id;
+            $advance->rejected_at               =   date('Y-m-d H:i:s');
+            $advance->reject_reason             =   $form['reject_reason'];
 
             if($advance->save()) {
 
