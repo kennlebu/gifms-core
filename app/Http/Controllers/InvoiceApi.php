@@ -25,6 +25,8 @@ use Anchu\Ftp\Facades\Ftp;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\NotifyInvoice;
 
 class InvoiceApi extends Controller
 {
@@ -440,14 +442,40 @@ class InvoiceApi extends Controller
      */
     public function rejectInvoice($invoice_id)
     {
-        $input = Request::all();
+        $invoice = [];
 
-        //path params validation
+        try{
+            $invoice   = Invoice::with( 
+                                        'raised_by',
+                                        'raise_action_by',
+                                        'status',
+                                        'project_manager',
+                                        'currency',
+                                        'lpo',
+                                        'rejected_by',
+                                        'approvals',
+                                        'allocations',
+                                        'comments'
+                                    )->findOrFail($invoice_id);
 
+           
 
-        //not path params validation
+            $invoice->status_id = 9;
+            $user = JWTAuth::parseToken()->authenticate();
+            $invoice->rejected_by_id            =   (int)   $user->id;
 
-        return response('How about implementing rejectInvoice as a PATCH method ?');
+            if($invoice->save()) {
+
+                Mail::send(new NotifyInvoice($invoice));
+
+                return Response()->json(array('msg' => 'Success: invoice approved','invoice' => $invoice), 200);
+            }
+
+        }catch(Exception $e){
+
+            $response =  ["error"=>"Invoice could not be found"];
+            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+        }
     }
 
 

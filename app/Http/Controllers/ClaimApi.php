@@ -25,6 +25,8 @@ use Anchu\Ftp\Facades\Ftp;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\NotifyClaims;
 
 class ClaimApi extends Controller
 {
@@ -387,14 +389,38 @@ class ClaimApi extends Controller
      */
     public function rejectClaim($claim_id)
     {
-        $input = Request::all();
+        $claim = [];
 
-        //path params validation
+        try{
+            $claim   = Claim::with( 
+                                        'requested_by',
+                                        'request_action_by',
+                                        'project',
+                                        'status',
+                                        'project_manager',
+                                        'currency',
+                                        'rejected_by',
+                                        'approvals',
+                                        'allocations'
+                                    )->findOrFail($claim_id);
 
+           
+            $claim->status_id = 9;
+            $user = JWTAuth::parseToken()->authenticate();
+            $claim->rejected_by_id            =   (int)   $user->id;
 
-        //not path params validation
+            if($claim->save()) {
 
-        return response('How about implementing rejectClaim as a PATCH method ?');
+                Mail::send(new NotifyClaims($claim));
+
+                return Response()->json(array('msg' => 'Success: claim approved','claim' => $claim), 200);
+            }
+
+        }catch(Exception $e){
+
+            $response =  ["error"=>"Claim could not be found"];
+            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+        }
     }
 
 

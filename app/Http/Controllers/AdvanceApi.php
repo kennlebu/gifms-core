@@ -21,6 +21,8 @@ use App\Models\AdvancesModels\Advance;
 use App\Models\AdvancesModels\AdvanceStatus;
 use App\Models\ProjectsModels\Project;
 use App\Models\AccountingModels\Account;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\NotifyAdvance;
 
 class AdvanceApi extends Controller
 {
@@ -383,14 +385,40 @@ class AdvanceApi extends Controller
      */
     public function rejectAdvance($advance_id)
     {
+
         $input = Request::all();
 
-        //path params validation
+        try{
+
+            $advance   = Advance::with(
+                                    'requested_by',
+                                    'request_action_by',
+                                    'project',
+                                    'status',
+                                    'project_manager',
+                                    'currency',
+                                    'rejected_by',
+                                    'approvals',
+                                    'allocations'
+                                )->findOrFail($advance_id);
+           
+            $advance->status_id = 11;
+            $user = JWTAuth::parseToken()->authenticate();
+            $advance->rejected_by_id            =   (int)   $user->id;
+
+            if($advance->save()) {
+
+                Mail::send(new NotifyAdvance($advance));
+
+                return Response()->json(array('msg' => 'Success: advance approved','advance' => $advance), 200);
+            }
 
 
-        //not path params validation
+        }catch(Exception $e){
 
-        return response('How about implementing rejectAdvance as a PATCH method ?');
+            $response =  ["error"=>"Advance could not be found"];
+            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+        }
     }
 
 

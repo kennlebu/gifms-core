@@ -29,6 +29,8 @@ use Anchu\Ftp\Facades\Ftp;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\NotifyMobilePayment;
 
 class MobilePaymentApi extends Controller
 {
@@ -375,14 +377,46 @@ class MobilePaymentApi extends Controller
      */
     public function reject($mobile_payment_id)
     {
-        $input = Request::all();
 
-        //path params validation
+        $response = [];
 
+        try{
+            $mobile_payment   = MobilePayment::with(
+                                    'requested_by',
+                                    'requested_action_by',
+                                    'project',
+                                    'account',
+                                    'mobile_payment_type',
+                                    'invoice',
+                                    'status',
+                                    'project_manager',
+                                    'region',
+                                    'county',
+                                    'currency',
+                                    'rejected_by',
+                                    'payees_upload_mode',
+                                    'payees',
+                                    'approvals',
+                                    'allocations'
+                                )->findOrFail($mobile_payment_id);
 
-        //not path params validation
+           
+            $mobile_payment->status_id = 7;
+            $user = JWTAuth::parseToken()->authenticate();
+            $mobile_payment->rejected_by_id            =   (int)   $user->id;
 
-        return response('How about implementing reject as a PATCH method ?');
+            if($mobile_payment->save()) {
+
+                Mail::send(new NotifyMobilePayment($mobile_payment));
+
+                return Response()->json(array('msg' => 'Success: mobile_payment approved','mobile_payment' => $mobile_payment), 200);
+            }
+
+        }catch(Exception $e){
+
+            $response =  ["error"=>"Mobile Payment could not be found"];
+            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+        }
     }
 
 
