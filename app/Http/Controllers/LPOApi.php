@@ -464,7 +464,7 @@ class LPOApi extends Controller
             $lpo->status_id = 12;
             $user = JWTAuth::parseToken()->authenticate();
             $lpo->rejected_by_id            =   (int)   $user->id;
-            $lpo->rejected_at               =   date('Y-m-d H:i:s');
+            $lpo->requested_at              =   date('Y-m-d H:i:s');
             $lpo->reject_reason             =   $form['reject_reason'];
 
             if($lpo->save()) {
