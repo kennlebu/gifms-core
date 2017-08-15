@@ -406,6 +406,30 @@ class InvoiceApi extends Controller
 
             if($invoice->save()) {
 
+                $invoice   = Invoice::with( 
+                                        'raised_by',
+                                        'raise_action_by',
+                                        'status',
+                                        'project_manager',
+                                        'currency',
+                                        'lpo',
+                                        'rejected_by',
+                                        'approvals',
+                                        'allocations',
+                                        'comments'
+                                    )->findOrFail($invoice_id);
+
+                $approval = new Approval;
+
+                $user = JWTAuth::parseToken()->authenticate();
+
+                $approval->approvable_id            =   (int)   $invoice->id;
+                $approval->approvable_type          =   "invoices";
+                $approval->approval_level_id        =   $invoice->status->approval_level_id;
+                $approval->approver_id              =   (int)   $user->id;
+
+                $approval->save();
+
                 Mail::send(new NotifyInvoice($invoice));
 
                 return Response()->json(array('msg' => 'Success: invoice approved','invoice' => $invoice), 200);

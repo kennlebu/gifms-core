@@ -345,6 +345,29 @@ class ClaimApi extends Controller
 
             if($claim->save()) {
 
+                $claim   = Claim::with( 
+                                        'requested_by',
+                                        'request_action_by',
+                                        'project',
+                                        'status',
+                                        'project_manager',
+                                        'currency',
+                                        'rejected_by',
+                                        'approvals',
+                                        'allocations'
+                                    )->findOrFail($claim_id);
+
+                $approval = new Approval;
+
+                $user = JWTAuth::parseToken()->authenticate();
+
+                $approval->approvable_id            =   (int)   $claim->id;
+                $approval->approvable_type          =   "claims";
+                $approval->approval_level_id        =   $claim->status->approval_level_id;
+                $approval->approver_id              =   (int)   $user->id;
+
+                $approval->save();
+
                 Mail::send(new NotifyClaim($claim));
 
                 return Response()->json(array('msg' => 'Success: claim approved','claim' => $claim), 200);

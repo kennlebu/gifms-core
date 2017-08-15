@@ -337,7 +337,38 @@ class MobilePaymentApi extends Controller
            
             $mobile_payment->status_id = $mobile_payment->status->next_status_id;
 
+
             if($mobile_payment->save()) {
+
+                $mobile_payment   = MobilePayment::with(
+                                    'requested_by',
+                                    'requested_action_by',
+                                    'project',
+                                    'account',
+                                    'mobile_payment_type',
+                                    'invoice',
+                                    'status',
+                                    'project_manager',
+                                    'region',
+                                    'county',
+                                    'currency',
+                                    'rejected_by',
+                                    'payees_upload_mode',
+                                    'payees',
+                                    'approvals',
+                                    'allocations'
+                                )->findOrFail($mobile_payment_id);
+
+                $approval = new Approval;
+
+                $user = JWTAuth::parseToken()->authenticate();
+
+                $approval->approvable_id            =   (int)   $mobile_payment->id;
+                $approval->approvable_type          =   "mobile_payments";
+                $approval->approval_level_id        =   $mobile_payment->status->approval_level_id;
+                $approval->approver_id              =   (int)   $user->id;
+
+                $approval->save();
 
                 Mail::send(new NotifyMobilePayment($mobile_payment));
 

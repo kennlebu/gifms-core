@@ -350,6 +350,29 @@ class AdvanceApi extends Controller
             $advance->status_id = $advance->status->next_status_id;
 
             if($advance->save()) {
+
+                $advance   = Advance::with(
+                                    'requested_by',
+                                    'request_action_by',
+                                    'project',
+                                    'status',
+                                    'project_manager',
+                                    'currency',
+                                    'rejected_by',
+                                    'approvals',
+                                    'allocations'
+                                )->findOrFail($advance_id);
+
+                $approval = new Approval;
+
+                $user = JWTAuth::parseToken()->authenticate();
+
+                $approval->approvable_id            =   (int)   $advance->id;
+                $approval->approvable_type          =   "advances";
+                $approval->approval_level_id        =   $advance->status->approval_level_id;
+                $approval->approver_id              =   (int)   $user->id;
+
+                $approval->save();
                 
                 Mail::send(new NotifyAdvance($advance));
 
