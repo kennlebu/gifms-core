@@ -140,9 +140,9 @@
           </td>
           <td style="text-align: left;" bgcolor="#ffffff" colspan="2" >
             <strong>
-              <span style="color: #092d50;">{{$invoice->rejected_by->name}}</span>
-              <span style="color: #092d50;">{{$invoice->rejection_reason}}</span>
-              <span style="color: #092d50;">{{$invoice->rejected_at}}</span>
+              <span style="color: #092d50;">{{$invoice->rejected_by->name}}</span><br/>
+              <span style="color: #092d50;">{{$invoice->rejected_at}}</span><br/><br/>
+              <span style="color: #092d50;">Reason: {{$invoice->rejection_reason}}</span>              
             </strong>
           </td>
         </tr>   

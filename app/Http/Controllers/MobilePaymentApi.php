@@ -443,7 +443,7 @@ class MobilePaymentApi extends Controller
             $mobile_payment->status_id = 7;
             $user = JWTAuth::parseToken()->authenticate();
             $mobile_payment->rejected_by_id            =   (int)   $user->id;
-            $mobile_payment->requested_at              =   date('Y-m-d H:i:s');
+            $mobile_payment->rejected_at              =   date('Y-m-d H:i:s');
             $mobile_payment->rejection_reason             =   $form['rejection_reason'];
 
             if($mobile_payment->save()) {

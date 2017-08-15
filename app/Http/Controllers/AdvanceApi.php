@@ -435,7 +435,7 @@ class AdvanceApi extends Controller
             $advance->status_id = 11;
             $user = JWTAuth::parseToken()->authenticate();
             $advance->rejected_by_id            =   (int)   $user->id;
-            $advance->requested_at              =   date('Y-m-d H:i:s');
+            $advance->rejected_at              =   date('Y-m-d H:i:s');
             $advance->rejection_reason             =   $form['rejection_reason'];
 
             if($advance->save()) {

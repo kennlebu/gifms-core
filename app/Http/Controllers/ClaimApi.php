@@ -441,7 +441,7 @@ class ClaimApi extends Controller
             $claim->status_id = 9;
             $user = JWTAuth::parseToken()->authenticate();
             $claim->rejected_by_id            =   (int)   $user->id;
-            $claim->requested_at              =   date('Y-m-d H:i:s');
+            $claim->rejected_at              =   date('Y-m-d H:i:s');
             $claim->rejection_reason             =   $form['rejection_reason'];
 
             if($claim->save()) {
