@@ -26,6 +26,7 @@ class CreateAdvancesTable extends Migration
             $table->integer('status_id')->nullable();
             $table->text('comment')->nullable();
             $table->integer('rejected_by_id')->nullable();
+            $table->timestamp('rejected_at')->nullable();
             $table->string('rejection_reason')->nullable();
             $table->integer('currency_id')->nullable();
             $table->integer('payment_mode_id')->nullable();
