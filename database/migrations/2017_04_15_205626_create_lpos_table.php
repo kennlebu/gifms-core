@@ -23,7 +23,7 @@ class CreateLposTable extends Migration
             $table->text('expense_purpose')->nullable();
             $table->integer('requested_by_id')->nullable();
             $table->integer('request_action_by_id')->nullable();
-            $table->timestamp('request_at')->nullable();
+            $table->timestamp('requested_at')->nullable();
             $table->integer('status_id')->nullable();
             $table->integer('currency_id')->nullable();
             $table->integer('preffered_quotation_id')->nullable();

@@ -14,9 +14,9 @@ class post_keys_migration_migration extends Seeder
         //LPOS
     	$sql = "
     			UPDATE `lpos` 
-	    			SET `created_at`  = `request_date`,
- 						`updated_at`  = `request_date`,
-                        `ref`         = CONCAT('CHAI/LPO/#',`id`,'/',DATE_FORMAT(`request_date`,'%Y/%m/%d'))
+	    			SET `created_at`  = `requested_at`,
+ 						`updated_at`  = `requested_at`,
+                        `ref`         = CONCAT('CHAI/LPO/#',`id`,'/',DATE_FORMAT(`requested_at`,'%Y/%m/%d'))
 
     			";
 
@@ -87,9 +87,9 @@ class post_keys_migration_migration extends Seeder
         //Invoices
         $sql = "
                 UPDATE `invoices` 
-                    SET `created_at`  = `date_raised`,
-                        `updated_at`  = `date_raised`,
-                        `ref`         = CONCAT('CHAI/INV/#',`id`,'/',DATE_FORMAT(`date_raised`,'%Y/%m/%d'))
+                    SET `created_at`  = `raised_at`,
+                        `updated_at`  = `raised_at`,
+                        `ref`         = CONCAT('CHAI/INV/#',`id`,'/',DATE_FORMAT(`raised_at`,'%Y/%m/%d'))
 
                 ";
 
@@ -131,9 +131,9 @@ class post_keys_migration_migration extends Seeder
         //mobile_payments
         $sql = "
                 UPDATE `mobile_payments` 
-                    SET `created_at`  = `requested_date`,
-                        `updated_at`  = `requested_date`,
-                        `ref`         = CONCAT('CHAI/MPYMT/#',`id`,'/',DATE_FORMAT(`requested_date`,'%Y/%m/%d'))
+                    SET `created_at`  = `requested_at`,
+                        `updated_at`  = `requested_at`,
+                        `ref`         = CONCAT('CHAI/MPYMT/#',`id`,'/',DATE_FORMAT(`requested_at`,'%Y/%m/%d'))
 
                 ";
 
@@ -175,9 +175,9 @@ class post_keys_migration_migration extends Seeder
         //claims
         $sql = "
                 UPDATE `claims` 
-                    SET `created_at`  = `requested_date`,
-                        `updated_at`  = `requested_date`,
-                        `ref`         = CONCAT('CHAI/CLM/#',`id`,'/',DATE_FORMAT(`requested_date`,'%Y/%m/%d'))
+                    SET `created_at`  = `requested_at`,
+                        `updated_at`  = `requested_at`,
+                        `ref`         = CONCAT('CHAI/CLM/#',`id`,'/',DATE_FORMAT(`requested_at`,'%Y/%m/%d'))
 
                 ";
 
@@ -219,9 +219,9 @@ class post_keys_migration_migration extends Seeder
         //advances
         $sql = "
                 UPDATE `advances` 
-                    SET `created_at`  = `requested_date`,
-                        `updated_at`  = `requested_date`,
-                        `ref`         = CONCAT('CHAI/ADV/#',`id`,'/',DATE_FORMAT(`requested_date`,'%Y/%m/%d'))
+                    SET `created_at`  = `requested_at`,
+                        `updated_at`  = `requested_at`,
+                        `ref`         = CONCAT('CHAI/ADV/#',`id`,'/',DATE_FORMAT(`requested_at`,'%Y/%m/%d'))
 
                 ";
 
