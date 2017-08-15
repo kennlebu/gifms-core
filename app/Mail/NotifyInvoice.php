@@ -67,7 +67,7 @@ class NotifyInvoice extends Mailable
                     'email' => Config::get('mail.reply_to')['address'],
 
                 ])           
-            ->cc($this->invoice->requested_by)       
+            ->cc($this->invoice->raised_by)       
             ->bcc($bccs);
 
 
@@ -136,10 +136,10 @@ class NotifyInvoice extends Mailable
 
 
 
-        //     return $this->to($this->invoice->requested_by)
+        //     return $this->to($this->invoice->raised_by)
         //             ->with([
         //                     'invoice' => $this->invoice,
-        //                     'addressed_to' => $this->invoice->requested_by,
+        //                     'addressed_to' => $this->invoice->raised_by,
         //                     'js_url' => Config::get('app.js_url'),
         //                 ])
         //             ->subject("Invoice Cancelled ".$this->invoice->ref);
@@ -148,10 +148,10 @@ class NotifyInvoice extends Mailable
 
 
 
-            return $this->to($this->invoice->requested_by)
+            return $this->to($this->invoice->raised_by)
                     ->with([
                             'invoice' => $this->invoice,
-                            'addressed_to' => $this->invoice->requested_by,
+                            'addressed_to' => $this->invoice->raised_by,
                             'js_url' => Config::get('app.js_url'),
                         ])
                     ->subject("Invoice Rejected ".$this->invoice->ref);

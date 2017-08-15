@@ -99,7 +99,7 @@
           </td>
           <td style="text-align: left;" bgcolor="#ffffff" colspan="2" >
             <strong>
-              <span style="color: #092d50;">{{$invoice->requested_by->name}}</span>
+              <span style="color: #092d50;">{{$invoice->raised_by->name}}</span>
             </strong>
           </td>
         </tr>  
