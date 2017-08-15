@@ -377,11 +377,11 @@ class post_keys_migration_migration extends Seeder
         DB::table('invoice_statuses')->insert([
                 [
                     'invoice_status' =>'Received pending upload',
-                    'default_status' =>'1'
+                    'next_status_id' =>'10'
                 ],
                 [
                     'invoice_status' =>'Allocated Pending Accountant Approval',
-                    'default_status' =>''
+                    'next_status_id' =>'1'
 
                 ]
             ]);
@@ -417,11 +417,40 @@ class post_keys_migration_migration extends Seeder
         //advance_statuses
         DB::table('advance_statuses')->insert([
                 [
-                    'advance_status' =>'Pending Accountant Approval'
+                    'advance_status' =>'Pending Accountant Approval',
+                    'next_status_id' => '2'
                 ]
             ]);
 
         echo "\n advance_statuses  updated ---";
+
+
+
+        
+        $sql = "
+                UPDATE `advance_statuses`           SET `next_status_id`  = '4'     WHERE `id`='3'
+
+                ";
+
+
+        DB::statement($sql);
+
+        $sql = "
+                UPDATE `advance_statuses`           SET `next_status_id`  = '5'     WHERE `id`='4'
+
+                ";
+
+
+        DB::statement($sql);
+
+
+        $sql = "
+                UPDATE `advance_statuses`           SET `next_status_id`  = '6'     WHERE `id`='5'
+
+                ";
+
+
+        DB::statement($sql);
 
 
 
@@ -437,21 +466,21 @@ class post_keys_migration_migration extends Seeder
         //default statuses
         
         $sql = "
-                UPDATE `advance_statuses`           SET `default_status`  = '1'     WHERE `id`='1'
+                UPDATE `advance_statuses`           SET `default_status`  = '1', `next_status_id`  = '13'     WHERE `id`='1'
 
                 ";
 
 
         DB::statement($sql);
         $sql = "
-                UPDATE `claim_statuses`             SET `default_status`  = '1'     WHERE `id`='1'
+                UPDATE `claim_statuses`             SET `default_status`  = '1', `next_status_id`  = '10'     WHERE `id`='1'
 
                 ";
 
 
         DB::statement($sql);
         $sql = "
-                UPDATE `invoice_statuses`           SET `default_status`  = '1'     WHERE `id`='10'
+                UPDATE `invoice_statuses`           SET `default_status`  = '1', `next_status_id`  = '10'     WHERE `id`='11'
 
                 ";
 
@@ -472,6 +501,31 @@ class post_keys_migration_migration extends Seeder
         DB::statement($sql);
 
         echo "\n default statuses updated ---";
+
+
+
+
+
+
+
+
+
+
+
+
+        //invoice submittable
+        $sql = "
+                UPDATE `invoice_statuses`           SET `default_status`  = null, `next_status_id`  = '12'     WHERE `id`='10'
+
+                ";
+
+
+        DB::statement($sql);
+
+
+
+
+
 
 
 

@@ -54,6 +54,108 @@ class NotifyAdvance extends Mailable
      */
     public function build()
     {
-        return $this->view('view.name');
+
+        $bccs = [] ;
+        $bccs[0] = $this->accountant;
+        $bccs[1] = $this->financial_controller;
+        $bccs[2] = $this->director;
+
+
+        $this->view('emails/notify_advance')         
+            ->replyTo([
+                    'email' => Config::get('mail.reply_to')['address'],
+
+                ])           
+            ->cc($this->advance->requested_by)       
+            ->bcc($bccs);
+
+
+
+
+
+
+
+
+
+
+
+        if($this->advance->status_id == 13){
+
+
+
+            return $this->to($this->accountant)
+                    ->with([
+                            'advance' => $this->advance,
+                            'addressed_to' => $this->accountant,
+                            'js_url' => Config::get('app.js_url'),
+                        ])
+                    ->subject("Advance Approval Request ".$this->advance->ref);
+        }else if($this->advance->status_id == 2){
+
+
+
+            return $this->to($this->advance->project_manager)
+                    ->with([
+                            'advance' => $this->advance,
+                            'addressed_to' => $this->advance->project_manager,
+                            'js_url' => Config::get('app.js_url'),
+                        ])
+                    ->subject("Advance Approval Request ".$this->advance->ref);
+        }else if($this->advance->status_id == 3){
+
+
+
+            return $this->to($this->financial_controller)
+                    ->with([
+                            'advance' => $this->advance,
+                            'addressed_to' => $this->financial_controller,
+                            'js_url' => Config::get('app.js_url'),
+                        ])
+                    ->subject("Advance Approval Request ".$this->advance->ref);
+        }else if($this->advance->status_id == 4){
+
+
+
+            return $this->to($this->director)
+                    ->with([
+                            'advance' => $this->advance,
+                            'addressed_to' => $this->director,
+                            'js_url' => Config::get('app.js_url'),
+                        ])
+                    ->subject("Advance Approval Request ".$this->advance->ref);
+        }
+
+
+
+
+
+
+
+        // else if($this->advance->status_id == 99){
+
+
+
+        //     return $this->to($this->advance->requested_by)
+        //             ->with([
+        //                     'advance' => $this->advance,
+        //                     'addressed_to' => $this->advance->requested_by,
+        //                     'js_url' => Config::get('app.js_url'),
+        //                 ])
+        //             ->subject("Advance Cancelled ".$this->advance->ref);
+        // }
+        else if($this->advance->status_id == 11){
+
+
+
+            return $this->to($this->advance->requested_by)
+                    ->with([
+                            'advance' => $this->advance,
+                            'addressed_to' => $this->advance->requested_by,
+                            'js_url' => Config::get('app.js_url'),
+                        ])
+                    ->subject("Advance Rejected ".$this->advance->ref);
+        }
+
+    }
     }
 }

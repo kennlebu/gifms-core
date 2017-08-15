@@ -61,6 +61,109 @@ class NotifyMobilePayment extends Mailable
      */
     public function build()
     {
-        return $this->view('view.name');
+
+        $bccs = [] ;
+        $bccs[0] = $this->accountant;
+        $bccs[1] = $this->financial_controller;
+        $bccs[2] = $this->director;
+
+
+        $this->view('emails/notify_mobile_payment')         
+            ->replyTo([
+                    'email' => Config::get('mail.reply_to')['address'],
+
+                ])           
+            ->cc($this->mobile_payment->requested_by)       
+            ->bcc($bccs);
+
+
+
+
+
+
+
+
+
+
+
+        if($this->mobile_payment->status_id == 9){
+
+
+
+            return $this->to($this->accountant)
+                    ->with([
+                            'mobile_payment' => $this->mobile_payment,
+                            'addressed_to' => $this->accountant,
+                            'js_url' => Config::get('app.js_url'),
+                        ])
+                    ->subject("Mobile Payment Approval Request ".$this->mobile_payment->ref);
+        }else if($this->mobile_payment->status_id == 2){
+
+
+
+            return $this->to($this->mobile_payment->project_manager)
+                    ->with([
+                            'mobile_payment' => $this->mobile_payment,
+                            'addressed_to' => $this->mobile_payment->project_manager,
+                            'js_url' => Config::get('app.js_url'),
+                        ])
+                    ->subject("Mobile Payment Approval Request ".$this->mobile_payment->ref);
+        }else if($this->mobile_payment->status_id == 3){
+
+
+
+            return $this->to($this->financial_controller)
+                    ->with([
+                            'mobile_payment' => $this->mobile_payment,
+                            'addressed_to' => $this->financial_controller,
+                            'js_url' => Config::get('app.js_url'),
+                        ])
+                    ->subject("Mobile Payment Approval Request ".$this->mobile_payment->ref);
+        }else if($this->mobile_payment->status_id == 4){
+
+
+
+            return $this->to($this->director)
+                    ->with([
+                            'mobile_payment' => $this->mobile_payment,
+                            'addressed_to' => $this->director,
+                            'js_url' => Config::get('app.js_url'),
+                        ])
+                    ->subject("Mobile Payment Approval Request ".$this->mobile_payment->ref);
+        }
+
+
+
+
+
+
+
+        // else if($this->mobile_payment->status_id == 99){
+
+
+
+        //     return $this->to($this->mobile_payment->requested_by)
+        //             ->with([
+        //                     'mobile_payment' => $this->mobile_payment,
+        //                     'addressed_to' => $this->mobile_payment->requested_by,
+        //                     'js_url' => Config::get('app.js_url'),
+        //                 ])
+        //             ->subject("Mobile Payment Cancelled ".$this->mobile_payment->ref);
+        // }
+
+        else if($this->mobile_payment->status_id == 7){
+
+
+
+            return $this->to($this->mobile_payment->requested_by)
+                    ->with([
+                            'mobile_payment' => $this->mobile_payment,
+                            'addressed_to' => $this->mobile_payment->requested_by,
+                            'js_url' => Config::get('app.js_url'),
+                        ])
+                    ->subject("Mobile Payment Rejected ".$this->mobile_payment->ref);
+        }
+
+    }
     }
 }

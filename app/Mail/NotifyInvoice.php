@@ -32,7 +32,7 @@ class NotifyInvoice extends Mailable
                                     'status',
                                     'project_manager',
                                     'currency',
-                                    'lpo',
+                                    'invoice',
                                     'rejected_by',
                                     'approvals',
                                     'allocations',
@@ -55,6 +55,108 @@ class NotifyInvoice extends Mailable
      */
     public function build()
     {
-        return $this->view('view.name');
+
+        $bccs = [] ;
+        $bccs[0] = $this->accountant;
+        $bccs[1] = $this->financial_controller;
+        $bccs[2] = $this->director;
+
+
+        $this->view('emails/notify_invoice')         
+            ->replyTo([
+                    'email' => Config::get('mail.reply_to')['address'],
+
+                ])           
+            ->cc($this->invoice->requested_by)       
+            ->bcc($bccs);
+
+
+
+
+
+
+
+
+
+
+
+        if($this->invoice->status_id == 12){
+
+
+
+            return $this->to($this->accountant)
+                    ->with([
+                            'invoice' => $this->invoice,
+                            'addressed_to' => $this->accountant,
+                            'js_url' => Config::get('app.js_url'),
+                        ])
+                    ->subject("Invoice Approval Request ".$this->invoice->ref);
+        }else if($this->invoice->status_id == 1){
+
+
+
+            return $this->to($this->invoice->project_manager)
+                    ->with([
+                            'invoice' => $this->invoice,
+                            'addressed_to' => $this->invoice->project_manager,
+                            'js_url' => Config::get('app.js_url'),
+                        ])
+                    ->subject("Invoice Approval Request ".$this->invoice->ref);
+        }else if($this->invoice->status_id == 2){
+
+
+
+            return $this->to($this->financial_controller)
+                    ->with([
+                            'invoice' => $this->invoice,
+                            'addressed_to' => $this->financial_controller,
+                            'js_url' => Config::get('app.js_url'),
+                        ])
+                    ->subject("Invoice Approval Request ".$this->invoice->ref);
+        }else if($this->invoice->status_id == 3){
+
+
+
+            return $this->to($this->director)
+                    ->with([
+                            'invoice' => $this->invoice,
+                            'addressed_to' => $this->director,
+                            'js_url' => Config::get('app.js_url'),
+                        ])
+                    ->subject("Invoice Approval Request ".$this->invoice->ref);
+        }
+
+
+
+
+
+
+
+        // else if($this->invoice->status_id == 11){
+
+
+
+        //     return $this->to($this->invoice->requested_by)
+        //             ->with([
+        //                     'invoice' => $this->invoice,
+        //                     'addressed_to' => $this->invoice->requested_by,
+        //                     'js_url' => Config::get('app.js_url'),
+        //                 ])
+        //             ->subject("Invoice Cancelled ".$this->invoice->ref);
+        // }
+        else if($this->invoice->status_id == 9){
+
+
+
+            return $this->to($this->invoice->requested_by)
+                    ->with([
+                            'invoice' => $this->invoice,
+                            'addressed_to' => $this->invoice->requested_by,
+                            'js_url' => Config::get('app.js_url'),
+                        ])
+                    ->subject("Invoice Rejected ".$this->invoice->ref);
+        }
+
+    }
     }
 }

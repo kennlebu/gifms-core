@@ -54,6 +54,109 @@ class NotifyClaim extends Mailable
      */
     public function build()
     {
-        return $this->view('view.name');
+
+        $bccs = [] ;
+        $bccs[0] = $this->accountant;
+        $bccs[1] = $this->financial_controller;
+        $bccs[2] = $this->director;
+
+
+        $this->view('emails/notify_claim')         
+            ->replyTo([
+                    'email' => Config::get('mail.reply_to')['address'],
+
+                ])           
+            ->cc($this->claim->requested_by)       
+            ->bcc($bccs);
+
+
+
+
+
+
+
+
+
+
+
+        if($this->claim->status_id == 10){
+
+
+
+            return $this->to($this->accountant)
+                    ->with([
+                            'claim' => $this->claim,
+                            'addressed_to' => $this->accountant,
+                            'js_url' => Config::get('app.js_url'),
+                        ])
+                    ->subject("Claim Approval Request ".$this->claim->ref);
+        }else if($this->claim->status_id == 2){
+
+
+
+            return $this->to($this->claim->project_manager)
+                    ->with([
+                            'claim' => $this->claim,
+                            'addressed_to' => $this->claim->project_manager,
+                            'js_url' => Config::get('app.js_url'),
+                        ])
+                    ->subject("Claim Approval Request ".$this->claim->ref);
+        }else if($this->claim->status_id == 3){
+
+
+
+            return $this->to($this->financial_controller)
+                    ->with([
+                            'claim' => $this->claim,
+                            'addressed_to' => $this->financial_controller,
+                            'js_url' => Config::get('app.js_url'),
+                        ])
+                    ->subject("Claim Approval Request ".$this->claim->ref);
+        }else if($this->claim->status_id == 4){
+
+
+
+            return $this->to($this->director)
+                    ->with([
+                            'claim' => $this->claim,
+                            'addressed_to' => $this->director,
+                            'js_url' => Config::get('app.js_url'),
+                        ])
+                    ->subject("Claim Approval Request ".$this->claim->ref);
+        }
+
+
+
+
+
+
+
+        // else if($this->claim->status_id == 99){
+
+
+
+        //     return $this->to($this->claim->requested_by)
+        //             ->with([
+        //                     'claim' => $this->claim,
+        //                     'addressed_to' => $this->claim->requested_by,
+        //                     'js_url' => Config::get('app.js_url'),
+        //                 ])
+        //             ->subject("Claim Cancelled ".$this->claim->ref);
+        // }
+
+        else if($this->claim->status_id == 9){
+
+
+
+            return $this->to($this->claim->requested_by)
+                    ->with([
+                            'claim' => $this->claim,
+                            'addressed_to' => $this->claim->requested_by,
+                            'js_url' => Config::get('app.js_url'),
+                        ])
+                    ->subject("Claim Rejected ".$this->claim->ref);
+        }
+
+    }
     }
 }
