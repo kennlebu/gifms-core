@@ -15,6 +15,7 @@
 
 namespace App\Http\Controllers;
 
+use JWTAuth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\InvoicesModels\Invoice;
