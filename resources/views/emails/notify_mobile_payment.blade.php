@@ -9,7 +9,7 @@
       <br/>
       @if ($mobile_payment->status_id==9||$mobile_payment->status_id==2||$mobile_payment->status_id==3||$mobile_payment->status_id==4)
         The below detailed Bulk Mobile Payment has been posted and awaits your approval.
-      @elseif ($mobile_payment->status_id==12)
+      @elseif ($mobile_payment->status_id==7)
         The below detailed Bulk Mobile Payment has been Rejected by {{$mobile_payment->rejected_by->name}}
       @endif
       <br/>
@@ -143,7 +143,7 @@
           </td>
         </tr> 
         @endif  -->
-        @if ($mobile_payment->status_id==12) 
+        @if ($mobile_payment->status_id==7) 
         <tr>
           <td colspan="1"  bgcolor="#ffffff" height="20">
             <strong>

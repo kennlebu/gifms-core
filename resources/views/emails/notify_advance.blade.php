@@ -9,7 +9,7 @@
       <br/>
       @if ($advance->status_id==9||$advance->status_id==2||$advance->status_id==3||$advance->status_id==4)
         The below detailed advance has been posted and awaits your approval.
-      @elseif ($advance->status_id==12)
+      @elseif ($advance->status_id==11)
         The below detailed advance has been Rejected by {{$advance->rejected_by->name}}
       @endif
       <br/>
@@ -143,7 +143,7 @@
           </td>
         </tr> 
         @endif  -->
-        @if ($advance->status_id==12) 
+        @if ($advance->status_id==11) 
         <tr>
           <td colspan="1"  bgcolor="#ffffff" height="20">
             <strong>
