@@ -574,5 +574,45 @@ class post_keys_migration_migration extends Seeder
         echo "\n approvable statuses updated ---";
 
 
+
+
+
+
+
+
+
+
+
+
+
+        $sql = " UPDATE `claim_statuses`            SET `approval_level_id`  = '1'   WHERE `id` = '10'"; DB::statement($sql);
+        $sql = " UPDATE `claim_statuses`            SET `approval_level_id`  = '2'   WHERE `id` = '2' "; DB::statement($sql);
+        $sql = " UPDATE `claim_statuses`            SET `approval_level_id`  = '3'   WHERE `id` = '3' "; DB::statement($sql);
+        $sql = " UPDATE `claim_statuses`            SET `approval_level_id`  = '4'   WHERE `id` = '4' "; DB::statement($sql);
+
+        $sql = " UPDATE `advance_statuses`          SET `approval_level_id`  = '1'   WHERE `id` = '13'"; DB::statement($sql);
+        $sql = " UPDATE `advance_statuses`          SET `approval_level_id`  = '2'   WHERE `id` = '1' "; DB::statement($sql);
+        $sql = " UPDATE `advance_statuses`          SET `approval_level_id`  = '3'   WHERE `id` = '2' "; DB::statement($sql);
+        $sql = " UPDATE `advance_statuses`          SET `approval_level_id`  = '4'   WHERE `id` = '3' "; DB::statement($sql);
+
+        $sql = " UPDATE `lpo_statuses`              SET `approval_level_id`  = '1'   WHERE `id` = '13'"; DB::statement($sql);
+        $sql = " UPDATE `lpo_statuses`              SET `approval_level_id`  = '2'   WHERE `id` = '3' "; DB::statement($sql);
+        $sql = " UPDATE `lpo_statuses`              SET `approval_level_id`  = '3'   WHERE `id` = '4' "; DB::statement($sql);
+        $sql = " UPDATE `lpo_statuses`              SET `approval_level_id`  = '4'   WHERE `id` = '5' "; DB::statement($sql);
+
+        $sql = " UPDATE `invoice_statuses`          SET `approval_level_id`  = '1'   WHERE `id` = '12'"; DB::statement($sql);
+        $sql = " UPDATE `invoice_statuses`          SET `approval_level_id`  = '2'   WHERE `id` = '1' "; DB::statement($sql);
+        $sql = " UPDATE `invoice_statuses`          SET `approval_level_id`  = '3'   WHERE `id` = '2' "; DB::statement($sql);
+        $sql = " UPDATE `invoice_statuses`          SET `approval_level_id`  = '4'   WHERE `id` = '3' "; DB::statement($sql);
+
+        $sql = " UPDATE `mobile_payment_statuses`   SET `approval_level_id`  = '1'   WHERE `id` = '9' "; DB::statement($sql);
+        $sql = " UPDATE `mobile_payment_statuses`   SET `approval_level_id`  = '2'   WHERE `id` = '2' "; DB::statement($sql);
+        $sql = " UPDATE `mobile_payment_statuses`   SET `approval_level_id`  = '3'   WHERE `id` = '3' "; DB::statement($sql);
+        $sql = " UPDATE `mobile_payment_statuses`   SET `approval_level_id`  = '4'   WHERE `id` = '4' "; DB::statement($sql);
+
+        echo "\n approvable levels updated ---";
+
+
+
     }
 }
