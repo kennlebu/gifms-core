@@ -26,7 +26,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Mail;
-use App\Mail\NotifyClaims;
+use App\Mail\NotifyClaim;
 
 class ClaimApi extends Controller
 {
@@ -342,7 +342,7 @@ class ClaimApi extends Controller
 
             if($claim->save()) {
 
-                Mail::send(new NotifyClaims($claim));
+                Mail::send(new NotifyClaim($claim));
 
                 return Response()->json(array('msg' => 'Success: claim approved','claim' => $claim), 200);
             }
@@ -413,7 +413,7 @@ class ClaimApi extends Controller
 
             if($claim->save()) {
 
-                Mail::send(new NotifyClaims($claim));
+                Mail::send(new NotifyClaim($claim));
 
                 return Response()->json(array('msg' => 'Success: claim approved','claim' => $claim), 200);
             }
@@ -543,7 +543,7 @@ class ClaimApi extends Controller
 
             if($claim->save()) {
 
-                Mail::send(new NotifyClaims($claim));
+                Mail::send(new NotifyClaim($claim));
 
                 return Response()->json(array('msg' => 'Success: claim submitted','claim' => $claim), 200);
             }
