@@ -108,9 +108,11 @@
           <td style="text-align: left;" bgcolor="#ffffff" colspan="2" >
             <strong>
               @foreach ($invoice->approvals as $key => $item)
-                <span style="color: #092d50;">{{$item->approver->name}}</span>
-                <span style="color: #092d50;">{{$item->created_at}}</span>
-                <br/>
+                @isset($item->approver_id)
+                  <span style="color: #092d50;">{{$item->approver->name}}</span>
+                  <span style="color: #092d50;">{{$item->created_at}}</span>
+                  <br/>
+                @endisset
               @endforeach
             </strong>
           </td>
