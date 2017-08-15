@@ -9,10 +9,6 @@
       <br/>
       @if ($claim->status_id==10||$claim->status_id==2||$claim->status_id==3||$claim->status_id==4)
         The below detailed Claim has been posted and awaits your approval.
-        <!-- 
-      @elseif ($claim->status_id==99)
-        The below detailed Claim has been Cancelled by {{$claim->cancelled_by->name}}
-         -->
       @elseif ($claim->status_id==9)
         The below detailed Claim has been Rejected by {{$claim->rejected_by->name}}
       @endif

@@ -9,10 +9,6 @@
       <br/>
       @if ($invoice->status_id==12||$invoice->status_id==1||$invoice->status_id==2||$invoice->status_id==3)
         The below detailed invoice has been posted and awaits your approval.
-        <!-- 
-      @elseif ($invoice->status_id==99)
-        The below detailed invoice has been Cancelled by {{$invoice->cancelled_by->name}}
-         -->
       @elseif ($invoice->status_id==9)
         The below detailed invoice has been Rejected by {{$invoice->rejected_by->name}}
       @endif

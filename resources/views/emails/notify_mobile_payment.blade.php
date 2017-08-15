@@ -9,10 +9,6 @@
       <br/>
       @if ($mobile_payment->status_id==9||$mobile_payment->status_id==2||$mobile_payment->status_id==3||$mobile_payment->status_id==4)
         The below detailed Bulk Mobile Payment has been posted and awaits your approval.
-        <!-- 
-      @elseif ($mobile_payment->status_id==99)
-        The below detailed Bulk Mobile Payment has been Cancelled by {{$mobile_payment->cancelled_by->name}}
-         -->
       @elseif ($mobile_payment->status_id==12)
         The below detailed Bulk Mobile Payment has been Rejected by {{$mobile_payment->rejected_by->name}}
       @endif

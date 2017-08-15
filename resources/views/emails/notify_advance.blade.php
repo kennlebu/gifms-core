@@ -9,10 +9,6 @@
       <br/>
       @if ($advance->status_id==9||$advance->status_id==2||$advance->status_id==3||$advance->status_id==4)
         The below detailed advance has been posted and awaits your approval.
-        <!-- 
-      @elseif ($advance->status_id==99)
-        The below detailed advance has been Cancelled by {{$advance->cancelled_by->name}}
-         -->
       @elseif ($advance->status_id==12)
         The below detailed advance has been Rejected by {{$advance->rejected_by->name}}
       @endif
