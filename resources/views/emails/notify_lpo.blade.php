@@ -128,7 +128,35 @@
               @endforeach
             </strong>
           </td>
-        </tr>     
+        </tr>
+        @if ($lpo->status_id==11)    
+        <tr>
+          <td colspan="1"  bgcolor="#ffffff" height="20">
+            <strong>
+              <span style="color: #7c7c7c;">Cancelled by:</span>
+            </strong>
+          </td>
+          <td style="text-align: left;" bgcolor="#ffffff" colspan="2" >
+            <strong>
+              <span style="color: #092d50;">{{$lpo->cancelled_by->name}}</span>
+            </strong>
+          </td>
+        </tr> 
+        @endif 
+        @if ($lpo->status_id==12) 
+        <tr>
+          <td colspan="1"  bgcolor="#ffffff" height="20">
+            <strong>
+              <span style="color: #7c7c7c;">Rejected By:</span>
+            </strong>
+          </td>
+          <td style="text-align: left;" bgcolor="#ffffff" colspan="2" >
+            <strong>
+              <span style="color: #092d50;">{{$lpo->rejected_by->name}}}</span>
+            </strong>
+          </td>
+        </tr>   
+        @endif         
       </tbody>
     </table>
 

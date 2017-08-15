@@ -609,6 +609,7 @@ class LPOApi extends Controller
          * @param int $lpo_id ID of lpo to return lpo object (required)
          *
          * @return Http response
+         * @deprecated 
          */
         public function submitOrApprove($lpo_id)
         {

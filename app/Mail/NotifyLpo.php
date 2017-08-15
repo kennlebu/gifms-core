@@ -47,7 +47,7 @@ class NotifyLpo extends Mailable
                                             'deliveries'
                                 )->findOrFail($lpo->id);
         foreach ($this->lpo->approvals as $key => $value) {
-            $this->lpo->approvals[$key]['approver'] = Staff::findOrFail($this->lpo->approvals[$key]['approver_id']);
+            $this->lpo->approvals[$key]['approver'] = Staff::find($this->lpo->approvals[$key]['approver_id']);
         }
 
 
