@@ -6,7 +6,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use App\Models\InvoiceModels\Invoice;
+use App\Models\InvoicesModels\Invoice;
 use App\Models\StaffModels\Staff;
 use Config;
 
@@ -32,7 +32,7 @@ class NotifyInvoice extends Mailable
                                     'status',
                                     'project_manager',
                                     'currency',
-                                    'invoice',
+                                    'lpo',
                                     'rejected_by',
                                     'approvals',
                                     'allocations',
