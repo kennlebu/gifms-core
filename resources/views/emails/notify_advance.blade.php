@@ -102,12 +102,12 @@
         <tr>
           <td style="text-align: left; border-bottom: 1px dotted #ccbcbc;" colspan="1"  bgcolor="#ffffff" height="20">
             <strong>
-              <span style="color: #7c7c7c;">Requested Date:</span>
+              <span style="color: #7c7c7c;">Requested at:</span>
             </strong>
           </td>
           <td style="text-align: left; border-bottom: 1px dotted #ccbcbc;" bgcolor="#ffffff" colspan="2" >
             <strong>
-              <span style="color: #092d50;">{{$advance->request_date}}</span>
+              <span style="color: #092d50;">{{$advance->requested_at}}</span>
             </strong>
           </td>
         </tr> 

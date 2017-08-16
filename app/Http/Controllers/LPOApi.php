@@ -539,7 +539,7 @@ class LPOApi extends Controller
            
            
             $lpo->status_id = $lpo->status->next_status_id;
-            $lpo->request_date = date('Y-m-d H:i:s');
+            $lpo->requested_at = date('Y-m-d H:i:s');
 
             if($lpo->save()) {
 

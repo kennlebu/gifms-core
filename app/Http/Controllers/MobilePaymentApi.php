@@ -745,7 +745,7 @@ class MobilePaymentApi extends Controller
 
            
             $mobile_payment->status_id = $mobile_payment->status->next_status_id;
-            $mobile_payment->request_date = date('Y-m-d H:i:s');
+            $mobile_payment->requested_at = date('Y-m-d H:i:s');
 
             if($mobile_payment->save()) {
 

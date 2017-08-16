@@ -505,7 +505,7 @@ class AdvanceApi extends Controller
                                 )->findOrFail($advance_id);
            
             $advance->status_id = $advance->status->next_status_id;
-            $advance->request_date = date('Y-m-d H:i:s');
+            $advance->requested_at = date('Y-m-d H:i:s');
 
             if($advance->save()) {
                 
