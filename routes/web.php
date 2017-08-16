@@ -70,7 +70,9 @@ Route::get('test/email_lpo', function () {
         }
 
     $data = array(
-            'lpo'   => $lpo
+            'lpo'   => $lpo,
+            'addressed_to' => $lpo->requested_by,
+            'js_url' => "j",
         );
 
     return view('emails/notify_lpo',$data);
