@@ -94,6 +94,7 @@ class InvoiceApi extends Controller
 
 
             $form = Request::only(
+                'id',
                 'raised_by_id',
                 'received_by_id',
                 'expense_desc',
@@ -154,12 +155,45 @@ class InvoiceApi extends Controller
 
 
                 $invoice->status_id                         =   $this->default_log_status;
+            }else if($form['submission_type']=='upload_logged'){
+
+
+                $invoice = Invoice::with( 
+                                        'raised_by',
+                                        'received_by',
+                                        'raise_action_by',
+                                        'status',
+                                        'project_manager',
+                                        'currency',
+                                        'lpo',
+                                        'rejected_by',
+                                        'approvals',
+                                        'allocations',
+                                        'comments'
+                                    )->find((int) $form['id']);
+
+                $invoice->raised_by_id                      =   (int)       $form['raised_by_id'];
+                $invoice->expense_desc                      =               $form['expense_desc'];
+                $invoice->expense_purpose                   =               $form['expense_purpose'];
+                // $invoice->invoice_date                      =               $form['invoice_date'];
+                // $invoice->invoice_date                      =               $invoice_date;
+                $invoice->lpo_id                            =   (int)       $form['lpo_id'];
+                $invoice->supplier_id                       =   (int)       $form['supplier_id'];
+                $invoice->project_manager_id                =   (int)       $form['project_manager_id'];
+                $invoice->total                             =   (double)    $form['total'];
+                $invoice->currency_id                       =   (int)       $form['currency_id'];
+                $invoice->received_at                       =   date('Y-m-d H:i:s');
+                $invoice->raised_at                         =   date('Y-m-d H:i:s');
+
+                
+                $invoice->status_id = $invoice->status->next_status_id;
+
             }
 
 
             if($invoice->save()) {
 
-                if($form['submission_type']=='full'){
+                if($form['submission_type']=='full'||$form['submission_type']=='upload_logged'){
 
                     FTP::connection()->makeDir('./invoices/'.$invoice->id);
                     FTP::connection()->makeDir('./invoices/'.$invoice->id);
