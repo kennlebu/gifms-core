@@ -285,13 +285,14 @@ class StaffApi extends Controller
 
 
 
-         $response = Staff::all();
+         $response = Staff::orderBy('f_name','asc')->get();
 
 
         if(array_key_exists('role_abr', $input)&& $input['role_abr'] = "pm"){
             $response = Staff::where("deleted_at",null)
             ->where('post', "Program Manager")
             ->orWhere('post', "Financial Controller")
+            ->orderBy('f_name','asc')
             ->get();
         }
 
