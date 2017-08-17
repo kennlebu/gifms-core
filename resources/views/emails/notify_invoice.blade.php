@@ -11,6 +11,8 @@
         The below detailed invoice has been posted and awaits your approval.
       @elseif ($invoice->status_id==9)
         The below detailed invoice has been Rejected by {{$invoice->rejected_by->name}}
+      @elseif ($invoice->status_id==11)
+        The below detailed invoice has been received by {{$invoice->received_by->f_name}} for you to submit 
       @endif
       <br/>
 
@@ -42,6 +44,20 @@
         <tr>
           <td style="text-align: left; border-bottom: 1px dotted #ccbcbc;" colspan="1"  bgcolor="#ffffff" height="20">
             <strong>
+              <span style="color: #7c7c7c;">Supplier:</span>
+            </strong>
+          </td>
+          <td style="text-align: left; border-bottom: 1px dotted #ccbcbc;" bgcolor="#ffffff" colspan="2" >
+            <strong>
+              <span style="color: #092d50;">{{$invoice->supplier->supplier_name}}</span>
+            </strong>
+          </td>
+        </tr> 
+
+        @if ($invoice->status_id!=11)
+        <tr>
+          <td style="text-align: left; border-bottom: 1px dotted #ccbcbc;" colspan="1"  bgcolor="#ffffff" height="20">
+            <strong>
               <span style="color: #7c7c7c;">Title:</span>
             </strong>
           </td>
@@ -63,6 +79,8 @@
             </strong>
           </td>
         </tr> 
+
+        @endif  
         <tr>
           <td style="text-align: left; border-bottom: 1px dotted #ccbcbc;" colspan="1"  bgcolor="#ffffff" height="20">
             <strong>
@@ -71,10 +89,36 @@
           </td>
           <td style="text-align: left; border-bottom: 1px dotted #ccbcbc;" bgcolor="#ffffff" colspan="2" >
             <strong>
-              <span style="color: #092d50;"> {{$invoice->currency->currency_name}}. {{number_format($invoice->amount, 2)}}</span>
+              <span style="color: #092d50;"> {{$invoice->currency->currency_name}}. {{number_format($invoice->total, 2)}}</span>
             </strong>
           </td>
-        </tr>    
+        </tr>  
+        <tr>
+          <td style="text-align: left; border-bottom: 1px dotted #ccbcbc;" colspan="1"  bgcolor="#ffffff" height="20">
+            <strong>
+              <span style="color: #7c7c7c;">Received By:</span>
+            </strong>
+          </td>
+          <td style="text-align: left; border-bottom: 1px dotted #ccbcbc;" bgcolor="#ffffff" colspan="2" >
+            <strong>
+              <span style="color: #092d50;">{{$invoice->received_by->name}}</span>
+            </strong>
+          </td>
+        </tr>  
+        <tr>
+          <td style="text-align: left; border-bottom: 1px dotted #ccbcbc;" colspan="1"  bgcolor="#ffffff" height="20">
+            <strong>
+              <span style="color: #7c7c7c;">Received at:</span>
+            </strong>
+          </td>
+          <td style="text-align: left; border-bottom: 1px dotted #ccbcbc;" bgcolor="#ffffff" colspan="2" >
+            <strong>
+              <span style="color: #092d50;">{{$invoice->received_at}}</span>
+            </strong>
+          </td>
+        </tr> 
+
+        @if ($invoice->status_id!=11)
         <tr>
           <td style="text-align: left; border-bottom: 1px dotted #ccbcbc;" colspan="1"  bgcolor="#ffffff" height="20">
             <strong>
@@ -99,6 +143,7 @@
             </strong>
           </td>
         </tr> 
+
         <tr>
           <td style="text-align: left; border-bottom: 1px dotted #ccbcbc;" colspan="1"  bgcolor="#ffffff" height="20">
             <strong>
@@ -117,6 +162,7 @@
             </strong>
           </td>
         </tr>
+        @endif 
       <!--   @if ($invoice->status_id==99)    
         <tr>
           <td style="text-align: left; border-bottom: 1px dotted #ccbcbc;" colspan="1"  bgcolor="#ffffff" height="20">

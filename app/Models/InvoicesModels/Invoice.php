@@ -33,6 +33,10 @@ class Invoice extends BaseModel
     {
         return $this->belongsTo('App\Models\StaffModels\Staff','project_manager_id');
     }
+    public function supplier()
+    {
+        return $this->belongsTo('App\Models\SuppliesModels\Supplier','supplier_id');
+    }
     public function rejected_by()
     {
         return $this->belongsTo('App\Models\StaffModels\Staff','rejected_by_id');

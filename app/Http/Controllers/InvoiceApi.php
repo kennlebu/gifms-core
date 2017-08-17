@@ -164,6 +164,7 @@ class InvoiceApi extends Controller
                                         'raise_action_by',
                                         'status',
                                         'project_manager',
+                                        'supplier',
                                         'currency',
                                         'lpo',
                                         'rejected_by',
@@ -206,6 +207,9 @@ class InvoiceApi extends Controller
                 }else if($form['submission_type']=='log'){
                     $invoice->ref                        = "CHAI/INV/#$invoice->id/".date_format($invoice->created_at,"Y/m/d");
                     $invoice->save();
+
+                    Mail::send(new NotifyInvoice($invoice));
+
                 }
                 
                 return Response()->json(array('success' => 'Invoice Added','invoice' => $invoice), 200);
@@ -355,6 +359,7 @@ class InvoiceApi extends Controller
                                         'raise_action_by',
                                         'status',
                                         'project_manager',
+                                        'supplier',
                                         'currency',
                                         'lpo',
                                         'rejected_by',
@@ -467,6 +472,7 @@ class InvoiceApi extends Controller
                                         'raise_action_by',
                                         'status',
                                         'project_manager',
+                                        'supplier',
                                         'currency',
                                         'lpo',
                                         'rejected_by',
@@ -486,6 +492,7 @@ class InvoiceApi extends Controller
                                         'raise_action_by',
                                         'status',
                                         'project_manager',
+                                        'supplier',
                                         'currency',
                                         'lpo',
                                         'rejected_by',
@@ -560,6 +567,7 @@ class InvoiceApi extends Controller
                                         'raise_action_by',
                                         'status',
                                         'project_manager',
+                                        'supplier',
                                         'currency',
                                         'lpo',
                                         'rejected_by',
@@ -704,6 +712,7 @@ class InvoiceApi extends Controller
                                         'raise_action_by',
                                         'status',
                                         'project_manager',
+                                        'supplier',
                                         'currency',
                                         'lpo',
                                         'rejected_by',
@@ -999,6 +1008,7 @@ class InvoiceApi extends Controller
             // $data[$key]['project']                      = $invoice->project;
             $data[$key]['status']                       = $invoice->status;
             $data[$key]['project_manager']              = $invoice->project_manager;
+            $data[$key]['supplier']                     = $invoice->supplier;
             $data[$key]['currency']                     = $invoice->currency;
             $data[$key]['lpo']                          = $invoice->lpo;
             $data[$key]['rejected_by']                  = $invoice->rejected_by;
@@ -1067,6 +1077,10 @@ class InvoiceApi extends Controller
             }
             if($value["project_manager"]==null){
                 $data[$key]['project_manager'] = array("full_name"=>"N/A");
+                
+            }
+            if($value["supplier"]==null){
+                $data[$key]['supplier'] = array("supplier_name"=>"N/A");
                 
             }
             if($value["rejected_by"]==null){

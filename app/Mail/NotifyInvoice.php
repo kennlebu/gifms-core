@@ -28,9 +28,11 @@ class NotifyInvoice extends Mailable
 
         $this->invoice   = Invoice::with( 
                                     'raised_by',
+                                    'received_by',
                                     'raise_action_by',
                                     'status',
                                     'project_manager',
+                                    'supplier',
                                     'currency',
                                     'lpo',
                                     'rejected_by',
@@ -80,7 +82,18 @@ class NotifyInvoice extends Mailable
 
 
 
-        if($this->invoice->status_id == 12){
+        if($this->invoice->status_id == 11){
+
+
+
+            return $this->to($this->invoice->raised_by)
+                    ->with([
+                            'invoice' => $this->invoice,
+                            'addressed_to' => $this->invoice->raised_by,
+                            'js_url' => Config::get('app.js_url'),
+                        ])
+                    ->subject("Invoice Received/Logged  ".$this->invoice->ref);
+        }else if($this->invoice->status_id == 12){
 
 
 
