@@ -376,8 +376,9 @@ class post_keys_migration_migration extends Seeder
         //invoice_statuses
         DB::table('invoice_statuses')->insert([
                 [
-                    'invoice_status' =>'Received pending upload',
-                    'next_status_id' =>'10'
+                    'invoice_status' =>'Received/Logged pending upload',
+                    'next_status_id' =>'10',
+                    'default_log_status' =>'1'
                 ],
                 [
                     'invoice_status' =>'Allocated Pending Accountant Approval',

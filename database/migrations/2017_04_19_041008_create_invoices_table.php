@@ -19,7 +19,7 @@ class CreateInvoicesTable extends Migration
             $table->text('expense_desc')->nullable();
             $table->text('expense_purpose')->nullable();
             $table->string('external_ref')->nullable();
-            $table->date('invoice_date')->nullable();
+            $table->timestamp('invoice_date')->nullable();
             $table->timestamp('received_at')->nullable();
             $table->integer('received_by_id')->nullable();
             $table->timestamp('raised_at')->nullable();

@@ -36,6 +36,7 @@ class InvoiceApi extends Controller
 
 
     private $default_status = '';
+    private $default_log_status = '';
     private $approvable_statuses = [];
     /**
      * Constructor
@@ -43,8 +44,10 @@ class InvoiceApi extends Controller
     public function __construct()
     {
         $status = InvoiceStatus::where('default_status','1')->first();
+        $log_status = InvoiceStatus::where('default_log_status','1')->first();
         $this->approvable_statuses = InvoiceStatus::where('approvable','1')->get();
         $this->default_status = $status->id;
+        $this->default_log_status = $log_status->id;
     }
 
 
@@ -92,6 +95,7 @@ class InvoiceApi extends Controller
 
             $form = Request::only(
                 'raised_by_id',
+                'received_by_id',
                 'expense_desc',
                 'expense_purpose',
                 'invoice_date',
@@ -100,7 +104,8 @@ class InvoiceApi extends Controller
                 'project_manager_id',
                 'total',
                 'currency_id',
-                'file'
+                'file',
+                'submission_type'
                 );
 
 
@@ -113,28 +118,61 @@ class InvoiceApi extends Controller
             $file = $form['file'];
 
 
-            $invoice->raised_by_id                      =   (int)       $form['raised_by_id'];
-            $invoice->expense_desc                      =               $form['expense_desc'];
-            $invoice->expense_purpose                   =               $form['expense_purpose'];
-            $invoice->invoice_date                      =               $form['invoice_date'];
-            $invoice->lpo_id                            =   (int)       $form['lpo_id'];
-            $invoice->supplier_id                       =   (int)       $form['supplier_id'];
-            $invoice->project_manager_id                =   (int)       $form['project_manager_id'];
-            $invoice->total                             =   (double)    $form['total'];
-            $invoice->currency_id                       =   (int)       $form['currency_id'];
 
-            $invoice->status_id                         =   $this->default_status;
+
+            $invoice_date = date('Y-m-d H:i:s', strtotime($form['invoice_date']));
+
+            if($form['submission_type']=='full'){
+
+                $invoice->received_by_id                    =   (int)       $form['raised_by_id'];//received_by_id must be =raised_by_id
+                $invoice->raised_by_id                      =   (int)       $form['raised_by_id'];
+                $invoice->expense_desc                      =               $form['expense_desc'];
+                $invoice->expense_purpose                   =               $form['expense_purpose'];
+                // $invoice->invoice_date                      =               $form['invoice_date'];
+                $invoice->invoice_date                      =               $invoice_date;
+                $invoice->lpo_id                            =   (int)       $form['lpo_id'];
+                $invoice->supplier_id                       =   (int)       $form['supplier_id'];
+                $invoice->project_manager_id                =   (int)       $form['project_manager_id'];
+                $invoice->total                             =   (double)    $form['total'];
+                $invoice->currency_id                       =   (int)       $form['currency_id'];
+                $invoice->received_at                       =   date('Y-m-d H:i:s');
+                $invoice->raised_at                         =   date('Y-m-d H:i:s');
+
+                $invoice->status_id                         =   $this->default_status;
+
+            }else if($form['submission_type']=='log'){
+
+                $invoice->received_by_id                    =   (int)       $form['received_by_id'];
+                $invoice->raised_by_id                      =   (int)       $form['raised_by_id'];
+                // $invoice->invoice_date                      =               $form['invoice_date'];                
+                $invoice->invoice_date                      =               $invoice_date;
+                $invoice->lpo_id                            =   (int)       $form['lpo_id'];
+                $invoice->supplier_id                       =   (int)       $form['supplier_id'];
+                $invoice->total                             =   (double)    $form['total'];
+                $invoice->currency_id                       =   (int)       $form['currency_id'];
+                $invoice->received_at                       =   date('Y-m-d H:i:s');
+
+
+                $invoice->status_id                         =   $this->default_log_status;
+            }
 
 
             if($invoice->save()) {
 
-                FTP::connection()->makeDir('./invoices/'.$invoice->id);
-                FTP::connection()->makeDir('./invoices/'.$invoice->id);
-                FTP::connection()->uploadFile($file->getPathname(), './invoices/'.$invoice->id.'/'.$invoice->id.'.'.$file->getClientOriginalExtension());
+                if($form['submission_type']=='full'){
 
-                $invoice->invoice_document           =   $invoice->id.'.'.$file->getClientOriginalExtension();
-                $invoice->ref                        = "CHAI/INV/#$invoice->id/".date_format($invoice->created_at,"Y/m/d");
-                $invoice->save();
+                    FTP::connection()->makeDir('./invoices/'.$invoice->id);
+                    FTP::connection()->makeDir('./invoices/'.$invoice->id);
+                    FTP::connection()->uploadFile($file->getPathname(), './invoices/'.$invoice->id.'/'.$invoice->id.'.'.$file->getClientOriginalExtension());
+
+                    $invoice->invoice_document           =   $invoice->id.'.'.$file->getClientOriginalExtension();
+                    $invoice->ref                        = "CHAI/INV/#$invoice->id/".date_format($invoice->created_at,"Y/m/d");
+                    $invoice->save();
+
+                }else if($form['submission_type']=='log'){
+                    $invoice->ref                        = "CHAI/INV/#$invoice->id/".date_format($invoice->created_at,"Y/m/d");
+                    $invoice->save();
+                }
                 
                 return Response()->json(array('success' => 'Invoice Added','invoice' => $invoice), 200);
             }
