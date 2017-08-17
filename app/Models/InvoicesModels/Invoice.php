@@ -17,6 +17,10 @@ class Invoice extends BaseModel
     {
         return $this->belongsTo('App\Models\StaffModels\Staff','raised_by_id');
     }
+    public function received_by()
+    {
+        return $this->belongsTo('App\Models\StaffModels\Staff','received_by_id');
+    }
     public function raise_action_by()
     {
         return $this->belongsTo('App\Models\StaffModels\Staff','raise_action_by_id');

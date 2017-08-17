@@ -279,6 +279,7 @@ class InvoiceApi extends Controller
         try{
             $response   = Invoice::with( 
                                         'raised_by',
+                                        'received_by',
                                         'raise_action_by',
                                         'status',
                                         'project_manager',
@@ -390,6 +391,7 @@ class InvoiceApi extends Controller
         try{
             $invoice   = Invoice::with( 
                                         'raised_by',
+                                        'received_by',
                                         'raise_action_by',
                                         'status',
                                         'project_manager',
@@ -408,6 +410,7 @@ class InvoiceApi extends Controller
 
                 $invoice   = Invoice::with( 
                                         'raised_by',
+                                        'received_by',
                                         'raise_action_by',
                                         'status',
                                         'project_manager',
@@ -481,6 +484,7 @@ class InvoiceApi extends Controller
         try{
             $invoice   = Invoice::with( 
                                         'raised_by',
+                                        'received_by',
                                         'raise_action_by',
                                         'status',
                                         'project_manager',
@@ -624,6 +628,7 @@ class InvoiceApi extends Controller
         try{
             $invoice   = Invoice::with( 
                                         'raised_by',
+                                        'received_by',
                                         'raise_action_by',
                                         'status',
                                         'project_manager',
@@ -917,6 +922,7 @@ class InvoiceApi extends Controller
             $invoice = Invoice::find($data[$key]['id']);
 
             $data[$key]['raised_by']                    = $invoice->raised_by;
+            $data[$key]['received_by']                  = $invoice->received_by;
             $data[$key]['raise_action_by']              = $invoice->raise_action_by;
             // $data[$key]['project']                      = $invoice->project;
             $data[$key]['status']                       = $invoice->status;
@@ -969,6 +975,10 @@ class InvoiceApi extends Controller
 
             if($value["raised_by"]==null){
                 $data[$key]['raised_by'] = array("full_name"=>"N/A");
+                
+            }
+            if($value["received_by"]==null){
+                $data[$key]['received_by'] = array("full_name"=>"N/A");
                 
             }
             if($value["raise_action_by"]==null){
