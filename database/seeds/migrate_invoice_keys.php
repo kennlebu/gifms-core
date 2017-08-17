@@ -41,6 +41,7 @@ class migrate_invoice_keys extends Seeder
 
                                     SET     i.management_approval_id        =   ma.id, 
                                             i.raised_by_id                  =   rb.id, 
+                                            i.received_by_id                =   rb.id, 
                                             i.raise_action_by_id            =   rb.id, 
                                             i.approver_id                   =   ap.id, 
                                             i.project_manager_id            =   pm.id, 
