@@ -19,10 +19,12 @@ use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\MobilePaymentModels\MobilePayment;
 use App\Models\MobilePaymentModels\MobilePaymentStatus;
+use App\Models\MobilePaymentModels\MobilePaymentPayee;
 use App\Models\ProjectsModels\Project;
 use App\Models\AccountingModels\Account;
 use Exception;
 use PDF;
+use Excel;
 use App;
 use JWTAuth;
 use Anchu\Ftp\Facades\Ftp;
@@ -459,6 +461,122 @@ class MobilePaymentApi extends Controller
             return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /**
+     * Operation postPayees
+     *
+     * post mobile_payment payees in acsv by ID.
+     *
+     * @param int $mobile_payment_id ID of mobile_payment to return object (required)
+     *
+     * @return Http response
+     */
+    public function postPayees($mobile_payment_id)
+    {
+        // $input = Request::all();
+
+        //path params validation
+
+
+        //not path params validation
+
+        try{
+
+            $form = Request::only('file');
+
+            $file = $form['file'];
+
+            $ftp = FTP::connection()->getDirListing();
+
+
+            $mobile_payment = MobilePayment::find($mobile_payment_id);
+
+            // $contents = File::get($file->getPathname());
+            // $data = str_getcsv ($contents,",");
+
+            // print_r($data);
+
+
+            $data = Excel::load($file->getPathname(), function($reader) {
+
+            })->get()->toArray();
+
+
+            // print_r($data);
+        
+
+            foreach ($data as $key => $value) {
+                $payee = new MobilePaymentPayee();
+
+                $payee->mobile_payment_id   = $mobile_payment_id;
+                $payee->full_name           = $value['name'];
+                $payee->registered_name     = $value['name'];
+                $payee->amount              = $value['amount'];
+                $payee->mobile_number       = $value['phone'];
+                $payee->withdrawal_charges  = $payee->calculated_withdrawal_charges;
+                $payee->total               = $payee->calculated_total;
+
+                $payee->save();
+            }
+
+
+
+            return Response()->json(array('msg' => 'Success: mobile_payment payees uploaded','mobile_payment' => $mobile_payment), 200);
+        
+
+        }catch (JWTException $e){
+
+            return response()->json(['error'=>'You are not Authenticated'], 500);
+
+        }
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

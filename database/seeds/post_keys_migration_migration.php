@@ -382,7 +382,8 @@ class post_keys_migration_migration extends Seeder
                 ],
                 [
                     'invoice_status' =>'Allocated Pending Accountant Approval',
-                    'next_status_id' =>'1'
+                    'next_status_id' =>'1',
+                    'default_log_status' =>''
 
                 ]
             ]);

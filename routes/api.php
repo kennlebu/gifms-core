@@ -1656,6 +1656,13 @@ Route::GET('/mobile_payment/{mobile_payment_id}', 'MobilePaymentApi@getMobilePay
  */
 Route::PATCH('/mobile_payment/{mobile_payment_id}/approve', 'MobilePaymentApi@approve')->middleware('jwt.auth');
 /**
+ * POST postPayees
+ * Summary: post mobile_payment payees in acsv by ID
+ * Notes: get Mobile Payment Attendance Sheet
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/mobile_payment/{mobile_payment_id}/payees', 'MobilePaymentApi@postPayees')->middleware('jwt.auth');
+/**
  * PATCH reject
  * Summary: Submit/Approve mobile_payment by ID
  * Notes: Reject Mobile Payment
