@@ -32,7 +32,7 @@ class User extends Authenticatable
     ];
 
     
-    protected $appends = ['full_name','is_admin'];
+    protected $appends = ['full_name','name','is_admin'];
 
 
 
@@ -47,6 +47,13 @@ class User extends Authenticatable
 
     }
 
+    public function getNameAttribute()
+    {       
+
+        return $this->attributes['f_name'].' '.$this->attributes['l_name'];
+
+    }
+
     public function getIsAdminAttribute()
     {       
         //this is a stub
@@ -55,5 +62,9 @@ class User extends Authenticatable
         
         return $is_admin;
 
+    }
+    public function roles()
+    {
+        return $this->belongsToMany('App\Models\StaffModels\Role','user_roles','user_id', 'role_id');
     }
 }

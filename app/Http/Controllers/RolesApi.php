@@ -26,6 +26,34 @@ class RolesApi extends Controller
     {
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
     /**
      * Operation addRole
      *
@@ -50,6 +78,34 @@ class RolesApi extends Controller
 
         return response('How about implementing addRole as a POST method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation updateRole
      *
@@ -74,6 +130,34 @@ class RolesApi extends Controller
 
         return response('How about implementing updateRole as a PUT method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation deleteRole
      *
@@ -94,6 +178,34 @@ class RolesApi extends Controller
 
         return response('How about implementing deleteRole as a DELETE method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation getRoleById
      *
@@ -114,6 +226,34 @@ class RolesApi extends Controller
 
         return response('How about implementing getRoleById as a GET method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation rolesGet
      *

@@ -69,7 +69,7 @@
           </tr>
 
 
-          
+
 
           <tr>
             <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #c0c0c0;" bgcolor="#092d50" ><strong><span style="color: #ffffff;">ITEM #</span></strong></td>
@@ -125,67 +125,67 @@
           <tr>
             <td style="border: 1px solid #666666;margin-right: 20px;" colspan="6" rowspan="11"  valign="top" >
               <ul style="list-style-type: square;">
-               @foreach ($lpo->terms as $term)
-               <li>{{$term->terms}}</li>
-               @endforeach
-             </ul>
-           </td>
-           <td ></td>
-           <td >VAT</td>
-           <td >{{$lpo->currency->currency_name}}</td>
-           <td align="right" bgcolor="#E4E8F3">{{number_format($lpo->vats,2)}}</td>
-         </tr>
-         <tr>
-          <td >&nbsp;</td>
-          <td style="border-bottom: 3px double #000000;" colspan="1" ></td>
-          <td style="border-bottom: 3px double #000000;" ></td>
-          <td style="border-bottom: 3px double #000000;" align="right"></td>
-        </tr>
-        <tr>
-          <td ></td>
-          <td colspan="1" ><strong>TOTALS</strong></td>
-          <td >{{$lpo->currency->currency_name}}</td>
-          <td align="right" bgcolor="#E4E8F3"><strong>{{number_format($lpo->totals,2)}}</strong></td>
-        </tr>
-        <tr>
-          <td >&nbsp;</td>
-          <td ></td>
-          <td ></td>
-        </tr>
-        <tr>
-          <td ></td>
-          <td style="border-bottom: 2px solid #000000;" colspan="1" >Authorized by:</td>
-          <td style="border-bottom: 2px solid #000000;" ></td>
-          <td style="border-bottom: 2px solid #000000;" >Date:</td>
-        </tr>
-        <tr>
-          <td ></td>
-          <td colspan="2" >[NAME]</td>
-          <td >[Date]</td>
-        </tr>
-        <tr>
-          <td ></td>
-          <td colspan="4" rowspan="5" >[sign]</td>
-          <td ></td>
-        </tr>
-        <tr>
-          <td >&nbsp;</td>
-        </tr>
-        <tr>
-          <td>&nbsp;</td>
-        </tr>
-        <tr>
-          <td>&nbsp;</td>
-        </tr>
-        <tr>
-          <td>&nbsp;</td>
-        </tr>
-        <tr>
-        <td colspan="10">&nbsp;</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-</main>
+                @foreach ($lpo->terms as $term)
+                <li>{{$term->terms}}</li>
+                @endforeach
+              </ul>
+            </td>
+            <td ></td>
+            <td >VAT</td>
+            <td >{{$lpo->currency->currency_name}}</td>
+            <td align="right" bgcolor="#E4E8F3">{{number_format($lpo->vats,2)}}</td>
+          </tr>
+          <tr>
+            <td >&nbsp;</td>
+            <td style="border-bottom: 3px double #000000;" colspan="1" ></td>
+            <td style="border-bottom: 3px double #000000;" ></td>
+            <td style="border-bottom: 3px double #000000;" align="right"></td>
+          </tr>
+          <tr>
+            <td ></td>
+            <td colspan="1" ><strong>TOTALS</strong></td>
+            <td >{{$lpo->currency->currency_name}}</td>
+            <td align="right" bgcolor="#E4E8F3"><strong>{{number_format($lpo->totals,2)}}</strong></td>
+          </tr>
+          <tr>
+            <td >&nbsp;</td>
+            <td ></td>
+            <td ></td>
+          </tr>
+          <tr>
+            <td ></td>
+            <td style="border-bottom: 2px solid #000000;" colspan="1" >Authorized by:</td>
+            <td style="border-bottom: 2px solid #000000;" ></td>
+            <td style="border-bottom: 2px solid #000000;" >Date:</td>
+          </tr>
+          <tr>
+            <td ></td>
+            <td colspan="2" >[NAME]</td>
+            <td >[Date]</td>
+          </tr>
+          <tr>
+            <td ></td>
+            <td colspan="4" rowspan="5" >[sign]</td>
+            <td ></td>
+          </tr>
+          <tr>
+            <td >&nbsp;</td>
+          </tr>
+          <tr>
+            <td>&nbsp;</td>
+          </tr>
+          <tr>
+            <td>&nbsp;</td>
+          </tr>
+          <tr>
+            <td>&nbsp;</td>
+          </tr>
+          <tr>
+            <td colspan="10">&nbsp;</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
 </body>
 </html>

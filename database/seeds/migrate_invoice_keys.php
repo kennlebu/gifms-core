@@ -29,32 +29,28 @@ class migrate_invoice_keys extends Seeder
         $migrate_keys_sql = "
                                 UPDATE invoices i 
                                     LEFT JOIN staff ma 
-                                    ON ma.migration_id = i.migration_management_approval
-                                    LEFT JOIN staff ub 
-                                    ON ub.migration_id = i.migration_uploaded_by
+                                    ON ma.migration_id = i.migration_management_approval_id
+                                    LEFT JOIN staff rb 
+                                    ON rb.migration_id = i.migration_raised_by_id
                                     LEFT JOIN staff ap 
                                     ON ap.migration_id = i.migration_approver_id
-                                    LEFT JOIN claims c 
-                                    ON c.migration_id = i.migration_claim_id
+                                    LEFT JOIN staff pm 
+                                    ON pm.migration_id = i.migration_project_manager_id
                                     LEFT JOIN lpos l 
                                     ON l.migration_id = i.migration_lpo_id
-                                    LEFT JOIN staff_advances sa 
-                                    ON sa.migration_id = i.migration_advance_id
-                                    LEFT JOIN staff mp 
-                                    ON mp.migration_id = i.migration_mpesa_id
 
-                                    SET     i.management_approval   =   ma.id, 
-                                            i.uploaded_by           =   ub.id, 
-                                            i.approver_id           =   ap.id, 
-                                            i.claim_id              =   c.id, 
-                                            i.lpo_id                =   l.id, 
-                                            i.advance_id            =   sa.id, 
-                                            i.mpesa_id              =   mp.id, 
+                                    SET     i.management_approval_id        =   ma.id, 
+                                            i.raised_by_id                  =   rb.id, 
+                                            i.received_by_id                =   rb.id, 
+                                            i.raise_action_by_id            =   rb.id, 
+                                            i.approver_id                   =   ap.id, 
+                                            i.project_manager_id            =   pm.id, 
+                                            i.lpo_id                        =   l.id
                              ";
 
-        // DB::statement($migrate_keys_sql);
+        DB::statement($migrate_keys_sql);
 
-        echo "\n __________Migrated invoices Foreign keys ---------- banks,bank_branches \n";
+        echo "\n __________Migrated invoices Foreign keys ---------- pm,lpos \n";
 
       /**
          * 
@@ -62,7 +58,7 @@ class migrate_invoice_keys extends Seeder
          * 
          * 
          * 
-         *                  invoice_project_account_allocations
+         *                  allocations
          * 
          * 
          * 
@@ -70,23 +66,28 @@ class migrate_invoice_keys extends Seeder
          */
 
         $migrate_keys_sql = "
-                                UPDATE invoice_project_account_allocations ipaa 
+                                UPDATE allocations al 
                                     LEFT JOIN staff ab 
-                                    ON ab.migration_id = ipaa.migration_allocated_by
+                                    ON ab.migration_id = al.migration_allocated_by_id
                                     LEFT JOIN invoices i 
-                                    ON i.migration_id = ipaa.migration_invoice_id
+                                    ON i.migration_id = al.migration_allocatable_id
                                     LEFT JOIN projects p 
-                                    ON p.migration_id = ipaa.migration_project_id
-                                    LEFT JOIN accounts a 
-                                    ON a.account_code = ipaa.migration_project_account
+                                    ON p.migration_id = al.migration_project_id
+                                    LEFT JOIN accounts a13 
+                                    ON a13.account_code = al.migration_account_2013_code
                                     LEFT JOIN accounts a16 
-                                    ON a16.account_code = ipaa.migration_project_account_2016
+                                    ON a16.account_code = al.migration_account_2016_code
 
-                                    SET     ipaa.allocated_by              =   ab.id, 
-                                            ipaa.invoice_id                =   i.id, 
-                                            ipaa.project_id                =   p.id, 
-                                            ipaa.project_account           =   a.id, 
-                                            ipaa.project_account_2016      =   a16.id
+                                    SET     al.allocated_by_id           =   ab.id, 
+                                            al.allocatable_id            =   i.id, 
+                                            al.project_id                =   p.id, 
+                                            al.account_2013_id           =   a13.id, 
+                                            al.account_2016_id           =   a16.id,
+                                            al.account_id                =   CASE WHEN migration_account_2016_code <> '' THEN a16.id
+                                                                                  WHEN migration_account_2013_code <> '' THEN a13.id
+                                                                                  ELSE NULL
+                                                                             END
+
                              ";
 
         DB::statement($migrate_keys_sql);

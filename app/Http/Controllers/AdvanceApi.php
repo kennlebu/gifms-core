@@ -15,17 +15,32 @@
 
 namespace App\Http\Controllers;
 
+use JWTAuth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\AdvancesModels\Advance;
+use App\Models\AdvancesModels\AdvanceStatus;
+use App\Models\ProjectsModels\Project;
+use App\Models\AccountingModels\Account;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\NotifyAdvance;
+use App\Models\AllocationModels\Allocation;
+use App\Models\ApprovalsModels\Approval;
 
 class AdvanceApi extends Controller
 {
+
+
+    private $default_status = '';
+    private $approvable_statuses = [];
     /**
      * Constructor
      */
     public function __construct()
     {
+        $status = AdvanceStatus::where('default_status','1')->first();
+        $this->approvable_statuses = AdvanceStatus::where('approvable','1')->get();
+        $this->default_status = $status->id;
     }
 
 
@@ -61,19 +76,68 @@ class AdvanceApi extends Controller
      */
     public function addAdvance()
     {
-        $input = Request::all();
-
-        //path params validation
+        
 
 
-        //not path params validation
-        if (!isset($input['body'])) {
-            throw new \InvalidArgumentException('Missing the required parameter $body when calling addAdvance');
+        // $input = Request::all();
+
+        $advance = new Advance;
+
+
+        try{
+
+
+            $form = Request::only(
+                'requested_by_id',
+                'expense_desc',
+                'expense_purpose',
+                'project_manager_id',
+                'total',
+                'currency_id',
+                'file'
+                );
+
+
+            // FTP::connection()->changeDir('./lpos');
+
+            // $ftp = FTP::connection()->getDirListing();
+
+            // print_r($form['file']);
+
+            // $file = $form['file'];
+
+
+            $advance->requested_by_id                   =   (int)       $form['requested_by_id'];
+            // $advance->request_action_by_id              =   (int)      $body['request_action_by_id'];
+            $advance->expense_desc                      =               $form['expense_desc'];
+            $advance->expense_purpose                   =               $form['expense_purpose'];
+            $advance->project_manager_id                =   (int)       $form['project_manager_id'];
+            $advance->total                             =   (double)    $form['total'];
+            $advance->currency_id                       =   (int)       $form['currency_id'];           
+
+            $advance->status_id                         =   $this->default_status;
+
+
+            if($advance->save()) {
+
+                // FTP::connection()->makeDir('./advances/'.$advance->id);
+                // FTP::connection()->makeDir('./advances/'.$advance->id);
+                // FTP::connection()->uploadFile($file->getPathname(), './advances/'.$advance->id.'/'.$advance->id.'.'.$file->getClientOriginalExtension());
+
+                // $advance->advance_document           =   $advance->id.'.'.$file->getClientOriginalExtension();
+                $advance->ref                        = "CHAI/ADV/#$advance->id/".date_format($advance->created_at,"Y/m/d");
+                $advance->save();
+                
+                return Response()->json(array('success' => 'Advance Added','advance' => $advance), 200);
+            }
+
+
+        }catch (JWTException $e){
+
+            return response()->json(['error'=>'You are not Authenticated'], 500);
+
         }
-        $body = $input['body'];
 
-
-        return response('How about implementing addAdvance as a POST method ?');
     }
 
 
@@ -212,8 +276,17 @@ class AdvanceApi extends Controller
                                     'project_manager',
                                     'currency',
                                     'rejected_by',
-                                    'advance_approvals'
+                                    'approvals',
+                                    'allocations'
                                 )->findOrFail($advance_id);
+
+
+            foreach ($response->allocations as $key => $value) {
+                $project = Project::find((int)$value['project_id']);
+                $account = Account::find((int)$value['account_id']);
+                $response['allocations'][$key]['project']  =   $project;
+                $response['allocations'][$key]['account']  =   $account;
+            }
            
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
 
@@ -257,14 +330,61 @@ class AdvanceApi extends Controller
      */
     public function approveAdvance($advance_id)
     {
+
         $input = Request::all();
 
-        //path params validation
+        try{
+
+            $advance   = Advance::with(
+                                    'requested_by',
+                                    'request_action_by',
+                                    'project',
+                                    'status',
+                                    'project_manager',
+                                    'currency',
+                                    'rejected_by',
+                                    'approvals',
+                                    'allocations'
+                                )->findOrFail($advance_id);
+           
+            $advance->status_id = $advance->status->next_status_id;
+
+            if($advance->save()) {
+
+                $advance   = Advance::with(
+                                    'requested_by',
+                                    'request_action_by',
+                                    'project',
+                                    'status',
+                                    'project_manager',
+                                    'currency',
+                                    'rejected_by',
+                                    'approvals',
+                                    'allocations'
+                                )->findOrFail($advance_id);
+
+                $approval = new Approval;
+
+                $user = JWTAuth::parseToken()->authenticate();
+
+                $approval->approvable_id            =   (int)   $advance->id;
+                $approval->approvable_type          =   "advances";
+                $approval->approval_level_id        =   $advance->status->approval_level_id;
+                $approval->approver_id              =   (int)   $user->id;
+
+                $approval->save();
+                
+                Mail::send(new NotifyAdvance($advance));
+
+                return Response()->json(array('msg' => 'Success: advance approved','advance' => $advance), 200);
+            }
 
 
-        //not path params validation
+        }catch(Exception $e){
 
-        return response('How about implementing approveAdvance as a PATCH method ?');
+            $response =  ["error"=>"Advance could not be found"];
+            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+        }
     }
 
 
@@ -278,6 +398,72 @@ class AdvanceApi extends Controller
 
 
 
+
+
+
+
+    /**
+     * Operation rejectAdvance
+     *
+     * Approve advance by ID.
+     *
+     * @param int $advance_id ID of advance to return object (required)
+     *
+     * @return Http response
+     */
+    public function rejectAdvance($advance_id)
+    {
+
+        $form = Request::only(
+            'rejection_reason'
+            );
+
+        try{
+
+            $advance   = Advance::with(
+                                    'requested_by',
+                                    'request_action_by',
+                                    'project',
+                                    'status',
+                                    'project_manager',
+                                    'currency',
+                                    'rejected_by',
+                                    'approvals',
+                                    'allocations'
+                                )->findOrFail($advance_id);
+           
+            $advance->status_id = 11;
+            $user = JWTAuth::parseToken()->authenticate();
+            $advance->rejected_by_id            =   (int)   $user->id;
+            $advance->rejected_at              =   date('Y-m-d H:i:s');
+            $advance->rejection_reason             =   $form['rejection_reason'];
+
+            if($advance->save()) {
+
+                Mail::send(new NotifyAdvance($advance));
+
+                return Response()->json(array('msg' => 'Success: advance approved','advance' => $advance), 200);
+            }
+
+
+        }catch(Exception $e){
+
+            $response =  ["error"=>"Advance could not be found"];
+            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+    
 
 
 
@@ -300,14 +486,40 @@ class AdvanceApi extends Controller
      */
     public function submitAdvanceForApproval($advance_id)
     {
+
+
         $input = Request::all();
 
-        //path params validation
+        try{
+
+            $advance   = Advance::with(
+                                    'requested_by',
+                                    'request_action_by',
+                                    'project',
+                                    'status',
+                                    'project_manager',
+                                    'currency',
+                                    'rejected_by',
+                                    'approvals',
+                                    'allocations'
+                                )->findOrFail($advance_id);
+           
+            $advance->status_id = $advance->status->next_status_id;
+            $advance->requested_at = date('Y-m-d H:i:s');
+
+            if($advance->save()) {
+                
+                Mail::send(new NotifyAdvance($advance));
+
+                return Response()->json(array('msg' => 'Success: advance submitted','advance' => $advance), 200);
+            }
 
 
-        //not path params validation
+        }catch(Exception $e){
 
-        return response('How about implementing submitAdvanceForApproval as a PATCH method ?');
+            $response =  ["error"=>"Advance could not be found"];
+            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+        }
     }
 
 
@@ -383,6 +595,25 @@ class AdvanceApi extends Controller
         }
 
 
+        
+        $app_stat = $this->approvable_statuses ;
+        //if approvable is set
+
+        if(array_key_exists('approvable', $input)){
+
+            $qb->where(function ($query) use ($app_stat) {
+                    
+                foreach ($app_stat as $key => $value) {
+                    $query->orWhere('status_id',$value['id']);
+                }
+
+            });
+        }
+
+
+
+
+
 
 
         //searching
@@ -404,6 +635,29 @@ class AdvanceApi extends Controller
 
             $records_filtered = (int) $dt[0]['count'];
             // $records_filtered = 30;
+
+
+        }
+
+        //limit
+        if(array_key_exists('limit', $input)){
+
+
+            $qb->limit($input['limit']);
+
+
+        }
+
+        //migrated
+        if(array_key_exists('migrated', $input)){
+
+            $mig = (int) $input['migrated'];
+
+            if($mig==0){
+                $qb->whereNull('migration_id');
+            }else if($mig==1){
+                $qb->whereNotNull('migration_id');
+            }
 
 
         }
@@ -457,7 +711,13 @@ class AdvanceApi extends Controller
 
 
             //limit $ offset
-            $response_dt    =   $qb->limit($input['length'])->offset($input['start']);
+            if((int)$input['start']!= 0 ){
+
+                $response_dt    =   $qb->limit($input['length'])->offset($input['start']);
+
+            }else{
+                $qb->limit($input['length']);
+            }
 
 
 
@@ -484,6 +744,8 @@ class AdvanceApi extends Controller
 
             $sql            = Advance::bind_presql($qb->toSql(),$qb->getBindings());
             $response       = json_decode(json_encode(DB::select($sql)), true);
+            $response       = $this->append_relationships_objects($response);
+            $response       = $this->append_relationships_nulls($response);
         }
 
 
@@ -520,16 +782,25 @@ class AdvanceApi extends Controller
 
         foreach ($data as $key => $value) {
 
-            $mobile_payment = Advance::find($data[$key]['id']);
+            $advance = Advance::find($data[$key]['id']);
 
-            $data[$key]['requested_by']                 = $mobile_payment->requested_by;
-            $data[$key]['request_action_by']            = $mobile_payment->requested_action_by;
-            $data[$key]['project']                      = $mobile_payment->project;
-            $data[$key]['status']                       = $mobile_payment->status;
-            $data[$key]['project_manager']              = $mobile_payment->project_manager;
-            $data[$key]['currency']                     = $mobile_payment->currency;
-            $data[$key]['rejected_by']                  = $mobile_payment->rejected_by;
-            $data[$key]['advance_approvals']            = $mobile_payment->advance_approvals;
+            $data[$key]['requested_by']                 = $advance->requested_by;
+            $data[$key]['request_action_by']            = $advance->requested_action_by;
+            $data[$key]['project']                      = $advance->project;
+            $data[$key]['status']                       = $advance->status;
+            $data[$key]['project_manager']              = $advance->project_manager;
+            $data[$key]['currency']                     = $advance->currency;
+            $data[$key]['rejected_by']                  = $advance->rejected_by;
+            $data[$key]['approvals']                    = $advance->approvals;
+            $data[$key]['allocations']                  = $advance->allocations;
+            
+
+            foreach ($advance->allocations as $key1 => $value1) {
+                $project = Project::find((int)$value1['project_id']);
+                $account = Account::find((int)$value1['account_id']);
+                $data[$key]['allocations'][$key1]['project']  =   $project;
+                $data[$key]['allocations'][$key1]['account']  =   $account;
+            }
 
         }
 

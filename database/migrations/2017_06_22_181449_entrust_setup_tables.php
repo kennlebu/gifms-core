@@ -17,6 +17,7 @@ class EntrustSetupTables extends Migration
         Schema::create('roles', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name')->unique();
+            $table->string('acronym')->nullable();
             $table->string('display_name')->nullable();
             $table->string('description')->nullable();
             $table->timestamps();
@@ -41,6 +42,10 @@ class EntrustSetupTables extends Migration
             $table->string('name')->unique();
             $table->string('display_name')->nullable();
             $table->string('description')->nullable();
+            $table->string('entity')->nullable();
+            $table->string('operation_type')->nullable();
+            $table->integer('at_status_id')->nullable();
+            $table->integer('approval_level_id')->nullable();
             $table->timestamps();
         });
 

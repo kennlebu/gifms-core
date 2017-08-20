@@ -10,4 +10,13 @@ class Delivery extends BaseModel
 {
     //
     use SoftDeletes;
+    
+    public function comments()
+    {
+        return $this->morphMany('App\Models\OtherModels\Comment', 'commentable');
+    }
+    public function received_by()
+    {
+        return $this->belongsTo('App\Models\StaffModels\Staff','received_by_id');
+    }
 }

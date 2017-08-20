@@ -27,6 +27,30 @@ class SupplierApi extends Controller
     {
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
     /**
      * Operation addSupplier
      *
@@ -168,6 +192,30 @@ class SupplierApi extends Controller
 
         return response('How about implementing deleteSupplier as a DELETE method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation getSupplierById
      *
@@ -188,6 +236,30 @@ class SupplierApi extends Controller
 
         return response('How about implementing getSupplierById as a GET method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation suppliersGet
      *

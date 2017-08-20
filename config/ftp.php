@@ -31,6 +31,13 @@ return array(
             'password'   => env('FTP_PASSWORD', "root"),
             'passive'   => env('FTP_PASSIVE', false),
         ),
+        'connection_migration' => array(
+            'host'   => env('FTP_HOST_MIG', "localhost"),
+            'port'  => env('FTP_PORT_MIG', 21),
+            'username' => env('FTP_USERNAME_MIG', "root"),
+            'password'   => env('FTP_PASSWORD_MIG', "root"),
+            'passive'   => env('FTP_PASSIVE_MIG', false),
+        ),
     ),
 
 

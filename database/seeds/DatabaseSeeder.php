@@ -13,7 +13,7 @@ class DatabaseSeeder extends Seeder
     {
 
 
-        DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->setFetchMode(PDO::FETCH_ASSOC);
+        DB::connection(env('DB_MIGRATE_FROM','sqlsrv'));
 
         
         //refferences
@@ -22,12 +22,12 @@ class DatabaseSeeder extends Seeder
         $this->call(migrate_departments_data::class);
         $this->call(migrate_projects_data::class);
         
+        $this->call(migrate_banking_data::class);
         //personell
         $this->call(migrate_staff_data::class);
         $this->call(migrate_suppliers_data::class);
 
         //accounting
-        $this->call(migrate_banking_data::class);
         $this->call(migrate_accounting_data::class);
         $this->call(migrate_payment_data::class);
         $this->call(migrate_lpo_data::class);
@@ -47,16 +47,16 @@ class DatabaseSeeder extends Seeder
         $this->call(migrate_departments_keys::class);
         $this->call(migrate_projects_keys::class);
         
+        $this->call(migrate_banking_keys::class);
         //personell
         $this->call(migrate_staff_keys::class);
         $this->call(migrate_suppliers_keys::class);
 
         //accounting
-        $this->call(migrate_banking_keys::class);
         $this->call(migrate_accounting_keys::class);
         $this->call(migrate_payment_keys::class);   //waiting for definitions staff_advances
         $this->call(migrate_lpo_keys::class);
-        $this->call(migrate_invoice_keys::class);   //waiting for definitions claims, staff_advances, mobile_payments
+        $this->call(migrate_invoice_keys::class);   //waiting for definitions claims, staff_advances, 
         $this->call(migrate_mobile_payment_keys::class);
         $this->call(migrate_finance_keys::class);
         $this->call(migrate_advances_keys::class);
@@ -68,6 +68,7 @@ class DatabaseSeeder extends Seeder
 
         // drop keys after migration
         $this->call(post_keys_migration_migration::class);
+        $this->call(post_migration_allocations_data::class);
         $this->call(post_migration_keys_drop::class);
         
     }

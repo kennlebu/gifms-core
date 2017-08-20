@@ -52,6 +52,7 @@ return [
     */
 
     'url' => env('APP_URL', 'http://localhost'),
+    'js_url' => env('APP_JS_URL', 'http://localhost'),
 
     /*
     |--------------------------------------------------------------------------
@@ -64,7 +65,7 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    'timezone' => env('APP_TIMEZONE', 'UTC'),
 
     /*
     |--------------------------------------------------------------------------
@@ -242,5 +243,24 @@ return [
         'Entrust'   => Zizaco\Entrust\EntrustFacade::class,
 
     ],
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    'accountant_id'             => env('ACCOUNTANT_ID'),
+    'financial_controller_id'   => env('FINANCIAL_CONTROLLER_ID'),
+    'director_id'               => env('DIRECTOR_ID'),
 
 ];

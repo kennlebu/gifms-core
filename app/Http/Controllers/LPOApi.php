@@ -19,6 +19,7 @@ use JWTAuth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\LPOModels\Lpo;
+use App\Models\LPOModels\LpoStatus;
 use Exception;
 use PDF;
 use App;
@@ -26,15 +27,57 @@ use Anchu\Ftp\Facades\Ftp;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\NotifyLpo;
+use App\Models\AllocationModels\Allocation;
+use App\Models\ApprovalsModels\Approval;
 
 class LPOApi extends Controller
 {
+
+
+    private $default_status = '';
+    private $approvable_statuses = [];
     /**
     * Constructor
     */
     public function __construct()
     {
+        $status = LpoStatus::where('default_status','1')->first();
+        $this->approvable_statuses = LpoStatus::where('approvable','1')->get();
+        $this->default_status = $status->id;
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
 
     /**
     * Operation add
@@ -71,7 +114,7 @@ class LPOApi extends Controller
             $lpo->account_id                        =   (int)   $form['account_id'];
             $lpo->currency_id                       =   (int)   $form['currency_id'];
             $lpo->project_manager_id                =   (int)   $form['project_manager_id'];
-            $lpo->status_id                         =   2;
+            $lpo->status_id                         =   $this->default_status;
 
             $user = JWTAuth::parseToken()->authenticate();
             $lpo->request_action_by_id            =   (int)   $user->id;
@@ -239,6 +282,295 @@ class LPOApi extends Controller
 
 
 
+    /**
+     * Operation allocateLpo
+     *
+     * Allocate lpo by ID.
+     *
+     * @param int $lpo_id ID of lpo to return object (required)
+     *
+     * @return Http response
+     */
+    public function allocateLpo($lpo_id)
+    {
+        $input = Request::all();
+
+        //path params validation
+
+
+        //not path params validation
+
+        return response('How about implementing allocateLpo as a PATCH method ?');
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /**
+     * Operation approveLpo
+     *
+     * Approve lpo by ID.
+     *
+     * @param int $lpo_id ID of lpo to return object (required)
+     *
+     * @return Http response
+     */
+    public function approveLpo($lpo_id)
+    {
+        $input = Request::all();
+
+        try{
+
+            $lpo   = LPO::with(
+                                            'requested_by',
+                                            'request_action_by',
+                                            'project',
+                                            'account',
+                                            'invoice',
+                                            'status',
+                                            'project_manager',
+                                            'rejected_by',
+                                            'cancelled_by',
+                                            'received_by',
+                                            'supplier',
+                                            'currency',
+                                            'quotations',
+                                            'preffered_quotation',
+                                            'items',
+                                            'terms',
+                                            'approvals',
+                                            'deliveries'
+                                )->findOrFail($lpo_id);
+           
+           
+            $lpo->status_id = $lpo->status->next_status_id;
+
+            if($lpo->save()) {
+
+                $lpo   = LPO::with(
+                                            'requested_by',
+                                            'request_action_by',
+                                            'project',
+                                            'account',
+                                            'invoice',
+                                            'status',
+                                            'project_manager',
+                                            'rejected_by',
+                                            'cancelled_by',
+                                            'received_by',
+                                            'supplier',
+                                            'currency',
+                                            'quotations',
+                                            'preffered_quotation',
+                                            'items',
+                                            'terms',
+                                            'approvals',
+                                            'deliveries'
+                                )->findOrFail($lpo_id);
+
+                $approval = new Approval;
+
+                $user = JWTAuth::parseToken()->authenticate();
+
+                $approval->approvable_id            =   (int)   $lpo->id;
+                $approval->approvable_type          =   "lpos";
+                $approval->approval_level_id        =   $lpo->status->approval_level_id;
+                $approval->approver_id              =   (int)   $user->id;
+
+                $approval->save();
+
+
+                Mail::send(new NotifyLpo($lpo));
+
+                return Response()->json(array('msg' => 'Success: lpo approved','lpo' => $lpo), 200);
+            }
+
+        }catch(Exception $e){
+
+            $response =  ["error"=>"lpo could not be found"];
+            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /**
+     * Operation rejectLpo
+     *
+     * Approve lpo by ID.
+     *
+     * @param int $lpo_id ID of lpo to return object (required)
+     *
+     * @return Http response
+     */
+    public function rejectLpo($lpo_id)
+    {
+
+        $form = Request::only(
+            'rejection_reason'
+            );
+
+        try{
+
+            $lpo   = LPO::with(
+                                            'requested_by',
+                                            'request_action_by',
+                                            'project',
+                                            'account',
+                                            'invoice',
+                                            'status',
+                                            'project_manager',
+                                            'rejected_by',
+                                            'cancelled_by',
+                                            'received_by',
+                                            'supplier',
+                                            'currency',
+                                            'quotations',
+                                            'preffered_quotation',
+                                            'items',
+                                            'terms',
+                                            'approvals',
+                                            'deliveries'
+                                )->findOrFail($lpo_id);
+           
+           
+            $lpo->status_id = 12;
+            $user = JWTAuth::parseToken()->authenticate();
+            $lpo->rejected_by_id            =   (int)   $user->id;
+            $lpo->rejected_at              =   date('Y-m-d H:i:s');
+            $lpo->rejection_reason             =   $form['rejection_reason'];
+
+            if($lpo->save()) {
+
+                
+                Mail::send(new NotifyLpo($lpo));
+
+                return Response()->json(array('msg' => 'Success: lpo rejected','lpo' => $lpo), 200);
+            }
+
+        }catch(Exception $e){
+
+            $response =  ["error"=>"lpo could not be found"];
+            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /**
+     * Operation submitLpoForApproval
+     *
+     * Submit lpo by ID.
+     *
+     * @param int $lpo_id ID of lpo to return object (required)
+     *
+     * @return Http response
+     */
+    public function submitLpoForApproval($lpo_id)
+    {
+        
+        $input = Request::all();
+
+        try{
+
+            $lpo   = LPO::with(
+                                            'requested_by',
+                                            'request_action_by',
+                                            'project',
+                                            'account',
+                                            'invoice',
+                                            'status',
+                                            'project_manager',
+                                            'rejected_by',
+                                            'cancelled_by',
+                                            'received_by',
+                                            'supplier',
+                                            'currency',
+                                            'quotations',
+                                            'preffered_quotation',
+                                            'items',
+                                            'terms',
+                                            'approvals',
+                                            'deliveries'
+                                )->findOrFail($lpo_id);
+           
+           
+            $lpo->status_id = $lpo->status->next_status_id;
+            $lpo->requested_at = date('Y-m-d H:i:s');
+
+            if($lpo->save()) {
+
+
+                Mail::send(new NotifyLpo($lpo));
+
+                return Response()->json(array('msg' => 'Success: lpo submitted','lpo' => $lpo), 200);
+            }
+
+        }catch(Exception $e){
+
+            $response =  ["error"=>"lpo could not be found"];
+            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -277,7 +609,7 @@ class LPOApi extends Controller
                                             'preffered_quotation',
                                             'items',
                                             'terms',
-                                            'lpo_approvals',
+                                            'approvals',
                                             'deliveries'
                                 )->findOrFail($lpo_id);
            
@@ -316,6 +648,7 @@ class LPOApi extends Controller
          * @param int $lpo_id ID of lpo to return lpo object (required)
          *
          * @return Http response
+         * @deprecated 
          */
         public function submitOrApprove($lpo_id)
         {
@@ -453,7 +786,7 @@ class LPOApi extends Controller
         //query builder
         $qb = DB::table('lpos');
 
-        $qb->whereNull('deleted_at');
+        $qb->whereNull('lpos.deleted_at');
 
         $response;
         $response_dt;
@@ -473,10 +806,10 @@ class LPOApi extends Controller
             $status_ = (int) $input['status'];
 
             if($status_ >-1){
-                $qb->where('status_id', $input['status']);
-                $qb->where('requested_by_id',$this->current_user()->id);
+                $qb->where('lpos.status_id', $input['status']);
+                $qb->where('lpos.requested_by_id',$this->current_user()->id);
             }elseif ($status_==-1) {
-                $qb->where('requested_by_id',$this->current_user()->id);
+                $qb->where('lpos.requested_by_id',$this->current_user()->id);
             }elseif ($status_==-2) {
                 
             }
@@ -489,15 +822,31 @@ class LPOApi extends Controller
 
 
 
+        $app_stat = $this->approvable_statuses ;
+        //if approvable is set
+
+        if(array_key_exists('approvable', $input)){
+
+            $qb->where(function ($query) use ($app_stat) {
+                    
+                foreach ($app_stat as $key => $value) {
+                    $query->orWhere('status_id',$value['id']);
+                }
+
+            });
+        }
+
+
+
 
         //searching
         if(array_key_exists('searchval', $input)){
             $qb->where(function ($query) use ($input) {
                 
-                $query->orWhere('id','like', '\'%' . $input['searchval']. '%\'');
-                $query->orWhere('ref','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('expense_desc','like', '\'%' . $input['searchval']. '%\'');
-                $query->orWhere('expense_purpose','like', '\'%' . $input['searchval']. '%\'');
+                $query->orWhere('lpos.id','like', '\'%' . $input['searchval']. '%\'');
+                $query->orWhere('lpos.ref','like', '\'%' . $input['search']['value']. '%\'');
+                $query->orWhere('lpos.expense_desc','like', '\'%' . $input['searchval']. '%\'');
+                $query->orWhere('lpos.expense_purpose','like', '\'%' . $input['searchval']. '%\'');
 
             });
 
@@ -513,6 +862,57 @@ class LPOApi extends Controller
 
         }
 
+        //limit
+        if(array_key_exists('limit', $input)){
+
+
+            $qb->limit($input['limit']);
+
+
+        }
+
+        //migrated
+        if(array_key_exists('migrated', $input)){
+
+            $mig = (int) $input['migrated'];
+
+            if($mig==0){
+                $qb->whereNull('migration_id');
+            }else if($mig==1){
+                $qb->whereNotNull('migration_id');
+            }
+
+
+        }
+
+        //with_no_deliveries
+        if(array_key_exists('with_no_deliveries', $input)){
+
+            $del = (int) $input['with_no_deliveries'];
+
+            if($del==1){
+                $qb->leftJoin('deliveries', 'lpos.id', '=', 'deliveries.lpo_id');
+                $qb->whereNull('deliveries.lpo_id');
+                $qb->orderBy('lpos.id', 'desc');
+                $qb->select('lpos.*');
+            }
+
+        }
+
+        //with_no_invoices
+        if(array_key_exists('with_no_invoices', $input)){
+
+            $inv = (int) $input['with_no_invoices'];
+
+            if($inv==1){
+                $qb->leftJoin('invoices', 'lpos.id', '=', 'invoices.lpo_id');
+                $qb->whereNull('invoices.lpo_id');
+                $qb->orderBy('lpos.id', 'desc');
+                $qb->select('lpos.*');
+            }
+
+
+        }
 
 
 
@@ -521,10 +921,10 @@ class LPOApi extends Controller
             //searching
             $qb->where(function ($query) use ($input) {
                 
-                $query->orWhere('id','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('ref','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('expense_desc','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('expense_purpose','like', '\'%' . $input['search']['value']. '%\'');
+                $query->orWhere('lpos.id','like', '\'%' . $input['search']['value']. '%\'');
+                $query->orWhere('lpos.ref','like', '\'%' . $input['search']['value']. '%\'');
+                $query->orWhere('lpos.expense_desc','like', '\'%' . $input['search']['value']. '%\'');
+                $query->orWhere('lpos.expense_purpose','like', '\'%' . $input['search']['value']. '%\'');
 
             });
 
@@ -562,7 +962,13 @@ class LPOApi extends Controller
 
 
             //limit $ offset
-            $response_dt    =   $qb->limit($input['length'])->offset($input['start']);
+            if((int)$input['start']!= 0 ){
+
+                $response_dt    =   $qb->limit($input['length'])->offset($input['start']);
+
+            }else{
+                $qb->limit($input['length']);
+            }
 
 
 
@@ -589,6 +995,8 @@ class LPOApi extends Controller
 
             $sql            = Lpo::bind_presql($qb->toSql(),$qb->getBindings());
             $response       = json_decode(json_encode(DB::select($sql)), true);
+            $response       = $this->append_relationships_objects($response);
+            $response       = $this->append_relationships_nulls($response);
         }
 
 
@@ -642,7 +1050,7 @@ class LPOApi extends Controller
             $data[$key]['preffered_quotation']      = $lpo->preffered_quotation;
             $data[$key]['items']                    = $lpo->items;
             $data[$key]['terms']                    = $lpo->terms;
-            $data[$key]['lpo_approvals']            = $lpo->lpo_approvals;
+            $data[$key]['approvals']                = $lpo->approvals;
             $data[$key]['deliveries']               = $lpo->deliveries;
             $data[$key]['totals']                   = $lpo->totals;
 

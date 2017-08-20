@@ -19,12 +19,13 @@ class CreateClaimsTable extends Migration
             $table->double('total',30,4)->nullable();
             $table->string('expense_desc')->nullable();
             $table->text('expense_purpose')->nullable();
-            $table->date('requested_date')->nullable();
+            $table->timestamp('requested_at')->nullable();
             $table->string('claim_document')->nullable();
             $table->date('allocated_at')->nullable();
             $table->integer('allocated_by_id')->nullable();
             $table->integer('status_id')->nullable();
             $table->integer('rejected_by_id')->nullable();
+            $table->timestamp('rejected_at')->nullable();
             $table->text('rejection_reason')->nullable();
             $table->integer('currency_id')->nullable();
             $table->integer('payment_mode_id')->nullable();

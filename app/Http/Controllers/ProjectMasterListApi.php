@@ -26,6 +26,36 @@ class ProjectMasterListApi extends Controller
     {
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
     /**
      * Operation addProjectMasterList
      *
@@ -50,6 +80,36 @@ class ProjectMasterListApi extends Controller
 
         return response('How about implementing addProjectMasterList as a POST method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation updateProjectMasterList
      *
@@ -74,6 +134,36 @@ class ProjectMasterListApi extends Controller
 
         return response('How about implementing updateProjectMasterList as a PUT method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation deleteProjectMasterList
      *
@@ -94,6 +184,36 @@ class ProjectMasterListApi extends Controller
 
         return response('How about implementing deleteProjectMasterList as a DELETE method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation getProjectMasterListById
      *
@@ -114,6 +234,36 @@ class ProjectMasterListApi extends Controller
 
         return response('How about implementing getProjectMasterListById as a GET method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation projectMasterListsGet
      *

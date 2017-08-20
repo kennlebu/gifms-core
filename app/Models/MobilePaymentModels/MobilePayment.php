@@ -81,10 +81,18 @@ class MobilePayment extends BaseModel
     public function payees()
     {
         return $this->hasMany('App\Models\MobilePaymentModels\MobilePaymentPayee');
-    }
-    public function mobile_payment_approvals()
+    }    
+    public function comments()
     {
-        return $this->hasMany('App\Models\MobilePaymentModels\MobilePaymentApproval');
+        return $this->morphMany('App\Models\OtherModels\Comment', 'commentable');
+    }
+    public function approvals()
+    {
+        return $this->morphMany('App\Models\ApprovalsModels\Approval', 'approvable');
+    }
+    public function allocations()
+    {
+        return $this->morphMany('App\Models\AllocationModels\Allocation', 'allocatable');
     }
 
 

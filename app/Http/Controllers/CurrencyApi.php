@@ -27,6 +27,30 @@ class CurrencyApi extends Controller
     {
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
     /**
      * Operation currenciesGet
      *
@@ -46,6 +70,30 @@ class CurrencyApi extends Controller
           return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
 
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation addCurrency
      *
@@ -70,6 +118,30 @@ class CurrencyApi extends Controller
 
         return response('How about implementing addCurrency as a POST method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation updateCurrency
      *
@@ -94,6 +166,30 @@ class CurrencyApi extends Controller
 
         return response('How about implementing updateCurrency as a PUT method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation deleteCurrency
      *
@@ -114,6 +210,30 @@ class CurrencyApi extends Controller
 
         return response('How about implementing deleteCurrency as a DELETE method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation getCurrencyById
      *

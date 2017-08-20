@@ -27,6 +27,36 @@ class StaffApi extends Controller
     {
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
     /**
      * Operation addStaff
      *
@@ -51,6 +81,36 @@ class StaffApi extends Controller
 
         return response('How about implementing addStaff as a POST method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation updateStaff
      *
@@ -75,6 +135,36 @@ class StaffApi extends Controller
 
         return response('How about implementing updateStaff as a PUT method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation deleteStaff
      *
@@ -95,6 +185,36 @@ class StaffApi extends Controller
 
         return response('How about implementing deleteStaff as a DELETE method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation getStaffById
      *
@@ -115,6 +235,36 @@ class StaffApi extends Controller
 
         return response('How about implementing getStaffById as a GET method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation staffsGet
      *
@@ -135,17 +285,48 @@ class StaffApi extends Controller
 
 
 
-         $response = Staff::all();
+         $response = Staff::orderBy('f_name','asc')->get();
 
 
         if(array_key_exists('role_abr', $input)&& $input['role_abr'] = "pm"){
             $response = Staff::where("deleted_at",null)
             ->where('post', "Program Manager")
             ->orWhere('post', "Financial Controller")
+            ->orderBy('f_name','asc')
             ->get();
         }
 
+        $response    = $this->append_relationships_objects($response);
 
-          return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+
+        return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+    }
+
+
+
+
+
+
+
+
+
+
+
+    public function append_relationships_objects($data = array()){
+
+        // print_r($data);
+
+        foreach ($data as $key => $value) {
+
+            $staff = Staff::find($data[$key]['id']);
+
+            $data[$key]['roles']                   = $staff->roles;
+
+        }
+
+
+        return $data;
+
+
     }
 }

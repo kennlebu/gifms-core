@@ -97,6 +97,11 @@ tags:
     externalDocs:
       description: Find out more
       url: 'http://kefinance.clintonhealthaccess.org/api/mobile_payment_approval/docs'
+  - name: Mobile Payment Allocation
+    description: Everything About Mobile Payment Allocation
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/mobile_payment_allocation/docs'
   - name: Mobile Payment Payee
     description: Everything About Mobile Payment Payee
     externalDocs:
@@ -192,6 +197,11 @@ tags:
     externalDocs:
       description: Find out more
       url: 'http://kefinance.clintonhealthaccess.org/api/claim_approval/docs'
+  - name: Claim Allocation
+    description: Everything About Claim Allocation
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/claim_allocation/docs'
   - name: Advance
     description: Everything About Advance
     externalDocs:
@@ -207,11 +217,81 @@ tags:
     externalDocs:
       description: Find out more
       url: 'http://kefinance.clintonhealthaccess.org/api/advance_approval/docs'
+  - name: Advance Allocation
+    description: Everything About Advance Allocation
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/advance_allocation/docs'
   - name: Account
     description: Everything About Account
     externalDocs:
       description: Find out more
       url: 'http://kefinance.clintonhealthaccess.org/api/account/docs'
+  - name: Payment
+    description: Everything About Payment
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/payment/docs'
+  - name: Payment Batch
+    description: Everything About Payment Batch
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/payment_batch/docs'
+  - name: Payment Mode
+    description: Everything About Payment Mode
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/payment_mode/docs'
+  - name: Payment Type
+    description: Everything About Payment Type
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/payment_type/docs'
+  - name: Approval
+    description: Everything About Approval
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/approval/docs'
+  - name: Allocation
+    description: Everything About Allocation
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/allocation/docs'
+  - name: Delivery
+    description: Everything About Delivery
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/delivery/docs'
+  - name: Delivery Status
+    description: Everything About Delivery Status
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/delivery_status/docs'
+  - name: Delivery Approval
+    description: Everything About Delivery Approval
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/delivery_approval/docs'
+  - name: Invoice
+    description: Everything About Invoice
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/invoice/docs'
+  - name: Invoice Status
+    description: Everything About Invoice Status
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/invoice_status/docs'
+  - name: Invoice Approval
+    description: Everything About Invoice Approval
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/invoice_approval/docs'
+  - name: Invoice Allocation
+    description: Everything About Invoice Allocation
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/invoice_allocation/docs'
 schemes:
   - http
   - https
@@ -556,6 +636,34 @@ paths:
           description: advance not found
       security:
         - api_key: []
+  '/advance/{advance_id}/reject':
+    patch:
+      tags:
+        - Advance
+      summary: Approve advance by ID
+      description: Rejects Advance
+      operationId: reject_advance
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: advance_id
+          in: path
+          description: ID of advance to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/advance'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: advance not found
+      security:
+        - api_key: []
   /advance_statuses:
     get:
       summary: advance_statuses List
@@ -840,6 +948,432 @@ paths:
           description: advance_approval not found
       security:
         - api_key: []
+  /advance_allocations:
+    get:
+      summary: advance_allocations List
+      description: >
+        The advance_allocation endpoint returns multiple advance_allocation
+        requested given the parameters injected. 
+      parameters:
+        - name: advance_allocation_id
+          in: query
+          description: advance_allocation id
+          required: false
+          type: number
+          format: integer
+      tags:
+        - Advance Allocation
+      responses:
+        '200':
+          description: An array of advance_allocation returned
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/advance_allocation'
+        '404':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+        - api_key: []
+  /advance_allocation:
+    post:
+      tags:
+        - Advance Allocation
+      summary: Add a new advance_allocation
+      description: new advance_allocation
+      operationId: add_advance_allocation
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: advance_allocation object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/advance_allocation'
+      responses:
+        '200':
+          description: Successfully added a new advance_allocation for approval
+        '405':
+          description: 'Invalid input,adding a new advance_allocation was unsuccessful'
+      security:
+        - api_key: []
+    put:
+      tags:
+        - Advance Allocation
+      summary: Update an existing advance_allocation
+      description: ''
+      operationId: update_advance_allocation
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: advance_allocation object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/advance_allocation'
+      responses:
+        '200':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Success'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: advance_allocation not found
+        '405':
+          description: Validation exception
+      security:
+        - api_key: []
+  '/advance_allocation/{advance_allocation_id}':
+    get:
+      tags:
+        - Advance Allocation
+      summary: Find advance_allocation by ID
+      description: Returns a single advance_allocation
+      operationId: get_advance_allocation_by_id
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: advance_allocation_id
+          in: path
+          description: ID of advance_allocation to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/advance_allocation'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: advance_allocation not found
+      security:
+        - api_key: []
+    delete:
+      tags:
+        - Advance Allocation
+      summary: Deletes an advance_allocation
+      description: ''
+      operationId: delete_advance_allocation
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: api_key
+          in: header
+          required: true
+          type: string
+        - name: advance_allocation_id
+          in: path
+          description: advance_allocation id to delete
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: advance_allocation not found
+      security:
+        - api_key: []
+  /allocations:
+    get:
+      summary: allocations List
+      description: >
+        The allocation endpoint returns multiple allocation requested given the
+        parameters injected. 
+      parameters:
+        - name: allocation_id
+          in: query
+          description: allocation id
+          required: false
+          type: number
+          format: integer
+      tags:
+        - Allocation
+      responses:
+        '200':
+          description: An array of allocation returned
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/allocation'
+        '404':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+        - api_key: []
+  /allocation:
+    post:
+      tags:
+        - Allocation
+      summary: Add a new allocation
+      description: new allocation
+      operationId: add_allocation
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: allocation object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/allocation'
+      responses:
+        '200':
+          description: Successfully added a new allocation for approval
+        '405':
+          description: 'Invalid input,adding a new allocation was unsuccessful'
+      security:
+        - api_key: []
+    put:
+      tags:
+        - Allocation
+      summary: Update an existing allocation
+      description: ''
+      operationId: update_allocation
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: allocation object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/allocation'
+      responses:
+        '200':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Success'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: allocation not found
+        '405':
+          description: Validation exception
+      security:
+        - api_key: []
+  '/allocation/{allocation_id}':
+    get:
+      tags:
+        - Allocation
+      summary: Find allocation by ID
+      description: Returns a single allocation
+      operationId: get_allocation_by_id
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: allocation_id
+          in: path
+          description: ID of allocation to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/allocation'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: allocation not found
+      security:
+        - api_key: []
+    delete:
+      tags:
+        - Allocation
+      summary: Deletes an allocation
+      description: ''
+      operationId: delete_allocation
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: api_key
+          in: header
+          required: true
+          type: string
+        - name: allocation_id
+          in: path
+          description: allocation id to delete
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: allocation not found
+      security:
+        - api_key: []
+  /approvals:
+    get:
+      summary: approvals List
+      description: >
+        The approval endpoint returns multiple approval requested given the
+        parameters injected. 
+      parameters:
+        - name: approval_id
+          in: query
+          description: approval id
+          required: false
+          type: number
+          format: integer
+      tags:
+        - Approval
+      responses:
+        '200':
+          description: An array of approval returned
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/approval'
+        '404':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+        - api_key: []
+  /approval:
+    post:
+      tags:
+        - Approval
+      summary: Add a new approval
+      description: new approval
+      operationId: add_approval
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: approval object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/approval'
+      responses:
+        '200':
+          description: Successfully added a new approval for approval
+        '405':
+          description: 'Invalid input,adding a new approval was unsuccessful'
+      security:
+        - api_key: []
+    put:
+      tags:
+        - Approval
+      summary: Update an existing approval
+      description: ''
+      operationId: update_approval
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: approval object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/approval'
+      responses:
+        '200':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Success'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: approval not found
+        '405':
+          description: Validation exception
+      security:
+        - api_key: []
+  '/approval/{approval_id}':
+    get:
+      tags:
+        - Approval
+      summary: Find approval by ID
+      description: Returns a single approval
+      operationId: get_approval_by_id
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: approval_id
+          in: path
+          description: ID of approval to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/approval'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: approval not found
+      security:
+        - api_key: []
+    delete:
+      tags:
+        - Approval
+      summary: Deletes an approval
+      description: ''
+      operationId: delete_approval
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: api_key
+          in: header
+          required: true
+          type: string
+        - name: approval_id
+          in: path
+          description: approval id to delete
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: approval not found
+      security:
+        - api_key: []
   /claims:
     get:
       summary: claims List
@@ -1017,6 +1551,34 @@ paths:
       summary: Approve claim by ID
       description: Approves Claim
       operationId: approve_claim
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: claim_id
+          in: path
+          description: ID of claim to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/claim'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: claim not found
+      security:
+        - api_key: []
+  '/claim/{claim_id}/reject':
+    patch:
+      tags:
+        - Claim
+      summary: Reject claim by ID
+      description: Approves Claim
+      operationId: reject_claim
       produces:
         - application/json
         - application/xml
@@ -1376,6 +1938,1394 @@ paths:
           description: Invalid ID supplied
         '404':
           description: claim_approval not found
+      security:
+        - api_key: []
+  /claim_allocations:
+    get:
+      summary: claim_allocations List
+      description: >
+        The claim_allocation endpoint returns multiple claim_allocation
+        requested given the parameters injected. 
+      parameters:
+        - name: claim_allocation_id
+          in: query
+          description: claim_allocation id
+          required: false
+          type: number
+          format: integer
+      tags:
+        - Claim Allocation
+      responses:
+        '200':
+          description: An array of claim_allocation returned
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/claim_allocation'
+        '404':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+        - api_key: []
+  /claim_allocation:
+    post:
+      tags:
+        - Claim Allocation
+      summary: Add a new claim_allocation
+      description: new claim_allocation
+      operationId: add_claim_allocation
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: claim_allocation object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/claim_allocation'
+      responses:
+        '200':
+          description: Successfully added a new claim_allocation for approval
+        '405':
+          description: 'Invalid input,adding a new claim_allocation was unsuccessful'
+      security:
+        - api_key: []
+    put:
+      tags:
+        - Claim Allocation
+      summary: Update an existing claim_allocation
+      description: ''
+      operationId: update_claim_allocation
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: claim_allocation object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/claim_allocation'
+      responses:
+        '200':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Success'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: claim_allocation not found
+        '405':
+          description: Validation exception
+      security:
+        - api_key: []
+  '/claim_allocation/{claim_allocation_id}':
+    get:
+      tags:
+        - Claim Allocation
+      summary: Find claim_allocation by ID
+      description: Returns a single claim_allocation
+      operationId: get_claim_allocation_by_id
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: claim_allocation_id
+          in: path
+          description: ID of claim_allocation to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/claim_allocation'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: claim_allocation not found
+      security:
+        - api_key: []
+    delete:
+      tags:
+        - Claim Allocation
+      summary: Deletes an claim_allocation
+      description: ''
+      operationId: delete_claim_allocation
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: api_key
+          in: header
+          required: true
+          type: string
+        - name: claim_allocation_id
+          in: path
+          description: claim_allocation id to delete
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: claim_allocation not found
+      security:
+        - api_key: []
+  /deliveries:
+    get:
+      summary: deliveries List
+      description: >
+        The delivery endpoint returns multiple delivery requested given the
+        parameters injected. 
+      parameters:
+        - name: delivery_id
+          in: query
+          description: delivery id
+          required: false
+          type: number
+          format: integer
+      tags:
+        - Delivery
+      responses:
+        '200':
+          description: An array of delivery returned
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/delivery'
+        '404':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+        - api_key: []
+  /delivery:
+    post:
+      tags:
+        - Delivery
+      summary: Add a new delivery
+      description: new delivery
+      operationId: add_delivery
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: delivery object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/delivery'
+      responses:
+        '200':
+          description: Successfully added a new delivery for approval
+        '405':
+          description: 'Invalid input,adding a new delivery was unsuccessful'
+      security:
+        - api_key: []
+    put:
+      tags:
+        - Delivery
+      summary: Update an existing delivery
+      description: ''
+      operationId: update_delivery
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: delivery object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/delivery'
+      responses:
+        '200':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Success'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: delivery not found
+        '405':
+          description: Validation exception
+      security:
+        - api_key: []
+  '/delivery/{delivery_id}':
+    get:
+      tags:
+        - Delivery
+      summary: Find delivery by ID
+      description: Returns a single delivery
+      operationId: get_delivery_by_id
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: delivery_id
+          in: path
+          description: ID of delivery to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/delivery'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: delivery not found
+      security:
+        - api_key: []
+    delete:
+      tags:
+        - Delivery
+      summary: Deletes an delivery
+      description: ''
+      operationId: delete_delivery
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: api_key
+          in: header
+          required: true
+          type: string
+        - name: delivery_id
+          in: path
+          description: delivery id to delete
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: delivery not found
+      security:
+        - api_key: []
+  '/delivery/{delivery_id}/submit_for_approval':
+    patch:
+      tags:
+        - Delivery
+      summary: Submit delivery by ID
+      description: Submits delivery for approval
+      operationId: submit_delivery_for_approval
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: delivery_id
+          in: path
+          description: ID of delivery to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/delivery'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: delivery not found
+      security:
+        - api_key: []
+  '/delivery/{delivery_id}/approve':
+    patch:
+      tags:
+        - Delivery
+      summary: Approve delivery by ID
+      description: Approves Delivery
+      operationId: approve_delivery
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: delivery_id
+          in: path
+          description: ID of delivery to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/delivery'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: delivery not found
+      security:
+        - api_key: []
+  '/delivery/{delivery_id}/allocate':
+    patch:
+      tags:
+        - Delivery
+      summary: Allocate delivery by ID
+      description: Allocate Delivery
+      operationId: allocate_delivery
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: delivery_id
+          in: path
+          description: ID of delivery to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/delivery'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: delivery not found
+      security:
+        - api_key: []
+  '/delivery/{delivery_id}/get_document':
+    get:
+      tags:
+        - Delivery
+      summary: get delivery document by ID
+      description: get Delivery document
+      operationId: get_document_by_id
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: delivery_id
+          in: path
+          description: ID of delivery to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/delivery'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: delivery not found
+      security:
+        - api_key: []
+  /delivery_statuses:
+    get:
+      summary: delivery_statuses List
+      description: >
+        The delivery_status endpoint returns multiple delivery_status requested
+        given the parameters injected. 
+      parameters:
+        - name: delivery_status_id
+          in: query
+          description: delivery_status id
+          required: false
+          type: number
+          format: integer
+      tags:
+        - Delivery Status
+      responses:
+        '200':
+          description: An array of delivery_status returned
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/delivery_status'
+        '404':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+        - api_key: []
+  /delivery_status:
+    post:
+      tags:
+        - Delivery Status
+      summary: Add a new delivery_status
+      description: new delivery_status
+      operationId: add_delivery_status
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: delivery_status object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/delivery_status'
+      responses:
+        '200':
+          description: Successfully added a new delivery_status for approval
+        '405':
+          description: 'Invalid input,adding a new delivery_status was unsuccessful'
+      security:
+        - api_key: []
+    put:
+      tags:
+        - Delivery Status
+      summary: Update an existing delivery_status
+      description: ''
+      operationId: update_delivery_status
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: delivery_status object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/delivery_status'
+      responses:
+        '200':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Success'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: delivery_status not found
+        '405':
+          description: Validation exception
+      security:
+        - api_key: []
+  '/delivery_status/{delivery_status_id}':
+    get:
+      tags:
+        - Delivery Status
+      summary: Find delivery_status by ID
+      description: Returns a single delivery_status
+      operationId: get_delivery_status_by_id
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: delivery_status_id
+          in: path
+          description: ID of delivery_status to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/delivery_status'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: delivery_status not found
+      security:
+        - api_key: []
+    delete:
+      tags:
+        - Delivery Status
+      summary: Deletes an delivery_status
+      description: ''
+      operationId: delete_delivery_status
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: api_key
+          in: header
+          required: true
+          type: string
+        - name: delivery_status_id
+          in: path
+          description: delivery_status id to delete
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: delivery_status not found
+      security:
+        - api_key: []
+  /delivery_approvals:
+    get:
+      summary: delivery_approvals List
+      description: >
+        The delivery_approval endpoint returns multiple delivery_approval
+        requested given the parameters injected. 
+      parameters:
+        - name: delivery_approval_id
+          in: query
+          description: delivery_approval id
+          required: false
+          type: number
+          format: integer
+      tags:
+        - Delivery Approval
+      responses:
+        '200':
+          description: An array of delivery_approval returned
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/delivery_approval'
+        '404':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+        - api_key: []
+  /delivery_approval:
+    post:
+      tags:
+        - Delivery Approval
+      summary: Add a new delivery_approval
+      description: new delivery_approval
+      operationId: add_delivery_approval
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: delivery_approval object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/delivery_approval'
+      responses:
+        '200':
+          description: Successfully added a new delivery_approval for approval
+        '405':
+          description: 'Invalid input,adding a new delivery_approval was unsuccessful'
+      security:
+        - api_key: []
+    put:
+      tags:
+        - Delivery Approval
+      summary: Update an existing delivery_approval
+      description: ''
+      operationId: update_delivery_approval
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: delivery_approval object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/delivery_approval'
+      responses:
+        '200':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Success'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: delivery_approval not found
+        '405':
+          description: Validation exception
+      security:
+        - api_key: []
+  '/delivery_approval/{delivery_approval_id}':
+    get:
+      tags:
+        - Delivery Approval
+      summary: Find delivery_approval by ID
+      description: Returns a single delivery_approval
+      operationId: get_delivery_approval_by_id
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: delivery_approval_id
+          in: path
+          description: ID of delivery_approval to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/delivery_approval'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: delivery_approval not found
+      security:
+        - api_key: []
+    delete:
+      tags:
+        - Delivery Approval
+      summary: Deletes an delivery_approval
+      description: ''
+      operationId: delete_delivery_approval
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: api_key
+          in: header
+          required: true
+          type: string
+        - name: delivery_approval_id
+          in: path
+          description: delivery_approval id to delete
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: delivery_approval not found
+      security:
+        - api_key: []
+  /invoices:
+    get:
+      summary: invoices List
+      description: >
+        The invoice endpoint returns multiple invoice requested given the
+        parameters injected. 
+      parameters:
+        - name: invoice_id
+          in: query
+          description: invoice id
+          required: false
+          type: number
+          format: integer
+      tags:
+        - Invoice
+      responses:
+        '200':
+          description: An array of invoice returned
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/invoice'
+        '404':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+        - api_key: []
+  /invoice:
+    post:
+      tags:
+        - Invoice
+      summary: Add a new invoice
+      description: new invoice
+      operationId: add_invoice
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: invoice object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/invoice'
+      responses:
+        '200':
+          description: Successfully added a new invoice for approval
+        '405':
+          description: 'Invalid input,adding a new invoice was unsuccessful'
+      security:
+        - api_key: []
+    put:
+      tags:
+        - Invoice
+      summary: Update an existing invoice
+      description: ''
+      operationId: update_invoice
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: invoice object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/invoice'
+      responses:
+        '200':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Success'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: invoice not found
+        '405':
+          description: Validation exception
+      security:
+        - api_key: []
+  '/invoice/{invoice_id}':
+    get:
+      tags:
+        - Invoice
+      summary: Find invoice by ID
+      description: Returns a single invoice
+      operationId: get_invoice_by_id
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: invoice_id
+          in: path
+          description: ID of invoice to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/invoice'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: invoice not found
+      security:
+        - api_key: []
+    delete:
+      tags:
+        - Invoice
+      summary: Deletes an invoice
+      description: ''
+      operationId: delete_invoice
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: api_key
+          in: header
+          required: true
+          type: string
+        - name: invoice_id
+          in: path
+          description: invoice id to delete
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: invoice not found
+      security:
+        - api_key: []
+  '/invoice/{invoice_id}/submit_for_approval':
+    patch:
+      tags:
+        - Invoice
+      summary: Submit invoice by ID
+      description: Submits invoice for approval
+      operationId: submit_invoice_for_approval
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: invoice_id
+          in: path
+          description: ID of invoice to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/invoice'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: invoice not found
+      security:
+        - api_key: []
+  '/invoice/{invoice_id}/approve':
+    patch:
+      tags:
+        - Invoice
+      summary: Approve invoice by ID
+      description: Approves Invoice
+      operationId: approve_invoice
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: invoice_id
+          in: path
+          description: ID of invoice to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/invoice'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: invoice not found
+      security:
+        - api_key: []
+  '/invoice/{invoice_id}/reject':
+    patch:
+      tags:
+        - Invoice
+      summary: Reject invoice by ID
+      description: Approves Invoice
+      operationId: reject_invoice
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: invoice_id
+          in: path
+          description: ID of invoice to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/invoice'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: invoice not found
+      security:
+        - api_key: []
+  '/invoice/{invoice_id}/allocate':
+    patch:
+      tags:
+        - Invoice
+      summary: Allocate invoice by ID
+      description: Allocate Invoice
+      operationId: allocate_invoice
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: invoice_id
+          in: path
+          description: ID of invoice to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/invoice'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: invoice not found
+      security:
+        - api_key: []
+  '/invoice/{invoice_id}/get_document':
+    get:
+      tags:
+        - Invoice
+      summary: get invoice document by ID
+      description: get Invoice document
+      operationId: get_document_by_id
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: invoice_id
+          in: path
+          description: ID of invoice to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/invoice'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: invoice not found
+      security:
+        - api_key: []
+  /invoice_statuses:
+    get:
+      summary: invoice_statuses List
+      description: >
+        The invoice_status endpoint returns multiple invoice_status requested
+        given the parameters injected. 
+      parameters:
+        - name: invoice_status_id
+          in: query
+          description: invoice_status id
+          required: false
+          type: number
+          format: integer
+      tags:
+        - Invoice Status
+      responses:
+        '200':
+          description: An array of invoice_status returned
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/invoice_status'
+        '404':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+        - api_key: []
+  /invoice_status:
+    post:
+      tags:
+        - Invoice Status
+      summary: Add a new invoice_status
+      description: new invoice_status
+      operationId: add_invoice_status
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: invoice_status object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/invoice_status'
+      responses:
+        '200':
+          description: Successfully added a new invoice_status for approval
+        '405':
+          description: 'Invalid input,adding a new invoice_status was unsuccessful'
+      security:
+        - api_key: []
+    put:
+      tags:
+        - Invoice Status
+      summary: Update an existing invoice_status
+      description: ''
+      operationId: update_invoice_status
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: invoice_status object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/invoice_status'
+      responses:
+        '200':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Success'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: invoice_status not found
+        '405':
+          description: Validation exception
+      security:
+        - api_key: []
+  '/invoice_status/{invoice_status_id}':
+    get:
+      tags:
+        - Invoice Status
+      summary: Find invoice_status by ID
+      description: Returns a single invoice_status
+      operationId: get_invoice_status_by_id
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: invoice_status_id
+          in: path
+          description: ID of invoice_status to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/invoice_status'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: invoice_status not found
+      security:
+        - api_key: []
+    delete:
+      tags:
+        - Invoice Status
+      summary: Deletes an invoice_status
+      description: ''
+      operationId: delete_invoice_status
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: api_key
+          in: header
+          required: true
+          type: string
+        - name: invoice_status_id
+          in: path
+          description: invoice_status id to delete
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: invoice_status not found
+      security:
+        - api_key: []
+  /invoice_approvals:
+    get:
+      summary: invoice_approvals List
+      description: >
+        The invoice_approval endpoint returns multiple invoice_approval
+        requested given the parameters injected. 
+      parameters:
+        - name: invoice_approval_id
+          in: query
+          description: invoice_approval id
+          required: false
+          type: number
+          format: integer
+      tags:
+        - Invoice Approval
+      responses:
+        '200':
+          description: An array of invoice_approval returned
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/invoice_approval'
+        '404':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+        - api_key: []
+  /invoice_approval:
+    post:
+      tags:
+        - Invoice Approval
+      summary: Add a new invoice_approval
+      description: new invoice_approval
+      operationId: add_invoice_approval
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: invoice_approval object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/invoice_approval'
+      responses:
+        '200':
+          description: Successfully added a new invoice_approval for approval
+        '405':
+          description: 'Invalid input,adding a new invoice_approval was unsuccessful'
+      security:
+        - api_key: []
+    put:
+      tags:
+        - Invoice Approval
+      summary: Update an existing invoice_approval
+      description: ''
+      operationId: update_invoice_approval
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: invoice_approval object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/invoice_approval'
+      responses:
+        '200':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Success'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: invoice_approval not found
+        '405':
+          description: Validation exception
+      security:
+        - api_key: []
+  '/invoice_approval/{invoice_approval_id}':
+    get:
+      tags:
+        - Invoice Approval
+      summary: Find invoice_approval by ID
+      description: Returns a single invoice_approval
+      operationId: get_invoice_approval_by_id
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: invoice_approval_id
+          in: path
+          description: ID of invoice_approval to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/invoice_approval'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: invoice_approval not found
+      security:
+        - api_key: []
+    delete:
+      tags:
+        - Invoice Approval
+      summary: Deletes an invoice_approval
+      description: ''
+      operationId: delete_invoice_approval
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: api_key
+          in: header
+          required: true
+          type: string
+        - name: invoice_approval_id
+          in: path
+          description: invoice_approval id to delete
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: invoice_approval not found
+      security:
+        - api_key: []
+  /invoice_allocations:
+    get:
+      summary: invoice_allocations List
+      description: >
+        The invoice_allocation endpoint returns multiple invoice_allocation
+        requested given the parameters injected. 
+      parameters:
+        - name: invoice_allocation_id
+          in: query
+          description: invoice_allocation id
+          required: false
+          type: number
+          format: integer
+      tags:
+        - Invoice Approval
+      responses:
+        '200':
+          description: An array of invoice_allocation returned
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/invoice_allocation'
+        '404':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+        - api_key: []
+  /invoice_allocation:
+    post:
+      tags:
+        - Invoice Allocation
+      summary: Add a new invoice_allocation
+      description: new invoice_allocation
+      operationId: add_invoice_allocation
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: invoice_allocation object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/invoice_allocation'
+      responses:
+        '200':
+          description: Successfully added a new invoice_allocation for approval
+        '405':
+          description: 'Invalid input,adding a new invoice_allocation was unsuccessful'
+      security:
+        - api_key: []
+    put:
+      tags:
+        - Invoice Allocation
+      summary: Update an existing invoice_allocation
+      description: ''
+      operationId: update_invoice_allocation
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: invoice_allocation object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/invoice_allocation'
+      responses:
+        '200':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Success'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: invoice_allocation not found
+        '405':
+          description: Validation exception
+      security:
+        - api_key: []
+  '/invoice_allocation/{invoice_allocation_id}':
+    get:
+      tags:
+        - Invoice Allocation
+      summary: Find invoice_allocation by ID
+      description: Returns a single invoice_allocation
+      operationId: get_invoice_allocation_by_id
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: invoice_allocation_id
+          in: path
+          description: ID of invoice_allocation to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/invoice_allocation'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: invoice_allocation not found
+      security:
+        - api_key: []
+    delete:
+      tags:
+        - Invoice Allocation
+      summary: Deletes an invoice_allocation
+      description: ''
+      operationId: delete_invoice_allocation
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: api_key
+          in: header
+          required: true
+          type: string
+        - name: invoice_allocation_id
+          in: path
+          description: invoice_allocation id to delete
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: invoice_allocation not found
       security:
         - api_key: []
   /currencies:
@@ -1863,6 +3813,118 @@ paths:
           type: integer
           format: int64
       responses:
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: lpo not found
+      security:
+        - api_key: []
+  '/lpo/{lpo_id}/submit_for_approval':
+    patch:
+      tags:
+        - LPO
+      summary: Submit lpo by ID
+      description: Submits lpo for approval
+      operationId: submit_lpo_for_approval
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: lpo_id
+          in: path
+          description: ID of lpo to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/lpo'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: lpo not found
+      security:
+        - api_key: []
+  '/lpo/{lpo_id}/approve':
+    patch:
+      tags:
+        - LPO
+      summary: Approve lpo by ID
+      description: Approves LPO
+      operationId: approve_lpo
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: lpo_id
+          in: path
+          description: ID of lpo to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/lpo'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: lpo not found
+      security:
+        - api_key: []
+  '/lpo/{lpo_id}/reject':
+    patch:
+      tags:
+        - LPO
+      summary: Approve lpo by ID
+      description: Reject LPO
+      operationId: reject_lpo
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: lpo_id
+          in: path
+          description: ID of lpo to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/lpo'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: lpo not found
+      security:
+        - api_key: []
+  '/lpo/{lpo_id}/allocate':
+    patch:
+      tags:
+        - LPO
+      summary: Allocate lpo by ID
+      description: Allocate LPO
+      operationId: allocate_lpo
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: lpo_id
+          in: path
+          description: ID of lpo to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/lpo'
         '400':
           description: Invalid ID supplied
         '404':
@@ -3231,6 +5293,118 @@ paths:
           description: mobile_payment not found
       security:
         - api_key: []
+  '/mobile_payment/{mobile_payment_id}/reject':
+    patch:
+      tags:
+        - Mobile Payment
+      summary: Submit/Approve mobile_payment by ID
+      description: Reject Mobile Payment
+      operationId: reject
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: mobile_payment_id
+          in: path
+          description: ID of mobile_payment to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/mobile_payment'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: mobile_payment not found
+      security:
+        - api_key: []
+  '/mobile_payment/{mobile_payment_id}/allocate':
+    patch:
+      tags:
+        - Mobile Payment
+      summary: Allocate mobile_payment by ID
+      description: Allocate Mobile Payment
+      operationId: allocate_mobile_payment
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: mobile_payment_id
+          in: path
+          description: ID of mobile_payment to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/mobile_payment'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: mobile_payment not found
+      security:
+        - api_key: []
+  '/mobile_payment/{mobile_payment_id}/get_document':
+    get:
+      tags:
+        - Mobile Payment
+      summary: get mobile_payment document by ID
+      description: get Mobile Payment Document
+      operationId: get_document_by_id
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: mobile_payment_id
+          in: path
+          description: ID of mobile_payment to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/mobile_payment'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: mobile_payment not found
+      security:
+        - api_key: []
+  '/mobile_payment/{mobile_payment_id}/get_attendance_sheet':
+    get:
+      tags:
+        - Mobile Payment
+      summary: get mobile_payment attendance sheet by ID
+      description: get Mobile Payment Attendance Sheet
+      operationId: get_attendance_sheet_by_id
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: mobile_payment_id
+          in: path
+          description: ID of mobile_payment to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/mobile_payment'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: mobile_payment not found
+      security:
+        - api_key: []
   /mobile_payment_approvals:
     get:
       summary: mobile_payment_approvals List
@@ -3371,6 +5545,150 @@ paths:
           description: Invalid ID supplied
         '404':
           description: mobile_payment_approval not found
+      security:
+        - api_key: []
+  /mobile_payment_allocations:
+    get:
+      summary: mobile_payment_allocations List
+      description: >
+        The mobile_payment_allocation endpoint returns multiple
+        mobile_payment_allocation requested given the parameters injected. 
+      parameters:
+        - name: mobile_payment_allocation_id
+          in: query
+          description: mobile_payment_allocation id
+          required: false
+          type: number
+          format: integer
+      tags:
+        - Mobile Payment Allocation
+      responses:
+        '200':
+          description: An array of mobile_payment_allocation returned
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/mobile_payment_allocation'
+        '404':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+        - api_key: []
+  /mobile_payment_allocation:
+    post:
+      tags:
+        - Mobile Payment Allocation
+      summary: Add a new mobile_payment_allocation
+      description: new mobile_payment_allocation
+      operationId: add_mobile_payment_allocation
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: mobile_payment_allocation object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/mobile_payment_allocation'
+      responses:
+        '200':
+          description: Successfully added a new mobile_payment_allocation for approval
+        '405':
+          description: >-
+            Invalid input,adding a new mobile_payment_allocation was
+            unsuccessful
+      security:
+        - api_key: []
+    put:
+      tags:
+        - Mobile Payment Allocation
+      summary: Update an existing mobile_payment_allocation
+      description: ''
+      operationId: update_mobile_payment_allocation
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: mobile_payment_allocation object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/mobile_payment_allocation'
+      responses:
+        '200':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Success'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: mobile_payment_allocation not found
+        '405':
+          description: Validation exception
+      security:
+        - api_key: []
+  '/mobile_payment_allocation/{mobile_payment_allocation_id}':
+    get:
+      tags:
+        - Mobile Payment Allocation
+      summary: Find mobile_payment_allocation by ID
+      description: Returns a single mobile_payment_allocation
+      operationId: get_mobile_payment_allocation_by_id
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: mobile_payment_allocation_id
+          in: path
+          description: ID of mobile_payment_allocation to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/mobile_payment_allocation'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: mobile_payment_allocation not found
+      security:
+        - api_key: []
+    delete:
+      tags:
+        - Mobile Payment Allocation
+      summary: Deletes an mobile_payment_allocation
+      description: ''
+      operationId: delete_mobile_payment_allocation
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: api_key
+          in: header
+          required: true
+          type: string
+        - name: mobile_payment_allocation_id
+          in: path
+          description: mobile_payment_allocation id to delete
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: mobile_payment_allocation not found
       security:
         - api_key: []
   /mobile_payment_payees:
@@ -4228,6 +6546,602 @@ paths:
           description: Invalid ID supplied
         '404':
           description: payees_upload_mode not found
+      security:
+        - api_key: []
+  /payments:
+    get:
+      summary: payments List
+      description: >
+        The payment endpoint returns multiple payment requested given the
+        parameters injected. 
+      parameters:
+        - name: payment_id
+          in: query
+          description: payment id
+          required: false
+          type: number
+          format: integer
+      tags:
+        - Payment
+      responses:
+        '200':
+          description: An array of payment returned
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/payment'
+        '404':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+        - api_key: []
+  /payment:
+    post:
+      tags:
+        - Payment
+      summary: Add a new payment
+      description: new payment
+      operationId: add_payment
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: payment object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/payment'
+      responses:
+        '200':
+          description: Successfully added a new payment for approval
+        '405':
+          description: 'Invalid input,adding a new payment was unsuccessful'
+      security:
+        - api_key: []
+    put:
+      tags:
+        - Payment
+      summary: Update an existing payment
+      description: ''
+      operationId: update_payment
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: payment object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/payment'
+      responses:
+        '200':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Success'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: payment not found
+        '405':
+          description: Validation exception
+      security:
+        - api_key: []
+  '/payment/{payment_id}':
+    get:
+      tags:
+        - Payment
+      summary: Find payment by ID
+      description: Returns a single payment
+      operationId: get_payment_by_id
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: payment_id
+          in: path
+          description: ID of payment to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/payment'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: payment not found
+      security:
+        - api_key: []
+  '/payment/{payment_id}/get_voucher':
+    get:
+      tags:
+        - Payment
+      summary: get payment document by ID
+      description: get Payment document
+      operationId: get_document_by_id
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: payment_id
+          in: path
+          description: ID of payment to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/payment'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: payment not found
+      security:
+        - api_key: []
+    delete:
+      tags:
+        - Payment
+      summary: Deletes an payment
+      description: ''
+      operationId: delete_payment
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: api_key
+          in: header
+          required: true
+          type: string
+        - name: payment_id
+          in: path
+          description: payment id to delete
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: payment not found
+      security:
+        - api_key: []
+  /payment_batches:
+    get:
+      summary: payment_batches List
+      description: >
+        The payment_batch endpoint returns multiple payment_batch requested
+        given the parameters injected. 
+      parameters:
+        - name: payment_batch_id
+          in: query
+          description: payment_batch id
+          required: false
+          type: number
+          format: integer
+      tags:
+        - Payment Batch
+      responses:
+        '200':
+          description: An array of payment_batch returned
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/payment_batch'
+        '404':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+        - api_key: []
+  /payment_batch:
+    post:
+      tags:
+        - Payment Batch
+      summary: Add a new payment_batch
+      description: new payment_batch
+      operationId: add_payment_batch
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: payment_batch object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/payment_batch'
+      responses:
+        '200':
+          description: Successfully added a new payment_batch for approval
+        '405':
+          description: 'Invalid input,adding a new payment_batch was unsuccessful'
+      security:
+        - api_key: []
+    put:
+      tags:
+        - Payment Batch
+      summary: Update an existing payment_batch
+      description: ''
+      operationId: update_payment_batch
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: payment_batch object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/payment_batch'
+      responses:
+        '200':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Success'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: payment_batch not found
+        '405':
+          description: Validation exception
+      security:
+        - api_key: []
+  '/payment_batch/{payment_batch_id}':
+    get:
+      tags:
+        - Payment Batch
+      summary: Find payment_batch by ID
+      description: Returns a single payment_batch
+      operationId: get_payment_batch_by_id
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: payment_batch_id
+          in: path
+          description: ID of payment_batch to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/payment_batch'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: payment_batch not found
+      security:
+        - api_key: []
+    delete:
+      tags:
+        - Payment Batch
+      summary: Deletes an payment_batch
+      description: ''
+      operationId: delete_payment_batch
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: api_key
+          in: header
+          required: true
+          type: string
+        - name: payment_batch_id
+          in: path
+          description: payment_batch id to delete
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: payment_batch not found
+      security:
+        - api_key: []
+  /payment_modes:
+    get:
+      summary: payment_modes List
+      description: >
+        The payment_mode endpoint returns multiple payment_mode requested given
+        the parameters injected. 
+      parameters:
+        - name: payment_mode_id
+          in: query
+          description: payment_mode id
+          required: false
+          type: number
+          format: integer
+      tags:
+        - Payment Mode
+      responses:
+        '200':
+          description: An array of payment_mode returned
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/payment_mode'
+        '404':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+        - api_key: []
+  /payment_mode:
+    post:
+      tags:
+        - Payment Mode
+      summary: Add a new payment_mode
+      description: new payment_mode
+      operationId: add_payment_mode
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: payment_mode object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/payment_mode'
+      responses:
+        '200':
+          description: Successfully added a new payment_mode for approval
+        '405':
+          description: 'Invalid input,adding a new payment_mode was unsuccessful'
+      security:
+        - api_key: []
+    put:
+      tags:
+        - Payment Mode
+      summary: Update an existing payment_mode
+      description: ''
+      operationId: update_payment_mode
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: payment_mode object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/payment_mode'
+      responses:
+        '200':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Success'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: payment_mode not found
+        '405':
+          description: Validation exception
+      security:
+        - api_key: []
+  '/payment_mode/{payment_mode_id}':
+    get:
+      tags:
+        - Payment Mode
+      summary: Find payment_mode by ID
+      description: Returns a single payment_mode
+      operationId: get_payment_mode_by_id
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: payment_mode_id
+          in: path
+          description: ID of payment_mode to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/payment_mode'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: payment_mode not found
+      security:
+        - api_key: []
+    delete:
+      tags:
+        - Payment Mode
+      summary: Deletes an payment_mode
+      description: ''
+      operationId: delete_payment_mode
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: api_key
+          in: header
+          required: true
+          type: string
+        - name: payment_mode_id
+          in: path
+          description: payment_mode id to delete
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: payment_mode not found
+      security:
+        - api_key: []
+  /payment_types:
+    get:
+      summary: payment_types List
+      description: >
+        The payment_type endpoint returns multiple payment_type requested given
+        the parameters injected. 
+      parameters:
+        - name: payment_type_id
+          in: query
+          description: payment_type id
+          required: false
+          type: number
+          format: integer
+      tags:
+        - Payment Type
+      responses:
+        '200':
+          description: An array of payment_type returned
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/payment_type'
+        '404':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+        - api_key: []
+  /payment_type:
+    post:
+      tags:
+        - Payment Type
+      summary: Add a new payment_type
+      description: new payment_type
+      operationId: add_payment_type
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: payment_type object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/payment_type'
+      responses:
+        '200':
+          description: Successfully added a new payment_type for approval
+        '405':
+          description: 'Invalid input,adding a new payment_type was unsuccessful'
+      security:
+        - api_key: []
+    put:
+      tags:
+        - Payment Type
+      summary: Update an existing payment_type
+      description: ''
+      operationId: update_payment_type
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: payment_type object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/payment_type'
+      responses:
+        '200':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Success'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: payment_type not found
+        '405':
+          description: Validation exception
+      security:
+        - api_key: []
+  '/payment_type/{payment_type_id}':
+    get:
+      tags:
+        - Payment Type
+      summary: Find payment_type by ID
+      description: Returns a single payment_type
+      operationId: get_payment_type_by_id
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: payment_type_id
+          in: path
+          description: ID of payment_type to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/payment_type'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: payment_type not found
+      security:
+        - api_key: []
+    delete:
+      tags:
+        - Payment Type
+      summary: Deletes an payment_type
+      description: ''
+      operationId: delete_payment_type
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: api_key
+          in: header
+          required: true
+          type: string
+        - name: payment_type_id
+          in: path
+          description: payment_type id to delete
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: payment_type not found
       security:
         - api_key: []
   /projects:
@@ -6502,6 +9416,99 @@ definitions:
         example: '2010-02-11'
     xml:
       name: advance_approval
+  advance_allocation:
+    type: object
+    required:
+      - id
+      - created_at
+    properties:
+      id:
+        type: integer
+        format: int64
+        example: 1
+      num:
+        type: number
+        format: int64
+        example: 20000
+      str:
+        type: string
+        example: PayPal.pdf
+      date:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      created_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      updated_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+    xml:
+      name: advance_allocation
+  allocation:
+    type: object
+    required:
+      - id
+      - created_at
+    properties:
+      id:
+        type: integer
+        format: int64
+        example: 1
+      num:
+        type: number
+        format: int64
+        example: 20000
+      str:
+        type: string
+        example: PayPal.pdf
+      date:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      created_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      updated_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+    xml:
+      name: allocation
+  approval:
+    type: object
+    required:
+      - id
+      - created_at
+    properties:
+      id:
+        type: integer
+        format: int64
+        example: 1
+      num:
+        type: number
+        format: int64
+        example: 20000
+      str:
+        type: string
+        example: PayPal.pdf
+      date:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      created_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      updated_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+    xml:
+      name: approval
   claim:
     type: object
     required:
@@ -6595,6 +9602,254 @@ definitions:
         example: '2010-02-11'
     xml:
       name: claim_approval
+  claim_allocation:
+    type: object
+    required:
+      - id
+      - created_at
+    properties:
+      id:
+        type: integer
+        format: int64
+        example: 1
+      num:
+        type: number
+        format: int64
+        example: 20000
+      str:
+        type: string
+        example: PayPal.pdf
+      date:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      created_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      updated_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+    xml:
+      name: claim_allocation
+  delivery:
+    type: object
+    required:
+      - id
+      - created_at
+    properties:
+      id:
+        type: integer
+        format: int64
+        example: 1
+      num:
+        type: number
+        format: int64
+        example: 20000
+      str:
+        type: string
+        example: PayPal.pdf
+      date:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      created_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      updated_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+    xml:
+      name: delivery
+  delivery_status:
+    type: object
+    required:
+      - id
+      - created_at
+    properties:
+      id:
+        type: integer
+        format: int64
+        example: 1
+      num:
+        type: number
+        format: int64
+        example: 20000
+      str:
+        type: string
+        example: PayPal.pdf
+      date:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      created_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      updated_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+    xml:
+      name: delivery_status
+  delivery_approval:
+    type: object
+    required:
+      - id
+      - created_at
+    properties:
+      id:
+        type: integer
+        format: int64
+        example: 1
+      num:
+        type: number
+        format: int64
+        example: 20000
+      str:
+        type: string
+        example: PayPal.pdf
+      date:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      created_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      updated_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+    xml:
+      name: delivery_approval
+  invoice:
+    type: object
+    required:
+      - id
+      - created_at
+    properties:
+      id:
+        type: integer
+        format: int64
+        example: 1
+      num:
+        type: number
+        format: int64
+        example: 20000
+      str:
+        type: string
+        example: PayPal.pdf
+      date:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      created_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      updated_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+    xml:
+      name: invoice
+  invoice_status:
+    type: object
+    required:
+      - id
+      - created_at
+    properties:
+      id:
+        type: integer
+        format: int64
+        example: 1
+      num:
+        type: number
+        format: int64
+        example: 20000
+      str:
+        type: string
+        example: PayPal.pdf
+      date:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      created_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      updated_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+    xml:
+      name: invoice_status
+  invoice_approval:
+    type: object
+    required:
+      - id
+      - created_at
+    properties:
+      id:
+        type: integer
+        format: int64
+        example: 1
+      num:
+        type: number
+        format: int64
+        example: 20000
+      str:
+        type: string
+        example: PayPal.pdf
+      date:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      created_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      updated_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+    xml:
+      name: invoice_approval
+  invoice_allocation:
+    type: object
+    required:
+      - id
+      - created_at
+    properties:
+      id:
+        type: integer
+        format: int64
+        example: 1
+      num:
+        type: number
+        format: int64
+        example: 20000
+      str:
+        type: string
+        example: PayPal.pdf
+      date:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      created_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      updated_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+    xml:
+      name: invoice_allocation
   currency:
     type: object
     required:
@@ -6647,7 +9902,7 @@ definitions:
       - preffered_supplier
       - attention
       - lpo_email
-      - reject_reason
+      - rejection_reason
       - quote_exempt
       - quote_exempt_explanation
       - account_id
@@ -6724,7 +9979,7 @@ definitions:
       lpo_email:
         type: string
         example: mwangikevinn@gmail.com
-      reject_reason:
+      rejection_reason:
         type: string
         example: No currency indicated
       quote_exempt:
@@ -7125,6 +10380,37 @@ definitions:
         example: '2010-02-11'
     xml:
       name: mobile_payment_approval
+  mobile_payment_allocation:
+    type: object
+    required:
+      - id
+      - created_at
+    properties:
+      id:
+        type: integer
+        format: int64
+        example: 1
+      num:
+        type: number
+        format: int64
+        example: 20000
+      str:
+        type: string
+        example: PayPal.pdf
+      date:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      created_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      updated_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+    xml:
+      name: mobile_payment_allocation
   mobile_payment_payee:
     type: object
     required:
@@ -7311,6 +10597,130 @@ definitions:
         example: '2010-02-11'
     xml:
       name: payees_upload_mode
+  payment:
+    type: object
+    required:
+      - id
+      - created_at
+    properties:
+      id:
+        type: integer
+        format: int64
+        example: 1
+      num:
+        type: number
+        format: int64
+        example: 20000
+      str:
+        type: string
+        example: PayPal.pdf
+      date:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      created_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      updated_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+    xml:
+      name: payment
+  payment_batch:
+    type: object
+    required:
+      - id
+      - created_at
+    properties:
+      id:
+        type: integer
+        format: int64
+        example: 1
+      num:
+        type: number
+        format: int64
+        example: 20000
+      str:
+        type: string
+        example: PayPal.pdf
+      date:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      created_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      updated_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+    xml:
+      name: payment_batch
+  payment_mode:
+    type: object
+    required:
+      - id
+      - created_at
+    properties:
+      id:
+        type: integer
+        format: int64
+        example: 1
+      num:
+        type: number
+        format: int64
+        example: 20000
+      str:
+        type: string
+        example: PayPal.pdf
+      date:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      created_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      updated_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+    xml:
+      name: payment_mode
+  payment_type:
+    type: object
+    required:
+      - id
+      - created_at
+    properties:
+      id:
+        type: integer
+        format: int64
+        example: 1
+      num:
+        type: number
+        format: int64
+        example: 20000
+      str:
+        type: string
+        example: PayPal.pdf
+      date:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      created_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      updated_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+    xml:
+      name: payment_type
   project:
     type: object
     required:

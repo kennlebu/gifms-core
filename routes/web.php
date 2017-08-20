@@ -14,7 +14,9 @@
 Route::get('/', function () {
     return view('welcome');
 });
-Route::get('test/pdf', function () {
+
+
+Route::get('test/pdf_lpo', function () {
 
 	$lpo   = App\Models\LPOModels\Lpo::findOrFail(128);
 
@@ -23,4 +25,55 @@ Route::get('test/pdf', function () {
         );
 
     return view('pdf/lpo',$data);
+});
+
+
+
+Route::get('test/pdf_mobile_payment', function () {
+
+	$mp   = App\Models\MobilePaymentModels\MobilePayment::findOrFail(128);
+
+    $data = array(
+            'mobile_payment'   => $mp
+        );
+
+    return view('pdf/mobile_payment',$data);
+});
+
+
+
+Route::get('test/email_lpo', function () {
+
+        $lpo = App\Models\LPOModels\LPO::with(
+                                            'requested_by',
+                                            'request_action_by',
+                                            'project',
+                                            'account',
+                                            'invoice',
+                                            'status',
+                                            'project_manager',
+                                            'rejected_by',
+                                            'cancelled_by',
+                                            'received_by',
+                                            'supplier',
+                                            'currency',
+                                            'quotations',
+                                            'preffered_quotation',
+                                            'items',
+                                            'terms',
+                                            'approvals',
+                                            'deliveries'
+                                )->findOrFail(128);
+
+        foreach ($lpo->approvals as $key => $value) {
+            $lpo->approvals[$key]['approver'] = App\Models\StaffModels\Staff::findOrFail($lpo->approvals[$key]['approver_id']);
+        }
+
+    $data = array(
+            'lpo'   => $lpo,
+            'addressed_to' => $lpo->requested_by,
+            'js_url' => "j",
+        );
+
+    return view('emails/notify_lpo',$data);
 });

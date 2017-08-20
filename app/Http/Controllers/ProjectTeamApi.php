@@ -26,6 +26,37 @@ class ProjectTeamApi extends Controller
     {
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
     /**
      * Operation addProjectTeam
      *
@@ -50,6 +81,37 @@ class ProjectTeamApi extends Controller
 
         return response('How about implementing addProjectTeam as a POST method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation updateProjectTeam
      *
@@ -74,6 +136,37 @@ class ProjectTeamApi extends Controller
 
         return response('How about implementing updateProjectTeam as a PUT method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation deleteProjectTeam
      *
@@ -94,6 +187,37 @@ class ProjectTeamApi extends Controller
 
         return response('How about implementing deleteProjectTeam as a DELETE method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation getProjectTeamById
      *
@@ -114,6 +238,37 @@ class ProjectTeamApi extends Controller
 
         return response('How about implementing getProjectTeamById as a GET method ?');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation projectTeamsGet
      *

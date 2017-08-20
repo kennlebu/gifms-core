@@ -23,9 +23,35 @@ class Controller extends BaseController
     }
 
 
+
+
+
+
+
+
+
+
+
+
+    
+
+
     public function current_user(){
     	return JWTAuth::parseToken()->authenticate();
     }
+
+
+
+
+
+
+
+
+
+
+
+
+    
 
 
 

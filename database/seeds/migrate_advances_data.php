@@ -39,7 +39,7 @@ class migrate_advances_data extends Seeder
             $data_to_migrate[$key]['approved_total']         				= $data[$key]['AmountApproved'];
             $data_to_migrate[$key]['expense_desc']         					= $data[$key]['Description'];
             $data_to_migrate[$key]['expense_purpose']         				= $data[$key]['AdvancePurpose'];
-            $data_to_migrate[$key]['requested_date']         				= $data[$key]['AdvanceRequestDate'];
+            $data_to_migrate[$key]['requested_at']         				    = $data[$key]['AdvanceRequestDate'];
             $data_to_migrate[$key]['due_date']         						= $data[$key]['AdvanceEventDate'];
             $data_to_migrate[$key]['status_id']         					= $data[$key]['AdvanceStatus'];
             $data_to_migrate[$key]['comment']         						= $data[$key]['ApprovalComment'];
@@ -116,7 +116,7 @@ class migrate_advances_data extends Seeder
         foreach ($data_to_migrate_pm as $key => $value) {
 
             if($value){
-                array_push($pm_approval,['approval_level_id' => 2,'created_at' => $value['pm_approval_date'],'advance_id' => $value['id'],'migration_approver_id' => $value['pm_approval']]);
+                array_push($pm_approval,['approval_level_id' => 2,'created_at' => $value['pm_approval_date'],'approvable_id' => $value['id'],'migration_approver_id' => $value['pm_approval'],'approvable_type'=>"advances"]);
             }
 
             echo "\n Advance Approval-$key---";
@@ -127,7 +127,7 @@ class migrate_advances_data extends Seeder
 
         $insertBatchs = array_chunk($pm_approval, 500);
         foreach ($insertBatchs as $batch) {
-            DB::table('advance_approvals')->insert($batch);
+            DB::table('approvals')->insert($batch);
              echo "\n-------------------------------------------------------Batch inserted\n";
         }
 
@@ -141,7 +141,7 @@ class migrate_advances_data extends Seeder
         foreach ($data_to_migrate_man as $key => $value) {
 
             if($value){
-                array_push($man_approval,['approval_level_id' => 4,'created_at' => $value['management_approval_date'],'advance_id' => $value['id'],'migration_approver_id' => $value['management_approval']]);
+                array_push($man_approval,['approval_level_id' => 4,'created_at' => $value['management_approval_date'],'approvable_id' => $value['id'],'migration_approver_id' => $value['management_approval'],'approvable_type'=>"advances"]);
             }
 
             echo "\n Advance Approval-$key---";
@@ -152,7 +152,7 @@ class migrate_advances_data extends Seeder
 
         $insertBatchs = array_chunk($man_approval, 500);
         foreach ($insertBatchs as $batch) {
-            DB::table('advance_approvals')->insert($batch);
+            DB::table('approvals')->insert($batch);
              echo "\n-------------------------------------------------------Batch inserted\n";
         }
 
@@ -166,7 +166,7 @@ class migrate_advances_data extends Seeder
         foreach ($data_to_migrate_fin as $key => $value) {
 
             if($value){
-                array_push($fin_approval,['approval_level_id' => 3,'created_at' => $value['finance_approval_date'],'advance_id' => $value['id'],'migration_approver_id' => $value['finance_approval']]);
+                array_push($fin_approval,['approval_level_id' => 3,'created_at' => $value['finance_approval_date'],'approvable_id' => $value['id'],'migration_approver_id' => $value['finance_approval'],'approvable_type'=>"advances"]);
             }
 
             echo "\n Advance Approval-$key---";
@@ -177,7 +177,7 @@ class migrate_advances_data extends Seeder
 
         $insertBatchs = array_chunk($fin_approval, 500);
         foreach ($insertBatchs as $batch) {
-            DB::table('advance_approvals')->insert($batch);
+            DB::table('approvals')->insert($batch);
              echo "\n-------------------------------------------------------Batch inserted\n";
         }
 
@@ -215,7 +215,7 @@ class migrate_advances_data extends Seeder
          */
 
 
-        DB::table('advance_statuses')->insert([]
+        DB::table('advance_statuses')->insert([
             ['advance_status'   => 'Requested Pending Submission',
             'next_status_id'    =>2,
             'migration_status_security_level'=> 0,

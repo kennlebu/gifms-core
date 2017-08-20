@@ -35,7 +35,7 @@ class migrate_mobile_payment_data extends Seeder
 
 
             $data_to_migrate[$key]['meeting']         						= $data[$key]['Meeting'];
-            $data_to_migrate[$key]['requested_date']         				= $data[$key]['RequestedDate'];
+            $data_to_migrate[$key]['requested_at']         				    = $data[$key]['RequestedDate'];
             $data_to_migrate[$key]['mobile_payment_type_id']                = $data[$key]['AllowanceType'];
             $data_to_migrate[$key]['expense_desc']                          = $data[$key]['Title'];
             $data_to_migrate[$key]['expense_purpose']                       = $data[$key]['AllowanceDescription'];
@@ -45,7 +45,7 @@ class migrate_mobile_payment_data extends Seeder
             $data_to_migrate[$key]['brevity']                               = $data[$key]['Berevity'];
             $data_to_migrate[$key]['region_id']                             = $data[$key]['Region'];
             $data_to_migrate[$key]['county_id']                             = $data[$key]['County'];
-            $data_to_migrate[$key]['attentendance_sheet']                   = $data[$key]['AttendanceScheet'];
+            $data_to_migrate[$key]['attendance_sheet']                      = $data[$key]['AttendanceScheet'];
             $data_to_migrate[$key]['rejection_reason']                      = $data[$key]['RejectReason'];
             $data_to_migrate[$key]['migration_requested_by_id']				= $data[$key]['RequestedBy'];
             $data_to_migrate[$key]['migration_project_id']         			= $data[$key]['Project'];
@@ -119,7 +119,7 @@ class migrate_mobile_payment_data extends Seeder
         foreach ($data_to_migrate_pm as $key => $value) {
 
             if($value){
-                array_push($pm_approval,['approval_level_id' => 2,'created_at' => $value['pm_approval_date'],'mobile_payment_id' => $value['id'],'migration_approver_id' => $value['pm_approval']]);
+                array_push($pm_approval,['approval_level_id' => 2,'created_at' => $value['pm_approval_date'],'approvable_id' => $value['id'],'migration_approver_id' => $value['pm_approval'],'approvable_type'=>"mobile_payments"]);
             }
 
             echo "\n Mpesa Payment Approval-$key---";
@@ -130,7 +130,7 @@ class migrate_mobile_payment_data extends Seeder
 
         $insertBatchs = array_chunk($pm_approval, 500);
         foreach ($insertBatchs as $batch) {
-            DB::table('mobile_payment_approvals')->insert($batch);
+            DB::table('approvals')->insert($batch);
              echo "\n-------------------------------------------------------Batch inserted\n";
         }
 
@@ -144,7 +144,7 @@ class migrate_mobile_payment_data extends Seeder
         foreach ($data_to_migrate_man as $key => $value) {
 
             if($value){
-                array_push($man_approval,['approval_level_id' => 4,'created_at' => $value['management_approval_date'],'mobile_payment_id' => $value['id'],'migration_approver_id' => $value['management_approval']]);
+                array_push($man_approval,['approval_level_id' => 4,'created_at' => $value['management_approval_date'],'approvable_id' => $value['id'],'migration_approver_id' => $value['management_approval'],'approvable_type'=>"mobile_payments"]);
             }
 
             echo "\n Mpesa Payment Approval-$key---";
@@ -155,7 +155,7 @@ class migrate_mobile_payment_data extends Seeder
 
         $insertBatchs = array_chunk($man_approval, 500);
         foreach ($insertBatchs as $batch) {
-            DB::table('mobile_payment_approvals')->insert($batch);
+            DB::table('approvals')->insert($batch);
              echo "\n-------------------------------------------------------Batch inserted\n";
         }
 
@@ -169,7 +169,7 @@ class migrate_mobile_payment_data extends Seeder
         foreach ($data_to_migrate_fin as $key => $value) {
 
             if($value){
-                array_push($fin_approval,['approval_level_id' => 3,'created_at' => $value['finance_approval_date'],'mobile_payment_id' => $value['id'],'migration_approver_id' => $value['finance_approval']]);
+                array_push($fin_approval,['approval_level_id' => 3,'created_at' => $value['finance_approval_date'],'approvable_id' => $value['id'],'migration_approver_id' => $value['finance_approval'],'approvable_type'=>"mobile_payments"]);
             }
 
             echo "\n Mpesa Payment Approval-$key---";
@@ -180,7 +180,7 @@ class migrate_mobile_payment_data extends Seeder
 
         $insertBatchs = array_chunk($fin_approval, 500);
         foreach ($insertBatchs as $batch) {
-            DB::table('mobile_payment_approvals')->insert($batch);
+            DB::table('approvals')->insert($batch);
              echo "\n-------------------------------------------------------Batch inserted\n";
         }
 

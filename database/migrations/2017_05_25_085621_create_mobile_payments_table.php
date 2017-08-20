@@ -18,7 +18,7 @@ class CreateMobilePaymentsTable extends Migration
             $table->increments('id');
             $table->string('ref')->nullable();
             $table->integer('meeting')->nullable();
-            $table->date('requested_date')->nullable();
+            $table->timestamp('requested_at')->nullable();
             $table->integer('requested_by_id')->nullable();
             $table->integer('request_action_by_id')->nullable();
             $table->integer('project_id')->nullable();
@@ -35,9 +35,10 @@ class CreateMobilePaymentsTable extends Migration
             $table->integer('brevity')->nullable();
             $table->integer('region_id')->nullable();
             $table->integer('county_id')->nullable();
-            $table->string('attentendance_sheet')->nullable();
+            $table->string('attendance_sheet')->nullable();
             $table->text('rejection_reason')->nullable();
             $table->integer('rejected_by_id')->nullable();
+            $table->timestamp('rejected_at')->nullable();
             $table->integer('migration_requested_by_id')->nullable();
             $table->integer('migration_project_id')->nullable();
             $table->integer('migration_account_id')->nullable();

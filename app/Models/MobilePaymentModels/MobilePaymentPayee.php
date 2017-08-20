@@ -37,9 +37,12 @@ class MobilePaymentPayee extends BaseModel
                      ->where('max_limit', '>=', $amount)
                      ->get();
 
+        // print_r($tariff_res);
+        // die;
+
         foreach ($tariff_res as $key => $value) {
             
-            $withdrawal_charges = (double)  $value->tariff ;
+            $withdrawal_charges = (double)  $value['tariff'] ;
 
         }
 

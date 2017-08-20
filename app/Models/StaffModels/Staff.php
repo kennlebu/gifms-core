@@ -36,7 +36,7 @@ class Staff extends BaseModel
 
 
 
-    protected $appends = ['full_name','is_admin'];
+    protected $appends = ['full_name','name','is_admin'];
 
 
 
@@ -51,6 +51,13 @@ class Staff extends BaseModel
 
     }
 
+    public function getNameAttribute()
+    {       
+
+        return $this->attributes['f_name'].' '.$this->attributes['l_name'];
+
+    }
+
     public function getIsAdminAttribute()
     {       
         //this is a stub
@@ -59,5 +66,9 @@ class Staff extends BaseModel
         
         return $is_admin;
 
+    }
+    public function roles()
+    {
+        return $this->belongsToMany('App\Models\StaffModels\Role','user_roles','user_id', 'role_id');
     }
 }

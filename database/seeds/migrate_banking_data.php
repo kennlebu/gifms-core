@@ -85,10 +85,10 @@ class migrate_banking_data extends Seeder
 
         foreach ($data as $key => $value) {
 
-        	$data_to_migrate[$key]['bank_id'] 			= $data[$key]['Bank'];
-        	$data_to_migrate[$key]['branch_name'] 		= $data[$key]['BankBranch'];
-        	$data_to_migrate[$key]['branch_code'] 		= $data[$key]['BranchCode'];
-        	$data_to_migrate[$key]['migration_id'] 		= $data[$key]['ID'];
+            $data_to_migrate[$key]['branch_name']       = $data[$key]['BankBranch'];
+            $data_to_migrate[$key]['branch_code']       = $data[$key]['BranchCode'];
+            $data_to_migrate[$key]['migration_id']      = $data[$key]['ID'];
+        	$data_to_migrate[$key]['migration_bank_id'] = $data[$key]['Bank'];
 
 
         	echo "\n Branch -$key---";
