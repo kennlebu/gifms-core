@@ -77,8 +77,8 @@ class MigrateFiles extends Command
             if ($value["invoice_document"]!='') {
 
 
-                FTP::connection()->makeDir("./$invoice_folder/".$value["id"]);
-                FTP::connection()->makeDir("./$invoice_folder/".$value["id"]);
+                FTP::connection()->makeDir("/$invoice_folder");
+                FTP::connection()->makeDir("/$invoice_folder/".$value["id"]);
                 $file_contents   =   FTP::connection("connection_migration")
                                     ->readFile("$invoice_mig_folder"."/".$value["invoice_document"]);
 
@@ -118,8 +118,8 @@ class MigrateFiles extends Command
             if ($value["claim_document"]!='') {
 
 
-                FTP::connection()->makeDir("./$claim_folder/".$value["id"]);
-                FTP::connection()->makeDir("./$claim_folder/".$value["id"]);
+                FTP::connection()->makeDir("/$claim_folder");
+                FTP::connection()->makeDir("/$claim_folder/".$value["id"]);
                 $file_contents   =   FTP::connection("connection_migration")
                                     ->readFile("$claim_mig_folder"."/".$value["claim_document"]);
 
@@ -159,8 +159,10 @@ class MigrateFiles extends Command
             if ($value["quotation_doc"]!=''&&$value["lpo_id"]!='' ) {
 
 
-                FTP::connection()->makeDir("./lpos/".$value["lpo_id"]."/quotations/".$value["id"]);
-                FTP::connection()->makeDir("./lpos/".$value["lpo_id"]."/quotations/".$value["id"]);
+                FTP::connection()->makeDir("/lpos");
+                FTP::connection()->makeDir("/lpos/".$value["lpo_id"]);
+                FTP::connection()->makeDir("/lpos/".$value["lpo_id"]."/quotations");
+                FTP::connection()->makeDir("/lpos/".$value["lpo_id"]."/quotations/".$value["id"]);
                 $file_contents   =   FTP::connection("connection_migration")
                                     ->readFile("$lpo_quotation_mig_folder"."/".$value["quotation_doc"]);
 
@@ -200,8 +202,9 @@ class MigrateFiles extends Command
             if ($value["attendance_sheet"]!='') {
 
 
-                FTP::connection()->makeDir("./$mobile_payment_folder/".$value["id"]."/signsheet/");
-                FTP::connection()->makeDir("./$mobile_payment_folder/".$value["id"]."/signsheet/");
+                FTP::connection()->makeDir("/$mobile_payment_folder");
+                FTP::connection()->makeDir("/$mobile_payment_folder/".$value["id"]);
+                FTP::connection()->makeDir("/$mobile_payment_folder/".$value["id"]."/signsheet");
                 $file_contents   =   FTP::connection("connection_migration")
                                     ->readFile("$mobile_payment_mig_folder"."/".$value["attendance_sheet"]);
 

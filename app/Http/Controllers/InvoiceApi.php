@@ -196,8 +196,8 @@ class InvoiceApi extends Controller
 
                 if($form['submission_type']=='full'||$form['submission_type']=='upload_logged'){
 
-                    FTP::connection()->makeDir('./invoices/'.$invoice->id);
-                    FTP::connection()->makeDir('./invoices/'.$invoice->id);
+                    FTP::connection()->makeDir('/invoices');
+                    FTP::connection()->makeDir('/invoices/'.$invoice->id);
                     FTP::connection()->uploadFile($file->getPathname(), './invoices/'.$invoice->id.'/'.$invoice->id.'.'.$file->getClientOriginalExtension());
 
                     $invoice->invoice_document           =   $invoice->id.'.'.$file->getClientOriginalExtension();

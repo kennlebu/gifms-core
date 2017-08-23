@@ -99,8 +99,8 @@ class ClaimApi extends Controller
 
             if($claim->save()) {
 
-                FTP::connection()->makeDir('./claims/'.$claim->id);
-                FTP::connection()->makeDir('./claims/'.$claim->id);
+                FTP::connection()->makeDir('/claims');
+                FTP::connection()->makeDir('/claims/'.$claim->id);
                 FTP::connection()->uploadFile($file->getPathname(), './claims/'.$claim->id.'/'.$claim->id.'.'.$file->getClientOriginalExtension());
 
                 $claim->claim_document           =   $claim->id.'.'.$file->getClientOriginalExtension();

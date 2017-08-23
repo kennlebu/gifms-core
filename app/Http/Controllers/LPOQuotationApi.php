@@ -83,8 +83,10 @@ class LPOQuotationApi extends Controller
 
             if($lpo_quotation->save()) {
 
-                FTP::connection()->makeDir('./lpos/'.$lpo_quotation->lpo_id.'/quotations/'.$lpo_quotation->id);
-                FTP::connection()->makeDir('./lpos/'.$lpo_quotation->lpo_id.'/quotations/'.$lpo_quotation->id);
+                FTP::connection()->makeDir('/lpos');
+                FTP::connection()->makeDir('/lpos/'.$lpo_quotation->lpo_id);
+                FTP::connection()->makeDir('/lpos/'.$lpo_quotation->lpo_id.'/quotations');
+                FTP::connection()->makeDir('/lpos/'.$lpo_quotation->lpo_id.'/quotations/'.$lpo_quotation->id);
                 FTP::connection()->uploadFile($file->getPathname(), './lpos/'.$lpo_quotation->lpo_id.'/quotations/'.$lpo_quotation->id.'/'.$lpo_quotation->id.'.'.$file->getClientOriginalExtension());
 
                 $lpo_quotation->quotation_doc                   =   $lpo_quotation->id.'.'.$file->getClientOriginalExtension();

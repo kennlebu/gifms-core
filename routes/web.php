@@ -1,5 +1,7 @@
 <?php
 
+use Anchu\Ftp\Facades\Ftp;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -13,6 +15,18 @@
 
 Route::get('/', function () {
     return view('welcome');
+});
+Route::get('/test/ftp', function () {
+    // return view('welcome');
+
+
+            $ftp = FTP::connection()->getDirListing();
+
+            // $status = FTP::connection()->makeDir('./inv');
+            $status = FTP::connection()->makeDir('/in');
+            $status = FTP::connection()->makeDir('/in/2');
+            $status = FTP::connection()->makeDir('/in/2/3');
+            echo $status;
 });
 
 
