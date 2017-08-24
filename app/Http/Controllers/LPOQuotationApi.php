@@ -66,7 +66,7 @@ class LPOQuotationApi extends Controller
                 );
 
 
-            // FTP::connection()->changeDir('./lpos');
+            // FTP::connection()->changeDir('/lpos');
 
             $ftp = FTP::connection()->getDirListing();
 
@@ -87,7 +87,7 @@ class LPOQuotationApi extends Controller
                 FTP::connection()->makeDir('/lpos/'.$lpo_quotation->lpo_id);
                 FTP::connection()->makeDir('/lpos/'.$lpo_quotation->lpo_id.'/quotations');
                 FTP::connection()->makeDir('/lpos/'.$lpo_quotation->lpo_id.'/quotations/'.$lpo_quotation->id);
-                FTP::connection()->uploadFile($file->getPathname(), './lpos/'.$lpo_quotation->lpo_id.'/quotations/'.$lpo_quotation->id.'/'.$lpo_quotation->id.'.'.$file->getClientOriginalExtension());
+                FTP::connection()->uploadFile($file->getPathname(), '/lpos/'.$lpo_quotation->lpo_id.'/quotations/'.$lpo_quotation->id.'/'.$lpo_quotation->id.'.'.$file->getClientOriginalExtension());
 
                 $lpo_quotation->quotation_doc                   =   $lpo_quotation->id.'.'.$file->getClientOriginalExtension();
                 $lpo_quotation->save();
@@ -285,7 +285,7 @@ class LPOQuotationApi extends Controller
 
             $quotation      = LpoQuotation::findOrFail($lpo_quotation_id);
 
-            $path           = './lpos/'.$quotation->lpo_id.'/quotations/'.$quotation->id.'/'.$quotation->quotation_doc;
+            $path           = '/lpos/'.$quotation->lpo_id.'/quotations/'.$quotation->id.'/'.$quotation->quotation_doc;
 
             $path_info      = pathinfo($path);
 

@@ -110,7 +110,7 @@ class InvoiceApi extends Controller
                 );
 
 
-            // FTP::connection()->changeDir('./lpos');
+            // FTP::connection()->changeDir('/lpos');
 
             $ftp = FTP::connection()->getDirListing();
 
@@ -198,7 +198,7 @@ class InvoiceApi extends Controller
 
                     FTP::connection()->makeDir('/invoices');
                     FTP::connection()->makeDir('/invoices/'.$invoice->id);
-                    FTP::connection()->uploadFile($file->getPathname(), './invoices/'.$invoice->id.'/'.$invoice->id.'.'.$file->getClientOriginalExtension());
+                    FTP::connection()->uploadFile($file->getPathname(), '/invoices/'.$invoice->id.'/'.$invoice->id.'.'.$file->getClientOriginalExtension());
 
                     $invoice->invoice_document           =   $invoice->id.'.'.$file->getClientOriginalExtension();
                     $invoice->ref                        = "CHAI/INV/#$invoice->id/".date_format($invoice->created_at,"Y/m/d");
@@ -636,7 +636,7 @@ class InvoiceApi extends Controller
 
             $invoice        = Invoice::findOrFail($invoice_id);
 
-            $path           = './invoices/'.$invoice->id.'/'.$invoice->invoice_document;
+            $path           = '/invoices/'.$invoice->id.'/'.$invoice->invoice_document;
 
             $path_info      = pathinfo($path);
 

@@ -78,7 +78,7 @@ class ClaimApi extends Controller
                 );
 
 
-            // FTP::connection()->changeDir('./lpos');
+            // FTP::connection()->changeDir('/lpos');
 
             $ftp = FTP::connection()->getDirListing();
 
@@ -101,7 +101,7 @@ class ClaimApi extends Controller
 
                 FTP::connection()->makeDir('/claims');
                 FTP::connection()->makeDir('/claims/'.$claim->id);
-                FTP::connection()->uploadFile($file->getPathname(), './claims/'.$claim->id.'/'.$claim->id.'.'.$file->getClientOriginalExtension());
+                FTP::connection()->uploadFile($file->getPathname(), '/claims/'.$claim->id.'/'.$claim->id.'.'.$file->getClientOriginalExtension());
 
                 $claim->claim_document           =   $claim->id.'.'.$file->getClientOriginalExtension();
                 $claim->ref                        = "CHAI/CLM/#$claim->id/".date_format($claim->created_at,"Y/m/d");
@@ -495,7 +495,7 @@ class ClaimApi extends Controller
 
             $claim          = Claim::findOrFail($claim_id);
 
-            $path           = './claims/'.$claim->id.'/'.$claim->claim_document;
+            $path           = '/claims/'.$claim->id.'/'.$claim->claim_document;
 
             $path_info      = pathinfo($path);
 

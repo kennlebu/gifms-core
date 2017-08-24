@@ -730,7 +730,7 @@ class MobilePaymentApi extends Controller
 
             $mobile_payment      = MobilePayment::findOrFail($mobile_payment_id);
 
-            $path           = './mobile_payments/'.$mobile_payment->id.'/signsheet/'.$mobile_payment->attendance_sheet;
+            $path           = '/mobile_payments/'.$mobile_payment->id.'/signsheet/'.$mobile_payment->attendance_sheet;
 
             $path_info      = pathinfo($path);
 

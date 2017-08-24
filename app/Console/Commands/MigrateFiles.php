@@ -86,7 +86,7 @@ class MigrateFiles extends Command
 
                 // echo storage_path("$invoice_folder"."/".$value["invoice_document"])."\n";
 
-                FTP::connection()->uploadFile(storage_path("app/$invoice_folder"."/".$value["invoice_document"]), './invoices/'.$value["id"].'/'.$value["invoice_document"]);
+                FTP::connection()->uploadFile(storage_path("app/$invoice_folder"."/".$value["invoice_document"]), '/invoices/'.$value["id"].'/'.$value["invoice_document"]);
 
                 echo "Invoice Document ---------- ".$value["id"]."------".$value["invoice_document"]."\n";
             }
@@ -127,7 +127,7 @@ class MigrateFiles extends Command
 
                 // echo storage_path("$claim_folder"."/".$value["claim_document"])."\n";
 
-                FTP::connection()->uploadFile(storage_path("app/$claim_folder"."/".$value["claim_document"]), './claims/'.$value["id"].'/'.$value["claim_document"]);
+                FTP::connection()->uploadFile(storage_path("app/$claim_folder"."/".$value["claim_document"]), '/claims/'.$value["id"].'/'.$value["claim_document"]);
 
                 echo "Claim Document ---------- ".$value["id"]."------".$value["claim_document"]."\n";
             }
@@ -170,7 +170,7 @@ class MigrateFiles extends Command
 
                 // echo storage_path("$lpo_quotation_folder"."/".$value["quotation_doc"])."\n";
 
-                FTP::connection()->uploadFile(storage_path("app/$lpo_quotation_folder"."/".$value["quotation_doc"]), './lpos/'.$value["lpo_id"].'/quotations/'.$value["id"].'/'.$value["quotation_doc"]);
+                FTP::connection()->uploadFile(storage_path("app/$lpo_quotation_folder"."/".$value["quotation_doc"]), '/lpos/'.$value["lpo_id"].'/quotations/'.$value["id"].'/'.$value["quotation_doc"]);
 
                 echo "Lpo Quotation Document -----lpo-".$value["lpo_id"]."----- ".$value["id"]."------".$value["quotation_doc"]."\n";
             }
@@ -212,7 +212,7 @@ class MigrateFiles extends Command
 
                 // echo storage_path("$mobile_payment_folder"."/".$value["attendance_sheet"])."\n";
 
-                FTP::connection()->uploadFile(storage_path("app/$mobile_payment_folder"."/".$value["attendance_sheet"]), './mobile_payments/'.$value["id"].'/signsheet/'.$value["attendance_sheet"]);
+                FTP::connection()->uploadFile(storage_path("app/$mobile_payment_folder"."/".$value["attendance_sheet"]), '/mobile_payments/'.$value["id"].'/signsheet/'.$value["attendance_sheet"]);
 
                 echo "Mobile Payments Signsheet ---------- ".$value["id"]."------".$value["attendance_sheet"]."\n";
             }

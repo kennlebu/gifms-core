@@ -98,7 +98,7 @@ class AdvanceApi extends Controller
                 );
 
 
-            // FTP::connection()->changeDir('./lpos');
+            // FTP::connection()->changeDir('/lpos');
 
             // $ftp = FTP::connection()->getDirListing();
 
@@ -120,9 +120,9 @@ class AdvanceApi extends Controller
 
             if($advance->save()) {
 
-                // FTP::connection()->makeDir('./advances/'.$advance->id);
-                // FTP::connection()->makeDir('./advances/'.$advance->id);
-                // FTP::connection()->uploadFile($file->getPathname(), './advances/'.$advance->id.'/'.$advance->id.'.'.$file->getClientOriginalExtension());
+                // FTP::connection()->makeDir('/advances/'.$advance->id);
+                // FTP::connection()->makeDir('/advances/'.$advance->id);
+                // FTP::connection()->uploadFile($file->getPathname(), '/advances/'.$advance->id.'/'.$advance->id.'.'.$file->getClientOriginalExtension());
 
                 // $advance->advance_document           =   $advance->id.'.'.$file->getClientOriginalExtension();
                 $advance->ref                        = "CHAI/ADV/#$advance->id/".date_format($advance->created_at,"Y/m/d");
