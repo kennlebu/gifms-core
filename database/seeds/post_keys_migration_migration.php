@@ -483,7 +483,13 @@ class post_keys_migration_migration extends Seeder
 
         DB::statement($sql);
         $sql = "
-                UPDATE `invoice_statuses`           SET `default_status`  = '1', `next_status_id`  = '10'     WHERE `id`='11'
+                UPDATE `invoice_statuses`           SET `default_status`  = NULL , `next_status_id`  = '10'     WHERE `id`='11'
+
+                ";
+
+        DB::statement($sql);
+        $sql = "
+                UPDATE `invoice_statuses`           SET `default_status`  = '1', `next_status_id`  = '12'     WHERE `id`='10'
 
                 ";
 
