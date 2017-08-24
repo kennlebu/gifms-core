@@ -36,6 +36,7 @@ class CreateStaffTable extends Migration
             $table->integer('active')->nullable();
             $table->string('signature')->nullable();
             $table->string('bank_signatory')->nullable();
+            $table->integer('receive_global_email_bcc')->nullable();
             $table->integer('migration_bank_id')->nullable();
             $table->integer('migration_bank_branch_id')->nullable();
             $table->integer('migration_department_id')->nullable();
