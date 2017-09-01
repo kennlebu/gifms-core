@@ -622,5 +622,18 @@ class post_keys_migration_migration extends Seeder
 
 
 
+
+
+
+
+
+        $sql = "UPDATE `mobile_payment_statuses` SET `mobile_payment_status`='Mobile Payments Requested Pending Submission' WHERE `id`='1'"; DB::statement($sql);
+        $sql = "UPDATE `mobile_payment_statuses` SET `mobile_payment_status`='Mobile Payments Requested Pending PM Approval' WHERE `id`='2'"; DB::statement($sql);
+        $sql = "UPDATE `mobile_payment_statuses` SET `mobile_payment_status`='Mobile Payments by Finance Pending Management Approval' WHERE `id`='8'"; DB::statement($sql);
+        $sql = "UPDATE `mobile_payment_statuses` SET `mobile_payment_status`='Mobile Payment Requested Pending Accountant Approval' WHERE `id`='9'"; DB::statement($sql);
+        echo "\n mobile_payment_statuses captions updated ---";
+
+
+
     }
 }
