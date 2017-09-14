@@ -914,6 +914,22 @@ class LPOApi extends Controller
 
         }
 
+        //supplier
+        if(array_key_exists('supplier', $input)){
+
+            $sup = (int) $input['supplier'];
+
+            if($sup>0){
+                $qb->leftJoin('lpo_quotations', 'lpos.id', '=', 'lpo_quotations.lpo_id');
+                $qb->leftJoin('suppliers', 'lpo_quotations.supplier_id', '=', 'suppliers.id');
+                $qb->where('lpo_quotations.supplier_id', $sup);
+                $qb->orderBy('lpos.id', 'desc');
+                $qb->select('lpos.*');
+            }
+
+
+        }
+
 
 
         if(array_key_exists('datatables', $input)){
