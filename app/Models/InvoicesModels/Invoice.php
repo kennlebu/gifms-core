@@ -12,6 +12,9 @@ class Invoice extends BaseModel
     //
     use SoftDeletes;
 
+
+    protected $appends = ['amount_allocated'];
+
     
     public function raised_by()
     {
@@ -64,5 +67,22 @@ class Invoice extends BaseModel
     public function allocations()
     {
         return $this->morphMany('App\Models\AllocationModels\Allocation', 'allocatable');
+    }
+
+
+
+    public function getAmountAllocatedAttribute(){
+
+        $allocations  =   $this->allocations;
+        $amount_allocated   =   0;
+
+        foreach ($allocations as $key => $value) {
+            $amount_allocated   +=   (float)   $value->amount_allocated;
+        }
+
+        return $amount_allocated;
+
+
+
     }
 }
