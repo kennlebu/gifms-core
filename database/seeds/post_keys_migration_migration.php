@@ -43,11 +43,11 @@ class post_keys_migration_migration extends Seeder
         //currencies color
 
         DB::statement("
-            UPDATE `gifms`.`currencies` SET `display_color`='#18468A' WHERE `id`='1'
+            UPDATE `currencies` SET `display_color`='#36a9e1' WHERE `id`='1'
             ");
 
         DB::statement("
-            UPDATE `gifms`.`currencies` SET `display_color`='#B01500' ,`currency_sign`='$' WHERE `id`='2'
+            UPDATE `currencies` SET `display_color`='#ff2121' ,`currency_sign`='$' WHERE `id`='2'
             ");
 
         echo "\n currencies display_color ---";
@@ -56,10 +56,10 @@ class post_keys_migration_migration extends Seeder
         //payments payable migration
 
         DB::statement('
-            UPDATE `gifms`.`payments` SET `payable_id`=`invoice_id`, `payable_type` = "invoices" WHERE `invoice_id`<>""
+            UPDATE `payments` SET `payable_id`=`invoice_id`, `payable_type` = "invoices" WHERE `invoice_id`<>""
             ');
         DB::statement('
-            UPDATE `gifms`.`payments` SET `payable_id`=`advance_id`, `payable_type` = "advances" WHERE `advance_id`<>""
+            UPDATE `payments` SET `payable_id`=`advance_id`, `payable_type` = "advances" WHERE `advance_id`<>""
             ');
         
         echo "\n payments payable_id, payable_type---";
