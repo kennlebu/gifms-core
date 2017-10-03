@@ -30,6 +30,14 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\NotifyInvoice;
 use App\Models\AllocationModels\Allocation;
 use App\Models\ApprovalsModels\Approval;
+use App\Models\ApprovalsModels\ApprovalLevel;
+use App\Models\StaffModels\Staff;
+use App\Models\PaymentModels\Payment;
+use App\Models\PaymentModels\PaymentMode;
+use App\Models\PaymentModels\PaymentBatch;
+use App\Models\PaymentModels\PaymentType;
+use App\Models\LookupModels\Currency;
+use App\Models\BankingModels\BankBranch;
 
 class InvoiceApi extends Controller
 {
@@ -364,6 +372,7 @@ class InvoiceApi extends Controller
                                         'lpo',
                                         'rejected_by',
                                         'approvals',
+                                        'payments',
                                         'allocations',
                                         'comments'
                                     )->findOrFail($invoice_id);
@@ -372,8 +381,29 @@ class InvoiceApi extends Controller
             foreach ($response->allocations as $key => $value) {
                 $project = Project::find((int)$value['project_id']);
                 $account = Account::find((int)$value['account_id']);
+                
                 $response['allocations'][$key]['project']  =   $project;
                 $response['allocations'][$key]['account']  =   $account;
+            }
+
+            foreach ($response->approvals as $key => $value) {
+                $approver = Staff::find((int)$value['approver_id']);
+                $appoval_level = ApprovalLevel::find((int)$value['approval_level_id']);
+
+                $response['approvals'][$key]['approver']  =   $approver;
+                $response['approvals'][$key]['approval_level']  =   $appoval_level;
+            }
+
+            foreach ($response->payments as $key => $value) {
+                $payment_mode           = PaymentMode::find((int)$value['payment_mode_id']);
+                $currency               = PaymentBatch::find((int)$value['currency_id']);
+                $payment_batch          = Currency::find((int)$value['payment_batch_id']);
+                $paid_to_bank_branch    = BankBranch::with('bank')->find((int)$value['paid_to_bank_branch_id']);
+
+                $response['payments'][$key]['payment_mode']   =   $payment_mode;
+                $response['payments'][$key]['currency']       =   $currency;
+                $response['payments'][$key]['payment_batch']  =   $payment_batch;
+                $response['payments'][$key]['paid_to_bank_branch']   =   $paid_to_bank_branch;
             }
 
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);

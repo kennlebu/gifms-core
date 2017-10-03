@@ -10,4 +10,10 @@ class BankBranch extends BaseModel
 {
     //
     use SoftDeletes;
+
+
+    public function bank()
+    {
+        return $this->belongsTo('App\Models\BankingModels\Bank');
+    }
 }
