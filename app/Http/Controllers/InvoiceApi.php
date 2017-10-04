@@ -396,8 +396,8 @@ class InvoiceApi extends Controller
 
             foreach ($response->payments as $key => $value) {
                 $payment_mode           = PaymentMode::find((int)$value['payment_mode_id']);
-                $currency               = PaymentBatch::find((int)$value['currency_id']);
-                $payment_batch          = Currency::find((int)$value['payment_batch_id']);
+                $currency               = Currency::find((int)$value['currency_id']);
+                $payment_batch          = PaymentBatch::find((int)$value['payment_batch_id']);
                 $paid_to_bank_branch    = BankBranch::with('bank')->find((int)$value['paid_to_bank_branch_id']);
 
                 $response['payments'][$key]['payment_mode']   =   $payment_mode;
