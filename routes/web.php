@@ -32,13 +32,24 @@ Route::get('/test/ftp', function () {
 
 Route::get('test/pdf_lpo', function () {
 
-	$lpo   = App\Models\LPOModels\Lpo::findOrFail(128);
+    $lpo   = App\Models\LPOModels\Lpo::findOrFail(128);
 
     $data = array(
             'lpo'   => $lpo
         );
 
     return view('pdf/lpo',$data);
+});
+
+Route::get('test/pdf_invoice_voucher', function () {
+
+    $inv   = App\Models\InvoicesModels\Invoice::findOrFail(128);
+
+    $data = array(
+            'inv'   => $inv
+        );
+
+    return view('pdf/invoice_payment_voucher',$data);
 });
 
 

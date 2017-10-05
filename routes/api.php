@@ -2777,6 +2777,13 @@ Route::PATCH('/invoice/{invoice_id}/approve', 'InvoiceApi@approveInvoice')->midd
  */
 Route::GET('/invoice/{invoice_id}/get_document', 'InvoiceApi@getDocumentById')->middleware('jwt.auth');
 /**
+ * GET getPaymentVoucherById
+ * Summary: get payment Voucher by ID
+ * Notes: get payment Voucher
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('invoice/{invoice_id}/get_payment_voucher', 'InvoiceApi@getPaymentVoucherById')->middleware('jwt.auth');
+/**
  * PATCH submitInvoiceForApproval
  * Summary: Submit invoice by ID
  * Notes: Submits invoice for approval

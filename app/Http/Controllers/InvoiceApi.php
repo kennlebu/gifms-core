@@ -22,7 +22,9 @@ use App\Models\InvoicesModels\Invoice;
 use App\Models\InvoicesModels\InvoiceStatus;
 use App\Models\ProjectsModels\Project;
 use App\Models\AccountingModels\Account;
+use App\Models\LPOModels\Lpo;
 use Anchu\Ftp\Facades\Ftp;
+use PDF;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Response;
@@ -706,6 +708,50 @@ class InvoiceApi extends Controller
 
 
 
+    /**
+     * Operation getPaymentVoucherById
+     *
+     * get payment Voucher by ID.
+     *
+     * @param int $invoice_id ID of invoice to return object (required)
+     *
+     * @return Http response
+     */
+    public function getPaymentVoucherById($invoice_id)
+    {
+
+        try{
+            // $invoice   = Invoice::findOrFail($invoice_id);
+
+            $data = array(
+                // 'invoice'   => $invoice
+                );
+
+            $pdf = PDF::loadView('pdf/invoice_payment_voucher', $data);
+
+            $file_contents  = $pdf->stream();
+
+            Storage::put('invoices/'.$invoice_id.'.voucher.temp', $file_contents);
+
+            $url       = storage_path("app/invoices/".$invoice_id.'.voucher.temp');
+
+            $file = File::get($url);
+
+            $response = Response::make($file, 200);
+
+            $response->header('Content-Type', 'application/pdf');
+
+            return $response;
+        }catch (Exception $e ){            
+
+            $response       = Response::make("", 200);
+
+            $response->header('Content-Type', 'application/pdf');
+
+            return $response;  
+
+        }
+    }
 
 
 
