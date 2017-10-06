@@ -721,23 +721,23 @@ class InvoiceApi extends Controller
     {
 
         try{
-            // $invoice   = Invoice::findOrFail($invoice_id);
+            $invoice        = Invoice::findOrFail($invoice_id);
 
-            $data = array(
-                // 'invoice'   => $invoice
-                );
+            $data           = array(
+                                'invoice'   => $invoice
+                                );
 
-            $pdf = PDF::loadView('pdf/invoice_payment_voucher', $data);
+            $pdf            = PDF::loadView('pdf/invoice_payment_voucher', $data);
 
             $file_contents  = $pdf->stream();
 
             Storage::put('invoices/'.$invoice_id.'.voucher.temp', $file_contents);
 
-            $url       = storage_path("app/invoices/".$invoice_id.'.voucher.temp');
+            $url            = storage_path("app/invoices/".$invoice_id.'.voucher.temp');
 
-            $file = File::get($url);
+            $file           = File::get($url);
 
-            $response = Response::make($file, 200);
+            $response       = Response::make($file, 200);
 
             $response->header('Content-Type', 'application/pdf');
 

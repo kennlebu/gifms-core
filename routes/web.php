@@ -46,7 +46,7 @@ Route::get('test/pdf_invoice_voucher', function () {
     $inv   = App\Models\InvoicesModels\Invoice::findOrFail(128);
 
     $data = array(
-            'inv'   => $inv
+            'invoice'   => $inv
         );
 
     return view('pdf/invoice_payment_voucher',$data);
