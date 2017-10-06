@@ -267,19 +267,99 @@ class InvoiceApi extends Controller
      */
     public function updateInvoice()
     {
-        $input = Request::all();
 
-        //path params validation
+        // $input = Request::all();
 
 
-        //not path params validation
-        if (!isset($input['body'])) {
-            throw new \InvalidArgumentException('Missing the required parameter $body when calling updateInvoice');
+
+        try{
+
+
+            $form = Request::only(
+                'id',
+                'raised_by_id',
+                'received_by_id',
+                'expense_desc',
+                'expense_purpose',
+                // 'invoice_date',
+                'lpo_id',
+                'supplier_id',
+                'project_manager_id',
+                'total',
+                'currency_id'
+                // 'file',
+                // 'submission_type'
+                );
+
+
+            // FTP::connection()->changeDir('/lpos');
+
+            // $ftp = FTP::connection()->getDirListing();
+
+            // print_r($form['file']);
+
+            // $file = $form['file'];
+
+
+
+
+            // $invoice_date = date('Y-m-d H:i:s', strtotime($form['invoice_date']));
+
+            // if($form['submission_type']=='full'){
+
+                // print_r($form);
+
+                $invoice = Invoice::findOrFail($form['id']);
+
+                // $invoice->received_by_id                    =   (int)       $form['raised_by_id'];//received_by_id must be =raised_by_id
+                $invoice->raised_by_id                      =   (int)       $form['raised_by_id'];
+                $invoice->expense_desc                      =               $form['expense_desc'];
+                $invoice->expense_purpose                   =               $form['expense_purpose'];
+                // $invoice->invoice_date                      =               $form['invoice_date'];
+                // $invoice->invoice_date                      =               $invoice_date;
+                $invoice->lpo_id                            =   (int)       $form['lpo_id'];
+                $invoice->supplier_id                       =   (int)       $form['supplier_id'];
+                $invoice->project_manager_id                =   (int)       $form['project_manager_id'];
+                $invoice->total                             =   (double)    $form['total'];
+                $invoice->currency_id                       =   (int)       $form['currency_id'];
+                // $invoice->received_at                       =   date('Y-m-d H:i:s');
+                // $invoice->raised_at                         =   date('Y-m-d H:i:s');
+
+                $invoice->status_id                         =   $this->default_status;
+
+            // }
+
+
+            if($invoice->save()) {
+
+                // if($form['submission_type']=='full'||$form['submission_type']=='upload_logged'){
+
+                //     FTP::connection()->makeDir('/invoices');
+                //     FTP::connection()->makeDir('/invoices/'.$invoice->id);
+                //     FTP::connection()->uploadFile($file->getPathname(), '/invoices/'.$invoice->id.'/'.$invoice->id.'.'.$file->getClientOriginalExtension());
+
+                //     $invoice->invoice_document           =   $invoice->id.'.'.$file->getClientOriginalExtension();
+                //     $invoice->ref                        = "CHAI/INV/#$invoice->id/".date_format($invoice->created_at,"Y/m/d");
+                //     $invoice->save();
+
+                // }else if($form['submission_type']=='log'){
+                //     $invoice->ref                        = "CHAI/INV/#$invoice->id/".date_format($invoice->created_at,"Y/m/d");
+                //     $invoice->save();
+
+                //     Mail::send(new NotifyInvoice($invoice));
+
+                // }
+                
+                return Response()->json(array('success' => 'Invoice Added','invoice' => $invoice), 200);
+            }
+
+
+        }catch (JWTException $e){
+
+            return response()->json(['error'=>'You are not Authenticated'], 500);
+
         }
-        $body = $input['body'];
 
-
-        return response('How about implementing updateInvoice as a PUT method ?');
     }
 
 

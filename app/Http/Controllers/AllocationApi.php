@@ -137,19 +137,59 @@ class AllocationApi extends Controller
      */
     public function updateAllocation()
     {
+
         $input = Request::all();
 
-        //path params validation
 
 
-        //not path params validation
-        if (!isset($input['body'])) {
-            throw new \InvalidArgumentException('Missing the required parameter $body when calling updateAllocation');
+
+        try{
+
+
+            $form = Request::only(
+                'id',
+                'account_id',
+                'allocatable_id',
+                'allocatable_type',
+                'amount',
+                'month',
+                'percentage',
+                'project_id',
+                'purpose',
+                'year'
+                );
+
+
+            $allocation = Allocation::findOrFail($form['id']);
+
+
+            $allocation->account_id             =               $form['account_id'];
+            $allocation->allocatable_id         =               $form['allocatable_id'];
+            $allocation->allocatable_type       =               $form['allocatable_type'];
+            $allocation->amount_allocated       =               $form['amount'];
+            $allocation->allocation_month       =               $form['month'];
+            $allocation->percentage_allocated   =               $form['percentage'];
+            $allocation->project_id             =               $form['project_id'];
+            $allocation->allocation_purpose     =               $form['purpose'];
+            $allocation->allocation_year        =               $form['year'];
+
+            $user = JWTAuth::parseToken()->authenticate();
+            $allocation->allocated_by_id            =   (int)   $user->id;
+
+
+            if($allocation->save()) {
+
+
+                $allocation->save();
+                return Response()->json(array('success' => 'allocation updated','allocation' => $allocation), 200);
+            }
+
+
+        }catch (JWTException $e){
+
+            return response()->json(['error'=>'You are not Authenticated'], 500);
+
         }
-        $body = $input['body'];
-
-
-        return response('How about implementing updateAllocation as a PUT method ?');
     }
 
 
