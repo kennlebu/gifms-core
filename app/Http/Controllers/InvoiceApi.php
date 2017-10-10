@@ -40,6 +40,7 @@ use App\Models\PaymentModels\PaymentBatch;
 use App\Models\PaymentModels\PaymentType;
 use App\Models\LookupModels\Currency;
 use App\Models\BankingModels\BankBranch;
+use App\Exceptions\NotFullyAllocatedException;
 
 class InvoiceApi extends Controller
 {
@@ -107,6 +108,7 @@ class InvoiceApi extends Controller
                 'id',
                 'raised_by_id',
                 'received_by_id',
+                'external_ref',
                 'expense_desc',
                 'expense_purpose',
                 'invoice_date',
@@ -137,6 +139,7 @@ class InvoiceApi extends Controller
 
                 $invoice->received_by_id                    =   (int)       $form['raised_by_id'];//received_by_id must be =raised_by_id
                 $invoice->raised_by_id                      =   (int)       $form['raised_by_id'];
+                $invoice->external_ref                      =               $form['external_ref'];
                 $invoice->expense_desc                      =               $form['expense_desc'];
                 $invoice->expense_purpose                   =               $form['expense_purpose'];
                 // $invoice->invoice_date                      =               $form['invoice_date'];
@@ -155,6 +158,7 @@ class InvoiceApi extends Controller
 
                 $invoice->received_by_id                    =   (int)       $form['received_by_id'];
                 $invoice->raised_by_id                      =   (int)       $form['raised_by_id'];
+                $invoice->external_ref                      =               $form['external_ref'];
                 // $invoice->invoice_date                      =               $form['invoice_date'];                
                 $invoice->invoice_date                      =               $invoice_date;
                 $invoice->lpo_id                            =   (int)       $form['lpo_id'];
@@ -184,6 +188,7 @@ class InvoiceApi extends Controller
                                     )->find((int) $form['id']);
 
                 $invoice->raised_by_id                      =   (int)       $form['raised_by_id'];
+                $invoice->external_ref                      =               $form['external_ref'];
                 $invoice->expense_desc                      =               $form['expense_desc'];
                 $invoice->expense_purpose                   =               $form['expense_purpose'];
                 // $invoice->invoice_date                      =               $form['invoice_date'];
@@ -877,7 +882,11 @@ class InvoiceApi extends Controller
                                         'comments'
                                     )->findOrFail($invoice_id);
 
-           
+           if (($invoice->total - $invoice->amount_allocated) > 1 ){ //allows error of 1
+             throw new NotFullyAllocatedException("This invoice has not been fully allocated");
+             
+           }
+
             $invoice->status_id = $invoice->status->next_status_id;
             $invoice->raised_at = date('Y-m-d H:i:s');
 
@@ -888,6 +897,10 @@ class InvoiceApi extends Controller
                 return Response()->json(array('msg' => 'Success: invoice submitted','invoice' => $invoice), 200);
             }
 
+        }catch(NotFullyAllocatedException $ae){
+
+            $response =  ["error"=>"Invoice not fully allocated"];
+            return response()->json($response, 403,array(),JSON_PRETTY_PRINT);
         }catch(Exception $e){
 
             $response =  ["error"=>"Invoice could not be found"];
