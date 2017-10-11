@@ -15,6 +15,7 @@
 ### Features
 
 * **Payment Voucher:** add payment voucher as a table
+* **Logs:** activity logs configured
 
 
 ### BREAKING CHANGES
