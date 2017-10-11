@@ -29,7 +29,7 @@ class migrate_lookup_data extends Seeder
         echo "\nApproval Levels -[ALL]---\n";
 
         DB::table('approval_levels')->insert([
-		    ['approval_level' => 'Accountant Approval'],
+		    ['approval_level' => 'Accountant Review'],
 		    ['approval_level' => 'PM Approval'],
 		    ['approval_level' => 'Finance Approval'],
 		    ['approval_level' => 'Management Approval']
