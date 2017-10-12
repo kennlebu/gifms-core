@@ -808,6 +808,22 @@ class InvoiceApi extends Controller
         try{
             $invoice        = Invoice::findOrFail($invoice_id);
 
+            //signatures
+
+            foreach ($invoice->approvals as $key => $value) {                
+
+                $path           = '/staff/'.$value->approver_id.'/signature/signature.png';
+
+                $file_contents  = FTP::connection()->readFile($path);
+
+                Storage::put('staff/signature'.$value->approver_id.'.png', $file_contents);
+
+                $url            = storage_path("app/staff/signature".$value->approver_id.'.png');
+
+                $file           = File::get($url);
+            }
+
+
             $data           = array(
                                 'invoice'   => $invoice
                                 );

@@ -16,6 +16,7 @@
 
 * **Payment Voucher:** add payment voucher as a table
 * **Logs:** activity logs configured
+* **Payment Voucher:** adding signatures to the voucher
 
 
 ### BREAKING CHANGES
