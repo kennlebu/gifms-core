@@ -16,6 +16,7 @@ class CreatePaymentVouchersTable extends Migration
         Schema::create('payment_vouchers', function (Blueprint $table) {
             $table->increments('id');
             $table->string('ref')->nullable();
+            $table->string('old_ref')->nullable();
             $table->integer('vouchable_id')->nullable();
             $table->text('vouchable_type')->nullable();
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));

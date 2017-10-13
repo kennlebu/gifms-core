@@ -524,7 +524,7 @@ class post_keys_migration_migration extends Seeder
 
         //invoice submittable
         $sql = "
-                UPDATE `invoice_statuses`           SET `default_status`  = null, `next_status_id`  = '12'     WHERE `id`='10'
+                UPDATE `invoice_statuses`           SET `default_status`  = '1', `next_status_id`  = '12'     WHERE `id`='10'
 
                 ";
 

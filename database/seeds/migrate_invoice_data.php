@@ -35,7 +35,8 @@ class migrate_invoice_data extends Seeder
         $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('Invoices')->get();
 
         $data_to_migrate=array();
-
+        $voucher_data_to_migrate=array();
+        $voucher_key = 1;
         foreach ($data as $key => $value) {
 
             $data_to_migrate[$key]['expense_desc']  				= $data[$key]['InvoiceTitle'];
@@ -88,6 +89,19 @@ class migrate_invoice_data extends Seeder
             $data_to_migrate[$key]['migration_id']					= $data[$key]['ID'];
 
 
+            if($data[$key]['PaymentDate']!=''){
+
+                $voucher_data_to_migrate[$voucher_key]['ref']       = "CHAI/VCHR/".$voucher_key."/".date("Y/m/d", strtotime($data[$key]['PaymentDate']));
+                $voucher_data_to_migrate[$voucher_key]['old_ref']           = $data[$key]['VoucherNumber'];
+                $voucher_data_to_migrate[$voucher_key]['vouchable_id']      = $key+1;
+                $voucher_data_to_migrate[$voucher_key]['vouchable_type']    = 'invoices';
+                $voucher_data_to_migrate[$voucher_key]['created_at']        = $data[$key]['PaymentDate'];
+
+                $voucher_key+=1;
+
+            }
+
+
 
 
             // $data_to_migrate_fin[$key]['id']                                = $key+1;
@@ -113,10 +127,19 @@ class migrate_invoice_data extends Seeder
         }
         
         $insertBatchs = array_chunk($data_to_migrate, 500);
-		foreach ($insertBatchs as $batch) {
-		    DB::table('invoices')->insert($batch);
-		     echo "\n-------------------------------------------------------Batch inserted\n";
-		}
+        foreach ($insertBatchs as $batch) {
+            DB::table('invoices')->insert($batch);
+             echo "\n-------------------------------------------------------Batch inserted\n";
+        }
+
+        echo "\n-----------------------------------------------------------------------------------------------------\n";
+
+        
+        $voucheInsertBatchs = array_chunk($voucher_data_to_migrate, 500);
+        foreach ($voucheInsertBatchs as $batch) {
+            DB::table('payment_vouchers')->insert($batch);
+             echo "\n-------------------------------------------------------payment_vouchers Batch inserted\n";
+        }
 
         echo "\n-----------------------------------------------------------------------------------------------------\n";
 
