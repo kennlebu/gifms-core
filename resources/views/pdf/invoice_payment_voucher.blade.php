@@ -213,7 +213,7 @@
                             <strong>{{$invoice->currency->currency_name}} {{$tot_words}} only.</strong>
                         </td>
                         <td style="border-top: 1px solid #C0C0C0; border-bottom: 1px solid #C0C0C0; border-left: 1px solid #000000; border-right: 1px solid #000000;"  colspan="2" align="right">
-                            <strong>{{number_format($tot_perc,2)}} % </strong>
+                            <strong>{{number_format($tot_perc,2)}} %</strong>
                         </td>
                         <td style="border-top: 1px solid #C0C0C0; border-bottom: 1px solid #C0C0C0; border-left: 1px solid #000000; border-right: 1px solid #000000;"  colspan="1" align="right">
                             <strong>{{number_format($tot,2)}} </strong>
@@ -227,6 +227,7 @@
 
 
                     @foreach ($invoice->approvals as $key => $approval)
+                    @isset($approval->approver_id)
 
                     <tr style="    height: 70px; ">
                         <td colspan="3">
@@ -249,6 +250,7 @@
                             </strong>
                         </td>
                     </tr>
+                    @endisset
                     @endforeach
 
 

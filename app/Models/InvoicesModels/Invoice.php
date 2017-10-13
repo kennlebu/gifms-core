@@ -54,19 +54,19 @@ class Invoice extends BaseModel
     }
     public function comments()
     {
-        return $this->morphMany('App\Models\OtherModels\Comment', 'commentable');
+        return $this->morphMany('App\Models\OtherModels\Comment', 'commentable')->orderBy('created_at','desc');
     }
     public function payments()
     {
-        return $this->morphMany('App\Models\PaymentModels\Payment', 'payable');
+        return $this->morphMany('App\Models\PaymentModels\Payment', 'payable')->orderBy('created_at','desc');
     }
     public function approvals()
     {
-        return $this->morphMany('App\Models\ApprovalsModels\Approval', 'approvable');
+        return $this->morphMany('App\Models\ApprovalsModels\Approval', 'approvable')->orderBy('created_at','desc');
     }
     public function allocations()
     {
-        return $this->morphMany('App\Models\AllocationModels\Allocation', 'allocatable');
+        return $this->morphMany('App\Models\AllocationModels\Allocation', 'allocatable')->orderBy('created_at','desc');
     }
 
 
