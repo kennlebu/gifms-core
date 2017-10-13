@@ -3575,10 +3575,15 @@ class migrate_staff_data extends Seeder
                     ->first();
 
             $permision = Permission::findOrFail($data['id']);
-            $user->attachPermission($permision);
+            try {
+                $user->attachPermission($permision);
+                
+            } catch (Exception $e) {
+                
+            }
 
             echo "\n Permissions-$value---";
-            echo $data[$key]['display_name'];
+            // echo $data[$key]['display_name'];
         }
         
         echo "\n migrate director permissions------------------------------------------------------------------------------\n";
@@ -3866,10 +3871,15 @@ class migrate_staff_data extends Seeder
                     ->first();
 
             $permision = Permission::findOrFail($data['id']);
-            $user->attachPermission($permision);
+            try {
+                $user->attachPermission($permision);
+                
+            } catch (Exception $e) {
+                
+            }
 
             echo "\n Permissions-$value---";
-            echo $data[$key]['display_name'];
+            // echo $data[$key]['display_name'];
         }
         
         echo "\n migrate financial-controller permissions------------------------------------------------------------------------------\n";
@@ -4158,10 +4168,15 @@ class migrate_staff_data extends Seeder
                     ->first();
 
             $permision = Permission::findOrFail($data['id']);
-            $user->attachPermission($permision);
+            try {
+                $user->attachPermission($permision);
+                
+            } catch (Exception $e) {
+                
+            }
 
             echo "\n Permissions-$value---";
-            echo $data[$key]['display_name'];
+            // echo $data[$key]['display_name'];
         }
         
         echo "\n migrate program-manager permissions------------------------------------------------------------------------------\n";
@@ -4450,10 +4465,15 @@ class migrate_staff_data extends Seeder
                     ->first();
 
             $permision = Permission::findOrFail($data['id']);
-            $user->attachPermission($permision);
+            try {
+                $user->attachPermission($permision);
+                
+            } catch (Exception $e) {
+                
+            }
 
             echo "\n Permissions-$value---";
-            echo $data[$key]['display_name'];
+            // echo $data[$key]['display_name'];
         }
         
         echo "\n migrate program-analyst permissions------------------------------------------------------------------------------\n";
@@ -4742,10 +4762,15 @@ class migrate_staff_data extends Seeder
                     ->first();
 
             $permision = Permission::findOrFail($data['id']);
-            $user->attachPermission($permision);
+            try {
+                $user->attachPermission($permision);
+                
+            } catch (Exception $e) {
+                
+            }
 
             echo "\n Permissions-$value---";
-            echo $data[$key]['display_name'];
+            // echo $data[$key]['display_name'];
         }
         
         echo "\n migrate accountant permissions------------------------------------------------------------------------------\n";
@@ -5036,10 +5061,15 @@ class migrate_staff_data extends Seeder
                     ->first();
 
             $permision = Permission::findOrFail($data['id']);
-            $user->attachPermission($permision);
+            try {
+                $user->attachPermission($permision);
+                
+            } catch (Exception $e) {
+                
+            }
 
             echo "\n Permissions-$value---";
-            echo $data[$key]['display_name'];
+            // echo $data[$key]['display_name'];
         }
         
         echo "\n migrate assistant-accountant permissions------------------------------------------------------------------------------\n";
@@ -5328,10 +5358,15 @@ class migrate_staff_data extends Seeder
                     ->first();
 
             $permision = Permission::findOrFail($data['id']);
-            $user->attachPermission($permision);
+            try {
+                $user->attachPermission($permision);
+                
+            } catch (Exception $e) {
+                
+            }
 
             echo "\n Permissions-$value---";
-            echo $data[$key]['display_name'];
+            // echo $data[$key]['display_name'];
         }
         
         echo "\n migrate admin-manager permissions------------------------------------------------------------------------------\n";
