@@ -21,6 +21,7 @@ use Anchu\Ftp\Facades\Ftp;
 use PDF;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Response;
 use App\Models\PaymentModels\PaymentVoucher;
 
 class PaymentVoucherApi extends Controller
@@ -269,8 +270,10 @@ class PaymentVoucherApi extends Controller
             //load signatures
 
             foreach ($payment_voucher->vouchable->approvals as $key => $approval) {
-                try {                    
-                    $signature = $approval->approver->signature_url;
+                try {    
+                    if ($approval->approver) {
+                        $signature = $approval->approver->signature_url;
+                    }                
                 } catch (Exception $e) {
                     
                 }

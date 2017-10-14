@@ -53,7 +53,7 @@
                         </td>
                         <td colspan="3" bgcolor="#092d50" height="20">
                             <strong style="float: left;">
-                                <span style="color: #ffffff;">{{$payment_voucher->vouchable->ref}}</span>
+                                <span style="color: #ffffff;">{{$payment_voucher->ref}}</span>
                             </strong>
                         </td>
                     </tr> 
