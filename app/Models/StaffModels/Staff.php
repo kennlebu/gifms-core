@@ -7,6 +7,9 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\BaseModels\BaseModel;
+use Anchu\Ftp\Facades\Ftp;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
 
 class Staff extends BaseModel
 {
@@ -36,7 +39,7 @@ class Staff extends BaseModel
 
 
 
-    protected $appends = ['full_name','name','is_admin'];
+    protected $appends = ['full_name','name','is_admin','signature_url'];
 
 
 
@@ -67,6 +70,22 @@ class Staff extends BaseModel
         return $is_admin;
 
     }
+
+    public function getSignatureUrlAttribute()
+    {       
+
+        $path           = '/staff/'.$this->attributes['id'].'/signature/signature.png';
+
+        $file_contents  = FTP::connection()->readFile($path);
+
+        Storage::put('staff/signature'.$this->attributes['id'].'.png', $file_contents);
+
+        $url            = storage_path("app/staff/signature".$this->attributes['id'].'.png');
+
+        return "app/staff/signature".$this->attributes['id'].'.png';
+
+    }
+
     public function roles()
     {
         return $this->belongsToMany('App\Models\StaffModels\Role','user_roles','user_id', 'role_id');
