@@ -234,6 +234,11 @@
     externalDocs:
       description: Find out more
       url: 'http://kefinance.clintonhealthaccess.org/api/payment_type/docs'
+  - name: Payment Voucher
+    description: Everything About Payment Voucher
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/payment_voucher/docs'
   - name: Approval
     description: Everything About Approval
     externalDocs:
