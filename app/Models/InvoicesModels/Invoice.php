@@ -68,6 +68,10 @@ class Invoice extends BaseModel
     {
         return $this->morphMany('App\Models\AllocationModels\Allocation', 'allocatable')->orderBy('created_at','desc');
     }
+    public function vouchers()
+    {
+        return $this->morphMany('App\Models\PaymentModels\PaymentVoucher', 'vouchable')->orderBy('created_at','desc');
+    }
 
 
 

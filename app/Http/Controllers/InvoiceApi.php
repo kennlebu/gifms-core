@@ -184,6 +184,7 @@ class InvoiceApi extends Controller
                                         'rejected_by',
                                         'approvals',
                                         'allocations',
+                                        'vouchers',
                                         'comments'
                                     )->find((int) $form['id']);
 
@@ -461,6 +462,7 @@ class InvoiceApi extends Controller
                                         'approvals',
                                         'payments',
                                         'allocations',
+                                        'vouchers',
                                         'comments'
                                     )->findOrFail($invoice_id);
 
@@ -595,6 +597,7 @@ class InvoiceApi extends Controller
                                         'rejected_by',
                                         'approvals',
                                         'allocations',
+                                        'vouchers',
                                         'comments'
                                     )->findOrFail($invoice_id);
 
@@ -615,6 +618,7 @@ class InvoiceApi extends Controller
                                         'rejected_by',
                                         'approvals',
                                         'allocations',
+                                        'vouchers',
                                         'comments'
                                     )->findOrFail($invoice_id);
 
@@ -690,6 +694,7 @@ class InvoiceApi extends Controller
                                         'rejected_by',
                                         'approvals',
                                         'allocations',
+                                        'vouchers',
                                         'comments'
                                     )->findOrFail($invoice_id);
 
@@ -895,6 +900,7 @@ class InvoiceApi extends Controller
                                         'rejected_by',
                                         'approvals',
                                         'allocations',
+                                        'vouchers',
                                         'comments'
                                     )->findOrFail($invoice_id);
 
@@ -1199,6 +1205,7 @@ class InvoiceApi extends Controller
             $data[$key]['rejected_by']                  = $invoice->rejected_by;
             $data[$key]['approvals']                    = $invoice->approvals;
             $data[$key]['allocations']                  = $invoice->allocations;
+            $data[$key]['vouchers']                     = $invoice->vouchers;
             $data[$key]['comments']                     = $invoice->comments;
 
             foreach ($invoice->allocations as $key1 => $value1) {
