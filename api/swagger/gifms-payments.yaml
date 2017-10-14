@@ -200,7 +200,7 @@ paths:
         - Payment
       summary: get payment document by ID
       description: get Payment document
-      operationId: get_document_by_id
+      operationId: get_voucher_document_by_id
       produces:
         - application/json
         - application/xml

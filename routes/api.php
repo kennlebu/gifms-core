@@ -3223,6 +3223,73 @@ Route::GET('/payment_types', 'PaymentTypeApi@getPaymentTypes')->middleware('jwt.
 
 
 
+/**
+ * POST addPaymentVoucher
+ * Summary: Add a new payment_voucher
+ * Notes: new payment_voucher
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/payment_voucher', 'PaymentVoucherApi@addPaymentVoucher')->middleware('jwt.auth');
+/**
+ * PUT updatePaymentVoucher
+ * Summary: Update an existing payment_voucher
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/payment_voucher', 'PaymentVoucherApi@updatePaymentVoucher')->middleware('jwt.auth');
+/**
+ * GET getPaymentVoucherById
+ * Summary: Find payment_voucher by ID
+ * Notes: Returns a single payment_voucher
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/payment_voucher/{payment_voucher_id}', 'PaymentVoucherApi@getPaymentVoucherById')->middleware('jwt.auth');
+/**
+ * DELETE deletePaymentVoucher
+ * Summary: Deletes an payment_voucher
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/payment_voucher/{payment_voucher_id}/get_document', 'PaymentVoucherApi@deletePaymentVoucher')->middleware('jwt.auth');
+/**
+ * GET getDocumentById
+ * Summary: get payment_voucher document by ID
+ * Notes: get Payment Voucher document
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/payment_voucher/{payment_voucher_id}/get_document', 'PaymentVoucherApi@getDocumentById')->middleware('jwt.auth');
+/**
+ * GET paymentVouchersGet
+ * Summary: payment_vouchers List
+ * Notes: The payment_voucher endpoint returns multiple payment_voucher requested given the parameters injected.  
+
+ */
+Route::GET('/payment_vouchers', 'PaymentVoucherApi@paymentVouchersGet')->middleware('jwt.auth');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

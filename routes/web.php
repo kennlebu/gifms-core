@@ -51,6 +51,30 @@ Route::get('test/pdf_invoice_voucher', function () {
 
     return view('pdf/invoice_payment_voucher',$data);
 });
+Route::get('test/pdf_voucher', function () {
+
+    $payment_voucher   = App\Models\PaymentModels\PaymentVoucher::findOrFail(128);
+
+            //load signatures
+
+            foreach ($payment_voucher->vouchable->approvals as $key => $approval) {
+                try {
+                    
+                    echo $signature = $approval->approver->signature_url;
+                } catch (Exception $e) {
+                    
+                }
+
+                # code...
+            }
+            // die;
+
+    $data = array(
+            'payment_voucher'   => $payment_voucher
+        );
+
+    return view('pdf/payment_voucher',$data);
+});
 
 
 
