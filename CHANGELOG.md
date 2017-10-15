@@ -4,11 +4,11 @@
 
 ### Fixes
 
-* **Invoice:** fix [#invoice.1](https://bitbucket.org/kevin_mwangi/gifms-core/tasks) Set role title when generating payment vouchers e.g. Admin Manager
-* **Invoice:** fix [#invoice.23](https://bitbucket.org/kevin_mwangi/gifms-core/tasks) Allow editing of allocations/invoice/LPOs
-* **Invoice:** fix [#invoice.14](https://bitbucket.org/kevin_mwangi/gifms-core/tasks) Restrict submitting of invoices/claims/mobile payments before allocations are complete (full amount)
-* **Invoice:** fix [#invoice.23](https://bitbucket.org/kevin_mwangi/gifms-core/tasks) On payment voucher It should state Accountant Review  not approval
-* **Invoice:** fix [#invoice.26](https://bitbucket.org/kevin_mwangi/gifms-core/tasks) Order Documents as follows LPO>Invoive document>PYmtVoucher
+* **Invoice:** fix [#invoice.1](https://bitbucket.org/kevin_mwangi/gifms-core/todo) Set role title when generating payment vouchers e.g. Admin Manager
+* **Invoice:** fix [#invoice.23](https://bitbucket.org/kevin_mwangi/gifms-core/todo) Allow editing of allocations/invoice/LPOs
+* **Invoice:** fix [#invoice.14](https://bitbucket.org/kevin_mwangi/gifms-core/todo) Restrict submitting of invoices/claims/mobile payments before allocations are complete (full amount)
+* **Invoice:** fix [#invoice.23](https://bitbucket.org/kevin_mwangi/gifms-core/todo) On payment voucher It should state Accountant Review  not approval
+* **Invoice:** fix [#invoice.26](https://bitbucket.org/kevin_mwangi/gifms-core/todo) Order Documents as follows LPO>Invoive document>PYmtVoucher
 
 
 

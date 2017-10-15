@@ -76,13 +76,39 @@
 
                     <tr>
                         <td style="border: 1px solid #000000; border-bottom: 0px solid #c0c0c0;" colspan="3">
-                            <span>Invoice #:</span>
+                            <span>
+                                @if (($payment_voucher->vouchable_type) == 'invoices')
+                                    Invoice
+                                @elseif (($payment_voucher->vouchable_type) == 'mobile_payments')
+                                    Mobile Payment
+                                @elseif (($payment_voucher->vouchable_type) == 'claims')
+                                    Claim
+                                @elseif (($payment_voucher->vouchable_type) == 'advances')
+                                    Advance
+                                @endif
+
+                                #:
+                            </span>
                         </td>
                         <td style="border: 1px solid #000000; border-bottom: 0px solid #c0c0c0;" colspan="3" >
                             <small>Journal Description:</small>
                         </td>
                         <td style="border: 1px solid #000000; border-bottom: 0px solid #c0c0c0;" colspan="2" >
-                            <span>Invoice Amount ({{$payment_voucher->vouchable->currency->currency_name}}):</span>
+                            <span>
+
+                                @if (($payment_voucher->vouchable_type) == 'invoices')
+                                    Invoice
+                                @elseif (($payment_voucher->vouchable_type) == 'mobile_payments')
+                                    Mobile Payment
+                                @elseif (($payment_voucher->vouchable_type) == 'claims')
+                                    Claim
+                                @elseif (($payment_voucher->vouchable_type) == 'advances')
+                                    Advance
+                                @endif
+
+
+                                Amount ({{$payment_voucher->vouchable->currency->currency_name}}):
+                            </span>
                         </td>
                         <td style="border: 1px solid #000000; border-bottom: 0px solid #c0c0c0;" colspan="1" >
                             <span>Payment Mode:</span>
@@ -92,7 +118,13 @@
                     <tr "    height: 70px;">
                         <td style="border: 1px solid #000000; border-top: 0px solid #c0c0c0;" colspan="3">
                             <strong style="float: left;">
-                                <span>{{$payment_voucher->vouchable->ref}}</span>
+                                <span>
+
+                                    @if (($payment_voucher->vouchable_type) == 'invoices')
+                                        {{$payment_voucher->vouchable->external_ref}}
+                                    @else
+                                        {{$payment_voucher->vouchable->ref}}
+                                    @endif</span>
                             </strong>
                         </td>
                         <td style="border: 1px solid #000000; border-top: 0px solid #c0c0c0;" colspan="3" >
@@ -163,43 +195,43 @@
                     @endphp
 
                     @foreach ($payment_voucher->vouchable->allocations as $key => $allocation)
-                    
-                    <tr>
-                        <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #000000; border-right: 1px solid #000000;" colspan="2" >
-                            {{$allocation->project->project_code}}
-                        </td>
-                        <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #000000; border-right: 1px solid #000000;"  colspan="2">
-                            {{$allocation->account->account_name}}
-                        </td>
-                        <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #000000; border-right: 1px solid #000000;"  colspan="2">
-                            {{$allocation->allocation_purpose}}
-                        </td>
-                        <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #000000; border-right: 1px solid #000000;"  colspan="2" align="right">
-                            {{number_format($allocation->percentage_allocated,2)}} % 
-                        </td>
-                        <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #000000; border-right: 1px solid #000000;"  colspan="1" bgcolor="#E4E8F3" align="right">
-                            {{number_format($allocation->amount_allocated,2)}} 
-                        </td>
-                    </tr>
+                        
+                        <tr>
+                            <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #000000; border-right: 1px solid #000000;" colspan="2" >
+                                {{$allocation->project->project_code}}
+                            </td>
+                            <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #000000; border-right: 1px solid #000000;"  colspan="2">
+                                {{$allocation->account->account_name}}
+                            </td>
+                            <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #000000; border-right: 1px solid #000000;"  colspan="2">
+                                {{$allocation->allocation_purpose}}
+                            </td>
+                            <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #000000; border-right: 1px solid #000000;"  colspan="2" align="right">
+                                {{number_format($allocation->percentage_allocated,2)}} % 
+                            </td>
+                            <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #000000; border-right: 1px solid #000000;"  colspan="1" bgcolor="#E4E8F3" align="right">
+                                {{number_format($allocation->amount_allocated,2)}} 
+                            </td>
+                        </tr>
 
-                    @php 
+                        @php 
 
-                        $tot_perc=$allocation->percentage_allocated+$tot_perc 
+                            $tot_perc=$allocation->percentage_allocated+$tot_perc 
 
-                    @endphp
+                        @endphp
 
-                    @php 
+                        @php 
 
-                        $tot=$allocation->amount_allocated+$tot 
+                            $tot=$allocation->amount_allocated+$tot 
 
-                    @endphp
+                        @endphp
 
-                    @php 
+                        @php 
 
-                        $f = new NumberFormatter("en", NumberFormatter::SPELLOUT);
-                        $tot_words =  $f->format($tot);
+                            $f = new NumberFormatter("en", NumberFormatter::SPELLOUT);
+                            $tot_words =  $f->format($tot);
 
-                    @endphp
+                        @endphp
 
 
                     @endforeach
@@ -227,30 +259,30 @@
 
 
                     @foreach ($payment_voucher->vouchable->approvals as $key => $approval)
-                    @isset($approval->approver_id)
+                        @isset($approval->approver_id)
 
-                    <tr style="    height: 70px; ">
-                        <td colspan="3">
-                            <strong>{{$approval->approval_level->approval_level}}</strong>                          
-                        </td>
-                        <td style="border-top: 1px solid #C0C0C0; border-bottom: 1px solid #C0C0C0; border-left: 1px solid #000000; border-right: 1px solid #000000;   vertical-align: top;  background-color: #f7f8fb;"  colspan="1">
-                            <small>Approver</small><br/><br/><br/>
-                            @isset($approval->approver_id)
-                                <strong>{{$approval->approver->full_name}}</strong>
-                            @endisset
-                        </td>
-                        <td style="border-top: 1px solid #C0C0C0; border-bottom: 1px solid #C0C0C0; border-left: 1px solid #000000; border-right: 1px solid #000000;  vertical-align: top;" colspan="3" >
-                            <small>signed:</small><br/>
-                            <img height = "60" alt="." src="{{asset('../storage/app/staff/signature'.$approval->approver_id.'.png')}}"></img>
-                        </td>
-                        <td style="border-top: 1px solid #C0C0C0; border-bottom: 1px solid #C0C0C0; border-left: 1px solid #000000; border-right: 1px solid #000000;   vertical-align: top;  background-color: #f7f8fb;"  colspan="2" >                  
-                                <small>Date</small><br/><br/><br/>          
-                            <strong style="float: left;">
-                                <span>{{date('d F, Y', strtotime($approval->created_at)) }}</span>
-                            </strong>
-                        </td>
-                    </tr>
-                    @endisset
+                        <tr style="    height: 70px; ">
+                            <td colspan="3">
+                                <strong>{{$approval->approval_level->approval_level}}</strong>                          
+                            </td>
+                            <td style="border-top: 1px solid #C0C0C0; border-bottom: 1px solid #C0C0C0; border-left: 1px solid #000000; border-right: 1px solid #000000;   vertical-align: top;  background-color: #f7f8fb;"  colspan="1">
+                                <small>Approver</small><br/><br/><br/>
+                                @isset($approval->approver_id)
+                                    <strong>{{$approval->approver->full_name}}</strong>
+                                @endisset
+                            </td>
+                            <td style="border-top: 1px solid #C0C0C0; border-bottom: 1px solid #C0C0C0; border-left: 1px solid #000000; border-right: 1px solid #000000;  vertical-align: top;" colspan="3" >
+                                <small>signed:</small><br/>
+                                <img height = "60" alt="." src="{{asset('../storage/app/staff/signature'.$approval->approver_id.'.png')}}"></img>
+                            </td>
+                            <td style="border-top: 1px solid #C0C0C0; border-bottom: 1px solid #C0C0C0; border-left: 1px solid #000000; border-right: 1px solid #000000;   vertical-align: top;  background-color: #f7f8fb;"  colspan="2" >                  
+                                    <small>Date</small><br/><br/><br/>          
+                                <strong style="float: left;">
+                                    <span>{{date('d F, Y', strtotime($approval->created_at)) }}</span>
+                                </strong>
+                            </td>
+                        </tr>
+                        @endisset
                     @endforeach
 
 

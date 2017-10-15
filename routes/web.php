@@ -53,7 +53,7 @@ Route::get('test/pdf_invoice_voucher', function () {
 });
 Route::get('test/pdf_voucher', function () {
 
-    $payment_voucher   = App\Models\PaymentModels\PaymentVoucher::findOrFail(128);
+    $payment_voucher   = App\Models\PaymentModels\PaymentVoucher::findOrFail(12);
 
             //load signatures
 
