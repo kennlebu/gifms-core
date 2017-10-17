@@ -96,6 +96,11 @@ class AllocationApi extends Controller
             if($allocation->save()) {
 
 
+                $user = JWTAuth::parseToken()->authenticate();
+                activity()
+                   ->performedOn($allocation->allocatable)
+                   ->causedBy($user)
+                   ->log('allocated');
                 $allocation->save();
                 return Response()->json(array('success' => 'allocation added','allocation' => $allocation), 200);
             }
@@ -180,6 +185,11 @@ class AllocationApi extends Controller
             if($allocation->save()) {
 
 
+                $user = JWTAuth::parseToken()->authenticate();
+                activity()
+                   ->performedOn($allocation->allocatable)
+                   ->causedBy($user)
+                   ->log('re-allocated');
                 $allocation->save();
                 return Response()->json(array('success' => 'allocation updated','allocation' => $allocation), 200);
             }
@@ -225,10 +235,20 @@ class AllocationApi extends Controller
         $input = Request::all();
 
 
+        $allocation = Allocation::findOrFail($allocation_id);
+        $user = JWTAuth::parseToken()->authenticate();
+        activity()
+           ->performedOn($allocation->allocatable)
+           ->causedBy($user)
+           ->log('de-allocated');
+               
         $deleted_allocation = Allocation::destroy($allocation_id);
 
 
+
+
         if($deleted_allocation){
+
             return response()->json(['msg'=>"Allocation deleted"], 200,array(),JSON_PRETTY_PRINT);
         }else{
             return response()->json(['error'=>"Allocation not found"], 404,array(),JSON_PRETTY_PRINT);

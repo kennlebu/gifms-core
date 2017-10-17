@@ -121,7 +121,7 @@ class Invoice extends BaseModel
     }
     public function logs()
     {
-        return $this->morphMany('App\Models\LogsModels\HistoryLog', 'subject')->orderBy('created_at','desc');
+        return $this->morphMany('App\Models\LogsModels\HistoryLog', 'subject')->orderBy('created_at','asc');
     }
 
 

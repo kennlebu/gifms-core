@@ -642,6 +642,11 @@ class InvoiceApi extends Controller
 
                 $approval->save();
 
+                activity()
+                   ->performedOn($invoice)
+                   ->causedBy($user)
+                   ->log('approved');
+
                 Mail::send(new NotifyInvoice($invoice));
 
                 return Response()->json(array('msg' => 'Success: invoice approved','invoice' => $invoice), 200);
@@ -718,6 +723,11 @@ class InvoiceApi extends Controller
             if($invoice->save()) {
 
                 Mail::send(new NotifyInvoice($invoice));
+
+                activity()
+                   ->performedOn($invoice)
+                   ->causedBy($user)
+                   ->log('rejected');
 
                 return Response()->json(array('msg' => 'Success: invoice approved','invoice' => $invoice), 200);
             }
@@ -925,6 +935,12 @@ class InvoiceApi extends Controller
             if($invoice->save()) {
 
                 Mail::send(new NotifyInvoice($invoice));
+
+                $user = JWTAuth::parseToken()->authenticate();
+                activity()
+                   ->performedOn($invoice)
+                   ->causedBy($user)
+                   ->log('submited for approval');
 
                 return Response()->json(array('msg' => 'Success: invoice submitted','invoice' => $invoice), 200);
             }
