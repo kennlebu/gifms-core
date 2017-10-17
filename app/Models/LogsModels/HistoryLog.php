@@ -11,11 +11,11 @@ class HistoryLog extends Model
 
     protected $table = 'activity_log';
 
-    public function subjectable()
+    public function subject()
     {
         return $this->morphTo();
     }
-    public function causable()
+    public function causer()
     {
         return $this->morphTo();
     }

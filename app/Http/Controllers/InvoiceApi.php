@@ -478,6 +478,12 @@ class InvoiceApi extends Controller
                 $response['allocations'][$key]['account']  =   $account;
             }
 
+            foreach ($response->logs as $key => $value) {
+                
+                $response['logs'][$key]['causer']   =   $value->causer;
+                $response['logs'][$key]['subject']  =   $value->subject;
+            }
+
             foreach ($response->approvals as $key => $value) {
                 $approver = Staff::find((int)$value['approver_id']);
                 $appoval_level = ApprovalLevel::find((int)$value['approval_level_id']);
