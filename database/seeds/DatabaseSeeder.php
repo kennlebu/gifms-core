@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
 
         DB::connection(env('DB_MIGRATE_FROM','sqlsrv'));
 
+        //DATA
         
         //refferences
         $this->call(migrate_lookup_data::class);
@@ -39,7 +40,7 @@ class DatabaseSeeder extends Seeder
 
 
 
-
+        //KEYS
 
         //refferences
         $this->call(migrate_lookup_keys::class);
@@ -54,9 +55,9 @@ class DatabaseSeeder extends Seeder
 
         //accounting
         $this->call(migrate_accounting_keys::class);
-        $this->call(migrate_payment_keys::class);   //waiting for definitions staff_advances
+        $this->call(migrate_payment_keys::class); 
         $this->call(migrate_lpo_keys::class);
-        $this->call(migrate_invoice_keys::class);   //waiting for definitions claims, staff_advances, 
+        $this->call(migrate_invoice_keys::class); 
         $this->call(migrate_mobile_payment_keys::class);
         $this->call(migrate_finance_keys::class);
         $this->call(migrate_advances_keys::class);
@@ -64,12 +65,44 @@ class DatabaseSeeder extends Seeder
 
 
 
-
+        //POST MIGRATION
 
         // drop keys after migration
         $this->call(post_keys_migration_migration::class);
         $this->call(post_migration_allocations_data::class);
         $this->call(post_migration_keys_drop::class);
+
+
+
+
+
+
+
+
+
+
+        //LOGS
+
+        //refferences
+        // $this->call(migrate_lookup_logs::class);
+        // $this->call(migrate_approvals_logs::class);
+        // $this->call(migrate_departments_logs::class);
+        // $this->call(migrate_projects_logs::class);
+        
+        // $this->call(migrate_banking_logs::class);
+        // //personell
+        // $this->call(migrate_staff_logs::class);
+        // $this->call(migrate_suppliers_logs::class);
+
+        // //accounting
+        // $this->call(migrate_accounting_logs::class);
+        // $this->call(migrate_payment_logs::class);
+        // $this->call(migrate_lpo_logs::class);
+        $this->call(migrate_invoice_logs::class);
+        // $this->call(migrate_mobile_payment_logs::class);
+        // $this->call(migrate_finance_logs::class);
+        // $this->call(migrate_advances_logs::class);
+        // $this->call(migrate_claims_keys::class);
         
     }
 }

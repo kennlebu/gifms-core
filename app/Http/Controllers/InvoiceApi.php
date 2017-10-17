@@ -194,7 +194,7 @@ class InvoiceApi extends Controller
                 $invoice->expense_purpose                   =               $form['expense_purpose'];
                 // $invoice->invoice_date                      =               $form['invoice_date'];
                 // $invoice->invoice_date                      =               $invoice_date;
-                $invoice->lpo_id                            =   (int)       $form['lpo_id'];
+                $invoice->lpo_id                            =   (((int) $form['lpo_id'])>0)?$form['lpo_id']:null;
                 $invoice->supplier_id                       =   (int)       $form['supplier_id'];
                 $invoice->project_manager_id                =   (int)       $form['project_manager_id'];
                 $invoice->total                             =   (double)    $form['total'];
@@ -323,7 +323,7 @@ class InvoiceApi extends Controller
                 $invoice->expense_purpose                   =               $form['expense_purpose'];
                 // $invoice->invoice_date                      =               $form['invoice_date'];
                 // $invoice->invoice_date                      =               $invoice_date;
-                $invoice->lpo_id                            =   (int)       $form['lpo_id'];
+                $invoice->lpo_id                            =   (((int) $form['lpo_id'])>0)?$form['lpo_id']:null;;
                 $invoice->supplier_id                       =   (int)       $form['supplier_id'];
                 $invoice->project_manager_id                =   (int)       $form['project_manager_id'];
                 $invoice->total                             =   (double)    $form['total'];
