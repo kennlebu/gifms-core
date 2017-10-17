@@ -6,12 +6,59 @@ namespace App\Models\InvoicesModels;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\BaseModels\BaseModel;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Invoice extends BaseModel
 {
     //
     use SoftDeletes;
 
+    // use LogsActivity;
+
+    protected $fillable = [
+        'ref',
+        'expense_desc',
+        'expense_purpose',
+        'external_ref',
+        'invoice_date',
+        'received_at',
+        'received_by_id',
+        'raised_at',
+        'raised_by_id',
+        'raise_action_by_id',
+        'total',
+        'invoice_document',
+        'project_manager_id',
+        'supplier_id',
+        'status_id',
+        'payment_mode_id',
+        'currency_id',
+        'lpo_id'
+    ];
+
+
+
+    protected static $logAttributes = [
+
+        'ref',
+        'expense_desc',
+        'expense_purpose',
+        'external_ref',
+        'invoice_date',
+        'received_at',
+        'received_by_id',
+        'raised_at',
+        'raised_by_id',
+        'raise_action_by_id',
+        'total',
+        'invoice_document',
+        'project_manager_id',
+        'supplier_id',
+        'status_id',
+        'payment_mode_id',
+        'currency_id',
+        'lpo_id'
+    ];
 
     protected $appends = ['amount_allocated'];
 
@@ -71,6 +118,10 @@ class Invoice extends BaseModel
     public function vouchers()
     {
         return $this->morphMany('App\Models\PaymentModels\PaymentVoucher', 'vouchable')->orderBy('created_at','asc');
+    }
+    public function logs()
+    {
+        return $this->morphMany('App\Models\LogsModels\HistoryLog', 'subject')->orderBy('created_at','desc');
     }
 
 

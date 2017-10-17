@@ -62,5 +62,9 @@ class Advance extends BaseModel
     {
         return $this->morphMany('App\Models\AllocationModels\Allocation', 'allocatable');
     }
+    // public function logs()
+    // {
+    //     return $this->morphMany('App\Models\LogsModels\HistoryLog', 'subjectable');
+    // }
 //
 }

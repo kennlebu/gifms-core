@@ -144,7 +144,7 @@ class InvoiceApi extends Controller
                 $invoice->expense_purpose                   =               $form['expense_purpose'];
                 // $invoice->invoice_date                      =               $form['invoice_date'];
                 $invoice->invoice_date                      =               $invoice_date;
-                $invoice->lpo_id                            =   (int)       $form['lpo_id'];
+                $invoice->lpo_id                            =   (((int) $form['lpo_id'])>0)?$form['lpo_id']:null;
                 $invoice->supplier_id                       =   (int)       $form['supplier_id'];
                 $invoice->project_manager_id                =   (int)       $form['project_manager_id'];
                 $invoice->total                             =   (double)    $form['total'];
@@ -160,8 +160,8 @@ class InvoiceApi extends Controller
                 $invoice->raised_by_id                      =   (int)       $form['raised_by_id'];
                 $invoice->external_ref                      =               $form['external_ref'];
                 // $invoice->invoice_date                      =               $form['invoice_date'];                
-                $invoice->invoice_date                      =               $invoice_date;
-                $invoice->lpo_id                            =   (int)       $form['lpo_id'];
+                $invoice->invoice_date                      =   (((int) $form['lpo_id'])>0)?$form['lpo_id']:null;
+                $invoice->lpo_id                            =               $form['lpo_id'];
                 $invoice->supplier_id                       =   (int)       $form['supplier_id'];
                 $invoice->total                             =   (double)    $form['total'];
                 $invoice->currency_id                       =   (int)       $form['currency_id'];
@@ -287,6 +287,7 @@ class InvoiceApi extends Controller
                 'received_by_id',
                 'expense_desc',
                 'expense_purpose',
+                'external_ref',
                 // 'invoice_date',
                 'lpo_id',
                 'supplier_id',
@@ -321,6 +322,7 @@ class InvoiceApi extends Controller
                 $invoice->raised_by_id                      =   (int)       $form['raised_by_id'];
                 $invoice->expense_desc                      =               $form['expense_desc'];
                 $invoice->expense_purpose                   =               $form['expense_purpose'];
+                $invoice->external_ref                      =               $form['external_ref'];
                 // $invoice->invoice_date                      =               $form['invoice_date'];
                 // $invoice->invoice_date                      =               $invoice_date;
                 $invoice->lpo_id                            =   (((int) $form['lpo_id'])>0)?$form['lpo_id']:null;;
@@ -462,6 +464,7 @@ class InvoiceApi extends Controller
                                         'approvals',
                                         'payments',
                                         'allocations',
+                                        'logs',
                                         'vouchers',
                                         'comments'
                                     )->findOrFail($invoice_id);
@@ -900,6 +903,7 @@ class InvoiceApi extends Controller
                                         'rejected_by',
                                         'approvals',
                                         'allocations',
+                                        'logs',
                                         'vouchers',
                                         'comments'
                                     )->findOrFail($invoice_id);
@@ -1205,6 +1209,7 @@ class InvoiceApi extends Controller
             $data[$key]['rejected_by']                  = $invoice->rejected_by;
             $data[$key]['approvals']                    = $invoice->approvals;
             $data[$key]['allocations']                  = $invoice->allocations;
+            $data[$key]['logs']                  = $invoice->logs;
             $data[$key]['vouchers']                     = $invoice->vouchers;
             $data[$key]['comments']                     = $invoice->comments;
 

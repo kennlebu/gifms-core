@@ -16,14 +16,43 @@ class migrate_invoice_logs extends Seeder
      */
     public function run()
     {
-    	$invoices 				= 	Invoice::all();
-    	$approvals 				= 	Approval::where("approvable_type",'invoices')->get();
-    	$allocations 			= 	Allocation::where("allocatable_type",'invoices')->get()();
-    	$payments 				= 	Payment::where("payment_type",'invoices')->get()();
-    	$payments 				= 	Payment::where("payment_type",'invoices')->get()();
-    	$payment_vouchers 		= 	PaymentVoucher::where("payment_type",'invoices')->get()();
+    	ini_set('memory_limit', '-1');
+
+
+
+
+
+
+
+
 
     	
+    	
+    	$invoices 				= 	Invoice::all();
+    	$approvals 				= 	Approval::where("approvable_type",'invoices')->get();
+    	$allocations 			= 	Allocation::where("allocatable_type",'invoices')->get();
+    	$payments 				= 	Payment::where("payable_type",'invoices')->get();
+    	$payment_vouchers 		= 	PaymentVoucher::where("vouchable_type",'invoices')->get();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         $data_to_migrate=array();
     	foreach ($invoices as $key => $invoice) {
@@ -36,7 +65,7 @@ class migrate_invoice_logs extends Seeder
             $data_to_migrate[$key]['causer_type']  				=		"staff";
             $data_to_migrate[$key]['properties']  				=		"[]";
             $data_to_migrate[$key]['created_at']  				=		$invoice->created_at;
-            $data_to_migrate[$key]['updated_at']  				=		$invoice->updated_at;
+            $data_to_migrate[$key]['updated_at']  				=		$invoice->created_at;
 
             echo "\n Invoices-$key--";
             echo $invoice->external_ref;
@@ -92,7 +121,7 @@ class migrate_invoice_logs extends Seeder
             $data_to_migrate[$key]['causer_type']  				=		"staff";
             $data_to_migrate[$key]['properties']  				=		"[]";
             $data_to_migrate[$key]['created_at']  				=		$approval->created_at;
-            $data_to_migrate[$key]['updated_at']  				=		$approval->updated_at;
+            $data_to_migrate[$key]['updated_at']  				=		$approval->created_at;
 
             echo "\n Invoices approvals-$key--";
     	}
@@ -145,7 +174,7 @@ class migrate_invoice_logs extends Seeder
             $data_to_migrate[$key]['properties']  				=		"[]";
             try{
 	            $data_to_migrate[$key]['created_at']  			=		$allocation->created_at;
-	            $data_to_migrate[$key]['updated_at']  			=		$allocation->updated_at;
+	            $data_to_migrate[$key]['updated_at']  			=		$allocation->created_at;
             } catch (Exception $e){
 	            $data_to_migrate[$key]['created_at']  			=		0;
 	            $data_to_migrate[$key]['updated_at']  			=		0;
@@ -203,7 +232,7 @@ class migrate_invoice_logs extends Seeder
             $data_to_migrate[$key]['causer_type']  				=		"staff";
             $data_to_migrate[$key]['properties']  				=		"[]";
             $data_to_migrate[$key]['created_at']  				=		$voucher->created_at;
-            $data_to_migrate[$key]['updated_at']  				=		$voucher->updated_at;
+            $data_to_migrate[$key]['updated_at']  				=		$voucher->created_at;
 
             echo "\n Invoices payment voucher -$key--";
             echo $invoice->external_ref;
@@ -240,8 +269,6 @@ class migrate_invoice_logs extends Seeder
 
 
 
-    }
-
         $data_to_migrate=array();
     	foreach ($payments as $key => $payment) {
     		
@@ -252,11 +279,11 @@ class migrate_invoice_logs extends Seeder
             } catch (Exception $e){
             	$data_to_migrate[$key]['subject_id'] 			=		0;
             }
-            $data_to_migrate[$key]['causer_id']  				=		39;
+            $data_to_migrate[$key]['causer_id']  				=		36;
             $data_to_migrate[$key]['causer_type']  				=		"staff";
             $data_to_migrate[$key]['properties']  				=		"[]";
             $data_to_migrate[$key]['created_at']  				=		$payment->created_at;
-            $data_to_migrate[$key]['updated_at']  				=		$payment->updated_at;
+            $data_to_migrate[$key]['updated_at']  				=		$payment->created_at;
 
             echo "\n Invoicespayment -$key--";
             echo $invoice->external_ref;
