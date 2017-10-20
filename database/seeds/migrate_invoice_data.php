@@ -49,7 +49,7 @@ class migrate_invoice_data extends Seeder
             // $data_to_migrate[$key]['raise_action_by_id']            = $data[$key]['ReceivedBy'];
             $data_to_migrate[$key]['total']                         = $data[$key]['InvoiceAmount'];
             $data_to_migrate[$key]['invoice_document']              = $data[$key]['InvoiceDocument'];
-            $data_to_migrate[$key]['supplier_id']                   = $data[$key]['Supplier'];
+            // $data_to_migrate[$key]['supplier_id']                   = $data[$key]['Supplier'];
             $data_to_migrate[$key]['status_id']                     = $data[$key]['InvoiceStatus'];
             $data_to_migrate[$key]['accountant_approval_date']      = $data[$key]['AccountsApprovalDate'];
             $data_to_migrate[$key]['management_approval_date']      = $data[$key]['ManagementApprovalDate'];
@@ -59,13 +59,14 @@ class migrate_invoice_data extends Seeder
             $data_to_migrate[$key]['reconcilliation_date']          = $data[$key]['ReconciliationDate'];
             $data_to_migrate[$key]['staff_advance']                 = $data[$key]['EmployeeAdvance'];
             $data_to_migrate[$key]['comments']                      = $data[$key]['InvoiceComments'];
-            $data_to_migrate[$key]['invoice_type_id']                  = $data[$key]['InvoiceType'];
-            $data_to_migrate[$key]['currency_id']                      = $data[$key]['InvoiceCurrency'];
-            $data_to_migrate[$key]['rejection_reason']                 = $data[$key]['RejectReason'];
+            $data_to_migrate[$key]['invoice_type_id']               = $data[$key]['InvoiceType'];
+            $data_to_migrate[$key]['currency_id']                   = $data[$key]['InvoiceCurrency'];
+            $data_to_migrate[$key]['rejection_reason']              = $data[$key]['RejectReason'];
             $data_to_migrate[$key]['withholding_tax']               = $data[$key]['WithHoldingTax'];
             $data_to_migrate[$key]['payment_mode_id']               = $data[$key]['InvoicePaymentMode'];
             $data_to_migrate[$key]['country_id']                    = $data[$key]['InvoiceCountry'];
             $data_to_migrate[$key]['voucher_no']                    = $data[$key]['VoucherNumber'];
+            $data_to_migrate[$key]['migration_supplier_id']         = $data[$key]['Supplier'];
             $data_to_migrate[$key]['migration_project_manager_id']  = $data[$key]['ProjectManager'];
             $data_to_migrate[$key]['migration_management_approval_id']	= $data[$key]['ManagementApproval'];
             $data_to_migrate[$key]['migration_raised_by_id']		= $data[$key]['ReceivedBy'];

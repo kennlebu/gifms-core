@@ -66,6 +66,7 @@ class CreateInvoicesTable extends Migration
             $table->double('exempt_supplies',30,5)->nullable();
             $table->double('other_levies',30,5)->nullable();
             $table->double('other_amounts',30,5)->nullable();
+            $table->integer('migration_supplier_id')->nullable();
             $table->integer('migration_project_manager_id')->nullable();
             $table->integer('migration_management_approval_id')->nullable();
             $table->integer('migration_raised_by_id')->nullable();

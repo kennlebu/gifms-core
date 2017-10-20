@@ -92,7 +92,7 @@ class NotifyInvoice extends Mailable
                             'addressed_to' => $this->invoice->raised_by,
                             'js_url' => Config::get('app.js_url'),
                         ])
-                    ->subject("Invoice Received/Logged  ".$this->invoice->ref);
+                    ->subject("Invoice Received/Logged  ".$this->invoice->external_ref);
         }else if($this->invoice->status_id == 12){
 
 
@@ -103,7 +103,7 @@ class NotifyInvoice extends Mailable
                             'addressed_to' => $this->accountant,
                             'js_url' => Config::get('app.js_url'),
                         ])
-                    ->subject("Invoice Approval Request ".$this->invoice->ref);
+                    ->subject("Invoice Approval Request ".$this->invoice->external_ref);
         }else if($this->invoice->status_id == 1){
 
 
@@ -114,7 +114,7 @@ class NotifyInvoice extends Mailable
                             'addressed_to' => $this->invoice->project_manager,
                             'js_url' => Config::get('app.js_url'),
                         ])
-                    ->subject("Invoice Approval Request ".$this->invoice->ref);
+                    ->subject("Invoice Approval Request ".$this->invoice->external_ref);
         }else if($this->invoice->status_id == 2){
 
 
@@ -125,7 +125,7 @@ class NotifyInvoice extends Mailable
                             'addressed_to' => $this->financial_controller,
                             'js_url' => Config::get('app.js_url'),
                         ])
-                    ->subject("Invoice Approval Request ".$this->invoice->ref);
+                    ->subject("Invoice Approval Request ".$this->invoice->external_ref);
         }else if($this->invoice->status_id == 3){
 
 
@@ -136,7 +136,7 @@ class NotifyInvoice extends Mailable
                             'addressed_to' => $this->director,
                             'js_url' => Config::get('app.js_url'),
                         ])
-                    ->subject("Invoice Approval Request ".$this->invoice->ref);
+                    ->subject("Invoice Approval Request ".$this->invoice->external_ref);
         }
 
 
@@ -155,7 +155,7 @@ class NotifyInvoice extends Mailable
         //                     'addressed_to' => $this->invoice->raised_by,
         //                     'js_url' => Config::get('app.js_url'),
         //                 ])
-        //             ->subject("Invoice Cancelled ".$this->invoice->ref);
+        //             ->subject("Invoice Cancelled ".$this->invoice->external_ref);
         // }
         else if($this->invoice->status_id == 9){
 
@@ -167,7 +167,7 @@ class NotifyInvoice extends Mailable
                             'addressed_to' => $this->invoice->raised_by,
                             'js_url' => Config::get('app.js_url'),
                         ])
-                    ->subject("Invoice Rejected ".$this->invoice->ref);
+                    ->subject("Invoice Rejected ".$this->invoice->external_ref);
         }
 
     }
