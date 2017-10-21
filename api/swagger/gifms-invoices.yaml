@@ -81,6 +81,38 @@ paths:
 
 
 
+  '/invoices/approve':    
+    patch:
+      tags:
+        - Invoice
+      summary: Approve several Invoices
+      description: Approve  
+      operationId: approve_several_invoices
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: invoice object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/invoice'
+      responses:
+        '200':
+          description: Approved invoices 
+        '405':
+          description: Invalid input,unsuccessful
+      security:
+        - api_key: []
+
+
+
+
+
   /invoice:    
     post:
       tags:

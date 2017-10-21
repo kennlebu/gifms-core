@@ -2797,6 +2797,13 @@ Route::PATCH('/invoice/{invoice_id}/submit_for_approval', 'InvoiceApi@submitInvo
 
  */
 Route::GET('/invoices', 'InvoiceApi@getInvoices')->middleware('jwt.auth');
+/**
+ * PATCH approveSeveralInvoices
+ * Summary: Approve several Invoices
+ * Notes: Approve
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PATCH('/invoices/approve', 'InvoiceApi@approveSeveralInvoices')->middleware('jwt.auth');
 
 
 

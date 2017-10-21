@@ -979,6 +979,56 @@ class InvoiceApi extends Controller
 
 
 
+
+    /**
+     * Operation approveSeveralInvoices
+     *
+     * Approve several Invoices.
+     *
+     *
+     * @return Http response
+     */
+    public function approveSeveralInvoices()
+    {   
+        try {
+            $form = Request::only("invoices");
+            $invoice_ids = $form['invoices'];
+
+            foreach ($invoice_ids as $key => $invoice_id) {
+                $this->approveInvoice($invoice_id);
+            }
+
+            return response()->json(['invoices'=>$form['invoices']], 201,array(),JSON_PRETTY_PRINT);
+            
+        } catch (Exception $e) {
+             return response()->json(['error'=>"An rerror occured during processing"], 500,array(),JSON_PRETTY_PRINT);
+            
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /**
      * Operation getInvoices
      *
