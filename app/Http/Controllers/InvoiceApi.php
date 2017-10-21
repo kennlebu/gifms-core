@@ -1096,6 +1096,25 @@ class InvoiceApi extends Controller
         }
 
 
+        
+
+        if(array_key_exists('my_approvables', $input)){
+
+
+            $qb->where(function ($query) use ($app_stat) {
+                    
+            $current_user =  JWTAuth::parseToken()->authenticate();
+                foreach ($app_stat as $key => $value) {
+                    $permission = 'APPROVE_INVOICE_'.$value['id'];
+                    if($current_user->can($permission)){
+                        $query->orWhere('status_id',$value['id']);                        
+                    }
+                }
+
+            });
+        }
+
+
 
 
         //searching

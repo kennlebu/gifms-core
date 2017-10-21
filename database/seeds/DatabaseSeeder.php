@@ -103,6 +103,18 @@ class DatabaseSeeder extends Seeder
         // $this->call(migrate_finance_logs::class);
         // $this->call(migrate_advances_logs::class);
         // $this->call(migrate_claims_keys::class);
+
+
+
+
+
+
+
+
+
+
+
+        $this->call(migrate_staff_roles::class);
         
     }
 }

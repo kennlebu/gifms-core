@@ -1136,33 +1136,33 @@ class migrate_staff_data extends Seeder
             [
                 'display_name'              => 'Invoice PM Approval',
                 'operation_type'            => 'Approval',
-                'name'                      => 'APPROVE_INVOICE_3',
+                'name'                      => 'APPROVE_INVOICE_1',
                 'entity'                    => 'Invoice',
-                'at_status_id'              => '3',
+                'at_status_id'              => '1',
                 'approval_level_id'         => '2'
             ],
             [
                 'display_name'              => 'Invoice Accountant Approval',
                 'operation_type'            => 'Approval',
-                'name'                      => 'APPROVE_INVOICE_13',
+                'name'                      => 'APPROVE_INVOICE_12',
                 'entity'                    => 'Invoice',
-                'at_status_id'              => '13',
+                'at_status_id'              => '12',
                 'approval_level_id'         => '1'
             ],
             [
                 'display_name'              => 'Invoice Finance Approval',
                 'operation_type'            => 'Approval',
-                'name'                      => 'APPROVE_INVOICE_4',
+                'name'                      => 'APPROVE_INVOICE_2',
                 'entity'                    => 'Invoice',
-                'at_status_id'              => '4',
+                'at_status_id'              => '2',
                 'approval_level_id'         => '3'
             ],
             [
                 'display_name'              => 'Invoice Management Approval',
                 'operation_type'            => 'Approval',
-                'name'                      => 'APPROVE_INVOICE_5',
+                'name'                      => 'APPROVE_INVOICE_3',
                 'entity'                    => 'Invoice',
-                'at_status_id'              => '5',
+                'at_status_id'              => '3',
                 'approval_level_id'         => '4'
             ],
 
@@ -3126,10 +3126,10 @@ class migrate_staff_data extends Seeder
         //             'UPDATE_INVOICE_10',
         //             'UPDATE_INVOICE_11',
         //             'UPDATE_INVOICE_12',
+        //             'APPROVE_INVOICE_1',
+        //             'APPROVE_INVOICE_12',
+        //             'APPROVE_INVOICE_2',
         //             'APPROVE_INVOICE_3',
-        //             'APPROVE_INVOICE_13',
-        //             'APPROVE_INVOICE_4',
-        //             'APPROVE_INVOICE_5',
         //             'DELETE_INVOICE_1',
         //             'DELETE_INVOICE_2',
         //             'DELETE_INVOICE_3',
@@ -3395,10 +3395,10 @@ class migrate_staff_data extends Seeder
                     'UPDATE_INVOICE_10',
                     'UPDATE_INVOICE_11',
                     // 'UPDATE_INVOICE_12',
-                    // 'APPROVE_INVOICE_3',
-                    // 'APPROVE_INVOICE_13',
-                    // 'APPROVE_INVOICE_4',
-                    // 'APPROVE_INVOICE_5',
+                    // 'APPROVE_INVOICE_1',
+                    // 'APPROVE_INVOICE_12',
+                    // 'APPROVE_INVOICE_2',
+                    'APPROVE_INVOICE_3',
                     // 'DELETE_INVOICE_1',
                     // 'DELETE_INVOICE_2',
                     // 'DELETE_INVOICE_3',
@@ -3692,10 +3692,10 @@ class migrate_staff_data extends Seeder
                     'UPDATE_INVOICE_10',
                     'UPDATE_INVOICE_11',
                     // 'UPDATE_INVOICE_12',
+                    // 'APPROVE_INVOICE_1',
+                    // 'APPROVE_INVOICE_12',
+                    'APPROVE_INVOICE_2',
                     // 'APPROVE_INVOICE_3',
-                    // 'APPROVE_INVOICE_13',
-                    // 'APPROVE_INVOICE_4',
-                    // 'APPROVE_INVOICE_5',
                     // 'DELETE_INVOICE_1',
                     // 'DELETE_INVOICE_2',
                     // 'DELETE_INVOICE_3',
@@ -3862,7 +3862,7 @@ class migrate_staff_data extends Seeder
                     );
 
 
-        $user = Role::findOrFail(3);
+        $user = Role::findOrFail(5);
 
         foreach ($perms as $key => $value) {
 
@@ -3988,10 +3988,10 @@ class migrate_staff_data extends Seeder
                     'UPDATE_INVOICE_10',
                     'UPDATE_INVOICE_11',
                     // 'UPDATE_INVOICE_12',
+                    'APPROVE_INVOICE_1',
+                    // 'APPROVE_INVOICE_12',
+                    // 'APPROVE_INVOICE_2',
                     // 'APPROVE_INVOICE_3',
-                    // 'APPROVE_INVOICE_13',
-                    // 'APPROVE_INVOICE_4',
-                    // 'APPROVE_INVOICE_5',
                     // 'DELETE_INVOICE_1',
                     // 'DELETE_INVOICE_2',
                     // 'DELETE_INVOICE_3',
@@ -4159,7 +4159,7 @@ class migrate_staff_data extends Seeder
                     );
 
 
-        $user = Role::findOrFail(3);
+        $user = Role::findOrFail(6);
 
         foreach ($perms as $key => $value) {
 
@@ -4285,10 +4285,10 @@ class migrate_staff_data extends Seeder
                     'UPDATE_INVOICE_10',
                     'UPDATE_INVOICE_11',
                     // 'UPDATE_INVOICE_12',
+                    // 'APPROVE_INVOICE_1',
+                    // 'APPROVE_INVOICE_12',
+                    // 'APPROVE_INVOICE_2',
                     // 'APPROVE_INVOICE_3',
-                    // 'APPROVE_INVOICE_13',
-                    // 'APPROVE_INVOICE_4',
-                    // 'APPROVE_INVOICE_5',
                     // 'DELETE_INVOICE_1',
                     // 'DELETE_INVOICE_2',
                     // 'DELETE_INVOICE_3',
@@ -4456,7 +4456,7 @@ class migrate_staff_data extends Seeder
                     );
 
 
-        $user = Role::findOrFail(3);
+        $user = Role::findOrFail(7);
 
         foreach ($perms as $key => $value) {
 
@@ -4581,11 +4581,11 @@ class migrate_staff_data extends Seeder
                     // 'UPDATE_INVOICE_9',
                     'UPDATE_INVOICE_10',
                     'UPDATE_INVOICE_11',
-                    // 'UPDATE_INVOICE_12',
+                    'UPDATE_INVOICE_12',
+                    // 'APPROVE_INVOICE_1',
+                    'APPROVE_INVOICE_12',
+                    // 'APPROVE_INVOICE_2',
                     // 'APPROVE_INVOICE_3',
-                    // 'APPROVE_INVOICE_13',
-                    // 'APPROVE_INVOICE_4',
-                    // 'APPROVE_INVOICE_5',
                     // 'DELETE_INVOICE_1',
                     // 'DELETE_INVOICE_2',
                     // 'DELETE_INVOICE_3',
@@ -4753,7 +4753,7 @@ class migrate_staff_data extends Seeder
                     );
 
 
-        $user = Role::findOrFail(3);
+        $user = Role::findOrFail(8);
 
         foreach ($perms as $key => $value) {
 
@@ -4881,10 +4881,10 @@ class migrate_staff_data extends Seeder
                     'UPDATE_INVOICE_10',
                     'UPDATE_INVOICE_11',
                     // 'UPDATE_INVOICE_12',
+                    // 'APPROVE_INVOICE_1',
+                    // 'APPROVE_INVOICE_12',
+                    // 'APPROVE_INVOICE_2',
                     // 'APPROVE_INVOICE_3',
-                    // 'APPROVE_INVOICE_13',
-                    // 'APPROVE_INVOICE_4',
-                    // 'APPROVE_INVOICE_5',
                     // 'DELETE_INVOICE_1',
                     // 'DELETE_INVOICE_2',
                     // 'DELETE_INVOICE_3',
@@ -5052,7 +5052,7 @@ class migrate_staff_data extends Seeder
                     );
 
 
-        $user = Role::findOrFail(3);
+        $user = Role::findOrFail(9);
 
         foreach ($perms as $key => $value) {
 
@@ -5178,10 +5178,10 @@ class migrate_staff_data extends Seeder
                     'UPDATE_INVOICE_10',
                     'UPDATE_INVOICE_11',
                     // 'UPDATE_INVOICE_12',
+                    // 'APPROVE_INVOICE_1',
+                    // 'APPROVE_INVOICE_12',
+                    // 'APPROVE_INVOICE_2',
                     // 'APPROVE_INVOICE_3',
-                    // 'APPROVE_INVOICE_13',
-                    // 'APPROVE_INVOICE_4',
-                    // 'APPROVE_INVOICE_5',
                     // 'DELETE_INVOICE_1',
                     // 'DELETE_INVOICE_2',
                     // 'DELETE_INVOICE_3',
@@ -5349,7 +5349,7 @@ class migrate_staff_data extends Seeder
                     );
 
 
-        $user = Role::findOrFail(3);
+        $user = Role::findOrFail(10);
 
         foreach ($perms as $key => $value) {
 
