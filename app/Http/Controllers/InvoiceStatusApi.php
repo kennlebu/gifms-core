@@ -15,6 +15,7 @@
 
 namespace App\Http\Controllers;
 
+use JWTAuth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\InvoicesModels\InvoiceStatus;
@@ -283,6 +284,8 @@ class InvoiceStatusApi extends Controller
         $qb = DB::table('invoice_statuses');
         $qb->whereNull('deleted_at');
 
+        $user = JWTAuth::parseToken()->authenticate();
+
 
         if(array_key_exists('allowed_only', $input)){
 
@@ -325,15 +328,16 @@ class InvoiceStatusApi extends Controller
                   );
 
 
-
-            //-1
-            $response[]=array(
-                    "id"=> -2,
-                    "invoice_status"=> "All Invoices",
-                    "order_priority"=> 1000,
-                    "display_color"=> "#BD755C",
-                    "invoices_count"=> Invoice::count()
-                  );
+            if ($user->can('READ_INVOICE_-2')){
+                //-2
+                $response[]=array(
+                        "id"=> -2,
+                        "invoice_status"=> "All Invoices",
+                        "order_priority"=> 1000,
+                        "display_color"=> "#BD755C",
+                        "invoices_count"=> Invoice::count()
+                      );
+            }
 
         }
 
