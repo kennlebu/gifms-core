@@ -2953,7 +2953,7 @@ class migrate_staff_data extends Seeder
 
 
 
-        $data = DB::table('permissions')->get();
+        $data = DB::table('permissions')->where('name', 'NOT LIKE', '%APPROVE%')->get();
 
         $data_to_migrate=array();
 
@@ -2997,7 +2997,7 @@ class migrate_staff_data extends Seeder
 
 
 
-        $data = DB::table('permissions')->get();
+        $data = DB::table('permissions')->where('name', 'NOT LIKE', '%APPROVE%')->get();
 
         $data_to_migrate=array();
 

@@ -34,6 +34,7 @@ class CreateStaffTable extends Migration
             $table->string('station')->nullable();
             $table->string('swift_code')->nullable();
             $table->integer('active')->nullable();
+            $table->integer('receives_global_bccs')->nullable();
             $table->string('signature')->nullable();
             $table->string('bank_signatory')->nullable();
             $table->integer('receive_global_email_bcc')->nullable();

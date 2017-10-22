@@ -1096,22 +1096,43 @@ class InvoiceApi extends Controller
         }
 
 
-        
+
 
         if(array_key_exists('my_approvables', $input)){
 
 
-            $qb->where(function ($query) use ($app_stat) {
-                    
             $current_user =  JWTAuth::parseToken()->authenticate();
-                foreach ($app_stat as $key => $value) {
-                    $permission = 'APPROVE_INVOICE_'.$value['id'];
-                    if($current_user->can($permission)){
-                        $query->orWhere('status_id',$value['id']);                        
+            if($current_user->hasRole([
+                'super-admin',
+                'admin',
+                'director',
+                'associate-director',
+                'financial-controller',
+                'program-manager', 
+                'accountant', 
+                'assistant-accountant']
+            )){                   
+                $qb->where(function ($query) use ($app_stat,$current_user) {
+                    foreach ($app_stat as $key => $value) {
+                        $permission = 'APPROVE_INVOICE_'.$value['id'];
+                        if($current_user->can($permission)&&$value['id']==1){
+                            $query->orWhere(function ($query1) use ($value,$current_user) {
+                                $query1->Where('status_id',$value['id']);
+                                $query1->Where('project_manager_id',$current_user->id);
+                            });
+                        }
+                        else if($current_user->can($permission)){
+                            $query->orWhere('status_id',$value['id']); 
+                        }
                     }
-                }
 
-            });
+                });
+
+
+            }else{
+                $qb->where('id',0);
+            }
+            // echo $qb->toSql();die;
         }
 
 
