@@ -17,6 +17,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Request;
 use App\Models\ProjectsModels\Project;
+use JWTAuth;
+use DB;
 
 class ProjectApi extends Controller
 {
@@ -288,6 +290,22 @@ class ProjectApi extends Controller
         $input = Request::all();
 
         $response = Project::orderBy('project_code', 'desc')->get();
+
+
+        if(array_key_exists('my_assigned', $input)&& $input['my_assigned'] = "true"){
+
+
+            $current_user = JWTAuth::parseToken()->authenticate();
+
+            $response = DB::table('projects')
+                     ->select(DB::raw('projects.*'))
+                     ->rightJoin('project_teams', 'project_teams.project_id', '=', 'projects.id')
+                     ->rightJoin('staff', 'staff.id', '=', 'project_teams.staff_id')
+                     ->where('staff.id', '=', $current_user->id)
+                     ->groupBy('projects.id')
+                     ->orderBy('projects.project_code', 'desc')
+                     ->get();
+        }
 
         return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
     }
