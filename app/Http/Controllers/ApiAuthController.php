@@ -134,14 +134,14 @@ class ApiAuthController extends Controller{
 
    public function userCan(){
 
-        $req = request()->only('permission');
+        $req = request()->only('permissions');
 
         try{
             $user;
             if (! $user = JWTAuth::parseToken()->authenticate()) {
                 return response()->json(['user_not_found'], 404);
             }
-            if ($user->can($req['permission'])) {
+            if ($user->can(explode(',', $req['permissions']))) {
                 return response()->json(['status'=>true], 200);
             }else{
                 return response()->json(['status'=>false], 200);                
@@ -157,14 +157,14 @@ class ApiAuthController extends Controller{
    }
    public function userHasRole(){
 
-        $req = request()->only('role');
+        $req = request()->only('roles');
 
         try{
             $user;
             if (! $user = JWTAuth::parseToken()->authenticate()) {
                 return response()->json(['user_not_found'], 404);
             }
-            if ($user->hasRole($req['role'])) {
+            if ($user->hasRole(explode(',', $req['roles']))) {
                 return response()->json(['status'=>true], 200);
             }else{
                 return response()->json(['status'=>false], 200);                
