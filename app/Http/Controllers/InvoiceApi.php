@@ -159,9 +159,9 @@ class InvoiceApi extends Controller
                 $invoice->received_by_id                    =   (int)       $form['received_by_id'];
                 $invoice->raised_by_id                      =   (int)       $form['raised_by_id'];
                 $invoice->external_ref                      =               $form['external_ref'];
-                // $invoice->invoice_date                      =               $form['invoice_date'];                
-                $invoice->invoice_date                      =   (((int) $form['lpo_id'])>0)?$form['lpo_id']:null;
-                $invoice->lpo_id                            =               $form['lpo_id'];
+                $invoice->invoice_date                      =               $form['invoice_date'];                
+                $invoice->lpo_id                            =   (((int) $form['lpo_id'])>0)?$form['lpo_id']:null;
+                // $invoice->lpo_id                            =               $form['lpo_id'];
                 $invoice->supplier_id                       =   (int)       $form['supplier_id'];
                 $invoice->total                             =   (double)    $form['total'];
                 $invoice->currency_id                       =   (int)       $form['currency_id'];
@@ -405,13 +405,27 @@ class InvoiceApi extends Controller
     public function deleteInvoice($invoice_id)
     {
         $input = Request::all();
+        try {
+            
+            // $allocation = Invoice::findOrFail($invoice_id);
+                   
+            $deleted_allocation = Invoice::destroy($invoice_id);
 
-        //path params validation
+            if($deleted_allocation){
+
+                return response()->json(['msg'=>"Invoice deleted"], 200,array(),JSON_PRETTY_PRINT);
+            }else{
+                return response()->json(['error'=>"Invoice not found"], 404,array(),JSON_PRETTY_PRINT);
+            }
+    
+        } catch (Exception $e) {
+                return response()->json(['error'=>"Invoice not found"], 404,array(),JSON_PRETTY_PRINT);
+            
+        }
 
 
-        //not path params validation
 
-        return response('How about implementing deleteInvoice as a DELETE method ?');
+
     }
 
 
