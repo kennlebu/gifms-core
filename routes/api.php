@@ -32,6 +32,8 @@ Route::get('/', function (Request $request) {
 Route::post('/authenticate', [	'uses' => 'ApiAuthController@authenticate']);
 Route::post('/authenticate_second_user', [	'uses' => 'ApiAuthController@authenticateSecondUser'])->middleware('jwt.auth');
 Route::get('/get_authenticated_user', [	'uses' => 'ApiAuthController@getAuthenticatedUser'])->middleware('jwt.auth');
+Route::post('/user_can', [	'uses' => 'ApiAuthController@userCan'])->middleware('jwt.auth');
+Route::post('/user_has_role', [	'uses' => 'ApiAuthController@userHasRole'])->middleware('jwt.auth');
 
 
 

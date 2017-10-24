@@ -90,4 +90,15 @@ class Staff extends BaseModel
     {
         return $this->belongsToMany('App\Models\StaffModels\Role','user_roles','user_id', 'role_id');
     }
+
+    public function programs()
+    {
+        return $this->belongsToMany('App\Models\ProgramModels\Program','program_staffs','staff_id','program_id');
+    }
+    
+    
+    public function projects()
+    {
+        return $this->belongsToMany('App\Models\ProjectsModels\Project','project_teams','staff_id','project_id');
+    }
 }

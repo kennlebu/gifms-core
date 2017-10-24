@@ -126,8 +126,56 @@ class ApiAuthController extends Controller{
 
     // the token is valid and we have found the user via the sub claim
 
-    $user = Staff::with(['roles'])->find($user['id']);
+    $user = Staff::with(['roles','programs','projects'])->find($user['id']);
     
     return response()->json(compact('user'));
   }
+
+
+   public function userCan(){
+
+        $req = request()->only('permission');
+
+        try{
+            $user;
+            if (! $user = JWTAuth::parseToken()->authenticate()) {
+                return response()->json(['user_not_found'], 404);
+            }
+            if ($user->can($req['permission'])) {
+                return response()->json(['status'=>true], 200);
+            }else{
+                return response()->json(['status'=>false], 200);                
+            }
+
+        }catch (JWTException $e){
+
+           return response()->json(['error'=>'something went wrong'], 500);
+
+       }
+       
+
+   }
+   public function userHasRole(){
+
+        $req = request()->only('role');
+
+        try{
+            $user;
+            if (! $user = JWTAuth::parseToken()->authenticate()) {
+                return response()->json(['user_not_found'], 404);
+            }
+            if ($user->hasRole($req['role'])) {
+                return response()->json(['status'=>true], 200);
+            }else{
+                return response()->json(['status'=>false], 200);                
+            }
+
+        }catch (JWTException $e){
+
+           return response()->json(['error'=>'something went wrong'], 500);
+
+       }
+       
+
+   }
 }
