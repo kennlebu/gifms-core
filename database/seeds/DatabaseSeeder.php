@@ -26,6 +26,7 @@ class DatabaseSeeder extends Seeder
         $this->call(migrate_banking_data::class);
         //personell
         $this->call(migrate_staff_data::class);
+        $this->call(migrate_program_data::class);
         $this->call(migrate_suppliers_data::class);
 
         //accounting
@@ -47,6 +48,7 @@ class DatabaseSeeder extends Seeder
         $this->call(migrate_approvals_keys::class);
         $this->call(migrate_departments_keys::class);
         $this->call(migrate_projects_keys::class);
+        $this->call(migrate_program_keys::class);
         
         $this->call(migrate_banking_keys::class);
         //personell
