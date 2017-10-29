@@ -317,7 +317,7 @@ class LPOStatusApi extends Controller
                     "id"=> -1,
                     "lpo_status"=> "My Lpos",
                     "order_priority"=> 999,
-                    "display_color"=> "#9053A6",
+                    "display_color"=> "#37A9E17A",
                     "lpo_count"=> LPO::where('requested_by_id',$this->current_user()->id)->count()
                   );
 
@@ -328,7 +328,7 @@ class LPOStatusApi extends Controller
                     "id"=> -2,
                     "lpo_status"=> "All Lpos",
                     "order_priority"=> 1000,
-                    "display_color"=> "#BD755C",
+                    "display_color"=> "#092D50",
                     "lpo_count"=> LPO::count()
                   );
 

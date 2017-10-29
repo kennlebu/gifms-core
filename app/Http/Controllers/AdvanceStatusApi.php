@@ -290,7 +290,7 @@ class AdvanceStatusApi extends Controller
                     "id"=> -1,
                     "advance_status"=> "My Advances",
                     "order_priority"=> 999,
-                    "display_color"=> "#9053A6",
+                    "display_color"=> "#37A9E17A",
                     "advances_count"=> Advance::where('requested_by_id',$this->current_user()->id)->count()
                   );
 
@@ -301,7 +301,7 @@ class AdvanceStatusApi extends Controller
                     "id"=> -2,
                     "advance_status"=> "All Advances",
                     "order_priority"=> 1000,
-                    "display_color"=> "#BD755C",
+                    "display_color"=> "#092D50",
                     "advances_count"=> Advance::count()
                   );
 

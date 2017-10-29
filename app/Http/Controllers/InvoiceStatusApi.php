@@ -323,7 +323,7 @@ class InvoiceStatusApi extends Controller
                     "id"=> -1,
                     "invoice_status"=> "My Invoices",
                     "order_priority"=> 999,
-                    "display_color"=> "#9053A6",
+                    "display_color"=> "#37A9E17A",
                     "invoices_count"=> Invoice::where('raised_by_id',$this->current_user()->id)->count()
                   );
 
@@ -334,7 +334,7 @@ class InvoiceStatusApi extends Controller
                         "id"=> -2,
                         "invoice_status"=> "All Invoices",
                         "order_priority"=> 1000,
-                        "display_color"=> "#BD755C",
+                        "display_color"=> "#092D50",
                         "invoices_count"=> Invoice::count()
                       );
             }

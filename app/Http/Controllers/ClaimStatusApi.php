@@ -290,7 +290,7 @@ class ClaimStatusApi extends Controller
                     "id"=> -1,
                     "claim_status"=> "My Claims",
                     "order_priority"=> 999,
-                    "display_color"=> "#9053A6",
+                    "display_color"=> "#37A9E17A",
                     "claims_count"=> Claim::where('requested_by_id',$this->current_user()->id)->count()
                   );
 
@@ -301,7 +301,7 @@ class ClaimStatusApi extends Controller
                     "id"=> -2,
                     "claim_status"=> "All Claims",
                     "order_priority"=> 1000,
-                    "display_color"=> "#BD755C",
+                    "display_color"=> "#092D50",
                     "claims_count"=> Claim::count()
                   );
 
