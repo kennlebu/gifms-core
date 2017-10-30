@@ -79,7 +79,7 @@ class post_migration_statuses_migration extends Seeder
         DB::statement($sql);
         $sql = "UPDATE `lpo_statuses` SET `order_priority`='7', `display_color`='#075b23a1' WHERE `id`='8'"; 
         DB::statement($sql);
-        $sql = "UPDATE `lpo_statuses` SET `order_priority`='8', `display_color`='#075b23a1' WHERE `id`='9'"; 
+        $sql = "UPDATE `lpo_statuses` SET `order_priority`='8', `display_color`='#55ff55c2' WHERE `id`='9'"; 
         DB::statement($sql);
         $sql = "UPDATE `lpo_statuses` SET `deleted_at`='2017-10-24 12:48:44' WHERE `id`='10'"; 
         DB::statement($sql);
