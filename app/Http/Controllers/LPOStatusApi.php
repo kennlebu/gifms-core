@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\LPOModels\LpoStatus;
 use App\Models\LPOModels\Lpo;
+use JWTAuth;
 
 class LPOStatusApi extends Controller
 {
@@ -280,6 +281,8 @@ class LPOStatusApi extends Controller
         $qb->whereNull('deleted_at');
 
 
+        $user = JWTAuth::parseToken()->authenticate();
+
         if(array_key_exists('allowed_only', $input)){
 
             $qb = $this->get_my_allowed_statuses($qb);
@@ -323,14 +326,16 @@ class LPOStatusApi extends Controller
 
 
 
-            //-1
-            $response[]=array(
-                    "id"=> -2,
-                    "lpo_status"=> "All Lpos",
-                    "order_priority"=> 1000,
-                    "display_color"=> "#092D50",
-                    "lpo_count"=> LPO::count()
-                  );
+            if ($user->can('READ_LPO_-2')){
+                //-1
+                $response[]=array(
+                        "id"=> -2,
+                        "lpo_status"=> "All Lpos",
+                        "order_priority"=> 1000,
+                        "display_color"=> "#092D50",
+                        "lpo_count"=> LPO::count()
+                      );
+            }
 
         }
 

@@ -31,6 +31,8 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\NotifyLpo;
 use App\Models\AllocationModels\Allocation;
 use App\Models\ApprovalsModels\Approval;
+use App\Models\ApprovalsModels\ApprovalLevel;
+use App\Models\StaffModels\Staff;
 
 class LPOApi extends Controller
 {
@@ -338,7 +340,7 @@ class LPOApi extends Controller
                                             'request_action_by',
                                             'project',
                                             'account',
-                                            'invoice',
+                                            'invoices',
                                             'status',
                                             'project_manager',
                                             'rejected_by',
@@ -364,7 +366,7 @@ class LPOApi extends Controller
                                             'request_action_by',
                                             'project',
                                             'account',
-                                            'invoice',
+                                            'invoices',
                                             'status',
                                             'project_manager',
                                             'rejected_by',
@@ -444,7 +446,7 @@ class LPOApi extends Controller
                                             'request_action_by',
                                             'project',
                                             'account',
-                                            'invoice',
+                                            'invoices',
                                             'status',
                                             'project_manager',
                                             'rejected_by',
@@ -521,7 +523,7 @@ class LPOApi extends Controller
                                             'request_action_by',
                                             'project',
                                             'account',
-                                            'invoice',
+                                            'invoices',
                                             'status',
                                             'project_manager',
                                             'rejected_by',
@@ -597,7 +599,7 @@ class LPOApi extends Controller
                                             'request_action_by',
                                             'project',
                                             'account',
-                                            'invoice',
+                                            'invoices',
                                             'status',
                                             'project_manager',
                                             'rejected_by',
@@ -610,8 +612,25 @@ class LPOApi extends Controller
                                             'items',
                                             'terms',
                                             'approvals',
+                                            'logs',
                                             'deliveries'
                                 )->findOrFail($lpo_id);
+
+
+
+            foreach ($response->logs as $key => $value) {
+                
+                $response['logs'][$key]['causer']   =   $value->causer;
+                $response['logs'][$key]['subject']  =   $value->subject;
+            }
+
+            foreach ($response->approvals as $key => $value) {
+                $approver = Staff::find((int)$value['approver_id']);
+                $appoval_level = ApprovalLevel::find((int)$value['approval_level_id']);
+
+                $response['approvals'][$key]['approver']  =   $approver;
+                $response['approvals'][$key]['approval_level']  =   $appoval_level;
+            }
            
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
 

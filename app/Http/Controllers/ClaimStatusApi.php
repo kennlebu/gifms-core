@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\ClaimsModels\ClaimStatus;
 use App\Models\ClaimsModels\Claim;
+use JWTAuth;
 
 class ClaimStatusApi extends Controller
 {
@@ -254,6 +255,8 @@ class ClaimStatusApi extends Controller
         $qb->whereNull('deleted_at');
 
 
+        $user = JWTAuth::parseToken()->authenticate();
+
         if(array_key_exists('allowed_only', $input)){
 
             $qb = $this->get_my_allowed_statuses($qb);
@@ -295,15 +298,17 @@ class ClaimStatusApi extends Controller
                   );
 
 
+            if ($user->can('READ_CLAIM_-2')){
 
-            //-1
-            $response[]=array(
-                    "id"=> -2,
-                    "claim_status"=> "All Claims",
-                    "order_priority"=> 1000,
-                    "display_color"=> "#092D50",
-                    "claims_count"=> Claim::count()
-                  );
+                //-1
+                $response[]=array(
+                        "id"=> -2,
+                        "claim_status"=> "All Claims",
+                        "order_priority"=> 1000,
+                        "display_color"=> "#092D50",
+                        "claims_count"=> Claim::count()
+                      );
+            }
 
         }
 

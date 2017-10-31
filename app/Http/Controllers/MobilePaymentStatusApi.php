@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\MobilePaymentModels\MobilePaymentStatus;
 use App\Models\MobilePaymentModels\MobilePayment;
+use JWTAuth;
 
 class MobilePaymentStatusApi extends Controller
 {
@@ -281,6 +282,7 @@ class MobilePaymentStatusApi extends Controller
         $qb = DB::table('mobile_payment_statuses');
         $qb->whereNull('deleted_at');
 
+        $user = JWTAuth::parseToken()->authenticate();
 
         if(array_key_exists('allowed_only', $input)){
 
@@ -324,14 +326,16 @@ class MobilePaymentStatusApi extends Controller
 
 
 
-            //-1
-            $response[]=array(
-                    "id"=> -2,
-                    "mobile_payment_status"=> "All Mobile Payments",
-                    "order_priority"=> 1000,
-                    "display_color"=> "#092D50",
-                    "mobile_payments_count"=> MobilePayment::count()
-                  );
+            if ($user->can('READ_MOBILEPAYMENT_-2')){
+                //-1
+                $response[]=array(
+                        "id"=> -2,
+                        "mobile_payment_status"=> "All Mobile Payments",
+                        "order_priority"=> 1000,
+                        "display_color"=> "#092D50",
+                        "mobile_payments_count"=> MobilePayment::count()
+                      );
+            }
 
         }
 

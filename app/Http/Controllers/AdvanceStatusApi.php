@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\AdvancesModels\AdvanceStatus;
 use App\Models\AdvancesModels\Advance;
+use JWTAuth;
 
 class AdvanceStatusApi extends Controller
 {
@@ -253,6 +254,7 @@ class AdvanceStatusApi extends Controller
         $qb = DB::table('advance_statuses');
         $qb->whereNull('deleted_at');
 
+        $user = JWTAuth::parseToken()->authenticate();
 
         if(array_key_exists('allowed_only', $input)){
 
@@ -295,15 +297,17 @@ class AdvanceStatusApi extends Controller
                   );
 
 
+            if ($user->can('READ_ADVANCE_-2')){
 
-            //-1
-            $response[]=array(
-                    "id"=> -2,
-                    "advance_status"=> "All Advances",
-                    "order_priority"=> 1000,
-                    "display_color"=> "#092D50",
-                    "advances_count"=> Advance::count()
-                  );
+                //-1
+                $response[]=array(
+                        "id"=> -2,
+                        "advance_status"=> "All Advances",
+                        "order_priority"=> 1000,
+                        "display_color"=> "#092D50",
+                        "advances_count"=> Advance::count()
+                      );
+            }
 
         }
 
