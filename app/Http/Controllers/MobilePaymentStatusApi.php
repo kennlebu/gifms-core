@@ -326,7 +326,7 @@ class MobilePaymentStatusApi extends Controller
 
 
 
-            if ($user->can('READ_MOBILEPAYMENT_-2')){
+            if ($user->can('READ_MOBILE_PAYMENT_-2')){
                 //-1
                 $response[]=array(
                         "id"=> -2,

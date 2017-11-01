@@ -176,7 +176,7 @@
               </tr>
               <tr>
                 <td ></td>
-                <td colspan="4" rowspan="5" >
+                <td colspan="4" rowspan="5" >Signed:
                   <img height = "60" alt="." src="{{asset('../storage/app/staff/signature'.$approval->approver_id.'.png')}}"></img>
                 </td>
                 <td ></td>
