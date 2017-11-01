@@ -62,4 +62,12 @@ class Claim extends BaseModel
     {
         return $this->morphMany('App\Models\AllocationModels\Allocation', 'allocatable');
     }
+    public function vouchers()
+    {
+        return $this->morphMany('App\Models\PaymentModels\PaymentVoucher', 'vouchable')->orderBy('created_at','asc');
+    }
+    public function logs()
+    {
+        return $this->morphMany('App\Models\LogsModels\HistoryLog', 'subject')->orderBy('created_at','asc');
+    }
 }

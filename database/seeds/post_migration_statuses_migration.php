@@ -194,16 +194,3 @@ class post_migration_statuses_migration extends Seeder
     }
 }
 
-UPDATE `gifms1`.`advance_statuses` SET `advance_status`='Compiled Pending Submission', `order_priority`='1', `display_color`='#64547a6e' WHERE `id`='1';
-UPDATE `gifms1`.`advance_statuses` SET `advance_status`='Pending PM Approval', `next_status_id`='3', `order_priority`='3' WHERE `id`='2';
-UPDATE `gifms1`.`advance_statuses` SET `advance_status`='Allocated Pending Accountant Review', `order_priority`='10', `display_color`='#075b23a1' WHERE `id`='9';
-UPDATE `gifms1`.`advance_statuses` SET `advance_status`='Pending Management Approval ', `next_status_id`='8', `order_priority`='5' WHERE `id`='4';
-UPDATE `gifms1`.`advance_statuses` SET `advance_status`='Pending Accountant Review', `order_priority`='2' WHERE `id`='13';
-UPDATE `gifms1`.`advance_statuses` SET `order_priority`='4' WHERE `id`='3';
-UPDATE `gifms1`.`advance_statuses` SET `advance_status`='Pending Finance CSV Creation (Batching)', `next_status_id`='5', `order_priority`='6', `display_color`='#075b23a1' WHERE `id`='8';
-UPDATE `gifms1`.`advance_statuses` SET `next_status_id`='7', `order_priority`='7', `display_color`='#075b23a1' WHERE `id`='5';
-UPDATE `gifms1`.`advance_statuses` SET `advance_status`='CSV Uploaded to Bank Awaiting Reconciliation', `next_status_id`='6', `order_priority`='8', `display_color`='#075b23a1' WHERE `id`='7';
-UPDATE `gifms1`.`advance_statuses` SET `advance_status`='Issued & Paid Awaiting Uploader Allocations', `next_status_id`='9', `order_priority`='9', `display_color`='#075b23a1' WHERE `id`='6';
-UPDATE `gifms1`.`advance_statuses` SET `advance_status`='Paid & Completed', `order_priority`='11', `display_color`='#55ff55c2' WHERE `id`='10';
-UPDATE `gifms1`.`advance_statuses` SET `deleted_at`='2017-10-24 12:48:44' WHERE `id`='12';
-UPDATE `gifms1`.`advance_statuses` SET `order_priority`='12', `display_color`='#ff5555c2' WHERE `id`='11';

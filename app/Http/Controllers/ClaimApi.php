@@ -239,6 +239,8 @@ class ClaimApi extends Controller
                                         'currency',
                                         'rejected_by',
                                         'approvals',
+                                        'logs',
+                                        'vouchers',
                                         'allocations'
                                     )->findOrFail($claim_id);
 

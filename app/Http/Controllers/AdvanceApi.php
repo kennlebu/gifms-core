@@ -277,7 +277,9 @@ class AdvanceApi extends Controller
                                     'currency',
                                     'rejected_by',
                                     'approvals',
-                                    'allocations'
+                                    'allocations',
+                                    'vouchers',
+                                    'logs'
                                 )->findOrFail($advance_id);
 
 

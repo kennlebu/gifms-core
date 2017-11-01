@@ -263,6 +263,8 @@ class MobilePaymentApi extends Controller
                                     'payees_upload_mode',
                                     'payees',
                                     'approvals',
+                                    'logs',
+                                    'vouchers',
                                     'allocations'
                                 )->findOrFail($mobile_payment_id);
 

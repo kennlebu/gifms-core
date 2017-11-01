@@ -634,6 +634,10 @@ class post_keys_migration_migration extends Seeder
         echo "\n mobile_payment_statuses captions updated ---";
 
 
+        $sql = "UPDATE `gifms1`.`staff` SET `security_group_id`='10', `post`='Program Analyst' WHERE `id`='7'"; DB::statement($sql);
+        $sql = "UPDATE `gifms1`.`staff` SET `security_group_id`='7',`post`='Director' WHERE `id`='40'"; DB::statement($sql);
+
+        echo "\n Remove alice and MCCARTHY fro PM List ---";
 
     }
 }
