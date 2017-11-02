@@ -11,6 +11,8 @@
         The below detailed Claim has been posted and awaits your approval.
       @elseif ($claim->status_id==9)
         The below detailed Claim has been Rejected by {{$claim->rejected_by->name}}
+      @elseif ($claim->status_id==5)
+        The below detailed claim has been Approved by management and awaits you to make the payment 
       @endif
       <br/>
 

@@ -137,6 +137,17 @@ class NotifyInvoice extends Mailable
                             'js_url' => Config::get('app.js_url'),
                         ])
                     ->subject("Invoice Approval Request ".$this->invoice->external_ref);
+        }else if($this->invoice->status_id == 4){
+
+
+
+            return $this->to($this->financial_controller)
+                    ->with([
+                            'invoice' => $this->invoice,
+                            'addressed_to' => $this->financial_controller,
+                            'js_url' => Config::get('app.js_url'),
+                        ])
+                    ->subject("Invoice Approval Request ".$this->invoice->external_ref);
         }
 
 

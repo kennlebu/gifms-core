@@ -11,6 +11,8 @@
         The below detailed advance has been posted and awaits your approval.
       @elseif ($advance->status_id==11)
         The below detailed advance has been Rejected by {{$advance->rejected_by->name}}
+      @elseif ($advance->status_id==8)
+        The below detailed advance has been Approved by management and awaits you to make the payment 
       @endif
       <br/>
 
@@ -51,18 +53,6 @@
             </strong>
           </td>
         </tr>
-        <tr>
-          <td style="text-align: left; border-bottom: 1px dotted #ccbcbc;" colspan="1"  bgcolor="#ffffff" height="20">
-            <strong>
-              <span style="color: #7c7c7c;">Project:</span>
-            </strong>
-          </td>
-          <td style="text-align: left; border-bottom: 1px dotted #ccbcbc;" bgcolor="#ffffff" colspan="2" >
-            <strong>
-              <span style="color: #092d50;">{{$advance->project->project_name}}</span>
-            </strong>
-          </td>
-        </tr> 
         <tr>
           <td style="text-align: left; border-bottom: 1px dotted #ccbcbc;" colspan="1"  bgcolor="#ffffff" height="20">
             <strong>

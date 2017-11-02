@@ -31,7 +31,7 @@ class NotifyLpo extends Mailable
                                             'request_action_by',
                                             'project',
                                             'account',
-                                            'invoice',
+                                            'invoices',
                                             'status',
                                             'project_manager',
                                             'rejected_by',
