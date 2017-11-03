@@ -86,6 +86,10 @@ class MobilePayment extends BaseModel
     {
         return $this->morphMany('App\Models\OtherModels\Comment', 'commentable');
     }
+    public function payments()
+    {
+        return $this->morphMany('App\Models\PaymentModels\Payment', 'payable')->orderBy('created_at','asc');
+    }
     public function approvals()
     {
         return $this->morphMany('App\Models\ApprovalsModels\Approval', 'approvable');
