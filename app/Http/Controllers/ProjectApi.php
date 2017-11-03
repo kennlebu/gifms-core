@@ -292,10 +292,12 @@ class ProjectApi extends Controller
         $response = Project::orderBy('project_code', 'desc')->get();
 
 
+        $current_user = JWTAuth::parseToken()->authenticate();
+
         if(array_key_exists('my_assigned', $input)&& $input['my_assigned'] = "true"){
 
 
-            $current_user = JWTAuth::parseToken()->authenticate();
+            // $current_user = JWTAuth::parseToken()->authenticate();
 
             $response = DB::table('projects')
                      ->select(DB::raw('projects.*'))
@@ -305,7 +307,12 @@ class ProjectApi extends Controller
                      ->groupBy('projects.id')
                      ->orderBy('projects.project_code', 'desc')
                      ->get();
+                     
+            if($current_user->hasRole(['accountant','assistant-accountant','financial-controller'])){
+                $response = Project::orderBy('project_code', 'desc')->get();
+            }
         }
+
 
         return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
     }

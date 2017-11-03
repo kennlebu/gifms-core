@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\LPOModels\Lpo;
 use App\Models\LPOModels\LpoStatus;
+use App\Models\LPOModels\LpoQuotation;
 use Exception;
 use PDF;
 use App;
@@ -33,6 +34,8 @@ use App\Models\AllocationModels\Allocation;
 use App\Models\ApprovalsModels\Approval;
 use App\Models\ApprovalsModels\ApprovalLevel;
 use App\Models\StaffModels\Staff;
+use App\Models\SuppliesModels\Supplier;
+
 
 class LPOApi extends Controller
 {
@@ -1127,7 +1130,14 @@ class LPOApi extends Controller
             $data[$key]['deliveries']               = $lpo->deliveries;
             $data[$key]['totals']                   = $lpo->totals;
 
+            if($lpo->preffered_quotation_id > 0 && $lpo->preffered_quotation->supplier_id > 0 ){
+
+                $data[$key]['preffered_quotation']['supplier']      = $lpo->preffered_quotation->supplier;
+
+            }
+
         }
+
 
         return $data;
 
