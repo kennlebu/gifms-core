@@ -16,6 +16,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Request;
+use App\Models\AdvancesModels\Advance;
+use App\Models\AllocationModels\Allocation;
 
 class AdvanceAllocationApi extends Controller
 {
@@ -105,14 +107,26 @@ class AdvanceAllocationApi extends Controller
      */
     public function getAdvanceAllocationById($advance_allocation_id)
     {
-        $input = Request::all();
+        $response = [];
 
-        //path params validation
+        try{
+            $response   = Allocation::with( 
+                                        'allocatable',
+                                        'allocated_by',
+                                        'project',
+                                        'account'
+                                    )->findOrFail($advance_allocation_id);
 
 
-        //not path params validation
+                $response['advance']  =   $response['allocatable'];
 
-        return response('How about implementing getAdvanceAllocationById as a GET method ?');
+            return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+
+        }catch(Exception $e){
+
+            $response =  ["error"=>"Advance Allocation could not be found"];
+            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+        }
     }
     /**
      * Operation advanceAllocationsGet

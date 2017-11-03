@@ -284,14 +284,24 @@ class AllocationApi extends Controller
      */
     public function getAllocationById($allocation_id)
     {
-        $input = Request::all();
+        $response = [];
 
-        //path params validation
+        try{
+            $response   = Allocation::with( 
+                                        'allocatable',
+                                        'allocated_by',
+                                        'project',
+                                        'account'
+                                    )->findOrFail($allocation_id);
 
 
-        //not path params validation
+            return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
 
-        return response('How about implementing getAllocationById as a GET method ?');
+        }catch(Exception $e){
+
+            $response =  ["error"=>"Allocation could not be found"];
+            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+        }
     }
 
 

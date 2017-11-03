@@ -18,6 +18,8 @@ class Advance extends BaseModel
     use SoftDeletes;
 
     
+    protected $appends = ['amount_allocated'];
+    
     public function requested_by()
     {
         return $this->belongsTo('App\Models\StaffModels\Staff','requested_by_id');
@@ -69,6 +71,20 @@ class Advance extends BaseModel
     public function vouchers()
     {
         return $this->morphMany('App\Models\PaymentModels\PaymentVoucher', 'vouchable')->orderBy('created_at','asc');
+    }    
+    public function getAmountAllocatedAttribute(){
+
+        $allocations  =   $this->allocations;
+        $amount_allocated   =   0;
+
+        foreach ($allocations as $key => $value) {
+            $amount_allocated   +=   (float)   $value->amount_allocated;
+        }
+
+        return $amount_allocated;
+
+
+
     }
 //
 }

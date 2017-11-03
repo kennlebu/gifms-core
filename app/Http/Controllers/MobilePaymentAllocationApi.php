@@ -16,6 +16,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Request;
+use App\Models\MobilePaymentModels\MobilePayment;
+use App\Models\AllocationModels\Allocation;
 
 class MobilePaymentAllocationApi extends Controller
 {
@@ -105,14 +107,26 @@ class MobilePaymentAllocationApi extends Controller
      */
     public function getMobilePaymentAllocationById($mobile_payment_allocation_id)
     {
-        $input = Request::all();
+        $response = [];
 
-        //path params validation
+        try{
+            $response   = Allocation::with( 
+                                        'allocatable',
+                                        'allocated_by',
+                                        'project',
+                                        'account'
+                                    )->findOrFail($mobile_payment_allocation_id);
 
 
-        //not path params validation
+                $response['mobile_payment']  =   $response['allocatable'];
 
-        return response('How about implementing getMobilePaymentAllocationById as a GET method ?');
+            return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+
+        }catch(Exception $e){
+
+            $response =  ["error"=>"Mobile Payment Allocation could not be found"];
+            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+        }
     }
     /**
      * Operation mobilePaymentAllocationsGet

@@ -22,7 +22,7 @@ class MobilePayment extends BaseModel
     //
     use SoftDeletes;
 
-    protected $appends = ['amounts','total_withdrawal_charges','totals'];
+    protected $appends = ['amounts','total_withdrawal_charges','totals','amount_allocated'];
 
  
 
@@ -147,6 +147,21 @@ class MobilePayment extends BaseModel
         }
 
         return $totals;
+
+    }
+
+    public function getAmountAllocatedAttribute(){
+
+        $allocations  =   $this->allocations;
+        $amount_allocated   =   0;
+
+        foreach ($allocations as $key => $value) {
+            $amount_allocated   +=   (float)   $value->amount_allocated;
+        }
+
+        return $amount_allocated;
+
+
 
     }
 
