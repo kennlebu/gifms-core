@@ -149,19 +149,56 @@ class LPOQuotationApi extends Controller
      */
     public function updateLpoQuotation()
     {
+
         $input = Request::all();
 
-        //path params validation
 
 
-        //not path params validation
-        if (!isset($input['body'])) {
-            throw new \InvalidArgumentException('Missing the required parameter $body when calling updateLpoQuotation');
+
+        try{
+
+
+            $form = Request::only(
+                'id',
+                'lpo_id',
+                'uploaded_by_id',
+                'supplier_id',
+                'amount',
+                'file'
+                );
+
+
+            $quotation = LpoQuotation::findOrFail($form['id']);
+
+
+            $quotation->lpo_id                   =               $form['lpo_id'];
+            $quotation->uploaded_by_id           =               $form['uploaded_by_id'];
+            $quotation->supplier_id              =               $form['supplier_id'];
+            $quotation->amount                   =               $form['amount'];
+            // $item->file               =               $form['file'];
+
+            // $user = JWTAuth::parseToken()->authenticate();
+            // $allocation->allocated_by_id            =   (int)   $user->id;
+
+
+            if($quotation->save()) {
+
+
+                // $user = JWTAuth::parseToken()->authenticate();
+                // activity()
+                //    ->performedOn($allocation->allocatable)
+                //    ->causedBy($user)
+                //    ->log('re-allocated');
+                // $allocation->save();
+                return Response()->json(array('success' => 'Item updated','lpo_quotation' => $quotation), 200);
+            }
+
+
+        }catch (JWTException $e){
+
+            return response()->json(['error'=>'You are not Authenticated'], 500);
+
         }
-        $body = $input['body'];
-
-
-        return response('How about implementing updateLpoQuotation as a PUT method ?');
     }
 
 

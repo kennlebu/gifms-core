@@ -18,9 +18,9 @@ class CreatePaymentBatchesTable extends Migration
             $table->string('ref')->nullable();
             $table->date('payment_date')->nullable();
             $table->date('upload_date')->nullable();
-            $table->integer('upload_status')->nullable();
-            $table->integer('processed_by')->nullable();
-            $table->integer('uploaded_by')->nullable();
+            $table->integer('upload_status_id')->nullable();
+            $table->integer('processed_by_id')->nullable();
+            $table->integer('uploaded_by_id')->nullable();
             $table->integer('migration_processed_by')->nullable();
             $table->integer('migration_uploaded_by')->nullable();
             $table->integer('migration_id')->nullable();

@@ -41,4 +41,8 @@ class Payment extends BaseModel
     {
         return $this->belongsTo('App\Models\PaymentModels\PaymentBatch');
     }
+    public function status()
+    {
+        return $this->belongsTo('App\Models\PaymentModels\PaymentStatus');
+    }
 }

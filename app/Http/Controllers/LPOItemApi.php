@@ -15,6 +15,7 @@
 
 namespace App\Http\Controllers;
 
+use JWTAuth;
 use Illuminate\Support\Facades\Request;
 use App\Models\LPOModels\LpoItem;
 
@@ -148,19 +149,60 @@ class LPOItemApi extends Controller
      */
     public function updateLpoItem()
     {
+
         $input = Request::all();
 
-        //path params validation
 
 
-        //not path params validation
-        if (!isset($input['body'])) {
-            throw new \InvalidArgumentException('Missing the required parameter $body when calling updateLpoItem');
+
+        try{
+
+
+            $form = Request::only(
+                'id',
+                'lpo_id',
+                'item',
+                'item_description',
+                'qty',
+                'qty_description',
+                'unit_price',
+                'vat_charge'
+                );
+
+
+            $item = LpoItem::findOrFail($form['id']);
+
+
+            $item->lpo_id                   =               $form['lpo_id'];
+            $item->item                     =               $form['item'];
+            $item->item_description         =               $form['item_description'];
+            $item->qty                      =               $form['qty'];
+            $item->qty_description          =               $form['qty_description'];
+            $item->unit_price               =               $form['unit_price'];
+            $item->vat_charge               =               $form['vat_charge'];
+
+            // $user = JWTAuth::parseToken()->authenticate();
+            // $allocation->allocated_by_id            =   (int)   $user->id;
+
+
+            if($item->save()) {
+
+
+                // $user = JWTAuth::parseToken()->authenticate();
+                // activity()
+                //    ->performedOn($allocation->allocatable)
+                //    ->causedBy($user)
+                //    ->log('re-allocated');
+                // $allocation->save();
+                return Response()->json(array('success' => 'Item updated','lpo_item' => $item), 200);
+            }
+
+
+        }catch (JWTException $e){
+
+            return response()->json(['error'=>'You are not Authenticated'], 500);
+
         }
-        $body = $input['body'];
-
-
-        return response('How about implementing updateLpoItem as a PUT method ?');
     }
 
 
@@ -251,14 +293,19 @@ class LPOItemApi extends Controller
      */
     public function getLpoItemById($lpo_item_id)
     {
-        $input = Request::all();
+       $input = Request::all();
 
-        //path params validation
+       try{
 
+            $response = LpoItem::findOrFail($lpo_item_id);
 
-        //not path params validation
+            return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
 
-        return response('How about implementing getLpoItemById as a GET method ?');
+        }catch(Exception $e){
+
+            $response =  ["error"=>"lpo could not be found"];
+            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+        }
     }
 
 

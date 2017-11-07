@@ -31,6 +31,7 @@ class CreatePaymentsTable extends Migration
             $table->integer('payment_mode_id')->nullable();
             $table->double('amount',30,5)->nullable();
             $table->integer('payment_batch_id')->nullable();
+            $table->integer('status_id')->nullable();
             $table->double('bank_charges',26,2)->nullable();
             $table->string('migration_payment_batch_id')->nullable();
             $table->integer('migration_invoice_id')->nullable();

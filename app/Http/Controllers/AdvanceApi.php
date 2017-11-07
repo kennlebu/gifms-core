@@ -181,19 +181,36 @@ class AdvanceApi extends Controller
      */
     public function updateAdvance()
     {
-        $input = Request::all();
+        
+         $form = Request::only(
+            'id',
+            'requested_by_id',
+            'expense_desc',
+            'expense_purpose',
+            'project_manager_id',
+            'total',
+            'currency_id'
+            );
 
-        //path params validation
+        $advance = Advance::find($form['id']);
 
 
-        //not path params validation
-        if (!isset($input['body'])) {
-            throw new \InvalidArgumentException('Missing the required parameter $body when calling updateAdvance');
+
+
+
+            $advance->requested_by_id                   =   (int)       $form['requested_by_id'];
+            $advance->expense_desc                      =               $form['expense_desc'];
+            $advance->expense_purpose                   =               $form['expense_purpose'];
+            $advance->project_manager_id                =   (int)       $form['project_manager_id'];
+            $advance->total                             =   (double)    $form['total'];
+            $advance->currency_id                       =   (int)       $form['currency_id'];  
+
+
+
+        if($advance->save()) {
+
+            return Response()->json(array('msg' => 'Success: Advance updated','advance' => $advance), 200);
         }
-        $body = $input['body'];
-
-
-        return response('How about implementing updateAdvance as a PUT method ?');
     }
 
 

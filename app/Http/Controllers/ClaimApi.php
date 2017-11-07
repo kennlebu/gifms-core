@@ -155,19 +155,34 @@ class ClaimApi extends Controller
      */
     public function updateClaim()
     {
-        $input = Request::all();
+         $form = Request::only(
+            'id',
+            'requested_by_id',
+            'expense_desc',
+            'expense_purpose',
+            'project_manager_id',
+            'total',
+            'currency_id'
+            );
 
-        //path params validation
+        $claim = Claim::find($form['id']);
 
 
-        //not path params validation
-        if (!isset($input['body'])) {
-            throw new \InvalidArgumentException('Missing the required parameter $body when calling updateClaim');
+
+
+            $claim->requested_by_id                   =   (int)       $form['requested_by_id'];
+            $claim->expense_desc                      =               $form['expense_desc'];
+            $claim->expense_purpose                   =               $form['expense_purpose'];
+            $claim->project_manager_id                =   (int)       $form['project_manager_id'];
+            $claim->total                             =   (double)    $form['total'];
+            $claim->currency_id                       =   (int)       $form['currency_id'];   
+
+
+
+        if($claim->save()) {
+
+            return Response()->json(array('msg' => 'Success: Claim updated','claim' => $claim), 200);
         }
-        $body = $input['body'];
-
-
-        return response('How about implementing updateClaim as a PUT method ?');
     }
 
 

@@ -184,48 +184,35 @@ class LPOApi extends Controller
     */
     public function updateLpo()
     {
-        $input = Request::all();
+        // $input = Request::all();
 
-        if (!isset($input['body'])) {
-            throw new \InvalidArgumentException('Missing the required parameter $body when calling updateLpo');
-        }
+        // if (!isset($input['body'])) {
+        //     throw new \InvalidArgumentException('Missing the required parameter $body when calling updateLpo');
+        // }
 
-        $body = $input['body'];
+        $form = Request::only(
+            'id',
+            'requested_by_id',
+            'expense_desc',
+            'expense_purpose',
+            'project_id',
+            'account_id',
+            'currency_id',
+            'project_manager_id'
+            );
 
-        $lpo = Lpo::find($body['id']);
+        $lpo = Lpo::find($form['id']);
 
 
 
 
-        $lpo->ref                                =           $body['ref'];
-        // $lpo->lpo_date                           =           $body['lpo_date'];
-        $lpo->supplier_id                        =   (int)   $body['supplier_id'];
-        // $lpo->addressee                          =           $body['addressee'];
-        $lpo->expense_desc                       =           $body['expense_desc'];
-        $lpo->expense_purpose                    =           $body['expense_purpose'];
-        $lpo->requested_by_id                    =   (int)   $body['requested_by_id'];
-        $lpo->request_action_by_id               =   (int)   $body['request_action_by_id'];
-        // $lpo->request_date                       =           $body['request_date'];
-        $lpo->status_id                          =   (int)   $body['status_id'];
-        $lpo->currency_id                        =   (int)   $body['currency_id'];
-        $lpo->preffered_quotation_id             =   (int)   $body['preffered_quotation_id'];
-        // $lpo->supply_category                    =   (int)   $body['supply_category'];
-        $lpo->delivery_document                  =           $body['delivery_document'];
-        $lpo->date_delivered                     =           $body['date_delivered'];
-        $lpo->received_by_id                     =   (int)   $body['received_by_id'];
-        // $lpo->meeting                            =   (int)   $body['meeting'];
-        // $lpo->comments                           =           $body['comments'];
-        // $lpo->preffered_supplier                 =   (int)   $body['preffered_supplier'];
-        $lpo->preffered_supplier_id              =   (int)   $body['preffered_supplier_id'];
-        $lpo->project_id                         =   (int)   $body['project_id'];
-        $lpo->account_id                         =   (int)   $body['account_id'];
-        // $lpo->attention                          =           $body['attention'];
-        // $lpo->lpo_email                          =   (int)   $body['lpo_email'];
-        $lpo->project_manager_id                 =   (int)   $body['project_manager_id'];
-        $lpo->rejection_reason                   =           $body['rejection_reason'];
-        $lpo->rejected_by_id                     =   (int)   $body['rejected_by_id'];
-        $lpo->quote_exempt                       =   (int)   $body['quote_exempt'];
-        $lpo->quote_exempt_explanation           =           $body['quote_exempt_explanation'];
+            $lpo->requested_by_id                   =   (int)   $form['requested_by_id'];
+            $lpo->expense_desc                      =           $form['expense_desc'];
+            $lpo->expense_purpose                   =           $form['expense_purpose'];
+            $lpo->project_id                        =   (int)   $form['project_id'];
+            $lpo->account_id                        =   (int)   $form['account_id'];
+            $lpo->currency_id                       =   (int)   $form['currency_id'];
+            $lpo->project_manager_id                =   (int)   $form['project_manager_id'];
 
 
 

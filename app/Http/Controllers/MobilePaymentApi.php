@@ -185,43 +185,59 @@ class MobilePaymentApi extends Controller
      */
     public function updateMobilePayment()
     {
-        $input = Request::all();
+        $form = Request::only(
+            'id',
+            'requested_by_id',
+            'request_action_by_id',
+            'project_id',
+            'account_id',
+            'mobile_payment_type_id',
+            'expense_desc',
+            'expense_purpose',
+            'payment_document',
+            'status_id',
+            'project_manager_id',
+            'region_id',
+            'county_id',
+            'attendance_sheet',
+            'payees_upload_mode_id',
+            'rejection_reason',
+            'rejected_by_id'
+        );
 
-        if (!isset($input['body'])) {
-            throw new \InvalidArgumentException('Missing the required parameter $body when calling updateMobilePayment');
-        }
+        // if (!isset($input['body'])) {
+        //     throw new \InvalidArgumentException('Missing the required parameter $body when calling updateMobilePayment');
+        // }
         
-        $body = $input['body'];
+        // $body = $input['body'];
 
-        $mobile_payment = MobilePayment::find($body['id']);
+        $mobile_payment = MobilePayment::find($form['id']);
 
 
 
-        // $mobile_payment->meeting                            =   (int)   $body['meeting'];
-        $mobile_payment->requested_date                     =           $body['requested_date'];
-        $mobile_payment->requested_by_id                    =   (int)   $body['requested_by_id'];
-        $mobile_payment->payment_desc                       =           $body['payment_desc'];
-        $mobile_payment->payment_purpose                    =           $body['payment_purpose'];
-        $mobile_payment->project_id                         =   (int)   $body['project_id'];
-        // $mobile_payment->account_id                         =   (int)   $body['account_id'];
-        $mobile_payment->mobile_payment_id                  =   (int)   $body['mobile_payment_id'];
-        $mobile_payment->invoice_id                         =   (int)   $body['invoice_id'];
-        $mobile_payment->expense_desc                       =           $body['expense_desc'];
-        $mobile_payment->expense_purpose                    =           $body['expense_purpose'];
-        $mobile_payment->payment_document                   =           $body['payment_document'];
-        $mobile_payment->status_id                          =   (int)   $body['status_id'];
-        $mobile_payment->project_manager_id                 =   (int)   $body['project_manager_id'];
-        $mobile_payment->region_id                          =   (int)   $body['region_id'];
-        $mobile_payment->county_id                          =   (int)   $body['county_id'];
-        $mobile_payment->attendance_sheet                   =           $body['attendance_sheet'];
-        $mobile_payment->rejection_reason                   =           $body['rejection_reason'];
-        $mobile_payment->rejected_by_id                     =   (int)   $body['rejected_by_id'];
+       
+            $mobile_payment->requested_by_id                =   (int)   $form['requested_by_id'];
+            $mobile_payment->request_action_by_id           =   (int)   $form['request_action_by_id'];
+            $mobile_payment->project_id                     =   (int)   $form['project_id'];
+            // $mobile_payment->account_id                     =   (int)   $form['account_id'];
+            $mobile_payment->mobile_payment_type_id         =   (int)   $form['mobile_payment_type_id'];
+            $mobile_payment->expense_desc                   =           $form['expense_desc'];
+            $mobile_payment->expense_purpose                =           $form['expense_purpose'];
+            $mobile_payment->payment_document               =   (int)   $form['payment_document'];
+            $mobile_payment->status_id                      =   (int)   $form['status_id'];
+            $mobile_payment->project_manager_id             =   (int)   $form['project_manager_id'];
+            $mobile_payment->region_id                      =   (int)   $form['region_id'];
+            $mobile_payment->county_id                      =   (int)   $form['county_id'];
+            $mobile_payment->attendance_sheet               =           $form['attendance_sheet'];
+            $mobile_payment->payees_upload_mode_id          =   (int)   $form['payees_upload_mode_id'];
+            $mobile_payment->rejection_reason               =           $form['rejection_reason'];
+            $mobile_payment->rejected_by_id                 =   (int)   $form['rejected_by_id'];
 
 
 
         if($mobile_payment->save()) {
 
-            return Response()->json(array('msg' => 'Success: Mobile payment updated','mobile_payment' => $lpo), 200);
+            return Response()->json(array('msg' => 'Success: Mobile payment updated','mobile_payment' => $mobile_payment), 200);
         }
     }
 

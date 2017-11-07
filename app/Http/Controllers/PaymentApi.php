@@ -372,6 +372,15 @@ class PaymentApi extends Controller
 
 
         }
+        //unbatched
+        if(array_key_exists('unbatched', $input)){
+
+            $mig = (int) $input['unbatched'];
+
+            // $qb->whereNull('payment_batch_id');
+            // $qb->whereNotNull('payable_type');
+            $qb->where('status_id',1);
+        }
 
 
 
@@ -500,12 +509,14 @@ class PaymentApi extends Controller
             $payment = Payment::find($data[$key]['id']);
 
             $data[$key]['payable']                      = $payment->payable;
+            $data[$key]['payable']['currency']          = $payment->payable->currency;
             $data[$key]['debit_bank_account']           = $payment->debit_bank_account;
             $data[$key]['currency']                     = $payment->currency;
             $data[$key]['paid_to_bank']                 = $payment->paid_to_bank;
             $data[$key]['paid_to_bank_branch']          = $payment->paid_to_bank_branch;
             $data[$key]['payment_mode']                 = $payment->payment_mode;
             $data[$key]['payment_batch']                = $payment->payment_batch;
+            $data[$key]['status']                       = $payment->status;
 
         }
 
