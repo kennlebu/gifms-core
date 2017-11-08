@@ -28,7 +28,7 @@ class PaymentBatch extends BaseModel
 
 
         $tariff_res = DB::table('payments')
-                     ->select(DB::raw(' payment_modes.id, payment_modes.abrv,payments.currency_id, currencies.currency_sign, currencies.display_color, currencies.default_currency '))
+                     ->select(DB::raw(' payment_modes.id, payment_modes.abrv,payments.currency_id, currencies.currency_sign, currencies.currency_name, currencies.display_color, currencies.default_currency '))
                      ->leftJoin('payment_modes', 'payments.payment_mode_id', '=', 'payment_modes.id')
                      ->leftJoin('currencies', 'payments.currency_id', '=', 'currencies.id')
                      ->where('payments.payment_batch_id', $id)

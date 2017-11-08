@@ -12,6 +12,7 @@ class Payment extends BaseModel
     //
     use SoftDeletes;
 
+    protected $appends = ['simple_date'];
     
     public function payable()
     {
@@ -44,5 +45,11 @@ class Payment extends BaseModel
     public function status()
     {
         return $this->belongsTo('App\Models\PaymentModels\PaymentStatus');
+    }
+    public function getSimpleDateAttribute(){
+        // $myDateTime = DateTime::createFromFormat('Y-m-d H:i:s', $this->attributes['created_at']);
+        // return $myDateTime->format('Ymd');
+        $timestamp = strtotime($this->attributes['created_at']); 
+        return $new_date = date('Ymd', $timestamp);
     }
 }

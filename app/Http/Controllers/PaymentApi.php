@@ -359,6 +359,32 @@ class PaymentApi extends Controller
 
         }
 
+
+
+
+            //if currency is set
+
+        if(array_key_exists('currency', $input)){
+
+            $currency = (int) $input['currency'];
+
+            if($currency >0){
+                $qb->where('currency_id', $input['currency']);
+            }
+
+        }
+            //if mode is set
+
+        if(array_key_exists('mode', $input)){
+
+            $mode = (int) $input['mode'];
+
+            if($mode >0){
+                $qb->where('payment_mode_id', $input['mode']);
+            }
+
+        }
+
         //migrated
         if(array_key_exists('migrated', $input)){
 
@@ -509,6 +535,7 @@ class PaymentApi extends Controller
             $payment = Payment::find($data[$key]['id']);
 
             $data[$key]['payable']                      = $payment->payable;
+            $data[$key]['simple_date']                  = $payment->simple_date;
             $data[$key]['payable']['currency']          = $payment->payable->currency;
             $data[$key]['debit_bank_account']           = $payment->debit_bank_account;
             $data[$key]['currency']                     = $payment->currency;
