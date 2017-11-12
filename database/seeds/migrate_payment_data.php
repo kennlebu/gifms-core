@@ -134,7 +134,7 @@ class migrate_payment_data extends Seeder
 
             $data_to_migrate[$key]['payment_date']                          =   $data[$key]['PaymentDate'];
             $data_to_migrate[$key]['upload_date']                           =   $data[$key]['UploadDate'];
-            $data_to_migrate[$key]['upload_status_id']                         =   $data[$key]['UploadStatus'];
+            $data_to_migrate[$key]['status_id']                             =   2;
             $data_to_migrate[$key]['migration_processed_by']                =   $data[$key]['ProcessedBy'];
             $data_to_migrate[$key]['migration_uploaded_by']                 =   $data[$key]['UploadedBy'];
             $data_to_migrate[$key]['migration_id']                          =   $data[$key]['ID'];
@@ -251,6 +251,62 @@ class migrate_payment_data extends Seeder
                 'payment_status' => 'Reconciled',
                 'next_status_id' => '5',
                 'order_priority' => '4',
+                'default_status' => NULL
+
+            ]
+        ]);
+        echo "\n-----------------------------------------------------------------------------------------------------\n";
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        /**
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         *                  Payment Batch Statuses
+         * 
+         * 
+         * 
+         * 
+         * 
+         */
+        echo "\nPayment Batch Statuses -[ALL]---\n";
+
+        DB::table('payment_batch_statuses')->insert([
+            [
+                'payment_status' => 'Created Awaiting Upload To Bank',
+                'next_status_id' => '2',
+                'order_priority' => '1',
+                'default_status' => '1'
+
+            ],
+            [
+                'payment_status' => 'Uploaded To Bank',
+                'next_status_id' => '3',
+                'order_priority' => '2',
                 'default_status' => NULL
 
             ]

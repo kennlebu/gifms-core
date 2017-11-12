@@ -88,28 +88,35 @@ class MobilePaymentApi extends Controller
     {
         $input = Request::all();
 
-
-
-        $form = Request::only(
-            'requested_by_id',
-            'request_action_by_id',
-            'project_id',
-            'account_id',
-            'mobile_payment_type_id',
-            'expense_desc',
-            'expense_purpose',
-            'payment_document',
-            'status_id',
-            'project_manager_id',
-            'region_id',
-            'county_id',
-            'attendance_sheet',
-            'payees_upload_mode_id',
-            'rejection_reason',
-            'rejected_by_id'
-            );
-
         try{
+
+
+            $form = Request::only(
+                'requested_by_id',
+                'request_action_by_id',
+                'project_id',
+                'account_id',
+                'mobile_payment_type_id',
+                'expense_desc',
+                'expense_purpose',
+                'payment_document',
+                'status_id',
+                'project_manager_id',
+                'region_id',
+                'county_id',
+                'attendance_sheet',
+                'payees_upload_mode_id',
+                'rejection_reason',
+                'file',
+                'rejected_by_id'
+                );
+
+
+            $ftp = FTP::connection()->getDirListing();
+
+
+            $file = $form['file'];
+
 
             $mobile_payment = new MobilePayment;
 
@@ -139,6 +146,13 @@ class MobilePaymentApi extends Controller
 
 
             if($mobile_payment->save()) {
+
+                FTP::connection()->makeDir('/mobile_payments');
+                FTP::connection()->makeDir('/mobile_payments/'.$mobile_payment->id);
+                FTP::connection()->makeDir('/mobile_payments/'.$mobile_payment->id.'/signsheet');
+                FTP::connection()->uploadFile($file->getPathname(), '/mobile_payments/'.$mobile_payment->id.'/signsheet/'.$mobile_payment->id.'.'.$file->getClientOriginalExtension());
+
+                $mobile_payment->attendance_sheet           =   $mobile_payment->id.'.'.$file->getClientOriginalExtension();
 
                 $mobile_payment->ref = "CHAI/MPYMT/#$mobile_payment->id/".date_format($mobile_payment->created_at,"Y/m/d");
                 $mobile_payment->save();
@@ -808,9 +822,9 @@ class MobilePaymentApi extends Controller
             return $response;  
         }catch (Exception $e ){            
 
-            $response       = Response::make("", 200);
+            $response       = Response::make(array('error'=>$e), 500);
 
-            $response->header('Content-Type', 'application/pdf');
+            // $response->header('Content-Type', 'application/pdf');
 
             return $response;  
 

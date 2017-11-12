@@ -198,7 +198,8 @@ class LPOApi extends Controller
             'project_id',
             'account_id',
             'currency_id',
-            'project_manager_id'
+            'project_manager_id',
+            'preffered_quotation_id'
             );
 
         $lpo = Lpo::find($form['id']);
@@ -213,6 +214,7 @@ class LPOApi extends Controller
             $lpo->account_id                        =   (int)   $form['account_id'];
             $lpo->currency_id                       =   (int)   $form['currency_id'];
             $lpo->project_manager_id                =   (int)   $form['project_manager_id'];
+            $lpo->preffered_quotation_id            =   (int)   $form['preffered_quotation_id'];
 
 
 

@@ -26,13 +26,13 @@ class post_migration_statuses_migration extends Seeder
         DB::statement($sql);
         $sql = "UPDATE `invoice_statuses` SET `order_priority`='6', `invoice_status`='Pending Management Approval'  WHERE `id`='3'"; 
         DB::statement($sql);
-        $sql = "UPDATE `invoice_statuses` SET `next_status_id`='5', `order_priority`='7', `display_color`='##075b23a1', `invoice_status`='Pending Finance CSV Creation (Batching)'  WHERE `id`='4'"; 
+        $sql = "UPDATE `invoice_statuses` SET `next_status_id`='5', `order_priority`='7', `display_color`='#075b23a1', `invoice_status`='Pending Finance CSV Creation (Batching)'  WHERE `id`='4'"; 
         DB::statement($sql);
-        $sql = "UPDATE `invoice_statuses` SET `order_priority`='9', `deleted_at`='2017-10-24 12:48:44' , `display_color`='##075b23a1' WHERE `id`='6'"; 
+        $sql = "UPDATE `invoice_statuses` SET `order_priority`='9', `deleted_at`='2017-10-24 12:48:44' , `display_color`='#075b23a1' WHERE `id`='6'"; 
         DB::statement($sql);
-        $sql = "UPDATE `invoice_statuses` SET `next_status_id`='7', `order_priority`='8' , `display_color`='##075b23a1' WHERE `id`='5'"; 
+        $sql = "UPDATE `invoice_statuses` SET `next_status_id`='7', `order_priority`='8' , `display_color`='#075b23a1' WHERE `id`='5'"; 
         DB::statement($sql);
-        $sql = "UPDATE `invoice_statuses` SET `order_priority`='10', `display_color`='##075b23a1',`invoice_status`='CSV Uploaded to Bank Awaiting Reconciliation'  WHERE `id`='7'"; 
+        $sql = "UPDATE `invoice_statuses` SET `order_priority`='10', `display_color`='#075b23a1',`invoice_status`='CSV Uploaded to Bank Awaiting Reconciliation'  WHERE `id`='7'"; 
         DB::statement($sql);
         $sql = "UPDATE `invoice_statuses` SET `order_priority`='11', `display_color`='#55ff55c2' WHERE `id`='8'"; 
         DB::statement($sql);
