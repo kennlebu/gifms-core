@@ -44,6 +44,7 @@ use App\Models\PaymentModels\PaymentType;
 use App\Models\LookupModels\Currency;
 use App\Models\BankingModels\BankBranch;
 use App\Exceptions\NotFullyAllocatedException;
+use App\Exceptions\ApprovalException;
 
 class MobilePaymentApi extends Controller
 {
@@ -285,6 +286,8 @@ class MobilePaymentApi extends Controller
     {
         $response = [];
 
+        $user = JWTAuth::parseToken()->authenticate();
+
         try{
             $response   = MobilePayment::with(
                                     'requested_by',
@@ -384,6 +387,8 @@ class MobilePaymentApi extends Controller
 
         $response = [];
 
+        $user = JWTAuth::parseToken()->authenticate();
+
         try{
             $mobile_payment   = MobilePayment::with(
                                     'requested_by',
@@ -404,6 +409,9 @@ class MobilePaymentApi extends Controller
                                     'allocations'
                                 )->findOrFail($mobile_payment_id);
 
+            if ($user->can("APPROVE_MOBILE_PAYMENT_".$mobile_payment->status_id)){
+                throw new ApprovalException("No approval permission");             
+            }
            
             $mobile_payment->status_id = $mobile_payment->status->next_status_id;
 
@@ -431,7 +439,6 @@ class MobilePaymentApi extends Controller
 
                 $approval = new Approval;
 
-                $user = JWTAuth::parseToken()->authenticate();
 
                 $approval->approvable_id            =   (int)   $mobile_payment->id;
                 $approval->approvable_type          =   "mobile_payments";
@@ -446,6 +453,10 @@ class MobilePaymentApi extends Controller
                 return Response()->json(array('msg' => 'Success: mobile_payment approved','mobile_payment' => $mobile_payment), 200);
             }
 
+        }catch(ApprovalException $ae){
+
+            $response =  ["error"=>"You do not have the permissions to perform this action at this point"];
+            return response()->json($response, 401,array(),JSON_PRETTY_PRINT);
         }catch(Exception $e){
 
             $response =  ["error"=>"Mobile Payment could not be found"];
@@ -489,6 +500,7 @@ class MobilePaymentApi extends Controller
             );
 
         $response = [];
+        $user = JWTAuth::parseToken()->authenticate();
 
         try{
             $mobile_payment   = MobilePayment::with(
@@ -510,9 +522,11 @@ class MobilePaymentApi extends Controller
                                     'allocations'
                                 )->findOrFail($mobile_payment_id);
 
+            if ($user->can("APPROVE_MOBILE_PAYMENT_".$mobile_payment->status_id)){
+                throw new ApprovalException("No approval permission");             
+            }
            
             $mobile_payment->status_id = 7;
-            $user = JWTAuth::parseToken()->authenticate();
             $mobile_payment->rejected_by_id            =   (int)   $user->id;
             $mobile_payment->rejected_at              =   date('Y-m-d H:i:s');
             $mobile_payment->rejection_reason             =   $form['rejection_reason'];
@@ -524,6 +538,10 @@ class MobilePaymentApi extends Controller
                 return Response()->json(array('msg' => 'Success: mobile_payment approved','mobile_payment' => $mobile_payment), 200);
             }
 
+        }catch(ApprovalException $ae){
+
+            $response =  ["error"=>"You do not have the permissions to perform this action at this point"];
+            return response()->json($response, 401,array(),JSON_PRETTY_PRINT);
         }catch(Exception $e){
 
             $response =  ["error"=>"Mobile Payment could not be found"];
@@ -931,6 +949,11 @@ class MobilePaymentApi extends Controller
                                 )->findOrFail($mobile_payment_id);
 
            
+
+           if (($mobile_payment->total - $mobile_payment->amount_allocated) > 1 ){ //allowance of 1
+             throw new NotFullyAllocatedException("This mobile payment has not been fully allocated");
+             
+           }
             $mobile_payment->status_id = $mobile_payment->status->next_status_id;
             $mobile_payment->requested_at = date('Y-m-d H:i:s');
 
@@ -941,6 +964,10 @@ class MobilePaymentApi extends Controller
                 return Response()->json(array('msg' => 'Success: mobile_payment submitted','mobile_payment' => $mobile_payment), 200);
             }
 
+        }catch(NotFullyAllocatedException $ae){
+
+            $response =  ["error"=>"Mobile Payment not fully allocated"];
+            return response()->json($response, 403,array(),JSON_PRETTY_PRINT);
         }catch(Exception $e){
 
             $response =  ["error"=>"Mobile Payment could not be found"];

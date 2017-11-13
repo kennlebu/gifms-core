@@ -19,7 +19,7 @@
       <table style="width: 100%;font-size: smaller;"  cellspacing="0">
         <tbody>
           <tr>
-            <td style="text-align: center;" colspan="10"  height="30"><span style="text-decoration: underline;"><strong><span style="color: #092d50; font-size: x-large; text-decoration: underline;">MOBILE PAYMENTS </span></strong></span></td>
+            <td style="text-align: center;" colspan="7"  height="30"><span style="text-decoration: underline;"><strong><span style="color: #092d50; font-size: x-large; text-decoration: underline;">MOBILE PAYMENTS </span></strong></span></td>
           </tr>
           <tr>
             <td colspan="4" ></td>
@@ -28,7 +28,7 @@
           </tr>
 
           <tr>
-            <td colspan="9" >&nbsp;</td>
+            <td colspan="7" >&nbsp;</td>
           </tr>
 
 
@@ -58,7 +58,7 @@
 
 
           <tr>
-            <td style="border-top: 1px solid #000000;" colspan="10" >&nbsp;</td>
+            <td style="border-top: 1px solid #000000;" colspan="7" >&nbsp;</td>
           </tr>
           <tr>
             <td ></td>

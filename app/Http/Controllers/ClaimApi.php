@@ -39,6 +39,7 @@ use App\Models\PaymentModels\PaymentType;
 use App\Models\LookupModels\Currency;
 use App\Models\BankingModels\BankBranch;
 use App\Exceptions\NotFullyAllocatedException;
+use App\Exceptions\ApprovalException;
 
 class ClaimApi extends Controller
 {
@@ -380,6 +381,8 @@ class ClaimApi extends Controller
     {
         $claim = [];
 
+        $user = JWTAuth::parseToken()->authenticate();
+
         try{
             $claim   = Claim::with( 
                                         'requested_by',
@@ -394,6 +397,9 @@ class ClaimApi extends Controller
                                     )->findOrFail($claim_id);
 
            
+            if ($user->can("APPROVE_CLAIM_".$claim->status_id)){
+                throw new ApprovalException("No approval permission");             
+            }
             $claim->status_id = $claim->status->next_status_id;
 
             if($claim->save()) {
@@ -412,8 +418,6 @@ class ClaimApi extends Controller
 
                 $approval = new Approval;
 
-                $user = JWTAuth::parseToken()->authenticate();
-
                 $approval->approvable_id            =   (int)   $claim->id;
                 $approval->approvable_type          =   "claims";
                 $approval->approval_level_id        =   $claim->status->approval_level_id;
@@ -426,6 +430,10 @@ class ClaimApi extends Controller
                 return Response()->json(array('msg' => 'Success: claim approved','claim' => $claim), 200);
             }
 
+        }catch(ApprovalException $ae){
+
+            $response =  ["error"=>"You do not have the permissions to perform this action at this point"];
+            return response()->json($response, 401,array(),JSON_PRETTY_PRINT);
         }catch(Exception $e){
 
             $response =  ["error"=>"Claim could not be found"];
@@ -476,6 +484,7 @@ class ClaimApi extends Controller
             );
         
         $claim = [];
+        $user = JWTAuth::parseToken()->authenticate();
 
         try{
             $claim   = Claim::with( 
@@ -490,9 +499,11 @@ class ClaimApi extends Controller
                                         'allocations'
                                     )->findOrFail($claim_id);
 
+            if ($user->can("APPROVE_CLAIM_".$claim->status_id)){
+                throw new ApprovalException("No approval permission");             
+            }
            
             $claim->status_id = 9;
-            $user = JWTAuth::parseToken()->authenticate();
             $claim->rejected_by_id            =   (int)   $user->id;
             $claim->rejected_at              =   date('Y-m-d H:i:s');
             $claim->rejection_reason             =   $form['rejection_reason'];
@@ -504,6 +515,10 @@ class ClaimApi extends Controller
                 return Response()->json(array('msg' => 'Success: claim approved','claim' => $claim), 200);
             }
 
+        }catch(ApprovalException $ae){
+
+            $response =  ["error"=>"You do not have the permissions to perform this action at this point"];
+            return response()->json($response, 401,array(),JSON_PRETTY_PRINT);
         }catch(Exception $e){
 
             $response =  ["error"=>"Claim could not be found"];
@@ -625,6 +640,12 @@ class ClaimApi extends Controller
                                     )->findOrFail($claim_id);
 
            
+
+           if (($claim->total - $claim->amount_allocated) > 1 ){ //allowance of 1
+             throw new NotFullyAllocatedException("This claim has not been fully allocated");
+             
+           }
+
             $claim->status_id = $claim->status->next_status_id;
             $claim->requested_at = date('Y-m-d H:i:s');
 
@@ -635,6 +656,10 @@ class ClaimApi extends Controller
                 return Response()->json(array('msg' => 'Success: claim submitted','claim' => $claim), 200);
             }
 
+        }catch(NotFullyAllocatedException $ae){
+
+            $response =  ["error"=>"Claim not fully allocated"];
+            return response()->json($response, 403,array(),JSON_PRETTY_PRINT);
         }catch(Exception $e){
 
             $response =  ["error"=>"Claim could not be found"];

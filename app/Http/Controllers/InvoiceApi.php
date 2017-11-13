@@ -41,6 +41,7 @@ use App\Models\PaymentModels\PaymentType;
 use App\Models\LookupModels\Currency;
 use App\Models\BankingModels\BankBranch;
 use App\Exceptions\NotFullyAllocatedException;
+use App\Exceptions\ApprovalException;
 
 class InvoiceApi extends Controller
 {
@@ -607,6 +608,8 @@ class InvoiceApi extends Controller
     {
         $invoice = [];
 
+        $user = JWTAuth::parseToken()->authenticate();
+
         try{
             $invoice   = Invoice::with( 
                                         'raised_by',
@@ -625,6 +628,10 @@ class InvoiceApi extends Controller
                                     )->findOrFail($invoice_id);
 
            
+            if ($user->can("APPROVE_INVOICE_".$invoice->status_id)){
+                throw new ApprovalException("No approval permission");             
+            }
+
             $invoice->status_id = $invoice->status->next_status_id;
 
             if($invoice->save()) {
@@ -647,8 +654,6 @@ class InvoiceApi extends Controller
 
                 $approval = new Approval;
 
-                $user = JWTAuth::parseToken()->authenticate();
-
                 $approval->approvable_id            =   (int)   $invoice->id;
                 $approval->approvable_type          =   "invoices";
                 $approval->approval_level_id        =   $invoice->status->approval_level_id;
@@ -666,6 +671,10 @@ class InvoiceApi extends Controller
                 return Response()->json(array('msg' => 'Success: invoice approved','invoice' => $invoice), 200);
             }
 
+        }catch(ApprovalException $ae){
+
+            $response =  ["error"=>"You do not have the permissions to perform this action at this point"];
+            return response()->json($response, 401,array(),JSON_PRETTY_PRINT);
         }catch(Exception $e){
 
             $response =  ["error"=>"Invoice could not be found"];
@@ -706,6 +715,7 @@ class InvoiceApi extends Controller
         $form = Request::only(
             'rejection_reason'
             );
+        $user = JWTAuth::parseToken()->authenticate();
         
         $invoice = [];
 
@@ -727,9 +737,11 @@ class InvoiceApi extends Controller
                                     )->findOrFail($invoice_id);
 
            
+            if ($user->can("APPROVE_INVOICE_".$invoice->status_id)){
+                throw new ApprovalException("No approval permission");             
+            }
 
             $invoice->status_id = 9;
-            $user = JWTAuth::parseToken()->authenticate();
             $invoice->rejected_by_id            =   (int)   $user->id;
             $invoice->rejected_at                 =   date('Y-m-d H:i:s');
             $invoice->rejection_reason             =   $form['rejection_reason'];
@@ -746,6 +758,10 @@ class InvoiceApi extends Controller
                 return Response()->json(array('msg' => 'Success: invoice approved','invoice' => $invoice), 200);
             }
 
+        }catch(ApprovalException $ae){
+
+            $response =  ["error"=>"You do not have the permissions to perform this action at this point"];
+            return response()->json($response, 401,array(),JSON_PRETTY_PRINT);
         }catch(Exception $e){
 
             $response =  ["error"=>"Invoice could not be found"];
@@ -942,7 +958,7 @@ class InvoiceApi extends Controller
                                         'comments'
                                     )->findOrFail($invoice_id);
 
-           if (($invoice->total - $invoice->amount_allocated) > 1 ){ //allows error of 1
+           if (($invoice->total - $invoice->amount_allocated) > 1 ){ //allowance of 1
              throw new NotFullyAllocatedException("This invoice has not been fully allocated");
              
            }

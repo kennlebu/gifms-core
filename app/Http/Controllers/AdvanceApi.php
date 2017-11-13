@@ -35,6 +35,7 @@ use App\Models\PaymentModels\PaymentType;
 use App\Models\LookupModels\Currency;
 use App\Models\BankingModels\BankBranch;
 use App\Exceptions\NotFullyAllocatedException;
+use App\Exceptions\ApprovalException;
 
 class AdvanceApi extends Controller
 {
@@ -388,6 +389,8 @@ class AdvanceApi extends Controller
 
         $input = Request::all();
 
+        $user = JWTAuth::parseToken()->authenticate();
+
         try{
 
             $advance   = Advance::with(
@@ -402,6 +405,9 @@ class AdvanceApi extends Controller
                                     'allocations'
                                 )->findOrFail($advance_id);
            
+            if ($user->can("APPROVE_ADVANCE_".$advance->status_id)){
+                throw new ApprovalException("No approval permission");             
+            }
             $advance->status_id = $advance->status->next_status_id;
 
             if($advance->save()) {
@@ -420,8 +426,6 @@ class AdvanceApi extends Controller
 
                 $approval = new Approval;
 
-                $user = JWTAuth::parseToken()->authenticate();
-
                 $approval->approvable_id            =   (int)   $advance->id;
                 $approval->approvable_type          =   "advances";
                 $approval->approval_level_id        =   $advance->status->approval_level_id;
@@ -435,6 +439,10 @@ class AdvanceApi extends Controller
             }
 
 
+        }catch(ApprovalException $ae){
+
+            $response =  ["error"=>"You do not have the permissions to perform this action at this point"];
+            return response()->json($response, 401,array(),JSON_PRETTY_PRINT);
         }catch(Exception $e){
 
             $response =  ["error"=>"Advance could not be found"];
@@ -473,6 +481,8 @@ class AdvanceApi extends Controller
             'rejection_reason'
             );
 
+        $user = JWTAuth::parseToken()->authenticate();
+
         try{
 
             $advance   = Advance::with(
@@ -487,8 +497,10 @@ class AdvanceApi extends Controller
                                     'allocations'
                                 )->findOrFail($advance_id);
            
+            if ($user->can("APPROVE_ADVANCE_".$advance->status_id)){
+                throw new ApprovalException("No approval permission");             
+            }
             $advance->status_id = 11;
-            $user = JWTAuth::parseToken()->authenticate();
             $advance->rejected_by_id            =   (int)   $user->id;
             $advance->rejected_at              =   date('Y-m-d H:i:s');
             $advance->rejection_reason             =   $form['rejection_reason'];
@@ -501,6 +513,10 @@ class AdvanceApi extends Controller
             }
 
 
+        }catch(ApprovalException $ae){
+
+            $response =  ["error"=>"You do not have the permissions to perform this action at this point"];
+            return response()->json($response, 401,array(),JSON_PRETTY_PRINT);
         }catch(Exception $e){
 
             $response =  ["error"=>"Advance could not be found"];

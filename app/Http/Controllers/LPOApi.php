@@ -35,6 +35,7 @@ use App\Models\ApprovalsModels\Approval;
 use App\Models\ApprovalsModels\ApprovalLevel;
 use App\Models\StaffModels\Staff;
 use App\Models\SuppliesModels\Supplier;
+use App\Exceptions\ApprovalException;
 
 
 class LPOApi extends Controller
@@ -325,6 +326,8 @@ class LPOApi extends Controller
     {
         $input = Request::all();
 
+        $user = JWTAuth::parseToken()->authenticate();
+
         try{
 
             $lpo   = LPO::with(
@@ -348,6 +351,9 @@ class LPOApi extends Controller
                                             'deliveries'
                                 )->findOrFail($lpo_id);
            
+            if ($user->can("APPROVE_LPO_".$lpo->status_id)){
+                throw new ApprovalException("No approval permission");             
+            }
            
             $lpo->status_id = $lpo->status->next_status_id;
 
@@ -376,8 +382,6 @@ class LPOApi extends Controller
 
                 $approval = new Approval;
 
-                $user = JWTAuth::parseToken()->authenticate();
-
                 $approval->approvable_id            =   (int)   $lpo->id;
                 $approval->approvable_type          =   "lpos";
                 $approval->approval_level_id        =   $lpo->status->approval_level_id;
@@ -392,6 +396,10 @@ class LPOApi extends Controller
                 return Response()->json(array('msg' => 'Success: lpo approved','lpo' => $lpo), 200);
             }
 
+        }catch(ApprovalException $ae){
+
+            $response =  ["error"=>"You do not have the permissions to perform this action at this point"];
+            return response()->json($response, 401,array(),JSON_PRETTY_PRINT);
         }catch(Exception $e){
 
             $response =  ["error"=>"lpo could not be found"];
@@ -432,6 +440,8 @@ class LPOApi extends Controller
             'rejection_reason'
             );
 
+        $user = JWTAuth::parseToken()->authenticate();
+
         try{
 
             $lpo   = LPO::with(
@@ -456,8 +466,10 @@ class LPOApi extends Controller
                                 )->findOrFail($lpo_id);
            
            
+            if ($user->can("APPROVE_LPO_".$lpo->status_id)){
+                throw new ApprovalException("No approval permission");             
+            }
             $lpo->status_id = 12;
-            $user = JWTAuth::parseToken()->authenticate();
             $lpo->rejected_by_id            =   (int)   $user->id;
             $lpo->rejected_at              =   date('Y-m-d H:i:s');
             $lpo->rejection_reason             =   $form['rejection_reason'];
@@ -470,6 +482,10 @@ class LPOApi extends Controller
                 return Response()->json(array('msg' => 'Success: lpo rejected','lpo' => $lpo), 200);
             }
 
+        }catch(ApprovalException $ae){
+
+            $response =  ["error"=>"You do not have the permissions to perform this action at this point"];
+            return response()->json($response, 401,array(),JSON_PRETTY_PRINT);
         }catch(Exception $e){
 
             $response =  ["error"=>"lpo could not be found"];
