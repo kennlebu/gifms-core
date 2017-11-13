@@ -409,7 +409,7 @@ class MobilePaymentApi extends Controller
                                     'allocations'
                                 )->findOrFail($mobile_payment_id);
 
-            if ($user->can("APPROVE_MOBILE_PAYMENT_".$mobile_payment->status_id)){
+            if (!$user->can("APPROVE_MOBILE_PAYMENT_".$mobile_payment->status_id)){
                 throw new ApprovalException("No approval permission");             
             }
            
@@ -456,7 +456,7 @@ class MobilePaymentApi extends Controller
         }catch(ApprovalException $ae){
 
             $response =  ["error"=>"You do not have the permissions to perform this action at this point"];
-            return response()->json($response, 401,array(),JSON_PRETTY_PRINT);
+            return response()->json($response, 403,array(),JSON_PRETTY_PRINT);
         }catch(Exception $e){
 
             $response =  ["error"=>"Mobile Payment could not be found"];
@@ -522,7 +522,7 @@ class MobilePaymentApi extends Controller
                                     'allocations'
                                 )->findOrFail($mobile_payment_id);
 
-            if ($user->can("APPROVE_MOBILE_PAYMENT_".$mobile_payment->status_id)){
+            if (!$user->can("APPROVE_MOBILE_PAYMENT_".$mobile_payment->status_id)){
                 throw new ApprovalException("No approval permission");             
             }
            
@@ -541,7 +541,7 @@ class MobilePaymentApi extends Controller
         }catch(ApprovalException $ae){
 
             $response =  ["error"=>"You do not have the permissions to perform this action at this point"];
-            return response()->json($response, 401,array(),JSON_PRETTY_PRINT);
+            return response()->json($response, 403,array(),JSON_PRETTY_PRINT);
         }catch(Exception $e){
 
             $response =  ["error"=>"Mobile Payment could not be found"];

@@ -405,7 +405,7 @@ class AdvanceApi extends Controller
                                     'allocations'
                                 )->findOrFail($advance_id);
            
-            if ($user->can("APPROVE_ADVANCE_".$advance->status_id)){
+            if (!$user->can("APPROVE_ADVANCE_".$advance->status_id)){
                 throw new ApprovalException("No approval permission");             
             }
             $advance->status_id = $advance->status->next_status_id;
@@ -442,7 +442,7 @@ class AdvanceApi extends Controller
         }catch(ApprovalException $ae){
 
             $response =  ["error"=>"You do not have the permissions to perform this action at this point"];
-            return response()->json($response, 401,array(),JSON_PRETTY_PRINT);
+            return response()->json($response, 403,array(),JSON_PRETTY_PRINT);
         }catch(Exception $e){
 
             $response =  ["error"=>"Advance could not be found"];
@@ -497,7 +497,7 @@ class AdvanceApi extends Controller
                                     'allocations'
                                 )->findOrFail($advance_id);
            
-            if ($user->can("APPROVE_ADVANCE_".$advance->status_id)){
+            if (!$user->can("APPROVE_ADVANCE_".$advance->status_id)){
                 throw new ApprovalException("No approval permission");             
             }
             $advance->status_id = 11;
@@ -516,7 +516,7 @@ class AdvanceApi extends Controller
         }catch(ApprovalException $ae){
 
             $response =  ["error"=>"You do not have the permissions to perform this action at this point"];
-            return response()->json($response, 401,array(),JSON_PRETTY_PRINT);
+            return response()->json($response, 403,array(),JSON_PRETTY_PRINT);
         }catch(Exception $e){
 
             $response =  ["error"=>"Advance could not be found"];

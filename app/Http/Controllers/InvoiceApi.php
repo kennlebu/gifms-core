@@ -628,7 +628,7 @@ class InvoiceApi extends Controller
                                     )->findOrFail($invoice_id);
 
            
-            if ($user->can("APPROVE_INVOICE_".$invoice->status_id)){
+            if (!$user->can("APPROVE_INVOICE_".$invoice->status_id)){
                 throw new ApprovalException("No approval permission");             
             }
 
@@ -674,7 +674,7 @@ class InvoiceApi extends Controller
         }catch(ApprovalException $ae){
 
             $response =  ["error"=>"You do not have the permissions to perform this action at this point"];
-            return response()->json($response, 401,array(),JSON_PRETTY_PRINT);
+            return response()->json($response, 403,array(),JSON_PRETTY_PRINT);
         }catch(Exception $e){
 
             $response =  ["error"=>"Invoice could not be found"];
@@ -737,7 +737,7 @@ class InvoiceApi extends Controller
                                     )->findOrFail($invoice_id);
 
            
-            if ($user->can("APPROVE_INVOICE_".$invoice->status_id)){
+            if (!$user->can("APPROVE_INVOICE_".$invoice->status_id)){
                 throw new ApprovalException("No approval permission");             
             }
 
@@ -761,7 +761,7 @@ class InvoiceApi extends Controller
         }catch(ApprovalException $ae){
 
             $response =  ["error"=>"You do not have the permissions to perform this action at this point"];
-            return response()->json($response, 401,array(),JSON_PRETTY_PRINT);
+            return response()->json($response, 403,array(),JSON_PRETTY_PRINT);
         }catch(Exception $e){
 
             $response =  ["error"=>"Invoice could not be found"];
