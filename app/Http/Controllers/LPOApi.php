@@ -798,6 +798,56 @@ class LPOApi extends Controller
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+    /**
+     * Operation approveSeveralLPOs
+     *
+     * Approve several Lpos.
+     *
+     *
+     * @return Http response
+     */
+    public function approveSeveralLPOs()
+    {   
+        try {
+            $form = Request::only("lpos");
+            $lpo_ids = $form['lpos'];
+
+            foreach ($lpo_ids as $key => $lpo_id) {
+                $this->approveLpo($lpo_id);
+            }
+
+            return response()->json(['lpos'=>$form['lpos']], 201,array(),JSON_PRETTY_PRINT);
+            
+        } catch (Exception $e) {
+             return response()->json(['error'=>"An rerror occured during processing"], 500,array(),JSON_PRETTY_PRINT);
+            
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /**
     * Operation lposGet
     *
@@ -840,6 +890,8 @@ class LPOApi extends Controller
                 $qb->where('lpos.requested_by_id',$this->current_user()->id);
             }elseif ($status_==-2) {
                 
+            }elseif ($status_==-3) {
+                $qb->where('project_manager_id',$this->current_user()->id);
             }
 
 

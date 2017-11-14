@@ -319,12 +319,21 @@ class MobilePaymentStatusApi extends Controller
             $response[]=array(
                     "id"=> -1,
                     "mobile_payment_status"=> "My Mobile Payments",
-                    "order_priority"=> 999,
+                    "order_priority"=> 998,
                     "display_color"=> "#37A9E17A",
                     "mobile_payments_count"=> MobilePayment::where('requested_by_id',$this->current_user()->id)->count()
                   );
 
 
+            if ($user->hasRole('program-manager')){
+                $response[]=array(
+                        "id"=> -3,
+                        "mobile_payment_status"=> "My PM-Assigned Mobile Payments",
+                        "order_priority"=> 999,
+                        "display_color"=> "#49149c7a",
+                        "mobile_payments_count"=> MobilePayment::where('project_manager_id',$this->current_user()->id)->count()
+                      );
+            }
 
             if ($user->can('READ_MOBILE_PAYMENT_-2')){
                 //-1
@@ -336,6 +345,7 @@ class MobilePaymentStatusApi extends Controller
                         "mobile_payments_count"=> MobilePayment::count()
                       );
             }
+
 
         }
 

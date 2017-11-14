@@ -997,6 +997,56 @@ class MobilePaymentApi extends Controller
 
 
 
+
+
+    /**
+     * Operation approveSeveralMobilePayment
+     *
+     * Approve several Mobile Payments.
+     *
+     *
+     * @return Http response
+     */
+    public function approveSeveralMobilePayment()
+    {   
+        try {
+            $form = Request::only("mobile_payments");
+            $mobile_payment_ids = $form['mobile_payments'];
+
+            foreach ($mobile_payment_ids as $key => $mobile_payment_id) {
+                $this->approve($mobile_payment_id);
+            }
+
+            return response()->json(['mobile_payments'=>$form['mobile_payments']], 201,array(),JSON_PRETTY_PRINT);
+            
+        } catch (Exception $e) {
+             return response()->json(['error'=>"An rerror occured during processing"], 500,array(),JSON_PRETTY_PRINT);
+            
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /**
      * Operation mobilePaymentsGet
      *
@@ -1039,6 +1089,8 @@ class MobilePaymentApi extends Controller
                 $qb->where('requested_by_id',$this->current_user()->id);
             }elseif ($status_==-2) {
                 
+            }elseif ($status_==-3) {
+                $qb->where('project_manager_id',$this->current_user()->id);
             }
 
 

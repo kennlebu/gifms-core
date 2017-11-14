@@ -292,12 +292,23 @@ class ClaimStatusApi extends Controller
             $response[]=array(
                     "id"=> -1,
                     "claim_status"=> "My Claims",
-                    "order_priority"=> 999,
+                    "order_priority"=> 998,
                     "display_color"=> "#37A9E17A",
                     "claims_count"=> Claim::where('requested_by_id',$this->current_user()->id)->count()
                   );
 
 
+
+
+            if ($user->hasRole('program-manager')){
+                $response[]=array(
+                        "id"=> -3,
+                        "claim_status"=> "My PM-Assigned Claims",
+                        "order_priority"=> 999,
+                        "display_color"=> "#49149c7a",
+                        "claims_count"=> Claim::where('project_manager_id',$this->current_user()->id)->count()
+                      );
+            }
             if ($user->can('READ_CLAIM_-2')){
 
                 //-1
@@ -309,6 +320,7 @@ class ClaimStatusApi extends Controller
                         "claims_count"=> Claim::count()
                       );
             }
+
 
         }
 

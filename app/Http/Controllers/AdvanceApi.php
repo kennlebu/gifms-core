@@ -657,6 +657,8 @@ class AdvanceApi extends Controller
                 $qb->where('requested_by_id',$this->current_user()->id);
             }elseif ($status_==-2) {
                 
+            }elseif ($status_==-3) {
+                $qb->where('project_manager_id',$this->current_user()->id);
             }
 
 

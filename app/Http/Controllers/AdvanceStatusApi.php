@@ -291,11 +291,21 @@ class AdvanceStatusApi extends Controller
             $response[]=array(
                     "id"=> -1,
                     "advance_status"=> "My Advances",
-                    "order_priority"=> 999,
+                    "order_priority"=> 998,
                     "display_color"=> "#37A9E17A",
                     "advances_count"=> Advance::where('requested_by_id',$this->current_user()->id)->count()
                   );
 
+
+            if ($user->hasRole('program-manager')){
+                $response[]=array(
+                        "id"=> -3,
+                        "advance_status"=> "My PM-Assigned Advances",
+                        "order_priority"=> 999,
+                        "display_color"=> "#49149c7a",
+                        "advances_count"=> Advance::where('project_manager_id',$this->current_user()->id)->count()
+                      );
+            }
 
             if ($user->can('READ_ADVANCE_-2')){
 
@@ -308,6 +318,7 @@ class AdvanceStatusApi extends Controller
                         "advances_count"=> Advance::count()
                       );
             }
+
 
         }
 

@@ -319,12 +319,22 @@ class LPOStatusApi extends Controller
             $response[]=array(
                     "id"=> -1,
                     "lpo_status"=> "My Lpos",
-                    "order_priority"=> 999,
+                    "order_priority"=> 998,
                     "display_color"=> "#37A9E17A",
                     "lpo_count"=> LPO::where('requested_by_id',$this->current_user()->id)->count()
                   );
 
 
+
+            if ($user->hasRole('program-manager')){
+                $response[]=array(
+                        "id"=> -3,
+                        "lpo_status"=> "My PM-Assigned LPOs",
+                        "order_priority"=> 999,
+                        "display_color"=> "#49149c7a",
+                        "lpo_count"=> LPO::where('project_manager_id',$this->current_user()->id)->count()
+                      );
+            }
 
             if ($user->can('READ_LPO_-2')){
                 //-1
@@ -336,6 +346,7 @@ class LPOStatusApi extends Controller
                         "lpo_count"=> LPO::count()
                       );
             }
+
 
         }
 

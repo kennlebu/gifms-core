@@ -322,12 +322,24 @@ class InvoiceStatusApi extends Controller
             $response[]=array(
                     "id"=> -1,
                     "invoice_status"=> "My Invoices",
-                    "order_priority"=> 999,
+                    "order_priority"=> 998,
                     "display_color"=> "#37A9E17A",
                     "invoices_count"=> Invoice::where('raised_by_id',$this->current_user()->id)->count()
                   );
 
 
+
+
+            if ($user->hasRole('program-manager')){
+                $response[]=array(
+                        "id"=> -3,
+                        "invoice_status"=> "My PM-Assigned Invoices",
+                        "order_priority"=> 999,
+                        "display_color"=> "#49149c7a",
+                        "invoices_count"=> Invoice::where('project_manager_id',$this->current_user()->id)->count()
+                      );
+            }
+            
             if ($user->can('READ_INVOICE_-2')){
                 //-2
                 $response[]=array(
@@ -338,6 +350,8 @@ class InvoiceStatusApi extends Controller
                         "invoices_count"=> Invoice::count()
                       );
             }
+
+
 
         }
 
