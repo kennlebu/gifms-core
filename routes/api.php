@@ -34,6 +34,9 @@ Route::post('/authenticate_second_user', [	'uses' => 'ApiAuthController@authenti
 Route::get('/get_authenticated_user', [	'uses' => 'ApiAuthController@getAuthenticatedUser'])->middleware('jwt.auth');
 Route::post('/user_can', [	'uses' => 'ApiAuthController@userCan'])->middleware('jwt.auth');
 Route::post('/user_has_role', [	'uses' => 'ApiAuthController@userHasRole'])->middleware('jwt.auth');
+Route::post('/update_my_profile', [	'uses' => 'ApiAuthController@UpdateMyProfile'])->middleware('jwt.auth');
+Route::post('/change_password', [	'uses' => 'ApiAuthController@changePassword'])->middleware('jwt.auth');
+Route::post('/forgot_password', [	'uses' => 'ApiAuthController@forgotPassword']);
 
 
 
@@ -3644,4 +3647,280 @@ Route::GET('/delivery_statuses', 'DeliveryStatusApi@getDeliveryStatuses')->middl
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * POST addBank
+ * Summary: Add a new bank
+ * Notes: new bank
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/bank', 'BankApi@addBank')->middleware('jwt.auth');
+/**
+ * PUT updateBank
+ * Summary: Update an existing bank
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/bank', 'BankApi@updateBank')->middleware('jwt.auth');
+/**
+ * DELETE deleteBank
+ * Summary: Deletes an bank
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/bank/{bank_id}', 'BankApi@deleteBank')->middleware('jwt.auth');
+/**
+ * GET getBankById
+ * Summary: Find bank by ID
+ * Notes: Returns a single bank
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/bank/{bank_id}', 'BankApi@getBankById')->middleware('jwt.auth');
+/**
+ * GET banksGet
+ * Summary: banks List
+ * Notes: The bank endpoint returns multiple bank requested given the parameters injected.  
+
+ */
+Route::GET('/banks', 'BankApi@banksGet')->middleware('jwt.auth');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * POST addBankAccount
+ * Summary: Add a new bank_account
+ * Notes: new bank_account
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/bank_account', 'BankAccountApi@addBankAccount')->middleware('jwt.auth');
+/**
+ * PUT updateBankAccount
+ * Summary: Update an existing bank_account
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/bank_account', 'BankAccountApi@updateBankAccount')->middleware('jwt.auth');
+/**
+ * DELETE deleteBankAccount
+ * Summary: Deletes an bank_account
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/bank_account/{bank_account_id}', 'BankAccountApi@deleteBankAccount')->middleware('jwt.auth');
+/**
+ * GET getBankAccountById
+ * Summary: Find bank_account by ID
+ * Notes: Returns a single bank_account
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/bank_account/{bank_account_id}', 'BankAccountApi@getBankAccountById')->middleware('jwt.auth');
+/**
+ * GET bankAccountsGet
+ * Summary: bank_accounts List
+ * Notes: The bank_account endpoint returns multiple bank_account requested given the parameters injected.  
+
+ */
+Route::GET('/bank_accounts', 'BankAccountApi@bankAccountsGet')->middleware('jwt.auth');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * POST addBankBranch
+ * Summary: Add a new bank_branch
+ * Notes: new bank_branch
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/bank_branch', 'BankBranchApi@addBankBranch')->middleware('jwt.auth');
+/**
+ * PUT updateBankBranch
+ * Summary: Update an existing bank_branch
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/bank_branch', 'BankBranchApi@updateBankBranch')->middleware('jwt.auth');
+/**
+ * DELETE deleteBankBranch
+ * Summary: Deletes an bank_branch
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/bank_branch/{bank_branch_id}', 'BankBranchApi@deleteBankBranch')->middleware('jwt.auth');
+/**
+ * GET getBankBranchById
+ * Summary: Find bank_branch by ID
+ * Notes: Returns a single bank_branch
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/bank_branch/{bank_branch_id}', 'BankBranchApi@getBankBranchById')->middleware('jwt.auth');
+/**
+ * GET bankBranchesGet
+ * Summary: bank_branches List
+ * Notes: The bank_branch endpoint returns multiple bank_branch requested given the parameters injected.  
+
+ */
+Route::GET('/bank_branches', 'BankBranchApi@bankBranchesGet')->middleware('jwt.auth');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * POST addBankCsv
+ * Summary: Add a new bank_csv
+ * Notes: new bank_csv
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/bank_csv', 'BankCSVApi@addBankCsv')->middleware('jwt.auth');
+/**
+ * PUT updateBankCsv
+ * Summary: Update an existing bank_csv
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/bank_csv', 'BankCSVApi@updateBankCsv')->middleware('jwt.auth');
+/**
+ * DELETE deleteBankCsv
+ * Summary: Deletes an bank_csv
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/bank_csv/{bank_csv_id}', 'BankCSVApi@deleteBankCsv')->middleware('jwt.auth');
+/**
+ * GET getBankCsvById
+ * Summary: Find bank_csv by ID
+ * Notes: Returns a single bank_csv
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/bank_csv/{bank_csv_id}', 'BankCSVApi@getBankCsvById')->middleware('jwt.auth');
+/**
+ * GET bankCsvsGet
+ * Summary: bank_csvs List
+ * Notes: The bank_csv endpoint returns multiple bank_csv requested given the parameters injected.  
+
+ */
+Route::GET('/bank_csvs', 'BankCSVApi@bankCsvsGet')->middleware('jwt.auth');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * POST addBankTransaction
+ * Summary: Add a new bank_transaction
+ * Notes: new bank_transaction
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/bank_transaction', 'BankTransactionApi@addBankTransaction')->middleware('jwt.auth');
+/**
+ * PUT updateBankTransaction
+ * Summary: Update an existing bank_transaction
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/bank_transaction', 'BankTransactionApi@updateBankTransaction')->middleware('jwt.auth');
+/**
+ * DELETE deleteBankTransaction
+ * Summary: Deletes an bank_transaction
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/bank_transaction/{bank_transaction_id}', 'BankTransactionApi@deleteBankTransaction')->middleware('jwt.auth');
+/**
+ * GET getBankTransactionById
+ * Summary: Find bank_transaction by ID
+ * Notes: Returns a single bank_transaction
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/bank_transaction/{bank_transaction_id}', 'BankTransactionApi@getBankTransactionById')->middleware('jwt.auth');
+/**
+ * GET bankTransactionsGet
+ * Summary: bank_transactions List
+ * Notes: The bank_transaction endpoint returns multiple bank_transaction requested given the parameters injected.  
+
+ */
+Route::GET('/bank_transactions', 'BankTransactionApi@bankTransactionsGet')->middleware('jwt.auth');
 

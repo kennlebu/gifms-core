@@ -284,3 +284,28 @@
     externalDocs:
       description: Find out more
       url: 'http://kefinance.clintonhealthaccess.org/api/invoice_allocation/docs'
+  - name: Bank
+    description: Everything About Bank
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/bank/docs'
+  - name: Bank Branch
+    description: Everything About Bank Branch
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/bank_branch/docs'
+  - name: Bank Account
+    description: Everything About Bank Account
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/bank_account/docs'
+  - name: Bank Transaction
+    description: Everything About Bank Transaction
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/bank_transaction/docs'
+  - name: Bank CSV
+    description: Everything About Bank CSV
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/bank_csv/docs'

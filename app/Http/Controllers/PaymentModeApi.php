@@ -16,6 +16,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Request;
+use App\Models\PaymentModels\PaymentMode;
 
 class PaymentModeApi extends Controller
 {
@@ -245,14 +246,12 @@ class PaymentModeApi extends Controller
     public function getPaymentModes()
     {
         $input = Request::all();
+        $response;
 
-        //path params validation
+        
 
+        $response = PaymentMode::all();
 
-        //not path params validation
-        $payment_mode_id = $input['payment_mode_id'];
-
-
-        return response('How about implementing getPaymentModes as a GET method ?');
+        return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
     }
 }
