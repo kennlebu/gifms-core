@@ -45,6 +45,7 @@ class migrate_staff_data extends Seeder
             $data_to_migrate[$key]['email']                     = strtolower(preg_replace('/\s+/', '', $data[$key]['email']));
             $data_to_migrate[$key]['security_group_id']         = $data[$key]['SecurityGroup'];
             $data_to_migrate[$key]['password']                  = bcrypt('secret');
+            $data_to_migrate[$key]['old_password']              = $data[$key]['PasswdOne'];
 
             $data_to_migrate[$key]['f_name']					= $data[$key]['FirstName'];
             $data_to_migrate[$key]['l_name']					= $data[$key]['LastName'];

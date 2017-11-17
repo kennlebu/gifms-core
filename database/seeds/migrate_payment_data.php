@@ -297,14 +297,14 @@ class migrate_payment_data extends Seeder
 
         DB::table('payment_batch_statuses')->insert([
             [
-                'payment_status' => 'Created Awaiting Upload To Bank',
+                'payment_batch_status' => 'Created Awaiting Upload To Bank',
                 'next_status_id' => '2',
                 'order_priority' => '1',
                 'default_status' => '1'
 
             ],
             [
-                'payment_status' => 'Uploaded To Bank',
+                'payment_batch_status' => 'Uploaded To Bank',
                 'next_status_id' => '3',
                 'order_priority' => '2',
                 'default_status' => NULL
