@@ -639,5 +639,8 @@ class post_keys_migration_migration extends Seeder
 
         echo "\n Remove alice and MCCARTHY fro PM List ---";
 
+        $sql = " UPDATE claims set deleted_at = '2015-08-05 13:38:13' WHERE status_id = 0"; DB::statement($sql);
+        echo "\n Remove statusless claims";
+
     }
 }

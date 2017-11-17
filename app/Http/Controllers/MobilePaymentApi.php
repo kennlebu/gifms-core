@@ -1072,7 +1072,6 @@ class MobilePaymentApi extends Controller
         try{
 
 
-            $invoice        = Invoice::findOrFail($invoice_id);
 
             $path           = '/templates/MPESA_TEMPLATE.xlsx';
 
