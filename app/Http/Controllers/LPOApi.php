@@ -808,17 +808,16 @@ class LPOApi extends Controller
 
 
 
-
     /**
-     * Operation approveSeveralLPOs
+     * Operation approveSeveralLpos
      *
-     * Approve several Lpos.
+     * Approve several LPOs.
      *
      *
      * @return Http response
      */
-    public function approveSeveralLPOs()
-    {   
+    public function approveSeveralLpos()
+    { 
         try {
             $form = Request::only("lpos");
             $lpo_ids = $form['lpos'];

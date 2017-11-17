@@ -151,6 +151,74 @@ paths:
 
 
 
+  '/mobile_payments/approve':    
+    patch:
+      tags:
+        - Mobile Payment
+      summary: Approve several Mobile Payments
+      description: Approve  
+      operationId: approve_several_mobile_payments
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: mobile_payment object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/mobile_payment'
+      responses:
+        '200':
+          description: Approved mobile_payments 
+        '405':
+          description: Invalid input,unsuccessful
+      security:
+        - api_key: []
+
+
+
+
+
+
+
+  '/mobile_payments/template':    
+    get:
+      tags:
+        - Mobile Payment
+      summary: Mobile Payments Template
+      description: Template  
+      operationId: get_template
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: mobile_payment object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/mobile_payment'
+      responses:
+        '200':
+          description: mobile_payments template 
+        '405':
+          description: Invalid input,unsuccessful
+      security:
+        - api_key: []
+
+
+
+
+
+
+
   /mobile_payment:    
     post:
       tags:

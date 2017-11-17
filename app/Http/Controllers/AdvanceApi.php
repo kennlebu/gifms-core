@@ -608,6 +608,44 @@ class AdvanceApi extends Controller
 
 
 
+/**
+     * Operation approveSeveralAdvances
+     *
+     * Approve several Advances.
+     *
+     *
+     * @return Http response
+     */
+    public function approveSeveralAdvances()
+    {
+        try {
+            $form = Request::only("advances");
+            $advance_ids = $form['advances'];
+
+            foreach ($advance_ids as $key => $advance_id) {
+                $this->approveAdvance($advance_id);
+            }
+
+            return response()->json(['advances'=>$form['advances']], 201,array(),JSON_PRETTY_PRINT);
+            
+        } catch (Exception $e) {
+             return response()->json(['error'=>"An rerror occured during processing"], 500,array(),JSON_PRETTY_PRINT);
+            
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -127,21 +127,28 @@ Route::GET('/lpo/{lpo_id}/get_document', 'LPOApi@getDocumentById')->middleware('
  * Notes: Allocate LPO
  * Output-Formats: [application/json, application/xml]
  */
-Route::PATCH('lpo/{lpo_id}/allocate', 'LPOApi@allocateLpo');
+Route::PATCH('lpo/{lpo_id}/allocate', 'LPOApi@allocateLpo')->middleware('jwt.auth');
 /**
  * PATCH approveLpo
  * Summary: Approve lpo by ID
  * Notes: Approves LPO
  * Output-Formats: [application/json, application/xml]
  */
-Route::PATCH('lpo/{lpo_id}/approve', 'LPOApi@approveLpo');
+Route::PATCH('lpo/{lpo_id}/approve', 'LPOApi@approveLpo')->middleware('jwt.auth');
 /**
  * PATCH submitLpoForApproval
  * Summary: Submit lpo by ID
  * Notes: Submits lpo for approval
  * Output-Formats: [application/json, application/xml]
  */
-Route::PATCH('lpo/{lpo_id}/submit_for_approval', 'LPOApi@submitLpoForApproval');
+Route::PATCH('lpo/{lpo_id}/submit_for_approval', 'LPOApi@submitLpoForApproval')->middleware('jwt.auth');
+/**
+ * PATCH approveSeveralLpos
+ * Summary: Approve several LPOs
+ * Notes: Approve
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PATCH('/api/lpos/approve', 'LPOApi@approveSeveralLpos')->middleware('jwt.auth');
 
 
 
@@ -1716,6 +1723,20 @@ Route::GET('/mobile_payment/{mobile_payment_id}/get_document', 'MobilePaymentApi
  * Output-Formats: [application/json, application/xml]
  */
 Route::GET('/mobile_payment/{mobile_payment_id}/get_attendance_sheet', 'MobilePaymentApi@getAttendanceSheetById')->middleware('jwt.auth');
+/**
+ * PATCH approveSeveralMobilePayments
+ * Summary: Approve several Mobile Payments
+ * Notes: Approve
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PATCH('/mobile_payments/approve', 'MobilePaymentApi@approveSeveralMobilePayments')->middleware('jwt.auth');
+/**
+ * GET getTemplate
+ * Summary: Mobile Payments Template
+ * Notes: Template
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/mobile_payments/template', 'MobilePaymentApi@getTemplate')->middleware('jwt.auth');
 
 
 
@@ -2290,6 +2311,13 @@ Route::PATCH('/claim/{claim_id}/submit_for_approval', 'ClaimApi@submitClaimForAp
 
  */
 Route::GET('/claims', 'ClaimApi@getClaims')->middleware('jwt.auth');
+/**
+ * PATCH approveSeveralClaims
+ * Summary: Approve several Claims
+ * Notes: Approve
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PATCH('/claims/approve', 'ClaimApi@approveSeveralClaims')->middleware('jwt.auth');
 
 
 
@@ -2540,6 +2568,13 @@ Route::PATCH('/advance/{advance_id}/submit_for_approval', 'AdvanceApi@submitAdva
 
  */
 Route::GET('/advances', 'AdvanceApi@getAdvances')->middleware('jwt.auth');
+/**
+ * PATCH approveSeveralAdvances
+ * Summary: Approve several Advances
+ * Notes: Approve
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PATCH('/advances/approve', 'AdvanceApi@approveSeveralAdvances')->middleware('jwt.auth');
 
 
 

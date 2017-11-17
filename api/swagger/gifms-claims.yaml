@@ -81,6 +81,40 @@ paths:
 
 
 
+  '/claims/approve':    
+    patch:
+      tags:
+        - Claim
+      summary: Approve several Claims
+      description: Approve  
+      operationId: approve_several_claims
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: claim object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/claim'
+      responses:
+        '200':
+          description: Approved claims 
+        '405':
+          description: Invalid input,unsuccessful
+      security:
+        - api_key: []
+
+
+
+
+
+
+
   /claim:    
     post:
       tags:

@@ -773,7 +773,7 @@ class MobilePaymentApi extends Controller
             return $response;
         }catch (Exception $e ){            
 
-            $response       = Response::make("", 200);
+            $response       = Response::make("", 500);
 
             $response->header('Content-Type', 'application/pdf');
 
@@ -999,16 +999,25 @@ class MobilePaymentApi extends Controller
 
 
 
+
+
+
+
+
+
+
+
+
     /**
-     * Operation approveSeveralMobilePayment
+     * Operation approveSeveralMobilePayments
      *
      * Approve several Mobile Payments.
      *
      *
      * @return Http response
      */
-    public function approveSeveralMobilePayment()
-    {   
+    public function approveSeveralMobilePayments()
+    {
         try {
             $form = Request::only("mobile_payments");
             $mobile_payment_ids = $form['mobile_payments'];
@@ -1032,6 +1041,71 @@ class MobilePaymentApi extends Controller
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /**
+     * Operation getTemplate
+     *
+     * Mobile Payments Template.
+     *
+     *
+     * @return Http response
+     */
+    public function getTemplate()
+    {
+
+
+
+        try{
+
+
+            $invoice        = Invoice::findOrFail($invoice_id);
+
+            $path           = '/templates/MPESA_TEMPLATE.xlsx';
+
+            $path_info      = pathinfo($path);
+
+            $ext            = $path_info['extension'];
+
+
+            $basename       = $path_info['basename'];
+
+            $file_contents  = FTP::connection()->readFile($path);
+
+            Storage::put($path , $file_contents);
+
+            $url            = storage_path("app".$path);
+
+            $file           = File::get($url);
+
+            $response       = Response::make($file, 200);
+
+            $response->header('Content-Type', $this->get_mime_type($basename));
+
+            return $response;  
+        }catch (Exception $e ){            
+
+            $response       = Response::make("", 500);
+
+            $response->header('Content-Type', 'application/vnd.ms-excel');
+
+            return $response;  
+
+        }
+    }
 
 
 

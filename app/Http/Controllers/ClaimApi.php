@@ -682,6 +682,48 @@ class ClaimApi extends Controller
 
 
 
+    
+    /**
+     * Operation approveSeveralClaims
+     *
+     * Approve several Claims.
+     *
+     *
+     * @return Http response
+     */
+    public function approveSeveralClaims()
+    {
+        try {
+            $form = Request::only("claims");
+            $claim_ids = $form['claims'];
+
+            foreach ($claim_ids as $key => $claim_id) {
+                $this->approveClaim($claim_id);
+            }
+
+            return response()->json(['claims'=>$form['claims']], 201,array(),JSON_PRETTY_PRINT);
+            
+        } catch (Exception $e) {
+             return response()->json(['error'=>"An rerror occured during processing"], 500,array(),JSON_PRETTY_PRINT);
+            
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     /**
