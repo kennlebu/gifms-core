@@ -34,7 +34,7 @@ class Staff extends BaseModel
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password', 'remember_token','old_password'
     ];
 
 

@@ -277,27 +277,17 @@ class StaffApi extends Controller
     {
         $input = Request::all();
 
-        //path params validation
+        $staffModel = Staff::orderBy('f_name','asc');
 
-
-        //not path params validation
-        // $staff_id = $input['staff_id'];
-
-
-
-         $response = Staff::orderBy('f_name','asc')->get();
-
-
-        if(array_key_exists('role_abr', $input)&& $input['role_abr'] = "pm"){
-            $response = Staff::where("deleted_at",null)
-            ->where('post', "Program Manager")
-            ->orWhere('post', "Financial Controller")
-            ->orderBy('f_name','asc')
-            ->get();
+        if(array_key_exists('role_abr', $input)){
+            $staffModel->whereHas('roles', function ($query) use ($input){
+                $query->where('acronym', $input['role_abr']);
+            });
         }
 
-        $response    = $this->append_relationships_objects($response);
+        $response = $staffModel->get();
 
+        $response    = $this->append_relationships_objects($response);
 
         return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
     }
@@ -312,9 +302,19 @@ class StaffApi extends Controller
 
 
 
-    public function append_relationships_objects($data = array()){
 
-        // print_r($data);
+
+
+
+
+
+
+
+
+
+
+
+    public function append_relationships_objects($data = array()){
 
         foreach ($data as $key => $value) {
 
