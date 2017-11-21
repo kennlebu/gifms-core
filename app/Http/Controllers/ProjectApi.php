@@ -127,19 +127,18 @@ class ProjectApi extends Controller
      */
     public function updateProject()
     {
-        $input = Request::all();
+        $form = Request::only(
+            'id'
+            );
 
-        //path params validation
+        $project = Project::find($form['id']);
 
+            // $project->requested_by_id                   =   (int)   $form['requested_by_id'];
 
-        //not path params validation
-        if (!isset($input['body'])) {
-            throw new \InvalidArgumentException('Missing the required parameter $body when calling updateProject');
+        if($project->save()) {
+
+            return Response()->json(array('msg' => 'Success: project updated','project' => $project), 200);
         }
-        $body = $input['body'];
-
-
-        return response('How about implementing updateProject as a PUT method ?');
     }
 
 
@@ -238,12 +237,17 @@ class ProjectApi extends Controller
     {
         $input = Request::all();
 
-        //path params validation
+        try{
 
+            $response   = Project::findOrFail($project_id);
+           
+            return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
 
-        //not path params validation
+        }catch(Exception $e){
 
-        return response('How about implementing getProjectById as a GET method ?');
+            $response =  ["error"=>"project could not be found"];
+            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+        }
     }
 
 

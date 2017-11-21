@@ -10,4 +10,14 @@ class Program extends BaseModel
 {
     //
     use SoftDeletes;
+
+    public function managers()
+    {
+        return $this->hasMany('App\Models\ProgramModels\ProgramManager');
+    }
+
+    public function staffs()
+    {
+        return $this->hasMany('App\Models\ProgramModels\ProgramStaff');
+    }
 }

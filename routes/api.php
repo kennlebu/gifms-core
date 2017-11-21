@@ -3959,3 +3959,61 @@ Route::GET('/bank_transaction/{bank_transaction_id}', 'BankTransactionApi@getBan
  */
 Route::GET('/bank_transactions', 'BankTransactionApi@bankTransactionsGet')->middleware('jwt.auth');
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * POST addProgram
+ * Summary: Add a new program
+ * Notes: new program
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/program', 'ProgramApi@addProgram')->middleware('jwt.auth');
+/**
+ * PUT updateProgram
+ * Summary: Update an existing program
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/program', 'ProgramApi@updateProgram')->middleware('jwt.auth');
+/**
+ * DELETE deleteProgram
+ * Summary: Deletes an program
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/program/{program_id}', 'ProgramApi@deleteProgram')->middleware('jwt.auth');
+/**
+ * GET getProgramById
+ * Summary: Find program by ID
+ * Notes: Returns a single program
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/program/{program_id}', 'ProgramApi@getProgramById')->middleware('jwt.auth');
+/**
+ * GET programsGet
+ * Summary: programs List
+ * Notes: The program endpoint returns multiple program requested given the parameters injected.  
+
+ */
+Route::GET('/programs', 'ProgramApi@programsGet')->middleware('jwt.auth');
+

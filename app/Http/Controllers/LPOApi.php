@@ -252,7 +252,7 @@ class LPOApi extends Controller
     {
         $input = Request::all();
 
-        $deleted = lpo::destroy($lpo_id);
+        $deleted = Lpo::destroy($lpo_id);
 
         if($deleted){
             return response()->json(['msg'=>"lpo deleted"], 200,array(),JSON_PRETTY_PRINT);

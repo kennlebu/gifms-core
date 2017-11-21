@@ -309,3 +309,8 @@
     externalDocs:
       description: Find out more
       url: 'http://kefinance.clintonhealthaccess.org/api/bank_csv/docs'
+  - name: Program
+    description: Everything About Program
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/program/docs'
