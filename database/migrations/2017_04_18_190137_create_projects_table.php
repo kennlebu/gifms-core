@@ -22,7 +22,7 @@ class CreateProjectsTable extends Migration
             $table->text('project_desc')->nullable();
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();
-            $table->integer('status');
+            $table->integer('status_id')->nullable();
             $table->integer('cluster')->nullable();
             $table->integer('client')->nullable();
             $table->integer('country_id')->nullable();

@@ -26,20 +26,9 @@ use App\Models\ProgramModels\ProgramStaff;
 
 
 use Exception;
-use PDF;
 use App;
-use Anchu\Ftp\Facades\Ftp;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Response;
-use Illuminate\Support\Facades\Mail;
-use App\Mail\NotifyLpo;
-use App\Models\AllocationModels\Allocation;
-use App\Models\ApprovalsModels\Approval;
-use App\Models\ApprovalsModels\ApprovalLevel;
 use App\Models\StaffModels\Staff;
-use App\Models\SuppliesModels\Supplier;
-use App\Exceptions\ApprovalException;
 
 class ProgramApi extends Controller
 {

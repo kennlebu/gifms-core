@@ -42,7 +42,7 @@ class migrate_projects_data extends Seeder
             $data_to_migrate[$key]['project_desc']  				= $data[$key]['ProjectDescription'];
             $data_to_migrate[$key]['start_date']  					= $data[$key]['StartDate'];
             $data_to_migrate[$key]['end_date']  					= $data[$key]['EndDate'];
-            $data_to_migrate[$key]['status']  						= $data[$key]['Status'];
+            $data_to_migrate[$key]['status_id']  				    = $data[$key]['Status'];
             $data_to_migrate[$key]['cluster']  						= $data[$key]['Cluster'];
             $data_to_migrate[$key]['client']  						= $data[$key]['Client'];
             $data_to_migrate[$key]['country_id']  				    = $data[$key]['ProjectCountry'];
