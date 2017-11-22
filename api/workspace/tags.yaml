@@ -314,3 +314,8 @@
     externalDocs:
       description: Find out more
       url: 'http://kefinance.clintonhealthaccess.org/api/program/docs'
+  - name: Country
+    description: Everything About Country
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/country/docs'

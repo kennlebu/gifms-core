@@ -102,7 +102,7 @@ class ProjectApi extends Controller
             $project->project_desc                     =         $form['project_desc'];
             $project->start_date                       =         $form['start_date'];
             $project->end_date                         =         $form['end_date'];
-            $project->status_id                        =  (int)  $form['status_id'];
+            $project->status_id                        =  1;
             $project->country_id                       =  (int)  $form['country_id'];
 
         if($project->save()) {

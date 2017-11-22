@@ -642,5 +642,15 @@ class post_keys_migration_migration extends Seeder
         $sql = " UPDATE claims set deleted_at = '2015-08-05 13:38:13' WHERE status_id = 0"; DB::statement($sql);
         echo "\n Remove statusless claims";
 
+
+
+        
+
+        $sql = " UPDATE `gifms3`.`projects` SET `program_id`= null WHERE `program_id`='0';"; DB::statement($sql);
+        echo "\n Nullify project program_id";
+
+        $sql = " UPDATE `gifms3`.`projects` SET `status_id`= null WHERE `status_id`='0';"; DB::statement($sql);
+        echo "\n Nullify project status_id";
+
     }
 }

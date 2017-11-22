@@ -4017,3 +4017,58 @@ Route::GET('/program/{program_id}', 'ProgramApi@getProgramById')->middleware('jw
  */
 Route::GET('/programs', 'ProgramApi@programsGet')->middleware('jwt.auth');
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * GET countriesGet
+ * Summary: Countries List
+ * Notes: The country endpoint returns multiple country requested given the parameters injected.  
+
+ */
+Route::GET('/countries', 'CountryApi@countriesGet')->middleware('jwt.auth');
+/**
+ * POST addCountry
+ * Summary: Add a new country
+ * Notes: new country
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/country', 'CountryApi@addCountry')->middleware('jwt.auth');
+/**
+ * PUT updateCountry
+ * Summary: Update an existing country
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/country', 'CountryApi@updateCountry')->middleware('jwt.auth');
+/**
+ * DELETE deleteCountry
+ * Summary: Deletes an country
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/country/{country_id}', 'CountryApi@deleteCountry')->middleware('jwt.auth');
+/**
+ * GET getCountryById
+ * Summary: Find country by ID
+ * Notes: Returns a single country
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/country/{country_id}', 'CountryApi@getCountryById')->middleware('jwt.auth');
+
