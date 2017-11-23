@@ -12,7 +12,7 @@
       @elseif ($invoice->status_id==9)
         The below detailed invoice has been Rejected by {{$invoice->rejected_by->name}}
       @elseif ($invoice->status_id==11)
-        The below detailed invoice has been received by {{$invoice->received_by->f_name}} for you to submit
+        The below detailed invoice has been received by {{$invoice->received_by->f_name}} for you to confirm, allocate & submit
       @elseif ($invoice->status_id==4)
         The below detailed invoice has been approved by management for you to make the payment 
       @endif
