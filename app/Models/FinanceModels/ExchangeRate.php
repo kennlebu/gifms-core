@@ -1,7 +1,6 @@
 <?php
 
-namespace App\Models\LookupModels;
-
+namespace App\Models\FinanceModels;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;

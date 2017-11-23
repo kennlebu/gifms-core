@@ -47,7 +47,7 @@ class post_keys_migration_migration extends Seeder
             ");
 
         DB::statement("
-            UPDATE `currencies` SET `display_color`='#ff2121' ,`currency_sign`='$' WHERE `id`='2'
+            UPDATE `currencies` SET `display_color`='#ff2121' ,`currency_sign`='$',`base_currency` = '1' WHERE `id`='2'
             ");
 
         echo "\n currencies display_color ---";
@@ -644,7 +644,7 @@ class post_keys_migration_migration extends Seeder
 
 
 
-        
+
 
         $sql = " UPDATE `gifms3`.`projects` SET `program_id`= null WHERE `program_id`='0';"; DB::statement($sql);
         echo "\n Nullify project program_id";

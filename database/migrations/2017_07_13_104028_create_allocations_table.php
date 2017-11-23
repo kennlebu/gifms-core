@@ -18,6 +18,7 @@ class CreateAllocationsTable extends Migration
             $table->integer('allocatable_id')->nullable();
             $table->text('allocatable_type')->nullable();
             $table->double('amount_allocated',30,5)->nullable();
+            $table->double('amount_allocated_base_currency',30,5)->nullable();
             $table->integer('allocation_month')->nullable();
             $table->integer('allocation_year')->nullable();
             $table->text('allocation_purpose')->nullable();
