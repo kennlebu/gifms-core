@@ -72,7 +72,7 @@
           </td>
           <td style="text-align: left; border-bottom: 1px dotted #ccbcbc;" bgcolor="#ffffff" colspan="2" >
             <strong>
-              <span style="color: #092d50;"> {{$claim->currency->currency_name}}. {{number_format($claim->amount, 2)}}</span>
+              <span style="color: #092d50;"> {{$claim->currency->currency_name}}. {{number_format($claim->total, 2)}}</span>
             </strong>
           </td>
         </tr>    

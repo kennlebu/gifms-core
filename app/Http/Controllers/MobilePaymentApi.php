@@ -413,6 +413,7 @@ class MobilePaymentApi extends Controller
                 throw new ApprovalException("No approval permission");             
             }
            
+            $approvable_status  = $mobile_payment->status;
             $mobile_payment->status_id = $mobile_payment->status->next_status_id;
 
 
@@ -442,7 +443,7 @@ class MobilePaymentApi extends Controller
 
                 $approval->approvable_id            =   (int)   $mobile_payment->id;
                 $approval->approvable_type          =   "mobile_payments";
-                $approval->approval_level_id        =   $mobile_payment->status->approval_level_id;
+                $approval->approval_level_id        =   $approvable_status->approval_level_id;
                 $approval->approver_id              =   (int)   $user->id;
 
                 $approval->save();

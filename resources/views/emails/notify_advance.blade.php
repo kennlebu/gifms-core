@@ -73,7 +73,7 @@
           </td>
           <td style="text-align: left; border-bottom: 1px dotted #ccbcbc;" bgcolor="#ffffff" colspan="2" >
             <strong>
-              <span style="color: #092d50;"> {{$advance->currency->currency_name}}. {{number_format($advance->amount, 2)}}</span>
+              <span style="color: #092d50;"> {{$advance->currency->currency_name}}. {{number_format($advance->total, 2)}}</span>
             </strong>
           </td>
         </tr>    

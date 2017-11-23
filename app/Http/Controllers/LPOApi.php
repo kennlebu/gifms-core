@@ -355,6 +355,7 @@ class LPOApi extends Controller
                 throw new ApprovalException("No approval permission");             
             }
            
+            $approvable_status  = $lpo->status;
             $lpo->status_id = $lpo->status->next_status_id;
 
             if($lpo->save()) {
@@ -384,7 +385,7 @@ class LPOApi extends Controller
 
                 $approval->approvable_id            =   (int)   $lpo->id;
                 $approval->approvable_type          =   "lpos";
-                $approval->approval_level_id        =   $lpo->status->approval_level_id;
+                $approval->approval_level_id        =   $approvable_status->approval_level_id;
                 $approval->approver_id              =   (int)   $user->id;
 
                 $approval->save();

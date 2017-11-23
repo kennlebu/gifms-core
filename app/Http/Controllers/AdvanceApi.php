@@ -326,10 +326,10 @@ class AdvanceApi extends Controller
 
             foreach ($response->approvals as $key => $value) {
                 $approver = Staff::find((int)$value['approver_id']);
-                $appoval_level = ApprovalLevel::find((int)$value['approval_level_id']);
+                $approval_level = ApprovalLevel::find((int)$value['approval_level_id']);
 
                 $response['approvals'][$key]['approver']  =   $approver;
-                $response['approvals'][$key]['approval_level']  =   $appoval_level;
+                $response['approvals'][$key]['approval_level']  =   $approval_level;
             }
 
             foreach ($response->payments as $key => $value) {
@@ -408,6 +408,7 @@ class AdvanceApi extends Controller
             if (!$user->can("APPROVE_ADVANCE_".$advance->status_id)){
                 throw new ApprovalException("No approval permission");             
             }
+            $approvable_status  = $advance->status;
             $advance->status_id = $advance->status->next_status_id;
 
             if($advance->save()) {
@@ -428,10 +429,33 @@ class AdvanceApi extends Controller
 
                 $approval->approvable_id            =   (int)   $advance->id;
                 $approval->approvable_type          =   "advances";
-                $approval->approval_level_id        =   $advance->status->approval_level_id;
+                $approval->approval_level_id        =   $approvable_status->approval_level_id;
                 $approval->approver_id              =   (int)   $user->id;
 
                 $approval->save();
+
+                if($approval->approval_level_id ==4){
+
+                    $payable    =   array(
+                        'payable_type'                  =>  'advances', 
+                        'payable_id'                    =>  $advance->id, 
+                        'debit_bank_account_id'         =>  $advance->currency_id, 
+                        'currency_id'                   =>  $advance->currency_id, 
+                        'payment_desc'                  =>  $advance->ref, 
+                        'paid_to_name'                  =>  $advance->requested_by->full_name, 
+                        'paid_to_mobile_phone_no'       =>  $advance->requested_by->mpesa_no, 
+                        'paid_to_bank_account_no'       =>  $advance->requested_by->bank_account, 
+                        'paid_to_bank_id'               =>  $advance->requested_by->bank_id, 
+                        'paid_to_bank_branch_id'        =>  $advance->requested_by->bank_branch_id, 
+                        'payment_mode_id'               =>  $advance->requested_by->payment_mode_id, 
+                        'amount'                        =>  $advance->total, 
+                        'payment_batch_id'              =>  "", 
+                        'bank_charges'                  =>  ""
+                    );
+
+                    $this->generate_payable_payment($payable);
+
+                }
                 
                 Mail::send(new NotifyAdvance($advance));
 

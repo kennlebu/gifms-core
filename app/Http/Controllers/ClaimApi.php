@@ -400,6 +400,7 @@ class ClaimApi extends Controller
             if (!$user->can("APPROVE_CLAIM_".$claim->status_id)){
                 throw new ApprovalException("No approval permission");             
             }
+            $approvable_status  = $claim->status;
             $claim->status_id = $claim->status->next_status_id;
 
             if($claim->save()) {
@@ -420,10 +421,35 @@ class ClaimApi extends Controller
 
                 $approval->approvable_id            =   (int)   $claim->id;
                 $approval->approvable_type          =   "claims";
-                $approval->approval_level_id        =   $claim->status->approval_level_id;
+                $approval->approval_level_id        =   $approvable_status->approval_level_id;
                 $approval->approver_id              =   (int)   $user->id;
 
                 $approval->save();
+
+
+                if($approval->approval_level_id==4){
+
+                    $payable    =   array(
+                        'payable_type'                  =>  'claims', 
+                        'payable_id'                    =>  $claim->id, 
+                        'debit_bank_account_id'         =>  $claim->currency_id, 
+                        'currency_id'                   =>  $claim->currency_id, 
+                        'payment_desc'                  =>  $claim->ref, 
+                        'paid_to_name'                  =>  $claim->requested_by->full_name, 
+                        'paid_to_mobile_phone_no'       =>  $claim->requested_by->mpesa_no, 
+                        'paid_to_bank_account_no'       =>  $claim->requested_by->bank_account, 
+                        'paid_to_bank_id'               =>  $claim->requested_by->bank_id, 
+                        'paid_to_bank_branch_id'        =>  $claim->requested_by->bank_branch_id, 
+                        'payment_mode_id'               =>  $claim->requested_by->payment_mode_id, 
+                        'amount'                        =>  $claim->total, 
+                        'payment_batch_id'              =>  "", 
+                        'bank_charges'                  =>  ""
+                    );
+                    
+                    $this->generate_payable_payment($payable);
+
+                }
+                
 
                 Mail::send(new NotifyClaim($claim));
 
