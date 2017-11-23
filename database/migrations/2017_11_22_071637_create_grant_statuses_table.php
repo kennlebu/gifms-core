@@ -15,7 +15,14 @@ class CreateGrantStatusesTable extends Migration
     {
         Schema::create('grant_statuses', function (Blueprint $table) {
             $table->increments('id');
-            $table->timestamps();
+            $table->string('grant_status');
+            $table->integer('next_status_id')->nullable();
+            $table->integer('order_priority')->nullable();
+            $table->string('display_color')->nullable();
+            $table->integer('default_status')->nullable();
+            $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
+            $table->softDeletes();
         });
     }
 

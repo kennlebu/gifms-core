@@ -4072,3 +4072,143 @@ Route::DELETE('/country/{country_id}', 'CountryApi@deleteCountry')->middleware('
  */
 Route::GET('/country/{country_id}', 'CountryApi@getCountryById')->middleware('jwt.auth');
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * POST addDonor
+ * Summary: Add a new donor
+ * Notes: new donor
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/donor', 'DonorApi@addDonor')->middleware('jwt.auth');
+/**
+ * PUT updateDonor
+ * Summary: Update an existing donor
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/donor', 'DonorApi@updateDonor')->middleware('jwt.auth');
+/**
+ * DELETE deleteDonor
+ * Summary: Deletes an donor
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/donor/{donor_id}', 'DonorApi@deleteDonor')->middleware('jwt.auth');
+/**
+ * GET getDonorById
+ * Summary: Find donor by ID
+ * Notes: Returns a single donor
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/donor/{donor_id}', 'DonorApi@getDonorById')->middleware('jwt.auth');
+/**
+ * GET donorsGet
+ * Summary: Donors List
+ * Notes: The donor endpoint returns multiple donor requested given the parameters injected.  
+
+ */
+Route::GET('/donors', 'DonorApi@donorsGet')->middleware('jwt.auth');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * POST addGrant
+ * Summary: Add a new grant
+ * Notes: new grant
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/grant', 'GrantApi@addGrant')->middleware('jwt.auth');
+/**
+ * PUT updateGrant
+ * Summary: Update an existing grant
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/grant', 'GrantApi@updateGrant')->middleware('jwt.auth');
+/**
+ * DELETE deleteGrant
+ * Summary: Deletes an grant
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/grant/{grant_id}', 'GrantApi@deleteGrant')->middleware('jwt.auth');
+/**
+ * GET getGrantById
+ * Summary: Find grant by ID
+ * Notes: Returns a single grant
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/grant/{grant_id}', 'GrantApi@getGrantById')->middleware('jwt.auth');
+/**
+ * GET grantsGet
+ * Summary: Grants List
+ * Notes: The grant endpoint returns multiple grant requested given the parameters injected.  
+
+ */
+Route::GET('/grants', 'GrantApi@grantsGet')->middleware('jwt.auth');
+
+
+
+

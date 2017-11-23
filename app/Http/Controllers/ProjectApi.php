@@ -588,7 +588,7 @@ class ProjectApi extends Controller
                 $data[$key]["program"] = array("program_name"=>"N/A");
             }
             if($data[$key]["status"]==null){
-                $data[$key]["status"] = array("status_name"=>"N/A");
+                $data[$key]["status"] = array("project_status"=>"N/A");
             }
             if($data[$key]["country"]==null){
                 $data[$key]["country"] = array("country_name"=>"N/A");
