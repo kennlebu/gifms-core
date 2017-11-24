@@ -79,13 +79,13 @@ class migrate_grant_data extends Seeder
          */
 
 
-        $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('Grants')->get();
+        $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('DonorGrants')->get();
 
         $data_to_migrate=array();
 
         foreach ($data as $key => $value) {
 
-            $data_to_migrate[$key]['grant_name']                 	= $data[$key]['Grant'];
+            $data_to_migrate[$key]['grant_name']                 	= $data[$key]['GrantName'];
             $data_to_migrate[$key]['grant_code']                 	= $data[$key]['GrantCode'];
             $data_to_migrate[$key]['grant_amount']                 	= $data[$key]['GrantAmount'];
             $data_to_migrate[$key]['status_id']                 	= $data[$key]['GrantStatus'];
@@ -94,13 +94,12 @@ class migrate_grant_data extends Seeder
 
 
             echo "\n Grants-$key---";
-            echo $data[$key]['Grant'];
+            echo $data[$key]['GrantName'];
         }
         
         DB::table('grants')->insert($data_to_migrate);
         
         echo "\n-----------------------------------------------------------------------------------------------------Grants \n";
-    }
 
 
 
@@ -130,7 +129,7 @@ class migrate_grant_data extends Seeder
          */
 
 
-        $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('GrantStatuses')->get();
+        $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('GrantStatus')->get();
 
         $data_to_migrate=array();
 
@@ -141,7 +140,7 @@ class migrate_grant_data extends Seeder
 
 
             echo "\n GrantStatuses-$key---";
-            echo $data[$key]['Grant'];
+            echo $data[$key]['GrantStatus'];
         }
         
         DB::table('grant_statuses')->insert($data_to_migrate);
