@@ -22,7 +22,9 @@ class CreateGrantsTable extends Migration
             $table->double('grant_amount',30,5)->nullable();
             $table->timestamp('start_date')->nullable();
             $table->timestamp('end_date')->nullable();
-            $table->integer('grant_status_id')->nullable();
+            $table->integer('status_id')->nullable();
+            $table->integer('migration_donor_id')->nullable();
+            $table->integer('migration_id')->nullable();
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
             $table->softDeletes();

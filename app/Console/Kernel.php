@@ -15,7 +15,9 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         Commands\MigrateFiles::class,
         Commands\MigratePasswords::class,
-        Commands\GenerateTransactionDocuments::class
+        Commands\GenerateTransactionDocuments::class,
+        Commands\ReformatPhoneNumbers::class,
+        Commands\TestSeed::class
     ];
 
     /**
