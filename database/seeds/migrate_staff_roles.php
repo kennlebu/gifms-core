@@ -734,7 +734,7 @@ class migrate_staff_roles extends Seeder
                     // 'UPDATE_MOBILE_PAYMENT_8',
                     // 'UPDATE_MOBILE_PAYMENT_9',
                     // 'UPDATE_MOBILE_PAYMENT_10',
-                    // 'UPDATE_MOBILE_PAYMENT_11',
+                    'UPDATE_MOBILE_PAYMENT_11',
                     // 'UPDATE_MOBILE_PAYMENT_12',
                     // 'UPDATE_MOBILE_PAYMENT_13',
                     // 'APPROVE_MOBILE_PAYMENT_3',
