@@ -1256,6 +1256,9 @@ class LPOApi extends Controller
             if($data[$key]["currency"]==null){
                 $data[$key]["currency"] = array("currency_name"=>"N/A");
             }
+            if($data[$key]["preffered_quotation"]==null){
+                $data[$key]["preffered_quotation"] = array("supplier"=>array("supplier_name"=>"N/A"));
+            }
         }
 
         return $data;

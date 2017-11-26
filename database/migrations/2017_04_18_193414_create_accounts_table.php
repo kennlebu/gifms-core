@@ -18,7 +18,7 @@ class CreateAccountsTable extends Migration
             $table->integer('account_code');
             $table->string('account_name')->nullable();
             $table->text('account_desc')->nullable();
-            $table->integer('account_type')->nullable();
+            $table->integer('account_type_id')->nullable();
             $table->integer('client')->nullable();
             $table->integer('brevity')->nullable()->default(0);
             $table->integer('office_cost')->nullable()->default(0);

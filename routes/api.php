@@ -743,6 +743,81 @@ Route::GET('/rights', 'RightsApi@rightsGet')->middleware('jwt.auth');
 
 
 
+
+
+
+
+/**
+ * POST addPermission
+ * Summary: Add a new permission
+ * Notes: new permission
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/permission', 'PermissionApi@addPermission')->middleware('jwt.auth');
+/**
+ * PUT updatePermission
+ * Summary: Update an existing permission
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/permission', 'PermissionApi@updatePermission')->middleware('jwt.auth');
+/**
+ * DELETE deletePermission
+ * Summary: Deletes an permission
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/permission/{permission_id}', 'PermissionApi@deletePermission')->middleware('jwt.auth');
+/**
+ * GET getPermissionById
+ * Summary: Find permission by ID
+ * Notes: Returns a single permission
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/permission/{permission_id}', 'PermissionApi@getPermissionById')->middleware('jwt.auth');
+/**
+ * GET permissionsGet
+ * Summary: Permission List
+ * Notes: The permission endpoint returns multiple permission requested given the parameters injected.  
+
+ */
+Route::GET('/permissions', 'PermissionApi@permissionsGet')->middleware('jwt.auth');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /**
  * POST addRole
  * Summary: Add a new role
@@ -4211,4 +4286,257 @@ Route::GET('/grants', 'GrantApi@grantsGet')->middleware('jwt.auth');
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * POST addAccountClassification
+ * Summary: Add a new account_classification
+ * Notes: new account_classification
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/account_classification', 'AccountClassificationApi@addAccountClassification')->middleware('jwt.auth');
+/**
+ * PUT updateAccountClassification
+ * Summary: Update an existing account_classification
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/account_classification', 'AccountClassificationApi@updateAccountClassification')->middleware('jwt.auth');
+/**
+ * DELETE deleteAccountClassification
+ * Summary: Deletes an account_classification
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/account_classification/{account_classification_id}', 'AccountClassificationApi@deleteAccountClassification')->middleware('jwt.auth');
+/**
+ * GET getAccountClassificationById
+ * Summary: Find account_classification by ID
+ * Notes: Returns a single account_classification
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/account_classification/{account_classification_id}', 'AccountClassificationApi@getAccountClassificationById')->middleware('jwt.auth');
+/**
+ * GET accountClassificationsGet
+ * Summary: Account Classifications List
+ * Notes: The account_classification endpoint returns multiple account_classification requested given the parameters injected.  
+
+ */
+Route::GET('/account_classifications', 'AccountClassificationApi@accountClassificationsGet')->middleware('jwt.auth');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * POST addAccountType
+ * Summary: Add a new account_type
+ * Notes: new account_type
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/account_type', 'AccountTypeApi@addAccountType')->middleware('jwt.auth');
+/**
+ * PUT updateAccountType
+ * Summary: Update an existing account_type
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/account_type', 'AccountTypeApi@updateAccountType')->middleware('jwt.auth');
+/**
+ * DELETE deleteAccountType
+ * Summary: Deletes an account_type
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/account_type/{account_type_id}', 'AccountTypeApi@deleteAccountType')->middleware('jwt.auth');
+/**
+ * GET getAccountTypeById
+ * Summary: Find account_type by ID
+ * Notes: Returns a single account_type
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/account_type/{account_type_id}', 'AccountTypeApi@getAccountTypeById')->middleware('jwt.auth');
+/**
+ * GET accountTypesGet
+ * Summary: Account Types List
+ * Notes: The account_type endpoint returns multiple account_type requested given the parameters injected.  
+
+ */
+Route::GET('/account_types', 'AccountTypeApi@accountTypesGet')->middleware('jwt.auth');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * GET citiesGet
+ * Summary: Cities List
+ * Notes: The city endpoint returns multiple city requested given the parameters injected.  
+
+ */
+Route::GET('/cities', 'CityApi@citiesGet')->middleware('jwt.auth');
+/**
+ * POST addCity
+ * Summary: Add a new city
+ * Notes: new city
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/city', 'CityApi@addCity')->middleware('jwt.auth');
+/**
+ * PUT updateCity
+ * Summary: Update an existing city
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/city', 'CityApi@updateCity')->middleware('jwt.auth');
+/**
+ * DELETE deleteCity
+ * Summary: Deletes an city
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/city/{city_id}', 'CityApi@deleteCity')->middleware('jwt.auth');
+/**
+ * GET getCityById
+ * Summary: Find city by ID
+ * Notes: Returns a single city
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/city/{city_id}', 'CityApi@getCityById')->middleware('jwt.auth');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * POST addApprovalLevel
+ * Summary: Add a new approval_level
+ * Notes: new approval_level
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/approval_level', 'ApprovalLevelApi@addApprovalLevel')->middleware('jwt.auth');
+/**
+ * PUT updateApprovalLevel
+ * Summary: Update an existing approval_level
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/approval_level', 'ApprovalLevelApi@updateApprovalLevel')->middleware('jwt.auth');
+/**
+ * DELETE deleteApprovalLevel
+ * Summary: Deletes an approval_level
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/approval_level/{approval_level_id}', 'ApprovalLevelApi@deleteApprovalLevel')->middleware('jwt.auth');
+/**
+ * GET getApprovalLevelById
+ * Summary: Find approval_level by ID
+ * Notes: Returns a single approval_level
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/approval_level/{approval_level_id}', 'ApprovalLevelApi@getApprovalLevelById')->middleware('jwt.auth');
+/**
+ * GET approvalLevelsGet
+ * Summary: Approval Levels List
+ * Notes: The approval_level endpoint returns multiple approval_level requested given the parameters injected.  
+
+ */
+Route::GET('/approval_levels', 'ApprovalLevelApi@approvalLevelsGet')->middleware('jwt.auth');
 

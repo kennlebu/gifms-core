@@ -319,3 +319,23 @@
     externalDocs:
       description: Find out more
       url: 'http://kefinance.clintonhealthaccess.org/api/country/docs'
+  - name: Account Classification
+    description: Everything About Account Classification
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/account_classification/docs'
+  - name: Account Type
+    description: Everything About Account Type
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/account_type/docs'
+  - name: City
+    description: Everything About City
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/city/docs'
+  - name: Permission
+    description: Everything About Permission
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/permission/docs'

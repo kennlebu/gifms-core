@@ -1,0 +1,308 @@
+swagger: '2.0'
+info:
+  description: Finance management sysytem
+  version: 1.0.0
+  title: Grants Information Management System
+  termsOfService: 'http://kefinance.clintonhealthaccess.org/terms/'
+  contact:
+    email: mwangikevinn@gmail.com
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+host: 'localhost:8000'
+basePath: /api
+tags:
+  - name: Account Classification
+    description: Everything About Account Classification
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/account_classification/docs'
+schemes:
+  - http
+  - https
+paths:
+
+
+
+
+
+
+
+
+
+
+
+  /account_classifications:
+    get:
+      summary: Account Classifications List
+      description: |
+        The account_classification endpoint returns multiple account_classification requested given the parameters injected. 
+      parameters:
+        - name: account_classification_id
+          in: query
+          description: account_classification id 
+          required: false
+          type: number
+          format: integer
+      tags:
+        - Account Classification
+      responses:
+        200:
+          description: An array of account_classification returned
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/account_classification'
+        404:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+        - api_key: []
+
+
+
+
+
+
+
+  /account_classification:    
+    post:
+      tags:
+        - Account Classification
+      summary: Add a new account_classification
+      description: new account_classification  
+      operationId: add_account_classification
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: account_classification object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/account_classification'
+      responses:
+        '200':
+          description: Successfully added a new account_classification for approval 
+        '405':
+          description: Invalid input,adding a new account_classification was unsuccessful
+      security:
+        - api_key: []
+            
+            
+            
+
+            
+    put:
+      tags:
+        - Account Classification
+      summary: Update an existing account_classification
+      description: ''
+      operationId: update_account_classification
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: account_classification object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/account_classification'
+      responses:
+        200:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Success'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: account_classification not found
+        '405':
+          description: Validation exception
+      security:
+        - api_key: []
+        
+        
+        
+        
+        
+        
+  '/account_classification/{account_classification_id}':
+    get:
+      tags:
+        - Account Classification
+      summary: Find account_classification by ID
+      description: Returns a single account_classification
+      operationId: get_account_classification_by_id
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: account_classification_id
+          in: path
+          description: ID of account_classification to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/account_classification'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: account_classification not found
+      security:
+        - api_key: []
+        
+        
+     
+            
+            
+            
+    delete:
+      tags:
+        - Account Classification
+      summary: Deletes an account_classification
+      description: ''
+      operationId: delete_account_classification
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: api_key
+          in: header
+          required: true
+          type: string
+        - name: account_classification_id
+          in: path
+          description: account_classification id to delete
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: account_classification not found
+      security:
+        - api_key: []
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+          
+          
+securityDefinitions:
+  api_key:
+    type: apiKey
+    name: Authorization
+    in: header
+     
+     
+     
+definitions:
+
+
+      
+      
+  account_classification:
+    type: object
+    required:
+      - id
+      - created_at
+    properties:
+      id:
+        type: integer
+        format: int64
+        example: 1
+      num:
+        type: number
+        format: int64
+        example: 20000
+      str:
+        type: string
+        example: 'PayPal.pdf'
+      date:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      created_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      updated_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+    xml:
+      name: account_classification
+    
+  
+    
+  
+  
+  
+  
+  Error:
+    type: object
+    properties:
+      error:
+        type: string
+        example: object not found
+
+
+  
+  Success:
+    type: object
+    properties:
+      msg:
+        type: string
+        example: object not found
+
+      
+      
+      
+      
