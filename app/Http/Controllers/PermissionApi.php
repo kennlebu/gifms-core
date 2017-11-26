@@ -345,7 +345,7 @@ class PermissionApi extends Controller
                 $query->orWhere('permissions.id','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('permissions.name','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('permissions.display_name','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('permissions.description','like', '\'%' . $input['searchval']. '%\'');
+                $query->orWhere('permissions.description','like', '\'%' . $input['search']['value']. '%\'');
 
             });
 

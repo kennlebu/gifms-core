@@ -329,7 +329,7 @@ class DepartmentApi extends Controller
                 $query->orWhere('departments.id','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('departments.department_name','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('departments.desc','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('departments.acronym','like', '\'%' . $input['searchval']. '%\'');
+                $query->orWhere('departments.acronym','like', '\'%' . $input['search']['value']. '%\'');
 
             });
 

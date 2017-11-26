@@ -330,7 +330,7 @@ class RolesApi extends Controller
 
 
 
-            $sql = Role::bind_presql($qb->toSql(),$qb->getBindings());
+            $sql = Staff::bind_presql($qb->toSql(),$qb->getBindings());
             $sql = str_replace("*"," count(*) AS count ", $sql);
             $dt = json_decode(json_encode(DB::select($sql)), true);
 

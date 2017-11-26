@@ -69,13 +69,13 @@ class PaymentModeApi extends Controller
     public function addPaymentMode()
     {
         $form = Request::only(
-            'abrvription',
+            'payment_mode_description',
             'abrv'
             );
 
         $payment_mode = new PaymentMode;
 
-            $payment_mode->abrvription                   =         $form['abrvription'];
+            $payment_mode->payment_mode_description                   =         $form['payment_mode_description'];
             $payment_mode->abrv                          =         $form['abrv'];
 
         if($payment_mode->save()) {
@@ -116,13 +116,13 @@ class PaymentModeApi extends Controller
     {
         $form = Request::only(
             'id',
-            'abrvription',
+            'payment_mode_description',
             'abrv'
             );
 
         $payment_mode = PaymentMode::find($form['id']);
 
-            $payment_mode->abrvription            =         $form['abrvription'];
+            $payment_mode->payment_mode_description            =         $form['payment_mode_description'];
             $payment_mode->abrv                   =         $form['abrv'];
 
         if($payment_mode->save()) {
@@ -274,7 +274,7 @@ class PaymentModeApi extends Controller
             $qb->where(function ($query) use ($input) {
                 
                 $query->orWhere('payment_modes.id','like', '\'%' . $input['searchval']. '%\'');
-                $query->orWhere('payment_modes.abrvription','like', '\'%' . $input['searchval']. '%\'');
+                $query->orWhere('payment_modes.payment_mode_description','like', '\'%' . $input['searchval']. '%\'');
                 $query->orWhere('payment_modes.abrv','like', '\'%' . $input['searchval']. '%\'');
 
             });
@@ -322,7 +322,7 @@ class PaymentModeApi extends Controller
             $qb->where(function ($query) use ($input) {
                 
                 $query->orWhere('payment_modes.id','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('payment_modes.abrvription','like', '\'%' . $input['search']['value']. '%\'');
+                $query->orWhere('payment_modes.payment_mode_description','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('payment_modes.abrv','like', '\'%' . $input['search']['value']. '%\'');
 
             });
