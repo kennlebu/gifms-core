@@ -22,4 +22,12 @@ class ClaimStatus extends BaseModel
 		        ->count();
 
     }
+    public function next_status()
+    {
+        return $this->belongsTo('App\Models\ClaimsModels\ClaimStatus','next_status_id');
+    }
+    public function approval_level()
+    {
+        return $this->belongsTo('App\Models\ApprovalsModels\ApprovalLevel','approval_level_id');
+    }
 }
