@@ -1135,9 +1135,13 @@ class migrate_staff_roles extends Seeder
 	        	//davis pm admin
                 if ($user->email == 'dkarambi@clintonhealthaccess.org') {
                     $user->attachRole(6);
+                    $user->attachRole(2);
                 }
                 if ($user->email == 'jayuma@clintonhealthaccess.org') {
                     $user->attachRole(6);
+                }
+                if ($user->email == 'rwangatia@clintonhealthaccess.org') {
+                    $user->attachRole(2);
                 }
         		
         	} catch (Exception $e) {

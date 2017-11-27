@@ -434,6 +434,14 @@ class SupplierApi extends Controller
                 
                 $query->orWhere('suppliers.id','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('suppliers.supplier_name','like', '\'%' . $input['search']['value']. '%\'');
+                $query->orWhere('suppliers.address','like', '\'%' . $input['search']['value']. '%\'');
+                $query->orWhere('suppliers.telephone','like', '\'%' . $input['search']['value']. '%\'');
+                $query->orWhere('suppliers.email','like', '\'%' . $input['search']['value']. '%\'');
+                $query->orWhere('suppliers.website','like', '\'%' . $input['search']['value']. '%\'');
+                $query->orWhere('suppliers.bank_account','like', '\'%' . $input['search']['value']. '%\'');
+                $query->orWhere('suppliers.city_id','like', '\'%' . $input['search']['value']. '%\'');
+                $query->orWhere('suppliers.contact_name_1','like', '\'%' . $input['search']['value']. '%\'');
+                $query->orWhere('suppliers.contact_name_2','like', '\'%' . $input['search']['value']. '%\'');
 
             });
 
