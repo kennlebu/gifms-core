@@ -456,6 +456,8 @@ class SupplierApi extends Controller
 
                 $qb->orderBy($order_column_name, $order_direction);
 
+            }else{
+                $qb->orderBy("supplier_name", "desc");
             }
 
 
@@ -495,10 +497,14 @@ class SupplierApi extends Controller
 
         }else{
 
+
+            $qb->orderBy("supplier_name", "asc");
+
             $sql            = Supplier::bind_presql($qb->toSql(),$qb->getBindings());
             $response       = json_decode(json_encode(DB::select($sql)), true);
             $response       = $this->append_relationships_objects($response);
             $response       = $this->append_relationships_nulls($response);
+
         }
 
 
