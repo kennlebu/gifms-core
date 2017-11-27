@@ -329,7 +329,7 @@ class MobilePaymentTariffApi extends Controller
                 $query->orWhere('mobile_payment_tariffs.id','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('mobile_payment_tariffs.min_limit','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('mobile_payment_tariffs.max_limit','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('mobile_payment_tariffs.tariff','like', '\'%' . $input['searchval']. '%\'');
+                $query->orWhere('mobile_payment_tariffs.tariff','like', '\'%' . $input['search']['value']. '%\'');
 
             });
 

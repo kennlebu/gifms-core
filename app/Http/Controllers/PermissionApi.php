@@ -446,6 +446,8 @@ class PermissionApi extends Controller
         foreach ($data as $key => $value) {
 
             $permissions = Permission::find($data[$key]['id']);
+            
+            $data[$key]['approval_level']                  = $permissions->approval_level;
 
 
         }
@@ -475,9 +477,9 @@ class PermissionApi extends Controller
         foreach ($data as $key => $value) {
 
 
-            // if($data[$key]["account"]==null){
-            //     $data[$key]["account"] = array("account_name"=>"N/A");
-            // }
+            if($data[$key]["approval_level"]==null){
+                $data[$key]["approval_level"] = array("approval_level"=>"N/A");
+            }
 
 
         }
