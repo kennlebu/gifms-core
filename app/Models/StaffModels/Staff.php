@@ -97,8 +97,29 @@ class Staff extends BaseModel
     }
     
     
-    public function projects()
+    public function assigned_projects()
     {
         return $this->belongsToMany('App\Models\ProjectsModels\Project','project_teams','staff_id','project_id');
+    }
+
+    public function department()
+    {
+        return $this->belongsTo('App\Models\StaffModels\Department','department_id');
+    }
+    // public function security_group()
+    // {
+    //     return $this->belongsTo('App\Models\StaffModels\SecurityGroup','security_group_id');
+    // }
+    public function payment_mode()
+    {
+        return $this->belongsTo('App\Models\PaymentModels\PaymentMode','payment_mode_id');
+    }
+    public function bank()
+    {
+        return $this->belongsTo('App\Models\BankingModels\Bank','bank_id');
+    }
+    public function bank_branch()
+    {
+        return $this->belongsTo('App\Models\BankingModels\BankBranch','bank_branch_id');
     }
 }

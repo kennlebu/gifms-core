@@ -423,6 +423,7 @@ class AccountTypeApi extends Controller
 
             $account_types = AccountType::find($data[$key]['id']);
 
+            $data[$key]['account_classification']                  = $account_types->account_classification;
 
         }
 
@@ -451,9 +452,9 @@ class AccountTypeApi extends Controller
         foreach ($data as $key => $value) {
 
 
-            // if($data[$key]["account"]==null){
-            //     $data[$key]["account"] = array("account_name"=>"N/A");
-            // }
+            if($data[$key]["account_classification"]==null){
+                $data[$key]["account_classification"] = array("account_classification_name"=>"N/A");
+            }
 
 
         }

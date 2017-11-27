@@ -547,7 +547,7 @@ class AccountApi extends Controller
 
 
             if($data[$key]["account_type"]==null){
-                $data[$key]["account_type"] = array("account_name"=>"N/A");
+                $data[$key]["account_type"] = array("account_type_name"=>"N/A");
             }
 
 

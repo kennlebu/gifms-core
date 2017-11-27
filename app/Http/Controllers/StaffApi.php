@@ -67,14 +67,59 @@ class StaffApi extends Controller
     public function addStaff()
     {
         $form = Request::only(
-            'staff_name',
-            'staff_desc'
+            'username',
+            'email',
+            'password',
+            'old_password',
+            'security_group_id',
+            'f_name',
+            'l_name',
+            'o_names',
+            'department_id',
+            'post',
+            'mobile_no',
+            'mpesa_no',
+            'bank_account',
+            'cheque_addressee',
+            'payment_mode_id',
+            'bank_id',
+            'bank_branch_id',
+            'station',
+            'swift_code',
+            'active',
+            'receives_global_bccs',
+            'signature',
+            'bank_signatory',
+            'receive_global_email_bcc'
             );
 
         $staff = new Staff;
 
-            $staff->staff_name                   =         $form['staff_name'];
-            $staff->staff_desc                   =         $form['staff_desc'];
+
+            $staff->username                     =         $form['username'];
+            $staff->email                        =         $form['email'];
+            $staff->password                     =         $form['password'];
+            $staff->old_password                 =         $form['old_password'];
+            $staff->security_group_id            =  (int)  $form['security_group_id'];
+            $staff->f_name                       =         $form['f_name'];
+            $staff->l_name                       =         $form['l_name'];
+            $staff->o_names                      =         $form['o_names'];
+            $staff->department_id                =  (int)  $form['department_id'];
+            $staff->post                         =         $form['post'];
+            $staff->mobile_no                    =         $form['mobile_no'];
+            $staff->mpesa_no                     =         $form['mpesa_no'];
+            $staff->bank_account                 =         $form['bank_account'];
+            $staff->cheque_addressee             =         $form['cheque_addressee'];
+            $staff->payment_mode_id              =  (int)  $form['payment_mode_id'];
+            $staff->bank_id                      =  (int)  $form['bank_id'];
+            $staff->bank_branch_id               =  (int)  $form['bank_branch_id'];
+            $staff->station                      =         $form['station'];
+            $staff->swift_code                   =         $form['swift_code'];
+            $staff->active                       =         $form['active'];
+            $staff->receives_global_bccs         =         $form['receives_global_bccs'];
+            $staff->signature                    =         $form['signature'];
+            $staff->bank_signatory               =         $form['bank_signatory'];
+            $staff->receive_global_email_bcc     =         $form['receive_global_email_bcc'];
 
         if($staff->save()) {
 
@@ -114,14 +159,58 @@ class StaffApi extends Controller
     {
         $form = Request::only(
             'id',
-            'staff_name',
-            'staff_desc'
+            'username',
+            'email',
+            'password',
+            'old_password',
+            'security_group_id',
+            'f_name',
+            'l_name',
+            'o_names',
+            'department_id',
+            'post',
+            'mobile_no',
+            'mpesa_no',
+            'bank_account',
+            'cheque_addressee',
+            'payment_mode_id',
+            'bank_id',
+            'bank_branch_id',
+            'station',
+            'swift_code',
+            'active',
+            'receives_global_bccs',
+            'signature',
+            'bank_signatory',
+            'receive_global_email_bcc'
             );
 
         $staff = Staff::find($form['id']);
 
-            $staff->staff_name                   =         $form['staff_name'];
-            $staff->staff_desc                   =         $form['staff_desc'];
+            $staff->username                     =         $form['username'];
+            $staff->email                        =         $form['email'];
+            $staff->password                     =         $form['password'];
+            $staff->old_password                 =         $form['old_password'];
+            $staff->security_group_id            =  (int)  $form['security_group_id'];
+            $staff->f_name                       =         $form['f_name'];
+            $staff->l_name                       =         $form['l_name'];
+            $staff->o_names                      =         $form['o_names'];
+            $staff->department_id                =  (int)  $form['department_id'];
+            $staff->post                         =         $form['post'];
+            $staff->mobile_no                    =         $form['mobile_no'];
+            $staff->mpesa_no                     =         $form['mpesa_no'];
+            $staff->bank_account                 =         $form['bank_account'];
+            $staff->cheque_addressee             =         $form['cheque_addressee'];
+            $staff->payment_mode_id              =  (int)  $form['payment_mode_id'];
+            $staff->bank_id                      =  (int)  $form['bank_id'];
+            $staff->bank_branch_id               =  (int)  $form['bank_branch_id'];
+            $staff->station                      =         $form['station'];
+            $staff->swift_code                   =         $form['swift_code'];
+            $staff->active                       =         $form['active'];
+            $staff->receives_global_bccs         =         $form['receives_global_bccs'];
+            $staff->signature                    =         $form['signature'];
+            $staff->bank_signatory               =         $form['bank_signatory'];
+            $staff->receive_global_email_bcc     =         $form['receive_global_email_bcc'];
 
         if($staff->save()) {
 
@@ -272,8 +361,10 @@ class StaffApi extends Controller
             $qb->where(function ($query) use ($input) {
                 
                 $query->orWhere('staff.id','like', '\'%' . $input['searchval']. '%\'');
-                $query->orWhere('staff.staff_name','like', '\'%' . $input['searchval']. '%\'');
-                $query->orWhere('staff.staff_desc','like', '\'%' . $input['searchval']. '%\'');
+                $query->orWhere('staff.f_name','like', '\'%' . $input['searchval']. '%\'');
+                $query->orWhere('staff.l_name','like', '\'%' . $input['searchval']. '%\'');
+                $query->orWhere('staff.o_names','like', '\'%' . $input['searchval']. '%\'');
+                $query->orWhere('staff.email','like', '\'%' . $input['searchval']. '%\'');
 
             });
 
@@ -334,8 +425,10 @@ class StaffApi extends Controller
             $qb->where(function ($query) use ($input) {
                 
                 $query->orWhere('staff.id','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('staff.staff_name','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('staff.staff_desc','like', '\'%' . $input['search']['value']. '%\'');
+                $query->orWhere('staff.f_name','like', '\'%' . $input['search']['value']. '%\'');
+                $query->orWhere('staff.l_name','like', '\'%' . $input['search']['value']. '%\'');
+                $query->orWhere('staff.o_names','like', '\'%' . $input['search']['value']. '%\'');
+                $query->orWhere('staff.email','like', '\'%' . $input['search']['value']. '%\'');
 
             });
 
@@ -437,9 +530,13 @@ class StaffApi extends Controller
 
             $staff = Staff::find($data[$key]['id']);
 
-            $data[$key]['roles']                      = $staff->roles;
-            $data[$key]['programs']                   = $staff->programs;
-            $data[$key]['projects']                   = $staff->projects;
+            $data[$key]['roles']                    =   $staff->roles;
+            $data[$key]['programs']                 =   $staff->programs;
+            $data[$key]['assigned_projects']        =   $staff->assigned_projects;
+            $data[$key]['department']               =   $staff->department;
+            $data[$key]['payment_mode']             =   $staff->payment_mode;
+            $data[$key]['bank']                     =   $staff->bank;
+            $data[$key]['bank_branch']              =   $staff->bank_branch;
 
         }
 
@@ -468,9 +565,18 @@ class StaffApi extends Controller
         foreach ($data as $key => $value) {
 
 
-            // if($data[$key]["account"]==null){
-            //     $data[$key]["account"] = array("account_name"=>"N/A");
-            // }
+            if($data[$key]["department"]==null){
+                $data[$key]["department"] = array("department_name"=>"N/A");
+            }
+            if($data[$key]["payment_mode"]==null){
+                $data[$key]["payment_mode"] = array("payment_mode_description"=>"N/A");
+            }
+            if($data[$key]["bank"]==null){
+                $data[$key]["bank"] = array("bank_name"=>"N/A");
+            }
+            if($data[$key]["bank_branch"]==null){
+                $data[$key]["bank_branch"] = array("branch_name"=>"N/A");
+            }
 
 
         }

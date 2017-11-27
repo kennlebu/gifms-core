@@ -433,6 +433,8 @@ class BankAccountApi extends Controller
 
             $bank_accounts = BankAccount::find($data[$key]['id']);
 
+
+            $data[$key]['currency']                    = $bank_accounts->currency;
         }
 
 
@@ -460,9 +462,9 @@ class BankAccountApi extends Controller
         foreach ($data as $key => $value) {
 
 
-            // if($data[$key]["account"]==null){
-            //     $data[$key]["account"] = array("account_name"=>"N/A");
-            // }
+            if($data[$key]["currency"]==null){
+                $data[$key]["currency"] = array("currency_name"=>"N/A");
+            }
 
 
         }

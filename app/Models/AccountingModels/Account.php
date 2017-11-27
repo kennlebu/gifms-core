@@ -10,4 +10,9 @@ class Account extends BaseModel
 {
     //
     use SoftDeletes;
+
+    public function account_type()
+    {
+        return $this->belongsTo('App\Models\AccountingModels\AccountType','account_type_id');
+    }
 }

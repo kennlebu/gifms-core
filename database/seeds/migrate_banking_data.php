@@ -145,7 +145,7 @@ class migrate_banking_data extends Seeder
         	$data_to_migrate[$key]['bank_name'] 		= $data[$key]['BankName'];
         	$data_to_migrate[$key]['branch_name'] 		= $data[$key]['BankBranch'];
         	$data_to_migrate[$key]['account_number'] 	= $data[$key]['AccountNumber'];
-        	$data_to_migrate[$key]['currency'] 			= $data[$key]['Currency'];
+        	$data_to_migrate[$key]['currency_id']      	= $data[$key]['Currency'];
         	$data_to_migrate[$key]['balance_locked'] 	= $data[$key]['BalanceLocked'];
         	$data_to_migrate[$key]['migration_id'] 		= $data[$key]['ID'];
 

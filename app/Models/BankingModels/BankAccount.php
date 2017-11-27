@@ -10,4 +10,9 @@ class BankAccount extends BaseModel
 {
     //
     use SoftDeletes;
+
+    public function currency()
+    {
+        return $this->belongsTo('App\Models\LookupModels\Currency','currency_id');
+    }
 }
