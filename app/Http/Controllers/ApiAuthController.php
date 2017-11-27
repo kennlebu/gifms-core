@@ -66,7 +66,7 @@ class ApiAuthController extends Controller{
             return response()->json(['token_absent'], $e->getStatusCode());
         }
 // the token is valid and we have found the user via the sub claim
-        $user = Staff::with(['roles','programs','projects'])->find($user['id']);
+        $user = Staff::with(['roles','programs','assigned_projects'])->find($user['id']);
 
         return response()->json(compact('user'));
     }
