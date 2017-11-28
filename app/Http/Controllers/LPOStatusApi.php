@@ -406,6 +406,8 @@ class LpoStatusApi extends Controller
 
 
         }else{
+            
+            $qb->orderBy("order_priority", "asc");
 
             $sql            = LpoStatus::bind_presql($qb->toSql(),$qb->getBindings());
             $response       = json_decode(json_encode(DB::select($sql)), true);

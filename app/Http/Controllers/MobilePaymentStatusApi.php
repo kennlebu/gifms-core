@@ -406,6 +406,8 @@ class MobilePaymentStatusApi extends Controller
 
 
         }else{
+            
+            $qb->orderBy("order_priority", "asc");
 
             $sql            = MobilePaymentStatus::bind_presql($qb->toSql(),$qb->getBindings());
             $response       = json_decode(json_encode(DB::select($sql)), true);

@@ -406,6 +406,8 @@ class InvoiceStatusApi extends Controller
 
 
         }else{
+            
+            $qb->orderBy("order_priority", "asc");
 
             $sql            = InvoiceStatus::bind_presql($qb->toSql(),$qb->getBindings());
             $response       = json_decode(json_encode(DB::select($sql)), true);
