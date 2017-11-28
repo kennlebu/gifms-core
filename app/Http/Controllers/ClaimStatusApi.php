@@ -127,6 +127,7 @@ class ClaimStatusApi extends Controller
     {
         $form = Request::only(
             'id',
+            'claim_status',
             'next_status_id',
             'status_security_level',
             'order_priority',

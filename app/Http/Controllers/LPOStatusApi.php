@@ -127,6 +127,7 @@ class LpoStatusApi extends Controller
     {
         $form = Request::only(
             'id',
+            'lpo_status',
             'next_status_id',
             'status_security_level',
             'order_priority',

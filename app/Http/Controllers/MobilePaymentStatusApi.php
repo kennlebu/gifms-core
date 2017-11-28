@@ -127,6 +127,7 @@ class MobilePaymentStatusApi extends Controller
     {
         $form = Request::only(
             'id',
+            'mobile_payment_status',
             'next_status_id',
             'status_security_level',
             'order_priority',
