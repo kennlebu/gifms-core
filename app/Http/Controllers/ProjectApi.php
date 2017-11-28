@@ -384,7 +384,7 @@ class ProjectApi extends Controller
         //my_assigned
         if((array_key_exists('my_assigned', $input)&& $input['my_assigned'] = "true")&&($current_user->hasRole(['accountant','assistant-accountant','financial-controller']))){
 
-            $qb->orderBy('project_code', 'desc');
+            $qb->orderBy('project_code', 'asc');
         }elseif (array_key_exists('my_assigned', $input)&& $input['my_assigned'] = "true") {
 
             $qb->select(DB::raw('projects.*'))
@@ -392,7 +392,7 @@ class ProjectApi extends Controller
                  ->rightJoin('staff', 'staff.id', '=', 'project_teams.staff_id')
                  ->where('staff.id', '=', $current_user->id)
                  ->groupBy('projects.id')
-                 ->orderBy('projects.project_code', 'desc');
+                 ->orderBy('projects.project_code', 'asc');
         }
 
 
@@ -403,6 +403,7 @@ class ProjectApi extends Controller
                 $query->orWhere('projects.id','like', '\'%' . $input['searchval']. '%\'');
                 $query->orWhere('projects.project_name','like', '\'%' . $input['searchval']. '%\'');
                 $query->orWhere('projects.project_desc','like', '\'%' . $input['searchval']. '%\'');
+                $query->orWhere('projects.project_code','like', '\'%' . $input['searchval']. '%\'');
 
             });
 
@@ -451,6 +452,7 @@ class ProjectApi extends Controller
                 $query->orWhere('projects.id','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('projects.project_name','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('projects.project_desc','like', '\'%' . $input['search']['value']. '%\'');
+                $query->orWhere('projects.project_code','like', '\'%' . $input['search']['value']. '%\'');
 
             });
 
@@ -511,6 +513,8 @@ class ProjectApi extends Controller
 
 
         }else{
+
+            $qb->orderBy("project_code", "asc");
 
             $sql            = Project::bind_presql($qb->toSql(),$qb->getBindings());
             $response       = json_decode(json_encode(DB::select($sql)), true);
