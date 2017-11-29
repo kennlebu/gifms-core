@@ -90,7 +90,7 @@ class migrate_accounting_data extends Seeder
             $data_to_migrate[$key]['account_code']                 	= $data[$key]['AccountCode'];
             $data_to_migrate[$key]['account_name']                 	= $data[$key]['Account'];
             $data_to_migrate[$key]['account_desc']                 	= $data[$key]['AccountDescription'];
-            $data_to_migrate[$key]['account_type']                 	= $data[$key]['AccountType'];
+            $data_to_migrate[$key]['account_type_id']                 	= $data[$key]['AccountType'];
             $data_to_migrate[$key]['client']                 		= $data[$key]['Client'];
             $data_to_migrate[$key]['brevity']                 		= $data[$key]['Berevity'];
             $data_to_migrate[$key]['office_cost']                 	= $data[$key]['OfficeCost'];
