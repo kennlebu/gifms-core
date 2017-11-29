@@ -25,6 +25,7 @@ use Exception;
 use App;
 use Illuminate\Support\Facades\Response;
 use App\Models\StaffModels\Staff;
+use Config;
 
 class StaffApi extends Controller
 {
@@ -95,11 +96,16 @@ class StaffApi extends Controller
 
         $staff = new Staff;
 
+            $default_pwd        = Config::get('app.default_password');
+            $encr_pwd           = bcrypt($default_pwd);
+            $encr_old_pwd       = $this->encrypt_password( $default_pwd);
 
             $staff->username                     =         $form['username'];
             $staff->email                        =         $form['email'];
-            $staff->password                     =         $form['password'];
-            $staff->old_password                 =         $form['old_password'];
+
+            $staff->password                     =         $encr_pwd;
+            $staff->old_password                 =         $encr_old_pwd;
+
             $staff->security_group_id            =  (int)  $form['security_group_id'];
             $staff->f_name                       =         $form['f_name'];
             $staff->l_name                       =         $form['l_name'];
@@ -189,8 +195,8 @@ class StaffApi extends Controller
 
             $staff->username                     =         $form['username'];
             $staff->email                        =         $form['email'];
-            $staff->password                     =         $form['password'];
-            $staff->old_password                 =         $form['old_password'];
+            // $staff->password                     =         $form['password'];
+            // $staff->old_password                 =         $form['old_password'];
             $staff->security_group_id            =  (int)  $form['security_group_id'];
             $staff->f_name                       =         $form['f_name'];
             $staff->l_name                       =         $form['l_name'];
@@ -589,5 +595,25 @@ class StaffApi extends Controller
         return $data;
 
 
+    }
+
+
+    public function encrypt_password($password_str){
+        $offset = 8;
+        $encrypted_password = '';
+        for ($i = 1; $i <= strlen($password_str); $i++) 
+        {
+            $encrypted_password.=chr((ord(substr($password_str,$i-1,1)) + $offset));
+        }
+        return $encrypted_password;
+    }
+    public function decrypt_password($password_str){
+        $offset = 8;
+        $decrypted_password = '';
+        for ($i = 1; $i <= strlen($password_str); $i++) 
+        {
+            $decrypted_password.=chr((ord(substr($password_str,$i-1,1)) - $offset));
+        }
+        return $decrypted_password;
     }
 }
