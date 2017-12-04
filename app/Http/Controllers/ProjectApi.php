@@ -281,7 +281,8 @@ class ProjectApi extends Controller
 
         try{
 
-            $response   = Project::findOrFail($project_id);
+            $response   = Project::with(["budget"])
+                                    ->findOrFail($project_id);
            
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
 
@@ -560,6 +561,7 @@ class ProjectApi extends Controller
             $data[$key]['status']                   = $projects->status;
             $data[$key]['country']                  = $projects->country;
             $data[$key]['staffs']                   = $projects->staffs;
+            $data[$key]['budget']                   = $projects->budget;
 
         }
 
@@ -596,6 +598,9 @@ class ProjectApi extends Controller
             }
             if($data[$key]["country"]==null){
                 $data[$key]["country"] = array("country_name"=>"N/A");
+            }
+            if($data[$key]["budget"]==null){
+                $data[$key]["budget"] = array("budget_desc"=>"N/A","totals"=>0);
             }
 
 

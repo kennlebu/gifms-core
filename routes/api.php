@@ -63,7 +63,6 @@ Route::post('/forgot_password', [	'uses' => 'ApiAuthController@forgotPassword'])
  * Output-Formats: [application/json, application/xml]
  */
 Route::POST('/lpo', 'LPOApi@add')->middleware('jwt.auth');
-;
 /**
  * PUT updateLpo
  * Summary: Update an existing LPO
@@ -4540,3 +4539,189 @@ Route::GET('/approval_level/{approval_level_id}', 'ApprovalLevelApi@getApprovalL
  */
 Route::GET('/approval_levels', 'ApprovalLevelApi@approvalLevelsGet')->middleware('jwt.auth');
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * POST addGrantAllocation
+ * Summary: Add a new grant_allocation
+ * Notes: new grant_allocation
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/grant_allocation', 'GrantAllocationApi@addGrantAllocation')->middleware('jwt.auth');
+/**
+ * PUT updateGrantAllocation
+ * Summary: Update an existing grant_allocation
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/grant_allocation', 'GrantAllocationApi@updateGrantAllocation')->middleware('jwt.auth');
+/**
+ * DELETE deleteGrantAllocation
+ * Summary: Deletes an grant_allocation
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/grant_allocation/{grant_allocation_id}', 'GrantAllocationApi@deleteGrantAllocation')->middleware('jwt.auth');
+/**
+ * GET getGrantAllocationById
+ * Summary: Find grant_allocation by ID
+ * Notes: Returns a single grant_allocation
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/grant_allocation/{grant_allocation_id}', 'GrantAllocationApi@getGrantAllocationById')->middleware('jwt.auth');
+/**
+ * GET grantAllocationsGet
+ * Summary: Grant Allocations List
+ * Notes: The grant_allocation endpoint returns multiple grant_allocation requested given the parameters injected.  
+
+ */
+Route::GET('/grant_allocations', 'GrantAllocationApi@grantAllocationsGet')->middleware('jwt.auth');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * POST addBudget
+ * Summary: Add a new budget
+ * Notes: new budget
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/budget', 'BudgetApi@addBudget')->middleware('jwt.auth');
+/**
+ * PUT updateBudget
+ * Summary: Update an existing budget
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/budget', 'BudgetApi@updateBudget')->middleware('jwt.auth');
+/**
+ * DELETE deleteBudget
+ * Summary: Deletes an budget
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/budget/{budget_id}', 'BudgetApi@deleteBudget')->middleware('jwt.auth');
+/**
+ * GET getBudgetById
+ * Summary: Find budget by ID
+ * Notes: Returns a single budget
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/budget/{budget_id}', 'BudgetApi@getBudgetById')->middleware('jwt.auth');
+/**
+ * GET budgetsGet
+ * Summary: Budgets List
+ * Notes: The budget endpoint returns multiple budget requested given the parameters injected.  
+
+ */
+Route::GET('/budgets', 'BudgetApi@budgetsGet')->middleware('jwt.auth');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * POST addBudgetItem
+ * Summary: Add a new budget_item
+ * Notes: new budget_item
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/budget_item', 'BudgetItemApi@addBudgetItem')->middleware('jwt.auth');
+/**
+ * PUT updateBudgetItem
+ * Summary: Update an existing budget_item
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/budget_item', 'BudgetItemApi@updateBudgetItem')->middleware('jwt.auth');
+/**
+ * DELETE deleteBudgetItem
+ * Summary: Deletes an budget_item
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/budget_item/{budget_item_id}', 'BudgetItemApi@deleteBudgetItem')->middleware('jwt.auth');
+/**
+ * GET getBudgetItemById
+ * Summary: Find budget_item by ID
+ * Notes: Returns a single budget_item
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/budget_item/{budget_item_id}', 'BudgetItemApi@getBudgetItemById')->middleware('jwt.auth');
+/**
+ * GET budgetItemsGet
+ * Summary: Budget Items List
+ * Notes: The budget_item endpoint returns multiple budget_item requested given the parameters injected.  
+
+ */
+Route::GET('/budget_items', 'BudgetItemApi@budgetItemsGet')->middleware('jwt.auth');

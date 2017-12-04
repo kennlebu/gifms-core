@@ -1,0 +1,308 @@
+swagger: '2.0'
+info:
+  description: Finance management sysytem
+  version: 1.0.0
+  title: Grants Information Management System
+  termsOfService: 'http://kefinance.clintonhealthaccess.org/terms/'
+  contact:
+    email: mwangikevinn@gmail.com
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+host: 'localhost:8000'
+basePath: /api
+tags:
+  - name: Budget Item
+    description: Everything About Budget Item
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/budget_item/docs'
+schemes:
+  - http
+  - https
+paths:
+
+
+
+
+
+
+
+
+
+
+
+  /budget_items:
+    get:
+      summary: Budget Items List
+      description: |
+        The budget_item endpoint returns multiple budget_item requested given the parameters injected. 
+      parameters:
+        - name: budget_item_id
+          in: query
+          description: budget_item id 
+          required: false
+          type: number
+          format: integer
+      tags:
+        - Budget Item
+      responses:
+        200:
+          description: An array of budget_item returned
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/budget_item'
+        404:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+        - api_key: []
+
+
+
+
+
+
+
+  /budget_item:    
+    post:
+      tags:
+        - Budget Item
+      summary: Add a new budget_item
+      description: new budget_item  
+      operationId: add_budget_item
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: budget_item object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/budget_item'
+      responses:
+        '200':
+          description: Successfully added a new budget_item for approval 
+        '405':
+          description: Invalid input,adding a new budget_item was unsuccessful
+      security:
+        - api_key: []
+            
+            
+            
+
+            
+    put:
+      tags:
+        - Budget Item
+      summary: Update an existing budget_item
+      description: ''
+      operationId: update_budget_item
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: budget_item object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/budget_item'
+      responses:
+        200:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Success'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: budget_item not found
+        '405':
+          description: Validation exception
+      security:
+        - api_key: []
+        
+        
+        
+        
+        
+        
+  '/budget_item/{budget_item_id}':
+    get:
+      tags:
+        - Budget Item
+      summary: Find budget_item by ID
+      description: Returns a single budget_item
+      operationId: get_budget_item_by_id
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: budget_item_id
+          in: path
+          description: ID of budget_item to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/budget_item'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: budget_item not found
+      security:
+        - api_key: []
+        
+        
+     
+            
+            
+            
+    delete:
+      tags:
+        - Budget Item
+      summary: Deletes an budget_item
+      description: ''
+      operationId: delete_budget_item
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: api_key
+          in: header
+          required: true
+          type: string
+        - name: budget_item_id
+          in: path
+          description: budget_item id to delete
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: budget_item not found
+      security:
+        - api_key: []
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+          
+          
+securityDefinitions:
+  api_key:
+    type: apiKey
+    name: Authorization
+    in: header
+     
+     
+     
+definitions:
+
+
+      
+      
+  budget_item:
+    type: object
+    required:
+      - id
+      - created_at
+    properties:
+      id:
+        type: integer
+        format: int64
+        example: 1
+      num:
+        type: number
+        format: int64
+        example: 20000
+      str:
+        type: string
+        example: 'PayPal.pdf'
+      date:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      created_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      updated_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+    xml:
+      name: budget_item
+    
+  
+    
+  
+  
+  
+  
+  Error:
+    type: object
+    properties:
+      error:
+        type: string
+        example: object not found
+
+
+  
+  Success:
+    type: object
+    properties:
+      msg:
+        type: string
+        example: object not found
+
+      
+      
+      
+      

@@ -339,3 +339,18 @@
     externalDocs:
       description: Find out more
       url: 'http://kefinance.clintonhealthaccess.org/api/permission/docs'
+  - name: Grant Allocation
+    description: Everything About Grant Allocation
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/grant_allocation/docs'
+  - name: Budget
+    description: Everything About Budget
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/budget/docs'
+  - name: Budget Item
+    description: Everything About Budget Item
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/budget_item/docs'

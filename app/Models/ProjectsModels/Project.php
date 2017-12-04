@@ -28,4 +28,8 @@ class Project extends BaseModel
     {
         return $this->belongsToMany('App\Models\StaffModels\Staff', 'project_teams', 'project_id', 'staff_id');
     }
+    public function budget()
+    {
+        return $this->belongsTo('App\Models\FinanceModels\Budget', 'budget_id');
+    }
 }

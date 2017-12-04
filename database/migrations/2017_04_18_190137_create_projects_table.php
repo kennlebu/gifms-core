@@ -17,15 +17,18 @@ class CreateProjectsTable extends Migration
             $table->increments('id');
             $table->integer('project_manager_id')->nullable();
             $table->integer('program_id')->nullable();
+            $table->integer('grant_id')->nullable();
             $table->string('project_code');
             $table->text('project_name');
             $table->text('project_desc')->nullable();
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();
+            $table->timestamp('closed_on')->nullable();
             $table->integer('status_id')->nullable();
             $table->integer('cluster')->nullable();
             $table->integer('client')->nullable();
             $table->integer('country_id')->nullable();
+            $table->integer('budget_id')->nullable();
             $table->integer('qb')->nullable();
             $table->integer('migration_project_manager_id')->nullable();
             $table->integer('migration_id')->nullable();

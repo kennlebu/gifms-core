@@ -121,6 +121,17 @@ class DatabaseSeeder extends Seeder
 
         $this->call(migrate_staff_roles::class);
         $this->call(migrate_project_programs_data::class);
+
+
+
+
+
+
+        $this->call(migrate_budgeting_data::class);
+        $this->call(migrate_budgeting_keys::class);
+
+        $this->call(migrate_grant_allocation_data::class);
+        $this->call(migrate_grant_allocation_keys::class);
         
     }
 }

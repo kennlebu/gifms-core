@@ -22,6 +22,7 @@ class CreateGrantsTable extends Migration
             $table->double('grant_amount',30,5)->nullable();
             $table->timestamp('start_date')->nullable();
             $table->timestamp('end_date')->nullable();
+            $table->timestamp('closed_on')->nullable();
             $table->integer('status_id')->nullable();
             $table->integer('migration_donor_id')->nullable();
             $table->integer('migration_id')->nullable();

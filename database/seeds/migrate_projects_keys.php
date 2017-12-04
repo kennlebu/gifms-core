@@ -63,7 +63,7 @@ class migrate_projects_keys extends Seeder
         $migrate_keys_sql = "
                                 UPDATE project_budget_accounts pba 
                                     LEFT JOIN accounts a 
-                                    ON a.migration_id = pba.migration_account_id
+                                    ON a.account_code = pba.migration_account_id
                                     LEFT JOIN projects p 
                                     ON p.migration_id = pba.migration_project_id
 
