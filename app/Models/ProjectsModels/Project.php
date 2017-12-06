@@ -12,6 +12,8 @@ class Project extends BaseModel
     use SoftDeletes;
 
 
+    protected $appends = ['grant_amount_allocated','total_expenditure'];
+
     public function program()
     {
         return $this->belongsTo('App\Models\ProgramModels\Program','program_id');
@@ -31,5 +33,49 @@ class Project extends BaseModel
     public function budget()
     {
         return $this->belongsTo('App\Models\FinanceModels\Budget', 'budget_id');
+    }
+    public function grant_allocations()
+    {
+        return $this->hasMany('App\Models\GrantModels\GrantAllocation','project_id');
+    }
+    public function allocations()
+    {
+        return $this->hasMany('App\Models\AllocationModels\Allocation','project_id');
+    }
+    // public function getAmountAllocatedAttribute(){
+
+    //     $grant_allocations     =   $this->grant_allocations;
+    //     $totals    =   0;
+
+    //     foreach ($grant_allocations as $key => $value) {
+    //         $totals    +=  (float) $value->amount_allocated;
+    //     }
+
+    //     return $totals;
+
+    // }
+    public function getGrantAmountAllocatedAttribute(){
+
+        $grant_allocations     =   $this->grant_allocations;
+        $totals    =   0;
+
+        foreach ($grant_allocations as $key => $value) {
+            $totals    +=  (float) $value->amount_allocated;
+        }
+
+        return $totals;
+
+    }
+    public function getTotalExpenditureAttribute(){
+
+        $allocations     =   $this->allocations;
+        $totals    =   0;
+
+        foreach ($allocations as $key => $value) {
+            $totals    +=  (float) $value->amount_allocated;
+        }
+
+        return $totals;
+
     }
 }

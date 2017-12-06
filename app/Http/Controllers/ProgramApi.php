@@ -261,6 +261,7 @@ class ProgramApi extends Controller
         $qb = DB::table('programs');
 
         $qb->whereNull('programs.deleted_at');
+        $current_user = JWTAuth::parseToken()->authenticate();
 
         $response;
         $response_dt;
@@ -270,6 +271,19 @@ class ProgramApi extends Controller
 
 
 
+
+        //my_pm_assigned
+        if(array_key_exists('my_pm_assigned', $input)&& $input['my_pm_assigned'] = "true"){
+
+
+            $qb->select(DB::raw('programs.*'))
+                 ->rightJoin('program_managers', 'program_managers.program_id', '=', 'programs.id')
+                 ->rightJoin('staff', 'staff.id', '=', 'program_managers.program_manager_id')
+                 ->where('staff.id', '=', $current_user->id)
+                 ->whereNotNull('programs.id')
+                 ->groupBy('programs.id')
+                 ->orderBy('programs.program_name', 'asc');
+        }
 
         //searching
         if(array_key_exists('searchval', $input)){

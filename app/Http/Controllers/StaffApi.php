@@ -345,7 +345,7 @@ class StaffApi extends Controller
     public function staffsGet()
     {
         
-
+        // ini_set('memory_limit', '2048M');
 
         $input = Request::all();
         //query builder
@@ -483,7 +483,7 @@ class StaffApi extends Controller
 
 
             $sql = Staff::bind_presql($qb->toSql(),$qb->getBindings());
-
+            // echo $sql;die;
             // $response_dt = DB::select($qb->toSql(),$qb->getBindings());         //pseudo
             $response_dt = DB::select($sql);
 
@@ -536,14 +536,22 @@ class StaffApi extends Controller
 
     public function append_relationships_objects($data = array()){
 
+        $input = Request::all();
+
 
         foreach ($data as $key => $value) {
 
+            
             $staff = Staff::find($data[$key]['id']);
+
+            //with_assigned_projects
+            if(array_key_exists('with_assigned_projects', $input)&& $input['with_assigned_projects'] = "true"){
+                $data[$key]['assigned_projects']        =   $staff->assigned_projects;
+            }
+
 
             $data[$key]['roles']                    =   $staff->roles;
             $data[$key]['programs']                 =   $staff->programs;
-            $data[$key]['assigned_projects']        =   $staff->assigned_projects;
             $data[$key]['department']               =   $staff->department;
             $data[$key]['payment_mode']             =   $staff->payment_mode;
             $data[$key]['bank']                     =   $staff->bank;

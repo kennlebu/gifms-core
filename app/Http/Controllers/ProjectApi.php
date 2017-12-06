@@ -385,15 +385,43 @@ class ProjectApi extends Controller
         //my_assigned
         if((array_key_exists('my_assigned', $input)&& $input['my_assigned'] = "true")&&($current_user->hasRole(['accountant','assistant-accountant','financial-controller']))){
 
-            $qb->orderBy('project_code', 'asc');
+            $qb->orderBy('project_code', 'asc')            
+                 ->whereNotNull('project_code');
         }elseif (array_key_exists('my_assigned', $input)&& $input['my_assigned'] = "true") {
 
             $qb->select(DB::raw('projects.*'))
                  ->rightJoin('project_teams', 'project_teams.project_id', '=', 'projects.id')
                  ->rightJoin('staff', 'staff.id', '=', 'project_teams.staff_id')
                  ->where('staff.id', '=', $current_user->id)
+                 ->whereNotNull('projects.id')
+                 ->whereNotNull('projects.project_code')
                  ->groupBy('projects.id')
                  ->orderBy('projects.project_code', 'asc');
+        }
+
+        //my_pm_assigned
+        if(array_key_exists('my_pm_assigned', $input)&& $input['my_pm_assigned'] = "true"){
+
+
+            $qb->select(DB::raw('projects.*'))
+                 ->rightJoin('programs', 'programs.id', '=', 'projects.program_id')
+                 ->rightJoin('program_managers', 'program_managers.program_id', '=', 'programs.id')
+                 ->rightJoin('staff', 'staff.id', '=', 'program_managers.program_manager_id')
+                 ->where('staff.id', '=', $current_user->id)
+                 ->whereNotNull('projects.id')
+                 ->groupBy('projects.id')
+                 ->orderBy('projects.project_code', 'asc');
+        }
+
+        //program_id
+         if(array_key_exists('program_id', $input)){
+
+            $program_id = (int) $input['program_id'];
+
+            if($program_id==0){
+            }else if($program_id==1){
+                $qb->where('program_id',$program_id);
+            }
         }
 
 
@@ -557,6 +585,13 @@ class ProjectApi extends Controller
 
             $projects = Project::find($data[$key]['id']);
 
+            $grant_amount_allocated     =   $data[$key]['grant_amount_allocated']   = (double) $projects->grant_amount_allocated;
+            $total_expenditure          =   $data[$key]['total_expenditure']        = (double) $projects->total_expenditure;
+            if($projects->grant_amount_allocated!=0){
+                $data[$key]['expenditure_perc']         = $total_expenditure/$grant_amount_allocated;
+            }else{
+                $data[$key]['expenditure_perc']         = 0;
+            }
             $data[$key]['program']                  = $projects->program;
             $data[$key]['status']                   = $projects->status;
             $data[$key]['country']                  = $projects->country;

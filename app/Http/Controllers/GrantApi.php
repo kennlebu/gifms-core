@@ -475,6 +475,7 @@ class GrantApi extends Controller
 
             $grants = Grant::find($data[$key]['id']);
 
+            $data[$key]['amount_allocated']      = $grants->amount_allocated;
             $data[$key]['status']                = $grants->status;
             $data[$key]['currency']              = $grants->currency;
             $data[$key]['donor']                 = $grants->donor;
