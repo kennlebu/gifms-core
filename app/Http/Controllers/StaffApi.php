@@ -545,13 +545,13 @@ class StaffApi extends Controller
             $staff = Staff::find($data[$key]['id']);
 
             //with_assigned_projects
-            if(array_key_exists('with_assigned_projects', $input)&& $input['with_assigned_projects'] = "true"){
-                $data[$key]['assigned_projects']        =   $staff->assigned_projects;
+            if(array_key_exists('detailed', $input)&& $input['detailed'] = "true"){
+                $data[$key]['detailed']        =   $staff->assigned_projects;
+                $data[$key]['roles']                    =   $staff->roles;
+                $data[$key]['programs']                 =   $staff->programs;
             }
 
 
-            $data[$key]['roles']                    =   $staff->roles;
-            $data[$key]['programs']                 =   $staff->programs;
             $data[$key]['department']               =   $staff->department;
             $data[$key]['payment_mode']             =   $staff->payment_mode;
             $data[$key]['bank']                     =   $staff->bank;

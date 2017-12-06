@@ -510,8 +510,12 @@ class SupplierApi extends Controller
 
             $sql            = Supplier::bind_presql($qb->toSql(),$qb->getBindings());
             $response       = json_decode(json_encode(DB::select($sql)), true);
-            $response       = $this->append_relationships_objects($response);
-            $response       = $this->append_relationships_nulls($response);
+
+            //with_assigned_projects
+            if(array_key_exists('detailed', $input)&& $input['detailed'] = "true"){
+                $response       = $this->append_relationships_objects($response);
+                $response       = $this->append_relationships_nulls($response);
+            }
 
         }
 
