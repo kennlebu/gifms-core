@@ -281,7 +281,7 @@ class ProjectApi extends Controller
 
         try{
 
-            $response   = Project::with(["budget"])
+            $response   = Project::with(["budget","project_manager"])
                                     ->findOrFail($project_id);
            
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
@@ -588,7 +588,7 @@ class ProjectApi extends Controller
             $grant_amount_allocated     =   $data[$key]['grant_amount_allocated']   = (double) $projects->grant_amount_allocated;
             $total_expenditure          =   $data[$key]['total_expenditure']        = (double) $projects->total_expenditure;
             if($projects->grant_amount_allocated!=0){
-                $data[$key]['expenditure_perc']         = $total_expenditure/$grant_amount_allocated;
+                $data[$key]['expenditure_perc']         = ($total_expenditure/$grant_amount_allocated)*100;
             }else{
                 $data[$key]['expenditure_perc']         = 0;
             }
