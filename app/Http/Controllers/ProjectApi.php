@@ -279,18 +279,32 @@ class ProjectApi extends Controller
     {
         $input = Request::all();
 
-        try{
+        // try{
 
             $response   = Project::with(["budget","project_manager"])
                                     ->findOrFail($project_id);
+
+
+            //with_chart_data
+            if(array_key_exists('with_chart_data', $input)&& $input['with_chart_data'] = "true"){
+
+
+                $project = Project::find($project_id);
+                $response["budget_expenditure_by_accounts_data"]    =   $project->getBudgetExpenditureByAccountsDataAttribute();
+                $response["grant_amount_allocated"]                 =   $project->getGrantAmountAllocatedAttribute();
+                $response["total_expenditure"]                      =   $project->getTotalExpenditureAttribute();
+                $response["total_expenditure_perc"]                 =   $project->getTotalExpenditurePercAttribute();
+
+
+            }
            
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
 
-        }catch(Exception $e){
+        // }catch(Exception $e){
 
-            $response =  ["error"=>"project could not be found"];
-            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
-        }
+        //     $response =  ["error"=>"project could not be found"];
+        //     return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+        // }
     }
 
 

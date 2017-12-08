@@ -13,7 +13,7 @@ class Project extends BaseModel
     use SoftDeletes;
 
 
-    protected $appends = ['grant_amount_allocated','total_expenditure','expenditure_by_accounts_data'];
+    protected $appends = [];
 
     public function program()
     {
@@ -95,6 +95,22 @@ class Project extends BaseModel
 
     }
 
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     public function getExpenditureByAccountsDataAttribute(){
 
         $project_id = $this->id;
@@ -113,6 +129,128 @@ class Project extends BaseModel
 
         $sql = $this->bind_presql($qb->toSql(),$qb->getBindings());
         $response = DB::select($sql);
+
+        return $response;
+
+    }
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public function getBudgetExpenditureByAccountsDataAttribute(){
+
+        $project_id = $this->id;
+        $result     = array();
+        $response   = array();
+
+
+
+        $qb_expenditure = DB::table('accounts');
+
+        $qb_expenditure->select(DB::raw('accounts.id AS account_id, accounts.account_name, accounts.account_code, allocations.id AS allocation_id, SUM(allocations.amount_allocated) AS `total_expenditure`, null AS budget_item_id,null AS `total_budget`'))
+                 ->leftJoin('allocations', 'allocations.account_id', '=', 'accounts.id')
+                 ->rightJoin('projects', function($q) use ($project_id)
+                    {
+                        $q->on('projects.id', '=', 'allocations.project_id')
+                         ->where('projects.id', '=', $project_id);
+                    })
+                 ->whereNotNull('accounts.account_name')
+                 ->groupBy('accounts.id')
+                 ->whereNull('accounts.deleted_at')
+                 ->orderBy('accounts.account_name', 'asc');
+
+
+
+        $sql_expenditure = $this->bind_presql($qb_expenditure->toSql(),$qb_expenditure->getBindings());
+        $sql_expenditure = "select accounts.id as account_id ,accounts.account_name, accounts.account_code, f.allocation_id, f.total_expenditure, f.budget_item_id, f.total_budget FROM accounts Left join ($sql_expenditure) as f on f.account_id = accounts.id where `accounts`.`account_name` is not null and `accounts`.`deleted_at` is null group by `accounts`.`id` order by `accounts`.`account_name` asc";
+        $result_expenditure = DB::select($sql_expenditure);
+
+
+
+
+
+
+
+
+
+
+        $qb_budget = DB::table('accounts');
+
+        $qb_budget->select(DB::raw('accounts.id AS account_id, accounts.account_name,  accounts.account_code, null AS allocation_id, null AS `total_expenditure`,  budget_items.id AS budget_item_id,SUM(budget_items.amount) AS `total_budget`'))
+                 ->leftJoin('budget_items', function($q) 
+                    {
+                        $q->on('budget_items.account_id', '=', 'accounts.id');
+                    })
+                 ->leftJoin('budgets', function($q) 
+                    {
+                        $q->on('budgets.id', '=', 'budget_items.budget_id');
+                    })
+                 ->rightJoin('projects', function($q)  use ($project_id)
+                    {
+                        $q->on('projects.budget_id', '=', 'budgets.id')
+                         ->where('projects.id', '=', $project_id);
+                    })
+                 ->whereNotNull('accounts.account_name')
+                 ->groupBy('accounts.id')
+                 ->whereNull('accounts.deleted_at')
+                 ->orderBy('accounts.account_name', 'asc');
+
+
+
+        $sql_budget = $this->bind_presql($qb_budget->toSql(),$qb_budget->getBindings());
+        $result_budget = DB::select($sql_budget);
+
+
+
+
+        foreach ($result_expenditure as $key => $value) {
+
+            $result[$key]["account_id"]         =    $value["account_id"];
+            $result[$key]["account_code"]       =    $value["account_code"];
+            $result[$key]["account_name"]       =    $value["account_name"];
+            $result[$key]["allocation_id"]      =    $value["allocation_id"];
+            $result[$key]["total_expenditure"]  =    $value["total_expenditure"]; 
+            
+            $result[$key]["budget_item_id"]     =    0;
+            $result[$key]["total_budget"]       =    0; 
+
+            foreach ($result_budget as $key1 => $value1) {
+                if ($value["account_id"]==$value1["account_id"]) {
+                    $result[$key]["budget_item_id"]     =    $result_budget[$key1]["budget_item_id"];
+                    $result[$key]["total_budget"]       =    $result_budget[$key1]["total_budget"];                    
+                }else{
+
+                }
+            }
+        }
+
+        foreach ($result as $key => $value) {
+            if(!empty($value["total_expenditure"])||!empty($value["total_budget"])){
+                $response[] = $value;
+            }
+        }
+
+        foreach ($response as $key => $value) {
+            if(is_null($value['total_expenditure'])){
+                $response[$key]['total_expenditure'] = 0;
+            }
+            if(is_null($value['total_budget'])){
+                $response[$key]['total_budget'] = 0;
+            }
+        }
+
 
         return $response;
 
