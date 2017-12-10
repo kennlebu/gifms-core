@@ -469,7 +469,7 @@ class ProjectApi extends Controller
 
             $qb->orderBy($order_column_name, $order_direction);
         }else{
-            $qb->orderBy("project_code", "asc");
+            // $qb->orderBy("project_code", "asc");
         }
 
         //limit

@@ -413,7 +413,7 @@ class SupplierApi extends Controller
 
             $qb->orderBy($order_column_name, $order_direction);
         }else{
-            $qb->orderBy("supplier_name", "asc");
+            // $qb->orderBy("supplier_name", "asc");
         }
 
         //limit

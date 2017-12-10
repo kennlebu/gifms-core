@@ -297,7 +297,7 @@ class AccountClassificationApi extends Controller
 
             $qb->orderBy($order_column_name, $order_direction);
         }else{
-            $qb->orderBy("account_classification_name", "asc");
+            // $qb->orderBy("account_classification_name", "asc");
         }
 
         //limit

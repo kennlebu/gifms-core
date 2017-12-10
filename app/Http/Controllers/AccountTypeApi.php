@@ -301,7 +301,7 @@ class AccountTypeApi extends Controller
 
             $qb->orderBy($order_column_name, $order_direction);
         }else{
-            $qb->orderBy("account_type_name", "asc");
+            // $qb->orderBy("account_type_name", "asc");
         }
 
         //limit
