@@ -399,8 +399,7 @@ class ProjectApi extends Controller
         //my_assigned
         if((array_key_exists('my_assigned', $input)&& $input['my_assigned'] = "true")&&($current_user->hasRole(['accountant','assistant-accountant','financial-controller']))){
 
-            $qb->orderBy('project_code', 'asc')            
-                 ->whereNotNull('project_code');
+            $qb->whereNotNull('project_code');
         }elseif (array_key_exists('my_assigned', $input)&& $input['my_assigned'] = "true") {
 
             $qb->select(DB::raw('projects.*'))
@@ -409,8 +408,7 @@ class ProjectApi extends Controller
                  ->where('staff.id', '=', $current_user->id)
                  ->whereNotNull('projects.id')
                  ->whereNotNull('projects.project_code')
-                 ->groupBy('projects.id')
-                 ->orderBy('projects.project_code', 'asc');
+                 ->groupBy('projects.id');
         }
 
         //my_pm_assigned
@@ -423,8 +421,7 @@ class ProjectApi extends Controller
                  ->rightJoin('staff', 'staff.id', '=', 'program_managers.program_manager_id')
                  ->where('staff.id', '=', $current_user->id)
                  ->whereNotNull('projects.id')
-                 ->groupBy('projects.id')
-                 ->orderBy('projects.project_code', 'asc');
+                 ->groupBy('projects.id');
         }
 
         //program_id
@@ -460,6 +457,19 @@ class ProjectApi extends Controller
             // $records_filtered = 30;
 
 
+        }
+
+        //ordering
+        if(array_key_exists('order_by', $input)&&$input['order_by']!=''){
+            $order_direction     = "desc";
+            $order_column_name   = $input['order_by'];
+            if(array_key_exists('order_dir', $input)&&$input['order_dir']!=''){                
+                $order_direction = $input['order_dir'];
+            }
+
+            $qb->orderBy($order_column_name, $order_direction);
+        }else{
+            $qb->orderBy("project_code", "asc");
         }
 
         //limit
@@ -557,7 +567,7 @@ class ProjectApi extends Controller
 
         }else{
 
-            $qb->orderBy("project_code", "asc");
+            // $qb->orderBy("project_name", "asc");
 
             $sql            = Project::bind_presql($qb->toSql(),$qb->getBindings());
             $response       = json_decode(json_encode(DB::select($sql)), true);

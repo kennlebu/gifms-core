@@ -386,6 +386,20 @@ class StaffApi extends Controller
 
         }
 
+
+        //ordering
+        if(array_key_exists('order_by', $input)&&$input['order_by']!=''){
+            $order_direction     = "desc";
+            $order_column_name   = $input['order_by'];
+            if(array_key_exists('order_dir', $input)&&$input['order_dir']!=''){                
+                $order_direction = $input['order_dir'];
+            }
+
+            $qb->orderBy($order_column_name, $order_direction);
+        }else{
+            $qb->orderBy("f_name", "asc");
+        }
+
         //limit
         if(array_key_exists('limit', $input)){
 
@@ -405,8 +419,7 @@ class StaffApi extends Controller
                  ->leftJoin('user_roles', 'user_roles.user_id', '=', 'staff.id')
                  ->leftJoin('roles', 'roles.id', '=', 'user_roles.role_id')
                  ->where('roles.acronym', '=', "'".$input['role_abr']."'")
-                 ->groupBy('staff.id')
-                 ->orderBy('staff.f_name', 'asc');
+                 ->groupBy('staff.id');
         }
 
         //migrated

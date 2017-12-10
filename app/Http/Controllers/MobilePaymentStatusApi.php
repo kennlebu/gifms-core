@@ -314,6 +314,20 @@ class MobilePaymentStatusApi extends Controller
 
         }
 
+
+        //ordering
+        if(array_key_exists('order_by', $input)&&$input['order_by']!=''){
+            $order_direction     = "desc";
+            $order_column_name   = $input['order_by'];
+            if(array_key_exists('order_dir', $input)&&$input['order_dir']!=''){                
+                $order_direction = $input['order_dir'];
+            }
+
+            $qb->orderBy($order_column_name, $order_direction);
+        }else{
+            //$qb->orderBy("project_code", "asc");
+        }
+
         //limit
         if(array_key_exists('limit', $input)){
 
