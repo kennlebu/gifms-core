@@ -22,6 +22,14 @@ class Budget extends BaseModel
     {
         return $this->belongsTo('App\Models\LookupModels\Currency','currency_id');
     }
+    public function created_by()
+    {
+        return $this->belongsTo('App\Models\StaffModels\Staff','created_by_id');
+    }
+    public function status()
+    {
+        return $this->belongsTo('App\Models\FinanceModels\BudgetStatus');
+    }
     
     public function getTotalsAttribute(){
 

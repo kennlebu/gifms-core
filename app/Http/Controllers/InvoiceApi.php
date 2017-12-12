@@ -136,9 +136,11 @@ class InvoiceApi extends Controller
 
             // $invoice_date = date('Y-m-d H:i:s', strtotime($form['invoice_date']));
             // $value = DateTime::createFromFormat('D M d Y H:i:s T +',$z);
-            $DT = new \DateTime();
-            $dt = $DT->createFromFormat('D M d Y H:i:s T +',$form['invoice_date']);
-            $invoice_date = $dt->format('Y-m-d');
+            if($form['submission_type']=='full' || $form['submission_type']=='log'){
+                $DT = new \DateTime();
+                $dt = $DT->createFromFormat('D M d Y H:i:s T +',$form['invoice_date']);
+                $invoice_date = $dt->format('Y-m-d');
+            }
 
             if($form['submission_type']=='full'){
 
@@ -164,7 +166,8 @@ class InvoiceApi extends Controller
                 $invoice->received_by_id                    =   (int)       $form['received_by_id'];
                 $invoice->raised_by_id                      =   (int)       $form['raised_by_id'];
                 $invoice->external_ref                      =               $form['external_ref'];
-                $invoice->invoice_date                      =               $invoice_date;                
+                // $invoice->invoice_date                      =               $form['invoice_date'];  
+                $invoice->invoice_date                      =               $invoice_date;              
                 $invoice->lpo_id                            =   (((int) $form['lpo_id'])>0)?$form['lpo_id']:null;
                 // $invoice->lpo_id                            =               $form['lpo_id'];
                 $invoice->supplier_id                       =   (int)       $form['supplier_id'];

@@ -117,6 +117,52 @@ class migrate_budgeting_data extends Seeder
 
 
 
+
+
+
+
+
+
+
+
+
+        /**
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         *                  Budget Status
+         * 
+         * 
+         * 
+         * 
+         * 
+         */
+        echo "\nBudget Status -[ALL]---\n";
+
+        DB::table('budget_statuses')->insert([
+            [
+                'budget_status'     => 'Accountant Review',
+                'next_status_id'    => '2',
+                'order_priority'    => '1',
+                'default_status'    => '1'
+            ],
+            [
+                'budget_status'     => 'PM Approval',
+                'next_status_id'    => '',
+                'order_priority'    => '2',
+                'default_status'    => ''
+            ]
+        ]);
+        echo "\n-----------------------------------------------------------------------------------------------------\n";
+
+
+
+
+
+
     }
 
 

@@ -21,7 +21,9 @@ use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\DB;
 
 use App\Models\FinanceModels\Budget;
-
+use App\Models\FinanceModels\BudgetItem;
+use App\Models\AccountingModels\Account;
+use App\Models\ProjectsModels\Project;
 
 use Exception;
 use App;
@@ -102,12 +104,21 @@ class BudgetApi extends Controller
 
         $budget = new Budget;
 
+
+            $DT = new \DateTime();
+
+            $dt_start_date  = $DT->createFromFormat('D M d Y H:i:s T +',$form['start_date']);
+            $dt_end_date    = $DT->createFromFormat('D M d Y H:i:s T +',$form['end_date']);
+            $start_date     = $dt_start_date->format('Y-m-d');
+            $end_date       = $dt_end_date->format('Y-m-d');
+
             $budget->budget_desc                  =         $form['budget_desc'];
             $budget->currency_id                  = (int)   $form['currency_id'];
-            $budget->start_date                   =         $form['start_date'];
-            $budget->end_date                     =         $form['end_date'];
+            $budget->start_date                   =         $start_date;
+            $budget->end_date                     =         $end_date;
             $budget->created_by_id                = (int)   $this->current_user()->id;
             $budget->create_action_by_id          = (int)   $this->current_user()->id;
+            $budget->status_id                    =         1;
 
         if($budget->save()) {
 
@@ -251,7 +262,19 @@ class BudgetApi extends Controller
 
         try{
 
-            $response   = Budget::findOrFail($budget_id);
+            $response   = Budget::with(
+                                'currency',
+                                'created_by',
+                                'status'
+                            )->findOrFail($budget_id);
+
+            foreach ($response->items as $key => $value) {
+                $account    = Account::find((int)$value['account_id']);
+                $created_by = Staff::find((int)$value['created_by_id']);
+
+                $response['items'][$key]['account']     =   $account;
+                $response['items'][$key]['created_by']  =   $created_by;
+            }
            
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
 
@@ -478,8 +501,11 @@ class BudgetApi extends Controller
 
             $budgets = Budget::find($data[$key]['id']);
 
-            $data[$key]['items']                = $budgets->items;
-            $data[$key]['currency']              = $budgets->currency;
+            $data[$key]['items']                    = $budgets->items;
+            $data[$key]['currency']                 = $budgets->currency;
+            $data[$key]['created_by']               = $budgets->created_by;
+            $data[$key]['status']                   = $budgets->status;
+            $data[$key]['totals']                   = $budgets->totals;
 
         }
 
@@ -510,6 +536,14 @@ class BudgetApi extends Controller
 
             if($data[$key]["currency"]==null){
                 $data[$key]["currency"] = array("currency_name"=>"N/A");
+            }
+
+            if($data[$key]["created_by"]==null){
+                $data[$key]["created_by"] = array("full_name"=>"N/A");
+            }
+
+            if($data[$key]["status"]==null){
+                $data[$key]["status"] = array("budget_status"=>"N/A");
             }
 
 
