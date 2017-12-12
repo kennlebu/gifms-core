@@ -171,8 +171,8 @@ class BudgetApi extends Controller
 
             $budget->budget_desc                  =         $form['budget_desc'];
             $budget->currency_id                  = (int)   $form['currency_id'];
-            $budget->start_date                   =         $form['start_date'];
-            $budget->end_date                     =         $form['end_date'];
+            // $budget->start_date                   =         $form['start_date'];
+            // $budget->end_date                     =         $form['end_date'];
 
         if($budget->save()) {
 
