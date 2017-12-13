@@ -35,6 +35,8 @@ use App\Models\ApprovalsModels\Approval;
 use App\Models\ApprovalsModels\ApprovalLevel;
 use App\Models\StaffModels\Staff;
 use App\Models\SuppliesModels\Supplier;
+use App\Exceptions\NoLpoItemsException;
+use App\Exceptions\LpoQuotationAmountMismatchException;
 use App\Exceptions\ApprovalException;
 
 
@@ -548,6 +550,16 @@ class LPOApi extends Controller
                                             'approvals',
                                             'deliveries'
                                 )->findOrFail($lpo_id);
+
+            if ($lpo->preffered_quotation->amount != $lpo->totals ){
+                throw new LpoQuotationAmountMismatchException("Total amount does not match with quotation amount");             
+            }
+
+            if ($lpo->totals < 1 ){
+                throw new NoLpoItemsException("This lpo has no items");             
+            }
+
+
            
            
             $lpo->status_id = $lpo->status->next_status_id;
@@ -561,6 +573,14 @@ class LPOApi extends Controller
                 return Response()->json(array('msg' => 'Success: lpo submitted','lpo' => $lpo), 200);
             }
 
+        }catch(LpoQuotationAmountMismatchException $me){
+
+            $response =  ["error"=>$me->getMessage()];
+            return response()->json($response, 403,array(),JSON_PRETTY_PRINT);
+        }catch(NoLpoItemsException $le){
+
+            $response =  ["error"=>$le->getMessage()];
+            return response()->json($response, 403,array(),JSON_PRETTY_PRINT);
         }catch(Exception $e){
 
             $response =  ["error"=>"lpo could not be found"];

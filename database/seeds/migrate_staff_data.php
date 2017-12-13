@@ -39,6 +39,9 @@ class migrate_staff_data extends Seeder
 
 
         foreach ($data as $key => $value) {
+            if ( (int) $data[$key]['EID'] == 123) {//aran
+                $data[$key]['SecurityGroup'] = 10;
+            }
 
 
             $data_to_migrate[$key]['username']                  = $data[$key]['UserName'];
