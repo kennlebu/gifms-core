@@ -423,8 +423,10 @@ class PermissionApi extends Controller
 
             $sql            = Staff::bind_presql($qb->toSql(),$qb->getBindings());
             $response       = json_decode(json_encode(DB::select($sql)), true);
-            $response       = $this->append_relationships_objects($response);
-            $response       = $this->append_relationships_nulls($response);
+            if(!array_key_exists('lean', $input)){
+                $response       = $this->append_relationships_objects($response);
+                $response       = $this->append_relationships_nulls($response);
+            }
         }
 
 
