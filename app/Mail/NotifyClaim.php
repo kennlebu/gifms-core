@@ -123,6 +123,17 @@ class NotifyClaim extends Mailable
                             'js_url' => Config::get('app.js_url'),
                         ])
                     ->subject("Claim Approval Request ".$this->claim->ref);
+        }else if($this->claim->status_id == 5){
+
+
+
+            return $this->to($this->financial_controller)
+                    ->with([
+                            'claim' => $this->claim,
+                            'addressed_to' => $this->financial_controller,
+                            'js_url' => Config::get('app.js_url'),
+                        ])
+                    ->subject("Claim Approval Request ".$this->claim->ref);
         }
 
 

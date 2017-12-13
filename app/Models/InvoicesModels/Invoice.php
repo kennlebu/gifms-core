@@ -6,11 +6,61 @@ namespace App\Models\InvoicesModels;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\BaseModels\BaseModel;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Invoice extends BaseModel
 {
     //
     use SoftDeletes;
+
+    // use LogsActivity;
+
+    protected $fillable = [
+        'ref',
+        'expense_desc',
+        'expense_purpose',
+        'external_ref',
+        'invoice_date',
+        'received_at',
+        'received_by_id',
+        'raised_at',
+        'raised_by_id',
+        'raise_action_by_id',
+        'total',
+        'invoice_document',
+        'project_manager_id',
+        'supplier_id',
+        'status_id',
+        'payment_mode_id',
+        'currency_id',
+        'lpo_id'
+    ];
+
+
+
+    protected static $logAttributes = [
+
+        'ref',
+        'expense_desc',
+        'expense_purpose',
+        'external_ref',
+        'invoice_date',
+        'received_at',
+        'received_by_id',
+        'raised_at',
+        'raised_by_id',
+        'raise_action_by_id',
+        'total',
+        'invoice_document',
+        'project_manager_id',
+        'supplier_id',
+        'status_id',
+        'payment_mode_id',
+        'currency_id',
+        'lpo_id'
+    ];
+
+    protected $appends = ['amount_allocated'];
 
     
     public function raised_by()
@@ -51,18 +101,43 @@ class Invoice extends BaseModel
     }
     public function comments()
     {
-        return $this->morphMany('App\Models\OtherModels\Comment', 'commentable');
+        return $this->morphMany('App\Models\OtherModels\Comment', 'commentable')->orderBy('created_at','asc');
     }
     public function payments()
     {
-        return $this->morphMany('App\Models\PaymentModels\Payment', 'payable');
+        return $this->morphMany('App\Models\PaymentModels\Payment', 'payable')->orderBy('created_at','asc');
     }
     public function approvals()
     {
-        return $this->morphMany('App\Models\ApprovalsModels\Approval', 'approvable');
+        return $this->morphMany('App\Models\ApprovalsModels\Approval', 'approvable')->orderBy('created_at','asc');
     }
     public function allocations()
     {
-        return $this->morphMany('App\Models\AllocationModels\Allocation', 'allocatable');
+        return $this->morphMany('App\Models\AllocationModels\Allocation', 'allocatable')->orderBy('created_at','asc');
+    }
+    public function vouchers()
+    {
+        return $this->morphMany('App\Models\PaymentModels\PaymentVoucher', 'vouchable')->orderBy('created_at','asc');
+    }
+    public function logs()
+    {
+        return $this->morphMany('App\Models\LogsModels\HistoryLog', 'subject')->orderBy('created_at','asc');
+    }
+
+
+
+    public function getAmountAllocatedAttribute(){
+
+        $allocations  =   $this->allocations;
+        $amount_allocated   =   0;
+
+        foreach ($allocations as $key => $value) {
+            $amount_allocated   +=   (float)   $value->amount_allocated;
+        }
+
+        return $amount_allocated;
+
+
+
     }
 }

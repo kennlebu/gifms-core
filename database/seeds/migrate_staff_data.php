@@ -39,12 +39,16 @@ class migrate_staff_data extends Seeder
 
 
         foreach ($data as $key => $value) {
+            if ( (int) $data[$key]['EID'] == 123) {//aran
+                $data[$key]['SecurityGroup'] = 10;
+            }
 
 
             $data_to_migrate[$key]['username']                  = $data[$key]['UserName'];
-            $data_to_migrate[$key]['email']                     = $data[$key]['email'];
+            $data_to_migrate[$key]['email']                     = strtolower(preg_replace('/\s+/', '', $data[$key]['email']));
             $data_to_migrate[$key]['security_group_id']         = $data[$key]['SecurityGroup'];
             $data_to_migrate[$key]['password']                  = bcrypt('secret');
+            $data_to_migrate[$key]['old_password']              = $data[$key]['PasswdOne'];
 
             $data_to_migrate[$key]['f_name']					= $data[$key]['FirstName'];
             $data_to_migrate[$key]['l_name']					= $data[$key]['LastName'];
@@ -189,13 +193,13 @@ class migrate_staff_data extends Seeder
                 'display_name'       => 'Assistant Accountant',
                 'description'        => '',
                 'acronym'            => 'a-ac',
-                'name'               => 'assistant-account'
+                'name'               => 'assistant-accountant'
             ],
             [
-                'display_name'       => 'Office Manager',
+                'display_name'       => 'Admin Manager',
                 'description'        => '',
-                'acronym'            => 'om',
-                'name'               => 'office-manager'
+                'acronym'            => 'am',
+                'name'               => 'admin-manager'
             ],
             [
                 'display_name'       => 'Auditor',
@@ -1136,33 +1140,33 @@ class migrate_staff_data extends Seeder
             [
                 'display_name'              => 'Invoice PM Approval',
                 'operation_type'            => 'Approval',
-                'name'                      => 'APPROVE_INVOICE_3',
+                'name'                      => 'APPROVE_INVOICE_1',
                 'entity'                    => 'Invoice',
-                'at_status_id'              => '3',
+                'at_status_id'              => '1',
                 'approval_level_id'         => '2'
             ],
             [
                 'display_name'              => 'Invoice Accountant Approval',
                 'operation_type'            => 'Approval',
-                'name'                      => 'APPROVE_INVOICE_13',
+                'name'                      => 'APPROVE_INVOICE_12',
                 'entity'                    => 'Invoice',
-                'at_status_id'              => '13',
+                'at_status_id'              => '12',
                 'approval_level_id'         => '1'
             ],
             [
                 'display_name'              => 'Invoice Finance Approval',
                 'operation_type'            => 'Approval',
-                'name'                      => 'APPROVE_INVOICE_4',
+                'name'                      => 'APPROVE_INVOICE_2',
                 'entity'                    => 'Invoice',
-                'at_status_id'              => '4',
+                'at_status_id'              => '2',
                 'approval_level_id'         => '3'
             ],
             [
                 'display_name'              => 'Invoice Management Approval',
                 'operation_type'            => 'Approval',
-                'name'                      => 'APPROVE_INVOICE_5',
+                'name'                      => 'APPROVE_INVOICE_3',
                 'entity'                    => 'Invoice',
-                'at_status_id'              => '5',
+                'at_status_id'              => '3',
                 'approval_level_id'         => '4'
             ],
 
@@ -1644,33 +1648,33 @@ class migrate_staff_data extends Seeder
             [
                 'display_name'              => 'Claim PM Approval',
                 'operation_type'            => 'Approval',
-                'name'                      => 'APPROVE_CLAIM_3',
+                'name'                      => 'APPROVE_CLAIM_2',
                 'entity'                    => 'Claim',
-                'at_status_id'              => '3',
+                'at_status_id'              => '2',
                 'approval_level_id'         => '2'
             ],
             [
                 'display_name'              => 'Claim Accountant Approval',
                 'operation_type'            => 'Approval',
-                'name'                      => 'APPROVE_CLAIM_13',
+                'name'                      => 'APPROVE_CLAIM_10',
                 'entity'                    => 'Claim',
-                'at_status_id'              => '13',
+                'at_status_id'              => '10',
                 'approval_level_id'         => '1'
             ],
             [
                 'display_name'              => 'Claim Finance Approval',
                 'operation_type'            => 'Approval',
-                'name'                      => 'APPROVE_CLAIM_4',
+                'name'                      => 'APPROVE_CLAIM_3',
                 'entity'                    => 'Claim',
-                'at_status_id'              => '4',
+                'at_status_id'              => '3',
                 'approval_level_id'         => '3'
             ],
             [
                 'display_name'              => 'Claim Management Approval',
                 'operation_type'            => 'Approval',
-                'name'                      => 'APPROVE_CLAIM_5',
+                'name'                      => 'APPROVE_CLAIM_4',
                 'entity'                    => 'Claim',
-                'at_status_id'              => '5',
+                'at_status_id'              => '4',
                 'approval_level_id'         => '4'
             ],
 
@@ -2156,33 +2160,33 @@ class migrate_staff_data extends Seeder
             [
                 'display_name'              => 'Mobile Payment PM Approval',
                 'operation_type'            => 'Approval',
-                'name'                      => 'APPROVE_MOBILE_PAYMENT_3',
+                'name'                      => 'APPROVE_MOBILE_PAYMENT_2',
                 'entity'                    => 'MobilePayment',
-                'at_status_id'              => '3',
+                'at_status_id'              => '2',
                 'approval_level_id'         => '2'
             ],
             [
                 'display_name'              => 'Mobile Payment Accountant Approval',
                 'operation_type'            => 'Approval',
-                'name'                      => 'APPROVE_MOBILE_PAYMENT_13',
+                'name'                      => 'APPROVE_MOBILE_PAYMENT_9',
                 'entity'                    => 'MobilePayment',
-                'at_status_id'              => '13',
+                'at_status_id'              => '9',
                 'approval_level_id'         => '1'
             ],
             [
                 'display_name'              => 'Mobile Payment Finance Approval',
                 'operation_type'            => 'Approval',
-                'name'                      => 'APPROVE_MOBILE_PAYMENT_4',
+                'name'                      => 'APPROVE_MOBILE_PAYMENT_3',
                 'entity'                    => 'MobilePayment',
-                'at_status_id'              => '4',
+                'at_status_id'              => '3',
                 'approval_level_id'         => '3'
             ],
             [
                 'display_name'              => 'Mobile Payment Management Approval',
                 'operation_type'            => 'Approval',
-                'name'                      => 'APPROVE_MOBILE_PAYMENT_5',
+                'name'                      => 'APPROVE_MOBILE_PAYMENT_8',
                 'entity'                    => 'MobilePayment',
-                'at_status_id'              => '5',
+                'at_status_id'              => '8',
                 'approval_level_id'         => '4'
             ],
 
@@ -2654,9 +2658,9 @@ class migrate_staff_data extends Seeder
             [
                 'display_name'              => 'Advance PM Approval',
                 'operation_type'            => 'Approval',
-                'name'                      => 'APPROVE_ADVANCE_3',
+                'name'                      => 'APPROVE_ADVANCE_2',
                 'entity'                    => 'Advance',
-                'at_status_id'              => '3',
+                'at_status_id'              => '2',
                 'approval_level_id'         => '2'
             ],
             [
@@ -2670,17 +2674,17 @@ class migrate_staff_data extends Seeder
             [
                 'display_name'              => 'Advance Finance Approval',
                 'operation_type'            => 'Approval',
-                'name'                      => 'APPROVE_ADVANCE_4',
+                'name'                      => 'APPROVE_ADVANCE_3',
                 'entity'                    => 'Advance',
-                'at_status_id'              => '4',
+                'at_status_id'              => '3',
                 'approval_level_id'         => '3'
             ],
             [
                 'display_name'              => 'Advance Management Approval',
                 'operation_type'            => 'Approval',
-                'name'                      => 'APPROVE_ADVANCE_5',
+                'name'                      => 'APPROVE_ADVANCE_4',
                 'entity'                    => 'Advance',
-                'at_status_id'              => '5',
+                'at_status_id'              => '4',
                 'approval_level_id'         => '4'
             ],
 
@@ -2946,32 +2950,6 @@ class migrate_staff_data extends Seeder
 
 
 
-
-
-
-
-
-
-
-        $data = DB::table('permissions')->get();
-
-        $data_to_migrate=array();
-
-        $s_admin = Role::findOrFail(1);
-
-        foreach ($data as $key => $value) {
-
-            $permision = Permission::findOrFail($value['id']);
-            $s_admin->attachPermission($permision);
-
-            echo "\n Permissions-$key---";
-            echo $data[$key]['display_name'];
-        }
-        
-        echo "\n migrate super admin permissions------------------------------------------------------------------------------\n";
-
-
-       
 
 
 

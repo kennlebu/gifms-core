@@ -234,6 +234,11 @@
     externalDocs:
       description: Find out more
       url: 'http://kefinance.clintonhealthaccess.org/api/payment_type/docs'
+  - name: Payment Voucher
+    description: Everything About Payment Voucher
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/payment_voucher/docs'
   - name: Approval
     description: Everything About Approval
     externalDocs:
@@ -279,3 +284,73 @@
     externalDocs:
       description: Find out more
       url: 'http://kefinance.clintonhealthaccess.org/api/invoice_allocation/docs'
+  - name: Bank
+    description: Everything About Bank
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/bank/docs'
+  - name: Bank Branch
+    description: Everything About Bank Branch
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/bank_branch/docs'
+  - name: Bank Account
+    description: Everything About Bank Account
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/bank_account/docs'
+  - name: Bank Transaction
+    description: Everything About Bank Transaction
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/bank_transaction/docs'
+  - name: Bank CSV
+    description: Everything About Bank CSV
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/bank_csv/docs'
+  - name: Program
+    description: Everything About Program
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/program/docs'
+  - name: Country
+    description: Everything About Country
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/country/docs'
+  - name: Account Classification
+    description: Everything About Account Classification
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/account_classification/docs'
+  - name: Account Type
+    description: Everything About Account Type
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/account_type/docs'
+  - name: City
+    description: Everything About City
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/city/docs'
+  - name: Permission
+    description: Everything About Permission
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/permission/docs'
+  - name: Grant Allocation
+    description: Everything About Grant Allocation
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/grant_allocation/docs'
+  - name: Budget
+    description: Everything About Budget
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/budget/docs'
+  - name: Budget Item
+    description: Everything About Budget Item
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/budget_item/docs'

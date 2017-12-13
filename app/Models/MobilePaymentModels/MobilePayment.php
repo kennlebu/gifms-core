@@ -22,7 +22,7 @@ class MobilePayment extends BaseModel
     //
     use SoftDeletes;
 
-    protected $appends = ['amounts','total_withdrawal_charges','totals'];
+    protected $appends = ['amounts','total_withdrawal_charges','totals','amount_allocated'];
 
  
 
@@ -86,6 +86,10 @@ class MobilePayment extends BaseModel
     {
         return $this->morphMany('App\Models\OtherModels\Comment', 'commentable');
     }
+    public function payments()
+    {
+        return $this->morphMany('App\Models\PaymentModels\Payment', 'payable')->orderBy('created_at','asc');
+    }
     public function approvals()
     {
         return $this->morphMany('App\Models\ApprovalsModels\Approval', 'approvable');
@@ -93,6 +97,14 @@ class MobilePayment extends BaseModel
     public function allocations()
     {
         return $this->morphMany('App\Models\AllocationModels\Allocation', 'allocatable');
+    }
+    public function logs()
+    {
+        return $this->morphMany('App\Models\LogsModels\HistoryLog', 'subject')->orderBy('created_at','asc');
+    }
+    public function vouchers()
+    {
+        return $this->morphMany('App\Models\PaymentModels\PaymentVoucher', 'vouchable')->orderBy('created_at','asc');
     }
 
 
@@ -139,6 +151,21 @@ class MobilePayment extends BaseModel
         }
 
         return $totals;
+
+    }
+
+    public function getAmountAllocatedAttribute(){
+
+        $allocations  =   $this->allocations;
+        $amount_allocated   =   0;
+
+        foreach ($allocations as $key => $value) {
+            $amount_allocated   +=   (float)   $value->amount_allocated;
+        }
+
+        return $amount_allocated;
+
+
 
     }
 

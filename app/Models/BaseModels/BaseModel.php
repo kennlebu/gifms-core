@@ -3,18 +3,30 @@
 namespace App\Models\BaseModels;
 
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class BaseModel extends Model
 {
+    use LogsActivity;
+
+    
+
 
 	// public function newPivot(Eloquent $parent, array $attributes, $table, $exists){
 	//     return new BaseModel($parent, $attributes, $table, $exists);
 	// }
 
-
-
+	
 
 	
+
+
+
+
+
+
+
+
 
 	protected function arr_to_dt_response($data,$draw,$total_records,$records_filtered){
 
@@ -33,6 +45,16 @@ class BaseModel extends Model
 
 	}
 
+	
+
+
+
+
+
+
+
+
+
 	protected function bind_presql($sql, $bindings){
 		
 		$needle = '?';
@@ -46,5 +68,67 @@ class BaseModel extends Model
         return $sql;
 
 	}
+
+	
+
+
+
+
+
+
+
+
+
+	protected function generateRandomString($length = 7) {
+	    $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+	    $charactersLength = strlen($characters);
+	    $randomString = '';
+	    for ($i = 0; $i < $length; $i++) {
+	        $randomString .= $characters[rand(0, $charactersLength - 1)];
+	    }
+	    return $randomString;
+	}
+
+
+
+
+
+
+
+
+	protected function generate_payable_payment($payable){
+
+        $status = App\Models\PaymentModels\PaymentStatus::where('default_status','1')->first();
+        $default_status = $status->id;
+
+
+		$payment = new App\Models\PaymentModels\Payment;
+
+		$payment->payable_type 				= 	$payable['payable_type'];
+		$payment->payable_id 				= 	$payable['payable_id'];
+		$payment->debit_bank_account_id		= 	$payable['debit_bank_account_id'];
+		$payment->currency_id		 		= 	$payable['currency_id'];
+		$payment->payment_desc		 		= 	$payable['payment_desc'];
+		$payment->paid_to_name		 		= 	$payable['paid_to_name'];
+		$payment->paid_to_mobile_phone_no	= 	$payable['paid_to_mobile_phone_no'];
+		$payment->paid_to_bank_account_no	= 	$payable['paid_to_bank_account_no'];
+		$payment->paid_to_bank_id		 	= 	$payable['paid_to_bank_id'];
+		$payment->paid_to_bank_branch_id	= 	$payable['paid_to_bank_branch_id'];
+		$payment->payment_mode_id		 	= 	$payable['payment_mode_id'];
+		$payment->amount		 			= 	$payable['amount'];
+		$payment->payment_batch_id		 	= 	$payable['payment_batch_id'];
+		$payment->bank_charges		 		= 	$payable['bank_charges'];
+
+		$payment->status_id		 			= 	$default_status;
+
+		if($payment->save()) {
+
+            $payment->ref                        = "CHAI/PYMT/#$payment->id/".date_format($payment->created_at,"Y/m/d");
+            $payment->save();
+            
+            // return Response()->json(array('success' => 'Payable Added','payment' => $payment), 200);
+        }
+	}
+
 
 }

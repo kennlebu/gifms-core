@@ -15,17 +15,37 @@
 
 namespace App\Http\Controllers;
 
+use JWTAuth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\DB;
 
+use App\Models\AccountingModels\Account;
+use App\Models\AccountingModels\AccountClassification;
+use App\Models\AccountingModels\AccountType;
+
+use Exception;
+use App;
+use Illuminate\Support\Facades\Response;
+use App\Models\StaffModels\Staff;
+
 class AccountApi extends Controller
 {
+
     /**
      * Constructor
      */
     public function __construct()
     {
     }
+
+
+
+
+
+
+
+
+
 
 
 
@@ -60,19 +80,28 @@ class AccountApi extends Controller
      */
     public function addAccount()
     {
-        $input = Request::all();
+        $form = Request::only(
+            'account_code',
+            'account_name',
+            'account_desc',
+            'account_format',
+            'office_cost',
+            'account_type'
+            );
 
-        //path params validation
+        $account = new Account;
 
+            $account->account_code                     =         $form['account_code'];
+            $account->account_name                     =         $form['account_name'];
+            $account->account_desc                     =         $form['account_desc'];
+            $account->account_format                   =         $form['account_format'];
+            $account->office_cost                      =  (int)  $form['office_cost'];
+            $account->account_type                     =  (int)  $form['account_type'];
 
-        //not path params validation
-        if (!isset($input['body'])) {
-            throw new \InvalidArgumentException('Missing the required parameter $body when calling addAccount');
+        if($account->save()) {
+
+            return Response()->json(array('msg' => 'Success: account added','account' => $account), 200);
         }
-        $body = $input['body'];
-
-
-        return response('How about implementing addAccount as a POST method ?');
     }
 
 
@@ -93,6 +122,19 @@ class AccountApi extends Controller
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation updateAccount
      *
@@ -103,19 +145,28 @@ class AccountApi extends Controller
      */
     public function updateAccount()
     {
-        $input = Request::all();
+        $form = Request::only(
+            'id',
+            'account_code',
+            'account_name',
+            'account_desc',
+            'account_format',
+            'account_type'
+            );
 
-        //path params validation
+        $account = Account::find($form['id']);
 
+            $account->account_code                     =         $form['account_code'];
+            $account->account_name                     =         $form['account_name'];
+            $account->account_desc                     =         $form['account_desc'];
+            $account->account_format                   =         $form['account_format'];
+            $account->office_cost                      =  (int)  $form['office_cost'];
+            $account->account_type                     =  (int)  $form['account_type'];
 
-        //not path params validation
-        if (!isset($input['body'])) {
-            throw new \InvalidArgumentException('Missing the required parameter $body when calling updateAccount');
+        if($account->save()) {
+
+            return Response()->json(array('msg' => 'Success: account updated','account' => $account), 200);
         }
-        $body = $input['body'];
-
-
-        return response('How about implementing updateAccount as a PUT method ?');
     }
 
 
@@ -136,6 +187,19 @@ class AccountApi extends Controller
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation deleteAccount
      *
@@ -149,12 +213,14 @@ class AccountApi extends Controller
     {
         $input = Request::all();
 
-        //path params validation
 
+        $deleted = Account::destroy($account_id);
 
-        //not path params validation
-
-        return response('How about implementing deleteAccount as a DELETE method ?');
+        if($deleted){
+            return response()->json(['msg'=>"account deleted"], 200,array(),JSON_PRETTY_PRINT);
+        }else{
+            return response()->json(['error'=>"account not found"], 404,array(),JSON_PRETTY_PRINT);
+        }
     }
 
 
@@ -175,6 +241,19 @@ class AccountApi extends Controller
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation getAccountById
      *
@@ -188,12 +267,17 @@ class AccountApi extends Controller
     {
         $input = Request::all();
 
-        //path params validation
+        try{
 
+            $response   = Account::findOrFail($account_id);
+           
+            return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
 
-        //not path params validation
+        }catch(Exception $e){
 
-        return response('How about implementing getAccountById as a GET method ?');
+            $response =  ["error"=>"account could not be found"];
+            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+        }
     }
 
 
@@ -215,6 +299,18 @@ class AccountApi extends Controller
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+    
     /**
      * Operation accountsGet
      *
@@ -225,7 +321,35 @@ class AccountApi extends Controller
      */
     public function accountsGet()
     {
+        
+
+
         $input = Request::all();
+        //query builder
+        $qb = DB::table('accounts');
+
+        $qb->whereNull('accounts.deleted_at');
+        $current_user = JWTAuth::parseToken()->authenticate();
+
+        $response;
+        $response_dt;
+
+        $total_records          = $qb->count();
+        $records_filtered       = 0;
+
+        
+        //my_assigned
+        if((array_key_exists('my_assigned', $input)&& $input['my_assigned'] = "true")&&($current_user->hasRole(['accountant','assistant-accountant','financial-controller']))){
+
+            $qb->whereNotNull('account_code');
+        }elseif (array_key_exists('my_assigned', $input)&& $input['my_assigned'] = "true") {
+
+            $qb->select(DB::raw('accounts.*'))
+                 ->rightJoin('account_teams', 'account_teams.account_id', '=', 'accounts.id')
+                 ->rightJoin('staff', 'staff.id', '=', 'account_teams.staff_id')
+                 ->where('staff.id', '=', $current_user->id)
+                 ->groupBy('accounts.id');
+        }
 
 
         //query builder
@@ -235,11 +359,215 @@ class AccountApi extends Controller
             $qb->where('account_format', $input['account_format']);
         }
 
-        $qb->orderBy('account_name', 'asc');
 
-        $response = $qb->get();
- 
+        //searching
+        if(array_key_exists('searchval', $input)){
+            $qb->where(function ($query) use ($input) {
+                
+                $query->orWhere('accounts.id','like', '\'%' . $input['searchval']. '%\'');
+                $query->orWhere('accounts.account_name','like', '\'%' . $input['searchval']. '%\'');
+                $query->orWhere('accounts.account_desc','like', '\'%' . $input['searchval']. '%\'');
+
+            });
+
+            // $records_filtered       =  $qb->count(); //doesn't work
+
+            $sql = Account::bind_presql($qb->toSql(),$qb->getBindings());
+            $sql = str_replace("*"," count(*) AS count ", $sql);
+            $dt = json_decode(json_encode(DB::select($sql)), true);
+
+            $records_filtered = (int) $dt[0]['count'];
+            // $records_filtered = 30;
+
+
+        }
+
+
+        //ordering
+        if(array_key_exists('order_by', $input)&&$input['order_by']!=''){
+            $order_direction     = "desc";
+            $order_column_name   = $input['order_by'];
+            if(array_key_exists('order_dir', $input)&&$input['order_dir']!=''){                
+                $order_direction = $input['order_dir'];
+            }
+
+            $qb->orderBy($order_column_name, $order_direction);
+        }else{
+            // $qb->orderBy("account_name", "asc");
+        }
+
+        //limit
+        if(array_key_exists('limit', $input)){
+
+
+            $qb->limit($input['limit']);
+
+
+        }
+
+        //migrated
+        if(array_key_exists('migrated', $input)){
+
+            $mig = (int) $input['migrated'];
+
+            if($mig==0){
+                $qb->whereNull('migration_id');
+            }else if($mig==1){
+                $qb->whereNotNull('migration_id');
+            }
+
+
+        }
+
+
+
+        if(array_key_exists('datatables', $input)){
+
+            //searching
+            $qb->where(function ($query) use ($input) {
+                
+                $query->orWhere('accounts.id','like', '\'%' . $input['search']['value']. '%\'');
+                $query->orWhere('accounts.account_name','like', '\'%' . $input['search']['value']. '%\'');
+                $query->orWhere('accounts.account_desc','like', '\'%' . $input['search']['value']. '%\'');
+
+            });
+
+
+
+
+            $sql = Account::bind_presql($qb->toSql(),$qb->getBindings());
+            $sql = str_replace("*"," count(*) AS count ", $sql);
+            $dt = json_decode(json_encode(DB::select($sql)), true);
+
+            $records_filtered = (int) $dt[0]['count'];
+
+
+            //ordering
+            $order_column_id    = (int) $input['order'][0]['column'];
+            $order_column_name  = $input['columns'][$order_column_id]['order_by'];
+            $order_direction    = $input['order'][0]['dir'];
+
+            if($order_column_name!=''){
+
+                $qb->orderBy($order_column_name, $order_direction);
+
+            }
+
+
+
+
+
+
+            //limit $ offset
+            if((int)$input['start']!= 0 ){
+
+                $response_dt    =   $qb->limit($input['length'])->offset($input['start']);
+
+            }else{
+                $qb->limit($input['length']);
+            }
+
+
+
+
+
+            $sql = Account::bind_presql($qb->toSql(),$qb->getBindings());
+
+            // $response_dt = DB::select($qb->toSql(),$qb->getBindings());         //pseudo
+            $response_dt = DB::select($sql);
+
+
+            $response_dt = json_decode(json_encode($response_dt), true);
+
+            $response_dt    = $this->append_relationships_objects($response_dt);
+            $response_dt    = $this->append_relationships_nulls($response_dt);
+            $response       = Account::arr_to_dt_response( 
+                $response_dt, $input['draw'],
+                $total_records,
+                $records_filtered
+                );
+
+
+        }else{
+
+            $sql            = Account::bind_presql($qb->toSql(),$qb->getBindings());
+            $response       = json_decode(json_encode(DB::select($sql)), true);
+            $response       = $this->append_relationships_objects($response);
+            $response       = $this->append_relationships_nulls($response);
+        }
+
+
+
 
         return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public function append_relationships_objects($data = array()){
+
+
+        foreach ($data as $key => $value) {
+
+            $accounts = Account::find($data[$key]['id']);
+
+            $data[$key]['account_type']                  = $accounts->account_type;
+
+        }
+
+
+        return $data;
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+    public function append_relationships_nulls($data = array()){
+
+
+        foreach ($data as $key => $value) {
+
+
+            if($data[$key]["account_type"]==null){
+                $data[$key]["account_type"] = array("account_type_name"=>"N/A");
+            }
+
+
+        }
+
+        return $data;
+
+
     }
 }

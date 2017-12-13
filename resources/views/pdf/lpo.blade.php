@@ -152,22 +152,37 @@
             <td ></td>
             <td ></td>
           </tr>
+
           <tr>
             <td ></td>
             <td style="border-bottom: 2px solid #000000;" colspan="1" >Authorized by:</td>
             <td style="border-bottom: 2px solid #000000;" ></td>
             <td style="border-bottom: 2px solid #000000;" >Date:</td>
           </tr>
-          <tr>
-            <td ></td>
-            <td colspan="2" >[NAME]</td>
-            <td >[Date]</td>
-          </tr>
-          <tr>
-            <td ></td>
-            <td colspan="4" rowspan="5" >[sign]</td>
-            <td ></td>
-          </tr>
+
+          @foreach ($lpo->approvals as $key => $approval)
+            @if ($approval->approval_level_id == 4)
+
+              <tr>
+                <td ></td>
+                <td colspan="2" >
+                  @isset($approval->approver_id)
+                      <strong>{{$approval->approver->full_name}}</strong>
+                  @endisset
+                </td>
+                <td >                  
+                  <span>{{date('d F, Y', strtotime($approval->created_at)) }}</span>
+                </td>
+              </tr>
+              <tr>
+                <td ></td>
+                <td colspan="4" rowspan="5" >Signed:
+                  <img height = "60" alt="." src="{{asset('storage/app/staff/signature'.$approval->approver_id.'.png')}}"></img>
+                </td>
+                <td ></td>
+              </tr>
+            @endif
+          @endforeach
           <tr>
             <td >&nbsp;</td>
           </tr>

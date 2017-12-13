@@ -15,8 +15,14 @@ class CreateBudgetsTable extends Migration
     {
         Schema::create('budgets', function (Blueprint $table) {          
             $table->increments('id');
-            $table->string('recurr_period')->nullable();
-            $table->integer('migration_id')->nullable();
+            $table->string('budget_desc')->nullable();
+            $table->date('start_date')->nullable();
+            $table->date('end_date')->nullable();
+            $table->integer('currency_id')->default(2);
+            $table->integer('created_by_id')->nullable();
+            $table->integer('create_action_by_id')->nullable();
+            $table->integer('currency_id')->nullable();
+            $table->integer('status_id')->nullable();
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
             $table->softDeletes();

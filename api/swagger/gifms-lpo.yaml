@@ -96,6 +96,40 @@ paths:
 
 
 
+
+
+  '/lpos/approve':    
+    patch:
+      tags:
+        - LPO
+      summary: Approve several LPOs
+      description: Approve  
+      operationId: approve_several_lpos
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: lpo object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/lpo'
+      responses:
+        '200':
+          description: Approved lpos 
+        '405':
+          description: Invalid input,unsuccessful
+      security:
+        - api_key: []
+
+
+
+
+
   /lpo:    
     post:
       tags:

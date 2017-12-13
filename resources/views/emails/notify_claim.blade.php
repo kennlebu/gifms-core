@@ -11,6 +11,8 @@
         The below detailed Claim has been posted and awaits your approval.
       @elseif ($claim->status_id==9)
         The below detailed Claim has been Rejected by {{$claim->rejected_by->name}}
+      @elseif ($claim->status_id==5)
+        The below detailed claim has been Approved by management and awaits you to make the payment 
       @endif
       <br/>
 
@@ -70,7 +72,7 @@
           </td>
           <td style="text-align: left; border-bottom: 1px dotted #ccbcbc;" bgcolor="#ffffff" colspan="2" >
             <strong>
-              <span style="color: #092d50;"> {{$claim->currency->currency_name}}. {{number_format($claim->amount, 2)}}</span>
+              <span style="color: #092d50;"> {{$claim->currency->currency_name}}. {{number_format($claim->total, 2)}}</span>
             </strong>
           </td>
         </tr>    

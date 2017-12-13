@@ -16,6 +16,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Request;
+use App\Models\ClaimsModels\Claim;
+use App\Models\AllocationModels\Allocation;
 
 class ClaimAllocationApi extends Controller
 {
@@ -105,14 +107,26 @@ class ClaimAllocationApi extends Controller
      */
     public function getClaimAllocationById($claim_allocation_id)
     {
-        $input = Request::all();
+        $response = [];
 
-        //path params validation
+        try{
+            $response   = Allocation::with( 
+                                        'allocatable',
+                                        'allocated_by',
+                                        'project',
+                                        'account'
+                                    )->findOrFail($claim_allocation_id);
 
 
-        //not path params validation
+                $response['claim']  =   $response['allocatable'];
 
-        return response('How about implementing getClaimAllocationById as a GET method ?');
+            return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+
+        }catch(Exception $e){
+
+            $response =  ["error"=>"Claim Allocation could not be found"];
+            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+        }
     }
     /**
      * Operation claimAllocationsGet

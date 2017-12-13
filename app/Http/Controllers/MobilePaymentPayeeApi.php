@@ -158,17 +158,51 @@ class MobilePaymentPayeeApi extends Controller
     {
         $input = Request::all();
 
-        //path params validation
 
 
-        //not path params validation
-        if (!isset($input['body'])) {
-            throw new \InvalidArgumentException('Missing the required parameter $body when calling updateMobilePaymentPayee');
+
+        try{
+
+
+            $form = Request::only(
+                'id',
+                'mobile_payment_id',
+                'full_name',
+                'registered_name',
+                'id_number',
+                'mobile_number',
+                'amount',
+                'email'
+                );
+            $mobile_payment_payee = MobilePaymentPayee::findOrFail((int)$form['id']);
+
+
+            // print_r($mobile_payment_payee);die;
+            $mobile_payment_payee->mobile_payment_id          =               $form['mobile_payment_id'];
+            $mobile_payment_payee->full_name                  =               $form['full_name'];
+            $mobile_payment_payee->registered_name            =               $form['registered_name'];
+            $mobile_payment_payee->id_number                  =               $form['id_number'];
+            $mobile_payment_payee->mobile_number              =               $form['mobile_number'];
+            $mobile_payment_payee->amount                     =   (double)    $form['amount'];
+            $mobile_payment_payee->email                      =               $form['email'];
+            $mobile_payment_payee->withdrawal_charges         =               $mobile_payment_payee->calculated_withdrawal_charges;
+            $mobile_payment_payee->total                      =               $mobile_payment_payee->calculated_total;
+
+
+            if($mobile_payment_payee->save()) {
+
+
+                $mobile_payment_payee->save();
+                return Response()->json(array('success' => 'mobile payment payee updated','mobile_payment_payee' => $mobile_payment_payee), 200);
+            }
+
+
+        }catch (JWTException $e){
+
+            return response()->json(['error'=>'Mobile Payment Payee not found'], 404);
+
         }
-        $body = $input['body'];
 
-
-        return response('How about implementing updateMobilePaymentPayee as a PUT method ?');
     }
 
 
@@ -266,14 +300,17 @@ class MobilePaymentPayeeApi extends Controller
      */
     public function getMobilePaymentPayeeById($mobile_payment_payee_id)
     {
-        $input = Request::all();
+        $response = [];
 
-        //path params validation
+        try{
+            $response   = MobilePaymentPayee::findOrFail($mobile_payment_payee_id);
+            return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
 
+        }catch(Exception $e){
 
-        //not path params validation
-
-        return response('How about implementing getMobilePaymentPayeeById as a GET method ?');
+            $response =  ["error"=>"Payee could not be found"];
+            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+        }
     }
 
 

@@ -1,0 +1,308 @@
+swagger: '2.0'
+info:
+  description: Finance management sysytem
+  version: 1.0.0
+  title: Grants Information Management System
+  termsOfService: 'http://kefinance.clintonhealthaccess.org/terms/'
+  contact:
+    email: mwangikevinn@gmail.com
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+host: 'localhost:8000'
+basePath: /api
+tags:
+  - name: Donor
+    description: Everything About Donor
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/donor/docs'
+schemes:
+  - http
+  - https
+paths:
+
+
+
+
+
+
+
+
+
+
+
+  /donors:
+    get:
+      summary: Donors List
+      description: |
+        The donor endpoint returns multiple donor requested given the parameters injected. 
+      parameters:
+        - name: donor_id
+          in: query
+          description: donor id 
+          required: false
+          type: number
+          format: integer
+      tags:
+        - Donor
+      responses:
+        200:
+          description: An array of donor returned
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/donor'
+        404:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+        - api_key: []
+
+
+
+
+
+
+
+  /donor:    
+    post:
+      tags:
+        - Donor
+      summary: Add a new donor
+      description: new donor  
+      operationId: add_donor
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: donor object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/donor'
+      responses:
+        '200':
+          description: Successfully added a new donor for approval 
+        '405':
+          description: Invalid input,adding a new donor was unsuccessful
+      security:
+        - api_key: []
+            
+            
+            
+
+            
+    put:
+      tags:
+        - Donor
+      summary: Update an existing donor
+      description: ''
+      operationId: update_donor
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: donor object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/donor'
+      responses:
+        200:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Success'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: donor not found
+        '405':
+          description: Validation exception
+      security:
+        - api_key: []
+        
+        
+        
+        
+        
+        
+  '/donor/{donor_id}':
+    get:
+      tags:
+        - Donor
+      summary: Find donor by ID
+      description: Returns a single donor
+      operationId: get_donor_by_id
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: donor_id
+          in: path
+          description: ID of donor to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/donor'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: donor not found
+      security:
+        - api_key: []
+        
+        
+     
+            
+            
+            
+    delete:
+      tags:
+        - Donor
+      summary: Deletes an donor
+      description: ''
+      operationId: delete_donor
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: api_key
+          in: header
+          required: true
+          type: string
+        - name: donor_id
+          in: path
+          description: donor id to delete
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: donor not found
+      security:
+        - api_key: []
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+          
+          
+securityDefinitions:
+  api_key:
+    type: apiKey
+    name: Authorization
+    in: header
+     
+     
+     
+definitions:
+
+
+      
+      
+  donor:
+    type: object
+    required:
+      - id
+      - created_at
+    properties:
+      id:
+        type: integer
+        format: int64
+        example: 1
+      num:
+        type: number
+        format: int64
+        example: 20000
+      str:
+        type: string
+        example: 'PayPal.pdf'
+      date:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      created_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      updated_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+    xml:
+      name: donor
+    
+  
+    
+  
+  
+  
+  
+  Error:
+    type: object
+    properties:
+      error:
+        type: string
+        example: object not found
+
+
+  
+  Success:
+    type: object
+    properties:
+      msg:
+        type: string
+        example: object not found
+
+      
+      
+      
+      

@@ -15,17 +15,26 @@
 
 namespace App\Http\Controllers;
 
+use JWTAuth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\PaymentModels\PaymentBatch;
+use App\Models\PaymentModels\PaymentStatus;
+use App\Models\PaymentModels\Payment;
 
 class PaymentBatchApi extends Controller
 {
+
+    private $default_payment_status = '';
+    // private $approvable_statuses = [];
     /**
      * Constructor
      */
     public function __construct()
-    {
+    {        
+        $status = PaymentStatus::where('default_status','1')->first();
+        // $this->approvable_statuses = PaymentBatch::where('approvable','1')->get();
+        $this->default_payment_status = $status->id;
     }
 
 
@@ -61,19 +70,50 @@ class PaymentBatchApi extends Controller
      */
     public function addPaymentBatch()
     {
-        $input = Request::all();
+       
 
-        //path params validation
+        $form = Request::only(
+            'payments'
+            );
+
+        try{
+
+            $payment_batch = new PaymentBatch;
 
 
-        //not path params validation
-        if (!isset($input['body'])) {
-            throw new \InvalidArgumentException('Missing the required parameter $body when calling addPaymentBatch');
+            $user = JWTAuth::parseToken()->authenticate();
+            $payment_batch->processed_by_id              =   (int)   $user->id;
+
+            // die;
+
+            if($payment_batch->save()) {
+
+                $payment_batch->ref = "CHAI/PYTBT/#$payment_batch->id/".date_format($payment_batch->created_at,"Y/m/d");
+                $payment_batch->save();
+
+
+                foreach ($form['payments'] as $key => $value) {
+
+                    $payment                    = Payment::find($value);
+                    $payment->status_id         = $payment->status->next_status_id;
+                    $payment->payment_batch_id  = $payment_batch->id;
+
+                    $payment->save();
+
+                    $payment->ref = "CHAI/PYMT/#$payment->id/".date_format($payment->created_at,"Y/m/d");
+                    $payment->save();
+
+
+                }
+
+                return Response()->json(array('msg' => 'Success: Payment Batch added','payment_batch' => PaymentBatch::find((int)$payment_batch->id)), 200);
+            }
+
+        }catch (JWTException $e){
+
+            return response()->json(['error'=>'something went wrong'], 500);
+
         }
-        $body = $input['body'];
-
-
-        return response('How about implementing addPaymentBatch as a POST method ?');
     }
 
 

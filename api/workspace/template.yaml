@@ -34,7 +34,7 @@ paths:
 
   /tests:
     get:
-      summary: tests List
+      summary: Tests List
       description: |
         The test endpoint returns multiple test requested given the parameters injected. 
       parameters:

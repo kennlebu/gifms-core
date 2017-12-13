@@ -35,10 +35,10 @@ class migrate_suppliers_data extends Seeder
 
             $data_to_migrate[$key]['supplier_name']                 = $data[$key]['Supplier'];
             $data_to_migrate[$key]['contact_name_1']                = $data[$key]['Contact'];
-            $data_to_migrate[$key]['contact_email_1']               = $data[$key]['AlternativeEmail'];
+            $data_to_migrate[$key]['contact_email_1']               = preg_replace('/\s+/', '', $data[$key]['AlternativeEmail']);
             $data_to_migrate[$key]['address']                       = $data[$key]['Addresss'];
             $data_to_migrate[$key]['telephone']                     = $data[$key]['Telephone'];
-            $data_to_migrate[$key]['email']                         = $data[$key]['Email'];
+            $data_to_migrate[$key]['email']                         = preg_replace('/\s+/', '', $data[$key]['Email']);
             $data_to_migrate[$key]['website']                       = $data[$key]['Website'];
             $data_to_migrate[$key]['bank_account']                  = $data[$key]['BankAccount'];
             $data_to_migrate[$key]['mobile_payment_number']         = $data[$key]['MobilePaymentNumber'];

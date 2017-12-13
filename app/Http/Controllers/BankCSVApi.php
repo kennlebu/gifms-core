@@ -17,7 +17,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Request;
 
-class RightsApi extends Controller
+class BankCSVApi extends Controller
 {
     /**
      * Constructor
@@ -26,44 +26,15 @@ class RightsApi extends Controller
     {
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-
     /**
-     * Operation addRight
+     * Operation addBankCsv
      *
-     * Add a new right.
+     * Add a new bank_csv.
      *
      *
      * @return Http response
      */
-    public function addRight()
+    public function addBankCsv()
     {
         $input = Request::all();
 
@@ -72,51 +43,22 @@ class RightsApi extends Controller
 
         //not path params validation
         if (!isset($input['body'])) {
-            throw new \InvalidArgumentException('Missing the required parameter $body when calling addRight');
+            throw new \InvalidArgumentException('Missing the required parameter $body when calling addBankCsv');
         }
         $body = $input['body'];
 
 
-        return response('How about implementing addRight as a POST method ?');
+        return response('How about implementing addBankCsv as a POST method ?');
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
     /**
-     * Operation updateRight
+     * Operation updateBankCsv
      *
-     * Update an existing right.
+     * Update an existing bank_csv.
      *
      *
      * @return Http response
      */
-    public function updateRight()
+    public function updateBankCsv()
     {
         $input = Request::all();
 
@@ -125,52 +67,23 @@ class RightsApi extends Controller
 
         //not path params validation
         if (!isset($input['body'])) {
-            throw new \InvalidArgumentException('Missing the required parameter $body when calling updateRight');
+            throw new \InvalidArgumentException('Missing the required parameter $body when calling updateBankCsv');
         }
         $body = $input['body'];
 
 
-        return response('How about implementing updateRight as a PUT method ?');
+        return response('How about implementing updateBankCsv as a PUT method ?');
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
     /**
-     * Operation deleteRight
+     * Operation deleteBankCsv
      *
-     * Deletes an right.
+     * Deletes an bank_csv.
      *
-     * @param int $right_id right id to delete (required)
+     * @param int $bank_csv_id bank_csv id to delete (required)
      *
      * @return Http response
      */
-    public function deleteRight($right_id)
+    public function deleteBankCsv($bank_csv_id)
     {
         $input = Request::all();
 
@@ -179,47 +92,18 @@ class RightsApi extends Controller
 
         //not path params validation
 
-        return response('How about implementing deleteRight as a DELETE method ?');
+        return response('How about implementing deleteBankCsv as a DELETE method ?');
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
     /**
-     * Operation getRightById
+     * Operation getBankCsvById
      *
-     * Find right by ID.
+     * Find bank_csv by ID.
      *
-     * @param int $right_id ID of right to return object (required)
+     * @param int $bank_csv_id ID of bank_csv to return object (required)
      *
      * @return Http response
      */
-    public function getRightById($right_id)
+    public function getBankCsvById($bank_csv_id)
     {
         $input = Request::all();
 
@@ -228,46 +112,17 @@ class RightsApi extends Controller
 
         //not path params validation
 
-        return response('How about implementing getRightById as a GET method ?');
+        return response('How about implementing getBankCsvById as a GET method ?');
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
     /**
-     * Operation rightsGet
+     * Operation bankCsvsGet
      *
-     * rights List.
+     * bank_csvs List.
      *
      *
      * @return Http response
      */
-    public function rightsGet()
+    public function bankCsvsGet()
     {
         $input = Request::all();
 
@@ -275,9 +130,9 @@ class RightsApi extends Controller
 
 
         //not path params validation
-        $right_id = $input['right_id'];
+        $bank_csv_id = $input['bank_csv_id'];
 
 
-        return response('How about implementing rightsGet as a GET method ?');
+        return response('How about implementing bankCsvsGet as a GET method ?');
     }
 }

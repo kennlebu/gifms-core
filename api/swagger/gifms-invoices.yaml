@@ -81,6 +81,38 @@ paths:
 
 
 
+  '/invoices/approve':    
+    patch:
+      tags:
+        - Invoice
+      summary: Approve several Invoices
+      description: Approve  
+      operationId: approve_several_invoices
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: invoice object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/invoice'
+      responses:
+        '200':
+          description: Approved invoices 
+        '405':
+          description: Invalid input,unsuccessful
+      security:
+        - api_key: []
+
+
+
+
+
   /invoice:    
     post:
       tags:
@@ -409,6 +441,35 @@ paths:
 
 
 
+  '/invoice/{invoice_id}/get_payment_voucher':
+    get:
+      tags:
+      - "Invoice"
+      summary: "get payment Voucher by ID"
+      description: "get payment Voucher"
+      operationId: "get_payment_voucher_by_id"
+      produces:
+      - "application/json"
+      - "application/xml"
+      parameters: []
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/invoice"
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "invoice not found"
+      security:
+      - api_key: []
+    parameters:
+    - name: invoice_id
+      in: path
+      required: true
+      type: integer
+      format: int64
+      description: "ID of invoice to return object"
 
 
 

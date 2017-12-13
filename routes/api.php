@@ -32,6 +32,11 @@ Route::get('/', function (Request $request) {
 Route::post('/authenticate', [	'uses' => 'ApiAuthController@authenticate']);
 Route::post('/authenticate_second_user', [	'uses' => 'ApiAuthController@authenticateSecondUser'])->middleware('jwt.auth');
 Route::get('/get_authenticated_user', [	'uses' => 'ApiAuthController@getAuthenticatedUser'])->middleware('jwt.auth');
+Route::post('/user_can', [	'uses' => 'ApiAuthController@userCan'])->middleware('jwt.auth');
+Route::post('/user_has_role', [	'uses' => 'ApiAuthController@userHasRole'])->middleware('jwt.auth');
+Route::post('/update_my_profile', [	'uses' => 'ApiAuthController@UpdateMyProfile'])->middleware('jwt.auth');
+Route::post('/change_password', [	'uses' => 'ApiAuthController@changePassword'])->middleware('jwt.auth');
+Route::post('/forgot_password', [	'uses' => 'ApiAuthController@forgotPassword']);
 
 
 
@@ -58,7 +63,6 @@ Route::get('/get_authenticated_user', [	'uses' => 'ApiAuthController@getAuthenti
  * Output-Formats: [application/json, application/xml]
  */
 Route::POST('/lpo', 'LPOApi@add')->middleware('jwt.auth');
-;
 /**
  * PUT updateLpo
  * Summary: Update an existing LPO
@@ -122,21 +126,28 @@ Route::GET('/lpo/{lpo_id}/get_document', 'LPOApi@getDocumentById')->middleware('
  * Notes: Allocate LPO
  * Output-Formats: [application/json, application/xml]
  */
-Route::PATCH('lpo/{lpo_id}/allocate', 'LPOApi@allocateLpo');
+Route::PATCH('lpo/{lpo_id}/allocate', 'LPOApi@allocateLpo')->middleware('jwt.auth');
 /**
  * PATCH approveLpo
  * Summary: Approve lpo by ID
  * Notes: Approves LPO
  * Output-Formats: [application/json, application/xml]
  */
-Route::PATCH('lpo/{lpo_id}/approve', 'LPOApi@approveLpo');
+Route::PATCH('lpo/{lpo_id}/approve', 'LPOApi@approveLpo')->middleware('jwt.auth');
 /**
  * PATCH submitLpoForApproval
  * Summary: Submit lpo by ID
  * Notes: Submits lpo for approval
  * Output-Formats: [application/json, application/xml]
  */
-Route::PATCH('lpo/{lpo_id}/submit_for_approval', 'LPOApi@submitLpoForApproval');
+Route::PATCH('lpo/{lpo_id}/submit_for_approval', 'LPOApi@submitLpoForApproval')->middleware('jwt.auth');
+/**
+ * PATCH approveSeveralLpos
+ * Summary: Approve several LPOs
+ * Notes: Approve
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PATCH('/api/lpos/approve', 'LPOApi@approveSeveralLpos')->middleware('jwt.auth');
 
 
 
@@ -697,6 +708,81 @@ Route::GET('/right/{right_id}', 'RightsApi@getRightById')->middleware('jwt.auth'
 
  */
 Route::GET('/rights', 'RightsApi@rightsGet')->middleware('jwt.auth');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * POST addPermission
+ * Summary: Add a new permission
+ * Notes: new permission
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/permission', 'PermissionApi@addPermission')->middleware('jwt.auth');
+/**
+ * PUT updatePermission
+ * Summary: Update an existing permission
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/permission', 'PermissionApi@updatePermission')->middleware('jwt.auth');
+/**
+ * DELETE deletePermission
+ * Summary: Deletes an permission
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/permission/{permission_id}', 'PermissionApi@deletePermission')->middleware('jwt.auth');
+/**
+ * GET getPermissionById
+ * Summary: Find permission by ID
+ * Notes: Returns a single permission
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/permission/{permission_id}', 'PermissionApi@getPermissionById')->middleware('jwt.auth');
+/**
+ * GET permissionsGet
+ * Summary: Permission List
+ * Notes: The permission endpoint returns multiple permission requested given the parameters injected.  
+
+ */
+Route::GET('/permissions', 'PermissionApi@permissionsGet')->middleware('jwt.auth');
+
+
 
 
 
@@ -1711,6 +1797,20 @@ Route::GET('/mobile_payment/{mobile_payment_id}/get_document', 'MobilePaymentApi
  * Output-Formats: [application/json, application/xml]
  */
 Route::GET('/mobile_payment/{mobile_payment_id}/get_attendance_sheet', 'MobilePaymentApi@getAttendanceSheetById')->middleware('jwt.auth');
+/**
+ * PATCH approveSeveralMobilePayments
+ * Summary: Approve several Mobile Payments
+ * Notes: Approve
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PATCH('/mobile_payments/approve', 'MobilePaymentApi@approveSeveralMobilePayments')->middleware('jwt.auth');
+/**
+ * GET getTemplate
+ * Summary: Mobile Payments Template
+ * Notes: Template
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/mobile_payments/template', 'MobilePaymentApi@getTemplate')->middleware('jwt.auth');
 
 
 
@@ -2285,6 +2385,13 @@ Route::PATCH('/claim/{claim_id}/submit_for_approval', 'ClaimApi@submitClaimForAp
 
  */
 Route::GET('/claims', 'ClaimApi@getClaims')->middleware('jwt.auth');
+/**
+ * PATCH approveSeveralClaims
+ * Summary: Approve several Claims
+ * Notes: Approve
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PATCH('/claims/approve', 'ClaimApi@approveSeveralClaims')->middleware('jwt.auth');
 
 
 
@@ -2535,6 +2642,13 @@ Route::PATCH('/advance/{advance_id}/submit_for_approval', 'AdvanceApi@submitAdva
 
  */
 Route::GET('/advances', 'AdvanceApi@getAdvances')->middleware('jwt.auth');
+/**
+ * PATCH approveSeveralAdvances
+ * Summary: Approve several Advances
+ * Notes: Approve
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PATCH('/advances/approve', 'AdvanceApi@approveSeveralAdvances')->middleware('jwt.auth');
 
 
 
@@ -2777,6 +2891,13 @@ Route::PATCH('/invoice/{invoice_id}/approve', 'InvoiceApi@approveInvoice')->midd
  */
 Route::GET('/invoice/{invoice_id}/get_document', 'InvoiceApi@getDocumentById')->middleware('jwt.auth');
 /**
+ * GET getPaymentVoucherById
+ * Summary: get payment Voucher by ID
+ * Notes: get payment Voucher
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('invoice/{invoice_id}/get_payment_voucher', 'InvoiceApi@getPaymentVoucherById')->middleware('jwt.auth');
+/**
  * PATCH submitInvoiceForApproval
  * Summary: Submit invoice by ID
  * Notes: Submits invoice for approval
@@ -2790,6 +2911,13 @@ Route::PATCH('/invoice/{invoice_id}/submit_for_approval', 'InvoiceApi@submitInvo
 
  */
 Route::GET('/invoices', 'InvoiceApi@getInvoices')->middleware('jwt.auth');
+/**
+ * PATCH approveSeveralInvoices
+ * Summary: Approve several Invoices
+ * Notes: Approve
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PATCH('/invoices/approve', 'InvoiceApi@approveSeveralInvoices')->middleware('jwt.auth');
 
 
 
@@ -3216,6 +3344,73 @@ Route::GET('/payment_types', 'PaymentTypeApi@getPaymentTypes')->middleware('jwt.
 
 
 
+/**
+ * POST addPaymentVoucher
+ * Summary: Add a new payment_voucher
+ * Notes: new payment_voucher
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/payment_voucher', 'PaymentVoucherApi@addPaymentVoucher')->middleware('jwt.auth');
+/**
+ * PUT updatePaymentVoucher
+ * Summary: Update an existing payment_voucher
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/payment_voucher', 'PaymentVoucherApi@updatePaymentVoucher')->middleware('jwt.auth');
+/**
+ * GET getPaymentVoucherById
+ * Summary: Find payment_voucher by ID
+ * Notes: Returns a single payment_voucher
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/payment_voucher/{payment_voucher_id}', 'PaymentVoucherApi@getPaymentVoucherById')->middleware('jwt.auth');
+/**
+ * DELETE deletePaymentVoucher
+ * Summary: Deletes an payment_voucher
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/payment_voucher/{payment_voucher_id}/get_document', 'PaymentVoucherApi@deletePaymentVoucher')->middleware('jwt.auth');
+/**
+ * GET getDocumentById
+ * Summary: get payment_voucher document by ID
+ * Notes: get Payment Voucher document
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/payment_voucher/{payment_voucher_id}/get_document', 'PaymentVoucherApi@getDocumentById')->middleware('jwt.auth');
+/**
+ * GET paymentVouchersGet
+ * Summary: payment_vouchers List
+ * Notes: The payment_voucher endpoint returns multiple payment_voucher requested given the parameters injected.  
+
+ */
+Route::GET('/payment_vouchers', 'PaymentVoucherApi@paymentVouchersGet')->middleware('jwt.auth');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -3562,3 +3757,971 @@ Route::GET('/delivery_statuses', 'DeliveryStatusApi@getDeliveryStatuses')->middl
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * POST addBank
+ * Summary: Add a new bank
+ * Notes: new bank
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/bank', 'BankApi@addBank')->middleware('jwt.auth');
+/**
+ * PUT updateBank
+ * Summary: Update an existing bank
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/bank', 'BankApi@updateBank')->middleware('jwt.auth');
+/**
+ * DELETE deleteBank
+ * Summary: Deletes an bank
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/bank/{bank_id}', 'BankApi@deleteBank')->middleware('jwt.auth');
+/**
+ * GET getBankById
+ * Summary: Find bank by ID
+ * Notes: Returns a single bank
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/bank/{bank_id}', 'BankApi@getBankById')->middleware('jwt.auth');
+/**
+ * GET banksGet
+ * Summary: banks List
+ * Notes: The bank endpoint returns multiple bank requested given the parameters injected.  
+
+ */
+Route::GET('/banks', 'BankApi@banksGet')->middleware('jwt.auth');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * POST addBankAccount
+ * Summary: Add a new bank_account
+ * Notes: new bank_account
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/bank_account', 'BankAccountApi@addBankAccount')->middleware('jwt.auth');
+/**
+ * PUT updateBankAccount
+ * Summary: Update an existing bank_account
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/bank_account', 'BankAccountApi@updateBankAccount')->middleware('jwt.auth');
+/**
+ * DELETE deleteBankAccount
+ * Summary: Deletes an bank_account
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/bank_account/{bank_account_id}', 'BankAccountApi@deleteBankAccount')->middleware('jwt.auth');
+/**
+ * GET getBankAccountById
+ * Summary: Find bank_account by ID
+ * Notes: Returns a single bank_account
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/bank_account/{bank_account_id}', 'BankAccountApi@getBankAccountById')->middleware('jwt.auth');
+/**
+ * GET bankAccountsGet
+ * Summary: bank_accounts List
+ * Notes: The bank_account endpoint returns multiple bank_account requested given the parameters injected.  
+
+ */
+Route::GET('/bank_accounts', 'BankAccountApi@bankAccountsGet')->middleware('jwt.auth');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * POST addBankBranch
+ * Summary: Add a new bank_branch
+ * Notes: new bank_branch
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/bank_branch', 'BankBranchApi@addBankBranch')->middleware('jwt.auth');
+/**
+ * PUT updateBankBranch
+ * Summary: Update an existing bank_branch
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/bank_branch', 'BankBranchApi@updateBankBranch')->middleware('jwt.auth');
+/**
+ * DELETE deleteBankBranch
+ * Summary: Deletes an bank_branch
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/bank_branch/{bank_branch_id}', 'BankBranchApi@deleteBankBranch')->middleware('jwt.auth');
+/**
+ * GET getBankBranchById
+ * Summary: Find bank_branch by ID
+ * Notes: Returns a single bank_branch
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/bank_branch/{bank_branch_id}', 'BankBranchApi@getBankBranchById')->middleware('jwt.auth');
+/**
+ * GET bankBranchesGet
+ * Summary: bank_branches List
+ * Notes: The bank_branch endpoint returns multiple bank_branch requested given the parameters injected.  
+
+ */
+Route::GET('/bank_branches', 'BankBranchApi@bankBranchesGet')->middleware('jwt.auth');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * POST addBankCsv
+ * Summary: Add a new bank_csv
+ * Notes: new bank_csv
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/bank_csv', 'BankCSVApi@addBankCsv')->middleware('jwt.auth');
+/**
+ * PUT updateBankCsv
+ * Summary: Update an existing bank_csv
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/bank_csv', 'BankCSVApi@updateBankCsv')->middleware('jwt.auth');
+/**
+ * DELETE deleteBankCsv
+ * Summary: Deletes an bank_csv
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/bank_csv/{bank_csv_id}', 'BankCSVApi@deleteBankCsv')->middleware('jwt.auth');
+/**
+ * GET getBankCsvById
+ * Summary: Find bank_csv by ID
+ * Notes: Returns a single bank_csv
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/bank_csv/{bank_csv_id}', 'BankCSVApi@getBankCsvById')->middleware('jwt.auth');
+/**
+ * GET bankCsvsGet
+ * Summary: bank_csvs List
+ * Notes: The bank_csv endpoint returns multiple bank_csv requested given the parameters injected.  
+
+ */
+Route::GET('/bank_csvs', 'BankCSVApi@bankCsvsGet')->middleware('jwt.auth');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * POST addBankTransaction
+ * Summary: Add a new bank_transaction
+ * Notes: new bank_transaction
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/bank_transaction', 'BankTransactionApi@addBankTransaction')->middleware('jwt.auth');
+/**
+ * PUT updateBankTransaction
+ * Summary: Update an existing bank_transaction
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/bank_transaction', 'BankTransactionApi@updateBankTransaction')->middleware('jwt.auth');
+/**
+ * DELETE deleteBankTransaction
+ * Summary: Deletes an bank_transaction
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/bank_transaction/{bank_transaction_id}', 'BankTransactionApi@deleteBankTransaction')->middleware('jwt.auth');
+/**
+ * GET getBankTransactionById
+ * Summary: Find bank_transaction by ID
+ * Notes: Returns a single bank_transaction
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/bank_transaction/{bank_transaction_id}', 'BankTransactionApi@getBankTransactionById')->middleware('jwt.auth');
+/**
+ * GET bankTransactionsGet
+ * Summary: bank_transactions List
+ * Notes: The bank_transaction endpoint returns multiple bank_transaction requested given the parameters injected.  
+
+ */
+Route::GET('/bank_transactions', 'BankTransactionApi@bankTransactionsGet')->middleware('jwt.auth');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * POST addProgram
+ * Summary: Add a new program
+ * Notes: new program
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/program', 'ProgramApi@addProgram')->middleware('jwt.auth');
+/**
+ * PUT updateProgram
+ * Summary: Update an existing program
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/program', 'ProgramApi@updateProgram')->middleware('jwt.auth');
+/**
+ * DELETE deleteProgram
+ * Summary: Deletes an program
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/program/{program_id}', 'ProgramApi@deleteProgram')->middleware('jwt.auth');
+/**
+ * GET getProgramById
+ * Summary: Find program by ID
+ * Notes: Returns a single program
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/program/{program_id}', 'ProgramApi@getProgramById')->middleware('jwt.auth');
+/**
+ * GET programsGet
+ * Summary: programs List
+ * Notes: The program endpoint returns multiple program requested given the parameters injected.  
+
+ */
+Route::GET('/programs', 'ProgramApi@programsGet')->middleware('jwt.auth');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * GET countriesGet
+ * Summary: Countries List
+ * Notes: The country endpoint returns multiple country requested given the parameters injected.  
+
+ */
+Route::GET('/countries', 'CountryApi@countriesGet')->middleware('jwt.auth');
+/**
+ * POST addCountry
+ * Summary: Add a new country
+ * Notes: new country
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/country', 'CountryApi@addCountry')->middleware('jwt.auth');
+/**
+ * PUT updateCountry
+ * Summary: Update an existing country
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/country', 'CountryApi@updateCountry')->middleware('jwt.auth');
+/**
+ * DELETE deleteCountry
+ * Summary: Deletes an country
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/country/{country_id}', 'CountryApi@deleteCountry')->middleware('jwt.auth');
+/**
+ * GET getCountryById
+ * Summary: Find country by ID
+ * Notes: Returns a single country
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/country/{country_id}', 'CountryApi@getCountryById')->middleware('jwt.auth');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * POST addDonor
+ * Summary: Add a new donor
+ * Notes: new donor
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/donor', 'DonorApi@addDonor')->middleware('jwt.auth');
+/**
+ * PUT updateDonor
+ * Summary: Update an existing donor
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/donor', 'DonorApi@updateDonor')->middleware('jwt.auth');
+/**
+ * DELETE deleteDonor
+ * Summary: Deletes an donor
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/donor/{donor_id}', 'DonorApi@deleteDonor')->middleware('jwt.auth');
+/**
+ * GET getDonorById
+ * Summary: Find donor by ID
+ * Notes: Returns a single donor
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/donor/{donor_id}', 'DonorApi@getDonorById')->middleware('jwt.auth');
+/**
+ * GET donorsGet
+ * Summary: Donors List
+ * Notes: The donor endpoint returns multiple donor requested given the parameters injected.  
+
+ */
+Route::GET('/donors', 'DonorApi@donorsGet')->middleware('jwt.auth');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * POST addGrant
+ * Summary: Add a new grant
+ * Notes: new grant
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/grant', 'GrantApi@addGrant')->middleware('jwt.auth');
+/**
+ * PUT updateGrant
+ * Summary: Update an existing grant
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/grant', 'GrantApi@updateGrant')->middleware('jwt.auth');
+/**
+ * DELETE deleteGrant
+ * Summary: Deletes an grant
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/grant/{grant_id}', 'GrantApi@deleteGrant')->middleware('jwt.auth');
+/**
+ * GET getGrantById
+ * Summary: Find grant by ID
+ * Notes: Returns a single grant
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/grant/{grant_id}', 'GrantApi@getGrantById')->middleware('jwt.auth');
+/**
+ * GET grantsGet
+ * Summary: Grants List
+ * Notes: The grant endpoint returns multiple grant requested given the parameters injected.  
+
+ */
+Route::GET('/grants', 'GrantApi@grantsGet')->middleware('jwt.auth');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * POST addAccountClassification
+ * Summary: Add a new account_classification
+ * Notes: new account_classification
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/account_classification', 'AccountClassificationApi@addAccountClassification')->middleware('jwt.auth');
+/**
+ * PUT updateAccountClassification
+ * Summary: Update an existing account_classification
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/account_classification', 'AccountClassificationApi@updateAccountClassification')->middleware('jwt.auth');
+/**
+ * DELETE deleteAccountClassification
+ * Summary: Deletes an account_classification
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/account_classification/{account_classification_id}', 'AccountClassificationApi@deleteAccountClassification')->middleware('jwt.auth');
+/**
+ * GET getAccountClassificationById
+ * Summary: Find account_classification by ID
+ * Notes: Returns a single account_classification
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/account_classification/{account_classification_id}', 'AccountClassificationApi@getAccountClassificationById')->middleware('jwt.auth');
+/**
+ * GET accountClassificationsGet
+ * Summary: Account Classifications List
+ * Notes: The account_classification endpoint returns multiple account_classification requested given the parameters injected.  
+
+ */
+Route::GET('/account_classifications', 'AccountClassificationApi@accountClassificationsGet')->middleware('jwt.auth');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * POST addAccountType
+ * Summary: Add a new account_type
+ * Notes: new account_type
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/account_type', 'AccountTypeApi@addAccountType')->middleware('jwt.auth');
+/**
+ * PUT updateAccountType
+ * Summary: Update an existing account_type
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/account_type', 'AccountTypeApi@updateAccountType')->middleware('jwt.auth');
+/**
+ * DELETE deleteAccountType
+ * Summary: Deletes an account_type
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/account_type/{account_type_id}', 'AccountTypeApi@deleteAccountType')->middleware('jwt.auth');
+/**
+ * GET getAccountTypeById
+ * Summary: Find account_type by ID
+ * Notes: Returns a single account_type
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/account_type/{account_type_id}', 'AccountTypeApi@getAccountTypeById')->middleware('jwt.auth');
+/**
+ * GET accountTypesGet
+ * Summary: Account Types List
+ * Notes: The account_type endpoint returns multiple account_type requested given the parameters injected.  
+
+ */
+Route::GET('/account_types', 'AccountTypeApi@accountTypesGet')->middleware('jwt.auth');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * GET citiesGet
+ * Summary: Cities List
+ * Notes: The city endpoint returns multiple city requested given the parameters injected.  
+
+ */
+Route::GET('/cities', 'CityApi@citiesGet')->middleware('jwt.auth');
+/**
+ * POST addCity
+ * Summary: Add a new city
+ * Notes: new city
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/city', 'CityApi@addCity')->middleware('jwt.auth');
+/**
+ * PUT updateCity
+ * Summary: Update an existing city
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/city', 'CityApi@updateCity')->middleware('jwt.auth');
+/**
+ * DELETE deleteCity
+ * Summary: Deletes an city
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/city/{city_id}', 'CityApi@deleteCity')->middleware('jwt.auth');
+/**
+ * GET getCityById
+ * Summary: Find city by ID
+ * Notes: Returns a single city
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/city/{city_id}', 'CityApi@getCityById')->middleware('jwt.auth');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * POST addApprovalLevel
+ * Summary: Add a new approval_level
+ * Notes: new approval_level
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/approval_level', 'ApprovalLevelApi@addApprovalLevel')->middleware('jwt.auth');
+/**
+ * PUT updateApprovalLevel
+ * Summary: Update an existing approval_level
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/approval_level', 'ApprovalLevelApi@updateApprovalLevel')->middleware('jwt.auth');
+/**
+ * DELETE deleteApprovalLevel
+ * Summary: Deletes an approval_level
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/approval_level/{approval_level_id}', 'ApprovalLevelApi@deleteApprovalLevel')->middleware('jwt.auth');
+/**
+ * GET getApprovalLevelById
+ * Summary: Find approval_level by ID
+ * Notes: Returns a single approval_level
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/approval_level/{approval_level_id}', 'ApprovalLevelApi@getApprovalLevelById')->middleware('jwt.auth');
+/**
+ * GET approvalLevelsGet
+ * Summary: Approval Levels List
+ * Notes: The approval_level endpoint returns multiple approval_level requested given the parameters injected.  
+
+ */
+Route::GET('/approval_levels', 'ApprovalLevelApi@approvalLevelsGet')->middleware('jwt.auth');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * POST addGrantAllocation
+ * Summary: Add a new grant_allocation
+ * Notes: new grant_allocation
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/grant_allocation', 'GrantAllocationApi@addGrantAllocation')->middleware('jwt.auth');
+/**
+ * PUT updateGrantAllocation
+ * Summary: Update an existing grant_allocation
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/grant_allocation', 'GrantAllocationApi@updateGrantAllocation')->middleware('jwt.auth');
+/**
+ * DELETE deleteGrantAllocation
+ * Summary: Deletes an grant_allocation
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/grant_allocation/{grant_allocation_id}', 'GrantAllocationApi@deleteGrantAllocation')->middleware('jwt.auth');
+/**
+ * GET getGrantAllocationById
+ * Summary: Find grant_allocation by ID
+ * Notes: Returns a single grant_allocation
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/grant_allocation/{grant_allocation_id}', 'GrantAllocationApi@getGrantAllocationById')->middleware('jwt.auth');
+/**
+ * GET grantAllocationsGet
+ * Summary: Grant Allocations List
+ * Notes: The grant_allocation endpoint returns multiple grant_allocation requested given the parameters injected.  
+
+ */
+Route::GET('/grant_allocations', 'GrantAllocationApi@grantAllocationsGet')->middleware('jwt.auth');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * POST addBudget
+ * Summary: Add a new budget
+ * Notes: new budget
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/budget', 'BudgetApi@addBudget')->middleware('jwt.auth');
+/**
+ * PUT updateBudget
+ * Summary: Update an existing budget
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/budget', 'BudgetApi@updateBudget')->middleware('jwt.auth');
+/**
+ * DELETE deleteBudget
+ * Summary: Deletes an budget
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/budget/{budget_id}', 'BudgetApi@deleteBudget')->middleware('jwt.auth');
+/**
+ * GET getBudgetById
+ * Summary: Find budget by ID
+ * Notes: Returns a single budget
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/budget/{budget_id}', 'BudgetApi@getBudgetById')->middleware('jwt.auth');
+/**
+ * GET budgetsGet
+ * Summary: Budgets List
+ * Notes: The budget endpoint returns multiple budget requested given the parameters injected.  
+
+ */
+Route::GET('/budgets', 'BudgetApi@budgetsGet')->middleware('jwt.auth');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * POST addBudgetItem
+ * Summary: Add a new budget_item
+ * Notes: new budget_item
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/budget_item', 'BudgetItemApi@addBudgetItem')->middleware('jwt.auth');
+/**
+ * PUT updateBudgetItem
+ * Summary: Update an existing budget_item
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/budget_item', 'BudgetItemApi@updateBudgetItem')->middleware('jwt.auth');
+/**
+ * DELETE deleteBudgetItem
+ * Summary: Deletes an budget_item
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/budget_item/{budget_item_id}', 'BudgetItemApi@deleteBudgetItem')->middleware('jwt.auth');
+/**
+ * GET getBudgetItemById
+ * Summary: Find budget_item by ID
+ * Notes: Returns a single budget_item
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/budget_item/{budget_item_id}', 'BudgetItemApi@getBudgetItemById')->middleware('jwt.auth');
+/**
+ * GET budgetItemsGet
+ * Summary: Budget Items List
+ * Notes: The budget_item endpoint returns multiple budget_item requested given the parameters injected.  
+
+ */
+Route::GET('/budget_items', 'BudgetItemApi@budgetItemsGet')->middleware('jwt.auth');

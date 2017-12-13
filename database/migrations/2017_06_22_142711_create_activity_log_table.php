@@ -23,6 +23,7 @@ class CreateActivityLogTable extends Migration
 
             $table->index('log_name');
         });
+        
     }
 
     /**

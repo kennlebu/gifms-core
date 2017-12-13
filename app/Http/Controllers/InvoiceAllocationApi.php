@@ -16,6 +16,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Request;
+use App\Models\InvoicesModels\Invoice;
+use App\Models\AllocationModels\Allocation;
 
 class InvoiceAllocationApi extends Controller
 {
@@ -105,13 +107,25 @@ class InvoiceAllocationApi extends Controller
      */
     public function getInvoiceAllocationById($invoice_allocation_id)
     {
-        $input = Request::all();
+        $response = [];
 
-        //path params validation
+        try{
+            $response   = Allocation::with( 
+                                        'allocatable',
+                                        'allocated_by',
+                                        'project',
+                                        'account'
+                                    )->findOrFail($invoice_allocation_id);
 
 
-        //not path params validation
+                $response['invoice']  =   $response['allocatable'];
 
-        return response('How about implementing getInvoiceAllocationById as a GET method ?');
+            return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+
+        }catch(Exception $e){
+
+            $response =  ["error"=>"Invoice Allocation could not be found"];
+            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+        }
     }
 }

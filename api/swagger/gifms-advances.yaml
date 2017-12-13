@@ -81,6 +81,40 @@ paths:
 
 
 
+  '/advances/approve':    
+    patch:
+      tags:
+        - Advance
+      summary: Approve several Advances
+      description: Approve  
+      operationId: approve_several_advances
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: advance object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/advance'
+      responses:
+        '200':
+          description: Approved advances 
+        '405':
+          description: Invalid input,unsuccessful
+      security:
+        - api_key: []
+
+
+
+
+
+
+
   /advance:    
     post:
       tags:

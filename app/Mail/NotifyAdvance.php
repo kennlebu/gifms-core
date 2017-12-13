@@ -123,6 +123,17 @@ class NotifyAdvance extends Mailable
                             'js_url' => Config::get('app.js_url'),
                         ])
                     ->subject("Advance Approval Request ".$this->advance->ref);
+        }else if($this->advance->status_id == 8){
+
+
+
+            return $this->to($this->financial_controller)
+                    ->with([
+                            'advance' => $this->advance,
+                            'addressed_to' => $this->financial_controller,
+                            'js_url' => Config::get('app.js_url'),
+                        ])
+                    ->subject("Advance Approval Request ".$this->advance->ref);
         }
 
 

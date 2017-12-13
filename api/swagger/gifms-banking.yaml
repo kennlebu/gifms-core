@@ -1,0 +1,1372 @@
+swagger: '2.0'
+info:
+  description: Finance management sysytem
+  version: 1.0.0
+  title: Grants Information Management System
+  termsOfService: 'http://kefinance.clintonhealthaccess.org/terms/'
+  contact:
+    email: mwangikevinn@gmail.com
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+host: 'localhost:8000'
+basePath: /api
+tags:
+  - name: Bank
+    description: Everything About Bank
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/bank/docs'
+  - name: Bank Branch
+    description: Everything About Bank Branch
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/bank_branch/docs'
+  - name: Bank Account
+    description: Everything About Bank Account
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/bank_account/docs'
+  - name: Bank Transaction
+    description: Everything About Bank Transaction
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/bank_transaction/docs'
+  - name: Bank CSV
+    description: Everything About Bank CSV
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/bank_csv/docs'
+schemes:
+  - http
+  - https
+paths:
+
+
+
+
+
+
+
+
+
+
+
+  /banks:
+    get:
+      summary: banks List
+      description: |
+        The bank endpoint returns multiple bank requested given the parameters injected. 
+      parameters:
+        - name: bank_id
+          in: query
+          description: bank id 
+          required: false
+          type: number
+          format: integer
+      tags:
+        - Bank
+      responses:
+        200:
+          description: An array of bank returned
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/bank'
+        404:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+        - api_key: []
+
+
+
+
+
+
+
+  /bank:    
+    post:
+      tags:
+        - Bank
+      summary: Add a new bank
+      description: new bank  
+      operationId: add_bank
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: bank object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/bank'
+      responses:
+        '200':
+          description: Successfully added a new bank for approval 
+        '405':
+          description: Invalid input,adding a new bank was unsuccessful
+      security:
+        - api_key: []
+            
+            
+            
+
+            
+    put:
+      tags:
+        - Bank
+      summary: Update an existing bank
+      description: ''
+      operationId: update_bank
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: bank object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/bank'
+      responses:
+        200:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Success'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: bank not found
+        '405':
+          description: Validation exception
+      security:
+        - api_key: []
+        
+        
+        
+        
+        
+        
+  '/bank/{bank_id}':
+    get:
+      tags:
+        - Bank
+      summary: Find bank by ID
+      description: Returns a single bank
+      operationId: get_bank_by_id
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: bank_id
+          in: path
+          description: ID of bank to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/bank'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: bank not found
+      security:
+        - api_key: []
+        
+        
+     
+            
+            
+            
+    delete:
+      tags:
+        - Bank
+      summary: Deletes an bank
+      description: ''
+      operationId: delete_bank
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: api_key
+          in: header
+          required: true
+          type: string
+        - name: bank_id
+          in: path
+          description: bank id to delete
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: bank not found
+      security:
+        - api_key: []
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  /bank_branches:
+    get:
+      summary: bank_branches List
+      description: |
+        The bank_branch endpoint returns multiple bank_branch requested given the parameters injected. 
+      parameters:
+        - name: bank_branch_id
+          in: query
+          description: bank_branch id 
+          required: false
+          type: number
+          format: integer
+      tags:
+        - Bank Branch
+      responses:
+        200:
+          description: An array of bank_branch returned
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/bank_branch'
+        404:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+        - api_key: []
+
+
+
+
+
+
+
+  /bank_branch:    
+    post:
+      tags:
+        - Bank Branch
+      summary: Add a new bank_branch
+      description: new bank_branch  
+      operationId: add_bank_branch
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: bank_branch object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/bank_branch'
+      responses:
+        '200':
+          description: Successfully added a new bank_branch for approval 
+        '405':
+          description: Invalid input,adding a new bank_branch was unsuccessful
+      security:
+        - api_key: []
+            
+            
+            
+
+            
+    put:
+      tags:
+        - Bank Branch
+      summary: Update an existing bank_branch
+      description: ''
+      operationId: update_bank_branch
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: bank_branch object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/bank_branch'
+      responses:
+        200:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Success'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: bank_branch not found
+        '405':
+          description: Validation exception
+      security:
+        - api_key: []
+        
+        
+        
+        
+        
+        
+  '/bank_branch/{bank_branch_id}':
+    get:
+      tags:
+        - Bank Branch
+      summary: Find bank_branch by ID
+      description: Returns a single bank_branch
+      operationId: get_bank_branch_by_id
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: bank_branch_id
+          in: path
+          description: ID of bank_branch to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/bank_branch'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: bank_branch not found
+      security:
+        - api_key: []
+        
+        
+     
+            
+            
+            
+    delete:
+      tags:
+        - Bank Branch
+      summary: Deletes an bank_branch
+      description: ''
+      operationId: delete_bank_branch
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: api_key
+          in: header
+          required: true
+          type: string
+        - name: bank_branch_id
+          in: path
+          description: bank_branch id to delete
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: bank_branch not found
+      security:
+        - api_key: []
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  /bank_accounts:
+    get:
+      summary: bank_accounts List
+      description: |
+        The bank_account endpoint returns multiple bank_account requested given the parameters injected. 
+      parameters:
+        - name: bank_account_id
+          in: query
+          description: bank_account id 
+          required: false
+          type: number
+          format: integer
+      tags:
+        - Bank Account
+      responses:
+        200:
+          description: An array of bank_account returned
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/bank_account'
+        404:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+        - api_key: []
+
+
+
+
+
+
+
+  /bank_account:    
+    post:
+      tags:
+        - Bank Account
+      summary: Add a new bank_account
+      description: new bank_account  
+      operationId: add_bank_account
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: bank_account object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/bank_account'
+      responses:
+        '200':
+          description: Successfully added a new bank_account for approval 
+        '405':
+          description: Invalid input,adding a new bank_account was unsuccessful
+      security:
+        - api_key: []
+            
+            
+            
+
+            
+    put:
+      tags:
+        - Bank Account
+      summary: Update an existing bank_account
+      description: ''
+      operationId: update_bank_account
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: bank_account object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/bank_account'
+      responses:
+        200:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Success'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: bank_account not found
+        '405':
+          description: Validation exception
+      security:
+        - api_key: []
+        
+        
+        
+        
+        
+        
+  '/bank_account/{bank_account_id}':
+    get:
+      tags:
+        - Bank Account
+      summary: Find bank_account by ID
+      description: Returns a single bank_account
+      operationId: get_bank_account_by_id
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: bank_account_id
+          in: path
+          description: ID of bank_account to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/bank_account'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: bank_account not found
+      security:
+        - api_key: []
+        
+        
+     
+            
+            
+            
+    delete:
+      tags:
+        - Bank Account
+      summary: Deletes an bank_account
+      description: ''
+      operationId: delete_bank_account
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: api_key
+          in: header
+          required: true
+          type: string
+        - name: bank_account_id
+          in: path
+          description: bank_account id to delete
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: bank_account not found
+      security:
+        - api_key: []
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  /bank_transactions:
+    get:
+      summary: bank_transactions List
+      description: |
+        The bank_transaction endpoint returns multiple bank_transaction requested given the parameters injected. 
+      parameters:
+        - name: bank_transaction_id
+          in: query
+          description: bank_transaction id 
+          required: false
+          type: number
+          format: integer
+      tags:
+        - Bank Transaction
+      responses:
+        200:
+          description: An array of bank_transaction returned
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/bank_transaction'
+        404:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+        - api_key: []
+
+
+
+
+
+
+
+  /bank_transaction:    
+    post:
+      tags:
+        - Bank Transaction
+      summary: Add a new bank_transaction
+      description: new bank_transaction  
+      operationId: add_bank_transaction
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: bank_transaction object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/bank_transaction'
+      responses:
+        '200':
+          description: Successfully added a new bank_transaction for approval 
+        '405':
+          description: Invalid input,adding a new bank_transaction was unsuccessful
+      security:
+        - api_key: []
+            
+            
+            
+
+            
+    put:
+      tags:
+        - Bank Transaction
+      summary: Update an existing bank_transaction
+      description: ''
+      operationId: update_bank_transaction
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: bank_transaction object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/bank_transaction'
+      responses:
+        200:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Success'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: bank_transaction not found
+        '405':
+          description: Validation exception
+      security:
+        - api_key: []
+        
+        
+        
+        
+        
+        
+  '/bank_transaction/{bank_transaction_id}':
+    get:
+      tags:
+        - Bank Transaction
+      summary: Find bank_transaction by ID
+      description: Returns a single bank_transaction
+      operationId: get_bank_transaction_by_id
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: bank_transaction_id
+          in: path
+          description: ID of bank_transaction to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/bank_transaction'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: bank_transaction not found
+      security:
+        - api_key: []
+        
+        
+     
+            
+            
+            
+    delete:
+      tags:
+        - Bank Transaction
+      summary: Deletes an bank_transaction
+      description: ''
+      operationId: delete_bank_transaction
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: api_key
+          in: header
+          required: true
+          type: string
+        - name: bank_transaction_id
+          in: path
+          description: bank_transaction id to delete
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: bank_transaction not found
+      security:
+        - api_key: []
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  /bank_csvs:
+    get:
+      summary: bank_csvs List
+      description: |
+        The bank_csv endpoint returns multiple bank_csv requested given the parameters injected. 
+      parameters:
+        - name: bank_csv_id
+          in: query
+          description: bank_csv id 
+          required: false
+          type: number
+          format: integer
+      tags:
+        - Bank CSV
+      responses:
+        200:
+          description: An array of bank_csv returned
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/bank_csv'
+        404:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+        - api_key: []
+
+
+
+
+
+
+
+  /bank_csv:    
+    post:
+      tags:
+        - Bank CSV
+      summary: Add a new bank_csv
+      description: new bank_csv  
+      operationId: add_bank_csv
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: bank_csv object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/bank_csv'
+      responses:
+        '200':
+          description: Successfully added a new bank_csv for approval 
+        '405':
+          description: Invalid input,adding a new bank_csv was unsuccessful
+      security:
+        - api_key: []
+            
+            
+            
+
+            
+    put:
+      tags:
+        - Bank CSV
+      summary: Update an existing bank_csv
+      description: ''
+      operationId: update_bank_csv
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: bank_csv object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/bank_csv'
+      responses:
+        200:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Success'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: bank_csv not found
+        '405':
+          description: Validation exception
+      security:
+        - api_key: []
+        
+        
+        
+        
+        
+        
+  '/bank_csv/{bank_csv_id}':
+    get:
+      tags:
+        - Bank CSV
+      summary: Find bank_csv by ID
+      description: Returns a single bank_csv
+      operationId: get_bank_csv_by_id
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: bank_csv_id
+          in: path
+          description: ID of bank_csv to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/bank_csv'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: bank_csv not found
+      security:
+        - api_key: []
+        
+        
+     
+            
+            
+            
+    delete:
+      tags:
+        - Bank CSV
+      summary: Deletes an bank_csv
+      description: ''
+      operationId: delete_bank_csv
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: api_key
+          in: header
+          required: true
+          type: string
+        - name: bank_csv_id
+          in: path
+          description: bank_csv id to delete
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: bank_csv not found
+      security:
+        - api_key: []
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+          
+          
+securityDefinitions:
+  api_key:
+    type: apiKey
+    name: Authorization
+    in: header
+     
+     
+     
+definitions:
+
+
+      
+      
+  bank:
+    type: object
+    required:
+      - id
+      - created_at
+    properties:
+      id:
+        type: integer
+        format: int64
+        example: 1
+      num:
+        type: number
+        format: int64
+        example: 20000
+      str:
+        type: string
+        example: 'PayPal.pdf'
+      date:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      created_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      updated_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+    xml:
+      name: bank
+    
+  
+
+
+      
+      
+  bank_branch:
+    type: object
+    required:
+      - id
+      - created_at
+    properties:
+      id:
+        type: integer
+        format: int64
+        example: 1
+      num:
+        type: number
+        format: int64
+        example: 20000
+      str:
+        type: string
+        example: 'PayPal.pdf'
+      date:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      created_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      updated_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+    xml:
+      name: bank_branch
+    
+  
+    
+  
+    
+  
+
+
+
+
+
+      
+  bank_account:
+    type: object
+    required:
+      - id
+      - created_at
+    properties:
+      id:
+        type: integer
+        format: int64
+        example: 1
+      num:
+        type: number
+        format: int64
+        example: 20000
+      str:
+        type: string
+        example: 'PayPal.pdf'
+      date:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      created_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      updated_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+    xml:
+      name: bank_account
+    
+  
+    
+  
+  
+  
+
+
+
+
+      
+      
+  bank_transaction:
+    type: object
+    required:
+      - id
+      - created_at
+    properties:
+      id:
+        type: integer
+        format: int64
+        example: 1
+      num:
+        type: number
+        format: int64
+        example: 20000
+      str:
+        type: string
+        example: 'PayPal.pdf'
+      date:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      created_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      updated_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+    xml:
+      name: bank_transaction
+    
+  
+    
+
+
+
+
+
+
+
+      
+  bank_csv:
+    type: object
+    required:
+      - id
+      - created_at
+    properties:
+      id:
+        type: integer
+        format: int64
+        example: 1
+      num:
+        type: number
+        format: int64
+        example: 20000
+      str:
+        type: string
+        example: 'PayPal.pdf'
+      date:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      created_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      updated_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+    xml:
+      name: bank_csv
+    
+  
+    
+  
+
+
+  
+  
+  
+  
+  
+  Error:
+    type: object
+    properties:
+      error:
+        type: string
+        example: object not found
+
+
+  
+  Success:
+    type: object
+    properties:
+      msg:
+        type: string
+        example: object not found
+
+      
+      
+      
+      

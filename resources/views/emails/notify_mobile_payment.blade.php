@@ -83,7 +83,7 @@
           </td>
           <td style="text-align: left; border-bottom: 1px dotted #ccbcbc;" bgcolor="#ffffff" colspan="2" >
             <strong>
-              <span style="color: #092d50;"> {{$mobile_payment->currency->currency_name}}. {{number_format($mobile_payment->amount, 2)}}</span>
+              <span style="color: #092d50;"> {{$mobile_payment->currency->currency_name}}. {{number_format($mobile_payment->totals, 2)}}</span>
             </strong>
           </td>
         </tr>    

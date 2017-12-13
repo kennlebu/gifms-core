@@ -50,9 +50,9 @@ class Lpo extends BaseModel
     {
         return $this->belongsTo('App\Models\AccountingModels\Account');
     }
-    public function invoice()
+    public function invoices()
     {
-        return $this->belongsTo('App\Models\InvoicesModels\Invoice');
+        return $this->hasMany('App\Models\InvoicesModels\Invoice');
     }
     public function status()
     {
@@ -109,6 +109,10 @@ class Lpo extends BaseModel
     public function approvals()
     {
         return $this->morphMany('App\Models\ApprovalsModels\Approval', 'approvable');
+    }
+    public function logs()
+    {
+        return $this->morphMany('App\Models\LogsModels\HistoryLog', 'subject')->orderBy('created_at','asc');
     }
 
 

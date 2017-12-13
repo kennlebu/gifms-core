@@ -12,7 +12,9 @@
       @elseif ($invoice->status_id==9)
         The below detailed invoice has been Rejected by {{$invoice->rejected_by->name}}
       @elseif ($invoice->status_id==11)
-        The below detailed invoice has been received by {{$invoice->received_by->f_name}} for you to submit 
+        The below detailed invoice has been received by {{$invoice->received_by->f_name}} for you to confirm, allocate & submit
+      @elseif ($invoice->status_id==4)
+        The below detailed invoice has been approved by management for you to make the payment 
       @endif
       <br/>
 
@@ -32,12 +34,12 @@
         <tr>
           <td style="text-align: left; border-bottom: 1px dotted #ccbcbc;" colspan="1"  bgcolor="#092d50" height="20">
             <strong>
-              <span style="color: #ffffff;">REF:</span>
+              <span style="color: #ffffff;">External REF:</span>
             </strong>
           </td>
           <td style="text-align: left; border-bottom: 1px dotted #ccbcbc;" bgcolor="#ffffff" colspan="2" >
             <strong>
-              <span style="color: #092d50;">{{$invoice->ref}}</span>
+              <span style="color: #092d50;">{{$invoice->external_ref}}</span>
             </strong>
           </td>
         </tr> 

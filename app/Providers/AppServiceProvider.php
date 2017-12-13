@@ -24,6 +24,9 @@ class AppServiceProvider extends ServiceProvider
             'lpos'                  =>      'App\Models\LPOModels\Lpo',
             'payments'              =>      'App\Models\PaymentModels\Payment',
             'deliveries'            =>      'App\Models\DeliveriesModels\Delivery',
+            'users'                 =>      'App\Models\StaffModels\User',
+            'staff'                 =>      'App\Models\StaffModels\Staff',
+            'allocations'           =>      'App\Models\AllocationModels\Allocation',
             ]);
         // $dispatcher = new Dispatcher;
         // $dispatcher->listen(Illuminate\Database\Events\StatementPrepared::class, function ($event) {

@@ -13,7 +13,7 @@ class post_migration_keys_drop extends Seeder
     {
         //LPOS
     	$sql = "
-    			ALTER TABLE `gifms`.`lpos` 
+    			ALTER TABLE `lpos` 
 					DROP COLUMN `migration_project_manager_id`,
 					DROP COLUMN `migration_supplier_id`,
 					DROP COLUMN `migration_received_by_id`,

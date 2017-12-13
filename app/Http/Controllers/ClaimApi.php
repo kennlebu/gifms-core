@@ -30,6 +30,16 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\NotifyClaim;
 use App\Models\AllocationModels\Allocation;
 use App\Models\ApprovalsModels\Approval;
+use App\Models\ApprovalsModels\ApprovalLevel;
+use App\Models\StaffModels\Staff;
+use App\Models\PaymentModels\Payment;
+use App\Models\PaymentModels\PaymentMode;
+use App\Models\PaymentModels\PaymentBatch;
+use App\Models\PaymentModels\PaymentType;
+use App\Models\LookupModels\Currency;
+use App\Models\BankingModels\BankBranch;
+use App\Exceptions\NotFullyAllocatedException;
+use App\Exceptions\ApprovalException;
 
 class ClaimApi extends Controller
 {
@@ -78,7 +88,7 @@ class ClaimApi extends Controller
                 );
 
 
-            // FTP::connection()->changeDir('./lpos');
+            // FTP::connection()->changeDir('/lpos');
 
             $ftp = FTP::connection()->getDirListing();
 
@@ -101,7 +111,7 @@ class ClaimApi extends Controller
 
                 FTP::connection()->makeDir('/claims');
                 FTP::connection()->makeDir('/claims/'.$claim->id);
-                FTP::connection()->uploadFile($file->getPathname(), './claims/'.$claim->id.'/'.$claim->id.'.'.$file->getClientOriginalExtension());
+                FTP::connection()->uploadFile($file->getPathname(), '/claims/'.$claim->id.'/'.$claim->id.'.'.$file->getClientOriginalExtension());
 
                 $claim->claim_document           =   $claim->id.'.'.$file->getClientOriginalExtension();
                 $claim->ref                        = "CHAI/CLM/#$claim->id/".date_format($claim->created_at,"Y/m/d");
@@ -146,19 +156,34 @@ class ClaimApi extends Controller
      */
     public function updateClaim()
     {
-        $input = Request::all();
+         $form = Request::only(
+            'id',
+            'requested_by_id',
+            'expense_desc',
+            'expense_purpose',
+            'project_manager_id',
+            'total',
+            'currency_id'
+            );
 
-        //path params validation
+        $claim = Claim::find($form['id']);
 
 
-        //not path params validation
-        if (!isset($input['body'])) {
-            throw new \InvalidArgumentException('Missing the required parameter $body when calling updateClaim');
+
+
+            $claim->requested_by_id                   =   (int)       $form['requested_by_id'];
+            $claim->expense_desc                      =               $form['expense_desc'];
+            $claim->expense_purpose                   =               $form['expense_purpose'];
+            $claim->project_manager_id                =   (int)       $form['project_manager_id'];
+            $claim->total                             =   (double)    $form['total'];
+            $claim->currency_id                       =   (int)       $form['currency_id'];   
+
+
+
+        if($claim->save()) {
+
+            return Response()->json(array('msg' => 'Success: Claim updated','claim' => $claim), 200);
         }
-        $body = $input['body'];
-
-
-        return response('How about implementing updateClaim as a PUT method ?');
     }
 
 
@@ -239,6 +264,9 @@ class ClaimApi extends Controller
                                         'currency',
                                         'rejected_by',
                                         'approvals',
+                                        'logs',
+                                        'vouchers',
+                                        'payments',
                                         'allocations'
                                     )->findOrFail($claim_id);
 
@@ -248,6 +276,32 @@ class ClaimApi extends Controller
                 $account = Account::find((int)$value['account_id']);
                 $response['allocations'][$key]['project']  =   $project;
                 $response['allocations'][$key]['account']  =   $account;
+            }
+
+            foreach ($response->logs as $key => $value) {
+                
+                $response['logs'][$key]['causer']   =   $value->causer;
+                $response['logs'][$key]['subject']  =   $value->subject;
+            }
+
+            foreach ($response->approvals as $key => $value) {
+                $approver = Staff::find((int)$value['approver_id']);
+                $appoval_level = ApprovalLevel::find((int)$value['approval_level_id']);
+
+                $response['approvals'][$key]['approver']  =   $approver;
+                $response['approvals'][$key]['approval_level']  =   $appoval_level;
+            }
+
+            foreach ($response->payments as $key => $value) {
+                $payment_mode           = PaymentMode::find((int)$value['payment_mode_id']);
+                $currency               = Currency::find((int)$value['currency_id']);
+                $payment_batch          = PaymentBatch::find((int)$value['payment_batch_id']);
+                $paid_to_bank_branch    = BankBranch::with('bank')->find((int)$value['paid_to_bank_branch_id']);
+
+                $response['payments'][$key]['payment_mode']   =   $payment_mode;
+                $response['payments'][$key]['currency']       =   $currency;
+                $response['payments'][$key]['payment_batch']  =   $payment_batch;
+                $response['payments'][$key]['paid_to_bank_branch']   =   $paid_to_bank_branch;
             }
 
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
@@ -327,6 +381,8 @@ class ClaimApi extends Controller
     {
         $claim = [];
 
+        $user = JWTAuth::parseToken()->authenticate();
+
         try{
             $claim   = Claim::with( 
                                         'requested_by',
@@ -341,6 +397,10 @@ class ClaimApi extends Controller
                                     )->findOrFail($claim_id);
 
            
+            if (!$user->can("APPROVE_CLAIM_".$claim->status_id)){
+                throw new ApprovalException("No approval permission");             
+            }
+            $approvable_status  = $claim->status;
             $claim->status_id = $claim->status->next_status_id;
 
             if($claim->save()) {
@@ -359,20 +419,47 @@ class ClaimApi extends Controller
 
                 $approval = new Approval;
 
-                $user = JWTAuth::parseToken()->authenticate();
-
                 $approval->approvable_id            =   (int)   $claim->id;
                 $approval->approvable_type          =   "claims";
-                $approval->approval_level_id        =   $claim->status->approval_level_id;
+                $approval->approval_level_id        =   $approvable_status->approval_level_id;
                 $approval->approver_id              =   (int)   $user->id;
 
                 $approval->save();
+
+
+                if($approval->approval_level_id==4){
+
+                    $payable    =   array(
+                        'payable_type'                  =>  'claims', 
+                        'payable_id'                    =>  $claim->id, 
+                        'debit_bank_account_id'         =>  $claim->currency_id, 
+                        'currency_id'                   =>  $claim->currency_id, 
+                        'payment_desc'                  =>  $claim->ref, 
+                        'paid_to_name'                  =>  $claim->requested_by->full_name, 
+                        'paid_to_mobile_phone_no'       =>  $claim->requested_by->mpesa_no, 
+                        'paid_to_bank_account_no'       =>  $claim->requested_by->bank_account, 
+                        'paid_to_bank_id'               =>  $claim->requested_by->bank_id, 
+                        'paid_to_bank_branch_id'        =>  $claim->requested_by->bank_branch_id, 
+                        'payment_mode_id'               =>  $claim->requested_by->payment_mode_id, 
+                        'amount'                        =>  $claim->total, 
+                        'payment_batch_id'              =>  "", 
+                        'bank_charges'                  =>  ""
+                    );
+                    
+                    $this->generate_payable_payment($payable);
+
+                }
+                
 
                 Mail::send(new NotifyClaim($claim));
 
                 return Response()->json(array('msg' => 'Success: claim approved','claim' => $claim), 200);
             }
 
+        }catch(ApprovalException $ae){
+
+            $response =  ["error"=>"You do not have the permissions to perform this action at this point"];
+            return response()->json($response, 403,array(),JSON_PRETTY_PRINT);
         }catch(Exception $e){
 
             $response =  ["error"=>"Claim could not be found"];
@@ -423,6 +510,7 @@ class ClaimApi extends Controller
             );
         
         $claim = [];
+        $user = JWTAuth::parseToken()->authenticate();
 
         try{
             $claim   = Claim::with( 
@@ -437,9 +525,11 @@ class ClaimApi extends Controller
                                         'allocations'
                                     )->findOrFail($claim_id);
 
+            if (!$user->can("APPROVE_CLAIM_".$claim->status_id)){
+                throw new ApprovalException("No approval permission");             
+            }
            
             $claim->status_id = 9;
-            $user = JWTAuth::parseToken()->authenticate();
             $claim->rejected_by_id            =   (int)   $user->id;
             $claim->rejected_at              =   date('Y-m-d H:i:s');
             $claim->rejection_reason             =   $form['rejection_reason'];
@@ -451,6 +541,10 @@ class ClaimApi extends Controller
                 return Response()->json(array('msg' => 'Success: claim approved','claim' => $claim), 200);
             }
 
+        }catch(ApprovalException $ae){
+
+            $response =  ["error"=>"You do not have the permissions to perform this action at this point"];
+            return response()->json($response, 403,array(),JSON_PRETTY_PRINT);
         }catch(Exception $e){
 
             $response =  ["error"=>"Claim could not be found"];
@@ -495,7 +589,7 @@ class ClaimApi extends Controller
 
             $claim          = Claim::findOrFail($claim_id);
 
-            $path           = './claims/'.$claim->id.'/'.$claim->claim_document;
+            $path           = '/claims/'.$claim->id.'/'.$claim->claim_document;
 
             $path_info      = pathinfo($path);
 
@@ -572,6 +666,12 @@ class ClaimApi extends Controller
                                     )->findOrFail($claim_id);
 
            
+
+           if (($claim->total - $claim->amount_allocated) > 1 ){ //allowance of 1
+             throw new NotFullyAllocatedException("This claim has not been fully allocated");
+             
+           }
+
             $claim->status_id = $claim->status->next_status_id;
             $claim->requested_at = date('Y-m-d H:i:s');
 
@@ -582,10 +682,56 @@ class ClaimApi extends Controller
                 return Response()->json(array('msg' => 'Success: claim submitted','claim' => $claim), 200);
             }
 
+        }catch(NotFullyAllocatedException $ae){
+
+            $response =  ["error"=>"Claim not fully allocated"];
+            return response()->json($response, 403,array(),JSON_PRETTY_PRINT);
         }catch(Exception $e){
 
             $response =  ["error"=>"Claim could not be found"];
             return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    /**
+     * Operation approveSeveralClaims
+     *
+     * Approve several Claims.
+     *
+     *
+     * @return Http response
+     */
+    public function approveSeveralClaims()
+    {
+        try {
+            $form = Request::only("claims");
+            $claim_ids = $form['claims'];
+
+            foreach ($claim_ids as $key => $claim_id) {
+                $this->approveClaim($claim_id);
+            }
+
+            return response()->json(['claims'=>$form['claims']], 201,array(),JSON_PRETTY_PRINT);
+            
+        } catch (Exception $e) {
+             return response()->json(['error'=>"An rerror occured during processing"], 500,array(),JSON_PRETTY_PRINT);
+            
         }
     }
 
@@ -648,6 +794,8 @@ class ClaimApi extends Controller
                 $qb->where('requested_by_id',$this->current_user()->id);
             }elseif ($status_==-2) {
                 
+            }elseif ($status_==-3) {
+                $qb->where('project_manager_id',$this->current_user()->id);
             }
 
 
@@ -673,6 +821,42 @@ class ClaimApi extends Controller
 
 
 
+        if(array_key_exists('my_approvables', $input)){
+
+
+            $current_user =  JWTAuth::parseToken()->authenticate();
+            if($current_user->hasRole([
+                'super-admin',
+                'admin',
+                'director',
+                'associate-director',
+                'financial-controller',
+                'program-manager', 
+                'accountant', 
+                'assistant-accountant']
+            )){                   
+                $qb->where(function ($query) use ($app_stat,$current_user) {
+                    foreach ($app_stat as $key => $value) {
+                        $permission = 'APPROVE_CLAIM_'.$value['id'];
+                        if($current_user->can($permission)&&$value['id']==2){
+                            $query->orWhere(function ($query1) use ($value,$current_user) {
+                                $query1->Where('status_id',$value['id']);
+                                $query1->Where('project_manager_id',$current_user->id);
+                            });
+                        }
+                        else if($current_user->can($permission)){
+                            $query->orWhere('status_id',$value['id']); 
+                        }
+                    }
+
+                });
+
+
+            }else{
+                $qb->where('id',0);
+            }
+            // echo $qb->toSql();die;
+        }
 
         //searching
         if(array_key_exists('searchval', $input)){
@@ -695,6 +879,20 @@ class ClaimApi extends Controller
             // $records_filtered = 30;
 
 
+        }
+
+
+        //ordering
+        if(array_key_exists('order_by', $input)&&$input['order_by']!=''){
+            $order_direction     = "desc";
+            $order_column_name   = $input['order_by'];
+            if(array_key_exists('order_dir', $input)&&$input['order_dir']!=''){                
+                $order_direction = $input['order_dir'];
+            }
+
+            $qb->orderBy($order_column_name, $order_direction);
+        }else{
+            //$qb->orderBy("project_code", "asc");
         }
 
         //limit

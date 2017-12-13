@@ -10,4 +10,37 @@ class Budget extends BaseModel
 {
     //
     use SoftDeletes;
+
+    protected $appends = ['totals'];
+
+
+    public function items()
+    {
+        return $this->hasMany('App\Models\FinanceModels\BudgetItem');
+    }
+    public function currency()
+    {
+        return $this->belongsTo('App\Models\LookupModels\Currency','currency_id');
+    }
+    public function created_by()
+    {
+        return $this->belongsTo('App\Models\StaffModels\Staff','created_by_id');
+    }
+    public function status()
+    {
+        return $this->belongsTo('App\Models\FinanceModels\BudgetStatus');
+    }
+    
+    public function getTotalsAttribute(){
+
+        $items     =   $this->items;
+        $totals    =   0;
+
+        foreach ($items as $key => $value) {
+            $totals    +=  (float) $value->amount;
+        }
+
+        return $totals;
+
+    }
 }

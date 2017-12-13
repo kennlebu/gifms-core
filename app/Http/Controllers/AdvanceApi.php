@@ -26,6 +26,16 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\NotifyAdvance;
 use App\Models\AllocationModels\Allocation;
 use App\Models\ApprovalsModels\Approval;
+use App\Models\ApprovalsModels\ApprovalLevel;
+use App\Models\StaffModels\Staff;
+use App\Models\PaymentModels\Payment;
+use App\Models\PaymentModels\PaymentMode;
+use App\Models\PaymentModels\PaymentBatch;
+use App\Models\PaymentModels\PaymentType;
+use App\Models\LookupModels\Currency;
+use App\Models\BankingModels\BankBranch;
+use App\Exceptions\NotFullyAllocatedException;
+use App\Exceptions\ApprovalException;
 
 class AdvanceApi extends Controller
 {
@@ -98,7 +108,7 @@ class AdvanceApi extends Controller
                 );
 
 
-            // FTP::connection()->changeDir('./lpos');
+            // FTP::connection()->changeDir('/lpos');
 
             // $ftp = FTP::connection()->getDirListing();
 
@@ -120,9 +130,9 @@ class AdvanceApi extends Controller
 
             if($advance->save()) {
 
-                // FTP::connection()->makeDir('./advances/'.$advance->id);
-                // FTP::connection()->makeDir('./advances/'.$advance->id);
-                // FTP::connection()->uploadFile($file->getPathname(), './advances/'.$advance->id.'/'.$advance->id.'.'.$file->getClientOriginalExtension());
+                // FTP::connection()->makeDir('/advances/'.$advance->id);
+                // FTP::connection()->makeDir('/advances/'.$advance->id);
+                // FTP::connection()->uploadFile($file->getPathname(), '/advances/'.$advance->id.'/'.$advance->id.'.'.$file->getClientOriginalExtension());
 
                 // $advance->advance_document           =   $advance->id.'.'.$file->getClientOriginalExtension();
                 $advance->ref                        = "CHAI/ADV/#$advance->id/".date_format($advance->created_at,"Y/m/d");
@@ -172,19 +182,36 @@ class AdvanceApi extends Controller
      */
     public function updateAdvance()
     {
-        $input = Request::all();
+        
+         $form = Request::only(
+            'id',
+            'requested_by_id',
+            'expense_desc',
+            'expense_purpose',
+            'project_manager_id',
+            'total',
+            'currency_id'
+            );
 
-        //path params validation
+        $advance = Advance::find($form['id']);
 
 
-        //not path params validation
-        if (!isset($input['body'])) {
-            throw new \InvalidArgumentException('Missing the required parameter $body when calling updateAdvance');
+
+
+
+            $advance->requested_by_id                   =   (int)       $form['requested_by_id'];
+            $advance->expense_desc                      =               $form['expense_desc'];
+            $advance->expense_purpose                   =               $form['expense_purpose'];
+            $advance->project_manager_id                =   (int)       $form['project_manager_id'];
+            $advance->total                             =   (double)    $form['total'];
+            $advance->currency_id                       =   (int)       $form['currency_id'];  
+
+
+
+        if($advance->save()) {
+
+            return Response()->json(array('msg' => 'Success: Advance updated','advance' => $advance), 200);
         }
-        $body = $input['body'];
-
-
-        return response('How about implementing updateAdvance as a PUT method ?');
     }
 
 
@@ -277,7 +304,10 @@ class AdvanceApi extends Controller
                                     'currency',
                                     'rejected_by',
                                     'approvals',
-                                    'allocations'
+                                    'allocations',
+                                    'vouchers',
+                                    'payments',
+                                    'logs'
                                 )->findOrFail($advance_id);
 
 
@@ -286,6 +316,32 @@ class AdvanceApi extends Controller
                 $account = Account::find((int)$value['account_id']);
                 $response['allocations'][$key]['project']  =   $project;
                 $response['allocations'][$key]['account']  =   $account;
+            }
+
+            foreach ($response->logs as $key => $value) {
+                
+                $response['logs'][$key]['causer']   =   $value->causer;
+                $response['logs'][$key]['subject']  =   $value->subject;
+            }
+
+            foreach ($response->approvals as $key => $value) {
+                $approver = Staff::find((int)$value['approver_id']);
+                $approval_level = ApprovalLevel::find((int)$value['approval_level_id']);
+
+                $response['approvals'][$key]['approver']  =   $approver;
+                $response['approvals'][$key]['approval_level']  =   $approval_level;
+            }
+
+            foreach ($response->payments as $key => $value) {
+                $payment_mode           = PaymentMode::find((int)$value['payment_mode_id']);
+                $currency               = Currency::find((int)$value['currency_id']);
+                $payment_batch          = PaymentBatch::find((int)$value['payment_batch_id']);
+                $paid_to_bank_branch    = BankBranch::with('bank')->find((int)$value['paid_to_bank_branch_id']);
+
+                $response['payments'][$key]['payment_mode']   =   $payment_mode;
+                $response['payments'][$key]['currency']       =   $currency;
+                $response['payments'][$key]['payment_batch']  =   $payment_batch;
+                $response['payments'][$key]['paid_to_bank_branch']   =   $paid_to_bank_branch;
             }
            
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
@@ -333,6 +389,8 @@ class AdvanceApi extends Controller
 
         $input = Request::all();
 
+        $user = JWTAuth::parseToken()->authenticate();
+
         try{
 
             $advance   = Advance::with(
@@ -347,6 +405,10 @@ class AdvanceApi extends Controller
                                     'allocations'
                                 )->findOrFail($advance_id);
            
+            if (!$user->can("APPROVE_ADVANCE_".$advance->status_id)){
+                throw new ApprovalException("No approval permission");             
+            }
+            $approvable_status  = $advance->status;
             $advance->status_id = $advance->status->next_status_id;
 
             if($advance->save()) {
@@ -365,14 +427,35 @@ class AdvanceApi extends Controller
 
                 $approval = new Approval;
 
-                $user = JWTAuth::parseToken()->authenticate();
-
                 $approval->approvable_id            =   (int)   $advance->id;
                 $approval->approvable_type          =   "advances";
-                $approval->approval_level_id        =   $advance->status->approval_level_id;
+                $approval->approval_level_id        =   $approvable_status->approval_level_id;
                 $approval->approver_id              =   (int)   $user->id;
 
                 $approval->save();
+
+                if($approval->approval_level_id ==4){
+
+                    $payable    =   array(
+                        'payable_type'                  =>  'advances', 
+                        'payable_id'                    =>  $advance->id, 
+                        'debit_bank_account_id'         =>  $advance->currency_id, 
+                        'currency_id'                   =>  $advance->currency_id, 
+                        'payment_desc'                  =>  $advance->ref, 
+                        'paid_to_name'                  =>  $advance->requested_by->full_name, 
+                        'paid_to_mobile_phone_no'       =>  $advance->requested_by->mpesa_no, 
+                        'paid_to_bank_account_no'       =>  $advance->requested_by->bank_account, 
+                        'paid_to_bank_id'               =>  $advance->requested_by->bank_id, 
+                        'paid_to_bank_branch_id'        =>  $advance->requested_by->bank_branch_id, 
+                        'payment_mode_id'               =>  $advance->requested_by->payment_mode_id, 
+                        'amount'                        =>  $advance->total, 
+                        'payment_batch_id'              =>  "", 
+                        'bank_charges'                  =>  ""
+                    );
+
+                    $this->generate_payable_payment($payable);
+
+                }
                 
                 Mail::send(new NotifyAdvance($advance));
 
@@ -380,6 +463,10 @@ class AdvanceApi extends Controller
             }
 
 
+        }catch(ApprovalException $ae){
+
+            $response =  ["error"=>"You do not have the permissions to perform this action at this point"];
+            return response()->json($response, 403,array(),JSON_PRETTY_PRINT);
         }catch(Exception $e){
 
             $response =  ["error"=>"Advance could not be found"];
@@ -418,6 +505,8 @@ class AdvanceApi extends Controller
             'rejection_reason'
             );
 
+        $user = JWTAuth::parseToken()->authenticate();
+
         try{
 
             $advance   = Advance::with(
@@ -432,8 +521,10 @@ class AdvanceApi extends Controller
                                     'allocations'
                                 )->findOrFail($advance_id);
            
+            if (!$user->can("APPROVE_ADVANCE_".$advance->status_id)){
+                throw new ApprovalException("No approval permission");             
+            }
             $advance->status_id = 11;
-            $user = JWTAuth::parseToken()->authenticate();
             $advance->rejected_by_id            =   (int)   $user->id;
             $advance->rejected_at              =   date('Y-m-d H:i:s');
             $advance->rejection_reason             =   $form['rejection_reason'];
@@ -446,6 +537,10 @@ class AdvanceApi extends Controller
             }
 
 
+        }catch(ApprovalException $ae){
+
+            $response =  ["error"=>"You do not have the permissions to perform this action at this point"];
+            return response()->json($response, 403,array(),JSON_PRETTY_PRINT);
         }catch(Exception $e){
 
             $response =  ["error"=>"Advance could not be found"];
@@ -537,6 +632,44 @@ class AdvanceApi extends Controller
 
 
 
+/**
+     * Operation approveSeveralAdvances
+     *
+     * Approve several Advances.
+     *
+     *
+     * @return Http response
+     */
+    public function approveSeveralAdvances()
+    {
+        try {
+            $form = Request::only("advances");
+            $advance_ids = $form['advances'];
+
+            foreach ($advance_ids as $key => $advance_id) {
+                $this->approveAdvance($advance_id);
+            }
+
+            return response()->json(['advances'=>$form['advances']], 201,array(),JSON_PRETTY_PRINT);
+            
+        } catch (Exception $e) {
+             return response()->json(['error'=>"An rerror occured during processing"], 500,array(),JSON_PRETTY_PRINT);
+            
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -586,6 +719,8 @@ class AdvanceApi extends Controller
                 $qb->where('requested_by_id',$this->current_user()->id);
             }elseif ($status_==-2) {
                 
+            }elseif ($status_==-3) {
+                $qb->where('project_manager_id',$this->current_user()->id);
             }
 
 
@@ -613,6 +748,42 @@ class AdvanceApi extends Controller
 
 
 
+        if(array_key_exists('my_approvables', $input)){
+
+
+            $current_user =  JWTAuth::parseToken()->authenticate();
+            if($current_user->hasRole([
+                'super-admin',
+                'admin',
+                'director',
+                'associate-director',
+                'financial-controller',
+                'program-manager', 
+                'accountant', 
+                'assistant-accountant']
+            )){                   
+                $qb->where(function ($query) use ($app_stat,$current_user) {
+                    foreach ($app_stat as $key => $value) {
+                        $permission = 'APPROVE_ADVANCE_'.$value['id'];
+                        if($current_user->can($permission)&&$value['id']==2){
+                            $query->orWhere(function ($query1) use ($value,$current_user) {
+                                $query1->Where('status_id',$value['id']);
+                                $query1->Where('project_manager_id',$current_user->id);
+                            });
+                        }
+                        else if($current_user->can($permission)){
+                            $query->orWhere('status_id',$value['id']); 
+                        }
+                    }
+
+                });
+
+
+            }else{
+                $qb->where('id',0);
+            }
+            // echo $qb->toSql();die;
+        }
 
 
 
@@ -637,6 +808,20 @@ class AdvanceApi extends Controller
             // $records_filtered = 30;
 
 
+        }
+
+
+        //ordering
+        if(array_key_exists('order_by', $input)&&$input['order_by']!=''){
+            $order_direction     = "desc";
+            $order_column_name   = $input['order_by'];
+            if(array_key_exists('order_dir', $input)&&$input['order_dir']!=''){                
+                $order_direction = $input['order_dir'];
+            }
+
+            $qb->orderBy($order_column_name, $order_direction);
+        }else{
+            //$qb->orderBy("project_code", "asc");
         }
 
         //limit

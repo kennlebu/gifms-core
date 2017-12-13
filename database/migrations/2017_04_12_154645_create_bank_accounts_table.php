@@ -19,7 +19,7 @@ class CreateBankAccountsTable extends Migration
             $table->string('bank_name');
             $table->string('branch_name')->nullable();
             $table->string('account_number');
-            $table->integer('currency');
+            $table->integer('currency_id');
             $table->integer('balance_locked');
             $table->integer('migration_id')->nullable();
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));

@@ -79,8 +79,8 @@ class migrate_payment_keys extends Seeder
                                     LEFT JOIN staff ub 
                                     ON ub.migration_id = p.migration_uploaded_by
 
-                                    SET     p.processed_by              =   pb.id ,
-                                            p.uploaded_by               =   ub.id 
+                                    SET     p.processed_by_id              =   pb.id ,
+                                            p.uploaded_by_id               =   ub.id 
                              ";
 
         DB::statement($migrate_keys_sql);

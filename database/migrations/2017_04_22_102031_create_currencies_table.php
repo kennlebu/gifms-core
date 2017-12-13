@@ -18,6 +18,7 @@ class CreateCurrenciesTable extends Migration
             $table->string('currency_name')->nullable();
             $table->string('currency_sign')->nullable();
             $table->integer('default_currency')->nullable();
+            $table->integer('base_currency')->nullable();
             $table->string('display_color')->nullable();
             $table->integer('migration_id')->nullable();
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));

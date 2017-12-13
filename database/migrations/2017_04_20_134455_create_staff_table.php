@@ -18,6 +18,7 @@ class CreateStaffTable extends Migration
             $table->string('username');
             $table->string('email')->unique();
             $table->string('password');
+            $table->string('old_password');
             $table->integer('security_group_id')->nullable();
             $table->string('f_name')->nullable();
             $table->string('l_name')->nullable();
@@ -34,8 +35,10 @@ class CreateStaffTable extends Migration
             $table->string('station')->nullable();
             $table->string('swift_code')->nullable();
             $table->integer('active')->nullable();
+            $table->integer('receives_global_bccs')->nullable();
             $table->string('signature')->nullable();
             $table->string('bank_signatory')->nullable();
+            $table->integer('receive_global_email_bcc')->nullable();
             $table->integer('migration_bank_id')->nullable();
             $table->integer('migration_bank_branch_id')->nullable();
             $table->integer('migration_department_id')->nullable();

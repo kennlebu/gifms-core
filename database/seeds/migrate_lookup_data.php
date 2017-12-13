@@ -29,7 +29,7 @@ class migrate_lookup_data extends Seeder
         echo "\nApproval Levels -[ALL]---\n";
 
         DB::table('approval_levels')->insert([
-		    ['approval_level' => 'Accountant Approval'],
+		    ['approval_level' => 'Accountant Review'],
 		    ['approval_level' => 'PM Approval'],
 		    ['approval_level' => 'Finance Approval'],
 		    ['approval_level' => 'Management Approval']
@@ -284,41 +284,41 @@ class migrate_lookup_data extends Seeder
 
 
 
-        /**
-         * 
-         * 
-         * 
-         * 
-         * 
-         * 
-         *                  ExchangeRates
-         * 
-         * 
-         * 
-         * 
-         * 
-         */
+        // /**
+        //  * 
+        //  * 
+        //  * 
+        //  * 
+        //  * 
+        //  * 
+        //  *                  ExchangeRates
+        //  * 
+        //  * 
+        //  * 
+        //  * 
+        //  * 
+        //  */
 
-        $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('ExchangeRates')->get();
+        // $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('ExchangeRates')->get();
 
-        $data_to_migrate=array();
+        // $data_to_migrate=array();
 
-        foreach ($data as $key => $value) {
+        // foreach ($data as $key => $value) {
 
-            $data_to_migrate[$key]['exchange_rate']                 = $data[$key]['ExchangeRate'];
-            $data_to_migrate[$key]['current_rate']                  = $data[$key]['CurrRate'];
-            $data_to_migrate[$key]['active_date']                   = $data[$key]['ActiveDate'];
-            $data_to_migrate[$key]['end_date']                      = $data[$key]['EndDate'];
-            $data_to_migrate[$key]['migration_id']                  = $data[$key]['ID'];
+        //     $data_to_migrate[$key]['exchange_rate']                 = $data[$key]['ExchangeRate'];
+        //     $data_to_migrate[$key]['current_rate']                  = $data[$key]['CurrRate'];
+        //     $data_to_migrate[$key]['active_date']                   = $data[$key]['ActiveDate'];
+        //     $data_to_migrate[$key]['end_date']                      = $data[$key]['EndDate'];
+        //     $data_to_migrate[$key]['migration_id']                  = $data[$key]['ID'];
 
 
-            echo "\n ExchangeRates-$key---";
-            echo $data[$key]['ExchangeRate'];
-        }
+        //     echo "\n ExchangeRates-$key---";
+        //     echo $data[$key]['ExchangeRate'];
+        // }
         
-        DB::table('exchange_rates')->insert($data_to_migrate);
+        // DB::table('exchange_rates')->insert($data_to_migrate);
         
-        echo "\n-----------------------------------------------------------------------------------------------------\n";
+        // echo "\n-----------------------------------------------------------------------------------------------------\n";
 
 
 

@@ -38,6 +38,8 @@ class migrate_invoice_keys extends Seeder
                                     ON pm.migration_id = i.migration_project_manager_id
                                     LEFT JOIN lpos l 
                                     ON l.migration_id = i.migration_lpo_id
+                                    LEFT JOIN suppliers s 
+                                    ON s.migration_id = i.migration_supplier_id
 
                                     SET     i.management_approval_id        =   ma.id, 
                                             i.raised_by_id                  =   rb.id, 
@@ -45,7 +47,8 @@ class migrate_invoice_keys extends Seeder
                                             i.raise_action_by_id            =   rb.id, 
                                             i.approver_id                   =   ap.id, 
                                             i.project_manager_id            =   pm.id, 
-                                            i.lpo_id                        =   l.id
+                                            i.lpo_id                        =   l.id,
+                                            i.supplier_id                   =   s.id
                              ";
 
         DB::statement($migrate_keys_sql);

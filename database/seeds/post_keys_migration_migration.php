@@ -43,11 +43,11 @@ class post_keys_migration_migration extends Seeder
         //currencies color
 
         DB::statement("
-            UPDATE `gifms`.`currencies` SET `display_color`='#18468A' WHERE `id`='1'
+            UPDATE `currencies` SET `display_color`='#36a9e1' WHERE `id`='1'
             ");
 
         DB::statement("
-            UPDATE `gifms`.`currencies` SET `display_color`='#B01500' ,`currency_sign`='$' WHERE `id`='2'
+            UPDATE `currencies` SET `display_color`='#ff2121' ,`currency_sign`='$',`base_currency` = '1' WHERE `id`='2'
             ");
 
         echo "\n currencies display_color ---";
@@ -56,10 +56,10 @@ class post_keys_migration_migration extends Seeder
         //payments payable migration
 
         DB::statement('
-            UPDATE `gifms`.`payments` SET `payable_id`=`invoice_id`, `payable_type` = "invoices" WHERE `invoice_id`<>""
+            UPDATE `payments` SET `payable_id`=`invoice_id`, `payable_type` = "invoices" WHERE `invoice_id`<>""
             ');
         DB::statement('
-            UPDATE `gifms`.`payments` SET `payable_id`=`advance_id`, `payable_type` = "advances" WHERE `advance_id`<>""
+            UPDATE `payments` SET `payable_id`=`advance_id`, `payable_type` = "advances" WHERE `advance_id`<>""
             ');
         
         echo "\n payments payable_id, payable_type---";
@@ -483,7 +483,13 @@ class post_keys_migration_migration extends Seeder
 
         DB::statement($sql);
         $sql = "
-                UPDATE `invoice_statuses`           SET `default_status`  = '1', `next_status_id`  = '10'     WHERE `id`='11'
+                UPDATE `invoice_statuses`           SET `default_status`  = NULL , `next_status_id`  = '10'     WHERE `id`='11'
+
+                ";
+
+        DB::statement($sql);
+        $sql = "
+                UPDATE `invoice_statuses`           SET `default_status`  = '1', `next_status_id`  = '12'     WHERE `id`='10'
 
                 ";
 
@@ -518,7 +524,7 @@ class post_keys_migration_migration extends Seeder
 
         //invoice submittable
         $sql = "
-                UPDATE `invoice_statuses`           SET `default_status`  = null, `next_status_id`  = '12'     WHERE `id`='10'
+                UPDATE `invoice_statuses`           SET `default_status`  = '1', `next_status_id`  = '12'     WHERE `id`='10'
 
                 ";
 
@@ -615,6 +621,36 @@ class post_keys_migration_migration extends Seeder
         echo "\n approvable levels updated ---";
 
 
+
+
+
+
+
+
+        $sql = "UPDATE `mobile_payment_statuses` SET `mobile_payment_status`='Mobile Payments Requested Pending Submission' WHERE `id`='1'"; DB::statement($sql);
+        $sql = "UPDATE `mobile_payment_statuses` SET `mobile_payment_status`='Mobile Payments Requested Pending PM Approval' WHERE `id`='2'"; DB::statement($sql);
+        $sql = "UPDATE `mobile_payment_statuses` SET `mobile_payment_status`='Mobile Payments by Finance Pending Management Approval' WHERE `id`='8'"; DB::statement($sql);
+        $sql = "UPDATE `mobile_payment_statuses` SET `mobile_payment_status`='Mobile Payment Requested Pending Accountant Approval' WHERE `id`='9'"; DB::statement($sql);
+        echo "\n mobile_payment_statuses captions updated ---";
+
+
+        $sql = "UPDATE `staff` SET `security_group_id`='10', `post`='Program Analyst' WHERE `id`='7'"; DB::statement($sql);
+        $sql = "UPDATE `staff` SET `security_group_id`='7',`post`='Director' WHERE `id`='40'"; DB::statement($sql);
+
+        echo "\n Remove alice and MCCARTHY fro PM List ---";
+
+        $sql = " UPDATE claims set deleted_at = '2015-08-05 13:38:13' WHERE status_id = 0"; DB::statement($sql);
+        echo "\n Remove statusless claims";
+
+
+
+
+
+        $sql = " UPDATE `gifms3`.`projects` SET `program_id`= null WHERE `program_id`='0';"; DB::statement($sql);
+        echo "\n Nullify project program_id";
+
+        $sql = " UPDATE `gifms3`.`projects` SET `status_id`= null WHERE `status_id`='0';"; DB::statement($sql);
+        echo "\n Nullify project status_id";
 
     }
 }

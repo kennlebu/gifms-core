@@ -1,0 +1,308 @@
+swagger: '2.0'
+info:
+  description: Finance management sysytem
+  version: 1.0.0
+  title: Grants Information Management System
+  termsOfService: 'http://kefinance.clintonhealthaccess.org/terms/'
+  contact:
+    email: mwangikevinn@gmail.com
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+host: 'localhost:8000'
+basePath: /api
+tags:
+  - name: Grant Allocation
+    description: Everything About Grant Allocation
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/grant_allocation/docs'
+schemes:
+  - http
+  - https
+paths:
+
+
+
+
+
+
+
+
+
+
+
+  /grant_allocations:
+    get:
+      summary: Grant Allocations List
+      description: |
+        The grant_allocation endpoint returns multiple grant_allocation requested given the parameters injected. 
+      parameters:
+        - name: grant_allocation_id
+          in: query
+          description: grant_allocation id 
+          required: false
+          type: number
+          format: integer
+      tags:
+        - Grant Allocation
+      responses:
+        200:
+          description: An array of grant_allocation returned
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/grant_allocation'
+        404:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+        - api_key: []
+
+
+
+
+
+
+
+  /grant_allocation:    
+    post:
+      tags:
+        - Grant Allocation
+      summary: Add a new grant_allocation
+      description: new grant_allocation  
+      operationId: add_grant_allocation
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: grant_allocation object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/grant_allocation'
+      responses:
+        '200':
+          description: Successfully added a new grant_allocation for approval 
+        '405':
+          description: Invalid input,adding a new grant_allocation was unsuccessful
+      security:
+        - api_key: []
+            
+            
+            
+
+            
+    put:
+      tags:
+        - Grant Allocation
+      summary: Update an existing grant_allocation
+      description: ''
+      operationId: update_grant_allocation
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: grant_allocation object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/grant_allocation'
+      responses:
+        200:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Success'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: grant_allocation not found
+        '405':
+          description: Validation exception
+      security:
+        - api_key: []
+        
+        
+        
+        
+        
+        
+  '/grant_allocation/{grant_allocation_id}':
+    get:
+      tags:
+        - Grant Allocation
+      summary: Find grant_allocation by ID
+      description: Returns a single grant_allocation
+      operationId: get_grant_allocation_by_id
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: grant_allocation_id
+          in: path
+          description: ID of grant_allocation to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/grant_allocation'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: grant_allocation not found
+      security:
+        - api_key: []
+        
+        
+     
+            
+            
+            
+    delete:
+      tags:
+        - Grant Allocation
+      summary: Deletes an grant_allocation
+      description: ''
+      operationId: delete_grant_allocation
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: api_key
+          in: header
+          required: true
+          type: string
+        - name: grant_allocation_id
+          in: path
+          description: grant_allocation id to delete
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: grant_allocation not found
+      security:
+        - api_key: []
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+          
+          
+securityDefinitions:
+  api_key:
+    type: apiKey
+    name: Authorization
+    in: header
+     
+     
+     
+definitions:
+
+
+      
+      
+  grant_allocation:
+    type: object
+    required:
+      - id
+      - created_at
+    properties:
+      id:
+        type: integer
+        format: int64
+        example: 1
+      num:
+        type: number
+        format: int64
+        example: 20000
+      str:
+        type: string
+        example: 'PayPal.pdf'
+      date:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      created_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      updated_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+    xml:
+      name: grant_allocation
+    
+  
+    
+  
+  
+  
+  
+  Error:
+    type: object
+    properties:
+      error:
+        type: string
+        example: object not found
+
+
+  
+  Success:
+    type: object
+    properties:
+      msg:
+        type: string
+        example: object not found
+
+      
+      
+      
+      

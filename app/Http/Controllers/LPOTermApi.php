@@ -148,17 +148,47 @@ class LPOTermApi extends Controller
     {
         $input = Request::all();
 
-        //path params validation
 
 
-        //not path params validation
-        if (!isset($input['body'])) {
-            throw new \InvalidArgumentException('Missing the required parameter $body when calling updateLpoTerm');
+
+        try{
+
+
+            $form = Request::only(
+                'id',
+                'lpo_id',
+                'terms'
+                );
+
+
+            $term = LpoTerm::findOrFail($form['id']);
+
+
+            $term->lpo_id              =               $form['lpo_id'];
+            $term->terms               =               $form['terms'];
+
+            // $user = JWTAuth::parseToken()->authenticate();
+            // $allocation->allocated_by_id            =   (int)   $user->id;
+
+
+            if($term->save()) {
+
+
+                // $user = JWTAuth::parseToken()->authenticate();
+                // activity()
+                //    ->performedOn($allocation->allocatable)
+                //    ->causedBy($user)
+                //    ->log('re-allocated');
+                // $allocation->save();
+                return Response()->json(array('success' => 'Terms updated','lpo_term' => $term), 200);
+            }
+
+
+        }catch (JWTException $e){
+
+            return response()->json(['error'=>'You are not Authenticated'], 500);
+
         }
-        $body = $input['body'];
-
-
-        return response('How about implementing updateLpoTerm as a PUT method ?');
     }
 
 
@@ -259,14 +289,20 @@ class LPOTermApi extends Controller
      */
     public function getLpoTermById($lpo_term_id)
     {
-        $input = Request::all();
 
-        //path params validation
+       $input = Request::all();
 
+       try{
 
-        //not path params validation
+            $response = LpoTerm::findOrFail($lpo_term_id);
 
-        return response('How about implementing getLpoTermById as a GET method ?');
+            return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+
+        }catch(Exception $e){
+
+            $response =  ["error"=>"lpo could not be found"];
+            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+        }
     }
 
 

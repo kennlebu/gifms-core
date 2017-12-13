@@ -263,4 +263,8 @@ return [
     'financial_controller_id'   => env('FINANCIAL_CONTROLLER_ID'),
     'director_id'               => env('DIRECTOR_ID'),
 
+
+
+    'default_password'          => env('DEFAULT_PASSWORD','secret'),
+
 ];

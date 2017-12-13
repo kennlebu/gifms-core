@@ -16,6 +16,25 @@ use Anchu\Ftp\Facades\Ftp;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('storage/app/staff/{filename}', function ($filename) 
+{
+   $path = storage_path("app/staff/".$filename);
+
+   if (!File::exists($path)) {
+      abort(404);
+   }
+
+   $file = File::get($path);
+   $type = File::mimeType($path);
+
+   $response = Response::make($file, 200);
+   $response->header("Content-Type", $type);
+
+   return $response;
+});
+
+
 Route::get('/test/ftp', function () {
     // return view('welcome');
 
@@ -32,13 +51,48 @@ Route::get('/test/ftp', function () {
 
 Route::get('test/pdf_lpo', function () {
 
-	$lpo   = App\Models\LPOModels\Lpo::findOrFail(128);
+    $lpo   = App\Models\LPOModels\Lpo::findOrFail(128);
 
     $data = array(
             'lpo'   => $lpo
         );
 
     return view('pdf/lpo',$data);
+});
+
+Route::get('test/pdf_invoice_voucher', function () {
+
+    $inv   = App\Models\InvoicesModels\Invoice::findOrFail(128);
+
+    $data = array(
+            'invoice'   => $inv
+        );
+
+    return view('pdf/invoice_payment_voucher',$data);
+});
+Route::get('test/pdf_voucher', function () {
+
+    $payment_voucher   = App\Models\PaymentModels\PaymentVoucher::findOrFail(12);
+
+            //load signatures
+
+            foreach ($payment_voucher->vouchable->approvals as $key => $approval) {
+                try {
+                    
+                    echo $signature = $approval->approver->signature_url;
+                } catch (Exception $e) {
+                    
+                }
+
+                # code...
+            }
+            // die;
+
+    $data = array(
+            'payment_voucher'   => $payment_voucher
+        );
+
+    return view('pdf/payment_voucher',$data);
 });
 
 

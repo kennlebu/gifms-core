@@ -32,6 +32,11 @@ tags:
     externalDocs:
       description: Find out more
       url: 'http://kefinance.clintonhealthaccess.org/api/payment_type/docs'
+  - name: Payment Voucher
+    description: Everything About Payment Voucher
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/payment_voucher/docs'
 schemes:
   - http
   - https
@@ -195,7 +200,7 @@ paths:
         - Payment
       summary: get payment document by ID
       description: get Payment document
-      operationId: get_document_by_id
+      operationId: get_voucher_document_by_id
       produces:
         - application/json
         - application/xml
@@ -1015,6 +1020,271 @@ paths:
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  /payment_vouchers:
+    get:
+      summary: payment_vouchers List
+      description: |
+        The payment_voucher endpoint returns multiple payment_voucher requested given the parameters injected. 
+      parameters:
+        - name: payment_voucher_id
+          in: query
+          description: payment_voucher id 
+          required: false
+          type: number
+          format: integer
+      tags:
+        - Payment Voucher
+      responses:
+        200:
+          description: An array of payment_voucher returned
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/payment_voucher'
+        404:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      security:
+        - api_key: []
+
+
+
+
+
+
+
+  /payment_voucher:    
+    post:
+      tags:
+        - Payment Voucher
+      summary: Add a new payment_voucher
+      description: new payment_voucher  
+      operationId: add_payment_voucher
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: payment_voucher object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/payment_voucher'
+      responses:
+        '200':
+          description: Successfully added a new payment_voucher for approval 
+        '405':
+          description: Invalid input,adding a new payment_voucher was unsuccessful
+      security:
+        - api_key: []
+            
+            
+            
+
+            
+    put:
+      tags:
+        - Payment Voucher
+      summary: Update an existing payment_voucher
+      description: ''
+      operationId: update_payment_voucher
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - in: body
+          name: body
+          description: payment_voucher object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/payment_voucher'
+      responses:
+        200:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Success'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: payment_voucher not found
+        '405':
+          description: Validation exception
+      security:
+        - api_key: []
+        
+        
+        
+        
+        
+        
+  '/payment_voucher/{payment_voucher_id}':
+    get:
+      tags:
+        - Payment Voucher
+      summary: Find payment_voucher by ID
+      description: Returns a single payment_voucher
+      operationId: get_payment_voucher_by_id
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: payment_voucher_id
+          in: path
+          description: ID of payment_voucher to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/payment_voucher'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: payment_voucher not found
+      security:
+        - api_key: []
+
+        
+        
+
+
+        
+
+
+
+        
+        
+        
+  '/payment_voucher/{payment_voucher_id}/get_document':
+    get:
+      tags:
+        - Payment Voucher
+      summary: get payment_voucher document by ID
+      description: get Payment Voucher document
+      operationId: get_document_by_id
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: payment_voucher_id
+          in: path
+          description: ID of payment_voucher to return object
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/payment_voucher'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: payment_voucher not found
+      security:
+        - api_key: []
+        
+        
+     
+            
+            
+            
+    delete:
+      tags:
+        - Payment Voucher
+      summary: Deletes an payment_voucher
+      description: ''
+      operationId: delete_payment_voucher
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - name: api_key
+          in: header
+          required: true
+          type: string
+        - name: payment_voucher_id
+          in: path
+          description: payment_voucher id to delete
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: payment_voucher not found
+      security:
+        - api_key: []
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
           
           
 securityDefinitions:
@@ -1146,6 +1416,43 @@ definitions:
       
       
   payment_type:
+    type: object
+    required:
+      - id
+      - created_at
+    properties:
+      id:
+        type: integer
+        format: int64
+        example: 1
+      num:
+        type: number
+        format: int64
+        example: 20000
+      str:
+        type: string
+        example: 'PayPal.pdf'
+      date:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      created_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+      updated_at:
+        type: string
+        format: date-time
+        example: '2010-02-11'
+    xml:
+      name: payment_type
+  
+    
+
+    
+      
+      
+  payment_voucher:
     type: object
     required:
       - id

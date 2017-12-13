@@ -350,12 +350,52 @@ class PaymentApi extends Controller
 
         }
 
+
+        //ordering
+        if(array_key_exists('order_by', $input)&&$input['order_by']!=''){
+            $order_direction     = "desc";
+            $order_column_name   = $input['order_by'];
+            if(array_key_exists('order_dir', $input)&&$input['order_dir']!=''){                
+                $order_direction = $input['order_dir'];
+            }
+
+            $qb->orderBy($order_column_name, $order_direction);
+        }else{
+            //$qb->orderBy("project_code", "asc");
+        }
+
         //limit
         if(array_key_exists('limit', $input)){
 
 
             $qb->limit($input['limit']);
 
+
+        }
+
+
+
+
+            //if currency is set
+
+        if(array_key_exists('currency', $input)){
+
+            $currency = (int) $input['currency'];
+
+            if($currency >0){
+                $qb->where('currency_id', $input['currency']);
+            }
+
+        }
+            //if mode is set
+
+        if(array_key_exists('mode', $input)){
+
+            $mode = (int) $input['mode'];
+
+            if($mode >0){
+                $qb->where('payment_mode_id', $input['mode']);
+            }
 
         }
 
@@ -371,6 +411,15 @@ class PaymentApi extends Controller
             }
 
 
+        }
+        //unbatched
+        if(array_key_exists('unbatched', $input)){
+
+            $mig = (int) $input['unbatched'];
+
+            // $qb->whereNull('payment_batch_id');
+            // $qb->whereNotNull('payable_type');
+            $qb->where('status_id',1);
         }
 
 
@@ -500,12 +549,15 @@ class PaymentApi extends Controller
             $payment = Payment::find($data[$key]['id']);
 
             $data[$key]['payable']                      = $payment->payable;
+            $data[$key]['simple_date']                  = $payment->simple_date;
+            $data[$key]['payable']['currency']          = $payment->payable->currency;
             $data[$key]['debit_bank_account']           = $payment->debit_bank_account;
             $data[$key]['currency']                     = $payment->currency;
             $data[$key]['paid_to_bank']                 = $payment->paid_to_bank;
             $data[$key]['paid_to_bank_branch']          = $payment->paid_to_bank_branch;
             $data[$key]['payment_mode']                 = $payment->payment_mode;
             $data[$key]['payment_batch']                = $payment->payment_batch;
+            $data[$key]['status']                       = $payment->status;
 
         }
 

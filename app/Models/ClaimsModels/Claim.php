@@ -16,6 +16,8 @@ class Claim extends BaseModel
 {
     
     use SoftDeletes;
+    
+    protected $appends = ['amount_allocated'];
 
     
     public function requested_by()
@@ -61,5 +63,27 @@ class Claim extends BaseModel
     public function allocations()
     {
         return $this->morphMany('App\Models\AllocationModels\Allocation', 'allocatable');
+    }
+    public function vouchers()
+    {
+        return $this->morphMany('App\Models\PaymentModels\PaymentVoucher', 'vouchable')->orderBy('created_at','asc');
+    }
+    public function logs()
+    {
+        return $this->morphMany('App\Models\LogsModels\HistoryLog', 'subject')->orderBy('created_at','asc');
+    }
+    public function getAmountAllocatedAttribute(){
+
+        $allocations  =   $this->allocations;
+        $amount_allocated   =   0;
+
+        foreach ($allocations as $key => $value) {
+            $amount_allocated   +=   (float)   $value->amount_allocated;
+        }
+
+        return $amount_allocated;
+
+
+
     }
 }

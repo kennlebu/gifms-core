@@ -96,6 +96,11 @@ class AllocationApi extends Controller
             if($allocation->save()) {
 
 
+                $user = JWTAuth::parseToken()->authenticate();
+                activity()
+                   ->performedOn($allocation->allocatable)
+                   ->causedBy($user)
+                   ->log('allocated');
                 $allocation->save();
                 return Response()->json(array('success' => 'allocation added','allocation' => $allocation), 200);
             }
@@ -137,19 +142,64 @@ class AllocationApi extends Controller
      */
     public function updateAllocation()
     {
+
         $input = Request::all();
 
-        //path params validation
 
 
-        //not path params validation
-        if (!isset($input['body'])) {
-            throw new \InvalidArgumentException('Missing the required parameter $body when calling updateAllocation');
+
+        try{
+
+
+            $form = Request::only(
+                'id',
+                'account_id',
+                'allocatable_id',
+                'allocatable_type',
+                'amount',
+                'month',
+                'percentage',
+                'project_id',
+                'purpose',
+                'year'
+                );
+
+
+            $allocation = Allocation::findOrFail($form['id']);
+
+
+            $allocation->account_id             =               $form['account_id'];
+            $allocation->allocatable_id         =               $form['allocatable_id'];
+            $allocation->allocatable_type       =               $form['allocatable_type'];
+            $allocation->amount_allocated       =               $form['amount'];
+            $allocation->allocation_month       =               $form['month'];
+            $allocation->percentage_allocated   =               $form['percentage'];
+            $allocation->project_id             =               $form['project_id'];
+            $allocation->allocation_purpose     =               $form['purpose'];
+            $allocation->allocation_year        =               $form['year'];
+
+            $user = JWTAuth::parseToken()->authenticate();
+            $allocation->allocated_by_id            =   (int)   $user->id;
+
+
+            if($allocation->save()) {
+
+
+                $user = JWTAuth::parseToken()->authenticate();
+                activity()
+                   ->performedOn($allocation->allocatable)
+                   ->causedBy($user)
+                   ->log('re-allocated');
+                $allocation->save();
+                return Response()->json(array('success' => 'allocation updated','allocation' => $allocation), 200);
+            }
+
+
+        }catch (JWTException $e){
+
+            return response()->json(['error'=>'You are not Authenticated'], 500);
+
         }
-        $body = $input['body'];
-
-
-        return response('How about implementing updateAllocation as a PUT method ?');
     }
 
 
@@ -185,10 +235,20 @@ class AllocationApi extends Controller
         $input = Request::all();
 
 
+        $allocation = Allocation::findOrFail($allocation_id);
+        $user = JWTAuth::parseToken()->authenticate();
+        activity()
+           ->performedOn($allocation->allocatable)
+           ->causedBy($user)
+           ->log('de-allocated');
+               
         $deleted_allocation = Allocation::destroy($allocation_id);
 
 
+
+
         if($deleted_allocation){
+
             return response()->json(['msg'=>"Allocation deleted"], 200,array(),JSON_PRETTY_PRINT);
         }else{
             return response()->json(['error'=>"Allocation not found"], 404,array(),JSON_PRETTY_PRINT);
@@ -224,14 +284,24 @@ class AllocationApi extends Controller
      */
     public function getAllocationById($allocation_id)
     {
-        $input = Request::all();
+        $response = [];
 
-        //path params validation
+        try{
+            $response   = Allocation::with( 
+                                        'allocatable',
+                                        'allocated_by',
+                                        'project',
+                                        'account'
+                                    )->findOrFail($allocation_id);
 
 
-        //not path params validation
+            return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
 
-        return response('How about implementing getAllocationById as a GET method ?');
+        }catch(Exception $e){
+
+            $response =  ["error"=>"Allocation could not be found"];
+            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+        }
     }
 
 
