@@ -305,7 +305,7 @@ class GrantAllocationApi extends Controller
 
         //ordering
         if(array_key_exists('order_by', $input)&&$input['order_by']!=''){
-            $order_direction     = "desc";
+            $order_direction     = "asc";
             $order_column_name   = $input['order_by'];
             if(array_key_exists('order_dir', $input)&&$input['order_dir']!=''){                
                 $order_direction = $input['order_dir'];
