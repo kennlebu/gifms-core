@@ -21,7 +21,6 @@ class CreateBudgetsTable extends Migration
             $table->integer('currency_id')->default(2);
             $table->integer('created_by_id')->nullable();
             $table->integer('create_action_by_id')->nullable();
-            $table->integer('currency_id')->nullable();
             $table->integer('status_id')->nullable();
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
