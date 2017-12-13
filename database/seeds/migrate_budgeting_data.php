@@ -91,9 +91,14 @@ class migrate_budgeting_data extends Seeder
 
         $data_to_migrate=array();
 
-        foreach ($data as $key => $value) {
+        $monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-            $data_to_migrate[$key]['budget_item_purpose']  	= $data[$key]['budget_month']."/".$data[$key]['budget_year'];
+        foreach ($data as $key => $value) {
+            $month = (int) $data[$key]['budget_month'];
+            $month -= 1;
+            $monthName = $monthNames[$month];
+
+            $data_to_migrate[$key]['budget_item_purpose']  	= "Activities for $monthName, ".$data[$key]['budget_year'];
             $data_to_migrate[$key]['budget_id']  			= $data[$key]['project_id'];
             $data_to_migrate[$key]['project_id']  			= $data[$key]['project_id'];
             $data_to_migrate[$key]['account_id']  			= $data[$key]['account_id'];
