@@ -624,10 +624,32 @@ class MobilePaymentApi extends Controller
 
 
             // print_r($data);
-        
+
 
             foreach ($data as $key => $value) {
                 $payee = new MobilePaymentPayee();
+
+                if((substr($value['phone'],0,6) == "(+254)") && ((int) strlen($value['phone'])== 15)) {
+                    
+                }else{
+                    throw new Exception("Phone number for ".$value['name']." is not of the required format", 1);
+                }
+            }
+
+
+            $dt = new \DateTime();
+            $invoice_date = $dt->format('Y-m-d');
+            DB::statement("UPDATE mobile_payment_payees SET deleted_at = '$invoice_date' WHERE  mobile_payment_id = '$mobile_payment_id' ");
+        
+
+            foreach ($data as $key => $value) {
+                // $payee = new MobilePaymentPayee();
+
+                // if((substr($value['phone'],0,6) == "(+254)") && ((int) strlen($value['phone'])== 15)) {
+                    
+                // }else{
+                //     throw new Exception("Phone number for ".$value['name']." is not of the required format", 1);
+                // }
 
                 $payee->mobile_payment_id   = $mobile_payment_id;
                 $payee->full_name           = $value['name'];
@@ -649,6 +671,8 @@ class MobilePaymentApi extends Controller
 
             return response()->json(['error'=>'You are not Authenticated'], 500);
 
+        }catch(Exception $ex){
+            return response()->json(['error'=>$ex->getMessage()], 500);
         }
 
 
@@ -1254,7 +1278,7 @@ class MobilePaymentApi extends Controller
 
         //ordering
         if(array_key_exists('order_by', $input)&&$input['order_by']!=''){
-            $order_direction     = "desc";
+            $order_direction     = "asc";
             $order_column_name   = $input['order_by'];
             if(array_key_exists('order_dir', $input)&&$input['order_dir']!=''){                
                 $order_direction = $input['order_dir'];
@@ -1370,8 +1394,10 @@ class MobilePaymentApi extends Controller
 
             $sql            = MobilePayment::bind_presql($qb->toSql(),$qb->getBindings());
             $response       = json_decode(json_encode(DB::select($sql)), true);
-            $response       = $this->append_relationships_objects($response);
-            $response       = $this->append_relationships_nulls($response);
+            if(!array_key_exists('lean', $input)){
+                $response       = $this->append_relationships_objects($response);
+                $response       = $this->append_relationships_nulls($response);
+            }
         }
 
 

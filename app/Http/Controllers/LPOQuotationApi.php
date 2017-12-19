@@ -16,6 +16,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Request;
+use App\Models\LPOModels\Lpo;
 use App\Models\LPOModels\LpoQuotation;
 use Anchu\Ftp\Facades\Ftp;
 use Illuminate\Support\Facades\Storage;
@@ -92,6 +93,13 @@ class LPOQuotationApi extends Controller
                 $lpo_quotation->quotation_doc                   =   $lpo_quotation->id.'.'.$file->getClientOriginalExtension();
                 $lpo_quotation->save();
                 
+
+                $lpo    =       Lpo::with("preffered_quotation")->findOrFail($lpo_quotation->lpo_id);
+                if (is_null($lpo->preffered_quotation)) {
+                    $lpo->preffered_quotation_id = $lpo_quotation->id;
+                    $lpo->save();
+                }
+
                 return Response()->json(array('success' => 'lpo quoatation added','lpo_quotation' => $lpo_quotation), 200);
             }
 

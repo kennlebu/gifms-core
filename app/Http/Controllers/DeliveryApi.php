@@ -500,7 +500,7 @@ class DeliveryApi extends Controller
 
         //ordering
         if(array_key_exists('order_by', $input)&&$input['order_by']!=''){
-            $order_direction     = "desc";
+            $order_direction     = "asc";
             $order_column_name   = $input['order_by'];
             if(array_key_exists('order_dir', $input)&&$input['order_dir']!=''){                
                 $order_direction = $input['order_dir'];
@@ -617,8 +617,10 @@ class DeliveryApi extends Controller
 
             $sql            = Delivery::bind_presql($qb->toSql(),$qb->getBindings());
             $response       = json_decode(json_encode(DB::select($sql)), true);
-            $response       = $this->append_relationships_objects($response);
-            $response       = $this->append_relationships_nulls($response);
+            if(!array_key_exists('lean', $input)){
+                $response       = $this->append_relationships_objects($response);
+                $response       = $this->append_relationships_nulls($response);
+            }
         }
 
 
