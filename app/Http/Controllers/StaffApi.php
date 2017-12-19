@@ -303,7 +303,7 @@ class StaffApi extends Controller
 
         try{
 
-            $response   = Staff::findOrFail($staff_id);
+            $response   = Staff::with("roles")->findOrFail($staff_id);
            
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
 

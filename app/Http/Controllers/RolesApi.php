@@ -363,6 +363,18 @@ class RolesApi extends Controller
             }
 
 
+            //staff_id
+            if(array_key_exists('staff_id', $input)){
+
+
+                $qb->select(DB::raw('roles.*'))
+                     ->rightJoin('user_roles', 'user_roles.role_id', '=', 'roles.id')
+                     ->rightJoin('staff', 'staff.id', '=', 'user_roles.staff_id')
+                     ->where('staff.id', '=', "'".$input['staff_id']."'")
+                     ->groupBy('roles.id');
+            }
+
+
 
 
 
