@@ -210,7 +210,7 @@ class RolesApi extends Controller
 
         try{
 
-            $response   = Role::findOrFail($role_id);
+            $response   = Role::with("permissions")->findOrFail($role_id);
            
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
 

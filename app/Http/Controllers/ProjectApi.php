@@ -281,7 +281,7 @@ class ProjectApi extends Controller
 
         // try{
 
-            $response   = Project::with(["budget","project_manager"])
+            $response   = Project::with(["budget","project_manager","staffs"])
                                     ->findOrFail($project_id);
 
 

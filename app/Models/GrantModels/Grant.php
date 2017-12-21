@@ -25,13 +25,17 @@ class Grant extends BaseModel
     {
         return $this->belongsTo('App\Models\GrantModels\Donor','donor_id');
     }
-    public function projects()
-    {
-        return $this->hasMany('App\Models\ProjectsModels\Project');
-    } 
+    // public function projects()
+    // {
+    //     return $this->hasMany('App\Models\ProjectsModels\Project');
+    // } 
     public function grant_allocations()
     {
         return $this->hasMany('App\Models\GrantModels\GrantAllocation');
+    }
+    public function account_restrictions()
+    {
+        return $this->hasMany('App\Models\GrantModels\GrantAccountRestriction');
     }
     
     public function getAmountAllocatedAttribute(){

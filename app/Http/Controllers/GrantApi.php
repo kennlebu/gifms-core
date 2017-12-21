@@ -260,7 +260,7 @@ class GrantApi extends Controller
 
         try{
 
-            $response   = Grant::findOrFail($grant_id);
+            $response   = Grant::with("account_restrictions","account_restrictions")->findOrFail($grant_id);
            
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
 
@@ -495,6 +495,9 @@ class GrantApi extends Controller
             $data[$key]['status']                = $grants->status;
             $data[$key]['currency']              = $grants->currency;
             $data[$key]['donor']                 = $grants->donor;
+            $data[$key]['grant_allocations']     = $grants->grant_allocations;
+            $data[$key]['account_restrictions']  = $grants->account_restrictions;
+
 
         }
 

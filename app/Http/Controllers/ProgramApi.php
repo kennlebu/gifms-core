@@ -212,7 +212,7 @@ class ProgramApi extends Controller
 
         try{
 
-            $response   = Program::findOrFail($program_id);
+            $response   = Program::with("managers")->findOrFail($program_id);
            
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
 
