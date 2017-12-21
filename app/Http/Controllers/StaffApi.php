@@ -77,7 +77,7 @@ class StaffApi extends Controller
             'l_name',
             'o_names',
             'department_id',
-            'post',
+            'official_post',
             'mobile_no',
             'mpesa_no',
             'bank_account',
@@ -111,7 +111,7 @@ class StaffApi extends Controller
             $staff->l_name                       =         $form['l_name'];
             $staff->o_names                      =         $form['o_names'];
             $staff->department_id                =  (int)  $form['department_id'];
-            $staff->post                         =         $form['post'];
+            $staff->official_post                         =         $form['official_post'];
             $staff->mobile_no                    =         $form['mobile_no'];
             $staff->mpesa_no                     =         $form['mpesa_no'];
             $staff->bank_account                 =         $form['bank_account'];
@@ -174,7 +174,7 @@ class StaffApi extends Controller
             'l_name',
             'o_names',
             'department_id',
-            'post',
+            'official_post',
             'mobile_no',
             'mpesa_no',
             'bank_account',
@@ -202,7 +202,7 @@ class StaffApi extends Controller
             $staff->l_name                       =         $form['l_name'];
             $staff->o_names                      =         $form['o_names'];
             $staff->department_id                =  (int)  $form['department_id'];
-            $staff->post                         =         $form['post'];
+            $staff->official_post                         =         $form['official_post'];
             $staff->mobile_no                    =         $form['mobile_no'];
             $staff->mpesa_no                     =         $form['mpesa_no'];
             $staff->bank_account                 =         $form['bank_account'];
@@ -449,7 +449,7 @@ class StaffApi extends Controller
                 $query->orWhere('staff.f_name','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('staff.l_name','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('staff.o_names','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('staff.post','like', '\'%' . $input['search']['value']. '%\'');
+                $query->orWhere('staff.official_post','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('staff.mobile_no','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('staff.mpesa_no','like', '\'%' . $input['search']['value']. '%\'');
 

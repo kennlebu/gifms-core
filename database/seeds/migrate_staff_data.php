@@ -50,7 +50,7 @@ class migrate_staff_data extends Seeder
 
             $data_to_migrate[$key]['f_name']					= $data[$key]['FirstName'];
             $data_to_migrate[$key]['l_name']					= $data[$key]['LastName'];
-            $data_to_migrate[$key]['post']						= $data[$key]['Post'];
+            $data_to_migrate[$key]['official_post']				= $data[$key]['Post'];
             $data_to_migrate[$key]['mobile_no']					= $data[$key]['Mobile'];
             $data_to_migrate[$key]['mpesa_no']					= $data[$key]['Mobile'];
             $data_to_migrate[$key]['bank_account']				= $data[$key]['BankAccount'];
