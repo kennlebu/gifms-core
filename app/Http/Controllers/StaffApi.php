@@ -350,7 +350,7 @@ class StaffApi extends Controller
     public function updateStaffRoles($staff_id)
     {
         $form = Request::only(
-            'roles',
+            'roles'
             );        
 
         try{

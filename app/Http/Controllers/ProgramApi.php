@@ -256,7 +256,7 @@ class ProgramApi extends Controller
     public function updateManagers($program_id)
     {
         $form = Request::only(
-            'managers',
+            'managers'
             );
 
         try{

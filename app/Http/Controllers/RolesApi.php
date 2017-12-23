@@ -250,7 +250,7 @@ class RolesApi extends Controller
     public function updateRolePermissions($role_id)
     {
         $form = Request::only(
-            'permissions',
+            'permissions'
             );
 
         try{

@@ -345,7 +345,7 @@ class ProjectApi extends Controller
     public function updateProjectTeamDef($project_id)
     {
         $form = Request::only(
-            'staffs',
+            'staffs'
             );
 
         try{

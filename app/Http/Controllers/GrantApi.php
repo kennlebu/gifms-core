@@ -303,7 +303,7 @@ class GrantApi extends Controller
     public function updateAccountRestrictions($grant_id)
     {
         $form = Request::only(
-            'account_restrictions',
+            'account_restrictions'
             ); 
 
         try{            
