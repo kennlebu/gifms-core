@@ -220,6 +220,53 @@ class RolesApi extends Controller
             return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    /**
+     * Operation updateRolePermissions
+     *
+     * Update Role Permissions by ID.
+     *
+     * @param int $role_id ID of role to return object (required)
+     *
+     * @return Http response
+     */
+    public function updateRolePermissions($role_id)
+    {
+        $form = Request::only(
+            'permissions',
+            );
+
+        try{
+
+            $role  =   Role::findOrFail($role_id);
+            $role->permissions()->sync($form->permissions);
+            $response   = Role::with("permissions")->findOrFail($role_id);
+           
+            return response()->json(['msg'=>"Permissions Updated", 'role'=>$response], 200,array(),JSON_PRETTY_PRINT);
+
+        }catch(Exception $e){
+
+            $response =  ["error"=>"role could not be found"];
+            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+        }
+    }
     
 
 

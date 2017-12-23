@@ -354,3 +354,8 @@
     externalDocs:
       description: Find out more
       url: 'http://kefinance.clintonhealthaccess.org/api/budget_item/docs'
+  - name: Grant Account Restriction
+    description: Everything About Grant Account Restriction
+    externalDocs:
+      description: Find out more
+      url: 'http://kefinance.clintonhealthaccess.org/api/grant_account_restriction/docs'

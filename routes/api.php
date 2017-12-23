@@ -846,6 +846,13 @@ Route::DELETE('/role/{role_id}', 'RolesApi@deleteRole')->middleware('jwt.auth');
  */
 Route::GET('/role/{role_id}', 'RolesApi@getRoleById')->middleware('jwt.auth');
 /**
+ * PATCH updateRolePermissions
+ * Summary: Update Role Permissions by ID
+ * Notes: Update Role Permissions
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PATCH('/role/{role_id}/permissions', 'RolesApi@updateRolePermissions')->middleware('jwt.auth');
+/**
  * GET rolesGet
  * Summary: roles List
  * Notes: The role endpoint returns multiple role requested given the parameters injected.  
@@ -917,6 +924,13 @@ Route::DELETE('/staff/{staff_id}', 'StaffApi@deleteStaff')->middleware('jwt.auth
  */
 Route::GET('/staff/{staff_id}', 'StaffApi@getStaffById')->middleware('jwt.auth');
 /**
+ * PATCH updateStaffRoles
+ * Summary: Updates Staff Roles by ID
+ * Notes: Updates Staff Roles
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PATCH('/staff/{staff_id}/roles', 'StaffApi@updateStaffRoles')->middleware('jwt.auth');
+/**
  * GET staffsGet
  * Summary: staffs List
  * Notes: The staff endpoint returns multiple staff requested given the parameters injected.  
@@ -973,6 +987,13 @@ Route::GET('/project/{project_id}', 'ProjectApi@getProjectById')->middleware('jw
 
  */
 Route::GET('/projects', 'ProjectApi@projectsGet')->middleware('jwt.auth');
+/**
+ * PATCH updateProjectTeamDef
+ * Summary: Update Project Team by ID
+ * Notes: Update Project Team
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PATCH('/project/{project_id}/team', 'ProjectApi@updateProjectTeamDef')->middleware('jwt.auth');
 /**
  * GET projectActivitiesGet
  * Summary: project_activities List
@@ -4084,6 +4105,13 @@ Route::DELETE('/program/{program_id}', 'ProgramApi@deleteProgram')->middleware('
  */
 Route::GET('/program/{program_id}', 'ProgramApi@getProgramById')->middleware('jwt.auth');
 /**
+ * PATCH updateManagers
+ * Summary: Update Program Managers by ID
+ * Notes: Update Program Managers
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PATCH('/program/{program_id}/managers', 'ProgramApi@updateManagers')->middleware('jwt.auth');
+/**
  * GET programsGet
  * Summary: programs List
  * Notes: The program endpoint returns multiple program requested given the parameters injected.  
@@ -4275,6 +4303,13 @@ Route::DELETE('/grant/{grant_id}', 'GrantApi@deleteGrant')->middleware('jwt.auth
  * Output-Formats: [application/json, application/xml]
  */
 Route::GET('/grant/{grant_id}', 'GrantApi@getGrantById')->middleware('jwt.auth');
+/**
+ * PATCH updateAccountRestrictions
+ * Summary: Update Account Restrictions by ID
+ * Notes: Update Account Restrictions
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PATCH('/grant/{grant_id}/account_restrictions', 'GrantApi@updateAccountRestrictions')->middleware('jwt.auth');
 /**
  * GET grantsGet
  * Summary: Grants List

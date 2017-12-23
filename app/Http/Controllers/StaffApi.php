@@ -313,6 +313,60 @@ class StaffApi extends Controller
             return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    /**
+     * Operation updateStaffRoles
+     *
+     * Updates Staff Roles by ID.
+     *
+     * @param int $staff_id ID of staff to return object (required)
+     *
+     * @return Http response
+     */
+    public function updateStaffRoles($staff_id)
+    {
+        $form = Request::only(
+            'roles',
+            );        
+
+        try{
+            $staff  =   Staff::findOrFail($staff_id);
+            $staff->roles()->sync($form->roles);
+            $response   = Staff::with("roles")->findOrFail($staff_id);
+           
+            return response()->json(['msg'=>"Roles Updated", 'staff'=>$response], 200,array(),JSON_PRETTY_PRINT);
+
+        }catch(Exception $e){
+
+            $response =  ["error"=>"staff could not be found"];
+            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+        }
+
+    }
     
 
 

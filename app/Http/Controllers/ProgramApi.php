@@ -222,6 +222,57 @@ class ProgramApi extends Controller
             return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /**
+     * Operation updateManagers
+     *
+     * Update Program Managers by ID.
+     *
+     * @param int $program_id ID of program to return object (required)
+     *
+     * @return Http response
+     */
+    public function updateManagers($program_id)
+    {
+        $form = Request::only(
+            'managers',
+            );
+
+        try{
+
+            $program    =   Program::findOrFail($staff_id);
+            $program->managers()->sync($form->managers);
+            $response   =   Program::with("managers")->findOrFail($program_id);
+           
+            return response()->json(['msg'=>"Managers Updated", 'managers'=>$response], 200,array(),JSON_PRETTY_PRINT);
+
+        }catch(Exception $e){
+
+            $response =  ["error"=>"program could not be found"];
+            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+        }
+    }
     
 
 

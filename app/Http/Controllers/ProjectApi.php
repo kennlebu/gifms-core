@@ -279,7 +279,7 @@ class ProjectApi extends Controller
     {
         $input = Request::all();
 
-        // try{
+        try{
 
             $response   = Project::with(["budget","project_manager","staffs"])
                                     ->findOrFail($project_id);
@@ -300,11 +300,67 @@ class ProjectApi extends Controller
            
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
 
-        // }catch(Exception $e){
+        }catch(Exception $e){
 
-        //     $response =  ["error"=>"project could not be found"];
-        //     return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
-        // }
+            $response =  ["error"=>"project could not be found"];
+            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    /**
+     * Operation updateProjectTeamDef
+     *
+     * Update Project Team by ID.
+     *
+     * @param int $project_id ID of project to return object (required)
+     *
+     * @return Http response
+     */
+    public function updateProjectTeamDef($project_id)
+    {
+        $form = Request::only(
+            'staffs',
+            );
+
+        try{
+
+            $project  =   Project::findOrFail($project_id);
+            $project->staffs()->sync($form->staffs);
+            $response   = Project::with(["budget","project_manager","staffs"])->findOrFail($project_id);
+           
+            return response()->json(['msg'=>"Team Updated", 'staffs'=>$response], 200,array(),JSON_PRETTY_PRINT);
+
+        }catch(Exception $e){
+
+            $response =  ["error"=>"project could not be found"];
+            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+        }
     }
 
 

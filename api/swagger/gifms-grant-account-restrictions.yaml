@@ -12,11 +12,11 @@ info:
 host: 'localhost:8000'
 basePath: /api
 tags:
-  - name: Grant
-    description: Everything About Grant
+  - name: Grant Account Restriction
+    description: Everything About Grant Account Restriction
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/grant/docs'
+      url: 'http://kefinance.clintonhealthaccess.org/api/grant_account_restriction/docs'
 schemes:
   - http
   - https
@@ -32,27 +32,27 @@ paths:
 
 
 
-  /grants:
+  /grant_account_restrictions:
     get:
-      summary: Grants List
+      summary: Grant Account Restrictions List
       description: |
-        The grant endpoint returns multiple grant requested given the parameters injected. 
+        The grant_account_restriction endpoint returns multiple grant_account_restriction requested given the parameters injected. 
       parameters:
-        - name: grant_id
+        - name: grant_account_restriction_id
           in: query
-          description: grant id 
+          description: grant_account_restriction id 
           required: false
           type: number
           format: integer
       tags:
-        - Grant
+        - Grant Account Restriction
       responses:
         200:
-          description: An array of grant returned
+          description: An array of grant_account_restriction returned
           schema:
             type: array
             items:
-              $ref: '#/definitions/grant'
+              $ref: '#/definitions/grant_account_restriction'
         404:
           description: Unexpected error
           schema:
@@ -66,13 +66,13 @@ paths:
 
 
 
-  /grant:    
+  /grant_account_restriction:    
     post:
       tags:
-        - Grant
-      summary: Add a new grant
-      description: new grant  
-      operationId: add_grant
+        - Grant Account Restriction
+      summary: Add a new grant_account_restriction
+      description: new grant_account_restriction  
+      operationId: add_grant_account_restriction
       consumes:
         - application/json
         - application/xml
@@ -82,15 +82,15 @@ paths:
       parameters:
         - in: body
           name: body
-          description: grant object that needs to be added
+          description: grant_account_restriction object that needs to be added
           required: true
           schema:
-            $ref: '#/definitions/grant'
+            $ref: '#/definitions/grant_account_restriction'
       responses:
         '200':
-          description: Successfully added a new grant for approval 
+          description: Successfully added a new grant_account_restriction for approval 
         '405':
-          description: Invalid input,adding a new grant was unsuccessful
+          description: Invalid input,adding a new grant_account_restriction was unsuccessful
       security:
         - api_key: []
             
@@ -100,10 +100,10 @@ paths:
             
     put:
       tags:
-        - Grant
-      summary: Update an existing grant
+        - Grant Account Restriction
+      summary: Update an existing grant_account_restriction
       description: ''
-      operationId: update_grant
+      operationId: update_grant_account_restriction
       consumes:
         - application/json
         - application/xml
@@ -113,10 +113,10 @@ paths:
       parameters:
         - in: body
           name: body
-          description: grant object that needs to be added
+          description: grant_account_restriction object that needs to be added
           required: true
           schema:
-            $ref: '#/definitions/grant'
+            $ref: '#/definitions/grant_account_restriction'
       responses:
         200:
           description: Unexpected error
@@ -125,7 +125,7 @@ paths:
         '400':
           description: Invalid ID supplied
         '404':
-          description: grant not found
+          description: grant_account_restriction not found
         '405':
           description: Validation exception
       security:
@@ -136,20 +136,20 @@ paths:
         
         
         
-  '/grant/{grant_id}':
+  '/grant_account_restriction/{grant_account_restriction_id}':
     get:
       tags:
-        - Grant
-      summary: Find grant by ID
-      description: Returns a single grant
-      operationId: get_grant_by_id
+        - Grant Account Restriction
+      summary: Find grant_account_restriction by ID
+      description: Returns a single grant_account_restriction
+      operationId: get_grant_account_restriction_by_id
       produces:
         - application/json
         - application/xml
       parameters:
-        - name: grant_id
+        - name: grant_account_restriction_id
           in: path
-          description: ID of grant to return object
+          description: ID of grant_account_restriction to return object
           required: true
           type: integer
           format: int64
@@ -157,45 +157,11 @@ paths:
         '200':
           description: successful operation
           schema:
-            $ref: '#/definitions/grant'
+            $ref: '#/definitions/grant_account_restriction'
         '400':
           description: Invalid ID supplied
         '404':
-          description: grant not found
-      security:
-        - api_key: []
-        
-        
-        
-        
-        
-        
-  '/grant/{grant_id}/account_restrictions':
-    patch:
-      tags:
-        - Grant
-      summary: Update Account Restrictions by ID
-      description: Update Account Restrictions
-      operationId: update_account_restrictions
-      produces:
-        - application/json
-        - application/xml
-      parameters:
-        - name: grant_id
-          in: path
-          description: ID of grant to return object
-          required: true
-          type: integer
-          format: int64
-      responses:
-        '200':
-          description: successful operation
-          schema:
-            $ref: '#/definitions/grant'
-        '400':
-          description: Invalid ID supplied
-        '404':
-          description: grant not found
+          description: grant_account_restriction not found
       security:
         - api_key: []
         
@@ -206,10 +172,10 @@ paths:
             
     delete:
       tags:
-        - Grant
-      summary: Deletes an grant
+        - Grant Account Restriction
+      summary: Deletes an grant_account_restriction
       description: ''
-      operationId: delete_grant
+      operationId: delete_grant_account_restriction
       produces:
         - application/json
         - application/xml
@@ -218,9 +184,9 @@ paths:
           in: header
           required: true
           type: string
-        - name: grant_id
+        - name: grant_account_restriction_id
           in: path
-          description: grant id to delete
+          description: grant_account_restriction id to delete
           required: true
           type: integer
           format: int64
@@ -228,7 +194,7 @@ paths:
         '400':
           description: Invalid ID supplied
         '404':
-          description: grant not found
+          description: grant_account_restriction not found
       security:
         - api_key: []
 
@@ -282,7 +248,7 @@ definitions:
 
       
       
-  grant:
+  grant_account_restriction:
     type: object
     required:
       - id
@@ -312,7 +278,7 @@ definitions:
         format: date-time
         example: '2010-02-11'
     xml:
-      name: grant
+      name: grant_account_restriction
     
   
     

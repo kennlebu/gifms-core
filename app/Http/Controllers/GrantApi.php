@@ -260,9 +260,58 @@ class GrantApi extends Controller
 
         try{
 
-            $response   = Grant::with("account_restrictions","account_restrictions")->findOrFail($grant_id);
+            $response   = Grant::with("account_restrictions")->findOrFail($grant_id);
            
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+
+        }catch(Exception $e){
+
+            $response =  ["error"=>"grant could not be found"];
+            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    /**
+     * Operation updateAccountRestrictions
+     *
+     * Update Account Restrictions by ID.
+     *
+     * @param int $grant_id ID of grant to return object (required)
+     *
+     * @return Http response
+     */
+    public function updateAccountRestrictions($grant_id)
+    {
+        $form = Request::only(
+            'account_restrictions',
+            ); 
+
+        try{            
+            $grant  =   Grant::findOrFail($grant_id);
+            $grant->account_restrictions()->sync($form->account_restrictions);
+            $response   = Grant::with("account_restrictions")->findOrFail($grant_id);
+           
+            return response()->json(['msg'=>"Restrictions Updated", 'account_restrictions'=>$response], 200,array(),JSON_PRETTY_PRINT);
 
         }catch(Exception $e){
 
