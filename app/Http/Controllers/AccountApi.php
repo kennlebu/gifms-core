@@ -358,6 +358,9 @@ class AccountApi extends Controller
         if(array_key_exists('account_format', $input)){
             $qb->where('account_format', $input['account_format']);
         }
+        if(array_key_exists('account_type_id', $input)){
+            $qb->where('account_type_id', $input['account_type_id']);
+        }
 
 
         //searching
