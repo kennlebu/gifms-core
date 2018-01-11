@@ -440,6 +440,16 @@ class StaffApi extends Controller
 
         }
 
+        //getting by id
+        if(array_key_exists('staff_id', $input)){
+            $qb->where(function ($query) use ($input) {
+                
+                $query->where('staff.id','=', $input['staff_id']);
+
+            });
+
+        }
+
 
         //ordering
         if(array_key_exists('order_by', $input)&&$input['order_by']!=''){

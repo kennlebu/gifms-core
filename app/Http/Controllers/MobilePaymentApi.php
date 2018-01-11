@@ -644,7 +644,7 @@ class MobilePaymentApi extends Controller
 
             foreach ($data as $key => $value) {
                 // $payee = new MobilePaymentPayee();
-
+            
                 // if((substr($value['phone'],0,6) == "(+254)") && ((int) strlen($value['phone'])== 15)) {
                     
                 // }else{
@@ -660,6 +660,8 @@ class MobilePaymentApi extends Controller
                 $payee->total               = $payee->calculated_total;
 
                 $payee->save();
+                //file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , '\nSaved '.json_encode($key). ' :::: '.json_encode($value) , FILE_APPEND);
+
             }
 
 

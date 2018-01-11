@@ -11,7 +11,7 @@
         "doctrine/dbal": "^2.5",
         "laravel/framework": "5.4.*",
         "maatwebsite/excel": "^2.1.0",
-        "niklasravnsborg/laravel-pdf": "^1.5",
+        "niklasravnsborg/laravel-pdf": "^2.0",
         "spatie/eloquent-sortable": "^3.3",
         "spatie/laravel-activitylog": "^1.15",
         "spatie/laravel-backup": "^4.0.0",

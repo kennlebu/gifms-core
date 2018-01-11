@@ -1,5 +1,6 @@
 <?php
 namespace App\Http\Controllers;
+use Exception;
 use JWTAuth;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Exceptions\JWTException;
@@ -17,7 +18,9 @@ class ApiAuthController extends Controller{
                 return response()->json(['error'=>'invalid credentials'], 401);
             }
         }catch (JWTException $e){
-            return response()->json(['error'=>'something went wrong'], 500);
+            return response()->json(['error'=>$e,'stack_trace'=>$e->getTrace()], 500);
+        }catch(\Exception $ex){
+            return response()->json(['error'=>$ex->getMessage(),'stack_trace'=>$ex->getTrace()], 500);
         }
         return response()->json(['token'=>$token], 200);
     }
