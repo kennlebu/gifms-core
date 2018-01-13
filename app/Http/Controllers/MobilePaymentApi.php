@@ -95,7 +95,7 @@ class MobilePaymentApi extends Controller
             $form = Request::only(
                 'requested_by_id',
                 'request_action_by_id',
-                'project_id',
+                //'project_id',
                 'account_id',
                 'mobile_payment_type_id',
                 'expense_desc',
@@ -123,7 +123,7 @@ class MobilePaymentApi extends Controller
 
             $mobile_payment->requested_by_id                =   (int)   $form['requested_by_id'];
             $mobile_payment->request_action_by_id           =   (int)   $form['request_action_by_id'];
-            $mobile_payment->project_id                     =   (int)   $form['project_id'];
+            //$mobile_payment->project_id                     =   (int)   $form['project_id'];
             // $mobile_payment->account_id                     =   (int)   $form['account_id'];
             $mobile_payment->mobile_payment_type_id         =   (int)   $form['mobile_payment_type_id'];
             $mobile_payment->expense_desc                   =           $form['expense_desc'];
@@ -1385,12 +1385,13 @@ class MobilePaymentApi extends Controller
 
             $response_dt    = $this->append_relationships_objects($response_dt);
             $response_dt    = $this->append_relationships_nulls($response_dt);
+            $response_dt = $this->fill_projects_column($response_dt);
             $response       = MobilePayment::arr_to_dt_response( 
                 $response_dt, $input['draw'],
                 $total_records,
                 $records_filtered
                 );
-
+                
 
         }else{
 
@@ -1551,6 +1552,69 @@ class MobilePaymentApi extends Controller
             }
         }
 
+        return $data;
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public function fill_projects_column($data = array()){
+
+        $id_holder = '';
+        $rpt = false;
+        foreach ($data as $key => $value) {
+
+            //$query = "SELECT p.id, p.project_code, p.project_name FROM mobile_payments as m join allocations as a on m.id = a.allocatable_id join projects as p on a.project_id = p.id where a.allocatable_id = :val and a.allocatable_type = :alt";
+            //$results = DB::select($query, ['val' => $value["id"], 'alt' => 'mobile_payments']);
+            
+            //query builder
+            $qb = DB::table('mobile_payments')
+            ->join('allocations', function ($join) use($value) {
+                $join->on('mobile_payments.id', '=', 'allocations.allocatable_id')
+                ->whereNull('mobile_payments.deleted_at')
+                ->where('allocations.allocatable_type', 'mobile_payments')
+                ->where('allocations.allocatable_id', $value["id"]);
+            })
+            ->join('projects', 'allocations.project_id', '=', 'projects.id')
+            ->select('projects.id', 'projects.project_code', 'projects.project_name')
+            ->get();
+
+            if($qb->count() > 0){
+                if($id_holder == $qb[0]['id']) $rpt = true;
+                $id_holder = $qb[0]['id'];
+
+                if($rpt){
+                    $data[$key]['project'] = array("project_name"=>'Multiple projects');
+                    
+                }
+                else if(!$rpt){
+                    $data[$key]['project'] = array("project_name"=>$qb[0]['project_name']);
+                }
+                else if($value["project"]==null){
+                    $data[$key]['project'] = array("project_name"=>"N/A");
+                    
+                }
+            }
+
+        }
         return $data;
 
 
