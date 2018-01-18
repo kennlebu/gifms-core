@@ -1576,9 +1576,9 @@ class MobilePaymentApi extends Controller
 
     public function fill_projects_column($data = array()){
 
-        $id_holder = '';
-        $rpt = false;
         foreach ($data as $key => $value) {
+            $id_holder = '';
+            $rpt = false;
 
             //$query = "SELECT p.id, p.project_code, p.project_name FROM mobile_payments as m join allocations as a on m.id = a.allocatable_id join projects as p on a.project_id = p.id where a.allocatable_id = :val and a.allocatable_type = :alt";
             //$results = DB::select($query, ['val' => $value["id"], 'alt' => 'mobile_payments']);
@@ -1595,22 +1595,26 @@ class MobilePaymentApi extends Controller
             ->select('projects.id', 'projects.project_code', 'projects.project_name')
             ->get();
 
-            if($qb->count() > 0){
-                if($id_holder == $qb[0]['id']) $rpt = true;
-                $id_holder = $qb[0]['id'];
+            if(count($qb) > 0){
+                foreach($qb as $record){
+                if($id_holder != $record['id'] && $id_holder != '') $rpt = true;
+                $id_holder = $record['id'];
 
                 if($rpt){
                     $data[$key]['project'] = array("project_name"=>'Multiple projects');
                     
                 }
                 else if(!$rpt){
-                    $data[$key]['project'] = array("project_name"=>$qb[0]['project_name']);
+                    $data[$key]['project'] = array("project_name"=>$record['project_name']);
                 }
+            }
+                
+            }
                 else if($value["project"]==null){
                     $data[$key]['project'] = array("project_name"=>"N/A");
                     
                 }
-            }
+            
 
         }
         return $data;
