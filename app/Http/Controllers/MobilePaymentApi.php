@@ -447,11 +447,15 @@ class MobilePaymentApi extends Controller
                 $approval->approver_id              =   (int)   $user->id;
 
                 $approval->save();
-                if($mobile_payment->status_id!=4){                        
+                if($mobile_payment->status_id!=4){   
+                    try{                     
                     Mail::send(new NotifyMobilePayment($mobile_payment));
+                    }catch(Exception $e){
+                        //file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , $e , FILE_APPEND);
+                    }
                 }
 
-                return Response()->json(array('msg' => 'Success: mobile_payment approved','mobile_payment' => $mobile_payment), 200);
+                return Response()->json(array('result' => 'Success: mobile_payment approved','mobile_payment' => $mobile_payment), 200);
             }
 
         }catch(ApprovalException $ae){
@@ -459,7 +463,7 @@ class MobilePaymentApi extends Controller
             $response =  ["error"=>"You do not have the permissions to perform this action at this point"];
             return response()->json($response, 403,array(),JSON_PRETTY_PRINT);
         }catch(Exception $e){
-
+            
             $response =  ["error"=>"Mobile Payment could not be found"];
             return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
         }

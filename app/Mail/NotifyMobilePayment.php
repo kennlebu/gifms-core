@@ -29,7 +29,7 @@ class NotifyMobilePayment extends Mailable
         $this->mobile_payment   = MobilePayment::with(
                                 'requested_by',
                                 'requested_action_by',
-                                'project',
+                                //'project',
                                 'account',
                                 'mobile_payment_type',
                                 'invoice',

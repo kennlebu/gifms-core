@@ -51,7 +51,7 @@
             </strong>
           </td>
         </tr>
-        <tr>
+        <!-- <tr>
           <td style="text-align: left; border-bottom: 1px dotted #ccbcbc;" colspan="1"  bgcolor="#ffffff" height="20">
             <strong>
               <span style="color: #7c7c7c;">Project:</span>
@@ -62,7 +62,7 @@
               <span style="color: #092d50;">{{$mobile_payment->project->project_name}}</span>
             </strong>
           </td>
-        </tr> 
+        </tr>  -->
         <tr>
           <td style="text-align: left; border-bottom: 1px dotted #ccbcbc;" colspan="1"  bgcolor="#ffffff" height="20">
             <strong>
