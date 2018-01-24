@@ -231,8 +231,9 @@ class InvoiceApi extends Controller
                 }else if($form['submission_type']=='log'){
                     $invoice->ref                        = "CHAI/INV/#$invoice->id/".date_format($invoice->created_at,"Y/m/d");
                     $invoice->save();
-
+                    try{
                     Mail::send(new NotifyInvoice($invoice));
+                    }catch(Exception $e){}
 
                 }
                 
@@ -698,7 +699,9 @@ class InvoiceApi extends Controller
                    ->causedBy($user)
                    ->log('approved');
 
+                   try{
                 Mail::send(new NotifyInvoice($invoice));
+                   }catch(Exception $e){}
 
                 return Response()->json(array('msg' => 'Success: invoice approved','invoice' => $invoice), 200);
             }
@@ -780,7 +783,9 @@ class InvoiceApi extends Controller
 
             if($invoice->save()) {
 
+                try{
                 Mail::send(new NotifyInvoice($invoice));
+                }catch(Exception $e){}
 
                 activity()
                    ->performedOn($invoice)
@@ -1000,7 +1005,9 @@ class InvoiceApi extends Controller
 
             if($invoice->save()) {
 
+                try{
                 Mail::send(new NotifyInvoice($invoice));
+                }catch(Exception $e){}
 
                 $user = JWTAuth::parseToken()->authenticate();
                 activity()

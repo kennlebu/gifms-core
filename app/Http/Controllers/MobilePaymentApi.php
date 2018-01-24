@@ -463,7 +463,7 @@ class MobilePaymentApi extends Controller
             $response =  ["error"=>"You do not have the permissions to perform this action at this point"];
             return response()->json($response, 403,array(),JSON_PRETTY_PRINT);
         }catch(Exception $e){
-            
+
             $response =  ["error"=>"Mobile Payment could not be found"];
             return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
         }
@@ -537,8 +537,9 @@ class MobilePaymentApi extends Controller
             $mobile_payment->rejection_reason             =   $form['rejection_reason'];
 
             if($mobile_payment->save()) {
-
+                try{
                 Mail::send(new NotifyMobilePayment($mobile_payment));
+                }catch(Exception $e){}
 
                 return Response()->json(array('msg' => 'Success: mobile_payment approved','mobile_payment' => $mobile_payment), 200);
             }
@@ -987,8 +988,9 @@ class MobilePaymentApi extends Controller
             $mobile_payment->requested_at = date('Y-m-d H:i:s');
 
             if($mobile_payment->save()) {
-
+                try{
                 Mail::send(new NotifyMobilePayment($mobile_payment));
+                }catch(Exception $e){}
 
                 return Response()->json(array('msg' => 'Success: mobile_payment submitted','mobile_payment' => $mobile_payment), 200);
             }

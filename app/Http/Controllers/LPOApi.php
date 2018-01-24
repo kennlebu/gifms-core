@@ -393,7 +393,11 @@ class LPOApi extends Controller
                 $approval->save();
 
                 if($lpo->status_id!=7){
+                    try{
                     Mail::send(new NotifyLpo($lpo));
+                    }catch(Exception $e){
+
+                    }
                 }
 
                 return Response()->json(array('msg' => 'Success: lpo approved','lpo' => $lpo), 200);
@@ -479,8 +483,9 @@ class LPOApi extends Controller
 
             if($lpo->save()) {
 
-                
+                try{
                 Mail::send(new NotifyLpo($lpo));
+                }catch(Exception $e){}
 
                 return Response()->json(array('msg' => 'Success: lpo rejected','lpo' => $lpo), 200);
             }
@@ -567,8 +572,12 @@ class LPOApi extends Controller
 
             if($lpo->save()) {
 
-
+                try{
                 Mail::send(new NotifyLpo($lpo));
+                }catch(Exception $e){
+            //$response =  ["error"=>"lpo could not be found"];
+            //return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+        }
 
                 return Response()->json(array('msg' => 'Success: lpo submitted','lpo' => $lpo), 200);
             }
@@ -711,7 +720,7 @@ class LPOApi extends Controller
                 $lpo->status_id = $next_status;
 
 
-                return Response()->json(array('msg' => 'Success','lpo' => $lpo), 200);
+                return Response()->json(array('result' => 'Success','lpo' => $lpo), 200);
 
             }catch(Exception $e){
 
@@ -1086,14 +1095,19 @@ class LPOApi extends Controller
         if(array_key_exists('datatables', $input)){
 
             //searching
+            //$qb->join('lpo_quotations', 'lpos.id', '=', 'lpo_quotations.lpo_id');
+            //$qb->join('suppliers', 'lpo_quotations.supplier_id', '=', 'suppliers.id');
             $qb->where(function ($query) use ($input) {
                 
                 $query->orWhere('lpos.id','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('lpos.ref','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('lpos.expense_desc','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('lpos.expense_purpose','like', '\'%' . $input['search']['value']. '%\'');
+                //$query->orWhere('suppliers.supplier_name','like','\'%' .$input['search']['value']. '%\'');
 
             });
+            
+            //    $qb->select(DB::raw('lpos.*, count(*) AS count', 'suppliers.supplier_name'));
 
 
 
@@ -1119,7 +1133,7 @@ class LPOApi extends Controller
 
             if($order_column_name!=''){
 
-                $qb->orderBy($order_column_name, $order_direction);
+                $qb->orderBy('lpos.'.$order_column_name, $order_direction);
 
             }
 
@@ -1142,7 +1156,7 @@ class LPOApi extends Controller
 
 
             $sql = Lpo::bind_presql($qb->toSql(),$qb->getBindings());
-
+           // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , '\nSQL:: '.$sql , FILE_APPEND);
             // $response_dt = DB::select($qb->toSql(),$qb->getBindings());         //pseudo
             $response_dt = DB::select($sql);
 
