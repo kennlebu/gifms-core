@@ -4339,6 +4339,30 @@ Route::GET('/grants', 'GrantApi@grantsGet')->middleware('jwt.auth');
 
 
 
+/**
+ * GET getUserGuide
+ * Summary: Donwloads the user guide
+ * Notes: Download user guide
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/help/user_guide', 'HelpApi@getUserGuide')->middleware('jwt.auth');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 /**
