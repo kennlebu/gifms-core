@@ -249,12 +249,13 @@ class AdvanceApi extends Controller
     {
         $input = Request::all();
 
-        //path params validation
+        $deleted = Advance::destroy($advance_id);
 
-
-        //not path params validation
-
-        return response('How about implementing deleteAdvance as a DELETE method ?');
+        if($deleted){
+            return response()->json(['msg'=>"Advance deleted"], 200,array(),JSON_PRETTY_PRINT);
+        }else{
+            return response()->json(['error'=>"Advance not found"], 404,array(),JSON_PRETTY_PRINT);
+        }
     }
 
 
