@@ -22,6 +22,10 @@ use App\Models\AdvancesModels\Advance;
 use App\Models\AdvancesModels\AdvanceStatus;
 use App\Models\ProjectsModels\Project;
 use App\Models\AccountingModels\Account;
+use Anchu\Ftp\Facades\Ftp;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\NotifyAdvance;
 use App\Models\AllocationModels\Allocation;
@@ -110,11 +114,11 @@ class AdvanceApi extends Controller
 
             // FTP::connection()->changeDir('/lpos');
 
-            // $ftp = FTP::connection()->getDirListing();
+            $ftp = FTP::connection()->getDirListing();
 
             // print_r($form['file']);
 
-            // $file = $form['file'];
+            $file = $form['file'];
 
 
             $advance->requested_by_id                   =   (int)       $form['requested_by_id'];
@@ -130,11 +134,11 @@ class AdvanceApi extends Controller
 
             if($advance->save()) {
 
-                // FTP::connection()->makeDir('/advances/'.$advance->id);
-                // FTP::connection()->makeDir('/advances/'.$advance->id);
-                // FTP::connection()->uploadFile($file->getPathname(), '/advances/'.$advance->id.'/'.$advance->id.'.'.$file->getClientOriginalExtension());
+                FTP::connection()->makeDir('/advances/'.$advance->id);
+                FTP::connection()->makeDir('/advances/'.$advance->id);
+                FTP::connection()->uploadFile($file->getPathname(), '/advances/'.$advance->id.'/'.$advance->id.'.'.$file->getClientOriginalExtension());
 
-                // $advance->advance_document           =   $advance->id.'.'.$file->getClientOriginalExtension();
+                $advance->advance_document           =   $advance->id.'.'.$file->getClientOriginalExtension();
                 $advance->ref                        = "CHAI/ADV/#$advance->id/".date_format($advance->created_at,"Y/m/d");
                 $advance->save();
                 
@@ -940,6 +944,79 @@ class AdvanceApi extends Controller
 
 
         return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /**
+     * Operation getAdvanceDocumentById
+     *
+     * get advance document by ID.
+     *
+     * @param int $advance_id ID of mobile_payment to return object (required)
+     *
+     * @return Http response
+     */
+    public function getAdvanceDocumentById($advance_id)
+    {
+
+
+        try{
+
+
+            $advance          = Advance::findOrFail($advance_id);
+
+            $path           = '/advances/'.$advance->id.'/'.$advance->advance_document;
+
+            $path_info      = pathinfo($path);
+
+            $ext            = $path_info['extension'];
+
+            $basename       = $path_info['basename'];
+
+            $file_contents  = FTP::connection()->readFile($path);
+
+            Storage::put('advances/'.$advance->id.'.temp', $file_contents);
+
+            $url            = storage_path("app/advances/".$advance->id.'.temp');
+
+            $file           = File::get($url);
+
+            $response       = Response::make($file, 200);
+
+            $response->header('Content-Type', $this->get_mime_type($basename));
+
+            return $response;  
+        }catch (Exception $e ){            
+
+            $response       = Response::make("", 200);
+
+            $response->header('Content-Type', 'application/pdf');
+
+            return $response;  
+
+        }
     }
 
 

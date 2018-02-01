@@ -8,4 +8,6 @@ Homestead.yaml
 .env
 .vscode/*
 lpos/*
+claims/
+advances/
 mobile_payments/*

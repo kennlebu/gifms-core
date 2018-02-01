@@ -2670,6 +2670,13 @@ Route::GET('/advances', 'AdvanceApi@getAdvances')->middleware('jwt.auth');
  * Output-Formats: [application/json, application/xml]
  */
 Route::PATCH('/advances/approve', 'AdvanceApi@approveSeveralAdvances')->middleware('jwt.auth');
+/**
+ * GET getAdvanceDocumentById
+ * Summary: preview advance document by ID
+ * Notes: Returns a single advance document
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/advance/{advance_id}/get_document', 'AdvanceApi@getAdvanceDocumentById')->middleware('jwt.auth');
 
 
 

@@ -5,4 +5,5 @@ mobile_payment/
 signsheets/
 staff/
 templates/
+advances/
 !.gitignore
