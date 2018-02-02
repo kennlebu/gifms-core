@@ -52,7 +52,7 @@ class MigratePasswords extends Command
             if($use_default_password){
                 $staff->password = bcrypt(Config::get('app.default_password'));
             }else{                
-                $staff->password = bcrypt($this->decrypt_password($staff->old_password));
+                $staff->password = bcrypt($this->removeInvalidCharacters($this->decrypt_password($staff->old_password)));
             }
             $staff->save();
             $bar->advance();
@@ -78,5 +78,10 @@ class MigratePasswords extends Command
             $decrypted_password.=chr((ord(substr($password_str,$i-1,1)) - $offset));
         }
         return $decrypted_password;
+    }
+
+    public function removeInvalidCharacters($string){
+        ini_set('mbstring.substitute_character', "none"); 
+        return mb_convert_encoding($string, 'UTF-8', 'UTF-8');
     }
 }
