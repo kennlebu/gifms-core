@@ -42,12 +42,11 @@ class HelpApi extends Controller
 
             $ext            = $path_info['extension'];
 
-
             $basename       = $path_info['basename'];
 
             $file_contents  = FTP::connection()->readFile($path);
 
-            Storage::put($path , $file_contents);
+            // Storage::put($path , $file_contents);
 
             $url            = storage_path("app".$path);
 
@@ -63,7 +62,6 @@ class HelpApi extends Controller
             $response       = Response::make("", 500);
 
             $response->header('Content-Type', 'application/pdf');
-            //file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , '== '>$e, FILE_APPEND);
 
             return $response;  
 
