@@ -210,16 +210,17 @@ class InvoiceApi extends Controller
                 $invoice->received_at                       =   date('Y-m-d H:i:s');
                 $invoice->raised_at                         =   date('Y-m-d H:i:s');
 
+                if (($invoice->total - $invoice->amount_allocated) <= 1 ){ //allowance of 1
+                    $invoice->status_id = $invoice->status->next_status_id;  
+                }
                 
-                $invoice->status_id = $invoice->status->next_status_id;
-
             }
 
 
             if($invoice->save()) {
 
                 if($form['submission_type']=='full'||$form['submission_type']=='upload_logged'){
-
+                    
                     FTP::connection()->makeDir('/invoices');
                     FTP::connection()->makeDir('/invoices/'.$invoice->id);
                     FTP::connection()->uploadFile($file->getPathname(), '/invoices/'.$invoice->id.'/'.$invoice->id.'.'.$file->getClientOriginalExtension());
@@ -239,7 +240,7 @@ class InvoiceApi extends Controller
                 
                 return Response()->json(array('success' => 'Invoice Added','invoice' => $invoice), 200);
             }
-
+        
 
         }catch (JWTException $e){
 
