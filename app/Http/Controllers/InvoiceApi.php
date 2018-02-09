@@ -303,19 +303,19 @@ class InvoiceApi extends Controller
                 'supplier_id',
                 'project_manager_id',
                 'total',
-                'currency_id'
-                // 'file',
-                // 'submission_type'
+                'currency_id',
+                'file',
+                'submission_type'
                 );
 
 
             // FTP::connection()->changeDir('/lpos');
 
-            // $ftp = FTP::connection()->getDirListing();
+            $ftp = FTP::connection()->getDirListing();
 
             // print_r($form['file']);
 
-            // $file = $form['file'];
+            $file = $form['file'];
 
 
 
@@ -350,17 +350,18 @@ class InvoiceApi extends Controller
 
             if($invoice->save()) {
 
-                // if($form['submission_type']=='full'||$form['submission_type']=='upload_logged'){
+                if($form['submission_type']=='full'){
 
-                //     FTP::connection()->makeDir('/invoices');
-                //     FTP::connection()->makeDir('/invoices/'.$invoice->id);
-                //     FTP::connection()->uploadFile($file->getPathname(), '/invoices/'.$invoice->id.'/'.$invoice->id.'.'.$file->getClientOriginalExtension());
+                    FTP::connection()->makeDir('/invoices');
+                    FTP::connection()->makeDir('/invoices/'.$invoice->id);
+                    FTP::connection()->uploadFile($file->getPathname(), '/invoices/'.$invoice->id.'/'.$invoice->id.'.'.$file->getClientOriginalExtension());
 
-                //     $invoice->invoice_document           =   $invoice->id.'.'.$file->getClientOriginalExtension();
-                //     $invoice->ref                        = "CHAI/INV/#$invoice->id/".date_format($invoice->created_at,"Y/m/d");
-                //     $invoice->save();
+                    $invoice->invoice_document           =   $invoice->id.'.'.$file->getClientOriginalExtension();
+                    $invoice->ref                        = "CHAI/INV/#$invoice->id/".date_format($invoice->created_at,"Y/m/d");
+                    $invoice->save();
 
-                // }else if($form['submission_type']=='log'){
+                }
+                // else if($form['submission_type']=='log'){
                 //     $invoice->ref                        = "CHAI/INV/#$invoice->id/".date_format($invoice->created_at,"Y/m/d");
                 //     $invoice->save();
 

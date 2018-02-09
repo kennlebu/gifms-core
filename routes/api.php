@@ -2875,7 +2875,7 @@ Route::POST('/invoice', 'InvoiceApi@addInvoice')->middleware('jwt.auth');
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::PUT('/invoice', 'InvoiceApi@updateInvoice')->middleware('jwt.auth');
+Route::POST('/invoice/update', 'InvoiceApi@updateInvoice')->middleware('jwt.auth');
 /**
  * DELETE deleteInvoice
  * Summary: Deletes an invoice
