@@ -18,6 +18,13 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\DeliveriesModels\Delivery;
+use Anchu\Ftp\Facades\Ftp;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
+use App\Models\ApprovalsModels\Approval;
+use App\Models\ApprovalsModels\ApprovalLevel;
+use App\Models\StaffModels\Staff;
+use Illuminate\Support\Facades\Response;
 
 class DeliveryApi extends Controller
 {
@@ -62,20 +69,20 @@ class DeliveryApi extends Controller
     public function addDelivery()
     {
 
-        $input = Request::all();
-
-
-
-        $form = Request::only(
-            'received_by_id',
-            'comment',
-            'external_ref',
-            'lpo_id'
-            );
+        $delivery = new Delivery;
 
         try{
 
-            $delivery = new Delivery;
+            $form = Request::only(
+                'received_by_id',
+                'comment',
+                'external_ref',
+                'lpo_id',
+                'file'
+            );
+
+            $ftp = FTP::connection()->getDirListing();
+            $file = $form['file'];
 
             $delivery->received_by_id                    =   (int)   $form['received_by_id'];
             $delivery->comment                           =           $form['comment'];
@@ -86,10 +93,13 @@ class DeliveryApi extends Controller
             // $user = JWTAuth::parseToken()->authenticate();
             // $delivery->request_action_by_id            =   (int)   $user->id;
 
-
-
             if($delivery->save()) {
 
+                FTP::connection()->makeDir('/deliveries');
+                FTP::connection()->makeDir('/deliveries/'.$delivery->id);
+                FTP::connection()->uploadFile($file->getPathname(), '/deliveries/'.$delivery->id.'/'.$delivery->id.'.'.$file->getClientOriginalExtension());
+
+                $delivery->delivery_document           =   $delivery->id.'.'.$file->getClientOriginalExtension();
                 $delivery->ref = "CHAI/DLV/#$delivery->id/".date_format($delivery->created_at,"Y/m/d");
                 $delivery->save();
 
@@ -136,19 +146,28 @@ class DeliveryApi extends Controller
      */
     public function updateDelivery()
     {
-        $input = Request::all();
+        $form = Request::only(
+            'id',
+            'received_by_id',
+            'comment',
+            'external_ref',
+            'lpo_id'
+            );
 
-        //path params validation
+        $delivery = Delivery::find($form['id']);
 
 
-        //not path params validation
-        if (!isset($input['body'])) {
-            throw new \InvalidArgumentException('Missing the required parameter $body when calling updateDelivery');
+
+
+            $delivery->received_by_id                   =   (int)       $form['received_by_id'];
+            $delivery->comment                      =               $form['comment'];
+            $delivery->external_ref                   =               $form['external_ref'];
+            $delivery->lpo_id                =   (int)       $form['lpo_id']; 
+
+        if($delivery->save()) {
+
+            return Response()->json(array('msg' => 'Success: Delivery updated','delivery' => $delivery), 200);
         }
-        $body = $input['body'];
-
-
-        return response('How about implementing updateDelivery as a PUT method ?');
     }
 
 
@@ -229,14 +248,30 @@ class DeliveryApi extends Controller
      */
     public function getDeliveryById($delivery_id)
     {
-        $input = Request::all();
+        $response = [];
 
-        //path params validation
+        try{
+            $response   = Delivery::with( 
+                                        'received_by',
+                                        'comments',
+                                        'supplier',
+                                        'lpo',
+                                        'logs'
+                                    )->findOrFail($delivery_id);
 
+            foreach ($response->logs as $key => $value) {
+                
+                $response['logs'][$key]['causer']   =   $value->causer;
+                $response['logs'][$key]['subject']  =   $value->subject;
+            }
 
-        //not path params validation
+            return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
 
-        return response('How about implementing getDeliveryById as a GET method ?');
+        }catch(Exception $e){
+
+            $response =  ["error"=>"Delivery could not be found"];
+            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+        }
     }
 
 
@@ -361,14 +396,41 @@ class DeliveryApi extends Controller
      */
     public function getDocumentById($delivery_id)
     {
-        $input = Request::all();
-
-        //path params validation
+        try{
 
 
-        //not path params validation
+            $delivery          = Delivery::findOrFail($delivery_id);
 
-        return response('How about implementing getDocumentById as a GET method ?');
+            $path           = '/deliveries/'.$delivery->id.'/'.$delivery->delivery_document;
+
+            $path_info      = pathinfo($path);
+
+            $ext            = $path_info['extension'];
+
+            $basename       = $path_info['basename'];
+
+            $file_contents  = FTP::connection()->readFile($path);
+
+            Storage::put('deliveries/'.$delivery->id.'.temp', $file_contents);
+
+            $url            = storage_path("app/deliveries/".$delivery->id.'.temp');
+
+            $file           = File::get($url);
+
+            $response       = Response::make($file, 200);
+
+            $response->header('Content-Type', $this->get_mime_type($basename));
+
+            return $response;  
+        }catch (Exception $e ){            
+
+            $response       = Response::make("", 200);
+
+            $response->header('Content-Type', 'application/pdf');
+
+            return $response;  
+
+        }
     }
 
 
