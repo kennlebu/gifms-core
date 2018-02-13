@@ -206,12 +206,13 @@ class DeliveryApi extends Controller
     {
         $input = Request::all();
 
-        //path params validation
+        $deleted = Delivery::destroy($delivery_id);
 
-
-        //not path params validation
-
-        return response('How about implementing deleteDelivery as a DELETE method ?');
+        if($deleted){
+            return response()->json(['msg'=>"delivery deleted"], 200,array(),JSON_PRETTY_PRINT);
+        }else{
+            return response()->json(['error'=>"delivery not found"], 404,array(),JSON_PRETTY_PRINT);
+        }
     }
 
 
