@@ -513,7 +513,7 @@ class StaffApi extends Controller
                 $query->orWhere('staff.f_name','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('staff.l_name','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('staff.o_names','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('staff.official_post','like', '\'%' . $input['search']['value']. '%\'');
+                $query->orWhere('staff.post','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('staff.mobile_no','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('staff.mpesa_no','like', '\'%' . $input['search']['value']. '%\'');
 
