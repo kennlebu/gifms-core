@@ -186,6 +186,8 @@ class AdvanceApi extends Controller
      */
     public function updateAdvance()
     {
+        try{
+
         
          $form = Request::only(
             'id',
@@ -194,10 +196,14 @@ class AdvanceApi extends Controller
             'expense_purpose',
             'project_manager_id',
             'total',
-            'currency_id'
+            'currency_id',
+            'file'
             );
 
-        $advance = Advance::find($form['id']);
+            $ftp = FTP::connection()->getDirListing();
+            $file = $form['file'];
+
+        $advance = Advance::findOrFail($form['id']);
 
 
 
@@ -214,8 +220,19 @@ class AdvanceApi extends Controller
 
         if($advance->save()) {
 
+            FTP::connection()->makeDir('/advances/'.$advance->id);
+                FTP::connection()->makeDir('/advances/'.$advance->id);
+                FTP::connection()->uploadFile($file->getPathname(), '/advances/'.$advance->id.'/'.$advance->id.'.'.$file->getClientOriginalExtension());
+
+                $advance->advance_document           =   $advance->id.'.'.$file->getClientOriginalExtension();
+
             return Response()->json(array('msg' => 'Success: Advance updated','advance' => $advance), 200);
         }
+    }catch (JWTException $e){
+
+        return response()->json(['error'=>'You are not Authenticated'], 500);
+
+    }
     }
 
 

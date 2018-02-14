@@ -2620,7 +2620,7 @@ Route::POST('/advance', 'AdvanceApi@addAdvance')->middleware('jwt.auth');
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::PUT('/advance', 'AdvanceApi@updateAdvance')->middleware('jwt.auth');
+Route::POST('/advance/update', 'AdvanceApi@updateAdvance')->middleware('jwt.auth');
 /**
  * DELETE deleteAdvance
  * Summary: Deletes an advance
