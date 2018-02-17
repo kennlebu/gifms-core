@@ -19,6 +19,11 @@ class PaymentBatch extends BaseModel
         return $this->belongsTo('App\Models\StaffModels\Staff','processed_by_id');
     }
 
+    public function status()
+    {
+        return $this->belongsTo('App\Models\PaymentModels\PaymentBatchStatus', 'status_id');
+    }
+
 
 
     public function getPaymentModesAttribute(){

@@ -21,6 +21,9 @@ use Illuminate\Support\Facades\DB;
 use App\Models\PaymentModels\PaymentBatch;
 use App\Models\PaymentModels\PaymentStatus;
 use App\Models\PaymentModels\Payment;
+use App\Models\AdvancesModels\Advance;
+use App\Models\ClaimsModels\Claim;
+use App\Models\InvoicesModels\Invoice;
 
 class PaymentBatchApi extends Controller
 {
@@ -83,6 +86,7 @@ class PaymentBatchApi extends Controller
 
             $user = JWTAuth::parseToken()->authenticate();
             $payment_batch->processed_by_id              =   (int)   $user->id;
+            $payment_batch->status_id             =   (int)  1;
 
             // die;
 
@@ -92,7 +96,7 @@ class PaymentBatchApi extends Controller
                 $payment_batch->save();
 
 
-                foreach ($form['payments'] as $key => $value) {
+                foreach ($form['payments'] as $key => $value) {                   
 
                     $payment                    = Payment::find($value);
                     $payment->status_id         = $payment->status->next_status_id;
@@ -102,6 +106,23 @@ class PaymentBatchApi extends Controller
 
                     $payment->ref = "CHAI/PYMT/#$payment->id/".date_format($payment->created_at,"Y/m/d");
                     $payment->save();
+
+                    // Now update the invoices, claims and advances
+                    if($payment->payable_type == 'invoices'){
+                        $invoice                = Invoice::find($payment->payable_id);
+                        $invoice->status_id     = $invoice->status->next_status_id;
+                        $invoice->save();
+                    }
+                    elseif($payment->payable_type == 'advances'){
+                        $advance                = Advance::find($payment->payable_id);
+                        $advance->status_id     = $advance->status->next_status_id;
+                        $advance->save();
+                    }
+                    elseif($payment->payable_type == 'claims'){
+                        $claim                = Claim::find($payment->payable_id);
+                        $claim->status_id     = $claim->status->next_status_id;
+                        $claim->save();
+                    }
 
 
                 }
@@ -113,6 +134,87 @@ class PaymentBatchApi extends Controller
 
             return response()->json(['error'=>'something went wrong'], 500);
 
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /**
+     * Operation completePaymentBatchUpload
+     *
+     * Complete upload of a payment_batch.
+     *
+     *
+     * @return Http response
+     */
+    public function completePaymentBatchUpload($payment_batch_id)
+    {
+
+        $input = Request::all();
+
+        try{
+
+            $payment_batch   = PaymentBatch::find($payment_batch_id);
+           
+            $payment_batch->status_id = (int) 3;
+            $payment_batch->upload_date = date('Y-m-d H:i:s');
+            $payment_batch->save();
+
+            // Get the payments and move them to the next status            
+            $qb = DB::table('payments')
+               ->whereNull('deleted_at')
+               ->where('payment_batch_id', '=', ''.$payment_batch_id)
+               ->select('id')
+               ->get();
+
+            foreach ($qb as $record) {                   
+
+                $payment                    = Payment::find($record['id']);
+                $payment->status_id         = (int) 3;
+
+                // Now update the invoices, claims and advances
+                if($payment->payable_type == 'invoices'){
+                    $invoice                = Invoice::find($payment->payable_id);
+                    $invoice->status_id     = $invoice->status->next_status_id;
+                    $invoice->save();
+                }
+                elseif($payment->payable_type == 'advances'){
+                    $advance                = Advance::find($payment->payable_id);
+                    $advance->status_id     = $advance->status->next_status_id;
+                    $advance->save();
+                }
+                elseif($payment->payable_type == 'claims'){
+                    $claim                = Claim::find($payment->payable_id);
+                    $claim->status_id     = $claim->status->next_status_id;
+                    $claim->save();
+                }
+            }
+
+            if($payment_batch->save()) {
+                return Response()->json(array('msg' => 'Success: batch uploaded','payment_batch' => $payment_batch), 200);
+            }
+
+
+        }catch(Exception $e){
+
+            $response =  ["error"=>"There was an error uploading the batch"];
+            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
         }
     }
 

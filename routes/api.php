@@ -3231,6 +3231,13 @@ Route::GET('/payment_batch/{payment_batch_id}', 'PaymentBatchApi@getPaymentBatch
 
  */
 Route::GET('/payment_batches', 'PaymentBatchApi@getPaymentBatches')->middleware('jwt.auth');
+/**
+ * POST completePaymentBatchUpload
+ * Summary: Completes upload of a payment_batch
+ * Notes: complete payment_batch upload
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PATCH('/payment_batch/{payment_batch_id}', 'PaymentBatchApi@completePaymentBatchUpload')->middleware('jwt.auth');
 
 
 
