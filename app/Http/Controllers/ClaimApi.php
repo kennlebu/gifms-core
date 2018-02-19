@@ -82,6 +82,7 @@ class ClaimApi extends Controller
                 'expense_desc',
                 'expense_purpose',
                 'project_manager_id',
+                'payment_mode_id',
                 'total',
                 'currency_id',
                 'file'
@@ -101,6 +102,7 @@ class ClaimApi extends Controller
             $claim->expense_desc                      =               $form['expense_desc'];
             $claim->expense_purpose                   =               $form['expense_purpose'];
             $claim->project_manager_id                =   (int)       $form['project_manager_id'];
+            $claim->payment_mode_id                   =   (int)       $form['payment_mode_id'];
             $claim->total                             =   (double)    $form['total'];
             $claim->currency_id                       =   (int)       $form['currency_id'];           
 
@@ -162,6 +164,7 @@ class ClaimApi extends Controller
             'expense_desc',
             'expense_purpose',
             'project_manager_id',
+            'payment_mode_id',
             'total',
             'currency_id'
             );
@@ -175,6 +178,7 @@ class ClaimApi extends Controller
             $claim->expense_desc                      =               $form['expense_desc'];
             $claim->expense_purpose                   =               $form['expense_purpose'];
             $claim->project_manager_id                =   (int)       $form['project_manager_id'];
+            $claim->payment_mode_id                   =   (int)       $form['payment_mode_id'];
             $claim->total                             =   (double)    $form['total'];
             $claim->currency_id                       =   (int)       $form['currency_id'];   
 
@@ -261,6 +265,7 @@ class ClaimApi extends Controller
                                         'project',
                                         'status',
                                         'project_manager',
+                                        'payment_mode',
                                         'currency',
                                         'rejected_by',
                                         'approvals',
@@ -390,6 +395,7 @@ class ClaimApi extends Controller
                                         'project',
                                         'status',
                                         'project_manager',
+                                        'payment_mode',
                                         'currency',
                                         'rejected_by',
                                         'approvals',
@@ -411,6 +417,7 @@ class ClaimApi extends Controller
                                         'project',
                                         'status',
                                         'project_manager',
+                                        'payment_mode',
                                         'currency',
                                         'rejected_by',
                                         'approvals',
@@ -440,7 +447,7 @@ class ClaimApi extends Controller
                         'paid_to_bank_account_no'       =>  $claim->requested_by->bank_account, 
                         'paid_to_bank_id'               =>  $claim->requested_by->bank_id, 
                         'paid_to_bank_branch_id'        =>  $claim->requested_by->bank_branch_id, 
-                        'payment_mode_id'               =>  $claim->requested_by->payment_mode_id, 
+                        'payment_mode_id'               =>  $claim->payment_mode, 
                         'amount'                        =>  $claim->total, 
                         'payment_batch_id'              =>  "", 
                         'bank_charges'                  =>  ""
@@ -519,6 +526,7 @@ class ClaimApi extends Controller
                                         'project',
                                         'status',
                                         'project_manager',
+                                        'payment_mode',
                                         'currency',
                                         'rejected_by',
                                         'approvals',
@@ -659,6 +667,7 @@ class ClaimApi extends Controller
                                         'project',
                                         'status',
                                         'project_manager',
+                                        'payment_mode',
                                         'currency',
                                         'rejected_by',
                                         'approvals',
@@ -1052,6 +1061,7 @@ class ClaimApi extends Controller
             $data[$key]['project']                      = $claim->project;
             $data[$key]['status']                       = $claim->status;
             $data[$key]['project_manager']              = $claim->project_manager;
+            $data[$key]['payment_mode']                 = $claim->payment_mode;
             $data[$key]['currency']                     = $claim->currency;
             $data[$key]['rejected_by']                  = $claim->rejected_by;
             $data[$key]['approvals']                    = $claim->approvals;
