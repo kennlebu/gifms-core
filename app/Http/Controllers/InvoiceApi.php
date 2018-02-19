@@ -115,6 +115,7 @@ class InvoiceApi extends Controller
                 'invoice_date',
                 'lpo_id',
                 'supplier_id',
+                'payment_mode_id',
                 'project_manager_id',
                 'total',
                 'currency_id',
@@ -153,6 +154,7 @@ class InvoiceApi extends Controller
                 $invoice->invoice_date                      =               $invoice_date;
                 $invoice->lpo_id                            =   (((int) $form['lpo_id'])>0)?$form['lpo_id']:null;
                 $invoice->supplier_id                       =   (int)       $form['supplier_id'];
+                $invoice->payment_mode_id                     =   (int)       $form['payment_mode_id'];
                 $invoice->project_manager_id                =   (int)       $form['project_manager_id'];
                 $invoice->total                             =   (double)    $form['total'];
                 $invoice->currency_id                       =   (int)       $form['currency_id'];
@@ -160,6 +162,8 @@ class InvoiceApi extends Controller
                 $invoice->raised_at                         =   date('Y-m-d H:i:s');
 
                 $invoice->status_id                         =   $this->default_status;
+
+                file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , 'Full: '.$invoice->payment_mode_id , FILE_APPEND);
 
             }else if($form['submission_type']=='log'){
 
@@ -171,12 +175,14 @@ class InvoiceApi extends Controller
                 $invoice->lpo_id                            =   (((int) $form['lpo_id'])>0)?$form['lpo_id']:null;
                 // $invoice->lpo_id                            =               $form['lpo_id'];
                 $invoice->supplier_id                       =   (int)       $form['supplier_id'];
+                $invoice->payment_mode_id                  =   (int)       $form['payment_mode_id'];
                 $invoice->total                             =   (double)    $form['total'];
                 $invoice->currency_id                       =   (int)       $form['currency_id'];
                 $invoice->received_at                       =   date('Y-m-d H:i:s');
 
-
                 $invoice->status_id                         =   $this->default_log_status;
+                file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , 'Log: '.$invoice->payment_mode_id , FILE_APPEND);
+
             }else if($form['submission_type']=='upload_logged'){
 
 
@@ -187,6 +193,7 @@ class InvoiceApi extends Controller
                                         'status',
                                         'project_manager',
                                         'supplier',
+                                        // 'payment_mode',
                                         'currency',
                                         'lpo',
                                         'rejected_by',
@@ -204,13 +211,26 @@ class InvoiceApi extends Controller
                 // $invoice->invoice_date                      =               $invoice_date;
                 $invoice->lpo_id                            =   (((int) $form['lpo_id'])>0)?$form['lpo_id']:null;
                 $invoice->supplier_id                       =   (int)       $form['supplier_id'];
+                // $invoice->payment_mode_id                   =   (int)       $form['payment_mode_id'];
                 $invoice->project_manager_id                =   (int)       $form['project_manager_id'];
                 $invoice->total                             =   (double)    $form['total'];
                 $invoice->currency_id                       =   (int)       $form['currency_id'];
                 $invoice->received_at                       =   date('Y-m-d H:i:s');
                 $invoice->raised_at                         =   date('Y-m-d H:i:s');
-
+                file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , 'Upload logged: '.$invoice->payment_mode_id , FILE_APPEND);
                 if (($invoice->total - $invoice->amount_allocated) <= 1 ){ //allowance of 1
+                    $invoice->status_id = $invoice->status->next_status_id;  
+                }
+                
+            }else if($form['submission_type']=='finish_allocations'){
+
+
+                $invoice = Invoice::find((int) $form['id']);
+
+                // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , $form['total'] , FILE_APPEND);
+                $invoice->total = (double)    $form['total'];
+
+                if ((($invoice->total - $invoice->amount_allocated) <= 1 ) && $invoice->status_id==11){ //allowance of 1
                     $invoice->status_id = $invoice->status->next_status_id;  
                 }
                 
@@ -299,8 +319,10 @@ class InvoiceApi extends Controller
                 'expense_purpose',
                 'external_ref',
                 // 'invoice_date',
+                'payment_mode_id',
                 'lpo_id',
                 'supplier_id',
+                'payment_mode_id',
                 'project_manager_id',
                 'total',
                 'currency_id',
@@ -337,6 +359,7 @@ class InvoiceApi extends Controller
                 // $invoice->invoice_date                      =               $invoice_date;
                 $invoice->lpo_id                            =   (((int) $form['lpo_id'])>0)?$form['lpo_id']:null;;
                 $invoice->supplier_id                       =   (int)       $form['supplier_id'];
+                $invoice->payment_mode_id                   =   (int)       $form['payment_mode_id'];
                 $invoice->project_manager_id                =   (int)       $form['project_manager_id'];
                 $invoice->total                             =   (double)    $form['total'];
                 $invoice->currency_id                       =   (int)       $form['currency_id'];
@@ -488,6 +511,7 @@ class InvoiceApi extends Controller
                                         'rejected_by',
                                         'approvals',
                                         'payments',
+                                        'payment_mode',
                                         'allocations',
                                         'logs',
                                         'vouchers',
@@ -628,6 +652,7 @@ class InvoiceApi extends Controller
                                         'status',
                                         'project_manager',
                                         'supplier',
+                                        'payment_mode',
                                         'currency',
                                         'lpo',
                                         'rejected_by',
@@ -654,6 +679,7 @@ class InvoiceApi extends Controller
                                         'status',
                                         'project_manager',
                                         'supplier',
+                                        'payment_mode',
                                         'currency',
                                         'lpo',
                                         'rejected_by',
@@ -686,7 +712,7 @@ class InvoiceApi extends Controller
                         'paid_to_bank_account_no'       =>  $invoice->supplier->bank_account, 
                         'paid_to_bank_id'               =>  $invoice->supplier->bank_id, 
                         'paid_to_bank_branch_id'        =>  $invoice->supplier->bank_branch_id, 
-                        'payment_mode_id'               =>  $invoice->supplier->payment_mode_id, 
+                        'payment_mode_id'               =>  $invoice->payment_mode, 
                         'amount'                        =>  $invoice->total, 
                         'payment_batch_id'              =>  "", 
                         'bank_charges'                  =>  ""
@@ -764,6 +790,7 @@ class InvoiceApi extends Controller
                                         'status',
                                         'project_manager',
                                         'supplier',
+                                        'payment_mode',
                                         'currency',
                                         'lpo',
                                         'rejected_by',
@@ -987,6 +1014,7 @@ class InvoiceApi extends Controller
                                         'status',
                                         'project_manager',
                                         'supplier',
+                                        'payment_mode',
                                         'currency',
                                         'lpo',
                                         'rejected_by',
@@ -1409,6 +1437,7 @@ class InvoiceApi extends Controller
             $data[$key]['status']                       = $invoice->status;
             $data[$key]['project_manager']              = $invoice->project_manager;
             $data[$key]['supplier']                     = $invoice->supplier;
+            $data[$key]['payment_mode']                 = $invoice->payment_mode;
             $data[$key]['currency']                     = $invoice->currency;
             $data[$key]['lpo']                          = $invoice->lpo;
             $data[$key]['rejected_by']                  = $invoice->rejected_by;
