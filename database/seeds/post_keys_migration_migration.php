@@ -634,8 +634,8 @@ class post_keys_migration_migration extends Seeder
         echo "\n mobile_payment_statuses captions updated ---";
 
 
-        $sql = "UPDATE `staff` SET `security_group_id`='10', `post`='Program Analyst' WHERE `id`='7'"; DB::statement($sql);
-        $sql = "UPDATE `staff` SET `security_group_id`='7',`post`='Director' WHERE `id`='40'"; DB::statement($sql);
+        $sql = "UPDATE `staff` SET `security_group_id`='10', `official_post`='Program Analyst' WHERE `id`='7'"; DB::statement($sql);
+        $sql = "UPDATE `staff` SET `security_group_id`='7',`official_post`='Director' WHERE `id`='40'"; DB::statement($sql);
 
         echo "\n Remove alice and MCCARTHY fro PM List ---";
 
@@ -646,10 +646,10 @@ class post_keys_migration_migration extends Seeder
 
 
 
-        $sql = " UPDATE `gifms3`.`projects` SET `program_id`= null WHERE `program_id`='0';"; DB::statement($sql);
+        $sql = " UPDATE `gifms`.`projects` SET `program_id`= null WHERE `program_id`='0';"; DB::statement($sql);
         echo "\n Nullify project program_id";
 
-        $sql = " UPDATE `gifms3`.`projects` SET `status_id`= null WHERE `status_id`='0';"; DB::statement($sql);
+        $sql = " UPDATE `gifms`.`projects` SET `status_id`= null WHERE `status_id`='0';"; DB::statement($sql);
         echo "\n Nullify project status_id";
 
     }
