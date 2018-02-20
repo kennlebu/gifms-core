@@ -238,6 +238,293 @@ class PaymentBatchApi extends Controller
 
 
 
+    /**
+     * Operation getCSVData
+     *
+     * get data for generating CSV.
+     *
+     *
+     * @return Http response
+     */
+    public function getCSVData(){
+        $input = Request::all();
+        $payment_batch_id = $input['payment_batch_id'];
+        $payment_mode = $input['payment_mode'];
+
+        // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , $payment_batch_id.'==='.$payment_mode , FILE_APPEND);
+
+        try{
+            // EFT
+            if($payment_mode=='1'){
+                $eft_result = [];
+                
+                //Getting the payments
+                $qb = DB::table('payments')
+                    ->whereNull('deleted_at')
+                    ->where('payment_batch_id', '=', ''.$payment_batch_id)
+                    ->where('payment_mode_id', '=', $payment_mode)
+                    ->select('id')
+                    ->get();
+                foreach ($qb as $record) {          
+
+                    $eft_data = array('date'=>'', 'bank_code'=>'', 'branch'=>'','account'=>'','amount'=>'','chaipv'=>'','acct_name'=>'');
+
+                    $payment                    = Payment::find($record['id']);
+                    $eft_data['amount'] = $payment->amount;
+                    $eft_data['date'] = date('Ymd', strtotime($payment->created_at));
+                    
+                    // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , json_encode($eft_data->amount) , FILE_APPEND);
+
+                    if($payment->payable_type == 'invoices'){
+                        $invoice                = Invoice::find($payment->payable_id);
+
+                        $qb_invoice = DB::table('invoices')
+                            ->join('suppliers', 'invoices.supplier_id', '=', 'suppliers.id')
+                            ->join('banks', 'suppliers.bank_id', '=', 'banks.id')
+                            ->join('bank_branches', 'banks.id', '=', 'bank_branches.bank_id')
+                            ->where('invoices.id', '=', $invoice->raised_by_id)
+                            ->select('banks.bank_code','bank_branches.branch_code','suppliers.bank_account','suppliers.chaque_address')
+                            ->get();
+                            foreach($qb_invoice as $row){
+                                $eft_data['bank_code'] = $this->pad_zeros(2,$row['bank_code']);
+                                $eft_data['branch'] = $this->pad_zeros(3,$row['branch_code']);
+                                $eft_data['account'] = $row['bank_account'];
+                                $eft_data['chaipv'] = 'INV'.$payment->id;
+                                $eft_data['acct_name'] = $row['chaque_address'];
+                            }
+
+                            array_push($eft_result, $eft_data);
+                    }
+                    elseif($payment->payable_type == 'advances'){
+                        $advance                = Advance::find($payment->payable_id);
+                        
+                        $advance_qb = DB::table('staff')
+                        ->join('banks', 'staff.bank_id', '=', 'banks.id')
+                        ->join('bank_branches', 'banks.id', '=', 'bank_branches.bank_id')
+                        ->where('staff.id', '=', $advance->requested_by_id)
+                        ->select('staff.bank_account','banks.bank_code','bank_branches.branch_code','staff.cheque_addressee')
+                        ->get();
+                        file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , json_encode($advance->requested_by_id) , FILE_APPEND);
+                        foreach($advance_qb as $row){
+                            $eft_data['bank_code'] = $row['bank_code'];
+                            $eft_data['branch'] = $row['branch_code'];
+                            $eft_data['account'] = $row['bank_account'];
+                            $eft_data['chaipv'] = 'ADV'.$payment->id;
+                            $eft_data['acct_name'] = ['cheque_addressee'];
+                        }
+
+                        array_push($eft_result, $eft_data);
+                    }
+                    elseif($payment->payable_type == 'claims'){
+                        $claim                = Claim::find($payment->payable_id);
+                        
+                        $claim_qb = DB::table('staff')
+                        ->join('banks', 'staff.bank_id', '=', 'banks.id')
+                        ->join('bank_branches', 'banks.id', '=', 'bank_branches.bank_id')
+                        ->where('staff.id', '=', $claim->requested_by_id)
+                        ->select('staff.bank_account','banks.bank_code','bank_branches.branch_code','staff.cheque_addressee')
+                        ->get();
+                        foreach($claim_qb as $row){
+                            $eft_data['bank_code'] = $row['bank_code'];
+                            $eft_data['branch'] = $row['branch_code'];
+                            $eft_data['account'] = $row['bank_account'];
+                            $eft_data['chaipv'] = 'CLM'.$payment->id;
+                            $eft_data['acct_name'] = ['cheque_addressee'];
+                        }
+
+                        array_push($eft_result, $eft_data);
+                    }
+                }
+                
+            return Response()->json(array('msg' => 'Success: csv generated','csv_data' => $eft_result), 200);
+            }
+
+
+
+
+            // RTGS
+            elseif($payment_mode=='4'){
+                $rtgs_result = [];
+                
+                //Getting the payments
+                $qb = DB::table('payments')
+                    ->whereNull('deleted_at')
+                    ->where('payment_batch_id', '=', ''.$payment_batch_id)
+                    ->where('payment_mode_id', '=', $payment_mode)
+                    ->select('id')
+                    ->get();
+                foreach ($qb as $record) {          
+
+                    $rtgs_data = array('date'=>'', 'bank_code'=>'','account'=>'','acct_name'=>'','amount'=>'','chaipv'=>'','channel'=>'BANK');
+
+                    $payment                    = Payment::find($record['id']);
+                    $rtgs_data['amount'] = $payment->amount;
+                    $rtgs_data['date'] = date('Ymd', strtotime($payment->created_at));
+                    
+                    // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , json_encode($eft_data->amount) , FILE_APPEND);
+
+                    if($payment->payable_type == 'invoices'){
+                        $invoice                = Invoice::find($payment->payable_id);
+
+                        $qb_invoice = DB::table('invoices')
+                            ->join('suppliers', 'invoices.supplier_id', '=', 'suppliers.id')
+                            ->join('banks', 'suppliers.bank_id', '=', 'banks.id')
+                            ->join('bank_branches', 'banks.id', '=', 'bank_branches.bank_id')
+                            ->where('invoices.id', '=', $invoice->raised_by_id)
+                            ->select('banks.bank_code','bank_branches.branch_code','suppliers.bank_account','suppliers.chaque_address')
+                            ->get();
+                            foreach($qb_invoice as $row){
+                                $rtgs_data['bank_code'] = $this->pad_zeros(2,$row['bank_code']).$this->pad_zeros(3,$row['branch_code']);
+                                $rtgs_data['account'] = $row['bank_account'];
+                                $rtgs_data['chaipv'] = 'INV'.$payment->id;
+                                $rtgs_data['acct_name'] = $row['chaque_address'];
+                            }
+
+                            array_push($rtgs_result, $rtgs_data);
+                    }
+                    elseif($payment->payable_type == 'advances'){
+                        $advance                = Advance::find($payment->payable_id);
+                        
+                        $advance_qb = DB::table('staff')
+                        ->join('banks', 'staff.bank_id', '=', 'banks.id')
+                        ->join('bank_branches', 'banks.id', '=', 'bank_branches.bank_id')
+                        ->where('staff.id', '=', $advance->requested_by_id)
+                        ->select('staff.bank_account','banks.bank_code','bank_branches.branch_code','staff.cheque_addressee')
+                        ->get();
+                        // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , json_encode($advance->requested_by_id) , FILE_APPEND);
+                        foreach($advance_qb as $row){
+                            $rtgs_data['bank_code'] = $row['bank_code'].$row['branch_code'];
+                            $rtgs_data['account'] = $row['bank_account'];
+                            $rtgs_data['chaipv'] = 'ADV'.$payment->id;
+                            $rtgs_data['acct_name'] = ['cheque_addressee'];
+                        }
+
+                        array_push($rtgs_result, $rtgs_data);
+                    }
+                    elseif($payment->payable_type == 'claims'){
+                        $claim                = Claim::find($payment->payable_id);
+                        
+                        $claim_qb = DB::table('staff')
+                        ->join('banks', 'staff.bank_id', '=', 'banks.id')
+                        ->join('bank_branches', 'banks.id', '=', 'bank_branches.bank_id')
+                        ->where('staff.id', '=', $claim->requested_by_id)
+                        ->select('staff.bank_account','banks.bank_code','bank_branches.branch_code','staff.cheque_addressee')
+                        ->get();
+                        foreach($claim_qb as $row){
+                            $rtgs_data['bank_code'] = $row['bank_code'].$row['branch_code'];
+                            $rtgs_data['account'] = $row['bank_account'];
+                            $rtgs_data['chaipv'] = 'CLM'.$payment->id;
+                            $rtgs_data['acct_name'] = ['cheque_addressee'];
+                        }
+
+                        array_push($rtgs_result, $rtgs_data);
+                    }
+                }
+                
+            return Response()->json(array('msg' => 'Success: csv generated','csv_data' => $rtgs_result), 200);
+
+            }
+            //MMTS
+            elseif($payment_mode=='2'){
+                $mmts_result = [];
+                
+                //Getting the payments
+                $qb = DB::table('payments')
+                    ->whereNull('deleted_at')
+                    ->where('payment_batch_id', '=', ''.$payment_batch_id)
+                    ->where('payment_mode_id', '=', $payment_mode)
+                    ->select('id')
+                    ->get();
+                foreach ($qb as $record) {          
+
+                    $mmts_data = array('date'=>'', 'bank_code'=>'99001','phone'=>'','mobile_name'=>'','bank_name'=>'NIC','amount'=>'','chaipv'=>'');
+
+                    $payment                    = Payment::find($record['id']);
+                    $mmts_data['amount'] = $payment->amount;
+                    $mmts_data['date'] = date('Ymd', strtotime($payment->created_at));
+                    
+                    // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , json_encode($eft_data->amount) , FILE_APPEND);
+
+                    if($payment->payable_type == 'invoices'){
+                        $invoice                = Invoice::find($payment->payable_id);
+
+                        $qb_invoice = DB::table('invoices')
+                            ->join('suppliers', 'invoices.supplier_id', '=', 'suppliers.id')
+                            ->where('invoices.id', '=', $invoice->raised_by_id)
+                            ->select('suppliers.mobile_payment_number','suppliers.mobile_payment_name')
+                            ->get();
+                            foreach($qb_invoice as $row){
+                                $mmts_data['phone'] = $row['mobile_payment_number'];
+                                $mmts_data['mobile_name'] = $row['mobile_payment_name'];
+                                $mmts_data['chaipv'] = 'INV'.$payment->id;
+                            }
+
+                            array_push($mmts_result, $mmts_data);
+                    }
+                    elseif($payment->payable_type == 'advances'){
+                        $advance                = Advance::find($payment->payable_id);
+                        
+                        $advance_qb = DB::table('staff')
+                        ->where('staff.id', '=', $advance->requested_by_id)
+                        ->select('staff.mpesa_no','staff.cheque_addressee')
+                        ->get();
+                        // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , json_encode($advance->requested_by_id) , FILE_APPEND);
+                        foreach($advance_qb as $row){
+                            $mmts_data['phone'] = $row['mpesa_no'];
+                            $mmts_data['mobile_name'] = ['cheque_addressee'];
+                            $mmts_data['chaipv'] = 'ADV'.$payment->id;
+                        }
+
+                        array_push($mmts_result, $mmts_data);
+                    }
+                    elseif($payment->payable_type == 'claims'){
+                        $claim                = Claim::find($payment->payable_id);
+                        
+                        $claim_qb = DB::table('staff')
+                        ->where('staff.id', '=', $advance->requested_by_id)
+                        ->select('staff.mpesa_no','staff.cheque_addressee')
+                        ->get();
+                        // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , json_encode($advance->requested_by_id) , FILE_APPEND);
+                        foreach($advance_qb as $row){
+                            $mmts_data['phone'] = $row['mpesa_no'];
+                            $mmts_data['mobile_name'] = ['cheque_addressee'];
+                            $mmts_data['chaipv'] = 'ADV'.$payment->id;
+                        }
+
+                        array_push($mmts_result, $mmts_data);
+                    }
+                }
+                
+            return Response()->json(array('msg' => 'Success: csv generated','csv_data' => $mmts_result), 200);
+            }
+
+        }
+        catch(Exception $e){
+            $response =  ["error"=>"There was an error getting the CSV"];
+            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     
     /**
@@ -567,6 +854,24 @@ class PaymentBatchApi extends Controller
         return $data;
 
 
+    }
+
+
+
+
+
+
+
+
+
+
+    public function pad_zeros($desired_length, $data){
+        if(strlen($data)<$desired_length){
+            return str_repeat('0', $desired_length-strlen($data)).$data;
+        }
+        else{
+            return $data;
+        }
     }
 
 

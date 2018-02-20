@@ -3238,6 +3238,13 @@ Route::GET('/payment_batches', 'PaymentBatchApi@getPaymentBatches')->middleware(
  * Output-Formats: [application/json, application/xml]
  */
 Route::PATCH('/payment_batch/{payment_batch_id}', 'PaymentBatchApi@completePaymentBatchUpload')->middleware('jwt.auth');
+/**
+ * POST getCSVData
+ * Summary: get data for CSV generation
+ * Notes: get CSV data
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/payment_batch', 'PaymentBatchApi@getCSVData')->middleware('jwt.auth');
 
 
 
