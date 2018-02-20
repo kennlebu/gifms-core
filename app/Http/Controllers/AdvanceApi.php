@@ -108,6 +108,7 @@ class AdvanceApi extends Controller
                 'project_manager_id',
                 'total',
                 'currency_id',
+                'payment_mode_id',
                 'file'
                 );
 
@@ -126,6 +127,7 @@ class AdvanceApi extends Controller
             $advance->expense_desc                      =               $form['expense_desc'];
             $advance->expense_purpose                   =               $form['expense_purpose'];
             $advance->project_manager_id                =   (int)       $form['project_manager_id'];
+            $advance->payment_mode_id                   =   (int)       $form['payment_mode_id'];
             $advance->total                             =   (double)    $form['total'];
             $advance->currency_id                       =   (int)       $form['currency_id'];           
 
@@ -195,6 +197,7 @@ class AdvanceApi extends Controller
             'expense_desc',
             'expense_purpose',
             'project_manager_id',
+            'payment_mode_id',
             'total',
             'currency_id',
             'file'
@@ -213,6 +216,7 @@ class AdvanceApi extends Controller
             $advance->expense_desc                      =               $form['expense_desc'];
             $advance->expense_purpose                   =               $form['expense_purpose'];
             $advance->project_manager_id                =   (int)       $form['project_manager_id'];
+            $advance->payment_mode_id                   =   (int)       $form['payment_mode_id'];
             $advance->total                             =   (double)    $form['total'];
             $advance->currency_id                       =   (int)       $form['currency_id'];  
 
@@ -323,6 +327,7 @@ class AdvanceApi extends Controller
                                     'project',
                                     'status',
                                     'project_manager',
+                                    'payment_mode',
                                     'currency',
                                     'rejected_by',
                                     'approvals',
@@ -421,6 +426,7 @@ class AdvanceApi extends Controller
                                     'project',
                                     'status',
                                     'project_manager',
+                                    'payment_mode',
                                     'currency',
                                     'rejected_by',
                                     'approvals',
@@ -441,6 +447,7 @@ class AdvanceApi extends Controller
                                     'project',
                                     'status',
                                     'project_manager',
+                                    'payment_mode',
                                     'currency',
                                     'rejected_by',
                                     'approvals',
@@ -469,7 +476,7 @@ class AdvanceApi extends Controller
                         'paid_to_bank_account_no'       =>  $advance->requested_by->bank_account, 
                         'paid_to_bank_id'               =>  $advance->requested_by->bank_id, 
                         'paid_to_bank_branch_id'        =>  $advance->requested_by->bank_branch_id, 
-                        'payment_mode_id'               =>  $advance->requested_by->payment_mode_id, 
+                        'payment_mode_id'               =>  $advance->payment_mode->id, 
                         'amount'                        =>  $advance->total, 
                         'payment_batch_id'              =>  "", 
                         'bank_charges'                  =>  ""
@@ -537,6 +544,7 @@ class AdvanceApi extends Controller
                                     'project',
                                     'status',
                                     'project_manager',
+                                    'payment_mode',
                                     'currency',
                                     'rejected_by',
                                     'approvals',
@@ -615,6 +623,7 @@ class AdvanceApi extends Controller
                                     'project',
                                     'status',
                                     'project_manager',
+                                    'payment_mode',
                                     'currency',
                                     'rejected_by',
                                     'approvals',
@@ -626,7 +635,10 @@ class AdvanceApi extends Controller
 
             if($advance->save()) {
                 
+                try{
                 Mail::send(new NotifyAdvance($advance));
+                }
+                catch(Exception $e){}
 
                 return Response()->json(array('msg' => 'Success: advance submitted','advance' => $advance), 200);
             }

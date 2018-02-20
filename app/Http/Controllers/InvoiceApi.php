@@ -712,7 +712,7 @@ class InvoiceApi extends Controller
                         'paid_to_bank_account_no'       =>  $invoice->supplier->bank_account, 
                         'paid_to_bank_id'               =>  $invoice->supplier->bank_id, 
                         'paid_to_bank_branch_id'        =>  $invoice->supplier->bank_branch_id, 
-                        'payment_mode_id'               =>  $invoice->payment_mode, 
+                        'payment_mode_id'               =>  $invoice->payment_mode->id, 
                         'amount'                        =>  $invoice->total, 
                         'payment_batch_id'              =>  "", 
                         'bank_charges'                  =>  ""

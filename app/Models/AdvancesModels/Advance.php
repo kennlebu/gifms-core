@@ -40,6 +40,10 @@ class Advance extends BaseModel
     {
         return $this->belongsTo('App\Models\StaffModels\Staff','project_manager_id');
     }
+    public function payment_mode()
+    {
+        return $this->belongsTo('App\Models\PaymentModels\PaymentMode','payment_mode_id');
+    }
     public function rejected_by()
     {
         return $this->belongsTo('App\Models\StaffModels\Staff','rejected_by_id');

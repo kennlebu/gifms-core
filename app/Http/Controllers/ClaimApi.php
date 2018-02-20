@@ -447,7 +447,7 @@ class ClaimApi extends Controller
                         'paid_to_bank_account_no'       =>  $claim->requested_by->bank_account, 
                         'paid_to_bank_id'               =>  $claim->requested_by->bank_id, 
                         'paid_to_bank_branch_id'        =>  $claim->requested_by->bank_branch_id, 
-                        'payment_mode_id'               =>  $claim->payment_mode, 
+                        'payment_mode_id'               =>  $claim->payment_mode->id, 
                         'amount'                        =>  $claim->total, 
                         'payment_batch_id'              =>  "", 
                         'bank_charges'                  =>  ""
