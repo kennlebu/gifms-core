@@ -168,17 +168,26 @@ class migrate_projects_keys extends Seeder
                                     ->where("default_approver","=",1)
                                     ->first();
 
-        $davis      =   ProgramManager::where("program_id","1")
-                                    ->where(function ($query)  {
-                                            $query->whereNull('default_approver')
-                                                  ->orWhere("default_approver",'<>','1');
-                                        })
-                                    ->first();
+        // $davis      =   ProgramManager::where("program_id","1")
+        //                             ->where(function ($query)  {
+        //                                     $query->whereNull('default_approver')
+        //                                           ->orWhere("default_approver",'<>','1');
+        //                                 })
+        //                             ->first();
 
         $rosemary   =   ProgramManager::where("program_id","2")
                                     ->first();
 
+        $rosemary1   =   ProgramManager::where("program_id","7")
+                                    ->first();
+
+        $rosemary2   =   ProgramManager::where("program_id","9")
+                                    ->first();
+
         $patricia   =   ProgramManager::where("program_id","3")
+                                    ->first();
+
+        $patricia1   =   ProgramManager::where("program_id","6")
                                     ->first();
 
         $ngatia1    =   ProgramManager::where("program_id","4")
@@ -187,7 +196,16 @@ class migrate_projects_keys extends Seeder
         $ngatia2    =   ProgramManager::where("program_id","5")
                                     ->first();
 
-        $jane       =   ProgramManager::where("program_id","6")
+        $jane       =   ProgramManager::where("program_id","10")
+                                    ->first();
+
+        $jane1       =   ProgramManager::where("program_id","11")
+                                    ->first();
+
+        $jhungu       =   ProgramManager::where("program_id","8")
+                                    ->first();
+
+        $jkimani       =   ProgramManager::where("program_id","12")
                                     ->first();
 
 
@@ -198,7 +216,7 @@ class migrate_projects_keys extends Seeder
 
             $sql = "
                         UPDATE projects p 
-                            SET     p.program_id         =   7 
+                            SET     p.program_id         =   11 
                             WHERE id = '".$project['id']."'
                      ";      
             DB::statement($sql);
@@ -210,9 +228,9 @@ class migrate_projects_keys extends Seeder
         //HIV
         $hiv_projects   = Project::where("country_id","=",1)
 
-                                    ->where(function ($query) use ($judi,$davis) {
-                                            $query->where("project_manager_id","=",$judi->program_manager_id)
-                                                  ->orWhere("project_manager_id","=",$davis->program_manager_id);
+                                    ->where(function ($query) use ($judi) {
+                                            $query->where("project_manager_id","=",$judi->program_manager_id);
+                                                //   ->orWhere("project_manager_id","=",$davis->program_manager_id);
                                         })
                                     
                                     ->get();
@@ -246,6 +264,42 @@ class migrate_projects_keys extends Seeder
         }
         echo "\n __________Migrated program_ids Essential Medicines\n";
 
+
+
+        //Hepatitis
+        $hepatitis_projects   = Project::where("country_id","=",1)
+                                    ->where("project_manager_id","=",$rosemary1->program_manager_id)
+                                    ->get();
+
+        foreach ($hepatitis_projects as $key => $project) {
+
+            $sql = "
+                        UPDATE projects p 
+                            SET     p.program_id         =   7 
+                            WHERE id = '".$project['id']."'
+                     ";
+            DB::statement($sql);
+        }
+        echo "\n __________Migrated program_ids Hepatits\n";
+
+
+
+        //Nutrition
+        $nutrition_projects   = Project::where("country_id","=",1)
+                                    ->where("project_manager_id","=",$rosemary->program_manager_id)
+                                    ->get();
+
+        foreach ($nutrition_projects as $key => $project) {
+
+            $sql = "
+                        UPDATE projects p 
+                            SET     p.program_id         =   9 
+                            WHERE id = '".$project['id']."'
+                     ";
+            DB::statement($sql);
+        }
+        echo "\n __________Migrated program_ids Nutrition\n";
+
         //Malaria
         $malaria_projects   = Project::where("country_id","=",1)
                                     // ->where("project_manager_id","=",$patricia->program_manager_id)
@@ -264,7 +318,27 @@ class migrate_projects_keys extends Seeder
                      ";
             DB::statement($sql);
         }
-        echo "\n __________Migrated program_ids Essential Medicines\n";
+        echo "\n __________Migrated program_ids Malaria\n";
+
+        //Cancer
+        $cancer_projects   = Project::where("country_id","=",1)
+                                    // ->where("project_manager_id","=",$patricia->program_manager_id)
+                                    ->where(function ($query) use ($patricia) {
+                                            $query->where("project_manager_id","=",$patricia->program_manager_id)
+                                                  ->orWhere("project_name",'LIKE','%malaria%');
+                                        })
+                                    ->get();
+
+        foreach ($cancer_projects as $key => $project) {
+
+            $sql = "
+                        UPDATE projects p 
+                            SET     p.program_id         =   6 
+                            WHERE id = '".$project['id']."'
+                     ";
+            DB::statement($sql);
+        }
+        echo "\n __________Migrated program_ids Cancer\n";
 
         //Family Planning
         $fp_projects   = Project::where("country_id","=",1)
@@ -310,12 +384,45 @@ class migrate_projects_keys extends Seeder
 
             $sql = "
                         UPDATE projects p 
-                            SET     p.program_id         =   6 
+                            SET     p.program_id         =   10 
                             WHERE id = '".$project['id']."'
                      ";
             DB::statement($sql);
         }
         echo "\n __________Migrated program_ids Office Operational Costs & Overheads\n";
+
+        //Health System Strengthening
+        $hss_projects   = Project::where("country_id","=",1)
+                                    ->where("project_manager_id","=",$jhungu->program_manager_id)
+                                    ->get();
+
+        foreach ($hss_projects as $key => $project) {
+
+            $sql = "
+                        UPDATE projects p 
+                            SET     p.program_id         =   8 
+                            WHERE id = '".$project['id']."'
+                     ";
+            DB::statement($sql);
+        }
+        echo "\n __________Migrated program_ids Health System Strengthening\n";
+
+        //Health Financing
+        // $hf_projects   = Project::where("country_id","=",1)
+        //                             ->where("project_manager_id","=",$jkimani->program_manager_id)
+        //                             ->get();
+
+        // foreach ($hf_projects as $key => $project) {
+
+        //     $sql = "
+        //                 UPDATE projects p 
+        //                     SET     p.program_id         =   12 
+        //                     WHERE id = '".$project['id']."'
+        //              ";
+        //     DB::statement($sql);
+        // }
+        echo "\n __________Migrated program_ids Health Financing\n";
+        
 
 
 

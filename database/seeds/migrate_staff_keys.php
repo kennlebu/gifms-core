@@ -32,9 +32,9 @@ class migrate_staff_keys extends Seeder
                                     LEFT JOIN departments d 
                                     ON d.migration_id = s.migration_department_id
                                     LEFT JOIN banks b 
-                                    ON b.migration_id = s.migration_bank_id
+                                    ON b.bank_code = s.migration_bank_id
                                     LEFT JOIN bank_branches bbr 
-                                    ON bbr.migration_id = s.migration_bank_branch_id
+                                    ON bbr.branch_code = s.migration_bank_branch_id
 
                                     SET     s.department_id       =   d.id ,
                                             s.bank_id             =   b.id ,

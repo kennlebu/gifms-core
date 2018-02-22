@@ -39,8 +39,8 @@ class CreateStaffTable extends Migration
             $table->string('signature')->nullable();
             $table->string('bank_signatory')->nullable();
             $table->integer('receive_global_email_bcc')->nullable();
-            $table->integer('migration_bank_id')->nullable();
-            $table->integer('migration_bank_branch_id')->nullable();
+            $table->string('migration_bank_id')->nullable();
+            $table->string('migration_bank_branch_id')->nullable();
             $table->integer('migration_department_id')->nullable();
             $table->integer('migration_id')->nullable();
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));

@@ -62,14 +62,14 @@ class migrate_staff_data extends Seeder
             $data_to_migrate[$key]['signature']                 = $data[$key]['Signature'];
             $data_to_migrate[$key]['bank_signatory']            = $data[$key]['BankSignatory'];
 
-            $data_to_migrate[$key]['migration_bank_branch_id']  = (int)$data[$key]['BankBranch'];
-            $data_to_migrate[$key]['migration_bank_id']			= (int)$data[$key]['Bank'];
+            $data_to_migrate[$key]['migration_bank_branch_id']  = $data[$key]['BankBranch'];
+            $data_to_migrate[$key]['migration_bank_id']			= $data[$key]['Bank'];
             $data_to_migrate[$key]['migration_department_id']	= $data[$key]['Department'];
             $data_to_migrate[$key]['migration_id']				= $data[$key]['EID'];
 
-            if ( (int) $data_to_migrate[$key]['migration_id'] == 123) {//aran
-                $data_to_migrate[$key]['security_group_id'] = 10;
-            }
+            // if ( (int) $data_to_migrate[$key]['migration_id'] == 123) {//aran
+            //     $data_to_migrate[$key]['security_group_id'] = 10;
+            // }
 
 
 

@@ -33,10 +33,9 @@ class migrate_suppliers_keys extends Seeder
         $migrate_keys_sql = "
                                 UPDATE suppliers sup 
                                     LEFT JOIN banks b 
-                                    ON b.migration_id = sup.migration_bank_id
+                                    ON b.bank_code = sup.migration_bank_id
                                     LEFT JOIN bank_branches bb 
                                     ON bb.branch_code = sup.migration_bank_branch_code
-                                    AND bb.migration_bank_id = sup.migration_bank_id
                                     LEFT JOIN staff s 
                                     ON s.migration_id = sup.migration_staff_id
 

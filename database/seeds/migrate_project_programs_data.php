@@ -29,7 +29,7 @@ class migrate_project_programs_data extends Seeder
                      ->select(DB::raw('staff.id,staff.email,projects.project_code,projects.program_id'))
                      ->leftJoin('project_teams', 'staff.id', '=', 'project_teams.staff_id')
                      ->leftJoin('projects', 'project_teams.project_id', '=', 'projects.id')
-                     ->where('projects.program_id', '<>', 7)
+                     ->where('projects.program_id', '<>', 11)
                      ->groupBy('staff.email','projects.program_id')
                      ->orderBy('staff.id', 'asc')
                      ->get();
