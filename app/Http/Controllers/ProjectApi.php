@@ -491,6 +491,19 @@ class ProjectApi extends Controller
             }
         }
 
+        // Unallocated
+        if(array_key_exists('project_type', $input) && $input['project_type']=='unallocated'){
+            // $qb->where('project_code', 'like', '%' . Input::get('name') . '%');
+            $qb->where('project_code', 'like', '"%CHKENYDINOH1%"');
+            $qb->orWhere('project_code', 'like', '"%CHG&ADHQEM1%"');
+            $qb->orWhere('project_code', 'like', '"%CHGADHQAC1%"');
+            $qb->orWhere('project_code', 'like', '"%CHGADHQEM1%"');
+            $qb->orWhere('project_code', 'like', '"%CHGADHQHR1%"');
+            $qb->orWhere('project_code', 'like', '"%CHGADHQRC1%"');
+            $qb->orWhere('project_code', 'like', '"%CHGMGTDGPM1%"');
+            $qb->orWhere('project_code', 'like', '"%CHGMGTDSASE1%"');
+        }
+
 
         //searching
         if(array_key_exists('searchval', $input)){
