@@ -163,7 +163,7 @@ class InvoiceApi extends Controller
 
                 $invoice->status_id                         =   $this->default_status;
 
-                file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , 'Full: '.$invoice->payment_mode_id , FILE_APPEND);
+                // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , 'Full: '.$invoice->payment_mode_id , FILE_APPEND);
 
             }else if($form['submission_type']=='log'){
 
@@ -181,7 +181,7 @@ class InvoiceApi extends Controller
                 $invoice->received_at                       =   date('Y-m-d H:i:s');
 
                 $invoice->status_id                         =   $this->default_log_status;
-                file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , 'Log: '.$invoice->payment_mode_id , FILE_APPEND);
+                // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , 'Log: '.$invoice->payment_mode_id , FILE_APPEND);
 
             }else if($form['submission_type']=='upload_logged'){
 
@@ -217,7 +217,7 @@ class InvoiceApi extends Controller
                 $invoice->currency_id                       =   (int)       $form['currency_id'];
                 $invoice->received_at                       =   date('Y-m-d H:i:s');
                 $invoice->raised_at                         =   date('Y-m-d H:i:s');
-                file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , 'Upload logged: '.$invoice->payment_mode_id , FILE_APPEND);
+                // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , 'Upload logged: '.$invoice->payment_mode_id , FILE_APPEND);
                 if (($invoice->total - $invoice->amount_allocated) <= 1 ){ //allowance of 1
                     $invoice->status_id = $invoice->status->next_status_id;  
                 }

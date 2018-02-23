@@ -99,6 +99,7 @@ class PaymentBatchApi extends Controller
                 foreach ($form['payments'] as $key => $value) {                   
 
                     $payment                    = Payment::find($value);
+                    
                     $payment->status_id         = $payment->status->next_status_id;
                     $payment->payment_batch_id  = $payment_batch->id;
 
@@ -172,7 +173,7 @@ class PaymentBatchApi extends Controller
 
             $payment_batch   = PaymentBatch::find($payment_batch_id);
            
-            $payment_batch->status_id = (int) 3;
+            $payment_batch->status_id = (int) 2;
             $payment_batch->upload_date = date('Y-m-d H:i:s');
             $payment_batch->save();
 
@@ -187,21 +188,25 @@ class PaymentBatchApi extends Controller
 
                 $payment                    = Payment::find($record['id']);
                 $payment->status_id         = (int) 3;
+                $payment->save();
 
                 // Now update the invoices, claims and advances
                 if($payment->payable_type == 'invoices'){
                     $invoice                = Invoice::find($payment->payable_id);
-                    $invoice->status_id     = $invoice->status->next_status_id;
+                    // $invoice->status_id     = $invoice->status->next_status_id;
+                    $invoice->status_id     = 7;
                     $invoice->save();
                 }
                 elseif($payment->payable_type == 'advances'){
                     $advance                = Advance::find($payment->payable_id);
-                    $advance->status_id     = $advance->status->next_status_id;
+                    // $advance->status_id     = $advance->status->next_status_id;
+                    $advance->status_id     = 7;
                     $advance->save();
                 }
                 elseif($payment->payable_type == 'claims'){
                     $claim                = Claim::find($payment->payable_id);
-                    $claim->status_id     = $claim->status->next_status_id;
+                    // $claim->status_id     = $claim->status->next_status_id;
+                    $claim->status_id     = 7;
                     $claim->save();
                 }
             }
@@ -251,8 +256,6 @@ class PaymentBatchApi extends Controller
         $payment_batch_id = $input['payment_batch_id'];
         $payment_mode = $input['payment_mode'];
 
-        // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , $payment_batch_id.'==='.$payment_mode , FILE_APPEND);
-
         try{
             // EFT
             if($payment_mode=='1'){
@@ -272,8 +275,6 @@ class PaymentBatchApi extends Controller
                     $payment                    = Payment::find($record['id']);
                     $eft_data['amount'] = $payment->amount;
                     $eft_data['date'] = date('Ymd', strtotime($payment->created_at));
-                    
-                    // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , json_encode($eft_data->amount) , FILE_APPEND);
 
                     if($payment->payable_type == 'invoices'){
                         $invoice                = Invoice::find($payment->payable_id);
@@ -304,13 +305,13 @@ class PaymentBatchApi extends Controller
                         ->where('staff.id', '=', $advance->requested_by_id)
                         ->select('staff.bank_account','banks.bank_code','bank_branches.branch_code','staff.cheque_addressee')
                         ->get();
-                        file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , json_encode($advance->requested_by_id) , FILE_APPEND);
+                        // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , json_encode($advance->requested_by_id) , FILE_APPEND);
                         foreach($advance_qb as $row){
                             $eft_data['bank_code'] = $row['bank_code'];
                             $eft_data['branch'] = $row['branch_code'];
                             $eft_data['account'] = $row['bank_account'];
                             $eft_data['chaipv'] = 'ADV'.$payment->id;
-                            $eft_data['acct_name'] = ['cheque_addressee'];
+                            $eft_data['acct_name'] = $row['cheque_addressee'];
                         }
 
                         array_push($eft_result, $eft_data);
@@ -329,7 +330,7 @@ class PaymentBatchApi extends Controller
                             $eft_data['branch'] = $row['branch_code'];
                             $eft_data['account'] = $row['bank_account'];
                             $eft_data['chaipv'] = 'CLM'.$payment->id;
-                            $eft_data['acct_name'] = ['cheque_addressee'];
+                            $eft_data['acct_name'] = $row['cheque_addressee'];
                         }
 
                         array_push($eft_result, $eft_data);
@@ -360,8 +361,6 @@ class PaymentBatchApi extends Controller
                     $payment                    = Payment::find($record['id']);
                     $rtgs_data['amount'] = $payment->amount;
                     $rtgs_data['date'] = date('Ymd', strtotime($payment->created_at));
-                    
-                    // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , json_encode($eft_data->amount) , FILE_APPEND);
 
                     if($payment->payable_type == 'invoices'){
                         $invoice                = Invoice::find($payment->payable_id);
@@ -391,12 +390,12 @@ class PaymentBatchApi extends Controller
                         ->where('staff.id', '=', $advance->requested_by_id)
                         ->select('staff.bank_account','banks.bank_code','bank_branches.branch_code','staff.cheque_addressee')
                         ->get();
-                        // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , json_encode($advance->requested_by_id) , FILE_APPEND);
+                        
                         foreach($advance_qb as $row){
                             $rtgs_data['bank_code'] = $row['bank_code'].$row['branch_code'];
                             $rtgs_data['account'] = $row['bank_account'];
                             $rtgs_data['chaipv'] = 'ADV'.$payment->id;
-                            $rtgs_data['acct_name'] = ['cheque_addressee'];
+                            $rtgs_data['acct_name'] = $row['cheque_addressee'];
                         }
 
                         array_push($rtgs_result, $rtgs_data);
@@ -414,7 +413,7 @@ class PaymentBatchApi extends Controller
                             $rtgs_data['bank_code'] = $row['bank_code'].$row['branch_code'];
                             $rtgs_data['account'] = $row['bank_account'];
                             $rtgs_data['chaipv'] = 'CLM'.$payment->id;
-                            $rtgs_data['acct_name'] = ['cheque_addressee'];
+                            $rtgs_data['acct_name'] = $row['cheque_addressee'];
                         }
 
                         array_push($rtgs_result, $rtgs_data);
@@ -422,8 +421,8 @@ class PaymentBatchApi extends Controller
                 }
                 
             return Response()->json(array('msg' => 'Success: csv generated','csv_data' => $rtgs_result), 200);
-
             }
+
             //MMTS
             elseif($payment_mode=='2'){
                 $mmts_result = [];
@@ -442,8 +441,6 @@ class PaymentBatchApi extends Controller
                     $payment                    = Payment::find($record['id']);
                     $mmts_data['amount'] = $payment->amount;
                     $mmts_data['date'] = date('Ymd', strtotime($payment->created_at));
-                    
-                    // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , json_encode($eft_data->amount) , FILE_APPEND);
 
                     if($payment->payable_type == 'invoices'){
                         $invoice                = Invoice::find($payment->payable_id);
@@ -468,10 +465,10 @@ class PaymentBatchApi extends Controller
                         ->where('staff.id', '=', $advance->requested_by_id)
                         ->select('staff.mpesa_no','staff.cheque_addressee')
                         ->get();
-                        // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , json_encode($advance->requested_by_id) , FILE_APPEND);
+                        
                         foreach($advance_qb as $row){
                             $mmts_data['phone'] = $row['mpesa_no'];
-                            $mmts_data['mobile_name'] = ['cheque_addressee'];
+                            $mmts_data['mobile_name'] = $row['cheque_addressee'];
                             $mmts_data['chaipv'] = 'ADV'.$payment->id;
                         }
 
@@ -481,14 +478,14 @@ class PaymentBatchApi extends Controller
                         $claim                = Claim::find($payment->payable_id);
                         
                         $claim_qb = DB::table('staff')
-                        ->where('staff.id', '=', $advance->requested_by_id)
+                        ->where('staff.id', '=', $claim->requested_by_id)
                         ->select('staff.mpesa_no','staff.cheque_addressee')
                         ->get();
-                        // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , json_encode($advance->requested_by_id) , FILE_APPEND);
-                        foreach($advance_qb as $row){
+                        
+                        foreach($claim_qb as $row){
                             $mmts_data['phone'] = $row['mpesa_no'];
-                            $mmts_data['mobile_name'] = ['cheque_addressee'];
-                            $mmts_data['chaipv'] = 'ADV'.$payment->id;
+                            $mmts_data['mobile_name'] = $row['cheque_addressee'];
+                            $mmts_data['chaipv'] = 'CLM'.$payment->id;
                         }
 
                         array_push($mmts_result, $mmts_data);
@@ -504,6 +501,116 @@ class PaymentBatchApi extends Controller
             return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+     * Operation uploadBankFile
+     *
+     * upload the bank file
+     *
+     *
+     * @return Http response
+     */
+    public function uploadBankFile(){
+        
+        $input = Request::all();
+        try{
+            $payment_ids = [];
+            $payments = [];
+            $form = Request::only('file');
+            $file = $form['file'];
+            // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , 'Something\'s here' , FILE_APPEND);
+
+            $handle = fopen($file, 'r');
+            $header = true;
+            while($csvLine = fgetcsv($handle, 1000, ',')){
+                if ($header) {
+                    $header = false;
+                } else {
+                    $ref = explode(" ", $csvLine[1])[0];
+                    array_push($payment_ids, (int)preg_replace("/[^0-9,.]/", "", $ref)); 
+                }
+            }
+            
+            // Change the status of the payment to reconciled
+            foreach($payment_ids as $id){
+                $payment = Payment::find($id);
+                // $payment->status_id = $payment->status->next_status_id;
+                if($payment->status_id==3){
+                    $payment->status_id = 4; // Hard-coded
+                    $payment->save();
+                }           
+
+                // Change invoice status
+                if($payment->payable_type=='invoices'){
+                    $invoice = Invoice::find($payment->payable_id);
+                    // $invoice->status_id = $invoice->status->next_status_id;
+                    if($invoice->status_id==7){
+                        $invoice->status_id = 8;
+                        $invoice->save();
+                        array_push($payments, ['type'=>'Invoice', 'ref'=>'INV'.$invoice->id, 'paid'=>true]);
+                    }
+                    else{
+                        array_push($payments, ['type'=>'Invoice', 'ref'=>'INV'.$invoice->id, 'paid'=>false]);
+                    }
+                }
+                // Change advance status
+                if($payment->payable_type=='advances'){
+                    $advance = Advance::find($payment->payable_id);
+                    // $advance->status_id = $advance->status->next_status_id;
+                    if($advance->status_id==7){
+                        $advance->status_id = 6;
+                        $advance->save();
+                        array_push($payments, ['type'=>'Advance', 'ref'=>'ADV'.$advance->id, 'paid'=>true]);
+                    }
+                    else{
+                        array_push($payments, ['type'=>'Advance', 'ref'=>'ADV'.$advance->id, 'paid'=>false]);
+                    }
+                }
+                // Change claim status
+                if($payment->payable_type=='claims'){
+                    $claim = Claim::find($payment->payable_id);
+                    file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , $claim , FILE_APPEND);
+                    // $claim->status_id = $claim->status->next_status_id;
+                    if($claim->status_id==7){
+                        $claim->status_id = 8;
+                        $claim->save();
+                        array_push($payments, ['type'=>'Claim', 'ref'=>'CLM'.$claim->id, 'paid'=>true]);
+                    }
+                    else{
+                        array_push($payments, ['type'=>'Claim', 'ref'=>'CLM'.$claim->id, 'paid'=>false]);
+                    }
+                }
+            }
+
+            return Response()->json(array('msg' => 'Success: payments reconciled','payments' => $payments), 200);
+        }
+        catch(Exception $e){
+            return response()->json(['error'=>'There was an error uploading the file'], 500);
+        }
+    }
+
 
 
 

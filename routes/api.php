@@ -3244,7 +3244,14 @@ Route::PATCH('/payment_batch/{payment_batch_id}', 'PaymentBatchApi@completePayme
  * Notes: get CSV data
  * Output-Formats: [application/json, application/xml]
  */
-Route::POST('/payment_batch', 'PaymentBatchApi@getCSVData')->middleware('jwt.auth');
+Route::POST('/payment_batch/download_csv', 'PaymentBatchApi@getCSVData')->middleware('jwt.auth');
+/**
+ * POST uploadBankFile
+ * Summary: upload the bank file
+ * Notes: get Bank file
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/payment_batch/upload_bankfile', 'PaymentBatchApi@uploadBankFile')->middleware('jwt.auth');
 
 
 
