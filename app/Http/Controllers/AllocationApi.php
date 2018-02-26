@@ -75,7 +75,8 @@ class AllocationApi extends Controller
                 'percentage',
                 'project_id',
                 'purpose',
-                'year'
+                'year',
+                'allocation_step'
                 );
 
 
@@ -88,6 +89,7 @@ class AllocationApi extends Controller
             $allocation->project_id             =               $form['project_id'];
             $allocation->allocation_purpose     =               $form['purpose'];
             $allocation->allocation_year        =               $form['year'];
+            $allocation->allocation_step        =               $form['allocation_step'];
 
             $user = JWTAuth::parseToken()->authenticate();
             $allocation->allocated_by_id            =   (int)   $user->id;

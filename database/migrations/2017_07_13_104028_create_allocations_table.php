@@ -28,6 +28,7 @@ class CreateAllocationsTable extends Migration
             $table->integer('account_id')->nullable();
             $table->integer('account_2013_id')->nullable();
             $table->integer('account_2016_id')->nullable();
+            $table->text('allocation_step')->nullable();
             $table->integer('migration_allocated_by_id')->nullable();
             $table->integer('migration_allocatable_id')->nullable();
             $table->integer('migration_project_id')->nullable();

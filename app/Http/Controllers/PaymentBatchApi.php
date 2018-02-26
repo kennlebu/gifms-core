@@ -591,7 +591,6 @@ class PaymentBatchApi extends Controller
                 // Change claim status
                 if($payment->payable_type=='claims'){
                     $claim = Claim::find($payment->payable_id);
-                    file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , $claim , FILE_APPEND);
                     // $claim->status_id = $claim->status->next_status_id;
                     if($claim->status_id==7){
                         $claim->status_id = 8;
