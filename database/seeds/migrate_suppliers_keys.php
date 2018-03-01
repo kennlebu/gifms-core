@@ -30,19 +30,21 @@ class migrate_suppliers_keys extends Seeder
 
 
 
-        $migrate_keys_sql = "
-                                UPDATE suppliers sup 
-                                    LEFT JOIN banks b 
-                                    ON b.bank_code = sup.migration_bank_id
-                                    LEFT JOIN bank_branches bb 
-                                    ON bb.branch_code = sup.migration_bank_branch_code
-                                    LEFT JOIN staff s 
-                                    ON s.migration_id = sup.migration_staff_id
+        // $migrate_keys_sql = "
+        //                         UPDATE suppliers sup 
+        //                             INNER JOIN banks b 
+        //                             ON b.bank_code = sup.migration_bank_id
+        //                             INNER JOIN bank_branches bb 
+        //                             ON bb.branch_code = sup.migration_bank_branch_code
+        //                             LEFT JOIN staff s 
+        //                             ON s.migration_id = sup.migration_staff_id
 
-                                    SET     sup.bank_id             =   b.id ,
-                                            sup.bank_branch_id      =   bb.id,
-                                            sup.staff_id            =   s.id
-                             ";
+        //                             SET     sup.bank_id             =   b.id ,
+        //                                     sup.bank_branch_id      =   bb.id,
+        //                                     sup.staff_id            =   s.id
+        //                      ";
+
+        $migrate_keys_sql = "call migrate_bank_foreign_keys";
 
         DB::statement($migrate_keys_sql);
 
