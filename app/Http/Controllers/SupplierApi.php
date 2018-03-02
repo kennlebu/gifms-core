@@ -98,7 +98,8 @@ class SupplierApi extends Controller
             'contact_phone_1',
             'contact_name_2',
             'contact_email_2',
-            'contact_phone_2'
+            'contact_phone_2',
+            'requires_lpo'
             );
 
         $supplier = new Supplier;
@@ -134,6 +135,7 @@ class SupplierApi extends Controller
             $supplier->contact_name_2          =         $form['contact_name_2'];
             $supplier->contact_email_2         =         $form['contact_email_2'];
             $supplier->contact_phone_2         =         $form['contact_phone_2'];
+            $supplier->requires_lpo            =         $form['requires_lpo'];
 
         if($supplier->save()) {
 
@@ -202,7 +204,8 @@ class SupplierApi extends Controller
             'contact_phone_1',
             'contact_name_2',
             'contact_email_2',
-            'contact_phone_2'
+            'contact_phone_2',
+            'requires_lpo'
             );
 
         $supplier = Supplier::find($form['id']);
@@ -237,6 +240,7 @@ class SupplierApi extends Controller
             $supplier->contact_name_2          =         $form['contact_name_2'];
             $supplier->contact_email_2         =         $form['contact_email_2'];
             $supplier->contact_phone_2         =         $form['contact_phone_2'];
+            $supplier->requires_lpo            =         $form['requires_lpo'];
         if($supplier->save()) {
 
             return Response()->json(array('msg' => 'Success: supplier updated','supplier' => $supplier), 200);
