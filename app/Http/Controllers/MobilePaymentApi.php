@@ -27,12 +27,14 @@ use PDF;
 use Excel;
 use App;
 use JWTAuth;
+use Config;
 use Anchu\Ftp\Facades\Ftp;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\NotifyMobilePayment;
+use App\Mail\MobilePaymentInstructBank;
 use App\Models\AllocationModels\Allocation;
 use App\Models\ApprovalsModels\Approval;
 use App\Models\ApprovalsModels\ApprovalLevel;
@@ -446,13 +448,73 @@ class MobilePaymentApi extends Controller
                 $approval->approval_level_id        =   $approvable_status->approval_level_id;
                 $approval->approver_id              =   (int)   $user->id;
 
-                $approval->save();
-                if($mobile_payment->status_id!=4){   
+                if($mobile_payment->status_id!=4 && $mobile_payment->status_id!=8){   
+                
+                    $approval->save();
                     try{                     
                     Mail::send(new NotifyMobilePayment($mobile_payment));
                     }catch(Exception $e){
-                        //file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , $e , FILE_APPEND);
                     }
+                }
+                elseif($mobile_payment->status_id==4){
+                    
+                    /* Get CSV data */
+                    date_default_timezone_set('Africa/Nairobi'); // Set timezone to Nairobi
+                    $date = date('Ymd');
+
+                    $csv_data = [];
+                    $qb = DB::table('mobile_payment_payees')
+                        ->whereNull('deleted_at')
+                        ->where('mobile_payment_id', '=', ''.$mobile_payment->id)
+                        ->select('id', 'registered_name', 'mobile_number', 'total')
+                        ->get();
+                    
+                        foreach($qb as $row){
+                            $data = array(
+                                $date, // date
+                                '99001', // bank_code
+                                '', // blank space
+                                preg_replace("/[^0-9]/", "", $row['mobile_number']), // phone
+                                $row['registered_name'], // mobile_name
+                                'NIC', // bank_name
+                                '', // blank space
+                                'KES', // currency
+                                $row['total'], // amount
+                                'CHAI'.$this->pad_zeros(5, $row['id']) // chaipv
+                            );
+                            
+                            // Add the data to the csv_data array
+                            array_push($csv_data, $data);
+                        }
+
+                    /* Generate CSV */
+                    if (!$fp = fopen('php://temp', 'w+')) return false; // Open temp file pointer
+                    foreach ($csv_data as $line){
+                        fputcsv($fp, $line);
+                    }
+                    rewind($fp); // Place stream pointer at beginning
+                    $csv_file = stream_get_contents($fp);
+
+                    /* Generate PDF */
+                    $deputy_director = Staff::findOrFail((int) Config::get('app.director_id'));
+                    $director = Staff::findOrFail(32); //TODO: Pick this from config
+                    $pdf_data = array('mobile_payment' => $mobile_payment,
+                        'addressee'=>'Maureen Adega',
+                        'deputy_director'=>$deputy_director,
+                        'director'=>$director,
+                        'our_ref'=>'CHAI'.$this->pad_zeros(5, $row['id'])
+                    );
+                    $pdf = PDF::loadView('pdf/mobile_payment_bank_instruction', $pdf_data);
+                    $pdf_file = $pdf->stream();
+
+                    /* Send Email */
+                    Mail::send(new MobilePaymentInstructBank($mobile_payment, $csv_file, $pdf_file));
+                    
+                    // Save the approval if the bank has been notified successfully
+                    $approval->save();
+                }
+                elseif($mobile_payment->status_id==8){
+                    $approval->save();
                 }
 
                 return Response()->json(array('result' => 'Success: mobile_payment approved','mobile_payment' => $mobile_payment), 200);
@@ -464,7 +526,7 @@ class MobilePaymentApi extends Controller
             return response()->json($response, 403,array(),JSON_PRETTY_PRINT);
         }catch(Exception $e){
 
-            $response =  ["error"=>"Mobile Payment could not be found"];
+            $response =  ["error"=>$e->getMessage()];
             return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
         }
     }
@@ -1115,7 +1177,7 @@ class MobilePaymentApi extends Controller
 
             $file_contents  = FTP::connection()->readFile($path);
 
-            Storage::put($path , $file_contents);
+            // Storage::put($path , $file_contents);
 
             $url            = storage_path("app".$path);
 
@@ -1626,6 +1688,28 @@ class MobilePaymentApi extends Controller
         return $data;
 
 
+    }
+
+
+
+
+
+
+
+
+
+
+    /**
+     * Adds zeros at the beginning of string until the desired
+     * length is reached.
+     */
+    public function pad_zeros($desired_length, $data){
+        if(strlen($data)<$desired_length){
+            return str_repeat('0', $desired_length-strlen($data)).$data;
+        }
+        else{
+            return $data;
+        }
     }
 
 

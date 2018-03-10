@@ -23,9 +23,33 @@ class MobilePaymentInstructBank extends Mailable
      *
      * @return void
      */
-    public function __construct(MobilePayment $mobile_payment)
+    public function __construct(MobilePayment $mobile_payment, $csv_attachment, $pdf_attachment)
     {
-        //
+        $this->mobile_payment = $mobile_payment;
+        $this->csv_attachment = $csv_attachment;
+        $this->pdf_attachment = $pdf_attachment;
+        $this->director2_id = 32;
+
+        $this->accountant           = Staff::findOrFail(    (int)   Config::get('app.accountant_id'));
+        $this->financial_controller = Staff::findOrFail(    (int)   Config::get('app.financial_controller_id'));
+        $this->director             = Staff::findOrFail(    (int)   Config::get('app.director_id'));
+        $this->director2 = Staff::findOrFail($this->director2_id);
+        $this->requester = Staff::findOrFail($mobile_payment->requested_by_id);
+        $this->bank_to = array('first_name'=>'Christine', 'last_name'=>'Kithembe', 'email'=>'Christine.Kithembe@nic-bank.com');
+        $this->bank_cc = array(
+            array('first_name'=>'Dennis', 'last_name'=>'Owino', 'email'=>'Dennis.Owino@nic-bank.com'),
+            array('first_name'=>'Maureen', 'last_name'=>'Adega', 'email'=>'Maureen.Adega@nic-bank.com'),
+            array('first_name'=>'NIC', 'last_name'=>'Bank', 'email'=>'niconline@nic-bank.com'),
+            array('first_name'=>'Leonard', 'last_name'=>'Kerika', 'email'=>'Leonard.Kerika@nic-bank.com')
+        );
+        $this->chai_cc = array(
+            array('first_name'=>'Jane', 'last_name'=>'Ayuma', 'email'=>'jayuma@clintonhealthaccess.org'),
+            array('first_name'=>'Ramadhan', 'last_name'=>'Wangatia', 'email'=>'rwangatia@clintonhealthaccess.org'),
+            array('first_name'=>'Davis', 'last_name'=>'Karambi', 'email'=>'dkarambi@clintonhealthaccess.org'),
+            array('first_name'=>'Jackson', 'last_name'=>'Hungu', 'email'=>'jhungu@clintonhealthaccess.org'),
+            array('first_name'=>'Rosemary', 'last_name'=>'Kihoto', 'email'=>'rkihoto@clintonhealthaccess.org'),
+            array('first_name'=>'Gerald', 'last_name'=>'Macharia', 'email'=>'gmacharia@clintonhealthaccess.org')
+        );
     }
 
     /**
@@ -36,10 +60,16 @@ class MobilePaymentInstructBank extends Mailable
     public function build()
     {
 
-        $bccs = [] ;
-        $bccs[0] = $this->accountant;
-        $bccs[1] = $this->financial_controller;
-        $bccs[2] = $this->director;
+        $ccs = [];
+        foreach($this->bank_cc as $bank_cc){
+            array_push($ccs, $bank_cc['email']);
+        }
+        foreach($this->chai_cc as $chai_cc){
+            array_push($ccs, $chai_cc['email']);
+        }
+        array_push($ccs, $this->requester->email);
+
+        $subject = "Bulk MPESA Payment - ".$this->pad_zeros(5,$this->mobile_payment->id);
 
 
         $this->view('emails/mobile_payment_instruct_bank')         
@@ -47,94 +77,30 @@ class MobilePaymentInstructBank extends Mailable
                     'email' => Config::get('mail.reply_to')['address'],
 
                 ])           
-            ->cc($this->lpo->requested_by)       
-            ->bcc($bccs);
+            ->cc($ccs)
+            ->attachData($this->pdf_attachment, 'ALLOWANCES_'.$this->pad_zeros(5,$this->mobile_payment->id).'.pdf')
+            ->attachData($this->csv_attachment, 'ALLOWANCES_'.$this->pad_zeros(5,$this->mobile_payment->id).'.csv');      
 
+        return $this->to($this->bank_to['email'])
+            ->with([
+                    'mobile_payment' => $this->mobile_payment,
+                    'addressed_to' => $this->accountant,
+                    'bank_to' => $this->bank_to,
+                    'js_url' => Config::get('app.js_url'),
+                ])
+            ->subject("Bulk MPESA Payment - ".$this->pad_zeros(5,$this->mobile_payment->id));
+    }
 
-
-
-
-
-
-
-
-
-
-        if($this->lpo->status_id == 13){
-
-
-
-            return $this->to($this->accountant)
-                    ->with([
-                            'lpo' => $this->lpo,
-                            'addressed_to' => $this->accountant,
-                            'js_url' => Config::get('app.js_url'),
-                        ])
-                    ->subject("LPO Approval Request ".$this->lpo->ref);
-        }else if($this->lpo->status_id == 3){
-
-
-
-            return $this->to($this->lpo->project_manager)
-                    ->with([
-                            'lpo' => $this->lpo,
-                            'addressed_to' => $this->lpo->project_manager,
-                            'js_url' => Config::get('app.js_url'),
-                        ])
-                    ->subject("LPO Approval Request ".$this->lpo->ref);
-        }else if($this->lpo->status_id == 4){
-
-
-
-            return $this->to($this->financial_controller)
-                    ->with([
-                            'lpo' => $this->lpo,
-                            'addressed_to' => $this->financial_controller,
-                            'js_url' => Config::get('app.js_url'),
-                        ])
-                    ->subject("LPO Approval Request ".$this->lpo->ref);
-        }else if($this->lpo->status_id == 5){
-
-
-
-            return $this->to($this->director)
-                    ->with([
-                            'lpo' => $this->lpo,
-                            'addressed_to' => $this->director,
-                            'js_url' => Config::get('app.js_url'),
-                        ])
-                    ->subject("LPO Approval Request ".$this->lpo->ref);
+    /**
+     * Adds zeros at the beginning of string until the desired
+     * length is reached.
+     */
+    public function pad_zeros($desired_length, $data){
+        if(strlen($data)<$desired_length){
+            return str_repeat('0', $desired_length-strlen($data)).$data;
         }
-
-
-
-
-
-
-
-        else if($this->lpo->status_id == 11){
-
-
-
-            return $this->to($this->lpo->requested_by)
-                    ->with([
-                            'lpo' => $this->lpo,
-                            'addressed_to' => $this->lpo->requested_by,
-                            'js_url' => Config::get('app.js_url'),
-                        ])
-                    ->subject("LPO Cancelled ".$this->lpo->ref);
-        }else if($this->lpo->status_id == 12){
-
-
-
-            return $this->to($this->lpo->requested_by)
-                    ->with([
-                            'lpo' => $this->lpo,
-                            'addressed_to' => $this->lpo->requested_by,
-                            'js_url' => Config::get('app.js_url'),
-                        ])
-                    ->subject("LPO Rejected ".$this->lpo->ref);
+        else{
+            return $data;
         }
-
     }
 }
