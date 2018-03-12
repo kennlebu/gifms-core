@@ -9,6 +9,9 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use App\Models\MobilePaymentModels\MobilePayment;
 use App\Models\StaffModels\Staff;
 use Config;
+use PDF;
+use Excel;
+use Illuminate\Support\Facades\File;
 
 class MobilePaymentInstructBank extends Mailable
 {
@@ -18,16 +21,22 @@ class MobilePaymentInstructBank extends Mailable
     protected $accountant;
     protected $financial_controller;
     protected $director;
+    protected $csv_data;
+    protected $pdf_data;
+    protected $bank_cc;
+    protected $chai_cc;
+    protected $bank_to;
+    protected $requester;
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct(MobilePayment $mobile_payment, $csv_attachment, $pdf_attachment)
+    public function __construct(MobilePayment $mobile_payment, $csv_data, $pdf_data)
     {
         $this->mobile_payment = $mobile_payment;
-        $this->csv_attachment = $csv_attachment;
-        $this->pdf_attachment = $pdf_attachment;
+        $this->csv_data = $csv_data;
+        $this->pdf_data = $pdf_data;
         $this->director2_id = 32;
 
         $this->accountant           = Staff::findOrFail(    (int)   Config::get('app.accountant_id'));
@@ -58,7 +67,18 @@ class MobilePaymentInstructBank extends Mailable
      * @return $this
      */
     public function build()
-    {
+    {        
+        /* Generate CSV */
+        if (!$fp = fopen('php://temp', 'w+')) return false; // Open temp file pointer
+        foreach ($this->csv_data as $line){
+            fputcsv($fp, $line);
+        }
+        rewind($fp); // Place stream pointer at beginning
+        $csv_file = stream_get_contents($fp);
+
+        /* Generate PDF */
+        $pdf = PDF::loadView('pdf/mobile_payment_bank_instruction', $this->pdf_data);
+        $pdf_file = $pdf->stream();
 
         $ccs = [];
         foreach($this->bank_cc as $bank_cc){
@@ -78,8 +98,8 @@ class MobilePaymentInstructBank extends Mailable
 
                 ])           
             ->cc($ccs)
-            ->attachData($this->pdf_attachment, 'ALLOWANCES_'.$this->pad_zeros(5,$this->mobile_payment->id).'.pdf')
-            ->attachData($this->csv_attachment, 'ALLOWANCES_'.$this->pad_zeros(5,$this->mobile_payment->id).'.csv');      
+            ->attachData($pdf_file, 'ALLOWANCES_'.$this->pad_zeros(5,$this->mobile_payment->id).'.pdf')
+            ->attachData($csv_file, 'ALLOWANCES_'.$this->pad_zeros(5,$this->mobile_payment->id).'.csv');      
 
         return $this->to($this->bank_to['email'])
             ->with([

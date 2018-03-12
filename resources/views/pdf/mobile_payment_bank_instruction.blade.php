@@ -3,7 +3,7 @@
 <head>
     <style>
         @page {
-            margin: 300px 20px 300px 20px;
+            margin: 150px 40px 120px 40px;
         }
         
         header {
@@ -47,13 +47,12 @@
     </footer>
     <main>
         <div>
-            <p>{{date('l F d, Y') }}</p>
-            <p><span style="font-size: x-large;">Our Ref.: {{$our_ref}}</span></p>
-            <p>NIC Bank LTD<br/> NIC House<br/> Nairobi
-            </p>
-            <p><span style="text-decoration: underline;">Attn: {{$addressee}}</span></p>
-            <p><span style="text-decoration: underline;">RE: MPESA Bulk Payment KES {{number_format($mobile_payment->totals,2)}} ({{(new NumberFormatter("en", NumberFormatter::SPELLOUT))->format($mobile_payment->totals)}} only)</span></p>
-            <p>Please make the following MPESA payments from our KES A/C No: ICA-1-110-001137</p>
+            {{date('l F d, Y') }}<br/><br/>
+            <span style="font-size: x-large;">Our Ref.: {{$our_ref}}</span><br/><br/>
+            NIC Bank LTD<br/> NIC House<br/> Nairobi<br/><br/>
+            <span style="text-decoration: underline;">Attn: {{$addressee}}</span><br/><br/>
+            <span style="text-decoration: underline;">RE: MPESA Bulk Payment KES {{number_format($mobile_payment->totals,2)}} ({{(new NumberFormatter("en", NumberFormatter::SPELLOUT))->format($mobile_payment->totals)}} only)</span><br/><br/>
+            Please make the following MPESA payments from our KES A/C No: ICA-1-110-001137<br/><br/>
             <table style="width: 100%;font-size: smaller;" cellspacing="0">
                 <tbody>
 
@@ -61,14 +60,14 @@
 
 
                     <tr>
-                        <td style=" width: 20px; border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #c0c0c0;" bgcolor="#092d50"><strong><span style="color: #ffffff;">PAYEE #</span></strong></td>
+                        <td style=" width: 20px; border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #c0c0c0;" bgcolor="#092d50"><strong><span style="color: #ffffff;">#</span></strong></td>
                         <td style="border: 1px solid #c0c0c0;" colspan="3" bgcolor="#092d50"><span style="color: #ffffff;width:30%;"><strong>Name</strong></span></td>
                         <td style="border: 1px solid #c0c0c0;" bgcolor="#092d50"><strong><span style="color: #ffffff;">MOBILE NUMBER</span></strong></td>
                         <td style="border: 1px solid #c0c0c0;" bgcolor="#092d50"><strong><span style="color: #ffffff;"></span></strong></td>
                         <td style="border: 1px solid #c0c0c0;" bgcolor="#092d50"><strong><span style="color: #ffffff;">TOTAL({{$mobile_payment->currency->currency_name}})</span></strong></td>
                     </tr>
 
-                    <!-- @foreach ($mobile_payment->payees as $key => $payee) -->
+                    @foreach ($mobile_payment->payees as $key => $payee)
 
 
                     <tr>
@@ -80,7 +79,7 @@
                     </tr>
 
 
-                    <!-- @endforeach -->
+                    @endforeach
 
 
                     <tr>
@@ -124,13 +123,15 @@
             <div style="display:inline-block">
                 <div style="display:inline-block;margin-right:60px;">
                     Signed:<br/>
-                    <img src="{{asset('storage/app/staff/signature'.$director->id.'.png')}}"><br/> {{ucwords(strtolower($director->fname.' '.$director->l_name))}}
+                    <img src="{{asset('storage/app/staff/signature'.$director->id.'.png')}}"><br/> 
+                    {{ucwords(strtolower($director->f_name.' '.$director->l_name))}}
                     <br/>{{$director->post}}
                 </div>
 
                 <div style="display:inline-block;margin-left:60px;">
                     Signed:<br/>
-                    <img src="{{asset('storage/app/staff/signature'.$deputy_director->id.'.png')}}"><br/> {{ucwords(strtolower($deputy_director->fname.' '.$deputy_director->l_name))}}
+                    <img src="{{asset('storage/app/staff/signature'.$deputy_director->id.'.png')}}"><br/> 
+                    {{ucwords(strtolower($deputy_director->f_name.' '.$deputy_director->l_name))}}
                     <br/>{{$deputy_director->post}}
                 </div>
             </div>

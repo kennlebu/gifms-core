@@ -4146,6 +4146,13 @@ Route::PATCH('/program/{program_id}/managers', 'ProgramApi@updateManagers')->mid
 
  */
 Route::GET('/programs', 'ProgramApi@programsGet')->middleware('jwt.auth');
+/**
+ * GET programManagersGet
+ * Summary: program managers List
+ * Notes: The program endpoint returns multiple program managers requested given the parameters injected.  
+
+ */
+Route::GET('/program_managers', 'ProgramApi@programManagersGet')->middleware('jwt.auth');
 
 
 

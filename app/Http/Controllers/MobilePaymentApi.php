@@ -452,7 +452,7 @@ class MobilePaymentApi extends Controller
                 
                     $approval->save();
                     try{                     
-                    Mail::send(new NotifyMobilePayment($mobile_payment));
+                    Mail::queue(new NotifyMobilePayment($mobile_payment));
                     }catch(Exception $e){
                     }
                 }
@@ -469,33 +469,25 @@ class MobilePaymentApi extends Controller
                         ->select('id', 'registered_name', 'mobile_number', 'total')
                         ->get();
                     
-                        foreach($qb as $row){
-                            $data = array(
-                                $date, // date
-                                '99001', // bank_code
-                                '', // blank space
-                                preg_replace("/[^0-9]/", "", $row['mobile_number']), // phone
-                                $row['registered_name'], // mobile_name
-                                'NIC', // bank_name
-                                '', // blank space
-                                'KES', // currency
-                                $row['total'], // amount
-                                'CHAI'.$this->pad_zeros(5, $row['id']) // chaipv
-                            );
-                            
-                            // Add the data to the csv_data array
-                            array_push($csv_data, $data);
-                        }
-
-                    /* Generate CSV */
-                    if (!$fp = fopen('php://temp', 'w+')) return false; // Open temp file pointer
-                    foreach ($csv_data as $line){
-                        fputcsv($fp, $line);
+                    foreach($qb as $row){
+                        $data = array(
+                            $date, // date
+                            '99001', // bank_code
+                            '', // blank space
+                            preg_replace("/[^0-9]/", "", $row['mobile_number']), // phone
+                            $row['registered_name'], // mobile_name
+                            'NIC', // bank_name
+                            '', // blank space
+                            'KES', // currency
+                            $row['total'], // amount
+                            'CHAI'.$this->pad_zeros(5, $row['id']) // chaipv
+                        );
+                        
+                        // Add the data to the csv_data array
+                        array_push($csv_data, $data);
                     }
-                    rewind($fp); // Place stream pointer at beginning
-                    $csv_file = stream_get_contents($fp);
 
-                    /* Generate PDF */
+                    /* Get PDF data */                    
                     $deputy_director = Staff::findOrFail((int) Config::get('app.director_id'));
                     $director = Staff::findOrFail(32); //TODO: Pick this from config
                     $pdf_data = array('mobile_payment' => $mobile_payment,
@@ -504,11 +496,9 @@ class MobilePaymentApi extends Controller
                         'director'=>$director,
                         'our_ref'=>'CHAI'.$this->pad_zeros(5, $row['id'])
                     );
-                    $pdf = PDF::loadView('pdf/mobile_payment_bank_instruction', $pdf_data);
-                    $pdf_file = $pdf->stream();
 
                     /* Send Email */
-                    Mail::send(new MobilePaymentInstructBank($mobile_payment, $csv_file, $pdf_file));
+                    Mail::queue(new MobilePaymentInstructBank($mobile_payment, $csv_data, $pdf_data));
                     
                     // Save the approval if the bank has been notified successfully
                     $approval->save();

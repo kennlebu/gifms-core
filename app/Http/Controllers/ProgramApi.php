@@ -481,6 +481,204 @@ class ProgramApi extends Controller
 
 
     }
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /**
+     * Operation programManagersGet
+     *
+     * program managers List.
+     *
+     *
+     * @return Http response
+     */
+    public function programManagersGet()
+    {
+        
+
+
+        $input = Request::all();
+        //query builder
+        $qb = DB::table('program_managers')
+            ->leftJoin('programs', 'program_managers.program_id', '=', 'programs.id')
+            ->leftJoin('staff', 'program_managers.program_manager_id', '=', 'staff.id')
+            ->select('program_managers.id', 'program_managers.program_manager_id', 'programs.program_name', 'programs.program_desc', 
+                'staff.email', 'staff.f_name', 'staff.l_name')
+            ->whereNull('program_managers.deleted_at');
+
+        $current_user = JWTAuth::parseToken()->authenticate();
+
+        $response;
+        $response_dt;
+
+        $total_records          = $qb->count();
+        $records_filtered       = 0;
+
+
+
+
+        //my_pm_assigned
+        if(array_key_exists('my_pm_assigned', $input)&& $input['my_pm_assigned'] = "true"){
+
+
+            $qb->select(DB::raw('programs.*'))
+                 ->rightJoin('program_managers', 'program_managers.program_id', '=', 'programs.id')
+                 ->rightJoin('staff', 'staff.id', '=', 'program_managers.program_manager_id')
+                 ->where('staff.id', '=', $current_user->id)
+                 ->whereNotNull('programs.id')
+                 ->groupBy('programs.id')
+                 ->orderBy('programs.program_name', 'asc');
+        }
+
+        //searching
+        if(array_key_exists('searchval', $input)){
+            $qb->where(function ($query) use ($input) {
+                
+                $query->orWhere('programs.id','like', '\'%' . $input['searchval']. '%\'');
+                $query->orWhere('programs.program_name','like', '\'%' . $input['searchval']. '%\'');
+                $query->orWhere('programs.program_desc','like', '\'%' . $input['searchval']. '%\'');
+
+            });
+        }
+
+
+        //ordering
+        if(array_key_exists('order_by', $input)&&$input['order_by']!=''){
+            $order_direction     = "asc";
+            $order_column_name   = $input['order_by'];
+            if(array_key_exists('order_dir', $input)&&$input['order_dir']!=''){                
+                $order_direction = $input['order_dir'];
+            }
+
+            $qb->orderBy($order_column_name, $order_direction);
+        }else{
+            //$qb->orderBy("project_code", "asc");
+        }
+
+        //limit
+        if(array_key_exists('limit', $input)){
+
+
+            $qb->limit($input['limit']);
+
+
+        }
+
+        //migrated
+        if(array_key_exists('migrated', $input)){
+
+            $mig = (int) $input['migrated'];
+
+            if($mig==0){
+                $qb->whereNull('migration_id');
+            }else if($mig==1){
+                $qb->whereNotNull('migration_id');
+            }
+
+
+        }
+
+
+
+        if(array_key_exists('datatables', $input)){
+
+            //searching
+            $qb->where(function ($query) use ($input) {
+                
+                $query->orWhere('programs.id','like', '\'%' . $input['search']['value']. '%\'');
+                $query->orWhere('programs.program_name','like', '\'%' . $input['search']['value']. '%\'');
+                $query->orWhere('programs.program_desc','like', '\'%' . $input['search']['value']. '%\'');
+
+            });
+
+
+            $dt = json_decode(json_encode($qb->get()), true);
+
+            // $records_filtered = (int) $dt[0]['count'];
+
+
+            //ordering
+            $order_column_id    = (int) $input['order'][0]['column'];
+            $order_column_name  = $input['columns'][$order_column_id]['order_by'];
+            $order_direction    = $input['order'][0]['dir'];
+
+            if($order_column_name!=''){
+
+                $qb->orderBy($order_column_name, $order_direction);
+
+            }
+
+
+
+
+
+
+            //limit $ offset
+            if((int)$input['start']!= 0 ){
+
+                $response_dt    =   $qb->limit($input['length'])->offset($input['start']);
+
+            }else{
+                $qb->limit($input['length']);
+            }
+
+
+
+
+
+            // $sql = Program::bind_presql($qb->toSql(),$qb->getBindings());
+
+            // // $response_dt = DB::select($qb->toSql(),$qb->getBindings());         //pseudo
+            // $response_dt = DB::select($sql);
+            $response_dt = $qb->get();
+
+
+            $response_dt = json_decode(json_encode($response_dt), true);
+
+            // $response_dt    = $this->append_relationships_objects($response_dt);
+            // $response_dt    = $this->append_relationships_nulls($response_dt);
+            $response       = Program::arr_to_dt_response( 
+                $response_dt, $input['draw'],
+                $total_records,
+                $records_filtered
+                );
+
+
+        }else{
+
+            // $sql            = Program::bind_presql($qb->toSql(),$qb->getBindings());
+            $response       = json_decode(json_encode($qb->get()), true);
+            if(!array_key_exists('lean', $input)){
+                // $response       = $this->append_relationships_objects($response);
+                // $response       = $this->append_relationships_nulls($response);
+            }
+        }
+
+
+
+
+        return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+
+
+    }
 
 
 
