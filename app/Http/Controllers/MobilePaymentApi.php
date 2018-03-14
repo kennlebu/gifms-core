@@ -456,7 +456,8 @@ class MobilePaymentApi extends Controller
                     }catch(Exception $e){
                     }
                 }
-                elseif($mobile_payment->status_id==4){
+                // Management approval or accountant approval after corrections
+                elseif($mobile_payment->status_id==4||$mobile_payment->status_id==12){
                     
                     /* Get CSV data */
                     date_default_timezone_set('Africa/Nairobi'); // Set timezone to Nairobi
@@ -582,15 +583,21 @@ class MobilePaymentApi extends Controller
             if (!$user->can("APPROVE_MOBILE_PAYMENT_".$mobile_payment->status_id)){
                 throw new ApprovalException("No approval permission");             
             }
-           
-            $mobile_payment->status_id = 7;
+           // Set as rejected by bank if it was already approved by management
+           // otherwise, set it as a normal rejection 
+           if($mobile_payment->status_id==4||$mobile_payment->status_id==12||$mobile_payment->status_id==13) {
+               $mobile_payment->status_id = 11;
+            }
+           else{
+                $mobile_payment->status_id = 7;
+           }
             $mobile_payment->rejected_by_id            =   (int)   $user->id;
             $mobile_payment->rejected_at              =   date('Y-m-d H:i:s');
             $mobile_payment->rejection_reason             =   $form['rejection_reason'];
 
             if($mobile_payment->save()) {
                 try{
-                Mail::send(new NotifyMobilePayment($mobile_payment));
+                Mail::queue(new NotifyMobilePayment($mobile_payment));
                 }catch(Exception $e){}
 
                 return Response()->json(array('msg' => 'Success: mobile_payment approved','mobile_payment' => $mobile_payment), 200);
@@ -1037,11 +1044,13 @@ class MobilePaymentApi extends Controller
              
            }
             $mobile_payment->status_id = $mobile_payment->status->next_status_id;
-            $mobile_payment->requested_at = date('Y-m-d H:i:s');
+            if($mobile_payment->status_id != 11){ // Only set request time if its not after corrections
+                $mobile_payment->requested_at = date('Y-m-d H:i:s');
+            }
 
             if($mobile_payment->save()) {
                 try{
-                Mail::send(new NotifyMobilePayment($mobile_payment));
+                Mail::queue(new NotifyMobilePayment($mobile_payment));
                 }catch(Exception $e){}
 
                 return Response()->json(array('msg' => 'Success: mobile_payment submitted','mobile_payment' => $mobile_payment), 200);
@@ -1228,8 +1237,19 @@ class MobilePaymentApi extends Controller
         $records_filtered       = 0;
 
 
+        // Sent to bank, awaiting reconciliation
+        if(array_key_exists('bank_approvable', $input) && $input['bank_approvable']==true){
+            // $qb->where(function ($query) {
+            //     $query->where('status_id', '4')
+            //      ->orWhere('status_id', '13');
+            // });
+            $qb->whereIn('status_id', ['4','13']);
+        }
 
-
+        // Corrected, awaiting accountant approval
+        if(array_key_exists('corrected_approvable', $input) && $input['corrected_approvable']==true){
+            $qb->where('status_id', '12');
+        }
 
 
         //if status is set
@@ -1308,7 +1328,6 @@ class MobilePaymentApi extends Controller
             }
             // echo $qb->toSql();die;
         }
-
 
         //searching
         if(array_key_exists('searchval', $input)){
@@ -1465,6 +1484,78 @@ class MobilePaymentApi extends Controller
         return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
 
 
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /**
+     * Operation uploadBankFile
+     *
+     * Upload bank file for reconciliation.
+     *
+     * @return Http response
+     */
+    public function uploadBankFile()
+    {
+        $input = Request::all();
+        try{
+            $payees_ids = [];
+            $payment_refs = [];
+            $mobile_payment_ids = [];
+            $form = Request::only('file');
+            $file = $form['file'];
+
+            $handle = fopen($file, 'r');
+            $header = true;
+            while($csvLine = fgetcsv($handle, 1000, ',')){
+                if ($header) {
+                    $header = false;
+                } else {
+                    $ref = explode(" ", $csvLine[1])[0];
+                    array_push($payees_ids, (int)preg_replace("/[^0-9]/", "", $ref)); 
+                }
+            }
+
+            // Mark payees as paid
+            foreach($payees_ids as $id){
+                $payee = MobilePaymentPayee::findOrFail($id);
+                $payee->paid = 1;
+                $payee->save();
+                if(!in_array($payee->mobile_payment_id, $mobile_payment_ids)){
+                    array_push($mobile_payment_ids, $payee->mobile_payment_id);
+                }
+            }
+
+            // Change status of the mobile payment(s) to paid
+            foreach($mobile_payment_ids as $id){
+                $mobile_payment = MobilePayment::findOrFail($id);
+                $mobile_payment->status_id = 5;
+                $mobile_payment->save();
+                array_push($payment_refs, $mobile_payment->ref);
+                // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , json_encode($mobile_payment) , FILE_APPEND);
+            }
+
+            return Response()->json(array('msg' => 'Success: Mobile Payment(s) reconciled','payments' => $payment_refs), 200);
+
+        }
+        catch (Exception $e){
+            return response()->json(['error'=>$e.getMessage()], 500);
+        }
     }
 
 

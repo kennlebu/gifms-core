@@ -1832,6 +1832,13 @@ Route::PATCH('/mobile_payments/approve', 'MobilePaymentApi@approveSeveralMobileP
  * Output-Formats: [application/json, application/xml]
  */
 Route::GET('/mobile_payments/template', 'MobilePaymentApi@getTemplate')->middleware('jwt.auth');
+/**
+ * POST uploadBankFile
+ * Summary: upload bank file
+ * Notes: upload bank file for reconciliation
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/mobile_payment/upload_bankfile', 'MobilePaymentApi@uploadBankFile')->middleware('jwt.auth');
 
 
 
