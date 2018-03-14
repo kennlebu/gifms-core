@@ -25,6 +25,7 @@ use App\Models\ApprovalsModels\Approval;
 use App\Models\ApprovalsModels\ApprovalLevel;
 use App\Models\StaffModels\Staff;
 use Illuminate\Support\Facades\Response;
+use App\Models\LPOModels\Lpo;
 
 class DeliveryApi extends Controller
 {
@@ -78,6 +79,7 @@ class DeliveryApi extends Controller
                 'comment',
                 'external_ref',
                 'lpo_id',
+                'delivery_made',
                 'file'
             );
 
@@ -88,12 +90,15 @@ class DeliveryApi extends Controller
             $delivery->comment                           =           $form['comment'];
             $delivery->external_ref                      =           $form['external_ref'];
             $delivery->lpo_id                            =   (int)   $form['lpo_id'];
-            // $delivery->status_id                         =   2;
-
-            // $user = JWTAuth::parseToken()->authenticate();
-            // $delivery->request_action_by_id            =   (int)   $user->id;
+            $delivery->delivery_made = $form['delivery_made'];
 
             if($delivery->save()) {
+                // Mark LPO as delivered
+                $lpo = Lpo::find($delivery->lpo_id);
+                $lpo->date_delivered = date("Y-m-d H:i:s");
+                $lpo->delivery_Comment = $delivery->comment;
+                $lpo->delivery_made = $delivery->delivery_made;
+                $lpo->save();
 
                 FTP::connection()->makeDir('/deliveries');
                 FTP::connection()->makeDir('/deliveries/'.$delivery->id);

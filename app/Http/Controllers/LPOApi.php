@@ -902,7 +902,14 @@ class LPOApi extends Controller
         $records_filtered       = 0;
 
 
-
+        // if for delivery
+        if(array_key_exists('for_delivery',$input)&&$input['for_delivery']==true){
+            $full = 'full';
+            $qb->where(function ($query) use ($full){
+                $query->whereNull('lpos.delivery_made');
+                $query->orWhere('lpos.delivery_made', 'not like', '\'%full%\'');
+            });
+        }
 
 
 

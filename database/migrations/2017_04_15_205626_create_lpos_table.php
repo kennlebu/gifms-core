@@ -28,6 +28,7 @@ class CreateLposTable extends Migration
             $table->integer('currency_id')->nullable();
             $table->integer('preffered_quotation_id')->nullable();
             $table->integer('supply_category')->nullable();
+            $table->string('delivery_made')->nullable();
             $table->string('delivery_document')->nullable();
             $table->text('delivery_Comment')->nullable();
             $table->timestamp('date_delivered')->nullable();
