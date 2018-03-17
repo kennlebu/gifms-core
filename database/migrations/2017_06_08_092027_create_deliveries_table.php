@@ -19,6 +19,7 @@ class CreateDeliveriesTable extends Migration
             $table->string('external_ref')->nullable();
             $table->integer('lpo_id')->nullable();
             $table->integer('received_by_id')->nullable();
+            $table->integer('received_for_id')->nullable();
             $table->string('delivery_document')->nullable();
             $table->string('receipt')->nullable();
             $table->text('comment')->nullable();

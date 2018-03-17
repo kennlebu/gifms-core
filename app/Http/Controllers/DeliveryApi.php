@@ -26,6 +26,8 @@ use App\Models\ApprovalsModels\ApprovalLevel;
 use App\Models\StaffModels\Staff;
 use Illuminate\Support\Facades\Response;
 use App\Models\LPOModels\Lpo;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\NotifyDelivery;
 
 class DeliveryApi extends Controller
 {
@@ -80,6 +82,7 @@ class DeliveryApi extends Controller
                 'external_ref',
                 'lpo_id',
                 'delivery_made',
+                'received_for_id',
                 'file'
             );
 
@@ -91,6 +94,7 @@ class DeliveryApi extends Controller
             $delivery->external_ref                      =           $form['external_ref'];
             $delivery->lpo_id                            =   (int)   $form['lpo_id'];
             $delivery->delivery_made = $form['delivery_made'];
+            $delivery->received_for_id = (int)$form['received_for_id'];
 
             if($delivery->save()) {
                 // Mark LPO as delivered
@@ -99,6 +103,13 @@ class DeliveryApi extends Controller
                 $lpo->delivery_Comment = $delivery->comment;
                 $lpo->delivery_made = $delivery->delivery_made;
                 $lpo->save();
+
+                // Email delivery owner
+                try{
+                    Mail::queue(new NotifyDelivery($delivery, $lpo));
+                }catch(Exception $e){
+
+                }
 
                 FTP::connection()->makeDir('/deliveries');
                 FTP::connection()->makeDir('/deliveries/'.$delivery->id);
@@ -154,6 +165,7 @@ class DeliveryApi extends Controller
         $form = Request::only(
             'id',
             'received_by_id',
+            'received_for_id',
             'comment',
             'external_ref',
             'lpo_id'
@@ -165,6 +177,7 @@ class DeliveryApi extends Controller
 
 
             $delivery->received_by_id                   =   (int)       $form['received_by_id'];
+            $delivery->received_for_id  = (int) $form['received_for_id'];
             $delivery->comment                      =               $form['comment'];
             $delivery->external_ref                   =               $form['external_ref'];
             $delivery->lpo_id                =   (int)       $form['lpo_id']; 
@@ -259,6 +272,7 @@ class DeliveryApi extends Controller
         try{
             $response   = Delivery::with( 
                                         'received_by',
+                                        'received_for',
                                         'comments',
                                         'supplier',
                                         'lpo',
@@ -748,6 +762,7 @@ class DeliveryApi extends Controller
 
             $data[$key]['lpo']                      = $delivery->lpo;
             $data[$key]['received_by']              = $delivery->received_by;
+            $data[$key]['received_for']             = $delivery->received_for;
 
         }
 

@@ -20,6 +20,10 @@ class Delivery extends BaseModel
     {
         return $this->belongsTo('App\Models\StaffModels\Staff','received_by_id');
     }
+    public function received_for()
+    {
+        return $this->belongsTo('App\Models\StaffModels\Staff','received_for_id');
+    }
     public function supplier()
     {
         return $this->belongsTo('App\Models\SuppliesModels\Supplier');
