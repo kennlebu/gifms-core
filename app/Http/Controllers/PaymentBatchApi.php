@@ -24,6 +24,7 @@ use App\Models\PaymentModels\Payment;
 use App\Models\AdvancesModels\Advance;
 use App\Models\ClaimsModels\Claim;
 use App\Models\InvoicesModels\Invoice;
+use App\Models\LPOModels\Lpo;
 
 class PaymentBatchApi extends Controller
 {
@@ -540,7 +541,6 @@ class PaymentBatchApi extends Controller
             $payments = [];
             $form = Request::only('file');
             $file = $form['file'];
-            // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , 'Something\'s here' , FILE_APPEND);
 
             $handle = fopen($file, 'r');
             $header = true;
@@ -570,6 +570,11 @@ class PaymentBatchApi extends Controller
                         $invoice->status_id = 8;
                         $invoice->save();
                         array_push($payments, ['type'=>'Invoice', 'ref'=>'INV'.$invoice->id, 'paid'=>true]);
+
+                        // Change LPO to paid
+                        $lpo = Lpo::findOrFail($invoice->lpo_id);
+                        $lpo->invoice_paid = 'True';
+                        $lpo->save();
                     }
                     else{
                         array_push($payments, ['type'=>'Invoice', 'ref'=>'INV'.$invoice->id, 'paid'=>false]);

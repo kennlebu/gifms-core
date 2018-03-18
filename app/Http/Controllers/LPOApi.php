@@ -904,10 +904,18 @@ class LPOApi extends Controller
 
         // if for delivery
         if(array_key_exists('for_delivery',$input)&&$input['for_delivery']==true){
-            $full = 'full';
-            $qb->where(function ($query) use ($full){
+            $qb->where(function ($query){
                 $query->whereNull('lpos.delivery_made');
                 $query->orWhere('lpos.delivery_made', 'not like', '\'%full%\'');
+            });
+        }
+
+
+         // if for invoice
+         if(array_key_exists('for_invoice',$input)&&$input['for_invoice']==true){
+            $qb->where(function ($query){
+                $query->whereNull('lpos.invoice_paid');
+                $query->orWhere('lpos.invoice_paid', 'not like', '\'%full%\'');
             });
         }
 
