@@ -574,6 +574,7 @@ class PaymentBatchApi extends Controller
                         // Change LPO to paid
                         $lpo = Lpo::findOrFail($invoice->lpo_id);
                         $lpo->invoice_paid = 'True';
+                        $lpo->status_id = 9;
                         $lpo->save();
                     }
                     else{

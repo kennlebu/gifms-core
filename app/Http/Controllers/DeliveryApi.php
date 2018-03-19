@@ -102,6 +102,7 @@ class DeliveryApi extends Controller
                 $lpo->date_delivered = date("Y-m-d H:i:s");
                 $lpo->delivery_Comment = $delivery->comment;
                 $lpo->delivery_made = $delivery->delivery_made;
+                $lpo->status_id = $lpo->status->next_status_id;
                 $lpo->save();
 
                 // Email delivery owner
