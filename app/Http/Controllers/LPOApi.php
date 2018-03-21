@@ -30,6 +30,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\NotifyLpo;
+use App\Mail\NotifyLpoDispatch;
 use App\Models\AllocationModels\Allocation;
 use App\Models\ApprovalsModels\Approval;
 use App\Models\ApprovalsModels\ApprovalLevel;
@@ -394,9 +395,15 @@ class LPOApi extends Controller
 
                 if($lpo->status_id!=7){
                     try{
-                    Mail::send(new NotifyLpo($lpo));
+                    Mail::queue(new NotifyLpo($lpo));
                     }catch(Exception $e){
 
+                    }
+                }
+                elseif($lpo->status_id==7){
+                    try{ 
+                        Mail::queue(new NotifyLpoDispatch($lpo));
+                    }catch(Exception $e){
                     }
                 }
 
