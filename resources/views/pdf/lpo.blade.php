@@ -116,51 +116,48 @@
             <td align="right" bgcolor="#E4E8F3">{{number_format($lpo->sub_totals,2)}}</td>
           </tr>
           <tr>
-            <td style="border: 1px solid #666666;margin-right: 20px;" colspan="6"  bgcolor="#C0C0C0" ><strong>Terms And Conditions</strong></td>
+            <td colspan="6">&nbsp;</td>
             <td ></td>
             <td colspan="1" >VAT RATE</td>
             <td ></td>
             <td align="right">16%</td>
           </tr>
           <tr>
-            <td style="border: 1px solid #666666;margin-right: 20px;" colspan="6" rowspan="11"  valign="top" >
-              <ul style="list-style-type: square;">
-                @foreach ($lpo->terms as $term)
-                <li>{{$term->terms}}</li>
-                @endforeach
-              </ul>
-            </td>
+            <td colspan="6">&nbsp;</td>
             <td ></td>
             <td >VAT</td>
             <td >{{$lpo->currency->currency_name}}</td>
             <td align="right" bgcolor="#E4E8F3">{{number_format($lpo->vats,2)}}</td>
           </tr>
           <tr>
+            <td colspan="6">&nbsp;</td>
             <td >&nbsp;</td>
             <td style="border-bottom: 3px double #000000;" colspan="1" ></td>
             <td style="border-bottom: 3px double #000000;" ></td>
             <td style="border-bottom: 3px double #000000;" align="right"></td>
           </tr>
           <tr>
+            <td colspan="6">&nbsp;</td>
             <td ></td>
             <td colspan="1" ><strong>TOTALS</strong></td>
             <td >{{$lpo->currency->currency_name}}</td>
             <td align="right" bgcolor="#E4E8F3"><strong>{{number_format($lpo->totals,2)}}</strong></td>
           </tr>
           <tr>
+            <td colspan="6">&nbsp;</td>
             <td >&nbsp;</td>
             <td ></td>
             <td ></td>
           </tr>
 
-          <tr>
+          {{--  <tr>
             <td ></td>
             <td style="border-bottom: 2px solid #000000;" colspan="1" >Authorized by:</td>
             <td style="border-bottom: 2px solid #000000;" ></td>
             <td style="border-bottom: 2px solid #000000;" >Date:</td>
-          </tr>
+          </tr>  --}}
 
-          @foreach ($lpo->approvals as $key => $approval)
+          {{--  @foreach ($lpo->approvals as $key => $approval)
             @if ($approval->approval_level_id == 4)
 
               <tr>
@@ -182,16 +179,102 @@
                 <td ></td>
               </tr>
             @endif
+          @endforeach  --}}
+          <tr>
+              <td style="border: 1px solid #666666;margin-right: 20px;" colspan="10"  bgcolor="#C0C0C0" ><strong>Terms And Conditions</strong></td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #666666;margin-right: 20px;" colspan="10" valign="top" >
+              <ul style="list-style-type: square;">
+                @foreach ($lpo->terms as $term)
+                <li>{{$term->terms}}</li>
+                @endforeach
+              </ul>
+            </td>
+          </tr>
+          {{--  <tr>
+            <td colspan="10">              
+              @if (!empty($lpo->quote_exempt_explanation))
+                <strong>Quote exempt reason:</strong><br/>
+                {{$lpo->quote_exempt_explanation}}
+              @endif
+            </td>
+          </tr>  --}}
+          @if (!empty($lpo->quote_exempt_explanation))
+          <tr>
+            <td colspan="10">&nbsp;</td>
+          </tr>
+          <tr>
+              <td style="border: 1px solid #666666;margin-right: 20px;" colspan="10"  bgcolor="#C0C0C0" ><strong>Quote exempt reason</strong></td>
+          </tr>
+          <tr>
+            <td style="border: 1px solid #666666;margin-right: 20px;" colspan="10" valign="top" >
+                {{$lpo->quote_exempt_explanation}}
+            </td>
+          </tr>
+          @endif
+          <tr>
+              <td colspan="10">&nbsp;</td>
+          </tr>
+
+          @foreach ($unique_approvals as $key => $approval)
+            {{--  @if ($approval->approval_level_id == 1)  --}}
+            <tr>
+                <td colspan="4">Authorized by:<br/>
+                  <img height = "60" alt="." src="{{asset('storage/app/staff/signature'.$approval->approver_id.'.png')}}"><br/>
+                  @isset($approval->approver_id)
+                      <strong>{{$approval->approver->full_name}}</strong>
+                  @endisset
+                </td>
+                <td colspan="2">Date:<br/>
+                  <span>{{date('d F, Y', strtotime($approval->created_at)) }}</span>
+                </td>
+              </tr>
+              <tr>
+                  <td colspan="10">&nbsp;</td>
+              </tr>
+            {{--  @endif  --}}
+            {{--  @if ($approval->approval_level_id == 2)
+            <tr>
+                <td colspan="4">Authorized by:<br/>
+                  <img height = "60" alt="." src="{{asset('storage/app/staff/signature'.$approval->approver_id.'.png')}}"><br/>
+                  @isset($approval->approver_id)
+                      <strong>{{$approval->approver->full_name}}</strong>
+                  @endisset
+                </td>
+                <td colspan="2">Date:<br/>
+                  <span>{{date('d F, Y', strtotime($approval->created_at)) }}</span>
+                </td>
+              </tr>
+            @endif
+
+            @if ($approval->approval_level_id == 3)
+            <tr>
+                <td colspan="4">Authorized by:<br/>
+                  <img height = "60" alt="." src="{{asset('storage/app/staff/signature'.$approval->approver_id.'.png')}}"><br/>
+                  @isset($approval->approver_id)
+                      <strong>{{$approval->approver->full_name}}</strong>
+                  @endisset
+                </td>
+                <td colspan="2">Date:<br/>
+                  <span>{{date('d F, Y', strtotime($approval->created_at)) }}</span>
+                </td>
+              </tr>
+            @endif
+            @if ($approval->approval_level_id == 4)
+            <tr>
+                <td colspan="4">Authorized by:<br/>
+                  <img height = "60" alt="." src="{{asset('storage/app/staff/signature'.$approval->approver_id.'.png')}}"><br/>
+                  @isset($approval->approver_id)
+                      <strong>{{$approval->approver->full_name}}</strong>
+                  @endisset
+                </td>
+                <td colspan="2">Date:<br/>
+                  <span>{{date('d F, Y', strtotime($approval->created_at)) }}</span>
+                </td>
+              </tr>
+            @endif  --}}
           @endforeach
-          <tr>
-            <td >&nbsp;</td>
-          </tr>
-          <tr>
-            <td>&nbsp;</td>
-          </tr>
-          <tr>
-            <td>&nbsp;</td>
-          </tr>
           <tr>
             <td>&nbsp;</td>
           </tr>
@@ -199,7 +282,7 @@
             <td colspan="10">&nbsp;</td>
           </tr>
         </tbody>
-      </table>
+      </table>      
     </div>
   </main>
 </body>

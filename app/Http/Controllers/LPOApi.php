@@ -109,7 +109,8 @@ class LPOApi extends Controller
             'project_id',
             'account_id',
             'currency_id',
-            'project_manager_id'
+            'project_manager_id',
+            'quote_exempt_explanation'
             );
 
         try{
@@ -124,6 +125,7 @@ class LPOApi extends Controller
             $lpo->currency_id                       =   (int)   $form['currency_id'];
             $lpo->project_manager_id                =   (int)   $form['project_manager_id'];
             $lpo->status_id                         =   $this->default_status;
+            $lpo->quote_exempt_explanation          = $form['quote_exempt_explanation'];
 
             $user = JWTAuth::parseToken()->authenticate();
             $lpo->request_action_by_id            =   (int)   $user->id;
@@ -203,7 +205,8 @@ class LPOApi extends Controller
             'account_id',
             'currency_id',
             'project_manager_id',
-            'preffered_quotation_id'
+            'preffered_quotation_id',
+            'quote_exempt_explanation'
             );
 
         $lpo = Lpo::find($form['id']);
@@ -219,6 +222,7 @@ class LPOApi extends Controller
             $lpo->currency_id                       =   (int)   $form['currency_id'];
             $lpo->project_manager_id                =   (int)   $form['project_manager_id'];
             $lpo->preffered_quotation_id            =   (int)   $form['preffered_quotation_id'];
+            $lpo->quote_exempt_explanation = $form['quote_exempt_explanation'];
 
 
 
@@ -761,9 +765,11 @@ class LPOApi extends Controller
     {   
         try{
             $lpo   = Lpo::findOrFail($lpo_id);
+            $unique_approvals = $this->unique_multidim_array($lpo->approvals, 'approver_id');
 
             $data = array(
-                'lpo'   => $lpo
+                'lpo'   => $lpo,
+                'unique_approvals' => $unique_approvals
                 );
 
         // return view('pdf/lpo',$data);
@@ -793,6 +799,27 @@ class LPOApi extends Controller
 
         }
 
+    }
+
+    /**
+     * Returns an array with unique array elements for a
+     * multi-dimensional array
+     * $array is the array to be parsed
+     * $key is the field that you need to be unique
+     */
+    function unique_multidim_array($array, $key) {
+        $temp_array = array();
+        $i = 0;
+        $key_array = array();
+       
+        foreach($array as $val) {
+            if (!in_array($val[$key], $key_array)) {
+                $key_array[$i] = $val[$key];
+                $temp_array[$i] = $val;
+            }
+            $i++;
+        }
+        return $temp_array;
     }
 
 
