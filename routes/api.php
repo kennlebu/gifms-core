@@ -149,6 +149,14 @@ Route::PATCH('lpo/{lpo_id}/submit_for_approval', 'LPOApi@submitLpoForApproval')-
  */
 Route::PATCH('/api/lpos/approve', 'LPOApi@approveSeveralLpos')->middleware('jwt.auth');
 
+/**
+ * GET getLpoQuoteExemptReasons
+ * Summary: Get a list of the LPO quote exempt reasons
+ * Notes: Get LPO exempt reasons
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('lpos/exempt_reasons', 'LPOApi@getLpoExemptReasons')->middleware('jwt.auth');
+
 
 
 

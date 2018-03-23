@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\LPOModels\Lpo;
 use App\Models\LPOModels\LpoStatus;
 use App\Models\LPOModels\LpoQuotation;
+use App\Models\LPOModels\LpoQuoteExemptReason;
 use Exception;
 use PDF;
 use App;
@@ -739,6 +740,28 @@ class LPOApi extends Controller
                 return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
             }
             
+        }
+
+
+
+
+        /**
+         * Operation lpoExemptReasons
+         * 
+         * Gets a list of LPO exempt resaons
+         * 
+         * @return Http respons
+         */
+        public function getLpoExemptReasons(){
+            try{
+                $response = LpoQuoteExemptReason::all();
+                return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+            }
+            catch (Exception $e){
+                file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , 'EXCEPTION:: '.$e.getMessage() , FILE_APPEND);
+                $response = ['error'=>'Failed to retrieve records'];
+                return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+            }
         }
 
 
