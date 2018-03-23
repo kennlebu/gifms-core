@@ -281,6 +281,41 @@ class LPOApi extends Controller
 
 
 
+    /**
+     * Operation recallLpo
+     * 
+     * Recalls an LPO.
+     * 
+     * @param int $lpo_id LPO id to recall (required)
+     * 
+     * @return Http response
+     */
+    public function recallLpo($lpo_id)
+    {
+        $input = Request::all();
+        
+        $lpo = Lpo::find($lpo_id);
+        $lpo->status_id = 2;
+        
+        if($lpo->save()){
+            return response()->json(['msg'=>"lpo recalled"], 200,array(),JSON_PRETTY_PRINT);
+        }else{
+            return response()->json(['error'=>"could not recall lpo"], 404,array(),JSON_PRETTY_PRINT);
+        }
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
