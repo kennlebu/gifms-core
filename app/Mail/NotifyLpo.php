@@ -65,19 +65,19 @@ class NotifyLpo extends Mailable
     public function build()
     {
 
-        $bccs = [] ;
-        $bccs[0] = $this->accountant;
-        $bccs[1] = $this->financial_controller;
-        $bccs[2] = $this->director;
+        $ccs = [] ;
+        $ccs[0] = $this->accountant;
+        $ccs[1] = $this->financial_controller;
+        $ccs[2] = $this->director;
+        $ccs[3] = $this->lpo->requested_by;
 
 
         $this->view('emails/notify_lpo')         
             ->replyTo([
                     'email' => Config::get('mail.reply_to')['address'],
 
-                ])           
-            ->cc($this->lpo->requested_by)       
-            ->bcc($bccs);
+                ])      
+            ->cc($ccs);
 
 
 
