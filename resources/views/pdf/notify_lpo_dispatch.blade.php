@@ -50,9 +50,9 @@
             <span><br/><strong>Our Ref.:</strong> {{$lpo->ref}}</span><br/><br/>
             {{date('l F d, Y') }}<br/><br/>
             <span style="font-weight:bold">Attention: {{$lpo->attention}}</span><br/><br/>
-            {{$lpo->supplier->supplier_name}}<br/>
-            {{$lpo->supplier->address}}<br/>
-            {{$lpo->supplier->email}}<br/><br/>
+            {{$lpo->preffered_quotation->supplier->supplier_name}}<br/>
+            {{$lpo->preffered_quotation->supplier->address}}<br/>
+            {{$lpo->preffered_quotation->supplier->email}}<br/><br/>
             <span style="text-decoration: underline;font-weight:bold">RE:LPO_{{$lpo->id}}_{{$lpo->expense_desc}}</span><br/><br/>
 
 

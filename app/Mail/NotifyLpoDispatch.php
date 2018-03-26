@@ -37,15 +37,6 @@ class NotifyLpoDispatch extends Mailable
         $this->director             = Staff::findOrFail(    (int)   Config::get('app.director_id'));
         $this->requester = Staff::findOrFail($lpo->requested_by_id);
         $this->lpo_PM = Staff::findOrFail($lpo->project_manager_id);
-        
-        $this->chai_cc = array(
-            array('first_name'=>'Jane', 'last_name'=>'Ayuma', 'email'=>'jayuma@clintonhealthaccess.org'),
-            array('first_name'=>'Ramadhan', 'last_name'=>'Wangatia', 'email'=>'rwangatia@clintonhealthaccess.org'),
-            array('first_name'=>'Davis', 'last_name'=>'Karambi', 'email'=>'dkarambi@clintonhealthaccess.org'),
-            array('first_name'=>'Jackson', 'last_name'=>'Hungu', 'email'=>'jhungu@clintonhealthaccess.org'),
-            array('first_name'=>'Rosemary', 'last_name'=>'Kihoto', 'email'=>'rkihoto@clintonhealthaccess.org'),
-            array('first_name'=>'Gerald', 'last_name'=>'Macharia', 'email'=>'gmacharia@clintonhealthaccess.org')
-        );
     }
 
     /**
@@ -56,12 +47,12 @@ class NotifyLpoDispatch extends Mailable
     public function build()
     {
         $supplier_cc = [];
-        $supplier_to = array('name'=>$this->lpo->supplier->supplier_name,
-            'email'=>$this->lpo->supplier->email);
+        $supplier_to = array('name'=>$this->lpo->preffered_quotation->supplier->supplier_name,
+            'email'=>$this->lpo->preffered_quotation->supplier->email);
         // CC second supplier email if it exists
-        if(!empty($this->lpo->supplier->contact_email_1)){
-            $supplier_cc = array('name'=>$this->lpo->supplier->supplier_name,
-            'email'=>$this->lpo->supplier->contact_email_1);
+        if(!empty($this->lpo->preffered_quotation->supplier->contact_email_1)){
+            $supplier_cc = array('name'=>$this->lpo->preffered_quotation->supplier->supplier_name,
+            'email'=>$this->lpo->preffered_quotation->supplier->contact_email_1);
         }
 
         // CHAI cc
@@ -97,14 +88,14 @@ class NotifyLpoDispatch extends Mailable
         $pdf = PDF::loadView('pdf/notify_lpo_dispatch', $pdf_data);
         $pdf_file = $pdf->stream();
 
-        $subject = "LPO ".$lpo_no." ".$this->lpo->supplier->supplier_name;
+        $subject = "LPO ".$lpo_no." ".$this->lpo->preffered_quotation->supplier->supplier_name;
 
         $this->view('emails/notify_lpo_dispatch')         
             ->replyTo([
                     'email' => Config::get('mail.reply_to')['address']
                 ])           
             ->cc($ccs)
-            ->attachData($pdf_file, 'LPO_'.$lpo_no.'_'.$this->lpo->supplier->supplier_name.'.pdf');   
+            ->attachData($pdf_file, 'LPO_'.$lpo_no.'_'.$this->lpo->preffered_quotation->supplier->supplier_name.'.pdf');   
 
         return $this->to($supplier_to['email'])
             ->with([
