@@ -301,7 +301,7 @@ class LPOApi extends Controller
             return response()->json(['msg'=>"you do not have permission to do this"], 403, array(), JSON_PRETTY_PRINT);
         }
 
-        $lpo->status_id = 2;
+        $lpo->status_id = 11;
         
         if($lpo->save()){
             return response()->json(['msg'=>"lpo recalled"], 200,array(),JSON_PRETTY_PRINT);
