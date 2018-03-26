@@ -294,7 +294,13 @@ class LPOApi extends Controller
     {
         $input = Request::all();
         
-        $lpo = Lpo::find($lpo_id);
+        $lpo = Lpo::find($lpo_id);        
+
+        // Ensure LPO is in the recallable statuses
+        if(!in_array($lpo->status_id, [13,3,4,5])){
+            return response()->json(['msg'=>"you do not have permission to do this"], 403, array(), JSON_PRETTY_PRINT);
+        }
+
         $lpo->status_id = 2;
         
         if($lpo->save()){
