@@ -64,6 +64,9 @@ class NotifyLpoDispatch extends Mailable
             array('first_name'=>$this->lpo_PM->f_name, 'last_name'=>$this->lpo_PM->l_name, 'email'=>$this->lpo_PM->email)
         );
 
+        // Add Jane Ayuma to cc
+        array_push($chai_cc, array('first_name'=>'JANE', 'last_name'=>'AYUMA', 'email'=>'jayuma@clintonhealthaccess.org'));
+
         $ccs = [];
         foreach($supplier_cc as $supplier_cc){
             array_push($ccs, $supplier_cc['email']);
