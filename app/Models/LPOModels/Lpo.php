@@ -178,7 +178,7 @@ class Lpo extends BaseModel
             $sub_totals   +=   (float)   $value->calculated_sub_total;
         }
 
-        return $sub_totals;
+        return round($sub_totals, 3);
 
 
 
@@ -193,7 +193,7 @@ class Lpo extends BaseModel
             $totals   +=   (float)   $value->calculated_total;
         }
 
-        return $totals;
+        return round($totals, 3);
 
 
 

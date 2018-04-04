@@ -267,6 +267,7 @@ class migrate_projects_keys extends Seeder
 
 
         //Hepatitis
+        if(!empty($rosemary1->program_manager_id)){
         $hepatitis_projects   = Project::where("country_id","=",1)
                                     ->where("project_manager_id","=",$rosemary1->program_manager_id)
                                     ->get();
@@ -280,11 +281,13 @@ class migrate_projects_keys extends Seeder
                      ";
             DB::statement($sql);
         }
+    }
         echo "\n __________Migrated program_ids Hepatits\n";
 
 
 
         //Nutrition
+        if(!empty($rosemary->program_manager_id)){
         $nutrition_projects   = Project::where("country_id","=",1)
                                     ->where("project_manager_id","=",$rosemary->program_manager_id)
                                     ->get();
@@ -298,9 +301,11 @@ class migrate_projects_keys extends Seeder
                      ";
             DB::statement($sql);
         }
+    }
         echo "\n __________Migrated program_ids Nutrition\n";
 
         //Malaria
+        if(!empty($patricia->program_manager_id)){
         $malaria_projects   = Project::where("country_id","=",1)
                                     // ->where("project_manager_id","=",$patricia->program_manager_id)
                                     ->where(function ($query) use ($patricia) {
@@ -318,9 +323,11 @@ class migrate_projects_keys extends Seeder
                      ";
             DB::statement($sql);
         }
+    }
         echo "\n __________Migrated program_ids Malaria\n";
 
         //Cancer
+        if(!empty($patricia->program_manager_id)){
         $cancer_projects   = Project::where("country_id","=",1)
                                     // ->where("project_manager_id","=",$patricia->program_manager_id)
                                     ->where(function ($query) use ($patricia) {
@@ -338,9 +345,11 @@ class migrate_projects_keys extends Seeder
                      ";
             DB::statement($sql);
         }
+    }
         echo "\n __________Migrated program_ids Cancer\n";
 
         //Family Planning
+        if(!empty($ngatia1->program_manager_id)){
         $fp_projects   = Project::where("country_id","=",1)
                                     ->where("project_manager_id","=",$ngatia1->program_manager_id)
                                     ->get();
@@ -354,9 +363,11 @@ class migrate_projects_keys extends Seeder
                      ";
             DB::statement($sql);
         }
+    }
         echo "\n __________Migrated program_ids Family Planning\n";
 
         //Vaccines
+        if(!empty($ngatia2->program_manager_id)){
         $vacc_projects   = Project::where("country_id","=",1)
                                     // ->where("project_manager_id","=",$ngatia2->program_manager_id)
                                     ->where(function ($query) use ($ngatia2) {
@@ -374,8 +385,11 @@ class migrate_projects_keys extends Seeder
                      ";
             DB::statement($sql);
         }
+    }
         echo "\n __________Migrated program_ids Vaccines\n";
+
         //Office Operational Costs & Overheads
+        if(!empty($jane->program_manager_id)){
         $office_projects   = Project::where("country_id","=",1)
                                     ->where("project_manager_id","=",$jane->program_manager_id)
                                     ->get();
@@ -389,9 +403,11 @@ class migrate_projects_keys extends Seeder
                      ";
             DB::statement($sql);
         }
+    }
         echo "\n __________Migrated program_ids Office Operational Costs & Overheads\n";
 
         //Health System Strengthening
+        if(!empty($jhungu->program_manager_id)){
         $hss_projects   = Project::where("country_id","=",1)
                                     ->where("project_manager_id","=",$jhungu->program_manager_id)
                                     ->get();
@@ -405,6 +421,7 @@ class migrate_projects_keys extends Seeder
                      ";
             DB::statement($sql);
         }
+    }
         echo "\n __________Migrated program_ids Health System Strengthening\n";
 
         //Health Financing
