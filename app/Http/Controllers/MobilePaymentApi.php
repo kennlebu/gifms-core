@@ -1244,6 +1244,7 @@ class MobilePaymentApi extends Controller
             //      ->orWhere('status_id', '13');
             // });
             $qb->whereIn('status_id', ['4','13']);
+            $qb->orderByRaw('created_at DESC');
         }
 
         // Corrected, awaiting accountant approval
