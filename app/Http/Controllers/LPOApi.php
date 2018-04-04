@@ -537,7 +537,7 @@ class LPOApi extends Controller
             if($lpo->save()) {
 
                 try{
-                Mail::send(new NotifyLpo($lpo));
+                Mail::queue(new NotifyLpo($lpo));
                 }catch(Exception $e){}
 
                 return Response()->json(array('msg' => 'Success: lpo rejected','lpo' => $lpo), 200);
@@ -626,7 +626,7 @@ class LPOApi extends Controller
             if($lpo->save()) {
 
                 try{
-                Mail::send(new NotifyLpo($lpo));
+                Mail::queue(new NotifyLpo($lpo));
                 }catch(Exception $e){
             //$response =  ["error"=>"lpo could not be found"];
             //return response()->json($response, 404,array(),JSON_PRETTY_PRINT);

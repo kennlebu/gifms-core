@@ -253,7 +253,7 @@ class InvoiceApi extends Controller
                     $invoice->ref                        = "CHAI/INV/#$invoice->id/".date_format($invoice->created_at,"Y/m/d");
                     $invoice->save();
                     try{
-                    Mail::send(new NotifyInvoice($invoice));
+                    Mail::queue(new NotifyInvoice($invoice));
                     }catch(Exception $e){}
 
                 }
@@ -388,7 +388,7 @@ class InvoiceApi extends Controller
                 //     $invoice->ref                        = "CHAI/INV/#$invoice->id/".date_format($invoice->created_at,"Y/m/d");
                 //     $invoice->save();
 
-                //     Mail::send(new NotifyInvoice($invoice));
+                //     Mail::queue(new NotifyInvoice($invoice));
 
                 // }
                 
@@ -728,7 +728,7 @@ class InvoiceApi extends Controller
                    ->log('approved');
 
                    try{
-                Mail::send(new NotifyInvoice($invoice));
+                Mail::queue(new NotifyInvoice($invoice));
                    }catch(Exception $e){}
 
                 return Response()->json(array('msg' => 'Success: invoice approved','invoice' => $invoice), 200);
@@ -813,7 +813,7 @@ class InvoiceApi extends Controller
             if($invoice->save()) {
 
                 try{
-                Mail::send(new NotifyInvoice($invoice));
+                Mail::queue(new NotifyInvoice($invoice));
                 }catch(Exception $e){}
 
                 activity()
@@ -1036,7 +1036,7 @@ class InvoiceApi extends Controller
             if($invoice->save()) {
 
                 try{
-                Mail::send(new NotifyInvoice($invoice));
+                Mail::queue(new NotifyInvoice($invoice));
                 }catch(Exception $e){}
 
                 $user = JWTAuth::parseToken()->authenticate();
