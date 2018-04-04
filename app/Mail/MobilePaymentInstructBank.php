@@ -81,9 +81,9 @@ class MobilePaymentInstructBank extends Mailable
         $pdf_file = $pdf->stream();
 
         $ccs = [];
-        foreach($this->bank_cc as $bank_cc){
-            array_push($ccs, $bank_cc['email']);
-        }
+        // foreach($this->bank_cc as $bank_cc){
+        //     array_push($ccs, $bank_cc['email']);
+        // }
         foreach($this->chai_cc as $chai_cc){
             array_push($ccs, $chai_cc['email']);
         }
@@ -101,7 +101,8 @@ class MobilePaymentInstructBank extends Mailable
             ->attachData($pdf_file, 'ALLOWANCES_'.$this->pad_zeros(5,$this->mobile_payment->id).'.pdf')
             ->attachData($csv_file, 'ALLOWANCES_'.$this->pad_zeros(5,$this->mobile_payment->id).'.csv');      
 
-        return $this->to($this->bank_to['email'])
+        // return $this->to($this->bank_to['email'])
+        return $this->to('kennlebu@live.com') // for test
             ->with([
                     'mobile_payment' => $this->mobile_payment,
                     'addressed_to' => $this->accountant,
