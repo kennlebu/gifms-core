@@ -68,9 +68,9 @@ class NotifyLpoDispatch extends Mailable
         array_push($chai_cc, array('first_name'=>'JANE', 'last_name'=>'AYUMA', 'email'=>'jayuma@clintonhealthaccess.org'));
 
         $ccs = [];
-        // foreach($supplier_cc as $supplier_cc){
-        //     array_push($ccs, $supplier_cc['email']);
-        // }
+        foreach($supplier_cc as $supplier_cc){
+            array_push($ccs, $supplier_cc['email']);
+        }
         foreach($chai_cc as $chai_cc){
             array_push($ccs, $chai_cc['email']);
         }
@@ -100,8 +100,8 @@ class NotifyLpoDispatch extends Mailable
             ->cc($ccs)
             ->attachData($pdf_file, 'LPO_'.$lpo_no.'_'.$this->lpo->preffered_quotation->supplier->supplier_name.'.pdf');   
 
-        // return $this->to($supplier_to['email'])
-        return $this->to('kennlebu@live.com') // for test
+        return $this->to($supplier_to['email'])
+        // return $this->to('kennlebu@live.com') // for test
             ->with([
                     'lpo' => $this->lpo,
                     'lpo_no' => $lpo_no,

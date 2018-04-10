@@ -458,7 +458,7 @@ class ClaimApi extends Controller
                 }
                 
 
-                Mail::send(new NotifyClaim($claim));
+                Mail::queue(new NotifyClaim($claim));
 
                 return Response()->json(array('msg' => 'Success: claim approved','claim' => $claim), 200);
             }
@@ -544,7 +544,7 @@ class ClaimApi extends Controller
 
             if($claim->save()) {
 
-                Mail::send(new NotifyClaim($claim));
+                Mail::queue(new NotifyClaim($claim));
 
                 return Response()->json(array('msg' => 'Success: claim approved','claim' => $claim), 200);
             }
@@ -686,7 +686,7 @@ class ClaimApi extends Controller
 
             if($claim->save()) {
 
-                Mail::send(new NotifyClaim($claim));
+                Mail::queue(new NotifyClaim($claim));
 
                 return Response()->json(array('msg' => 'Success: claim submitted','claim' => $claim), 200);
             }

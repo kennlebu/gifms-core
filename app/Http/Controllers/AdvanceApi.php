@@ -486,7 +486,7 @@ class AdvanceApi extends Controller
 
                 }
                 
-                Mail::send(new NotifyAdvance($advance));
+                Mail::queue(new NotifyAdvance($advance));
 
                 return Response()->json(array('msg' => 'Success: advance approved','advance' => $advance), 200);
             }
@@ -561,7 +561,7 @@ class AdvanceApi extends Controller
 
             if($advance->save()) {
 
-                Mail::send(new NotifyAdvance($advance));
+                Mail::queue(new NotifyAdvance($advance));
 
                 return Response()->json(array('msg' => 'Success: advance approved','advance' => $advance), 200);
             }
@@ -636,7 +636,7 @@ class AdvanceApi extends Controller
             if($advance->save()) {
                 
                 try{
-                Mail::send(new NotifyAdvance($advance));
+                Mail::queue(new NotifyAdvance($advance));
                 }
                 catch(Exception $e){}
 
