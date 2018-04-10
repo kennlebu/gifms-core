@@ -46,6 +46,7 @@ class CreateSuppliersTable extends Migration
             $table->string('contact_email_2')->nullable();
             $table->string('contact_phone_2')->nullable();
             $table->string('requires_lpo')->nullable();
+            $table->string('supplier_category_id')->nullable();
             $table->integer('migration_staff_id')->nullable();
             $table->string('migration_bank_id')->nullable();
             $table->integer('migration_bank_branch_id')->nullable();
