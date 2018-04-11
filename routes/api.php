@@ -4842,3 +4842,20 @@ Route::GET('/budget_item/{budget_item_id}', 'BudgetItemApi@getBudgetItemById')->
 
  */
 Route::GET('/budget_items', 'BudgetItemApi@budgetItemsGet')->middleware('jwt.auth');
+
+
+
+
+
+
+
+
+
+
+/**
+ * POST getReport
+ * Summary: Get monthly transactions
+ * Notes: get report
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/reports/2016', 'ReportsApi@get2016Report')->middleware('jwt.auth');
