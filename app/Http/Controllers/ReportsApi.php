@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\DB;
 use Exception;
 use App;
+use Excel;
 use Illuminate\Support\Facades\Response;
 use App\Models\PaymentModels\PaymentBatch;
 use App\Models\PaymentModels\Payment;
@@ -54,11 +55,17 @@ class ReportsApi extends Controller
     {
         $form = Request::only(
             'start_date',
-            'end_date'
+            'end_date',
+            'currency',
+            'operation'
             );
 
         $fromDate = $form['start_date'];
         $toDate = $form['end_date'];
+        $operation = $form['operation'];
+        $currency = 0;
+        if($form['currency'] == 'kes') $currency = 1;
+        elseif($form['currency'] == 'usd') $currency = 2;
 
         $report_data = [];
         
@@ -68,9 +75,7 @@ class ReportsApi extends Controller
             'project'=>'',
             'program_id'=>'',
             'program_desc'=>'',
-            'grant_id'=>'',
-            'grant_name'=>'',
-            'grant_code'=>'',
+            'grant'=>'',
             'invoice_title'=>'',
             'account_number'=>'',
             'account_description'=>'',
@@ -80,13 +85,12 @@ class ReportsApi extends Controller
             'voucher_number'=>'',
             'total_amount'=>'',
             'transaction_type'=>'',
+            'currency'=>''
         ];
-        
-        $batches = PaymentBatch::select('id', 'created_at')->whereBetween('created_at', [$fromDate, $toDate])->get();
 
         $payments = Payment::whereHas('payment_batch', function($query) use ($fromDate, $toDate){
             $query->whereBetween('created_at', [$fromDate, $toDate]);  
-        })->get();  
+        })->where('currency_id', $currency)->get();  
 
         $payables = [];
         foreach($payments as $payment){
@@ -107,7 +111,7 @@ class ReportsApi extends Controller
             array_push($payables, $res);
         }
 
-        $mobile_payments = MobilePayment::whereBetween('management_approval_at', [$fromDate, $toDate])->get();
+        $mobile_payments = MobilePayment::whereBetween('management_approval_at', [$fromDate, $toDate])->where('currency_id', $currency)->get();
         foreach($mobile_payments as $mobile_payment){
             $res = array();
             $res = ['payable_type'=>'mobile_payments', 'payment'=>null, 'payable'=>$mobile_payment, 'payment_date'=>$mobile_payment->management_approval_at];
@@ -129,19 +133,16 @@ class ReportsApi extends Controller
                 }
                 $account = Account::find($allocation['account_id']);
 
-                // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , 'Project: '.$row['payable']['requested_by_id'] , FILE_APPEND);
-
                 $my_result['date_posted'] = $row['payment_date'];
                 $my_result['project'] = $project;
                 $my_result['program_id'] = $project->program_id;
                 $my_result['program_desc'] = $project->project_name;
-                $my_result['grant_id'] = $project->grant_id;
-                empty($project->grant_id) ? $my_result['grant_name'] = '' : $my_result['grant_name'] = $grant->grant_name;
-                empty($project->grant_id) ? $my_result['grant_code'] = '' : $my_result['grant_code'] = $grant->grant_code;
+                $my_result['grant'] = $grant;
                 $my_result['invoice_title'] = $row['payable']['expense_desc'];
                 $my_result['account_number'] = $account->account_code;
                 $my_result['account_description'] = $account->account_desc;
                 $my_result['allocation_amount'] = $allocation['amount_allocated'];
+                $my_result['currecny'] = $currency;
 
                 if($row['payable_type'] == 'mobile_payments'){
                     $mpesa_payee = Staff::find($row['payable']['requested_by_id'])->full_name;
@@ -177,27 +178,16 @@ class ReportsApi extends Controller
             }
 
         }
-        
 
+        if($operation == 'preview') {
+            return response()->json($report_data, 200,array(),JSON_PRETTY_PRINT);
+        }
+        elseif($operation == 'excel') {
+            // Generate excel and return it
+            // return response()->json($report_data, 200,array(),JSON_PRETTY_PRINT);
+            return null;
+        }
 
-        
-
-        // // Get individual payments from the batches
-        // $payments = [];
-        // foreach($batches as $batch){
-        //     $payment = Payment::where('payment_batch_id', $batch->id)->get();
-        //     array_push($payments, $payment);
-        // }
-        // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , 'Payments: '.json_encode($not_mpesas) , FILE_APPEND);
-
-        // // now get the allocations
-        // $allocations = [];
-        // foreach($$payments as $payment){
-        //     $allocation = Allocation::where('allocatable_id', $payment->id)->get();
-        //     array_push($allocations, $allocation);
-        // }
-
-        return response()->json($report_data, 200,array(),JSON_PRETTY_PRINT);
     }
 
 
