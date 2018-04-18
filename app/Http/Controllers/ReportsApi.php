@@ -246,7 +246,7 @@ class ReportsApi extends Controller
                 'Access-Control-Allow-Credentials' => 'true'
             ];
             // Build excel
-            Excel::create('Expense report '.$fromDateOnly.' to '.$toDateOnly, function($excel) use ($currency, $excel_data, $fromDateOnly, $toDateOnly) {
+            $file = Excel::create('Expense report '.$fromDateOnly.' to '.$toDateOnly, function($excel) use ($currency, $excel_data, $fromDateOnly, $toDateOnly) {
                 $account_name = 'CHAI Account';
                 if($currency==1) $account_name = 'Kenya Shillings Account';
                 elseif($currency==2) $account_name = 'US Dollars Account';
@@ -331,18 +331,6 @@ class ReportsApi extends Controller
                 });
     
             })->download('xlsx', $headers);
-            // })->store('xlsx', storage_path('app/reports'), true);
-
-            // $file = File::get(storage_path("app/reports/Expense report ".$fromDateOnly." to ".$toDateOnly.".xlsx"));
-            // $path = storage_path("app/reports/Expense report ".$fromDateOnly." to ".$toDateOnly.".xlsx");
-            // $name = "Expense report ".$fromDateOnly." to ".$toDateOnly.".xlsx";
-            // return response()->download($path, $name, $headers);
-
-            // return Response::download($file['full'], true);
-            // return Response::make($file, 200)->header('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-
-            // return response()->json($report_data, 200,array(),JSON_PRETTY_PRINT);
-            // return null;
         }
 
     }
