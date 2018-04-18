@@ -108,7 +108,7 @@ class ReportsApi extends Controller
                 if($is_pm == 'true'){
                     $advance = Advance::where('project_manager_id', $user_id)
                                 ->where('id', $payment->payable_id)
-                                ->get();
+                                ->first();
                 }
                 else $advance = Advance::find($payment->payable_id);
                 $res = ['payable_type'=>$payment->payable_type, 'payment'=>$payment, 'payable'=>$advance, 'payment_date'=>$batch_date->created_at];
@@ -117,7 +117,7 @@ class ReportsApi extends Controller
                 if($is_pm == 'true'){
                     $claim = Claim::where('project_manager_id', $user_id)
                                 ->where('id', $payment->payable_id)
-                                ->get();
+                                ->first();
                 }
                 else $claim = Claim::find($payment->payable_id);
                 $res = ['payable_type'=>$payment->payable_type, 'payment'=>$payment, 'payable'=>$claim, 'payment_date'=>$batch_date->created_at];
@@ -126,7 +126,7 @@ class ReportsApi extends Controller
                 if($is_pm == 'true'){
                     $invoice = Invoice::where('project_manager_id', $user_id)
                                     ->where('id', $payment->payable_id)
-                                    ->get();
+                                    ->first();
                 }
                 else $invoice = Invoice::find($payment->payable_id);
                 $res = ['payable_type'=>$payment->payable_type, 'payment'=>$payment, 'payable'=>$invoice, 'payment_date'=>$batch_date->created_at];
@@ -148,11 +148,8 @@ class ReportsApi extends Controller
             array_push($payables, $res);
         }
 
-        // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , 'Payables '.json_encode($payables) , FILE_APPEND);
-
-        foreach($payables as $row){
-            if(!empty($row['payable']['allocations'])){
-                file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , 'Payable '.$row['payable_type'] , FILE_APPEND);
+        foreach($payables as $row){if(isset($row['payable']['allocations'])){
+                
                 foreach($row['payable']['allocations'] as $allocation){
 
                     $my_result = $result;
@@ -303,7 +300,7 @@ class ReportsApi extends Controller
                     $sheet->setFontSize(10);
                     $sheet->setHeight(1, 25);
                     $sheet->row(1, function($row){
-                        $row->setFontSize(12);
+                        $row->setFontSize(11);
                         $row->setFontWeight('bold');
                         $row->setAlignment('center');
                         $row->setValignment('center');
@@ -333,16 +330,16 @@ class ReportsApi extends Controller
                     $sheet->setAutoFilter('C1:C1');
                 });
     
-            // })->download('xlsx', $headers);
-            })->store('xlsx', storage_path('app/reports'), true);
+            })->download('xlsx', $headers);
+            // })->store('xlsx', storage_path('app/reports'), true);
 
-            $file = File::get(storage_path("app/reports/Expense report ".$fromDateOnly." to ".$toDateOnly.".xlsx"));
+            // $file = File::get(storage_path("app/reports/Expense report ".$fromDateOnly." to ".$toDateOnly.".xlsx"));
             // $path = storage_path("app/reports/Expense report ".$fromDateOnly." to ".$toDateOnly.".xlsx");
             // $name = "Expense report ".$fromDateOnly." to ".$toDateOnly.".xlsx";
             // return response()->download($path, $name, $headers);
 
             // return Response::download($file['full'], true);
-            return Response::make($file, 200)->header('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            // return Response::make($file, 200)->header('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 
             // return response()->json($report_data, 200,array(),JSON_PRETTY_PRINT);
             // return null;
