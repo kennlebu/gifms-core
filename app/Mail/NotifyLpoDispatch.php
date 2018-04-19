@@ -68,7 +68,7 @@ class NotifyLpoDispatch extends Mailable
         array_push($chai_cc, array('first_name'=>'JANE', 'last_name'=>'AYUMA', 'email'=>'jayuma@clintonhealthaccess.org'));
 
         $ccs = [];
-        foreach($supplier_cc as $supplier_cc){
+        if(!empty($supplier_cc)){
             array_push($ccs, $supplier_cc['email']);
         }
         foreach($chai_cc as $chai_cc){

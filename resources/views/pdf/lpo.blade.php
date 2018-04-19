@@ -1,7 +1,7 @@
 <html>
 <head>
   <style>
-    @page { margin: 150px 20px 120px 20px; }
+    @page { margin: 150px 40px 120px 40px; }
     header { position: fixed; top: -130px; left: 0px; right: 0px; background-color: white; height: 120px; }
     footer { position: fixed; bottom: -110px; left: 0px; right: 0px; background-color: #E4E8F3; height: 100px; }
     p { page-break-after: always; }
@@ -67,10 +67,6 @@
           <tr>
             <td colspan="9" >&nbsp;</td>
           </tr>
-
-
-
-
           <tr>
             <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #c0c0c0;" bgcolor="#092d50" ><strong><span style="color: #ffffff;">ITEM #</span></strong></td>
             <td style="border: 1px solid #c0c0c0;" colspan="3" bgcolor="#092d50"><span style="color: #ffffff;width:30%;"><strong>PARTICULARS</strong></span></td>
@@ -83,8 +79,6 @@
           </tr>
 
           @foreach ($lpo->items as $key => $item)
-
-
           <tr>
             <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #000000; border-right: 1px solid #000000;"  >{{$key+1}}</td>
             <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #000000; border-right: 1px solid #000000;" colspan="3" >{{$item->item_description}}</td>
@@ -95,10 +89,7 @@
             <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #000000; border-right: 1px solid #000000;" align="right">{{number_format($item->calculated_vat,2)}}</td>
             <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #000000; border-right: 1px solid #000000;" align="right" bgcolor="#E4E8F3">{{number_format($item->calculated_total,2)}}</td>
           </tr>
-
-
           @endforeach
-
 
           <tr>
             <td style="border-top: 1px solid #000000;" colspan="10" >&nbsp;</td>
@@ -150,36 +141,6 @@
             <td ></td>
           </tr>
 
-          {{--  <tr>
-            <td ></td>
-            <td style="border-bottom: 2px solid #000000;" colspan="1" >Authorized by:</td>
-            <td style="border-bottom: 2px solid #000000;" ></td>
-            <td style="border-bottom: 2px solid #000000;" >Date:</td>
-          </tr>  --}}
-
-          {{--  @foreach ($lpo->approvals as $key => $approval)
-            @if ($approval->approval_level_id == 4)
-
-              <tr>
-                <td ></td>
-                <td colspan="2" >
-                  @isset($approval->approver_id)
-                      <strong>{{$approval->approver->full_name}}</strong>
-                  @endisset
-                </td>
-                <td >                  
-                  <span>{{date('d F, Y', strtotime($approval->created_at)) }}</span>
-                </td>
-              </tr>
-              <tr>
-                <td ></td>
-                <td colspan="4" rowspan="5" >Signed:
-                  <img height = "60" alt="." src="{{asset('storage/app/staff/signature'.$approval->approver_id.'.png')}}"></img>
-                </td>
-                <td ></td>
-              </tr>
-            @endif
-          @endforeach  --}}
           <tr>
               <td style="border: 1px solid #666666;margin-right: 20px;" colspan="10"  bgcolor="#C0C0C0" ><strong>Terms And Conditions</strong></td>
           </tr>
@@ -192,14 +153,7 @@
               </ul>
             </td>
           </tr>
-          {{--  <tr>
-            <td colspan="10">              
-              @if (!empty($lpo->quote_exempt_explanation))
-                <strong>Quote exempt reason:</strong><br/>
-                {{$lpo->quote_exempt_explanation}}
-              @endif
-            </td>
-          </tr>  --}}
+
           @if (!empty($lpo->quote_exempt_explanation))
           <tr>
             <td colspan="10">&nbsp;</td>
@@ -209,7 +163,7 @@
           </tr>
           <tr>
             <td style="border: 1px solid #666666;margin-right: 20px;" colspan="10" valign="top" >
-                {{$lpo->quote_exempt_explanation}}
+                {{$lpo->quote_exempt_explanation}}: {{$lpo->quote_exempt_details}}
             </td>
           </tr>
           @endif
@@ -218,7 +172,6 @@
           </tr>
 
           @foreach ($unique_approvals as $key => $approval)
-            {{--  @if ($approval->approval_level_id == 1)  --}}
             <tr>
                 <td colspan="4">Authorized by:<br/>
                   <img height = "60" alt="." src="{{asset('storage/app/staff/signature'.$approval->approver_id.'.png')}}"><br/>
@@ -233,47 +186,6 @@
               <tr>
                   <td colspan="10">&nbsp;</td>
               </tr>
-            {{--  @endif  --}}
-            {{--  @if ($approval->approval_level_id == 2)
-            <tr>
-                <td colspan="4">Authorized by:<br/>
-                  <img height = "60" alt="." src="{{asset('storage/app/staff/signature'.$approval->approver_id.'.png')}}"><br/>
-                  @isset($approval->approver_id)
-                      <strong>{{$approval->approver->full_name}}</strong>
-                  @endisset
-                </td>
-                <td colspan="2">Date:<br/>
-                  <span>{{date('d F, Y', strtotime($approval->created_at)) }}</span>
-                </td>
-              </tr>
-            @endif
-
-            @if ($approval->approval_level_id == 3)
-            <tr>
-                <td colspan="4">Authorized by:<br/>
-                  <img height = "60" alt="." src="{{asset('storage/app/staff/signature'.$approval->approver_id.'.png')}}"><br/>
-                  @isset($approval->approver_id)
-                      <strong>{{$approval->approver->full_name}}</strong>
-                  @endisset
-                </td>
-                <td colspan="2">Date:<br/>
-                  <span>{{date('d F, Y', strtotime($approval->created_at)) }}</span>
-                </td>
-              </tr>
-            @endif
-            @if ($approval->approval_level_id == 4)
-            <tr>
-                <td colspan="4">Authorized by:<br/>
-                  <img height = "60" alt="." src="{{asset('storage/app/staff/signature'.$approval->approver_id.'.png')}}"><br/>
-                  @isset($approval->approver_id)
-                      <strong>{{$approval->approver->full_name}}</strong>
-                  @endisset
-                </td>
-                <td colspan="2">Date:<br/>
-                  <span>{{date('d F, Y', strtotime($approval->created_at)) }}</span>
-                </td>
-              </tr>
-            @endif  --}}
           @endforeach
           <tr>
             <td>&nbsp;</td>
