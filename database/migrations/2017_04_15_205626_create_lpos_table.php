@@ -51,6 +51,7 @@ class CreateLposTable extends Migration
             $table->timestamp('cancelled_at')->nullable();
             $table->integer('quote_exempt')->nullable();
             $table->text('quote_exempt_explanation')->nullable();
+            $table->text('quote_exempt_details')->nullable();
             $table->integer('migration_preffered_quotation_id')->nullable();
             $table->integer('migration_account_id')->nullable();
             $table->integer('migration_requested_by_id')->nullable();

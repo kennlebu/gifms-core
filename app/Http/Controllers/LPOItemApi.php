@@ -68,14 +68,9 @@ class LPOItemApi extends Controller
     {
         $input = Request::all();
 
-        //path params validation
-
-
         $lpo_item = new LpoItem;
 
-
         try{
-
 
             $form = Request::only(
                         'lpo_id',
@@ -87,7 +82,6 @@ class LPOItemApi extends Controller
                         'vat_charge'
                     );
 
-
             $lpo_item->lpo_id                       =               $form['lpo_id'];
             $lpo_item->item                         =               $form['item'];
             $lpo_item->item_description             =               $form['item_description'];
@@ -98,18 +92,13 @@ class LPOItemApi extends Controller
             $lpo_item->migration_id = 0;
             $lpo_item->lpo_migration_id = 0;
 
-
             if($lpo_item->save()) {
                 return Response()->json(array('success' => 'lpo quoatation added','lpo_item' => $lpo_item), 200);
             }
 
-
         }catch (JWTException $e){
-
                 return response()->json(['error'=>'You are not Authenticated'], 500);
-
-        }
-     
+        }     
     }
 
 
@@ -181,19 +170,8 @@ class LPOItemApi extends Controller
             $item->unit_price               =               $form['unit_price'];
             $item->vat_charge               =               $form['vat_charge'];
 
-            // $user = JWTAuth::parseToken()->authenticate();
-            // $allocation->allocated_by_id            =   (int)   $user->id;
-
 
             if($item->save()) {
-
-
-                // $user = JWTAuth::parseToken()->authenticate();
-                // activity()
-                //    ->performedOn($allocation->allocatable)
-                //    ->causedBy($user)
-                //    ->log('re-allocated');
-                // $allocation->save();
                 return Response()->json(array('success' => 'Item updated','lpo_item' => $item), 200);
             }
 

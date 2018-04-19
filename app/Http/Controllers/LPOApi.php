@@ -101,8 +101,6 @@ class LPOApi extends Controller
     {
         $input = Request::all();
 
-
-
         $form = Request::only(
             'requested_by_id',
             'expense_desc',
@@ -111,7 +109,8 @@ class LPOApi extends Controller
             'account_id',
             'currency_id',
             'project_manager_id',
-            'quote_exempt_explanation'
+            'quote_exempt_explanation',
+            'quote_exempt_details'
             );
 
         try{
@@ -127,6 +126,7 @@ class LPOApi extends Controller
             $lpo->project_manager_id                =   (int)   $form['project_manager_id'];
             $lpo->status_id                         =   $this->default_status;
             $lpo->quote_exempt_explanation          = $form['quote_exempt_explanation'];
+            $lpo->quote_exempt_details = $form['quote_exempt_details'];
 
             $user = JWTAuth::parseToken()->authenticate();
             $lpo->request_action_by_id            =   (int)   $user->id;
@@ -207,7 +207,8 @@ class LPOApi extends Controller
             'currency_id',
             'project_manager_id',
             'preffered_quotation_id',
-            'quote_exempt_explanation'
+            'quote_exempt_explanation',
+            'quote_exempt_details'
             );
 
         $lpo = Lpo::find($form['id']);
@@ -224,6 +225,7 @@ class LPOApi extends Controller
             $lpo->project_manager_id                =   (int)   $form['project_manager_id'];
             $lpo->preffered_quotation_id            =   (int)   $form['preffered_quotation_id'];
             $lpo->quote_exempt_explanation = $form['quote_exempt_explanation'];
+            $lpo->quote_exempt_details = $form['quote_exempt_details'];
 
 
 
