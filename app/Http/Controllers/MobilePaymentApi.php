@@ -502,6 +502,11 @@ class MobilePaymentApi extends Controller
                     Mail::queue(new MobilePaymentInstructBank($mobile_payment, $csv_data, $pdf_data));
                     
                     // Save the approval if the bank has been notified successfully
+                    if($mobile_payment->status_id==4){
+                        $approval->approval_level_id = 4;
+                        $mobile_payment->management_approval_at = new \DateTime();
+                        $mobile_payment->save();
+                    }
                     $approval->save();
                 }
                 elseif($mobile_payment->status_id==8){
