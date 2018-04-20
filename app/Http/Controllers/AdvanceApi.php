@@ -411,7 +411,7 @@ class AdvanceApi extends Controller
      *
      * @return Http response
      */
-    public function approveAdvance($advance_id)
+    public function approveAdvance($advance_id, $several=null)
     {
 
         $input = Request::all();
@@ -488,6 +488,7 @@ class AdvanceApi extends Controller
                 
                 Mail::queue(new NotifyAdvance($advance));
 
+                if($several!=true)
                 return Response()->json(array('msg' => 'Success: advance approved','advance' => $advance), 200);
             }
 
@@ -681,7 +682,7 @@ class AdvanceApi extends Controller
             $advance_ids = $form['advances'];
 
             foreach ($advance_ids as $key => $advance_id) {
-                $this->approveAdvance($advance_id);
+                $this->approveAdvance($advance_id, true);
             }
 
             return response()->json(['advances'=>$form['advances']], 201,array(),JSON_PRETTY_PRINT);

@@ -638,7 +638,7 @@ class InvoiceApi extends Controller
      *
      * @return Http response
      */
-    public function approveInvoice($invoice_id)
+    public function approveInvoice($invoice_id, $several=null)
     {
         $invoice = [];
 
@@ -727,10 +727,9 @@ class InvoiceApi extends Controller
                    ->causedBy($user)
                    ->log('approved');
 
-                   try{
                 Mail::queue(new NotifyInvoice($invoice));
-                   }catch(Exception $e){}
 
+                if($several!=true)
                 return Response()->json(array('msg' => 'Success: invoice approved','invoice' => $invoice), 200);
             }
 
@@ -1098,7 +1097,7 @@ class InvoiceApi extends Controller
             $invoice_ids = $form['invoices'];
 
             foreach ($invoice_ids as $key => $invoice_id) {
-                $this->approveInvoice($invoice_id);
+                $this->approveInvoice($invoice_id, true);
             }
 
             return response()->json(['invoices'=>$form['invoices']], 201,array(),JSON_PRETTY_PRINT);

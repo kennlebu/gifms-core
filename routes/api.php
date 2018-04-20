@@ -147,7 +147,7 @@ Route::PATCH('lpo/{lpo_id}/submit_for_approval', 'LPOApi@submitLpoForApproval')-
  * Notes: Approve
  * Output-Formats: [application/json, application/xml]
  */
-Route::PATCH('/api/lpos/approve', 'LPOApi@approveSeveralLpos')->middleware('jwt.auth');
+Route::PATCH('lpos/approve', 'LPOApi@approveSeveralLpos')->middleware('jwt.auth');
 
 /**
  * GET getLpoQuoteExemptReasons

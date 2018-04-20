@@ -373,7 +373,7 @@ class LPOApi extends Controller
      *
      * @return Http response
      */
-    public function approveLpo($lpo_id)
+    public function approveLpo($lpo_id, $several=null)
     {
         $input = Request::all();
 
@@ -455,6 +455,7 @@ class LPOApi extends Controller
                     }
                 }
 
+                if($several!=true)
                 return Response()->json(array('msg' => 'Success: lpo approved','lpo' => $lpo), 200);
             }
 
@@ -953,7 +954,7 @@ class LPOApi extends Controller
             $lpo_ids = $form['lpos'];
 
             foreach ($lpo_ids as $key => $lpo_id) {
-                $this->approveLpo($lpo_id);
+                $this->approveLpo($lpo_id, true);
             }
 
             return response()->json(['lpos'=>$form['lpos']], 201,array(),JSON_PRETTY_PRINT);

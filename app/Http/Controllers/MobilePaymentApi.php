@@ -384,7 +384,7 @@ class MobilePaymentApi extends Controller
      *
      * @return Http response
      */
-    public function approve($mobile_payment_id)
+    public function approve($mobile_payment_id, $several=null)
     {
 
         $response = [];
@@ -508,6 +508,7 @@ class MobilePaymentApi extends Controller
                     $approval->save();
                 }
 
+                if($several!=true)
                 return Response()->json(array('result' => 'Success: mobile_payment approved','mobile_payment' => $mobile_payment), 200);
             }
 
@@ -1115,7 +1116,7 @@ class MobilePaymentApi extends Controller
             $mobile_payment_ids = $form['mobile_payments'];
 
             foreach ($mobile_payment_ids as $key => $mobile_payment_id) {
-                $this->approve($mobile_payment_id);
+                $this->approve($mobile_payment_id, true);
             }
 
             return response()->json(['mobile_payments'=>$form['mobile_payments']], 201,array(),JSON_PRETTY_PRINT);

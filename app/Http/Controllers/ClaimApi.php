@@ -382,7 +382,7 @@ class ClaimApi extends Controller
      *
      * @return Http response
      */
-    public function approveClaim($claim_id)
+    public function approveClaim($claim_id, $several=null)
     {
         $claim = [];
 
@@ -460,6 +460,7 @@ class ClaimApi extends Controller
 
                 Mail::queue(new NotifyClaim($claim));
 
+                if($several!=true)
                 return Response()->json(array('msg' => 'Success: claim approved','claim' => $claim), 200);
             }
 
@@ -733,7 +734,7 @@ class ClaimApi extends Controller
             $claim_ids = $form['claims'];
 
             foreach ($claim_ids as $key => $claim_id) {
-                $this->approveClaim($claim_id);
+                $this->approveClaim($claim_id, true);
             }
 
             return response()->json(['claims'=>$form['claims']], 201,array(),JSON_PRETTY_PRINT);
