@@ -52,6 +52,7 @@ class CreateLposTable extends Migration
             $table->integer('quote_exempt')->nullable();
             $table->text('quote_exempt_explanation')->nullable();
             $table->text('quote_exempt_details')->nullable();
+            $table->text('expensive_quotation_reason')->nullable();
             $table->integer('migration_preffered_quotation_id')->nullable();
             $table->integer('migration_account_id')->nullable();
             $table->integer('migration_requested_by_id')->nullable();
