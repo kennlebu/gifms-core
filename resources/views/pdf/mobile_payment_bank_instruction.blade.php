@@ -94,45 +94,24 @@
                         <td>{{$mobile_payment->currency->currency_name}}</td>
                         <td align="right" bgcolor="#E4E8F3">{{number_format($mobile_payment->totals,2)}}</td>
                     </tr>
-
-                    {{--  @foreach ($mobile_payment->approvals as $key => $approval)
-            @if ($approval->approval_level_id == 4)
-
-              <tr>
-                <td colspan="2" >
-                  @isset($approval->approver_id)
-                      <strong>{{$approval->approver->full_name}}</strong>
-                  @endisset
-                </td>
-                <td >
-                  <span>{{date('d F, Y', strtotime($approval->created_at)) }}</span>
-                </td>
-              </tr>
-              <tr>
-                <td colspan="4" rowspan="5" >
-                  <img height = "60" alt="." src="{{asset('storage/app/staff/signature'.$approval->approver_id.'.png')}}"></img>
-                </td>
-                <td ></td>
-              </tr>
-
-            @endif
-          @endforeach  --}}
                 </tbody>
             </table>
             <br/><br/><br/>
-            <div style="display:inline-block">
-                <div style="display:inline-block;margin-right:60px;">
+            <div style="display:inline-block;margin-top:25px;">
+                <div style="display:inline-block;margin-right:80px;">
                     Signed:<br/>
-                    <img src="{{asset('storage/app/staff/signature'.$director->id.'.png')}}"><br/> 
-                    {{ucwords(strtolower($director->f_name.' '.$director->l_name))}}
-                    <br/>{{$director->post}}
+                    <div style="height:70px;width:200px; background:url({{asset('storage/app/staff/signature'.$director->id.'.png')}}; background-repeat:no-repeat;background-size:contain;"></div>
+                    <br/> 
+                    {{trim($director->f_name).' '.trim($director->l_name)}}
+                    <br/>{{$director->official_post}}
                 </div>
 
-                <div style="display:inline-block;margin-left:60px;">
+                <div style="display:inline-block;margin-left:80px;">
                     Signed:<br/>
-                    <img src="{{asset('storage/app/staff/signature'.$deputy_director->id.'.png')}}"><br/> 
-                    {{ucwords(strtolower($deputy_director->f_name.' '.$deputy_director->l_name))}}
-                    <br/>{{$deputy_director->post}}
+                    <div style="height:70px;width:200px; background:url({{asset('storage/app/staff/signature'.$deputy_director->id.'.png')}}; background-repeat:no-repeat;background-size:contain;"></div>
+                    <br/> 
+                    {{trim($deputy_director->f_name).' '.trim($deputy_director->l_name)}}
+                    <br/>{{$deputy_director->official_post}}
                 </div>
             </div>
         </div>

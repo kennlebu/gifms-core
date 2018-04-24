@@ -174,7 +174,8 @@
           @foreach ($unique_approvals as $key => $approval)
             <tr>
                 <td colspan="4">Authorized by:<br/>
-                  <img height = "60" alt="." src="{{asset('storage/app/staff/signature'.$approval->approver_id.'.png')}}"><br/>
+                  <div style="height:70px;width:200px; background:url({{asset('storage/app/staff/signature'.$approval->approver_id.'.png')}}; background-repeat:no-repeat;background-size:contain;"></div>
+                  {{-- <img height = "60" alt="." src="{{asset('storage/app/staff/signature'.$approval->approver_id.'.png')}}"><br/> --}}
                   @isset($approval->approver_id)
                       <strong>{{$approval->approver->full_name}}</strong>
                   @endisset

@@ -90,7 +90,8 @@
               </tr>
               <tr>
                 <td colspan="4" rowspan="5" >
-                  <img height = "60" alt="." src="{{asset('storage/app/staff/signature'.$approval->approver_id.'.png')}}"></img>
+                    <div style="height:70px;width:200px; background:url({{asset('storage/app/staff/signature'.$approval->approver_id.'.png')}}; background-repeat:no-repeat;background-size:contain;"></div>
+                  {{-- <img height = "60" alt="." src="{{asset('storage/app/staff/signature'.$approval->approver_id.'.png')}}"></img> --}}
                 </td>
                 <td ></td>
               </tr>
