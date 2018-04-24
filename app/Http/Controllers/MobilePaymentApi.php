@@ -679,27 +679,17 @@ class MobilePaymentApi extends Controller
 
             $ftp = FTP::connection()->getDirListing();
 
-
             $mobile_payment = MobilePayment::find($mobile_payment_id);
-
-            // $contents = File::get($file->getPathname());
-            // $data = str_getcsv ($contents,",");
-
-            // print_r($data);
-
 
             $data = Excel::load($file->getPathname(), function($reader) {
 
             })->get()->toArray();
 
-
-            // print_r($data);
-
-
             foreach ($data as $key => $value) {
                 $payee = new MobilePaymentPayee();
 
-                if((substr($value['phone'],0,6) == "(+254)") && ((int) strlen($value['phone'])== 15)) {
+                // if((substr($value['phone'],0,6) == "(+254)") && ((int) strlen($value['phone'])== 15)) {
+                if(strlen($value['phone'])==9 && substr($value['phone'],0,1)=='7'){
                     
                 }else{
                     throw new Exception("Phone number for ".$value['name']." is not of the required format", 1);
@@ -714,18 +704,12 @@ class MobilePaymentApi extends Controller
 
             foreach ($data as $key => $value) {
                 $payee = new MobilePaymentPayee();
-            
-                // if((substr($value['phone'],0,6) == "(+254)") && ((int) strlen($value['phone'])== 15)) {
-                    
-                // }else{
-                //     throw new Exception("Phone number for ".$value['name']." is not of the required format", 1);
-                // }
 
                 $payee->mobile_payment_id   = $mobile_payment_id;
                 $payee->full_name           = $value['name'];
                 $payee->registered_name     = $value['name'];
                 $payee->amount              = $value['amount'];
-                $payee->mobile_number       = $value['phone'];
+                $payee->mobile_number       = "(+254)".$value['phone'];
                 $payee->withdrawal_charges  = $payee->calculated_withdrawal_charges;
                 $payee->total               = $payee->calculated_total;
 

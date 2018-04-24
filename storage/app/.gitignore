@@ -4,7 +4,6 @@ lpo_quotation/
 mobile_payment/
 signsheets/
 staff/
-templates/
 advances/
 reports/
 !.gitignore
