@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 use Exception;
 use App;
+use DateTime;
 use Excel;
 use Illuminate\Support\Facades\Response;
 use App\Models\PaymentModels\PaymentBatch;
@@ -164,7 +165,7 @@ class ReportsApi extends Controller
                     }
                     $account = Account::find($allocation['account_id']);
     
-                    $my_result['date_posted'] = $row['payment_date'];
+                    $my_result['date_posted'] = (string)$row['payment_date'];
                     $my_result['project'] = $project;
                     $my_result['program_id'] = $project->program_id;
                     $my_result['program_desc'] = $project->project_name;
@@ -223,7 +224,7 @@ class ReportsApi extends Controller
             foreach($report_data as $row){
                 $excel_row = array();
                 $excel_row['vendor_name'] = $row['vendor_name'];
-                $excel_row['date'] = '08 Jan 2018';
+                $excel_row['date'] = DateTime::createFromFormat('Y-m-d H:i:s', $row['date_posted'])->format('d-M-Y'); //'08 Jan 2018';
                 $excel_row['project_id'] = $row['project']['project_code'];
                 $excel_row['grant_details'] = $row['grant']['grant_code'];
                 $excel_row['account_number'] = $row['account_number'];
