@@ -441,7 +441,7 @@ class ClaimApi extends Controller
                         'payable_id'                    =>  $claim->id, 
                         'debit_bank_account_id'         =>  $claim->currency_id, 
                         'currency_id'                   =>  $claim->currency_id, 
-                        'payment_desc'                  =>  $claim->ref, 
+                        'payment_desc'                  =>  $claim->expense_desc, 
                         'paid_to_name'                  =>  $claim->requested_by->full_name, 
                         'paid_to_mobile_phone_no'       =>  $claim->requested_by->mpesa_no, 
                         'paid_to_bank_account_no'       =>  $claim->requested_by->bank_account, 

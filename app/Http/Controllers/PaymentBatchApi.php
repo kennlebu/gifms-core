@@ -291,7 +291,7 @@ class PaymentBatchApi extends Controller
                                 $eft_data['bank_code'] = $this->pad_zeros(2,$row['bank_code']);
                                 $eft_data['branch'] = $this->pad_zeros(3,$row['branch_code']);
                                 $eft_data['account'] = $row['bank_account'];
-                                $eft_data['chaipv'] = 'INV'.$payment->id;
+                                $eft_data['chaipv'] = 'CHAI'.$payment->id.'-INV';
                                 $eft_data['acct_name'] = $row['chaque_address'];
                             }
 
@@ -311,7 +311,7 @@ class PaymentBatchApi extends Controller
                             $eft_data['bank_code'] = $row['bank_code'];
                             $eft_data['branch'] = $row['branch_code'];
                             $eft_data['account'] = $row['bank_account'];
-                            $eft_data['chaipv'] = 'ADV'.$payment->id;
+                            $eft_data['chaipv'] = 'CHAI'.$payment->id.'-ADV';
                             $eft_data['acct_name'] = $row['cheque_addressee'];
                         }
 
@@ -330,7 +330,7 @@ class PaymentBatchApi extends Controller
                             $eft_data['bank_code'] = $row['bank_code'];
                             $eft_data['branch'] = $row['branch_code'];
                             $eft_data['account'] = $row['bank_account'];
-                            $eft_data['chaipv'] = 'CLM'.$payment->id;
+                            $eft_data['chaipv'] = 'CHAI'.$payment->id.'-CLM';
                             $eft_data['acct_name'] = $row['cheque_addressee'];
                         }
 
@@ -376,7 +376,7 @@ class PaymentBatchApi extends Controller
                             foreach($qb_invoice as $row){
                                 $rtgs_data['bank_code'] = $this->pad_zeros(2,$row['bank_code']).$this->pad_zeros(3,$row['branch_code']);
                                 $rtgs_data['account'] = $row['bank_account'];
-                                $rtgs_data['chaipv'] = 'INV'.$payment->id;
+                                $rtgs_data['chaipv'] = 'CHAI'.$payment->id.'-INV';
                                 $rtgs_data['acct_name'] = $row['chaque_address'];
                             }
 
@@ -395,7 +395,7 @@ class PaymentBatchApi extends Controller
                         foreach($advance_qb as $row){
                             $rtgs_data['bank_code'] = $row['bank_code'].$row['branch_code'];
                             $rtgs_data['account'] = $row['bank_account'];
-                            $rtgs_data['chaipv'] = 'ADV'.$payment->id;
+                            $rtgs_data['chaipv'] = 'CHAI'.$payment->id.'-ADV';
                             $rtgs_data['acct_name'] = $row['cheque_addressee'];
                         }
 
@@ -413,7 +413,7 @@ class PaymentBatchApi extends Controller
                         foreach($claim_qb as $row){
                             $rtgs_data['bank_code'] = $row['bank_code'].$row['branch_code'];
                             $rtgs_data['account'] = $row['bank_account'];
-                            $rtgs_data['chaipv'] = 'CLM'.$payment->id;
+                            $rtgs_data['chaipv'] = 'CHAI'.$payment->id.'-CLM';
                             $rtgs_data['acct_name'] = $row['cheque_addressee'];
                         }
 
@@ -454,7 +454,7 @@ class PaymentBatchApi extends Controller
                             foreach($qb_invoice as $row){
                                 $mmts_data['phone'] = $row['mobile_payment_number'];
                                 $mmts_data['mobile_name'] = $row['mobile_payment_name'];
-                                $mmts_data['chaipv'] = 'INV'.$payment->id;
+                                $mmts_data['chaipv'] = 'CHAI'.$payment->id.'-INV';
                             }
 
                             array_push($mmts_result, $mmts_data);
@@ -470,7 +470,7 @@ class PaymentBatchApi extends Controller
                         foreach($advance_qb as $row){
                             $mmts_data['phone'] = $row['mpesa_no'];
                             $mmts_data['mobile_name'] = $row['cheque_addressee'];
-                            $mmts_data['chaipv'] = 'ADV'.$payment->id;
+                            $mmts_data['chaipv'] = 'CHAI'.$payment->id.'-ADV';
                         }
 
                         array_push($mmts_result, $mmts_data);
@@ -486,7 +486,7 @@ class PaymentBatchApi extends Controller
                         foreach($claim_qb as $row){
                             $mmts_data['phone'] = $row['mpesa_no'];
                             $mmts_data['mobile_name'] = $row['cheque_addressee'];
-                            $mmts_data['chaipv'] = 'CLM'.$payment->id;
+                            $mmts_data['chaipv'] = 'CHAI'.$payment->id.'-CLM';
                         }
 
                         array_push($mmts_result, $mmts_data);

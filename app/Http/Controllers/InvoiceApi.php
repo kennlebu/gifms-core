@@ -706,7 +706,7 @@ class InvoiceApi extends Controller
                         'payable_id'                    =>  $invoice->id, 
                         'debit_bank_account_id'         =>  $invoice->currency_id, 
                         'currency_id'                   =>  $invoice->currency_id, 
-                        'payment_desc'                  =>  $invoice->ref, 
+                        'payment_desc'                  =>  $invoice->expense_desc, 
                         'paid_to_name'                  =>  $invoice->supplier->supplier_name, 
                         'paid_to_mobile_phone_no'       =>  $invoice->supplier->mobile_payment_number, 
                         'paid_to_bank_account_no'       =>  $invoice->supplier->bank_account, 

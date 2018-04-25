@@ -470,7 +470,7 @@ class AdvanceApi extends Controller
                         'payable_id'                    =>  $advance->id, 
                         'debit_bank_account_id'         =>  $advance->currency_id, 
                         'currency_id'                   =>  $advance->currency_id, 
-                        'payment_desc'                  =>  $advance->ref, 
+                        'payment_desc'                  =>  $advance->expense_desc, 
                         'paid_to_name'                  =>  $advance->requested_by->full_name, 
                         'paid_to_mobile_phone_no'       =>  $advance->requested_by->mpesa_no, 
                         'paid_to_bank_account_no'       =>  $advance->requested_by->bank_account, 

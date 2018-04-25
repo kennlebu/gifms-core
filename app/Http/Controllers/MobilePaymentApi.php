@@ -481,7 +481,7 @@ class MobilePaymentApi extends Controller
                             '', // blank space
                             'KES', // currency
                             $row['total'], // amount
-                            'CHAI'.$this->pad_zeros(5, $row['id']) // chaipv
+                            'CHAI'.$this->pad_zeros(5, $mobile_payment->id).'-MMTS' // chaipv
                         );
                         
                         // Add the data to the csv_data array
@@ -1518,19 +1518,13 @@ class MobilePaymentApi extends Controller
                     $header = false;
                 } else {
                     $ref = explode(" ", $csvLine[1])[0];
-                    array_push($payees_ids, (int)preg_replace("/[^0-9]/", "", $ref)); 
+                    array_push($mobile_payment_ids, (int)preg_replace("/[^0-9]/", "", $ref)); 
                 }
             }
+            // Get only unique values
+            $mobile_payment_ids = array_unique($mobile_payment_ids);
 
-            // Mark payees as paid
-            foreach($payees_ids as $id){
-                $payee = MobilePaymentPayee::findOrFail($id);
-                $payee->paid = 1;
-                $payee->save();
-                if(!in_array($payee->mobile_payment_id, $mobile_payment_ids)){
-                    array_push($mobile_payment_ids, $payee->mobile_payment_id);
-                }
-            }
+            
 
             // Change status of the mobile payment(s) to paid
             foreach($mobile_payment_ids as $id){
@@ -1538,14 +1532,20 @@ class MobilePaymentApi extends Controller
                 $mobile_payment->status_id = 5;
                 $mobile_payment->save();
                 array_push($payment_refs, $mobile_payment->ref);
-                // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , json_encode($mobile_payment) , FILE_APPEND);
+
+                // // Mark payees as paid
+                // foreach($mobile_payment->payees as $pid){
+                //     $payee = MobilePaymentPayee::findOrFail($pid);
+                //     $payee->paid = 1;
+                //     $payee->save();
+                // }
             }
 
             return Response()->json(array('msg' => 'Success: Mobile Payment(s) reconciled','payments' => $payment_refs), 200);
 
         }
         catch (Exception $e){
-            return response()->json(['error'=>$e.getMessage()], 500);
+            return response()->json(['error'=>$e->getMessage()], 500);
         }
     }
 
