@@ -56,18 +56,18 @@ class NotifyClaim extends Mailable
     {
 
         $ccs = [] ;
-        $ccs[0] = $this->accountant;
-        $ccs[1] = $this->financial_controller;
-        $ccs[2] = $this->director;
-        $ccs[3] = $this->claim->requested_by;
+        // $ccs[0] = $this->accountant;
+        // $ccs[1] = $this->financial_controller;
+        // $ccs[2] = $this->director;
+        // $ccs[3] = $this->claim->requested_by;
 
 
         $this->view('emails/notify_claim')         
             ->replyTo([
                     'email' => Config::get('mail.reply_to')['address'],
 
-                ])   
-            ->cc($ccs);
+                ]);
+            // ->cc($ccs);
 
 
 
@@ -80,8 +80,7 @@ class NotifyClaim extends Mailable
 
 
         if($this->claim->status_id == 10){
-
-
+            $ccs[0] = $this->claim->requested_by;
 
             return $this->to($this->accountant)
                     ->with([
@@ -89,6 +88,7 @@ class NotifyClaim extends Mailable
                             'addressed_to' => $this->accountant,
                             'js_url' => Config::get('app.js_url'),
                         ])
+                    ->cc($ccs)
                     ->subject("Claim Approval Request ".$this->claim->ref);
         }else if($this->claim->status_id == 2){
 
@@ -135,25 +135,6 @@ class NotifyClaim extends Mailable
                         ])
                     ->subject("Claim Approval Request ".$this->claim->ref);
         }
-
-
-
-
-
-
-
-        // else if($this->claim->status_id == 99){
-
-
-
-        //     return $this->to($this->claim->requested_by)
-        //             ->with([
-        //                     'claim' => $this->claim,
-        //                     'addressed_to' => $this->claim->requested_by,
-        //                     'js_url' => Config::get('app.js_url'),
-        //                 ])
-        //             ->subject("Claim Cancelled ".$this->claim->ref);
-        // }
 
         else if($this->claim->status_id == 9){
 

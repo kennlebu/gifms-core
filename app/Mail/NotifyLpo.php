@@ -66,18 +66,18 @@ class NotifyLpo extends Mailable
     {
 
         $ccs = [] ;
-        $ccs[0] = $this->accountant;
-        $ccs[1] = $this->financial_controller;
-        $ccs[2] = $this->director;
-        $ccs[3] = $this->lpo->requested_by;
+        // $ccs[0] = $this->accountant;
+        // $ccs[1] = $this->financial_controller;
+        // $ccs[2] = $this->director;
+        // $ccs[3] = $this->lpo->requested_by;
 
 
         $this->view('emails/notify_lpo')         
             ->replyTo([
                     'email' => Config::get('mail.reply_to')['address'],
 
-                ])      
-            ->cc($ccs);
+                ]);
+            // ->cc($ccs);
 
 
 
@@ -90,8 +90,7 @@ class NotifyLpo extends Mailable
 
 
         if($this->lpo->status_id == 13){
-
-
+            $ccs[0] = $this->lpo->requested_by;
 
             return $this->to($this->accountant)
                     ->with([
@@ -99,6 +98,7 @@ class NotifyLpo extends Mailable
                             'addressed_to' => $this->accountant,
                             'js_url' => Config::get('app.js_url'),
                         ])
+                    ->cc($ccs)
                     ->subject("LPO Approval Request ".$this->lpo->ref);
         }else if($this->lpo->status_id == 3){
 

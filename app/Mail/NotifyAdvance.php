@@ -56,18 +56,18 @@ class NotifyAdvance extends Mailable
     {
 
         $ccs = [] ;
-        $ccs[0] = $this->accountant;
-        $ccs[1] = $this->financial_controller;
-        $ccs[2] = $this->director;
-        $ccs[3] = $this->advance->requested_by;
+        // $ccs[0] = $this->accountant;
+        // $ccs[1] = $this->financial_controller;
+        // $ccs[2] = $this->director;
+        // $ccs[3] = $this->advance->requested_by;
 
 
         $this->view('emails/notify_advance')         
             ->replyTo([
                     'email' => Config::get('mail.reply_to')['address'],
 
-                ])                
-            ->cc($ccs);
+                ]);            
+            // ->cc($ccs);
 
 
 
@@ -80,8 +80,7 @@ class NotifyAdvance extends Mailable
 
 
         if($this->advance->status_id == 13){
-
-
+            $ccs[0] = $this->advance->requested_by;
 
             return $this->to($this->accountant)
                     ->with([
@@ -89,6 +88,7 @@ class NotifyAdvance extends Mailable
                             'addressed_to' => $this->accountant,
                             'js_url' => Config::get('app.js_url'),
                         ])
+                    ->cc($ccs)
                     ->subject("Advance Approval Request ".$this->advance->ref);
         }else if($this->advance->status_id == 2){
 

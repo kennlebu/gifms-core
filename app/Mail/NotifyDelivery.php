@@ -66,10 +66,6 @@ class NotifyDelivery extends Mailable
                             'delivery' => $this->delivery,
                             'lpo' => $this->lpo,
                             'js_url' => Config::get('app.js_url'),
-                            // 'supplier' => $this->supplier->supplier_name,
-                            // 'received_by' => $this->received_by,
-                            // 'received_for' => $this->received_for,
-                            // 'amount' => $this->preferred_quotation->amount
                         ])
                     ->subject("Delivery Received ".$this->delivery->external_ref);
     }

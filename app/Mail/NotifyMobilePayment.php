@@ -63,18 +63,18 @@ class NotifyMobilePayment extends Mailable
     {
 
         $ccs = [] ;
-        $ccs[0] = $this->accountant;
-        $ccs[1] = $this->financial_controller;
-        $ccs[2] = $this->director;
-        $ccs[3] = $this->mobile_payment->requested_by;
+        // $ccs[0] = $this->accountant;
+        // $ccs[1] = $this->financial_controller;
+        // $ccs[2] = $this->director;
+        // $ccs[3] = $this->mobile_payment->requested_by;
 
 
         $this->view('emails/notify_mobile_payment')         
             ->replyTo([
                     'email' => Config::get('mail.reply_to')['address'],
 
-                ]) 
-            ->cc($ccs);
+                ]);
+            // ->cc($ccs);
 
 
 
@@ -87,7 +87,7 @@ class NotifyMobilePayment extends Mailable
 
 
         if($this->mobile_payment->status_id == 9){
-
+            $ccs[0] = $this->mobile_payment->requested_by;
 
 
             return $this->to($this->accountant)
@@ -96,6 +96,7 @@ class NotifyMobilePayment extends Mailable
                             'addressed_to' => $this->accountant,
                             'js_url' => Config::get('app.js_url'),
                         ])
+                    ->cc($ccs)
                     ->subject("Mobile Payment Approval Request ".$this->mobile_payment->ref);
         }else if($this->mobile_payment->status_id == 2){
 
@@ -131,25 +132,6 @@ class NotifyMobilePayment extends Mailable
                         ])
                     ->subject("Mobile Payment Approval Request ".$this->mobile_payment->ref);
         }
-
-
-
-
-
-
-
-        // else if($this->mobile_payment->status_id == 99){
-
-
-
-        //     return $this->to($this->mobile_payment->requested_by)
-        //             ->with([
-        //                     'mobile_payment' => $this->mobile_payment,
-        //                     'addressed_to' => $this->mobile_payment->requested_by,
-        //                     'js_url' => Config::get('app.js_url'),
-        //                 ])
-        //             ->subject("Mobile Payment Cancelled ".$this->mobile_payment->ref);
-        // }
 
         else if($this->mobile_payment->status_id == 7){
 

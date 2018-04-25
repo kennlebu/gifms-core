@@ -59,18 +59,18 @@ class NotifyInvoice extends Mailable
     {
 
         $ccs = [] ;
-        $ccs[0] = $this->accountant;
-        $ccs[1] = $this->financial_controller;
-        $ccs[2] = $this->director;
-        $ccs[3] = $this->invoice->raised_by;
+        // $ccs[0] = $this->accountant;
+        // $ccs[1] = $this->financial_controller;
+        // $ccs[2] = $this->director;
+        // $ccs[3] = $this->invoice->raised_by;
 
 
         $this->view('emails/notify_invoice')         
             ->replyTo([
                     'email' => Config::get('mail.reply_to')['address'],
 
-                ])      
-            ->cc($ccs);
+                ]);      
+            // ->cc($ccs);
 
 
 
@@ -83,18 +83,17 @@ class NotifyInvoice extends Mailable
 
 
         if($this->invoice->status_id == 11){
-
-
-
+            
             return $this->to($this->invoice->raised_by)
                     ->with([
                             'invoice' => $this->invoice,
                             'addressed_to' => $this->invoice->raised_by,
                             'js_url' => Config::get('app.js_url'),
                         ])
+                    
                     ->subject("Invoice Received/Logged  ".$this->invoice->external_ref);
         }else if($this->invoice->status_id == 12){
-
+            $ccs[0] = $this->invoice->raised_by;
 
 
             return $this->to($this->accountant)
@@ -103,6 +102,7 @@ class NotifyInvoice extends Mailable
                             'addressed_to' => $this->accountant,
                             'js_url' => Config::get('app.js_url'),
                         ])
+                    ->cc($ccs)
                     ->subject("Invoice Approval Request ".$this->invoice->external_ref);
         }else if($this->invoice->status_id == 1){
 
@@ -150,24 +150,6 @@ class NotifyInvoice extends Mailable
                     ->subject("Invoice Approval Request ".$this->invoice->external_ref);
         }
 
-
-
-
-
-
-
-        // else if($this->invoice->status_id == 11){
-
-
-
-        //     return $this->to($this->invoice->raised_by)
-        //             ->with([
-        //                     'invoice' => $this->invoice,
-        //                     'addressed_to' => $this->invoice->raised_by,
-        //                     'js_url' => Config::get('app.js_url'),
-        //                 ])
-        //             ->subject("Invoice Cancelled ".$this->invoice->external_ref);
-        // }
         else if($this->invoice->status_id == 9){
 
 
