@@ -3,12 +3,12 @@ info:
   description: Finance management sysytem
   version: 1.0.0
   title: Grants Information Management System
-  termsOfService: 'http://kefinance.clintonhealthaccess.org/terms/'
+  termsOfService: 'https://kefinance.clintonhealthaccess.org/terms/'
   contact:
     email: mwangikevinn@gmail.com
   license:
     name: Apache 2.0
-    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+    url: 'https://www.apache.org/licenses/LICENSE-2.0.html'
 host: 'localhost:8000'
 basePath: /api
 tags:
@@ -16,7 +16,7 @@ tags:
     description: Everything About Account Type
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/account_type/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/account_type/docs'
 schemes:
   - http
   - https

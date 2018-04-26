@@ -1,1372 +1,1271 @@
 {
- "swagger": "2.0",
- "info": {
-  "description": "Finance management sysytem",
-  "version": "1.0.0",
-  "title": "Grants Information Management System",
-  "termsOfService": "http://kefinance.clintonhealthaccess.org/terms/",
-  "contact": {
-   "email": "mwangikevinn@gmail.com"
-  },
-  "license": {
-   "name": "Apache 2.0",
-   "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
-  }
- },
- "host": "localhost:8000",
- "basePath": "/api",
- "tags": [
-  {
-   "name": "Invoice",
-   "description": "Everything About Invoice",
-   "externalDocs": {
-    "description": "Find out more",
-    "url": "http://kefinance.clintonhealthaccess.org/api/invoice/docs"
-   }
-  },
-  {
-   "name": "Invoice Status",
-   "description": "Everything About Invoice Status",
-   "externalDocs": {
-    "description": "Find out more",
-    "url": "http://kefinance.clintonhealthaccess.org/api/invoice_status/docs"
-   }
-  },
-  {
-   "name": "Invoice Approval",
-   "description": "Everything About Invoice Approval",
-   "externalDocs": {
-    "description": "Find out more",
-    "url": "http://kefinance.clintonhealthaccess.org/api/invoice_approval/docs"
-   }
-  },
-  {
-   "name": "Invoice Allocation",
-   "description": "Everything About Invoice Allocation",
-   "externalDocs": {
-    "description": "Find out more",
-    "url": "http://kefinance.clintonhealthaccess.org/api/invoice_allocation/docs"
-   }
-  }
- ],
- "schemes": [
-  "http",
-  "https"
- ],
- "paths": {
-  "/invoices": {
-   "get": {
-    "summary": "invoices List",
-    "description": "The invoice endpoint returns multiple invoice requested given the parameters injected. \n",
-    "parameters": [
-     {
-      "name": "invoice_id",
-      "in": "query",
-      "description": "invoice id",
-      "required": false,
-      "type": "number",
-      "format": "integer"
-     }
-    ],
-    "tags": [
-     "Invoice"
-    ],
-    "responses": {
-     "200": {
-      "description": "An array of invoice returned",
-      "schema": {
-       "type": "array",
-       "items": {
-        "$ref": "#/definitions/invoice"
-       }
-      }
-     },
-     "404": {
-      "description": "Unexpected error",
-      "schema": {
-       "$ref": "#/definitions/Error"
-      }
-     }
+    "swagger": "2.0",
+    "info": {
+        "description": "Finance management sysytem",
+        "version": "1.0.0",
+        "title": "Grants Information Management System",
+        "termsOfService": "https://kefinance.clintonhealthaccess.org/terms/",
+        "contact": {
+            "email": "mwangikevinn@gmail.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
+        }
     },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   }
-  },
-  "/invoice": {
-   "post": {
-    "tags": [
-     "Invoice"
+    "host": "localhost:8000",
+    "basePath": "/api",
+    "tags": [{
+            "name": "Invoice",
+            "description": "Everything About Invoice",
+            "externalDocs": {
+                "description": "Find out more",
+                "url": "https://kefinance.clintonhealthaccess.org/api/invoice/docs"
+            }
+        },
+        {
+            "name": "Invoice Status",
+            "description": "Everything About Invoice Status",
+            "externalDocs": {
+                "description": "Find out more",
+                "url": "https://kefinance.clintonhealthaccess.org/api/invoice_status/docs"
+            }
+        },
+        {
+            "name": "Invoice Approval",
+            "description": "Everything About Invoice Approval",
+            "externalDocs": {
+                "description": "Find out more",
+                "url": "https://kefinance.clintonhealthaccess.org/api/invoice_approval/docs"
+            }
+        },
+        {
+            "name": "Invoice Allocation",
+            "description": "Everything About Invoice Allocation",
+            "externalDocs": {
+                "description": "Find out more",
+                "url": "https://kefinance.clintonhealthaccess.org/api/invoice_allocation/docs"
+            }
+        }
     ],
-    "summary": "Add a new invoice",
-    "description": "new invoice",
-    "operationId": "add_invoice",
-    "consumes": [
-     "application/json",
-     "application/xml"
+    "schemes": [
+        "http",
+        "https"
     ],
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "in": "body",
-      "name": "body",
-      "description": "invoice object that needs to be added",
-      "required": true,
-      "schema": {
-       "$ref": "#/definitions/invoice"
-      }
-     }
-    ],
-    "responses": {
-     "200": {
-      "description": "Successfully added a new invoice for approval"
-     },
-     "405": {
-      "description": "Invalid input,adding a new invoice was unsuccessful"
-     }
+    "paths": {
+        "/invoices": {
+            "get": {
+                "summary": "invoices List",
+                "description": "The invoice endpoint returns multiple invoice requested given the parameters injected. \n",
+                "parameters": [{
+                    "name": "invoice_id",
+                    "in": "query",
+                    "description": "invoice id",
+                    "required": false,
+                    "type": "number",
+                    "format": "integer"
+                }],
+                "tags": [
+                    "Invoice"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "An array of invoice returned",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/invoice"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            }
+        },
+        "/invoice": {
+            "post": {
+                "tags": [
+                    "Invoice"
+                ],
+                "summary": "Add a new invoice",
+                "description": "new invoice",
+                "operationId": "add_invoice",
+                "consumes": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [{
+                    "in": "body",
+                    "name": "body",
+                    "description": "invoice object that needs to be added",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/definitions/invoice"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Successfully added a new invoice for approval"
+                    },
+                    "405": {
+                        "description": "Invalid input,adding a new invoice was unsuccessful"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            },
+            "put": {
+                "tags": [
+                    "Invoice"
+                ],
+                "summary": "Update an existing invoice",
+                "description": "",
+                "operationId": "update_invoice",
+                "consumes": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [{
+                    "in": "body",
+                    "name": "body",
+                    "description": "invoice object that needs to be added",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/definitions/invoice"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Success"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "invoice not found"
+                    },
+                    "405": {
+                        "description": "Validation exception"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            }
+        },
+        "/invoice/{invoice_id}": {
+            "get": {
+                "tags": [
+                    "Invoice"
+                ],
+                "summary": "Find invoice by ID",
+                "description": "Returns a single invoice",
+                "operationId": "get_invoice_by_id",
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [{
+                    "name": "invoice_id",
+                    "in": "path",
+                    "description": "ID of invoice to return object",
+                    "required": true,
+                    "type": "integer",
+                    "format": "int64"
+                }],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/invoice"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "invoice not found"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            },
+            "delete": {
+                "tags": [
+                    "Invoice"
+                ],
+                "summary": "Deletes an invoice",
+                "description": "",
+                "operationId": "delete_invoice",
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [{
+                        "name": "api_key",
+                        "in": "header",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "invoice_id",
+                        "in": "path",
+                        "description": "invoice id to delete",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "invoice not found"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            }
+        },
+        "/invoice/{invoice_id}/submit_for_approval": {
+            "patch": {
+                "tags": [
+                    "Invoice"
+                ],
+                "summary": "Submit invoice by ID",
+                "description": "Submits invoice for approval",
+                "operationId": "submit_invoice_for_approval",
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [{
+                    "name": "invoice_id",
+                    "in": "path",
+                    "description": "ID of invoice to return object",
+                    "required": true,
+                    "type": "integer",
+                    "format": "int64"
+                }],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/invoice"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "invoice not found"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            }
+        },
+        "/invoice/{invoice_id}/approve": {
+            "patch": {
+                "tags": [
+                    "Invoice"
+                ],
+                "summary": "Approve invoice by ID",
+                "description": "Approves Invoice",
+                "operationId": "approve_invoice",
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [{
+                    "name": "invoice_id",
+                    "in": "path",
+                    "description": "ID of invoice to return object",
+                    "required": true,
+                    "type": "integer",
+                    "format": "int64"
+                }],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/invoice"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "invoice not found"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            }
+        },
+        "/invoice/{invoice_id}/reject": {
+            "patch": {
+                "tags": [
+                    "Invoice"
+                ],
+                "summary": "Reject invoice by ID",
+                "description": "Approves Invoice",
+                "operationId": "reject_invoice",
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [{
+                    "name": "invoice_id",
+                    "in": "path",
+                    "description": "ID of invoice to return object",
+                    "required": true,
+                    "type": "integer",
+                    "format": "int64"
+                }],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/invoice"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "invoice not found"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            }
+        },
+        "/invoice/{invoice_id}/allocate": {
+            "patch": {
+                "tags": [
+                    "Invoice"
+                ],
+                "summary": "Allocate invoice by ID",
+                "description": "Allocate Invoice",
+                "operationId": "allocate_invoice",
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [{
+                    "name": "invoice_id",
+                    "in": "path",
+                    "description": "ID of invoice to return object",
+                    "required": true,
+                    "type": "integer",
+                    "format": "int64"
+                }],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/invoice"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "invoice not found"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            }
+        },
+        "/invoice/{invoice_id}/get_document": {
+            "get": {
+                "tags": [
+                    "Invoice"
+                ],
+                "summary": "get invoice document by ID",
+                "description": "get Invoice document",
+                "operationId": "get_document_by_id",
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [{
+                    "name": "invoice_id",
+                    "in": "path",
+                    "description": "ID of invoice to return object",
+                    "required": true,
+                    "type": "integer",
+                    "format": "int64"
+                }],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/invoice"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "invoice not found"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            }
+        },
+        "/invoice/{invoice_id}/get_payment_voucher": {
+            "get": {
+                "tags": [
+                    "Invoice"
+                ],
+                "summary": "get payment Voucher by ID",
+                "description": "get payment Voucher",
+                "operationId": "get_payment_voucher_by_id",
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/invoice"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "invoice not found"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            },
+            "parameters": [{
+                "name": "invoice_id",
+                "in": "path",
+                "required": true,
+                "type": "integer",
+                "format": "int64",
+                "description": "ID of invoice to return object"
+            }]
+        },
+        "/invoice_statuses": {
+            "get": {
+                "summary": "invoice_statuses List",
+                "description": "The invoice_status endpoint returns multiple invoice_status requested given the parameters injected. \n",
+                "parameters": [{
+                    "name": "invoice_status_id",
+                    "in": "query",
+                    "description": "invoice_status id",
+                    "required": false,
+                    "type": "number",
+                    "format": "integer"
+                }],
+                "tags": [
+                    "Invoice Status"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "An array of invoice_status returned",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/invoice_status"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            }
+        },
+        "/invoice_status": {
+            "post": {
+                "tags": [
+                    "Invoice Status"
+                ],
+                "summary": "Add a new invoice_status",
+                "description": "new invoice_status",
+                "operationId": "add_invoice_status",
+                "consumes": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [{
+                    "in": "body",
+                    "name": "body",
+                    "description": "invoice_status object that needs to be added",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/definitions/invoice_status"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Successfully added a new invoice_status for approval"
+                    },
+                    "405": {
+                        "description": "Invalid input,adding a new invoice_status was unsuccessful"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            },
+            "put": {
+                "tags": [
+                    "Invoice Status"
+                ],
+                "summary": "Update an existing invoice_status",
+                "description": "",
+                "operationId": "update_invoice_status",
+                "consumes": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [{
+                    "in": "body",
+                    "name": "body",
+                    "description": "invoice_status object that needs to be added",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/definitions/invoice_status"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Success"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "invoice_status not found"
+                    },
+                    "405": {
+                        "description": "Validation exception"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            }
+        },
+        "/invoice_status/{invoice_status_id}": {
+            "get": {
+                "tags": [
+                    "Invoice Status"
+                ],
+                "summary": "Find invoice_status by ID",
+                "description": "Returns a single invoice_status",
+                "operationId": "get_invoice_status_by_id",
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [{
+                    "name": "invoice_status_id",
+                    "in": "path",
+                    "description": "ID of invoice_status to return object",
+                    "required": true,
+                    "type": "integer",
+                    "format": "int64"
+                }],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/invoice_status"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "invoice_status not found"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            },
+            "delete": {
+                "tags": [
+                    "Invoice Status"
+                ],
+                "summary": "Deletes an invoice_status",
+                "description": "",
+                "operationId": "delete_invoice_status",
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [{
+                        "name": "api_key",
+                        "in": "header",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "invoice_status_id",
+                        "in": "path",
+                        "description": "invoice_status id to delete",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "invoice_status not found"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            }
+        },
+        "/invoice_approvals": {
+            "get": {
+                "summary": "invoice_approvals List",
+                "description": "The invoice_approval endpoint returns multiple invoice_approval requested given the parameters injected. \n",
+                "parameters": [{
+                    "name": "invoice_approval_id",
+                    "in": "query",
+                    "description": "invoice_approval id",
+                    "required": false,
+                    "type": "number",
+                    "format": "integer"
+                }],
+                "tags": [
+                    "Invoice Approval"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "An array of invoice_approval returned",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/invoice_approval"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            }
+        },
+        "/invoice_approval": {
+            "post": {
+                "tags": [
+                    "Invoice Approval"
+                ],
+                "summary": "Add a new invoice_approval",
+                "description": "new invoice_approval",
+                "operationId": "add_invoice_approval",
+                "consumes": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [{
+                    "in": "body",
+                    "name": "body",
+                    "description": "invoice_approval object that needs to be added",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/definitions/invoice_approval"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Successfully added a new invoice_approval for approval"
+                    },
+                    "405": {
+                        "description": "Invalid input,adding a new invoice_approval was unsuccessful"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            },
+            "put": {
+                "tags": [
+                    "Invoice Approval"
+                ],
+                "summary": "Update an existing invoice_approval",
+                "description": "",
+                "operationId": "update_invoice_approval",
+                "consumes": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [{
+                    "in": "body",
+                    "name": "body",
+                    "description": "invoice_approval object that needs to be added",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/definitions/invoice_approval"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Success"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "invoice_approval not found"
+                    },
+                    "405": {
+                        "description": "Validation exception"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            }
+        },
+        "/invoice_approval/{invoice_approval_id}": {
+            "get": {
+                "tags": [
+                    "Invoice Approval"
+                ],
+                "summary": "Find invoice_approval by ID",
+                "description": "Returns a single invoice_approval",
+                "operationId": "get_invoice_approval_by_id",
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [{
+                    "name": "invoice_approval_id",
+                    "in": "path",
+                    "description": "ID of invoice_approval to return object",
+                    "required": true,
+                    "type": "integer",
+                    "format": "int64"
+                }],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/invoice_approval"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "invoice_approval not found"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            },
+            "delete": {
+                "tags": [
+                    "Invoice Approval"
+                ],
+                "summary": "Deletes an invoice_approval",
+                "description": "",
+                "operationId": "delete_invoice_approval",
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [{
+                        "name": "api_key",
+                        "in": "header",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "invoice_approval_id",
+                        "in": "path",
+                        "description": "invoice_approval id to delete",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "invoice_approval not found"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            }
+        },
+        "/invoice_allocations": {
+            "get": {
+                "summary": "invoice_allocations List",
+                "description": "The invoice_allocation endpoint returns multiple invoice_allocation requested given the parameters injected. \n",
+                "parameters": [{
+                    "name": "invoice_allocation_id",
+                    "in": "query",
+                    "description": "invoice_allocation id",
+                    "required": false,
+                    "type": "number",
+                    "format": "integer"
+                }],
+                "tags": [
+                    "Invoice Approval"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "An array of invoice_allocation returned",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/invoice_allocation"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            }
+        },
+        "/invoice_allocation": {
+            "post": {
+                "tags": [
+                    "Invoice Allocation"
+                ],
+                "summary": "Add a new invoice_allocation",
+                "description": "new invoice_allocation",
+                "operationId": "add_invoice_allocation",
+                "consumes": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [{
+                    "in": "body",
+                    "name": "body",
+                    "description": "invoice_allocation object that needs to be added",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/definitions/invoice_allocation"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Successfully added a new invoice_allocation for approval"
+                    },
+                    "405": {
+                        "description": "Invalid input,adding a new invoice_allocation was unsuccessful"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            },
+            "put": {
+                "tags": [
+                    "Invoice Allocation"
+                ],
+                "summary": "Update an existing invoice_allocation",
+                "description": "",
+                "operationId": "update_invoice_allocation",
+                "consumes": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [{
+                    "in": "body",
+                    "name": "body",
+                    "description": "invoice_allocation object that needs to be added",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/definitions/invoice_allocation"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Success"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "invoice_allocation not found"
+                    },
+                    "405": {
+                        "description": "Validation exception"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            }
+        },
+        "/invoice_allocation/{invoice_allocation_id}": {
+            "get": {
+                "tags": [
+                    "Invoice Allocation"
+                ],
+                "summary": "Find invoice_allocation by ID",
+                "description": "Returns a single invoice_allocation",
+                "operationId": "get_invoice_allocation_by_id",
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [{
+                    "name": "invoice_allocation_id",
+                    "in": "path",
+                    "description": "ID of invoice_allocation to return object",
+                    "required": true,
+                    "type": "integer",
+                    "format": "int64"
+                }],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/invoice_allocation"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "invoice_allocation not found"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            },
+            "delete": {
+                "tags": [
+                    "Invoice Allocation"
+                ],
+                "summary": "Deletes an invoice_allocation",
+                "description": "",
+                "operationId": "delete_invoice_allocation",
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [{
+                        "name": "api_key",
+                        "in": "header",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "invoice_allocation_id",
+                        "in": "path",
+                        "description": "invoice_allocation id to delete",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "invoice_allocation not found"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            }
+        }
     },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   },
-   "put": {
-    "tags": [
-     "Invoice"
-    ],
-    "summary": "Update an existing invoice",
-    "description": "",
-    "operationId": "update_invoice",
-    "consumes": [
-     "application/json",
-     "application/xml"
-    ],
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "in": "body",
-      "name": "body",
-      "description": "invoice object that needs to be added",
-      "required": true,
-      "schema": {
-       "$ref": "#/definitions/invoice"
-      }
-     }
-    ],
-    "responses": {
-     "200": {
-      "description": "Unexpected error",
-      "schema": {
-       "$ref": "#/definitions/Success"
-      }
-     },
-     "400": {
-      "description": "Invalid ID supplied"
-     },
-     "404": {
-      "description": "invoice not found"
-     },
-     "405": {
-      "description": "Validation exception"
-     }
+    "securityDefinitions": {
+        "api_key": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
     },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   }
-  },
-  "/invoice/{invoice_id}": {
-   "get": {
-    "tags": [
-     "Invoice"
-    ],
-    "summary": "Find invoice by ID",
-    "description": "Returns a single invoice",
-    "operationId": "get_invoice_by_id",
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "name": "invoice_id",
-      "in": "path",
-      "description": "ID of invoice to return object",
-      "required": true,
-      "type": "integer",
-      "format": "int64"
-     }
-    ],
-    "responses": {
-     "200": {
-      "description": "successful operation",
-      "schema": {
-       "$ref": "#/definitions/invoice"
-      }
-     },
-     "400": {
-      "description": "Invalid ID supplied"
-     },
-     "404": {
-      "description": "invoice not found"
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   },
-   "delete": {
-    "tags": [
-     "Invoice"
-    ],
-    "summary": "Deletes an invoice",
-    "description": "",
-    "operationId": "delete_invoice",
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "name": "api_key",
-      "in": "header",
-      "required": true,
-      "type": "string"
-     },
-     {
-      "name": "invoice_id",
-      "in": "path",
-      "description": "invoice id to delete",
-      "required": true,
-      "type": "integer",
-      "format": "int64"
-     }
-    ],
-    "responses": {
-     "400": {
-      "description": "Invalid ID supplied"
-     },
-     "404": {
-      "description": "invoice not found"
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   }
-  },
-  "/invoice/{invoice_id}/submit_for_approval": {
-   "patch": {
-    "tags": [
-     "Invoice"
-    ],
-    "summary": "Submit invoice by ID",
-    "description": "Submits invoice for approval",
-    "operationId": "submit_invoice_for_approval",
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "name": "invoice_id",
-      "in": "path",
-      "description": "ID of invoice to return object",
-      "required": true,
-      "type": "integer",
-      "format": "int64"
-     }
-    ],
-    "responses": {
-     "200": {
-      "description": "successful operation",
-      "schema": {
-       "$ref": "#/definitions/invoice"
-      }
-     },
-     "400": {
-      "description": "Invalid ID supplied"
-     },
-     "404": {
-      "description": "invoice not found"
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   }
-  },
-  "/invoice/{invoice_id}/approve": {
-   "patch": {
-    "tags": [
-     "Invoice"
-    ],
-    "summary": "Approve invoice by ID",
-    "description": "Approves Invoice",
-    "operationId": "approve_invoice",
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "name": "invoice_id",
-      "in": "path",
-      "description": "ID of invoice to return object",
-      "required": true,
-      "type": "integer",
-      "format": "int64"
-     }
-    ],
-    "responses": {
-     "200": {
-      "description": "successful operation",
-      "schema": {
-       "$ref": "#/definitions/invoice"
-      }
-     },
-     "400": {
-      "description": "Invalid ID supplied"
-     },
-     "404": {
-      "description": "invoice not found"
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   }
-  },
-  "/invoice/{invoice_id}/reject": {
-   "patch": {
-    "tags": [
-     "Invoice"
-    ],
-    "summary": "Reject invoice by ID",
-    "description": "Approves Invoice",
-    "operationId": "reject_invoice",
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "name": "invoice_id",
-      "in": "path",
-      "description": "ID of invoice to return object",
-      "required": true,
-      "type": "integer",
-      "format": "int64"
-     }
-    ],
-    "responses": {
-     "200": {
-      "description": "successful operation",
-      "schema": {
-       "$ref": "#/definitions/invoice"
-      }
-     },
-     "400": {
-      "description": "Invalid ID supplied"
-     },
-     "404": {
-      "description": "invoice not found"
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   }
-  },
-  "/invoice/{invoice_id}/allocate": {
-   "patch": {
-    "tags": [
-     "Invoice"
-    ],
-    "summary": "Allocate invoice by ID",
-    "description": "Allocate Invoice",
-    "operationId": "allocate_invoice",
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "name": "invoice_id",
-      "in": "path",
-      "description": "ID of invoice to return object",
-      "required": true,
-      "type": "integer",
-      "format": "int64"
-     }
-    ],
-    "responses": {
-     "200": {
-      "description": "successful operation",
-      "schema": {
-       "$ref": "#/definitions/invoice"
-      }
-     },
-     "400": {
-      "description": "Invalid ID supplied"
-     },
-     "404": {
-      "description": "invoice not found"
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   }
-  },
-  "/invoice/{invoice_id}/get_document": {
-   "get": {
-    "tags": [
-     "Invoice"
-    ],
-    "summary": "get invoice document by ID",
-    "description": "get Invoice document",
-    "operationId": "get_document_by_id",
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "name": "invoice_id",
-      "in": "path",
-      "description": "ID of invoice to return object",
-      "required": true,
-      "type": "integer",
-      "format": "int64"
-     }
-    ],
-    "responses": {
-     "200": {
-      "description": "successful operation",
-      "schema": {
-       "$ref": "#/definitions/invoice"
-      }
-     },
-     "400": {
-      "description": "Invalid ID supplied"
-     },
-     "404": {
-      "description": "invoice not found"
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   }
-  },
-  "/invoice/{invoice_id}/get_payment_voucher": {
-   "get": {
-    "tags": [
-     "Invoice"
-    ],
-    "summary": "get payment Voucher by ID",
-    "description": "get payment Voucher",
-    "operationId": "get_payment_voucher_by_id",
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [],
-    "responses": {
-     "200": {
-      "description": "successful operation",
-      "schema": {
-       "$ref": "#/definitions/invoice"
-      }
-     },
-     "400": {
-      "description": "Invalid ID supplied"
-     },
-     "404": {
-      "description": "invoice not found"
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   },
-   "parameters": [
-    {
-     "name": "invoice_id",
-     "in": "path",
-     "required": true,
-     "type": "integer",
-     "format": "int64",
-     "description": "ID of invoice to return object"
+    "definitions": {
+        "invoice": {
+            "type": "object",
+            "required": [
+                "id",
+                "created_at"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "format": "int64",
+                    "example": 1
+                },
+                "num": {
+                    "type": "number",
+                    "format": "int64",
+                    "example": 20000
+                },
+                "str": {
+                    "type": "string",
+                    "example": "PayPal.pdf"
+                },
+                "date": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2010-02-11"
+                },
+                "created_at": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2010-02-11"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2010-02-11"
+                }
+            },
+            "xml": {
+                "name": "invoice"
+            }
+        },
+        "invoice_status": {
+            "type": "object",
+            "required": [
+                "id",
+                "created_at"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "format": "int64",
+                    "example": 1
+                },
+                "num": {
+                    "type": "number",
+                    "format": "int64",
+                    "example": 20000
+                },
+                "str": {
+                    "type": "string",
+                    "example": "PayPal.pdf"
+                },
+                "date": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2010-02-11"
+                },
+                "created_at": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2010-02-11"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2010-02-11"
+                }
+            },
+            "xml": {
+                "name": "invoice_status"
+            }
+        },
+        "invoice_approval": {
+            "type": "object",
+            "required": [
+                "id",
+                "created_at"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "format": "int64",
+                    "example": 1
+                },
+                "num": {
+                    "type": "number",
+                    "format": "int64",
+                    "example": 20000
+                },
+                "str": {
+                    "type": "string",
+                    "example": "PayPal.pdf"
+                },
+                "date": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2010-02-11"
+                },
+                "created_at": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2010-02-11"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2010-02-11"
+                }
+            },
+            "xml": {
+                "name": "invoice_approval"
+            }
+        },
+        "invoice_allocation": {
+            "type": "object",
+            "required": [
+                "id",
+                "created_at"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "format": "int64",
+                    "example": 1
+                },
+                "num": {
+                    "type": "number",
+                    "format": "int64",
+                    "example": 20000
+                },
+                "str": {
+                    "type": "string",
+                    "example": "PayPal.pdf"
+                },
+                "date": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2010-02-11"
+                },
+                "created_at": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2010-02-11"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2010-02-11"
+                }
+            },
+            "xml": {
+                "name": "invoice_allocation"
+            }
+        },
+        "Error": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "object not found"
+                }
+            }
+        },
+        "Success": {
+            "type": "object",
+            "properties": {
+                "msg": {
+                    "type": "string",
+                    "example": "object not found"
+                }
+            }
+        }
     }
-   ]
-  },
-  "/invoice_statuses": {
-   "get": {
-    "summary": "invoice_statuses List",
-    "description": "The invoice_status endpoint returns multiple invoice_status requested given the parameters injected. \n",
-    "parameters": [
-     {
-      "name": "invoice_status_id",
-      "in": "query",
-      "description": "invoice_status id",
-      "required": false,
-      "type": "number",
-      "format": "integer"
-     }
-    ],
-    "tags": [
-     "Invoice Status"
-    ],
-    "responses": {
-     "200": {
-      "description": "An array of invoice_status returned",
-      "schema": {
-       "type": "array",
-       "items": {
-        "$ref": "#/definitions/invoice_status"
-       }
-      }
-     },
-     "404": {
-      "description": "Unexpected error",
-      "schema": {
-       "$ref": "#/definitions/Error"
-      }
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   }
-  },
-  "/invoice_status": {
-   "post": {
-    "tags": [
-     "Invoice Status"
-    ],
-    "summary": "Add a new invoice_status",
-    "description": "new invoice_status",
-    "operationId": "add_invoice_status",
-    "consumes": [
-     "application/json",
-     "application/xml"
-    ],
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "in": "body",
-      "name": "body",
-      "description": "invoice_status object that needs to be added",
-      "required": true,
-      "schema": {
-       "$ref": "#/definitions/invoice_status"
-      }
-     }
-    ],
-    "responses": {
-     "200": {
-      "description": "Successfully added a new invoice_status for approval"
-     },
-     "405": {
-      "description": "Invalid input,adding a new invoice_status was unsuccessful"
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   },
-   "put": {
-    "tags": [
-     "Invoice Status"
-    ],
-    "summary": "Update an existing invoice_status",
-    "description": "",
-    "operationId": "update_invoice_status",
-    "consumes": [
-     "application/json",
-     "application/xml"
-    ],
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "in": "body",
-      "name": "body",
-      "description": "invoice_status object that needs to be added",
-      "required": true,
-      "schema": {
-       "$ref": "#/definitions/invoice_status"
-      }
-     }
-    ],
-    "responses": {
-     "200": {
-      "description": "Unexpected error",
-      "schema": {
-       "$ref": "#/definitions/Success"
-      }
-     },
-     "400": {
-      "description": "Invalid ID supplied"
-     },
-     "404": {
-      "description": "invoice_status not found"
-     },
-     "405": {
-      "description": "Validation exception"
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   }
-  },
-  "/invoice_status/{invoice_status_id}": {
-   "get": {
-    "tags": [
-     "Invoice Status"
-    ],
-    "summary": "Find invoice_status by ID",
-    "description": "Returns a single invoice_status",
-    "operationId": "get_invoice_status_by_id",
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "name": "invoice_status_id",
-      "in": "path",
-      "description": "ID of invoice_status to return object",
-      "required": true,
-      "type": "integer",
-      "format": "int64"
-     }
-    ],
-    "responses": {
-     "200": {
-      "description": "successful operation",
-      "schema": {
-       "$ref": "#/definitions/invoice_status"
-      }
-     },
-     "400": {
-      "description": "Invalid ID supplied"
-     },
-     "404": {
-      "description": "invoice_status not found"
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   },
-   "delete": {
-    "tags": [
-     "Invoice Status"
-    ],
-    "summary": "Deletes an invoice_status",
-    "description": "",
-    "operationId": "delete_invoice_status",
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "name": "api_key",
-      "in": "header",
-      "required": true,
-      "type": "string"
-     },
-     {
-      "name": "invoice_status_id",
-      "in": "path",
-      "description": "invoice_status id to delete",
-      "required": true,
-      "type": "integer",
-      "format": "int64"
-     }
-    ],
-    "responses": {
-     "400": {
-      "description": "Invalid ID supplied"
-     },
-     "404": {
-      "description": "invoice_status not found"
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   }
-  },
-  "/invoice_approvals": {
-   "get": {
-    "summary": "invoice_approvals List",
-    "description": "The invoice_approval endpoint returns multiple invoice_approval requested given the parameters injected. \n",
-    "parameters": [
-     {
-      "name": "invoice_approval_id",
-      "in": "query",
-      "description": "invoice_approval id",
-      "required": false,
-      "type": "number",
-      "format": "integer"
-     }
-    ],
-    "tags": [
-     "Invoice Approval"
-    ],
-    "responses": {
-     "200": {
-      "description": "An array of invoice_approval returned",
-      "schema": {
-       "type": "array",
-       "items": {
-        "$ref": "#/definitions/invoice_approval"
-       }
-      }
-     },
-     "404": {
-      "description": "Unexpected error",
-      "schema": {
-       "$ref": "#/definitions/Error"
-      }
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   }
-  },
-  "/invoice_approval": {
-   "post": {
-    "tags": [
-     "Invoice Approval"
-    ],
-    "summary": "Add a new invoice_approval",
-    "description": "new invoice_approval",
-    "operationId": "add_invoice_approval",
-    "consumes": [
-     "application/json",
-     "application/xml"
-    ],
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "in": "body",
-      "name": "body",
-      "description": "invoice_approval object that needs to be added",
-      "required": true,
-      "schema": {
-       "$ref": "#/definitions/invoice_approval"
-      }
-     }
-    ],
-    "responses": {
-     "200": {
-      "description": "Successfully added a new invoice_approval for approval"
-     },
-     "405": {
-      "description": "Invalid input,adding a new invoice_approval was unsuccessful"
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   },
-   "put": {
-    "tags": [
-     "Invoice Approval"
-    ],
-    "summary": "Update an existing invoice_approval",
-    "description": "",
-    "operationId": "update_invoice_approval",
-    "consumes": [
-     "application/json",
-     "application/xml"
-    ],
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "in": "body",
-      "name": "body",
-      "description": "invoice_approval object that needs to be added",
-      "required": true,
-      "schema": {
-       "$ref": "#/definitions/invoice_approval"
-      }
-     }
-    ],
-    "responses": {
-     "200": {
-      "description": "Unexpected error",
-      "schema": {
-       "$ref": "#/definitions/Success"
-      }
-     },
-     "400": {
-      "description": "Invalid ID supplied"
-     },
-     "404": {
-      "description": "invoice_approval not found"
-     },
-     "405": {
-      "description": "Validation exception"
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   }
-  },
-  "/invoice_approval/{invoice_approval_id}": {
-   "get": {
-    "tags": [
-     "Invoice Approval"
-    ],
-    "summary": "Find invoice_approval by ID",
-    "description": "Returns a single invoice_approval",
-    "operationId": "get_invoice_approval_by_id",
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "name": "invoice_approval_id",
-      "in": "path",
-      "description": "ID of invoice_approval to return object",
-      "required": true,
-      "type": "integer",
-      "format": "int64"
-     }
-    ],
-    "responses": {
-     "200": {
-      "description": "successful operation",
-      "schema": {
-       "$ref": "#/definitions/invoice_approval"
-      }
-     },
-     "400": {
-      "description": "Invalid ID supplied"
-     },
-     "404": {
-      "description": "invoice_approval not found"
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   },
-   "delete": {
-    "tags": [
-     "Invoice Approval"
-    ],
-    "summary": "Deletes an invoice_approval",
-    "description": "",
-    "operationId": "delete_invoice_approval",
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "name": "api_key",
-      "in": "header",
-      "required": true,
-      "type": "string"
-     },
-     {
-      "name": "invoice_approval_id",
-      "in": "path",
-      "description": "invoice_approval id to delete",
-      "required": true,
-      "type": "integer",
-      "format": "int64"
-     }
-    ],
-    "responses": {
-     "400": {
-      "description": "Invalid ID supplied"
-     },
-     "404": {
-      "description": "invoice_approval not found"
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   }
-  },
-  "/invoice_allocations": {
-   "get": {
-    "summary": "invoice_allocations List",
-    "description": "The invoice_allocation endpoint returns multiple invoice_allocation requested given the parameters injected. \n",
-    "parameters": [
-     {
-      "name": "invoice_allocation_id",
-      "in": "query",
-      "description": "invoice_allocation id",
-      "required": false,
-      "type": "number",
-      "format": "integer"
-     }
-    ],
-    "tags": [
-     "Invoice Approval"
-    ],
-    "responses": {
-     "200": {
-      "description": "An array of invoice_allocation returned",
-      "schema": {
-       "type": "array",
-       "items": {
-        "$ref": "#/definitions/invoice_allocation"
-       }
-      }
-     },
-     "404": {
-      "description": "Unexpected error",
-      "schema": {
-       "$ref": "#/definitions/Error"
-      }
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   }
-  },
-  "/invoice_allocation": {
-   "post": {
-    "tags": [
-     "Invoice Allocation"
-    ],
-    "summary": "Add a new invoice_allocation",
-    "description": "new invoice_allocation",
-    "operationId": "add_invoice_allocation",
-    "consumes": [
-     "application/json",
-     "application/xml"
-    ],
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "in": "body",
-      "name": "body",
-      "description": "invoice_allocation object that needs to be added",
-      "required": true,
-      "schema": {
-       "$ref": "#/definitions/invoice_allocation"
-      }
-     }
-    ],
-    "responses": {
-     "200": {
-      "description": "Successfully added a new invoice_allocation for approval"
-     },
-     "405": {
-      "description": "Invalid input,adding a new invoice_allocation was unsuccessful"
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   },
-   "put": {
-    "tags": [
-     "Invoice Allocation"
-    ],
-    "summary": "Update an existing invoice_allocation",
-    "description": "",
-    "operationId": "update_invoice_allocation",
-    "consumes": [
-     "application/json",
-     "application/xml"
-    ],
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "in": "body",
-      "name": "body",
-      "description": "invoice_allocation object that needs to be added",
-      "required": true,
-      "schema": {
-       "$ref": "#/definitions/invoice_allocation"
-      }
-     }
-    ],
-    "responses": {
-     "200": {
-      "description": "Unexpected error",
-      "schema": {
-       "$ref": "#/definitions/Success"
-      }
-     },
-     "400": {
-      "description": "Invalid ID supplied"
-     },
-     "404": {
-      "description": "invoice_allocation not found"
-     },
-     "405": {
-      "description": "Validation exception"
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   }
-  },
-  "/invoice_allocation/{invoice_allocation_id}": {
-   "get": {
-    "tags": [
-     "Invoice Allocation"
-    ],
-    "summary": "Find invoice_allocation by ID",
-    "description": "Returns a single invoice_allocation",
-    "operationId": "get_invoice_allocation_by_id",
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "name": "invoice_allocation_id",
-      "in": "path",
-      "description": "ID of invoice_allocation to return object",
-      "required": true,
-      "type": "integer",
-      "format": "int64"
-     }
-    ],
-    "responses": {
-     "200": {
-      "description": "successful operation",
-      "schema": {
-       "$ref": "#/definitions/invoice_allocation"
-      }
-     },
-     "400": {
-      "description": "Invalid ID supplied"
-     },
-     "404": {
-      "description": "invoice_allocation not found"
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   },
-   "delete": {
-    "tags": [
-     "Invoice Allocation"
-    ],
-    "summary": "Deletes an invoice_allocation",
-    "description": "",
-    "operationId": "delete_invoice_allocation",
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "name": "api_key",
-      "in": "header",
-      "required": true,
-      "type": "string"
-     },
-     {
-      "name": "invoice_allocation_id",
-      "in": "path",
-      "description": "invoice_allocation id to delete",
-      "required": true,
-      "type": "integer",
-      "format": "int64"
-     }
-    ],
-    "responses": {
-     "400": {
-      "description": "Invalid ID supplied"
-     },
-     "404": {
-      "description": "invoice_allocation not found"
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   }
-  }
- },
- "securityDefinitions": {
-  "api_key": {
-   "type": "apiKey",
-   "name": "Authorization",
-   "in": "header"
-  }
- },
- "definitions": {
-  "invoice": {
-   "type": "object",
-   "required": [
-    "id",
-    "created_at"
-   ],
-   "properties": {
-    "id": {
-     "type": "integer",
-     "format": "int64",
-     "example": 1
-    },
-    "num": {
-     "type": "number",
-     "format": "int64",
-     "example": 20000
-    },
-    "str": {
-     "type": "string",
-     "example": "PayPal.pdf"
-    },
-    "date": {
-     "type": "string",
-     "format": "date-time",
-     "example": "2010-02-11"
-    },
-    "created_at": {
-     "type": "string",
-     "format": "date-time",
-     "example": "2010-02-11"
-    },
-    "updated_at": {
-     "type": "string",
-     "format": "date-time",
-     "example": "2010-02-11"
-    }
-   },
-   "xml": {
-    "name": "invoice"
-   }
-  },
-  "invoice_status": {
-   "type": "object",
-   "required": [
-    "id",
-    "created_at"
-   ],
-   "properties": {
-    "id": {
-     "type": "integer",
-     "format": "int64",
-     "example": 1
-    },
-    "num": {
-     "type": "number",
-     "format": "int64",
-     "example": 20000
-    },
-    "str": {
-     "type": "string",
-     "example": "PayPal.pdf"
-    },
-    "date": {
-     "type": "string",
-     "format": "date-time",
-     "example": "2010-02-11"
-    },
-    "created_at": {
-     "type": "string",
-     "format": "date-time",
-     "example": "2010-02-11"
-    },
-    "updated_at": {
-     "type": "string",
-     "format": "date-time",
-     "example": "2010-02-11"
-    }
-   },
-   "xml": {
-    "name": "invoice_status"
-   }
-  },
-  "invoice_approval": {
-   "type": "object",
-   "required": [
-    "id",
-    "created_at"
-   ],
-   "properties": {
-    "id": {
-     "type": "integer",
-     "format": "int64",
-     "example": 1
-    },
-    "num": {
-     "type": "number",
-     "format": "int64",
-     "example": 20000
-    },
-    "str": {
-     "type": "string",
-     "example": "PayPal.pdf"
-    },
-    "date": {
-     "type": "string",
-     "format": "date-time",
-     "example": "2010-02-11"
-    },
-    "created_at": {
-     "type": "string",
-     "format": "date-time",
-     "example": "2010-02-11"
-    },
-    "updated_at": {
-     "type": "string",
-     "format": "date-time",
-     "example": "2010-02-11"
-    }
-   },
-   "xml": {
-    "name": "invoice_approval"
-   }
-  },
-  "invoice_allocation": {
-   "type": "object",
-   "required": [
-    "id",
-    "created_at"
-   ],
-   "properties": {
-    "id": {
-     "type": "integer",
-     "format": "int64",
-     "example": 1
-    },
-    "num": {
-     "type": "number",
-     "format": "int64",
-     "example": 20000
-    },
-    "str": {
-     "type": "string",
-     "example": "PayPal.pdf"
-    },
-    "date": {
-     "type": "string",
-     "format": "date-time",
-     "example": "2010-02-11"
-    },
-    "created_at": {
-     "type": "string",
-     "format": "date-time",
-     "example": "2010-02-11"
-    },
-    "updated_at": {
-     "type": "string",
-     "format": "date-time",
-     "example": "2010-02-11"
-    }
-   },
-   "xml": {
-    "name": "invoice_allocation"
-   }
-  },
-  "Error": {
-   "type": "object",
-   "properties": {
-    "error": {
-     "type": "string",
-     "example": "object not found"
-    }
-   }
-  },
-  "Success": {
-   "type": "object",
-   "properties": {
-    "msg": {
-     "type": "string",
-     "example": "object not found"
-    }
-   }
-  }
- }
 }

@@ -1,318 +1,297 @@
 {
- "swagger": "2.0",
- "info": {
-  "description": "Finance management sysytem",
-  "version": "1.0.0",
-  "title": "Grants Information Management System",
-  "termsOfService": "http://kefinance.clintonhealthaccess.org/terms/",
-  "contact": {
-   "email": "mwangikevinn@gmail.com"
-  },
-  "license": {
-   "name": "Apache 2.0",
-   "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
-  }
- },
- "host": "localhost:8000",
- "basePath": "/api",
- "tags": [
-  {
-   "name": "Currency",
-   "description": "Everything About Currency",
-   "externalDocs": {
-    "description": "Find out more",
-    "url": "http://kefinance.clintonhealthaccess.org/api/currency/docs"
-   }
-  }
- ],
- "schemes": [
-  "http",
-  "https"
- ],
- "paths": {
-  "/currencies": {
-   "get": {
-    "summary": "currencies List",
-    "description": "The currency endpoint returns multiple currency requested given the parameters injected. \n",
-    "parameters": [
-     {
-      "name": "currency_id",
-      "in": "query",
-      "description": "currency id",
-      "required": false,
-      "type": "number",
-      "format": "integer"
-     }
-    ],
-    "tags": [
-     "Currency"
-    ],
-    "responses": {
-     "200": {
-      "description": "An array of currency returned",
-      "schema": {
-       "type": "array",
-       "items": {
-        "$ref": "#/definitions/currency"
-       }
-      }
-     },
-     "404": {
-      "description": "Unexpected error",
-      "schema": {
-       "$ref": "#/definitions/Error"
-      }
-     }
+    "swagger": "2.0",
+    "info": {
+        "description": "Finance management sysytem",
+        "version": "1.0.0",
+        "title": "Grants Information Management System",
+        "termsOfService": "https://kefinance.clintonhealthaccess.org/terms/",
+        "contact": {
+            "email": "mwangikevinn@gmail.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
+        }
     },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   }
-  },
-  "/currency": {
-   "post": {
-    "tags": [
-     "Currency"
+    "host": "localhost:8000",
+    "basePath": "/api",
+    "tags": [{
+        "name": "Currency",
+        "description": "Everything About Currency",
+        "externalDocs": {
+            "description": "Find out more",
+            "url": "https://kefinance.clintonhealthaccess.org/api/currency/docs"
+        }
+    }],
+    "schemes": [
+        "http",
+        "https"
     ],
-    "summary": "Add a new currency",
-    "description": "new currency",
-    "operationId": "add_currency",
-    "consumes": [
-     "application/json",
-     "application/xml"
-    ],
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "in": "body",
-      "name": "body",
-      "description": "currency object that needs to be added",
-      "required": true,
-      "schema": {
-       "$ref": "#/definitions/currency"
-      }
-     }
-    ],
-    "responses": {
-     "200": {
-      "description": "Successfully added a new currency for approval"
-     },
-     "405": {
-      "description": "Invalid input,adding a new currency was unsuccessful"
-     }
+    "paths": {
+        "/currencies": {
+            "get": {
+                "summary": "currencies List",
+                "description": "The currency endpoint returns multiple currency requested given the parameters injected. \n",
+                "parameters": [{
+                    "name": "currency_id",
+                    "in": "query",
+                    "description": "currency id",
+                    "required": false,
+                    "type": "number",
+                    "format": "integer"
+                }],
+                "tags": [
+                    "Currency"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "An array of currency returned",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/currency"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            }
+        },
+        "/currency": {
+            "post": {
+                "tags": [
+                    "Currency"
+                ],
+                "summary": "Add a new currency",
+                "description": "new currency",
+                "operationId": "add_currency",
+                "consumes": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [{
+                    "in": "body",
+                    "name": "body",
+                    "description": "currency object that needs to be added",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/definitions/currency"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Successfully added a new currency for approval"
+                    },
+                    "405": {
+                        "description": "Invalid input,adding a new currency was unsuccessful"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            },
+            "put": {
+                "tags": [
+                    "Currency"
+                ],
+                "summary": "Update an existing currency",
+                "description": "",
+                "operationId": "update_currency",
+                "consumes": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [{
+                    "in": "body",
+                    "name": "body",
+                    "description": "currency object that needs to be added",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/definitions/currency"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Success"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "currency not found"
+                    },
+                    "405": {
+                        "description": "Validation exception"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            }
+        },
+        "/currency/{currency_id}": {
+            "get": {
+                "tags": [
+                    "Currency"
+                ],
+                "summary": "Find currency by ID",
+                "description": "Returns a single currency",
+                "operationId": "get_currency_by_id",
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [{
+                    "name": "currency_id",
+                    "in": "path",
+                    "description": "ID of currency to return object",
+                    "required": true,
+                    "type": "integer",
+                    "format": "int64"
+                }],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/currency"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "currency not found"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            },
+            "delete": {
+                "tags": [
+                    "Currency"
+                ],
+                "summary": "Deletes an currency",
+                "description": "",
+                "operationId": "delete_currency",
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [{
+                        "name": "api_key",
+                        "in": "header",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "currency_id",
+                        "in": "path",
+                        "description": "currency id to delete",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "currency not found"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            }
+        }
     },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   },
-   "put": {
-    "tags": [
-     "Currency"
-    ],
-    "summary": "Update an existing currency",
-    "description": "",
-    "operationId": "update_currency",
-    "consumes": [
-     "application/json",
-     "application/xml"
-    ],
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "in": "body",
-      "name": "body",
-      "description": "currency object that needs to be added",
-      "required": true,
-      "schema": {
-       "$ref": "#/definitions/currency"
-      }
-     }
-    ],
-    "responses": {
-     "200": {
-      "description": "Unexpected error",
-      "schema": {
-       "$ref": "#/definitions/Success"
-      }
-     },
-     "400": {
-      "description": "Invalid ID supplied"
-     },
-     "404": {
-      "description": "currency not found"
-     },
-     "405": {
-      "description": "Validation exception"
-     }
+    "securityDefinitions": {
+        "api_key": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
     },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   }
-  },
-  "/currency/{currency_id}": {
-   "get": {
-    "tags": [
-     "Currency"
-    ],
-    "summary": "Find currency by ID",
-    "description": "Returns a single currency",
-    "operationId": "get_currency_by_id",
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "name": "currency_id",
-      "in": "path",
-      "description": "ID of currency to return object",
-      "required": true,
-      "type": "integer",
-      "format": "int64"
-     }
-    ],
-    "responses": {
-     "200": {
-      "description": "successful operation",
-      "schema": {
-       "$ref": "#/definitions/currency"
-      }
-     },
-     "400": {
-      "description": "Invalid ID supplied"
-     },
-     "404": {
-      "description": "currency not found"
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   },
-   "delete": {
-    "tags": [
-     "Currency"
-    ],
-    "summary": "Deletes an currency",
-    "description": "",
-    "operationId": "delete_currency",
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "name": "api_key",
-      "in": "header",
-      "required": true,
-      "type": "string"
-     },
-     {
-      "name": "currency_id",
-      "in": "path",
-      "description": "currency id to delete",
-      "required": true,
-      "type": "integer",
-      "format": "int64"
-     }
-    ],
-    "responses": {
-     "400": {
-      "description": "Invalid ID supplied"
-     },
-     "404": {
-      "description": "currency not found"
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   }
-  }
- },
- "securityDefinitions": {
-  "api_key": {
-   "type": "apiKey",
-   "name": "Authorization",
-   "in": "header"
-  }
- },
- "definitions": {
-  "currency": {
-   "type": "object",
-   "required": [
-    "id",
-    "created_at"
-   ],
-   "properties": {
-    "id": {
-     "type": "integer",
-     "format": "int64",
-     "example": 1
-    },
-    "num": {
-     "type": "number",
-     "format": "int64",
-     "example": 20000
-    },
-    "str": {
-     "type": "string",
-     "example": "PayPal.pdf"
-    },
-    "date": {
-     "type": "string",
-     "format": "date-time",
-     "example": "2010-02-11"
-    },
-    "created_at": {
-     "type": "string",
-     "format": "date-time",
-     "example": "2010-02-11"
-    },
-    "updated_at": {
-     "type": "string",
-     "format": "date-time",
-     "example": "2010-02-11"
+    "definitions": {
+        "currency": {
+            "type": "object",
+            "required": [
+                "id",
+                "created_at"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "format": "int64",
+                    "example": 1
+                },
+                "num": {
+                    "type": "number",
+                    "format": "int64",
+                    "example": 20000
+                },
+                "str": {
+                    "type": "string",
+                    "example": "PayPal.pdf"
+                },
+                "date": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2010-02-11"
+                },
+                "created_at": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2010-02-11"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2010-02-11"
+                }
+            },
+            "xml": {
+                "name": "currency"
+            }
+        },
+        "Error": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "object not found"
+                }
+            }
+        },
+        "Success": {
+            "type": "object",
+            "properties": {
+                "msg": {
+                    "type": "string",
+                    "example": "object not found"
+                }
+            }
+        }
     }
-   },
-   "xml": {
-    "name": "currency"
-   }
-  },
-  "Error": {
-   "type": "object",
-   "properties": {
-    "error": {
-     "type": "string",
-     "example": "object not found"
-    }
-   }
-  },
-  "Success": {
-   "type": "object",
-   "properties": {
-    "msg": {
-     "type": "string",
-     "example": "object not found"
-    }
-   }
-  }
- }
 }

@@ -20,6 +20,7 @@ class CreatePaymentsTable extends Migration
             $table->text('payable_type')->nullable();
             $table->integer('invoice_id')->nullable();
             $table->integer('advance_id')->nullable();
+            $table->integer('voucher_no')->nullable();
             $table->integer('debit_bank_account_id')->nullable();
             $table->integer('currency_id')->nullable();
             $table->text('payment_desc')->nullable();

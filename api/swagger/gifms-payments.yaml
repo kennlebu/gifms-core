@@ -3,12 +3,12 @@ info:
   description: Finance management sysytem
   version: 1.0.0
   title: Grants Information Management System
-  termsOfService: 'http://kefinance.clintonhealthaccess.org/terms/'
+  termsOfService: 'https://kefinance.clintonhealthaccess.org/terms/'
   contact:
     email: mwangikevinn@gmail.com
   license:
     name: Apache 2.0
-    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+    url: 'https://www.apache.org/licenses/LICENSE-2.0.html'
 host: 'localhost:8000'
 basePath: /api
 tags:
@@ -16,27 +16,27 @@ tags:
     description: Everything About Payment
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/payment/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/payment/docs'
   - name: Payment Batch
     description: Everything About Payment Batch
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/payment_batch/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/payment_batch/docs'
   - name: Payment Mode
     description: Everything About Payment Mode
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/payment_mode/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/payment_mode/docs'
   - name: Payment Type
     description: Everything About Payment Type
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/payment_type/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/payment_type/docs'
   - name: Payment Voucher
     description: Everything About Payment Voucher
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/payment_voucher/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/payment_voucher/docs'
 schemes:
   - http
   - https

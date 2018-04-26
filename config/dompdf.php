@@ -113,9 +113,9 @@ return array(
          * look at {@link GD_Adapter} for more information.  GD support is
          * experimental, so use it at your own risk.
          *
-         * @link http://www.pdflib.com
-         * @link http://www.ros.co.nz/pdf
-         * @link http://www.php.net/image
+         * @link https://www.pdflib.com
+         * @link https://www.ros.co.nz/pdf
+         * @link https://www.php.net/image
          */
         "DOMPDF_PDF_BACKEND" => "CPDF",
 
@@ -126,7 +126,7 @@ return array(
          * your license key here.  If you are using PDFlib-Lite or are evaluating
          * the commercial version of PDFlib, comment out this setting.
          *
-         * @link http://www.pdflib.com
+         * @link https://www.pdflib.com
          *
          * If pdflib present in web server and auto or selected explicitely above,
          * a real license code must exist!
@@ -136,7 +136,7 @@ return array(
         /**
          * html target media view which should be rendered into pdf.
          * List of types and parsing rules for future extensions:
-         * http://www.w3.org/TR/REC-html40/types.html
+         * https://www.w3.org/TR/REC-html40/types.html
          *   screen, tty, tv, projection, handheld, print, braille, aural, all
          * Note: aural is deprecated in CSS 2.1 because it is replaced by speech in CSS 3.
          * Note, even though the generated pdf file is intended for print output,

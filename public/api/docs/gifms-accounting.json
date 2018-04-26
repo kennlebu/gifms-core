@@ -1,318 +1,297 @@
 {
- "swagger": "2.0",
- "info": {
-  "description": "Finance management sysytem",
-  "version": "1.0.0",
-  "title": "Grants Information Management System",
-  "termsOfService": "http://kefinance.clintonhealthaccess.org/terms/",
-  "contact": {
-   "email": "mwangikevinn@gmail.com"
-  },
-  "license": {
-   "name": "Apache 2.0",
-   "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
-  }
- },
- "host": "localhost:8000",
- "basePath": "/api",
- "tags": [
-  {
-   "name": "Account",
-   "description": "Everything About Account",
-   "externalDocs": {
-    "description": "Find out more",
-    "url": "http://kefinance.clintonhealthaccess.org/api/account/docs"
-   }
-  }
- ],
- "schemes": [
-  "http",
-  "https"
- ],
- "paths": {
-  "/accounts": {
-   "get": {
-    "summary": "accounts List",
-    "description": "The account endpoint returns multiple account requested given the parameters injected. \n",
-    "parameters": [
-     {
-      "name": "account_id",
-      "in": "query",
-      "description": "account id",
-      "required": false,
-      "type": "number",
-      "format": "integer"
-     }
-    ],
-    "tags": [
-     "Account"
-    ],
-    "responses": {
-     "200": {
-      "description": "An array of account returned",
-      "schema": {
-       "type": "array",
-       "items": {
-        "$ref": "#/definitions/account"
-       }
-      }
-     },
-     "404": {
-      "description": "Unexpected error",
-      "schema": {
-       "$ref": "#/definitions/Error"
-      }
-     }
+    "swagger": "2.0",
+    "info": {
+        "description": "Finance management sysytem",
+        "version": "1.0.0",
+        "title": "Grants Information Management System",
+        "termsOfService": "https://kefinance.clintonhealthaccess.org/terms/",
+        "contact": {
+            "email": "mwangikevinn@gmail.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
+        }
     },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   }
-  },
-  "/account": {
-   "post": {
-    "tags": [
-     "Account"
+    "host": "localhost:8000",
+    "basePath": "/api",
+    "tags": [{
+        "name": "Account",
+        "description": "Everything About Account",
+        "externalDocs": {
+            "description": "Find out more",
+            "url": "https://kefinance.clintonhealthaccess.org/api/account/docs"
+        }
+    }],
+    "schemes": [
+        "http",
+        "https"
     ],
-    "summary": "Add a new account",
-    "description": "new account",
-    "operationId": "add_account",
-    "consumes": [
-     "application/json",
-     "application/xml"
-    ],
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "in": "body",
-      "name": "body",
-      "description": "account object that needs to be added",
-      "required": true,
-      "schema": {
-       "$ref": "#/definitions/account"
-      }
-     }
-    ],
-    "responses": {
-     "200": {
-      "description": "Successfully added a new account for approval"
-     },
-     "405": {
-      "description": "Invalid input,adding a new account was unsuccessful"
-     }
+    "paths": {
+        "/accounts": {
+            "get": {
+                "summary": "accounts List",
+                "description": "The account endpoint returns multiple account requested given the parameters injected. \n",
+                "parameters": [{
+                    "name": "account_id",
+                    "in": "query",
+                    "description": "account id",
+                    "required": false,
+                    "type": "number",
+                    "format": "integer"
+                }],
+                "tags": [
+                    "Account"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "An array of account returned",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/account"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            }
+        },
+        "/account": {
+            "post": {
+                "tags": [
+                    "Account"
+                ],
+                "summary": "Add a new account",
+                "description": "new account",
+                "operationId": "add_account",
+                "consumes": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [{
+                    "in": "body",
+                    "name": "body",
+                    "description": "account object that needs to be added",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/definitions/account"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Successfully added a new account for approval"
+                    },
+                    "405": {
+                        "description": "Invalid input,adding a new account was unsuccessful"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            },
+            "put": {
+                "tags": [
+                    "Account"
+                ],
+                "summary": "Update an existing account",
+                "description": "",
+                "operationId": "update_account",
+                "consumes": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [{
+                    "in": "body",
+                    "name": "body",
+                    "description": "account object that needs to be added",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/definitions/account"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Success"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "account not found"
+                    },
+                    "405": {
+                        "description": "Validation exception"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            }
+        },
+        "/account/{account_id}": {
+            "get": {
+                "tags": [
+                    "Account"
+                ],
+                "summary": "Find account by ID",
+                "description": "Returns a single account",
+                "operationId": "get_account_by_id",
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [{
+                    "name": "account_id",
+                    "in": "path",
+                    "description": "ID of account to return object",
+                    "required": true,
+                    "type": "integer",
+                    "format": "int64"
+                }],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/account"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "account not found"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            },
+            "delete": {
+                "tags": [
+                    "Account"
+                ],
+                "summary": "Deletes an account",
+                "description": "",
+                "operationId": "delete_account",
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [{
+                        "name": "api_key",
+                        "in": "header",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "account_id",
+                        "in": "path",
+                        "description": "account id to delete",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "account not found"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            }
+        }
     },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   },
-   "put": {
-    "tags": [
-     "Account"
-    ],
-    "summary": "Update an existing account",
-    "description": "",
-    "operationId": "update_account",
-    "consumes": [
-     "application/json",
-     "application/xml"
-    ],
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "in": "body",
-      "name": "body",
-      "description": "account object that needs to be added",
-      "required": true,
-      "schema": {
-       "$ref": "#/definitions/account"
-      }
-     }
-    ],
-    "responses": {
-     "200": {
-      "description": "Unexpected error",
-      "schema": {
-       "$ref": "#/definitions/Success"
-      }
-     },
-     "400": {
-      "description": "Invalid ID supplied"
-     },
-     "404": {
-      "description": "account not found"
-     },
-     "405": {
-      "description": "Validation exception"
-     }
+    "securityDefinitions": {
+        "api_key": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
     },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   }
-  },
-  "/account/{account_id}": {
-   "get": {
-    "tags": [
-     "Account"
-    ],
-    "summary": "Find account by ID",
-    "description": "Returns a single account",
-    "operationId": "get_account_by_id",
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "name": "account_id",
-      "in": "path",
-      "description": "ID of account to return object",
-      "required": true,
-      "type": "integer",
-      "format": "int64"
-     }
-    ],
-    "responses": {
-     "200": {
-      "description": "successful operation",
-      "schema": {
-       "$ref": "#/definitions/account"
-      }
-     },
-     "400": {
-      "description": "Invalid ID supplied"
-     },
-     "404": {
-      "description": "account not found"
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   },
-   "delete": {
-    "tags": [
-     "Account"
-    ],
-    "summary": "Deletes an account",
-    "description": "",
-    "operationId": "delete_account",
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "name": "api_key",
-      "in": "header",
-      "required": true,
-      "type": "string"
-     },
-     {
-      "name": "account_id",
-      "in": "path",
-      "description": "account id to delete",
-      "required": true,
-      "type": "integer",
-      "format": "int64"
-     }
-    ],
-    "responses": {
-     "400": {
-      "description": "Invalid ID supplied"
-     },
-     "404": {
-      "description": "account not found"
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   }
-  }
- },
- "securityDefinitions": {
-  "api_key": {
-   "type": "apiKey",
-   "name": "Authorization",
-   "in": "header"
-  }
- },
- "definitions": {
-  "account": {
-   "type": "object",
-   "required": [
-    "id",
-    "created_at"
-   ],
-   "properties": {
-    "id": {
-     "type": "integer",
-     "format": "int64",
-     "example": 1
-    },
-    "num": {
-     "type": "number",
-     "format": "int64",
-     "example": 20000
-    },
-    "str": {
-     "type": "string",
-     "example": "PayPal.pdf"
-    },
-    "date": {
-     "type": "string",
-     "format": "date-time",
-     "example": "2010-02-11"
-    },
-    "created_at": {
-     "type": "string",
-     "format": "date-time",
-     "example": "2010-02-11"
-    },
-    "updated_at": {
-     "type": "string",
-     "format": "date-time",
-     "example": "2010-02-11"
+    "definitions": {
+        "account": {
+            "type": "object",
+            "required": [
+                "id",
+                "created_at"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "format": "int64",
+                    "example": 1
+                },
+                "num": {
+                    "type": "number",
+                    "format": "int64",
+                    "example": 20000
+                },
+                "str": {
+                    "type": "string",
+                    "example": "PayPal.pdf"
+                },
+                "date": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2010-02-11"
+                },
+                "created_at": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2010-02-11"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2010-02-11"
+                }
+            },
+            "xml": {
+                "name": "account"
+            }
+        },
+        "Error": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "object not found"
+                }
+            }
+        },
+        "Success": {
+            "type": "object",
+            "properties": {
+                "msg": {
+                    "type": "string",
+                    "example": "object not found"
+                }
+            }
+        }
     }
-   },
-   "xml": {
-    "name": "account"
-   }
-  },
-  "Error": {
-   "type": "object",
-   "properties": {
-    "error": {
-     "type": "string",
-     "example": "object not found"
-    }
-   }
-  },
-  "Success": {
-   "type": "object",
-   "properties": {
-    "msg": {
-     "type": "string",
-     "example": "object not found"
-    }
-   }
-  }
- }
 }

@@ -3,12 +3,12 @@ info:
   description: Finance management sysytem
   version: 1.0.0
   title: Grants Information Management System
-  termsOfService: 'http://kefinance.clintonhealthaccess.org/terms/'
+  termsOfService: 'https://kefinance.clintonhealthaccess.org/terms/'
   contact:
     email: mwangikevinn@gmail.com
   license:
     name: Apache 2.0
-    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+    url: 'https://www.apache.org/licenses/LICENSE-2.0.html'
 host: 'localhost:8000'
 basePath: /api
 tags:
@@ -16,37 +16,37 @@ tags:
     description: Everything About Project
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/project/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/project/docs'
   - name: Project Activity
     description: Everything About Project Activity
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/project_activity/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/project_activity/docs'
   - name: Project Budget Account
     description: Everything About Project Budget Account
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/project_budget_account/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/project_budget_account/docs'
   - name: Project Cash Needs
     description: Everything About Project Cash Needs
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/project_cash_need/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/project_cash_need/docs'
   - name: Project Master List
     description: Everything About Project Master List
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/project_master_list/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/project_master_list/docs'
   - name: Project Objective
     description: Everything About Project Objective
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/project_objective/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/project_objective/docs'
   - name: Project Team
     description: Everything About Project Team
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/project_team/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/project_team/docs'
 schemes:
   - http
   - https

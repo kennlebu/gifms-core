@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2012 Victor Stanciu (http://victorstanciu.ro)
+ * Copyright (c) 2012 Victor Stanciu (https://victorstanciu.ro)
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -25,7 +25,7 @@
  * @package DBV
  * @version 1.0.3
  * @author Victor Stanciu <vic.stanciu@gmail.com>
- * @link http://dbv.vizuina.com
+ * @link https://dbv.vizuina.com
  * @copyright Victor Stanciu 2012
  */
 class DBV_Exception extends Exception

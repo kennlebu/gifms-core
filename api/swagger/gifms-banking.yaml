@@ -3,12 +3,12 @@ info:
   description: Finance management sysytem
   version: 1.0.0
   title: Grants Information Management System
-  termsOfService: 'http://kefinance.clintonhealthaccess.org/terms/'
+  termsOfService: 'https://kefinance.clintonhealthaccess.org/terms/'
   contact:
     email: mwangikevinn@gmail.com
   license:
     name: Apache 2.0
-    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+    url: 'https://www.apache.org/licenses/LICENSE-2.0.html'
 host: 'localhost:8000'
 basePath: /api
 tags:
@@ -16,27 +16,27 @@ tags:
     description: Everything About Bank
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/bank/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/bank/docs'
   - name: Bank Branch
     description: Everything About Bank Branch
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/bank_branch/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/bank_branch/docs'
   - name: Bank Account
     description: Everything About Bank Account
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/bank_account/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/bank_account/docs'
   - name: Bank Transaction
     description: Everything About Bank Transaction
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/bank_transaction/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/bank_transaction/docs'
   - name: Bank CSV
     description: Everything About Bank CSV
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/bank_csv/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/bank_csv/docs'
 schemes:
   - http
   - https

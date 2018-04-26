@@ -1,1328 +1,1231 @@
 {
- "swagger": "2.0",
- "info": {
-  "description": "Finance management sysytem",
-  "version": "1.0.0",
-  "title": "Grants Information Management System",
-  "termsOfService": "http://kefinance.clintonhealthaccess.org/terms/",
-  "contact": {
-   "email": "mwangikevinn@gmail.com"
-  },
-  "license": {
-   "name": "Apache 2.0",
-   "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
-  }
- },
- "host": "localhost:8000",
- "basePath": "/api",
- "tags": [
-  {
-   "name": "Claim",
-   "description": "Everything About Claim",
-   "externalDocs": {
-    "description": "Find out more",
-    "url": "http://kefinance.clintonhealthaccess.org/api/claim/docs"
-   }
-  },
-  {
-   "name": "Claim Status",
-   "description": "Everything About Claim Status",
-   "externalDocs": {
-    "description": "Find out more",
-    "url": "http://kefinance.clintonhealthaccess.org/api/claim_status/docs"
-   }
-  },
-  {
-   "name": "Claim Approval",
-   "description": "Everything About Claim Approval",
-   "externalDocs": {
-    "description": "Find out more",
-    "url": "http://kefinance.clintonhealthaccess.org/api/claim_approval/docs"
-   }
-  },
-  {
-   "name": "Claim Allocation",
-   "description": "Everything About Claim Allocation",
-   "externalDocs": {
-    "description": "Find out more",
-    "url": "http://kefinance.clintonhealthaccess.org/api/claim_allocation/docs"
-   }
-  }
- ],
- "schemes": [
-  "http",
-  "https"
- ],
- "paths": {
-  "/claims": {
-   "get": {
-    "summary": "claims List",
-    "description": "The claim endpoint returns multiple claim requested given the parameters injected. \n",
-    "parameters": [
-     {
-      "name": "claim_id",
-      "in": "query",
-      "description": "claim id",
-      "required": false,
-      "type": "number",
-      "format": "integer"
-     }
-    ],
-    "tags": [
-     "Claim"
-    ],
-    "responses": {
-     "200": {
-      "description": "An array of claim returned",
-      "schema": {
-       "type": "array",
-       "items": {
-        "$ref": "#/definitions/claim"
-       }
-      }
-     },
-     "404": {
-      "description": "Unexpected error",
-      "schema": {
-       "$ref": "#/definitions/Error"
-      }
-     }
+    "swagger": "2.0",
+    "info": {
+        "description": "Finance management sysytem",
+        "version": "1.0.0",
+        "title": "Grants Information Management System",
+        "termsOfService": "https://kefinance.clintonhealthaccess.org/terms/",
+        "contact": {
+            "email": "mwangikevinn@gmail.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
+        }
     },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   }
-  },
-  "/claim": {
-   "post": {
-    "tags": [
-     "Claim"
+    "host": "localhost:8000",
+    "basePath": "/api",
+    "tags": [{
+            "name": "Claim",
+            "description": "Everything About Claim",
+            "externalDocs": {
+                "description": "Find out more",
+                "url": "https://kefinance.clintonhealthaccess.org/api/claim/docs"
+            }
+        },
+        {
+            "name": "Claim Status",
+            "description": "Everything About Claim Status",
+            "externalDocs": {
+                "description": "Find out more",
+                "url": "https://kefinance.clintonhealthaccess.org/api/claim_status/docs"
+            }
+        },
+        {
+            "name": "Claim Approval",
+            "description": "Everything About Claim Approval",
+            "externalDocs": {
+                "description": "Find out more",
+                "url": "https://kefinance.clintonhealthaccess.org/api/claim_approval/docs"
+            }
+        },
+        {
+            "name": "Claim Allocation",
+            "description": "Everything About Claim Allocation",
+            "externalDocs": {
+                "description": "Find out more",
+                "url": "https://kefinance.clintonhealthaccess.org/api/claim_allocation/docs"
+            }
+        }
     ],
-    "summary": "Add a new claim",
-    "description": "new claim",
-    "operationId": "add_claim",
-    "consumes": [
-     "application/json",
-     "application/xml"
+    "schemes": [
+        "http",
+        "https"
     ],
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "in": "body",
-      "name": "body",
-      "description": "claim object that needs to be added",
-      "required": true,
-      "schema": {
-       "$ref": "#/definitions/claim"
-      }
-     }
-    ],
-    "responses": {
-     "200": {
-      "description": "Successfully added a new claim for approval"
-     },
-     "405": {
-      "description": "Invalid input,adding a new claim was unsuccessful"
-     }
+    "paths": {
+        "/claims": {
+            "get": {
+                "summary": "claims List",
+                "description": "The claim endpoint returns multiple claim requested given the parameters injected. \n",
+                "parameters": [{
+                    "name": "claim_id",
+                    "in": "query",
+                    "description": "claim id",
+                    "required": false,
+                    "type": "number",
+                    "format": "integer"
+                }],
+                "tags": [
+                    "Claim"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "An array of claim returned",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/claim"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            }
+        },
+        "/claim": {
+            "post": {
+                "tags": [
+                    "Claim"
+                ],
+                "summary": "Add a new claim",
+                "description": "new claim",
+                "operationId": "add_claim",
+                "consumes": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [{
+                    "in": "body",
+                    "name": "body",
+                    "description": "claim object that needs to be added",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/definitions/claim"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Successfully added a new claim for approval"
+                    },
+                    "405": {
+                        "description": "Invalid input,adding a new claim was unsuccessful"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            },
+            "put": {
+                "tags": [
+                    "Claim"
+                ],
+                "summary": "Update an existing claim",
+                "description": "",
+                "operationId": "update_claim",
+                "consumes": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [{
+                    "in": "body",
+                    "name": "body",
+                    "description": "claim object that needs to be added",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/definitions/claim"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Success"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "claim not found"
+                    },
+                    "405": {
+                        "description": "Validation exception"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            }
+        },
+        "/claim/{claim_id}": {
+            "get": {
+                "tags": [
+                    "Claim"
+                ],
+                "summary": "Find claim by ID",
+                "description": "Returns a single claim",
+                "operationId": "get_claim_by_id",
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [{
+                    "name": "claim_id",
+                    "in": "path",
+                    "description": "ID of claim to return object",
+                    "required": true,
+                    "type": "integer",
+                    "format": "int64"
+                }],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/claim"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "claim not found"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            },
+            "delete": {
+                "tags": [
+                    "Claim"
+                ],
+                "summary": "Deletes an claim",
+                "description": "",
+                "operationId": "delete_claim",
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [{
+                        "name": "api_key",
+                        "in": "header",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "claim_id",
+                        "in": "path",
+                        "description": "claim id to delete",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "claim not found"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            }
+        },
+        "/claim/{claim_id}/submit_for_approval": {
+            "patch": {
+                "tags": [
+                    "Claim"
+                ],
+                "summary": "Submit claim by ID",
+                "description": "Submits claim for approval",
+                "operationId": "submit_claim_for_approval",
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [{
+                    "name": "claim_id",
+                    "in": "path",
+                    "description": "ID of claim to return object",
+                    "required": true,
+                    "type": "integer",
+                    "format": "int64"
+                }],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/claim"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "claim not found"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            }
+        },
+        "/claim/{claim_id}/approve": {
+            "patch": {
+                "tags": [
+                    "Claim"
+                ],
+                "summary": "Approve claim by ID",
+                "description": "Approves Claim",
+                "operationId": "approve_claim",
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [{
+                    "name": "claim_id",
+                    "in": "path",
+                    "description": "ID of claim to return object",
+                    "required": true,
+                    "type": "integer",
+                    "format": "int64"
+                }],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/claim"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "claim not found"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            }
+        },
+        "/claim/{claim_id}/reject": {
+            "patch": {
+                "tags": [
+                    "Claim"
+                ],
+                "summary": "Reject claim by ID",
+                "description": "Approves Claim",
+                "operationId": "reject_claim",
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [{
+                    "name": "claim_id",
+                    "in": "path",
+                    "description": "ID of claim to return object",
+                    "required": true,
+                    "type": "integer",
+                    "format": "int64"
+                }],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/claim"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "claim not found"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            }
+        },
+        "/claim/{claim_id}/allocate": {
+            "patch": {
+                "tags": [
+                    "Claim"
+                ],
+                "summary": "Allocate claim by ID",
+                "description": "Allocate Claim",
+                "operationId": "allocate_claim",
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [{
+                    "name": "claim_id",
+                    "in": "path",
+                    "description": "ID of claim to return object",
+                    "required": true,
+                    "type": "integer",
+                    "format": "int64"
+                }],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/claim"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "claim not found"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            }
+        },
+        "/claim/{claim_id}/get_document": {
+            "get": {
+                "tags": [
+                    "Claim"
+                ],
+                "summary": "get claim document by ID",
+                "description": "get Claim document",
+                "operationId": "get_document_by_id",
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [{
+                    "name": "claim_id",
+                    "in": "path",
+                    "description": "ID of claim to return object",
+                    "required": true,
+                    "type": "integer",
+                    "format": "int64"
+                }],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/claim"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "claim not found"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            }
+        },
+        "/claim_statuses": {
+            "get": {
+                "summary": "claim_statuses List",
+                "description": "The claim_status endpoint returns multiple claim_status requested given the parameters injected. \n",
+                "parameters": [{
+                    "name": "claim_status_id",
+                    "in": "query",
+                    "description": "claim_status id",
+                    "required": false,
+                    "type": "number",
+                    "format": "integer"
+                }],
+                "tags": [
+                    "Claim Status"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "An array of claim_status returned",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/claim_status"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            }
+        },
+        "/claim_status": {
+            "post": {
+                "tags": [
+                    "Claim Status"
+                ],
+                "summary": "Add a new claim_status",
+                "description": "new claim_status",
+                "operationId": "add_claim_status",
+                "consumes": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [{
+                    "in": "body",
+                    "name": "body",
+                    "description": "claim_status object that needs to be added",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/definitions/claim_status"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Successfully added a new claim_status for approval"
+                    },
+                    "405": {
+                        "description": "Invalid input,adding a new claim_status was unsuccessful"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            },
+            "put": {
+                "tags": [
+                    "Claim Status"
+                ],
+                "summary": "Update an existing claim_status",
+                "description": "",
+                "operationId": "update_claim_status",
+                "consumes": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [{
+                    "in": "body",
+                    "name": "body",
+                    "description": "claim_status object that needs to be added",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/definitions/claim_status"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Success"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "claim_status not found"
+                    },
+                    "405": {
+                        "description": "Validation exception"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            }
+        },
+        "/claim_status/{claim_status_id}": {
+            "get": {
+                "tags": [
+                    "Claim Status"
+                ],
+                "summary": "Find claim_status by ID",
+                "description": "Returns a single claim_status",
+                "operationId": "get_claim_status_by_id",
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [{
+                    "name": "claim_status_id",
+                    "in": "path",
+                    "description": "ID of claim_status to return object",
+                    "required": true,
+                    "type": "integer",
+                    "format": "int64"
+                }],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/claim_status"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "claim_status not found"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            },
+            "delete": {
+                "tags": [
+                    "Claim Status"
+                ],
+                "summary": "Deletes an claim_status",
+                "description": "",
+                "operationId": "delete_claim_status",
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [{
+                        "name": "api_key",
+                        "in": "header",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "claim_status_id",
+                        "in": "path",
+                        "description": "claim_status id to delete",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "claim_status not found"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            }
+        },
+        "/claim_approvals": {
+            "get": {
+                "summary": "claim_approvals List",
+                "description": "The claim_approval endpoint returns multiple claim_approval requested given the parameters injected. \n",
+                "parameters": [{
+                    "name": "claim_approval_id",
+                    "in": "query",
+                    "description": "claim_approval id",
+                    "required": false,
+                    "type": "number",
+                    "format": "integer"
+                }],
+                "tags": [
+                    "Claim Approval"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "An array of claim_approval returned",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/claim_approval"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            }
+        },
+        "/claim_approval": {
+            "post": {
+                "tags": [
+                    "Claim Approval"
+                ],
+                "summary": "Add a new claim_approval",
+                "description": "new claim_approval",
+                "operationId": "add_claim_approval",
+                "consumes": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [{
+                    "in": "body",
+                    "name": "body",
+                    "description": "claim_approval object that needs to be added",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/definitions/claim_approval"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Successfully added a new claim_approval for approval"
+                    },
+                    "405": {
+                        "description": "Invalid input,adding a new claim_approval was unsuccessful"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            },
+            "put": {
+                "tags": [
+                    "Claim Approval"
+                ],
+                "summary": "Update an existing claim_approval",
+                "description": "",
+                "operationId": "update_claim_approval",
+                "consumes": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [{
+                    "in": "body",
+                    "name": "body",
+                    "description": "claim_approval object that needs to be added",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/definitions/claim_approval"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Success"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "claim_approval not found"
+                    },
+                    "405": {
+                        "description": "Validation exception"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            }
+        },
+        "/claim_approval/{claim_approval_id}": {
+            "get": {
+                "tags": [
+                    "Claim Approval"
+                ],
+                "summary": "Find claim_approval by ID",
+                "description": "Returns a single claim_approval",
+                "operationId": "get_claim_approval_by_id",
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [{
+                    "name": "claim_approval_id",
+                    "in": "path",
+                    "description": "ID of claim_approval to return object",
+                    "required": true,
+                    "type": "integer",
+                    "format": "int64"
+                }],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/claim_approval"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "claim_approval not found"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            },
+            "delete": {
+                "tags": [
+                    "Claim Approval"
+                ],
+                "summary": "Deletes an claim_approval",
+                "description": "",
+                "operationId": "delete_claim_approval",
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [{
+                        "name": "api_key",
+                        "in": "header",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "claim_approval_id",
+                        "in": "path",
+                        "description": "claim_approval id to delete",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "claim_approval not found"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            }
+        },
+        "/claim_allocations": {
+            "get": {
+                "summary": "claim_allocations List",
+                "description": "The claim_allocation endpoint returns multiple claim_allocation requested given the parameters injected. \n",
+                "parameters": [{
+                    "name": "claim_allocation_id",
+                    "in": "query",
+                    "description": "claim_allocation id",
+                    "required": false,
+                    "type": "number",
+                    "format": "integer"
+                }],
+                "tags": [
+                    "Claim Allocation"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "An array of claim_allocation returned",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/claim_allocation"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            }
+        },
+        "/claim_allocation": {
+            "post": {
+                "tags": [
+                    "Claim Allocation"
+                ],
+                "summary": "Add a new claim_allocation",
+                "description": "new claim_allocation",
+                "operationId": "add_claim_allocation",
+                "consumes": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [{
+                    "in": "body",
+                    "name": "body",
+                    "description": "claim_allocation object that needs to be added",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/definitions/claim_allocation"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Successfully added a new claim_allocation for approval"
+                    },
+                    "405": {
+                        "description": "Invalid input,adding a new claim_allocation was unsuccessful"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            },
+            "put": {
+                "tags": [
+                    "Claim Allocation"
+                ],
+                "summary": "Update an existing claim_allocation",
+                "description": "",
+                "operationId": "update_claim_allocation",
+                "consumes": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [{
+                    "in": "body",
+                    "name": "body",
+                    "description": "claim_allocation object that needs to be added",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/definitions/claim_allocation"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Success"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "claim_allocation not found"
+                    },
+                    "405": {
+                        "description": "Validation exception"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            }
+        },
+        "/claim_allocation/{claim_allocation_id}": {
+            "get": {
+                "tags": [
+                    "Claim Allocation"
+                ],
+                "summary": "Find claim_allocation by ID",
+                "description": "Returns a single claim_allocation",
+                "operationId": "get_claim_allocation_by_id",
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [{
+                    "name": "claim_allocation_id",
+                    "in": "path",
+                    "description": "ID of claim_allocation to return object",
+                    "required": true,
+                    "type": "integer",
+                    "format": "int64"
+                }],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/claim_allocation"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "claim_allocation not found"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            },
+            "delete": {
+                "tags": [
+                    "Claim Allocation"
+                ],
+                "summary": "Deletes an claim_allocation",
+                "description": "",
+                "operationId": "delete_claim_allocation",
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [{
+                        "name": "api_key",
+                        "in": "header",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "claim_allocation_id",
+                        "in": "path",
+                        "description": "claim_allocation id to delete",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "claim_allocation not found"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            }
+        }
     },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   },
-   "put": {
-    "tags": [
-     "Claim"
-    ],
-    "summary": "Update an existing claim",
-    "description": "",
-    "operationId": "update_claim",
-    "consumes": [
-     "application/json",
-     "application/xml"
-    ],
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "in": "body",
-      "name": "body",
-      "description": "claim object that needs to be added",
-      "required": true,
-      "schema": {
-       "$ref": "#/definitions/claim"
-      }
-     }
-    ],
-    "responses": {
-     "200": {
-      "description": "Unexpected error",
-      "schema": {
-       "$ref": "#/definitions/Success"
-      }
-     },
-     "400": {
-      "description": "Invalid ID supplied"
-     },
-     "404": {
-      "description": "claim not found"
-     },
-     "405": {
-      "description": "Validation exception"
-     }
+    "securityDefinitions": {
+        "api_key": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
     },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   }
-  },
-  "/claim/{claim_id}": {
-   "get": {
-    "tags": [
-     "Claim"
-    ],
-    "summary": "Find claim by ID",
-    "description": "Returns a single claim",
-    "operationId": "get_claim_by_id",
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "name": "claim_id",
-      "in": "path",
-      "description": "ID of claim to return object",
-      "required": true,
-      "type": "integer",
-      "format": "int64"
-     }
-    ],
-    "responses": {
-     "200": {
-      "description": "successful operation",
-      "schema": {
-       "$ref": "#/definitions/claim"
-      }
-     },
-     "400": {
-      "description": "Invalid ID supplied"
-     },
-     "404": {
-      "description": "claim not found"
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   },
-   "delete": {
-    "tags": [
-     "Claim"
-    ],
-    "summary": "Deletes an claim",
-    "description": "",
-    "operationId": "delete_claim",
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "name": "api_key",
-      "in": "header",
-      "required": true,
-      "type": "string"
-     },
-     {
-      "name": "claim_id",
-      "in": "path",
-      "description": "claim id to delete",
-      "required": true,
-      "type": "integer",
-      "format": "int64"
-     }
-    ],
-    "responses": {
-     "400": {
-      "description": "Invalid ID supplied"
-     },
-     "404": {
-      "description": "claim not found"
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   }
-  },
-  "/claim/{claim_id}/submit_for_approval": {
-   "patch": {
-    "tags": [
-     "Claim"
-    ],
-    "summary": "Submit claim by ID",
-    "description": "Submits claim for approval",
-    "operationId": "submit_claim_for_approval",
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "name": "claim_id",
-      "in": "path",
-      "description": "ID of claim to return object",
-      "required": true,
-      "type": "integer",
-      "format": "int64"
-     }
-    ],
-    "responses": {
-     "200": {
-      "description": "successful operation",
-      "schema": {
-       "$ref": "#/definitions/claim"
-      }
-     },
-     "400": {
-      "description": "Invalid ID supplied"
-     },
-     "404": {
-      "description": "claim not found"
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   }
-  },
-  "/claim/{claim_id}/approve": {
-   "patch": {
-    "tags": [
-     "Claim"
-    ],
-    "summary": "Approve claim by ID",
-    "description": "Approves Claim",
-    "operationId": "approve_claim",
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "name": "claim_id",
-      "in": "path",
-      "description": "ID of claim to return object",
-      "required": true,
-      "type": "integer",
-      "format": "int64"
-     }
-    ],
-    "responses": {
-     "200": {
-      "description": "successful operation",
-      "schema": {
-       "$ref": "#/definitions/claim"
-      }
-     },
-     "400": {
-      "description": "Invalid ID supplied"
-     },
-     "404": {
-      "description": "claim not found"
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   }
-  },
-  "/claim/{claim_id}/reject": {
-   "patch": {
-    "tags": [
-     "Claim"
-    ],
-    "summary": "Reject claim by ID",
-    "description": "Approves Claim",
-    "operationId": "reject_claim",
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "name": "claim_id",
-      "in": "path",
-      "description": "ID of claim to return object",
-      "required": true,
-      "type": "integer",
-      "format": "int64"
-     }
-    ],
-    "responses": {
-     "200": {
-      "description": "successful operation",
-      "schema": {
-       "$ref": "#/definitions/claim"
-      }
-     },
-     "400": {
-      "description": "Invalid ID supplied"
-     },
-     "404": {
-      "description": "claim not found"
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   }
-  },
-  "/claim/{claim_id}/allocate": {
-   "patch": {
-    "tags": [
-     "Claim"
-    ],
-    "summary": "Allocate claim by ID",
-    "description": "Allocate Claim",
-    "operationId": "allocate_claim",
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "name": "claim_id",
-      "in": "path",
-      "description": "ID of claim to return object",
-      "required": true,
-      "type": "integer",
-      "format": "int64"
-     }
-    ],
-    "responses": {
-     "200": {
-      "description": "successful operation",
-      "schema": {
-       "$ref": "#/definitions/claim"
-      }
-     },
-     "400": {
-      "description": "Invalid ID supplied"
-     },
-     "404": {
-      "description": "claim not found"
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   }
-  },
-  "/claim/{claim_id}/get_document": {
-   "get": {
-    "tags": [
-     "Claim"
-    ],
-    "summary": "get claim document by ID",
-    "description": "get Claim document",
-    "operationId": "get_document_by_id",
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "name": "claim_id",
-      "in": "path",
-      "description": "ID of claim to return object",
-      "required": true,
-      "type": "integer",
-      "format": "int64"
-     }
-    ],
-    "responses": {
-     "200": {
-      "description": "successful operation",
-      "schema": {
-       "$ref": "#/definitions/claim"
-      }
-     },
-     "400": {
-      "description": "Invalid ID supplied"
-     },
-     "404": {
-      "description": "claim not found"
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   }
-  },
-  "/claim_statuses": {
-   "get": {
-    "summary": "claim_statuses List",
-    "description": "The claim_status endpoint returns multiple claim_status requested given the parameters injected. \n",
-    "parameters": [
-     {
-      "name": "claim_status_id",
-      "in": "query",
-      "description": "claim_status id",
-      "required": false,
-      "type": "number",
-      "format": "integer"
-     }
-    ],
-    "tags": [
-     "Claim Status"
-    ],
-    "responses": {
-     "200": {
-      "description": "An array of claim_status returned",
-      "schema": {
-       "type": "array",
-       "items": {
-        "$ref": "#/definitions/claim_status"
-       }
-      }
-     },
-     "404": {
-      "description": "Unexpected error",
-      "schema": {
-       "$ref": "#/definitions/Error"
-      }
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   }
-  },
-  "/claim_status": {
-   "post": {
-    "tags": [
-     "Claim Status"
-    ],
-    "summary": "Add a new claim_status",
-    "description": "new claim_status",
-    "operationId": "add_claim_status",
-    "consumes": [
-     "application/json",
-     "application/xml"
-    ],
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "in": "body",
-      "name": "body",
-      "description": "claim_status object that needs to be added",
-      "required": true,
-      "schema": {
-       "$ref": "#/definitions/claim_status"
-      }
-     }
-    ],
-    "responses": {
-     "200": {
-      "description": "Successfully added a new claim_status for approval"
-     },
-     "405": {
-      "description": "Invalid input,adding a new claim_status was unsuccessful"
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   },
-   "put": {
-    "tags": [
-     "Claim Status"
-    ],
-    "summary": "Update an existing claim_status",
-    "description": "",
-    "operationId": "update_claim_status",
-    "consumes": [
-     "application/json",
-     "application/xml"
-    ],
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "in": "body",
-      "name": "body",
-      "description": "claim_status object that needs to be added",
-      "required": true,
-      "schema": {
-       "$ref": "#/definitions/claim_status"
-      }
-     }
-    ],
-    "responses": {
-     "200": {
-      "description": "Unexpected error",
-      "schema": {
-       "$ref": "#/definitions/Success"
-      }
-     },
-     "400": {
-      "description": "Invalid ID supplied"
-     },
-     "404": {
-      "description": "claim_status not found"
-     },
-     "405": {
-      "description": "Validation exception"
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   }
-  },
-  "/claim_status/{claim_status_id}": {
-   "get": {
-    "tags": [
-     "Claim Status"
-    ],
-    "summary": "Find claim_status by ID",
-    "description": "Returns a single claim_status",
-    "operationId": "get_claim_status_by_id",
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "name": "claim_status_id",
-      "in": "path",
-      "description": "ID of claim_status to return object",
-      "required": true,
-      "type": "integer",
-      "format": "int64"
-     }
-    ],
-    "responses": {
-     "200": {
-      "description": "successful operation",
-      "schema": {
-       "$ref": "#/definitions/claim_status"
-      }
-     },
-     "400": {
-      "description": "Invalid ID supplied"
-     },
-     "404": {
-      "description": "claim_status not found"
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   },
-   "delete": {
-    "tags": [
-     "Claim Status"
-    ],
-    "summary": "Deletes an claim_status",
-    "description": "",
-    "operationId": "delete_claim_status",
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "name": "api_key",
-      "in": "header",
-      "required": true,
-      "type": "string"
-     },
-     {
-      "name": "claim_status_id",
-      "in": "path",
-      "description": "claim_status id to delete",
-      "required": true,
-      "type": "integer",
-      "format": "int64"
-     }
-    ],
-    "responses": {
-     "400": {
-      "description": "Invalid ID supplied"
-     },
-     "404": {
-      "description": "claim_status not found"
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   }
-  },
-  "/claim_approvals": {
-   "get": {
-    "summary": "claim_approvals List",
-    "description": "The claim_approval endpoint returns multiple claim_approval requested given the parameters injected. \n",
-    "parameters": [
-     {
-      "name": "claim_approval_id",
-      "in": "query",
-      "description": "claim_approval id",
-      "required": false,
-      "type": "number",
-      "format": "integer"
-     }
-    ],
-    "tags": [
-     "Claim Approval"
-    ],
-    "responses": {
-     "200": {
-      "description": "An array of claim_approval returned",
-      "schema": {
-       "type": "array",
-       "items": {
-        "$ref": "#/definitions/claim_approval"
-       }
-      }
-     },
-     "404": {
-      "description": "Unexpected error",
-      "schema": {
-       "$ref": "#/definitions/Error"
-      }
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   }
-  },
-  "/claim_approval": {
-   "post": {
-    "tags": [
-     "Claim Approval"
-    ],
-    "summary": "Add a new claim_approval",
-    "description": "new claim_approval",
-    "operationId": "add_claim_approval",
-    "consumes": [
-     "application/json",
-     "application/xml"
-    ],
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "in": "body",
-      "name": "body",
-      "description": "claim_approval object that needs to be added",
-      "required": true,
-      "schema": {
-       "$ref": "#/definitions/claim_approval"
-      }
-     }
-    ],
-    "responses": {
-     "200": {
-      "description": "Successfully added a new claim_approval for approval"
-     },
-     "405": {
-      "description": "Invalid input,adding a new claim_approval was unsuccessful"
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   },
-   "put": {
-    "tags": [
-     "Claim Approval"
-    ],
-    "summary": "Update an existing claim_approval",
-    "description": "",
-    "operationId": "update_claim_approval",
-    "consumes": [
-     "application/json",
-     "application/xml"
-    ],
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "in": "body",
-      "name": "body",
-      "description": "claim_approval object that needs to be added",
-      "required": true,
-      "schema": {
-       "$ref": "#/definitions/claim_approval"
-      }
-     }
-    ],
-    "responses": {
-     "200": {
-      "description": "Unexpected error",
-      "schema": {
-       "$ref": "#/definitions/Success"
-      }
-     },
-     "400": {
-      "description": "Invalid ID supplied"
-     },
-     "404": {
-      "description": "claim_approval not found"
-     },
-     "405": {
-      "description": "Validation exception"
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   }
-  },
-  "/claim_approval/{claim_approval_id}": {
-   "get": {
-    "tags": [
-     "Claim Approval"
-    ],
-    "summary": "Find claim_approval by ID",
-    "description": "Returns a single claim_approval",
-    "operationId": "get_claim_approval_by_id",
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "name": "claim_approval_id",
-      "in": "path",
-      "description": "ID of claim_approval to return object",
-      "required": true,
-      "type": "integer",
-      "format": "int64"
-     }
-    ],
-    "responses": {
-     "200": {
-      "description": "successful operation",
-      "schema": {
-       "$ref": "#/definitions/claim_approval"
-      }
-     },
-     "400": {
-      "description": "Invalid ID supplied"
-     },
-     "404": {
-      "description": "claim_approval not found"
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   },
-   "delete": {
-    "tags": [
-     "Claim Approval"
-    ],
-    "summary": "Deletes an claim_approval",
-    "description": "",
-    "operationId": "delete_claim_approval",
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "name": "api_key",
-      "in": "header",
-      "required": true,
-      "type": "string"
-     },
-     {
-      "name": "claim_approval_id",
-      "in": "path",
-      "description": "claim_approval id to delete",
-      "required": true,
-      "type": "integer",
-      "format": "int64"
-     }
-    ],
-    "responses": {
-     "400": {
-      "description": "Invalid ID supplied"
-     },
-     "404": {
-      "description": "claim_approval not found"
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   }
-  },
-  "/claim_allocations": {
-   "get": {
-    "summary": "claim_allocations List",
-    "description": "The claim_allocation endpoint returns multiple claim_allocation requested given the parameters injected. \n",
-    "parameters": [
-     {
-      "name": "claim_allocation_id",
-      "in": "query",
-      "description": "claim_allocation id",
-      "required": false,
-      "type": "number",
-      "format": "integer"
-     }
-    ],
-    "tags": [
-     "Claim Allocation"
-    ],
-    "responses": {
-     "200": {
-      "description": "An array of claim_allocation returned",
-      "schema": {
-       "type": "array",
-       "items": {
-        "$ref": "#/definitions/claim_allocation"
-       }
-      }
-     },
-     "404": {
-      "description": "Unexpected error",
-      "schema": {
-       "$ref": "#/definitions/Error"
-      }
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   }
-  },
-  "/claim_allocation": {
-   "post": {
-    "tags": [
-     "Claim Allocation"
-    ],
-    "summary": "Add a new claim_allocation",
-    "description": "new claim_allocation",
-    "operationId": "add_claim_allocation",
-    "consumes": [
-     "application/json",
-     "application/xml"
-    ],
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "in": "body",
-      "name": "body",
-      "description": "claim_allocation object that needs to be added",
-      "required": true,
-      "schema": {
-       "$ref": "#/definitions/claim_allocation"
-      }
-     }
-    ],
-    "responses": {
-     "200": {
-      "description": "Successfully added a new claim_allocation for approval"
-     },
-     "405": {
-      "description": "Invalid input,adding a new claim_allocation was unsuccessful"
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   },
-   "put": {
-    "tags": [
-     "Claim Allocation"
-    ],
-    "summary": "Update an existing claim_allocation",
-    "description": "",
-    "operationId": "update_claim_allocation",
-    "consumes": [
-     "application/json",
-     "application/xml"
-    ],
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "in": "body",
-      "name": "body",
-      "description": "claim_allocation object that needs to be added",
-      "required": true,
-      "schema": {
-       "$ref": "#/definitions/claim_allocation"
-      }
-     }
-    ],
-    "responses": {
-     "200": {
-      "description": "Unexpected error",
-      "schema": {
-       "$ref": "#/definitions/Success"
-      }
-     },
-     "400": {
-      "description": "Invalid ID supplied"
-     },
-     "404": {
-      "description": "claim_allocation not found"
-     },
-     "405": {
-      "description": "Validation exception"
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   }
-  },
-  "/claim_allocation/{claim_allocation_id}": {
-   "get": {
-    "tags": [
-     "Claim Allocation"
-    ],
-    "summary": "Find claim_allocation by ID",
-    "description": "Returns a single claim_allocation",
-    "operationId": "get_claim_allocation_by_id",
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "name": "claim_allocation_id",
-      "in": "path",
-      "description": "ID of claim_allocation to return object",
-      "required": true,
-      "type": "integer",
-      "format": "int64"
-     }
-    ],
-    "responses": {
-     "200": {
-      "description": "successful operation",
-      "schema": {
-       "$ref": "#/definitions/claim_allocation"
-      }
-     },
-     "400": {
-      "description": "Invalid ID supplied"
-     },
-     "404": {
-      "description": "claim_allocation not found"
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   },
-   "delete": {
-    "tags": [
-     "Claim Allocation"
-    ],
-    "summary": "Deletes an claim_allocation",
-    "description": "",
-    "operationId": "delete_claim_allocation",
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "name": "api_key",
-      "in": "header",
-      "required": true,
-      "type": "string"
-     },
-     {
-      "name": "claim_allocation_id",
-      "in": "path",
-      "description": "claim_allocation id to delete",
-      "required": true,
-      "type": "integer",
-      "format": "int64"
-     }
-    ],
-    "responses": {
-     "400": {
-      "description": "Invalid ID supplied"
-     },
-     "404": {
-      "description": "claim_allocation not found"
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   }
-  }
- },
- "securityDefinitions": {
-  "api_key": {
-   "type": "apiKey",
-   "name": "Authorization",
-   "in": "header"
-  }
- },
- "definitions": {
-  "claim": {
-   "type": "object",
-   "required": [
-    "id",
-    "created_at"
-   ],
-   "properties": {
-    "id": {
-     "type": "integer",
-     "format": "int64",
-     "example": 1
-    },
-    "num": {
-     "type": "number",
-     "format": "int64",
-     "example": 20000
-    },
-    "str": {
-     "type": "string",
-     "example": "PayPal.pdf"
-    },
-    "date": {
-     "type": "string",
-     "format": "date-time",
-     "example": "2010-02-11"
-    },
-    "created_at": {
-     "type": "string",
-     "format": "date-time",
-     "example": "2010-02-11"
-    },
-    "updated_at": {
-     "type": "string",
-     "format": "date-time",
-     "example": "2010-02-11"
+    "definitions": {
+        "claim": {
+            "type": "object",
+            "required": [
+                "id",
+                "created_at"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "format": "int64",
+                    "example": 1
+                },
+                "num": {
+                    "type": "number",
+                    "format": "int64",
+                    "example": 20000
+                },
+                "str": {
+                    "type": "string",
+                    "example": "PayPal.pdf"
+                },
+                "date": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2010-02-11"
+                },
+                "created_at": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2010-02-11"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2010-02-11"
+                }
+            },
+            "xml": {
+                "name": "claim"
+            }
+        },
+        "claim_status": {
+            "type": "object",
+            "required": [
+                "id",
+                "created_at"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "format": "int64",
+                    "example": 1
+                },
+                "num": {
+                    "type": "number",
+                    "format": "int64",
+                    "example": 20000
+                },
+                "str": {
+                    "type": "string",
+                    "example": "PayPal.pdf"
+                },
+                "date": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2010-02-11"
+                },
+                "created_at": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2010-02-11"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2010-02-11"
+                }
+            },
+            "xml": {
+                "name": "claim_status"
+            }
+        },
+        "claim_approval": {
+            "type": "object",
+            "required": [
+                "id",
+                "created_at"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "format": "int64",
+                    "example": 1
+                },
+                "num": {
+                    "type": "number",
+                    "format": "int64",
+                    "example": 20000
+                },
+                "str": {
+                    "type": "string",
+                    "example": "PayPal.pdf"
+                },
+                "date": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2010-02-11"
+                },
+                "created_at": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2010-02-11"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2010-02-11"
+                }
+            },
+            "xml": {
+                "name": "claim_approval"
+            }
+        },
+        "claim_allocation": {
+            "type": "object",
+            "required": [
+                "id",
+                "created_at"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "format": "int64",
+                    "example": 1
+                },
+                "num": {
+                    "type": "number",
+                    "format": "int64",
+                    "example": 20000
+                },
+                "str": {
+                    "type": "string",
+                    "example": "PayPal.pdf"
+                },
+                "date": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2010-02-11"
+                },
+                "created_at": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2010-02-11"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2010-02-11"
+                }
+            },
+            "xml": {
+                "name": "claim_allocation"
+            }
+        },
+        "Error": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "object not found"
+                }
+            }
+        },
+        "Success": {
+            "type": "object",
+            "properties": {
+                "msg": {
+                    "type": "string",
+                    "example": "object not found"
+                }
+            }
+        }
     }
-   },
-   "xml": {
-    "name": "claim"
-   }
-  },
-  "claim_status": {
-   "type": "object",
-   "required": [
-    "id",
-    "created_at"
-   ],
-   "properties": {
-    "id": {
-     "type": "integer",
-     "format": "int64",
-     "example": 1
-    },
-    "num": {
-     "type": "number",
-     "format": "int64",
-     "example": 20000
-    },
-    "str": {
-     "type": "string",
-     "example": "PayPal.pdf"
-    },
-    "date": {
-     "type": "string",
-     "format": "date-time",
-     "example": "2010-02-11"
-    },
-    "created_at": {
-     "type": "string",
-     "format": "date-time",
-     "example": "2010-02-11"
-    },
-    "updated_at": {
-     "type": "string",
-     "format": "date-time",
-     "example": "2010-02-11"
-    }
-   },
-   "xml": {
-    "name": "claim_status"
-   }
-  },
-  "claim_approval": {
-   "type": "object",
-   "required": [
-    "id",
-    "created_at"
-   ],
-   "properties": {
-    "id": {
-     "type": "integer",
-     "format": "int64",
-     "example": 1
-    },
-    "num": {
-     "type": "number",
-     "format": "int64",
-     "example": 20000
-    },
-    "str": {
-     "type": "string",
-     "example": "PayPal.pdf"
-    },
-    "date": {
-     "type": "string",
-     "format": "date-time",
-     "example": "2010-02-11"
-    },
-    "created_at": {
-     "type": "string",
-     "format": "date-time",
-     "example": "2010-02-11"
-    },
-    "updated_at": {
-     "type": "string",
-     "format": "date-time",
-     "example": "2010-02-11"
-    }
-   },
-   "xml": {
-    "name": "claim_approval"
-   }
-  },
-  "claim_allocation": {
-   "type": "object",
-   "required": [
-    "id",
-    "created_at"
-   ],
-   "properties": {
-    "id": {
-     "type": "integer",
-     "format": "int64",
-     "example": 1
-    },
-    "num": {
-     "type": "number",
-     "format": "int64",
-     "example": 20000
-    },
-    "str": {
-     "type": "string",
-     "example": "PayPal.pdf"
-    },
-    "date": {
-     "type": "string",
-     "format": "date-time",
-     "example": "2010-02-11"
-    },
-    "created_at": {
-     "type": "string",
-     "format": "date-time",
-     "example": "2010-02-11"
-    },
-    "updated_at": {
-     "type": "string",
-     "format": "date-time",
-     "example": "2010-02-11"
-    }
-   },
-   "xml": {
-    "name": "claim_allocation"
-   }
-  },
-  "Error": {
-   "type": "object",
-   "properties": {
-    "error": {
-     "type": "string",
-     "example": "object not found"
-    }
-   }
-  },
-  "Success": {
-   "type": "object",
-   "properties": {
-    "msg": {
-     "type": "string",
-     "example": "object not found"
-    }
-   }
-  }
- }
 }

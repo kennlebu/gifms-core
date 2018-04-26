@@ -3,12 +3,12 @@ info:
   description: Finance management sysytem
   version: 1.0.0
   title: Grants Information Management System
-  termsOfService: 'http://kefinance.clintonhealthaccess.org/terms/'
+  termsOfService: 'https://kefinance.clintonhealthaccess.org/terms/'
   contact:
     email: mwangikevinn@gmail.com
   license:
     name: Apache 2.0
-    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+    url: 'https://www.apache.org/licenses/LICENSE-2.0.html'
 host: 'localhost:8000'
 basePath: /api
 tags:
@@ -16,47 +16,47 @@ tags:
     description: Everything About Mobile Payment
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/mobile_payment/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/mobile_payment/docs'
   - name: Mobile Payment Approval
     description: Everything About Mobile Payment Approval
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/mobile_payment_approval/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/mobile_payment_approval/docs'
   - name: Mobile Payment Allocation
     description: Everything About Mobile Payment Allocation
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/mobile_payment_allocation/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/mobile_payment_allocation/docs'
   - name: Mobile Payment Payee
     description: Everything About Mobile Payment Payee
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/mobile_payment_payee/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/mobile_payment_payee/docs'
   - name: Mobile Payment Status
     description: Everything About Mobile Payment Status
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/mobile_payment_status/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/mobile_payment_status/docs'
   - name: Mobile Payment Tariff
     description: Everything About Mobile Payment Tariff
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/mobile_payment_tariff/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/mobile_payment_tariff/docs'
   - name: Mobile Payment Type
     description: Everything About Mobile Payment Type
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/mobile_payment_type/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/mobile_payment_type/docs'
   - name: Mobile Payment Viewing Permission
     description: Everything About Mobile Payment Viewing Permission
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/mobile_payment_viewing_permission/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/mobile_payment_viewing_permission/docs'
   - name: Payees Upload Mode
     description: Everything About Payees Upload Mode
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/payees_upload_mode/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/payees_upload_mode/docs'
 schemes:
   - http
   - https

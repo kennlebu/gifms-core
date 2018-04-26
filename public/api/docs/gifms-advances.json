@@ -1,1242 +1,1153 @@
 {
- "swagger": "2.0",
- "info": {
-  "description": "Finance management sysytem",
-  "version": "1.0.0",
-  "title": "Grants Information Management System",
-  "termsOfService": "http://kefinance.clintonhealthaccess.org/terms/",
-  "contact": {
-   "email": "mwangikevinn@gmail.com"
-  },
-  "license": {
-   "name": "Apache 2.0",
-   "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
-  }
- },
- "host": "localhost:8000",
- "basePath": "/api",
- "tags": [
-  {
-   "name": "Advance",
-   "description": "Everything About Advance",
-   "externalDocs": {
-    "description": "Find out more",
-    "url": "http://kefinance.clintonhealthaccess.org/api/advance/docs"
-   }
-  },
-  {
-   "name": "Advance Status",
-   "description": "Everything About Advance Status",
-   "externalDocs": {
-    "description": "Find out more",
-    "url": "http://kefinance.clintonhealthaccess.org/api/advance_status/docs"
-   }
-  },
-  {
-   "name": "Advance Approval",
-   "description": "Everything About Advance Approval",
-   "externalDocs": {
-    "description": "Find out more",
-    "url": "http://kefinance.clintonhealthaccess.org/api/advance_approval/docs"
-   }
-  },
-  {
-   "name": "Advance Allocation",
-   "description": "Everything About Advance Allocation",
-   "externalDocs": {
-    "description": "Find out more",
-    "url": "http://kefinance.clintonhealthaccess.org/api/advance_allocation/docs"
-   }
-  }
- ],
- "schemes": [
-  "http",
-  "https"
- ],
- "paths": {
-  "/advances": {
-   "get": {
-    "summary": "advances List",
-    "description": "The advance endpoint returns multiple advance requested given the parameters injected. \n",
-    "parameters": [
-     {
-      "name": "advance_id",
-      "in": "query",
-      "description": "advance id",
-      "required": false,
-      "type": "number",
-      "format": "integer"
-     }
-    ],
-    "tags": [
-     "Advance"
-    ],
-    "responses": {
-     "200": {
-      "description": "An array of advance returned",
-      "schema": {
-       "type": "array",
-       "items": {
-        "$ref": "#/definitions/advance"
-       }
-      }
-     },
-     "404": {
-      "description": "Unexpected error",
-      "schema": {
-       "$ref": "#/definitions/Error"
-      }
-     }
+    "swagger": "2.0",
+    "info": {
+        "description": "Finance management sysytem",
+        "version": "1.0.0",
+        "title": "Grants Information Management System",
+        "termsOfService": "https://kefinance.clintonhealthaccess.org/terms/",
+        "contact": {
+            "email": "mwangikevinn@gmail.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
+        }
     },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   }
-  },
-  "/advance": {
-   "post": {
-    "tags": [
-     "Advance"
+    "host": "localhost:8000",
+    "basePath": "/api",
+    "tags": [{
+            "name": "Advance",
+            "description": "Everything About Advance",
+            "externalDocs": {
+                "description": "Find out more",
+                "url": "https://kefinance.clintonhealthaccess.org/api/advance/docs"
+            }
+        },
+        {
+            "name": "Advance Status",
+            "description": "Everything About Advance Status",
+            "externalDocs": {
+                "description": "Find out more",
+                "url": "https://kefinance.clintonhealthaccess.org/api/advance_status/docs"
+            }
+        },
+        {
+            "name": "Advance Approval",
+            "description": "Everything About Advance Approval",
+            "externalDocs": {
+                "description": "Find out more",
+                "url": "https://kefinance.clintonhealthaccess.org/api/advance_approval/docs"
+            }
+        },
+        {
+            "name": "Advance Allocation",
+            "description": "Everything About Advance Allocation",
+            "externalDocs": {
+                "description": "Find out more",
+                "url": "https://kefinance.clintonhealthaccess.org/api/advance_allocation/docs"
+            }
+        }
     ],
-    "summary": "Add a new advance",
-    "description": "new advance",
-    "operationId": "add_advance",
-    "consumes": [
-     "application/json",
-     "application/xml"
+    "schemes": [
+        "http",
+        "https"
     ],
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "in": "body",
-      "name": "body",
-      "description": "advance object that needs to be added",
-      "required": true,
-      "schema": {
-       "$ref": "#/definitions/advance"
-      }
-     }
-    ],
-    "responses": {
-     "200": {
-      "description": "Successfully added a new advance for approval"
-     },
-     "405": {
-      "description": "Invalid input,adding a new advance was unsuccessful"
-     }
+    "paths": {
+        "/advances": {
+            "get": {
+                "summary": "advances List",
+                "description": "The advance endpoint returns multiple advance requested given the parameters injected. \n",
+                "parameters": [{
+                    "name": "advance_id",
+                    "in": "query",
+                    "description": "advance id",
+                    "required": false,
+                    "type": "number",
+                    "format": "integer"
+                }],
+                "tags": [
+                    "Advance"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "An array of advance returned",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/advance"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            }
+        },
+        "/advance": {
+            "post": {
+                "tags": [
+                    "Advance"
+                ],
+                "summary": "Add a new advance",
+                "description": "new advance",
+                "operationId": "add_advance",
+                "consumes": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [{
+                    "in": "body",
+                    "name": "body",
+                    "description": "advance object that needs to be added",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/definitions/advance"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Successfully added a new advance for approval"
+                    },
+                    "405": {
+                        "description": "Invalid input,adding a new advance was unsuccessful"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            },
+            "put": {
+                "tags": [
+                    "Advance"
+                ],
+                "summary": "Update an existing advance",
+                "description": "",
+                "operationId": "update_advance",
+                "consumes": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [{
+                    "in": "body",
+                    "name": "body",
+                    "description": "advance object that needs to be added",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/definitions/advance"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Success"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "advance not found"
+                    },
+                    "405": {
+                        "description": "Validation exception"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            }
+        },
+        "/advance/{advance_id}": {
+            "get": {
+                "tags": [
+                    "Advance"
+                ],
+                "summary": "Find advance by ID",
+                "description": "Returns a single advance",
+                "operationId": "get_advance_by_id",
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [{
+                    "name": "advance_id",
+                    "in": "path",
+                    "description": "ID of advance to return object",
+                    "required": true,
+                    "type": "integer",
+                    "format": "int64"
+                }],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/advance"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "advance not found"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            },
+            "delete": {
+                "tags": [
+                    "Advance"
+                ],
+                "summary": "Deletes an advance",
+                "description": "",
+                "operationId": "delete_advance",
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [{
+                        "name": "api_key",
+                        "in": "header",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "advance_id",
+                        "in": "path",
+                        "description": "advance id to delete",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "advance not found"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            }
+        },
+        "/advance/{advance_id}/submit_for_approval": {
+            "patch": {
+                "tags": [
+                    "Advance"
+                ],
+                "summary": "Submit advance by ID",
+                "description": "Submits advance for approval",
+                "operationId": "submit_advance_for_approval",
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [{
+                    "name": "advance_id",
+                    "in": "path",
+                    "description": "ID of advance to return object",
+                    "required": true,
+                    "type": "integer",
+                    "format": "int64"
+                }],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/advance"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "advance not found"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            }
+        },
+        "/advance/{advance_id}/approve": {
+            "patch": {
+                "tags": [
+                    "Advance"
+                ],
+                "summary": "Approve advance by ID",
+                "description": "Approves Advance",
+                "operationId": "approve_advance",
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [{
+                    "name": "advance_id",
+                    "in": "path",
+                    "description": "ID of advance to return object",
+                    "required": true,
+                    "type": "integer",
+                    "format": "int64"
+                }],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/advance"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "advance not found"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            }
+        },
+        "/advance/{advance_id}/reject": {
+            "patch": {
+                "tags": [
+                    "Advance"
+                ],
+                "summary": "Approve advance by ID",
+                "description": "Rejects Advance",
+                "operationId": "reject_advance",
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [{
+                    "name": "advance_id",
+                    "in": "path",
+                    "description": "ID of advance to return object",
+                    "required": true,
+                    "type": "integer",
+                    "format": "int64"
+                }],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/advance"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "advance not found"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            }
+        },
+        "/advance_statuses": {
+            "get": {
+                "summary": "advance_statuses List",
+                "description": "The advance_status endpoint returns multiple advance_status requested given the parameters injected. \n",
+                "parameters": [{
+                    "name": "advance_status_id",
+                    "in": "query",
+                    "description": "advance_status id",
+                    "required": false,
+                    "type": "number",
+                    "format": "integer"
+                }],
+                "tags": [
+                    "Advance Status"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "An array of advance_status returned",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/advance_status"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            }
+        },
+        "/advance_status": {
+            "post": {
+                "tags": [
+                    "Advance Status"
+                ],
+                "summary": "Add a new advance_status",
+                "description": "new advance_status",
+                "operationId": "add_advance_status",
+                "consumes": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [{
+                    "in": "body",
+                    "name": "body",
+                    "description": "advance_status object that needs to be added",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/definitions/advance_status"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Successfully added a new advance_status for approval"
+                    },
+                    "405": {
+                        "description": "Invalid input,adding a new advance_status was unsuccessful"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            },
+            "put": {
+                "tags": [
+                    "Advance Status"
+                ],
+                "summary": "Update an existing advance_status",
+                "description": "",
+                "operationId": "update_advance_status",
+                "consumes": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [{
+                    "in": "body",
+                    "name": "body",
+                    "description": "advance_status object that needs to be added",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/definitions/advance_status"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Success"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "advance_status not found"
+                    },
+                    "405": {
+                        "description": "Validation exception"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            }
+        },
+        "/advance_status/{advance_status_id}": {
+            "get": {
+                "tags": [
+                    "Advance Status"
+                ],
+                "summary": "Find advance_status by ID",
+                "description": "Returns a single advance_status",
+                "operationId": "get_advance_status_by_id",
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [{
+                    "name": "advance_status_id",
+                    "in": "path",
+                    "description": "ID of advance_status to return object",
+                    "required": true,
+                    "type": "integer",
+                    "format": "int64"
+                }],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/advance_status"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "advance_status not found"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            },
+            "delete": {
+                "tags": [
+                    "Advance Status"
+                ],
+                "summary": "Deletes an advance_status",
+                "description": "",
+                "operationId": "delete_advance_status",
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [{
+                        "name": "api_key",
+                        "in": "header",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "advance_status_id",
+                        "in": "path",
+                        "description": "advance_status id to delete",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "advance_status not found"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            }
+        },
+        "/advance_approvals": {
+            "get": {
+                "summary": "advance_approvals List",
+                "description": "The advance_approval endpoint returns multiple advance_approval requested given the parameters injected. \n",
+                "parameters": [{
+                    "name": "advance_approval_id",
+                    "in": "query",
+                    "description": "advance_approval id",
+                    "required": false,
+                    "type": "number",
+                    "format": "integer"
+                }],
+                "tags": [
+                    "Advance Approval"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "An array of advance_approval returned",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/advance_approval"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            }
+        },
+        "/advance_approval": {
+            "post": {
+                "tags": [
+                    "Advance Approval"
+                ],
+                "summary": "Add a new advance_approval",
+                "description": "new advance_approval",
+                "operationId": "add_advance_approval",
+                "consumes": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [{
+                    "in": "body",
+                    "name": "body",
+                    "description": "advance_approval object that needs to be added",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/definitions/advance_approval"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Successfully added a new advance_approval for approval"
+                    },
+                    "405": {
+                        "description": "Invalid input,adding a new advance_approval was unsuccessful"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            },
+            "put": {
+                "tags": [
+                    "Advance Approval"
+                ],
+                "summary": "Update an existing advance_approval",
+                "description": "",
+                "operationId": "update_advance_approval",
+                "consumes": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [{
+                    "in": "body",
+                    "name": "body",
+                    "description": "advance_approval object that needs to be added",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/definitions/advance_approval"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Success"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "advance_approval not found"
+                    },
+                    "405": {
+                        "description": "Validation exception"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            }
+        },
+        "/advance_approval/{advance_approval_id}": {
+            "get": {
+                "tags": [
+                    "Advance Approval"
+                ],
+                "summary": "Find advance_approval by ID",
+                "description": "Returns a single advance_approval",
+                "operationId": "get_advance_approval_by_id",
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [{
+                    "name": "advance_approval_id",
+                    "in": "path",
+                    "description": "ID of advance_approval to return object",
+                    "required": true,
+                    "type": "integer",
+                    "format": "int64"
+                }],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/advance_approval"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "advance_approval not found"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            },
+            "delete": {
+                "tags": [
+                    "Advance Approval"
+                ],
+                "summary": "Deletes an advance_approval",
+                "description": "",
+                "operationId": "delete_advance_approval",
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [{
+                        "name": "api_key",
+                        "in": "header",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "advance_approval_id",
+                        "in": "path",
+                        "description": "advance_approval id to delete",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "advance_approval not found"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            }
+        },
+        "/advance_allocations": {
+            "get": {
+                "summary": "advance_allocations List",
+                "description": "The advance_allocation endpoint returns multiple advance_allocation requested given the parameters injected. \n",
+                "parameters": [{
+                    "name": "advance_allocation_id",
+                    "in": "query",
+                    "description": "advance_allocation id",
+                    "required": false,
+                    "type": "number",
+                    "format": "integer"
+                }],
+                "tags": [
+                    "Advance Allocation"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "An array of advance_allocation returned",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/advance_allocation"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            }
+        },
+        "/advance_allocation": {
+            "post": {
+                "tags": [
+                    "Advance Allocation"
+                ],
+                "summary": "Add a new advance_allocation",
+                "description": "new advance_allocation",
+                "operationId": "add_advance_allocation",
+                "consumes": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [{
+                    "in": "body",
+                    "name": "body",
+                    "description": "advance_allocation object that needs to be added",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/definitions/advance_allocation"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Successfully added a new advance_allocation for approval"
+                    },
+                    "405": {
+                        "description": "Invalid input,adding a new advance_allocation was unsuccessful"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            },
+            "put": {
+                "tags": [
+                    "Advance Allocation"
+                ],
+                "summary": "Update an existing advance_allocation",
+                "description": "",
+                "operationId": "update_advance_allocation",
+                "consumes": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [{
+                    "in": "body",
+                    "name": "body",
+                    "description": "advance_allocation object that needs to be added",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/definitions/advance_allocation"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Unexpected error",
+                        "schema": {
+                            "$ref": "#/definitions/Success"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "advance_allocation not found"
+                    },
+                    "405": {
+                        "description": "Validation exception"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            }
+        },
+        "/advance_allocation/{advance_allocation_id}": {
+            "get": {
+                "tags": [
+                    "Advance Allocation"
+                ],
+                "summary": "Find advance_allocation by ID",
+                "description": "Returns a single advance_allocation",
+                "operationId": "get_advance_allocation_by_id",
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [{
+                    "name": "advance_allocation_id",
+                    "in": "path",
+                    "description": "ID of advance_allocation to return object",
+                    "required": true,
+                    "type": "integer",
+                    "format": "int64"
+                }],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/advance_allocation"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "advance_allocation not found"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            },
+            "delete": {
+                "tags": [
+                    "Advance Allocation"
+                ],
+                "summary": "Deletes an advance_allocation",
+                "description": "",
+                "operationId": "delete_advance_allocation",
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [{
+                        "name": "api_key",
+                        "in": "header",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "advance_allocation_id",
+                        "in": "path",
+                        "description": "advance_allocation id to delete",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                ],
+                "responses": {
+                    "400": {
+                        "description": "Invalid ID supplied"
+                    },
+                    "404": {
+                        "description": "advance_allocation not found"
+                    }
+                },
+                "security": [{
+                    "api_key": []
+                }]
+            }
+        }
     },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   },
-   "put": {
-    "tags": [
-     "Advance"
-    ],
-    "summary": "Update an existing advance",
-    "description": "",
-    "operationId": "update_advance",
-    "consumes": [
-     "application/json",
-     "application/xml"
-    ],
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "in": "body",
-      "name": "body",
-      "description": "advance object that needs to be added",
-      "required": true,
-      "schema": {
-       "$ref": "#/definitions/advance"
-      }
-     }
-    ],
-    "responses": {
-     "200": {
-      "description": "Unexpected error",
-      "schema": {
-       "$ref": "#/definitions/Success"
-      }
-     },
-     "400": {
-      "description": "Invalid ID supplied"
-     },
-     "404": {
-      "description": "advance not found"
-     },
-     "405": {
-      "description": "Validation exception"
-     }
+    "securityDefinitions": {
+        "api_key": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
     },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   }
-  },
-  "/advance/{advance_id}": {
-   "get": {
-    "tags": [
-     "Advance"
-    ],
-    "summary": "Find advance by ID",
-    "description": "Returns a single advance",
-    "operationId": "get_advance_by_id",
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "name": "advance_id",
-      "in": "path",
-      "description": "ID of advance to return object",
-      "required": true,
-      "type": "integer",
-      "format": "int64"
-     }
-    ],
-    "responses": {
-     "200": {
-      "description": "successful operation",
-      "schema": {
-       "$ref": "#/definitions/advance"
-      }
-     },
-     "400": {
-      "description": "Invalid ID supplied"
-     },
-     "404": {
-      "description": "advance not found"
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   },
-   "delete": {
-    "tags": [
-     "Advance"
-    ],
-    "summary": "Deletes an advance",
-    "description": "",
-    "operationId": "delete_advance",
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "name": "api_key",
-      "in": "header",
-      "required": true,
-      "type": "string"
-     },
-     {
-      "name": "advance_id",
-      "in": "path",
-      "description": "advance id to delete",
-      "required": true,
-      "type": "integer",
-      "format": "int64"
-     }
-    ],
-    "responses": {
-     "400": {
-      "description": "Invalid ID supplied"
-     },
-     "404": {
-      "description": "advance not found"
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   }
-  },
-  "/advance/{advance_id}/submit_for_approval": {
-   "patch": {
-    "tags": [
-     "Advance"
-    ],
-    "summary": "Submit advance by ID",
-    "description": "Submits advance for approval",
-    "operationId": "submit_advance_for_approval",
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "name": "advance_id",
-      "in": "path",
-      "description": "ID of advance to return object",
-      "required": true,
-      "type": "integer",
-      "format": "int64"
-     }
-    ],
-    "responses": {
-     "200": {
-      "description": "successful operation",
-      "schema": {
-       "$ref": "#/definitions/advance"
-      }
-     },
-     "400": {
-      "description": "Invalid ID supplied"
-     },
-     "404": {
-      "description": "advance not found"
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   }
-  },
-  "/advance/{advance_id}/approve": {
-   "patch": {
-    "tags": [
-     "Advance"
-    ],
-    "summary": "Approve advance by ID",
-    "description": "Approves Advance",
-    "operationId": "approve_advance",
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "name": "advance_id",
-      "in": "path",
-      "description": "ID of advance to return object",
-      "required": true,
-      "type": "integer",
-      "format": "int64"
-     }
-    ],
-    "responses": {
-     "200": {
-      "description": "successful operation",
-      "schema": {
-       "$ref": "#/definitions/advance"
-      }
-     },
-     "400": {
-      "description": "Invalid ID supplied"
-     },
-     "404": {
-      "description": "advance not found"
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   }
-  },
-  "/advance/{advance_id}/reject": {
-   "patch": {
-    "tags": [
-     "Advance"
-    ],
-    "summary": "Approve advance by ID",
-    "description": "Rejects Advance",
-    "operationId": "reject_advance",
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "name": "advance_id",
-      "in": "path",
-      "description": "ID of advance to return object",
-      "required": true,
-      "type": "integer",
-      "format": "int64"
-     }
-    ],
-    "responses": {
-     "200": {
-      "description": "successful operation",
-      "schema": {
-       "$ref": "#/definitions/advance"
-      }
-     },
-     "400": {
-      "description": "Invalid ID supplied"
-     },
-     "404": {
-      "description": "advance not found"
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   }
-  },
-  "/advance_statuses": {
-   "get": {
-    "summary": "advance_statuses List",
-    "description": "The advance_status endpoint returns multiple advance_status requested given the parameters injected. \n",
-    "parameters": [
-     {
-      "name": "advance_status_id",
-      "in": "query",
-      "description": "advance_status id",
-      "required": false,
-      "type": "number",
-      "format": "integer"
-     }
-    ],
-    "tags": [
-     "Advance Status"
-    ],
-    "responses": {
-     "200": {
-      "description": "An array of advance_status returned",
-      "schema": {
-       "type": "array",
-       "items": {
-        "$ref": "#/definitions/advance_status"
-       }
-      }
-     },
-     "404": {
-      "description": "Unexpected error",
-      "schema": {
-       "$ref": "#/definitions/Error"
-      }
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   }
-  },
-  "/advance_status": {
-   "post": {
-    "tags": [
-     "Advance Status"
-    ],
-    "summary": "Add a new advance_status",
-    "description": "new advance_status",
-    "operationId": "add_advance_status",
-    "consumes": [
-     "application/json",
-     "application/xml"
-    ],
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "in": "body",
-      "name": "body",
-      "description": "advance_status object that needs to be added",
-      "required": true,
-      "schema": {
-       "$ref": "#/definitions/advance_status"
-      }
-     }
-    ],
-    "responses": {
-     "200": {
-      "description": "Successfully added a new advance_status for approval"
-     },
-     "405": {
-      "description": "Invalid input,adding a new advance_status was unsuccessful"
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   },
-   "put": {
-    "tags": [
-     "Advance Status"
-    ],
-    "summary": "Update an existing advance_status",
-    "description": "",
-    "operationId": "update_advance_status",
-    "consumes": [
-     "application/json",
-     "application/xml"
-    ],
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "in": "body",
-      "name": "body",
-      "description": "advance_status object that needs to be added",
-      "required": true,
-      "schema": {
-       "$ref": "#/definitions/advance_status"
-      }
-     }
-    ],
-    "responses": {
-     "200": {
-      "description": "Unexpected error",
-      "schema": {
-       "$ref": "#/definitions/Success"
-      }
-     },
-     "400": {
-      "description": "Invalid ID supplied"
-     },
-     "404": {
-      "description": "advance_status not found"
-     },
-     "405": {
-      "description": "Validation exception"
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   }
-  },
-  "/advance_status/{advance_status_id}": {
-   "get": {
-    "tags": [
-     "Advance Status"
-    ],
-    "summary": "Find advance_status by ID",
-    "description": "Returns a single advance_status",
-    "operationId": "get_advance_status_by_id",
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "name": "advance_status_id",
-      "in": "path",
-      "description": "ID of advance_status to return object",
-      "required": true,
-      "type": "integer",
-      "format": "int64"
-     }
-    ],
-    "responses": {
-     "200": {
-      "description": "successful operation",
-      "schema": {
-       "$ref": "#/definitions/advance_status"
-      }
-     },
-     "400": {
-      "description": "Invalid ID supplied"
-     },
-     "404": {
-      "description": "advance_status not found"
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   },
-   "delete": {
-    "tags": [
-     "Advance Status"
-    ],
-    "summary": "Deletes an advance_status",
-    "description": "",
-    "operationId": "delete_advance_status",
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "name": "api_key",
-      "in": "header",
-      "required": true,
-      "type": "string"
-     },
-     {
-      "name": "advance_status_id",
-      "in": "path",
-      "description": "advance_status id to delete",
-      "required": true,
-      "type": "integer",
-      "format": "int64"
-     }
-    ],
-    "responses": {
-     "400": {
-      "description": "Invalid ID supplied"
-     },
-     "404": {
-      "description": "advance_status not found"
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   }
-  },
-  "/advance_approvals": {
-   "get": {
-    "summary": "advance_approvals List",
-    "description": "The advance_approval endpoint returns multiple advance_approval requested given the parameters injected. \n",
-    "parameters": [
-     {
-      "name": "advance_approval_id",
-      "in": "query",
-      "description": "advance_approval id",
-      "required": false,
-      "type": "number",
-      "format": "integer"
-     }
-    ],
-    "tags": [
-     "Advance Approval"
-    ],
-    "responses": {
-     "200": {
-      "description": "An array of advance_approval returned",
-      "schema": {
-       "type": "array",
-       "items": {
-        "$ref": "#/definitions/advance_approval"
-       }
-      }
-     },
-     "404": {
-      "description": "Unexpected error",
-      "schema": {
-       "$ref": "#/definitions/Error"
-      }
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   }
-  },
-  "/advance_approval": {
-   "post": {
-    "tags": [
-     "Advance Approval"
-    ],
-    "summary": "Add a new advance_approval",
-    "description": "new advance_approval",
-    "operationId": "add_advance_approval",
-    "consumes": [
-     "application/json",
-     "application/xml"
-    ],
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "in": "body",
-      "name": "body",
-      "description": "advance_approval object that needs to be added",
-      "required": true,
-      "schema": {
-       "$ref": "#/definitions/advance_approval"
-      }
-     }
-    ],
-    "responses": {
-     "200": {
-      "description": "Successfully added a new advance_approval for approval"
-     },
-     "405": {
-      "description": "Invalid input,adding a new advance_approval was unsuccessful"
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   },
-   "put": {
-    "tags": [
-     "Advance Approval"
-    ],
-    "summary": "Update an existing advance_approval",
-    "description": "",
-    "operationId": "update_advance_approval",
-    "consumes": [
-     "application/json",
-     "application/xml"
-    ],
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "in": "body",
-      "name": "body",
-      "description": "advance_approval object that needs to be added",
-      "required": true,
-      "schema": {
-       "$ref": "#/definitions/advance_approval"
-      }
-     }
-    ],
-    "responses": {
-     "200": {
-      "description": "Unexpected error",
-      "schema": {
-       "$ref": "#/definitions/Success"
-      }
-     },
-     "400": {
-      "description": "Invalid ID supplied"
-     },
-     "404": {
-      "description": "advance_approval not found"
-     },
-     "405": {
-      "description": "Validation exception"
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   }
-  },
-  "/advance_approval/{advance_approval_id}": {
-   "get": {
-    "tags": [
-     "Advance Approval"
-    ],
-    "summary": "Find advance_approval by ID",
-    "description": "Returns a single advance_approval",
-    "operationId": "get_advance_approval_by_id",
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "name": "advance_approval_id",
-      "in": "path",
-      "description": "ID of advance_approval to return object",
-      "required": true,
-      "type": "integer",
-      "format": "int64"
-     }
-    ],
-    "responses": {
-     "200": {
-      "description": "successful operation",
-      "schema": {
-       "$ref": "#/definitions/advance_approval"
-      }
-     },
-     "400": {
-      "description": "Invalid ID supplied"
-     },
-     "404": {
-      "description": "advance_approval not found"
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   },
-   "delete": {
-    "tags": [
-     "Advance Approval"
-    ],
-    "summary": "Deletes an advance_approval",
-    "description": "",
-    "operationId": "delete_advance_approval",
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "name": "api_key",
-      "in": "header",
-      "required": true,
-      "type": "string"
-     },
-     {
-      "name": "advance_approval_id",
-      "in": "path",
-      "description": "advance_approval id to delete",
-      "required": true,
-      "type": "integer",
-      "format": "int64"
-     }
-    ],
-    "responses": {
-     "400": {
-      "description": "Invalid ID supplied"
-     },
-     "404": {
-      "description": "advance_approval not found"
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   }
-  },
-  "/advance_allocations": {
-   "get": {
-    "summary": "advance_allocations List",
-    "description": "The advance_allocation endpoint returns multiple advance_allocation requested given the parameters injected. \n",
-    "parameters": [
-     {
-      "name": "advance_allocation_id",
-      "in": "query",
-      "description": "advance_allocation id",
-      "required": false,
-      "type": "number",
-      "format": "integer"
-     }
-    ],
-    "tags": [
-     "Advance Allocation"
-    ],
-    "responses": {
-     "200": {
-      "description": "An array of advance_allocation returned",
-      "schema": {
-       "type": "array",
-       "items": {
-        "$ref": "#/definitions/advance_allocation"
-       }
-      }
-     },
-     "404": {
-      "description": "Unexpected error",
-      "schema": {
-       "$ref": "#/definitions/Error"
-      }
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   }
-  },
-  "/advance_allocation": {
-   "post": {
-    "tags": [
-     "Advance Allocation"
-    ],
-    "summary": "Add a new advance_allocation",
-    "description": "new advance_allocation",
-    "operationId": "add_advance_allocation",
-    "consumes": [
-     "application/json",
-     "application/xml"
-    ],
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "in": "body",
-      "name": "body",
-      "description": "advance_allocation object that needs to be added",
-      "required": true,
-      "schema": {
-       "$ref": "#/definitions/advance_allocation"
-      }
-     }
-    ],
-    "responses": {
-     "200": {
-      "description": "Successfully added a new advance_allocation for approval"
-     },
-     "405": {
-      "description": "Invalid input,adding a new advance_allocation was unsuccessful"
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   },
-   "put": {
-    "tags": [
-     "Advance Allocation"
-    ],
-    "summary": "Update an existing advance_allocation",
-    "description": "",
-    "operationId": "update_advance_allocation",
-    "consumes": [
-     "application/json",
-     "application/xml"
-    ],
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "in": "body",
-      "name": "body",
-      "description": "advance_allocation object that needs to be added",
-      "required": true,
-      "schema": {
-       "$ref": "#/definitions/advance_allocation"
-      }
-     }
-    ],
-    "responses": {
-     "200": {
-      "description": "Unexpected error",
-      "schema": {
-       "$ref": "#/definitions/Success"
-      }
-     },
-     "400": {
-      "description": "Invalid ID supplied"
-     },
-     "404": {
-      "description": "advance_allocation not found"
-     },
-     "405": {
-      "description": "Validation exception"
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   }
-  },
-  "/advance_allocation/{advance_allocation_id}": {
-   "get": {
-    "tags": [
-     "Advance Allocation"
-    ],
-    "summary": "Find advance_allocation by ID",
-    "description": "Returns a single advance_allocation",
-    "operationId": "get_advance_allocation_by_id",
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "name": "advance_allocation_id",
-      "in": "path",
-      "description": "ID of advance_allocation to return object",
-      "required": true,
-      "type": "integer",
-      "format": "int64"
-     }
-    ],
-    "responses": {
-     "200": {
-      "description": "successful operation",
-      "schema": {
-       "$ref": "#/definitions/advance_allocation"
-      }
-     },
-     "400": {
-      "description": "Invalid ID supplied"
-     },
-     "404": {
-      "description": "advance_allocation not found"
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   },
-   "delete": {
-    "tags": [
-     "Advance Allocation"
-    ],
-    "summary": "Deletes an advance_allocation",
-    "description": "",
-    "operationId": "delete_advance_allocation",
-    "produces": [
-     "application/json",
-     "application/xml"
-    ],
-    "parameters": [
-     {
-      "name": "api_key",
-      "in": "header",
-      "required": true,
-      "type": "string"
-     },
-     {
-      "name": "advance_allocation_id",
-      "in": "path",
-      "description": "advance_allocation id to delete",
-      "required": true,
-      "type": "integer",
-      "format": "int64"
-     }
-    ],
-    "responses": {
-     "400": {
-      "description": "Invalid ID supplied"
-     },
-     "404": {
-      "description": "advance_allocation not found"
-     }
-    },
-    "security": [
-     {
-      "api_key": []
-     }
-    ]
-   }
-  }
- },
- "securityDefinitions": {
-  "api_key": {
-   "type": "apiKey",
-   "name": "Authorization",
-   "in": "header"
-  }
- },
- "definitions": {
-  "advance": {
-   "type": "object",
-   "required": [
-    "id",
-    "created_at"
-   ],
-   "properties": {
-    "id": {
-     "type": "integer",
-     "format": "int64",
-     "example": 1
-    },
-    "num": {
-     "type": "number",
-     "format": "int64",
-     "example": 20000
-    },
-    "str": {
-     "type": "string",
-     "example": "PayPal.pdf"
-    },
-    "date": {
-     "type": "string",
-     "format": "date-time",
-     "example": "2010-02-11"
-    },
-    "created_at": {
-     "type": "string",
-     "format": "date-time",
-     "example": "2010-02-11"
-    },
-    "updated_at": {
-     "type": "string",
-     "format": "date-time",
-     "example": "2010-02-11"
+    "definitions": {
+        "advance": {
+            "type": "object",
+            "required": [
+                "id",
+                "created_at"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "format": "int64",
+                    "example": 1
+                },
+                "num": {
+                    "type": "number",
+                    "format": "int64",
+                    "example": 20000
+                },
+                "str": {
+                    "type": "string",
+                    "example": "PayPal.pdf"
+                },
+                "date": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2010-02-11"
+                },
+                "created_at": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2010-02-11"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2010-02-11"
+                }
+            },
+            "xml": {
+                "name": "advance"
+            }
+        },
+        "advance_status": {
+            "type": "object",
+            "required": [
+                "id",
+                "created_at"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "format": "int64",
+                    "example": 1
+                },
+                "num": {
+                    "type": "number",
+                    "format": "int64",
+                    "example": 20000
+                },
+                "str": {
+                    "type": "string",
+                    "example": "PayPal.pdf"
+                },
+                "date": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2010-02-11"
+                },
+                "created_at": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2010-02-11"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2010-02-11"
+                }
+            },
+            "xml": {
+                "name": "advance_status"
+            }
+        },
+        "advance_approval": {
+            "type": "object",
+            "required": [
+                "id",
+                "created_at"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "format": "int64",
+                    "example": 1
+                },
+                "num": {
+                    "type": "number",
+                    "format": "int64",
+                    "example": 20000
+                },
+                "str": {
+                    "type": "string",
+                    "example": "PayPal.pdf"
+                },
+                "date": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2010-02-11"
+                },
+                "created_at": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2010-02-11"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2010-02-11"
+                }
+            },
+            "xml": {
+                "name": "advance_approval"
+            }
+        },
+        "advance_allocation": {
+            "type": "object",
+            "required": [
+                "id",
+                "created_at"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "format": "int64",
+                    "example": 1
+                },
+                "num": {
+                    "type": "number",
+                    "format": "int64",
+                    "example": 20000
+                },
+                "str": {
+                    "type": "string",
+                    "example": "PayPal.pdf"
+                },
+                "date": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2010-02-11"
+                },
+                "created_at": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2010-02-11"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2010-02-11"
+                }
+            },
+            "xml": {
+                "name": "advance_allocation"
+            }
+        },
+        "Error": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "object not found"
+                }
+            }
+        },
+        "Success": {
+            "type": "object",
+            "properties": {
+                "msg": {
+                    "type": "string",
+                    "example": "object not found"
+                }
+            }
+        }
     }
-   },
-   "xml": {
-    "name": "advance"
-   }
-  },
-  "advance_status": {
-   "type": "object",
-   "required": [
-    "id",
-    "created_at"
-   ],
-   "properties": {
-    "id": {
-     "type": "integer",
-     "format": "int64",
-     "example": 1
-    },
-    "num": {
-     "type": "number",
-     "format": "int64",
-     "example": 20000
-    },
-    "str": {
-     "type": "string",
-     "example": "PayPal.pdf"
-    },
-    "date": {
-     "type": "string",
-     "format": "date-time",
-     "example": "2010-02-11"
-    },
-    "created_at": {
-     "type": "string",
-     "format": "date-time",
-     "example": "2010-02-11"
-    },
-    "updated_at": {
-     "type": "string",
-     "format": "date-time",
-     "example": "2010-02-11"
-    }
-   },
-   "xml": {
-    "name": "advance_status"
-   }
-  },
-  "advance_approval": {
-   "type": "object",
-   "required": [
-    "id",
-    "created_at"
-   ],
-   "properties": {
-    "id": {
-     "type": "integer",
-     "format": "int64",
-     "example": 1
-    },
-    "num": {
-     "type": "number",
-     "format": "int64",
-     "example": 20000
-    },
-    "str": {
-     "type": "string",
-     "example": "PayPal.pdf"
-    },
-    "date": {
-     "type": "string",
-     "format": "date-time",
-     "example": "2010-02-11"
-    },
-    "created_at": {
-     "type": "string",
-     "format": "date-time",
-     "example": "2010-02-11"
-    },
-    "updated_at": {
-     "type": "string",
-     "format": "date-time",
-     "example": "2010-02-11"
-    }
-   },
-   "xml": {
-    "name": "advance_approval"
-   }
-  },
-  "advance_allocation": {
-   "type": "object",
-   "required": [
-    "id",
-    "created_at"
-   ],
-   "properties": {
-    "id": {
-     "type": "integer",
-     "format": "int64",
-     "example": 1
-    },
-    "num": {
-     "type": "number",
-     "format": "int64",
-     "example": 20000
-    },
-    "str": {
-     "type": "string",
-     "example": "PayPal.pdf"
-    },
-    "date": {
-     "type": "string",
-     "format": "date-time",
-     "example": "2010-02-11"
-    },
-    "created_at": {
-     "type": "string",
-     "format": "date-time",
-     "example": "2010-02-11"
-    },
-    "updated_at": {
-     "type": "string",
-     "format": "date-time",
-     "example": "2010-02-11"
-    }
-   },
-   "xml": {
-    "name": "advance_allocation"
-   }
-  },
-  "Error": {
-   "type": "object",
-   "properties": {
-    "error": {
-     "type": "string",
-     "example": "object not found"
-    }
-   }
-  },
-  "Success": {
-   "type": "object",
-   "properties": {
-    "msg": {
-     "type": "string",
-     "example": "object not found"
-    }
-   }
-  }
- }
 }

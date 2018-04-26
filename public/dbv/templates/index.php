@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html xmlns="https://www.w3.org/1999/xhtml">
 <head>
 	<title><?php echo __("dbv.php - Database versioning, made easy"); ?></title>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 	<meta http-equiv="content-language" content="en" />
 	<meta name="robots" content="noindex,nofollow" />
-	<meta name="author" content="Victor Stanciu - http://victorstanciu.ro" />
+	<meta name="author" content="Victor Stanciu - https://victorstanciu.ro" />
 
 	<link rel="stylesheet" type="text/css" media="screen" href="public/stylesheets/dbv.css" />
 	<link rel="stylesheet" type="text/css" media="screen" href="public/stylesheets/codemirror.css" />
@@ -30,7 +30,7 @@
 			<div class="container">
 				<a href="index.php" class="brand">dbv<span>.php</span></a>
 				<ul class="nav pull-right">
-					<li><a href="http://dbv.vizuina.com"><?php echo __('Check for updates'); ?></a></li>
+					<li><a href="https://dbv.vizuina.com"><?php echo __('Check for updates'); ?></a></li>
 				</ul>
 			</div>
 		</div>

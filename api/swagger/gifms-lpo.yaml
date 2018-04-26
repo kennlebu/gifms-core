@@ -3,12 +3,12 @@ info:
   description: Finance management sysytem
   version: 1.0.0
   title: Grants Information Management System
-  termsOfService: 'http://kefinance.clintonhealthaccess.org/terms/'
+  termsOfService: 'https://kefinance.clintonhealthaccess.org/terms/'
   contact:
     email: mwangikevinn@gmail.com
   license:
     name: Apache 2.0
-    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+    url: 'https://www.apache.org/licenses/LICENSE-2.0.html'
 host: 'localhost:8000'
 basePath: /api
 tags:
@@ -16,47 +16,47 @@ tags:
     description: Everything About Local Purchase Orders
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/lpos/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/lpos/docs'
   - name: LPO Status
     description: Everything About LPO Statuses
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/lpo_statuses/docs'      
+      url: 'https://kefinance.clintonhealthaccess.org/api/lpo_statuses/docs'      
   - name: LPO Quotation
     description: Everything About LPO Quotations
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/lpo_quotations/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/lpo_quotations/docs'
   - name: LPO Item
     description: Everything About LPO Items
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/lpo_items/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/lpo_items/docs'
   - name: LPO Term
     description: Everything About LPO Terms
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/lpo_terms/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/lpo_terms/docs'
   - name: LPO Comment
     description: Everything About LPO Comments
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/lpo_comments/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/lpo_comments/docs'
   - name: LPO Viewing Permission
     description: Everything About LPO Viewing Permissions
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/lpo_viewing_permissions/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/lpo_viewing_permissions/docs'
   - name: LPO Approval
     description: Everything About LPO Approvals
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/lpo_approvals/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/lpo_approvals/docs'
   - name: LPO Default Term
     description: Everything About LPO Default Term
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/lpo_default_term/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/lpo_default_term/docs'
 schemes:
   - http
   - https

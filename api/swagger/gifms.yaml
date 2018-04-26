@@ -3,12 +3,12 @@ info:
   description: Finance management sysytem
   version: 1.0.0
   title: Grants Information Management System
-  termsOfService: 'http://kefinance.clintonhealthaccess.org/terms/'
+  termsOfService: 'https://kefinance.clintonhealthaccess.org/terms/'
   contact:
     email: mwangikevinn@gmail.com
   license:
     name: Apache 2.0
-    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+    url: 'https://www.apache.org/licenses/LICENSE-2.0.html'
 host: 'localhost:8000'
 basePath: /api
 tags:
@@ -16,287 +16,287 @@ tags:
     description: Everything About Supplier
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/Supplier/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/Supplier/docs'
   - name: Supplier Rate
     description: Everything About Supplier Rate
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/supplier_rate/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/supplier_rate/docs'
   - name: Supply Category
     description: Everything About Supply Category
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/supply_cath/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/supply_cath/docs'
   - name: Supply Category Item
     description: Everything About Supply Category Item
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/supply_category_item/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/supply_category_item/docs'
   - name: Staff
     description: Everything About Staff
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/staff/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/staff/docs'
   - name: Department
     description: Everything About Department
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/departments/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/departments/docs'
   - name: Roles
     description: Everything About Roles
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/roles/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/roles/docs'
   - name: Rights
     description: Everything About Rights
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/right/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/right/docs'
   - name: Project
     description: Everything About Project
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/project/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/project/docs'
   - name: Project Activity
     description: Everything About Project Activity
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/project_activity/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/project_activity/docs'
   - name: Project Budget Account
     description: Everything About Project Budget Account
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/project_budget_account/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/project_budget_account/docs'
   - name: Project Cash Needs
     description: Everything About Project Cash Needs
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/project_cash_need/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/project_cash_need/docs'
   - name: Project Master List
     description: Everything About Project Master List
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/project_master_list/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/project_master_list/docs'
   - name: Project Objective
     description: Everything About Project Objective
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/project_objective/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/project_objective/docs'
   - name: Project Team
     description: Everything About Project Team
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/project_team/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/project_team/docs'
   - name: Mobile Payment
     description: Everything About Mobile Payment
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/mobile_payment/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/mobile_payment/docs'
   - name: Mobile Payment Approval
     description: Everything About Mobile Payment Approval
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/mobile_payment_approval/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/mobile_payment_approval/docs'
   - name: Mobile Payment Allocation
     description: Everything About Mobile Payment Allocation
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/mobile_payment_allocation/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/mobile_payment_allocation/docs'
   - name: Mobile Payment Payee
     description: Everything About Mobile Payment Payee
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/mobile_payment_payee/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/mobile_payment_payee/docs'
   - name: Mobile Payment Status
     description: Everything About Mobile Payment Status
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/mobile_payment_status/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/mobile_payment_status/docs'
   - name: Mobile Payment Tariff
     description: Everything About Mobile Payment Tariff
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/mobile_payment_tariff/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/mobile_payment_tariff/docs'
   - name: Mobile Payment Type
     description: Everything About Mobile Payment Type
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/mobile_payment_type/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/mobile_payment_type/docs'
   - name: Mobile Payment Viewing Permission
     description: Everything About Mobile Payment Viewing Permission
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/mobile_payment_viewing_permission/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/mobile_payment_viewing_permission/docs'
   - name: Payees Upload Mode
     description: Everything About Payees Upload Mode
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/payees_upload_mode/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/payees_upload_mode/docs'
   - name: LPO
     description: Everything About Local Purchase Orders
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/lpos/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/lpos/docs'
   - name: LPO Status
     description: Everything About LPO Statuses
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/lpo_statuses/docs'      
+      url: 'https://kefinance.clintonhealthaccess.org/api/lpo_statuses/docs'      
   - name: LPO Quotation
     description: Everything About LPO Quotations
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/lpo_quotations/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/lpo_quotations/docs'
   - name: LPO Item
     description: Everything About LPO Items
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/lpo_items/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/lpo_items/docs'
   - name: LPO Term
     description: Everything About LPO Terms
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/lpo_terms/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/lpo_terms/docs'
   - name: LPO Comment
     description: Everything About LPO Comments
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/lpo_comments/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/lpo_comments/docs'
   - name: LPO Viewing Permission
     description: Everything About LPO Viewing Permissions
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/lpo_viewing_permissions/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/lpo_viewing_permissions/docs'
   - name: LPO Approval
     description: Everything About LPO Approvals
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/lpo_approvals/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/lpo_approvals/docs'
   - name: LPO Default Term
     description: Everything About LPO Default Term
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/lpo_default_term/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/lpo_default_term/docs'
   - name: Currency
     description: Everything About Currency
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/currency/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/currency/docs'
   - name: Claim
     description: Everything About Claim
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/claim/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/claim/docs'
   - name: Claim Status
     description: Everything About Claim Status
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/claim_status/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/claim_status/docs'
   - name: Claim Approval
     description: Everything About Claim Approval
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/claim_approval/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/claim_approval/docs'
   - name: Claim Allocation
     description: Everything About Claim Allocation
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/claim_allocation/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/claim_allocation/docs'
   - name: Advance
     description: Everything About Advance
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/advance/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/advance/docs'
   - name: Advance Status
     description: Everything About Advance Status
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/advance_status/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/advance_status/docs'
   - name: Advance Approval
     description: Everything About Advance Approval
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/advance_approval/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/advance_approval/docs'
   - name: Advance Allocation
     description: Everything About Advance Allocation
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/advance_allocation/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/advance_allocation/docs'
   - name: Account
     description: Everything About Account
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/account/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/account/docs'
   - name: Payment
     description: Everything About Payment
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/payment/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/payment/docs'
   - name: Payment Batch
     description: Everything About Payment Batch
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/payment_batch/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/payment_batch/docs'
   - name: Payment Mode
     description: Everything About Payment Mode
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/payment_mode/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/payment_mode/docs'
   - name: Payment Type
     description: Everything About Payment Type
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/payment_type/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/payment_type/docs'
   - name: Payment Voucher
     description: Everything About Payment Voucher
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/payment_voucher/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/payment_voucher/docs'
   - name: Approval
     description: Everything About Approval
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/approval/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/approval/docs'
   - name: Allocation
     description: Everything About Allocation
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/allocation/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/allocation/docs'
   - name: Delivery
     description: Everything About Delivery
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/delivery/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/delivery/docs'
   - name: Delivery Status
     description: Everything About Delivery Status
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/delivery_status/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/delivery_status/docs'
   - name: Delivery Approval
     description: Everything About Delivery Approval
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/delivery_approval/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/delivery_approval/docs'
   - name: Invoice
     description: Everything About Invoice
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/invoice/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/invoice/docs'
   - name: Invoice Status
     description: Everything About Invoice Status
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/invoice_status/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/invoice_status/docs'
   - name: Invoice Approval
     description: Everything About Invoice Approval
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/invoice_approval/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/invoice_approval/docs'
   - name: Invoice Allocation
     description: Everything About Invoice Allocation
     externalDocs:
       description: Find out more
-      url: 'http://kefinance.clintonhealthaccess.org/api/invoice_allocation/docs'
+      url: 'https://kefinance.clintonhealthaccess.org/api/invoice_allocation/docs'
 schemes:
   - http
   - https
