@@ -167,12 +167,12 @@ class ReportsApi extends Controller
     
                     $my_result['date_posted'] = (string)$row['payment_date'];
                     $my_result['project'] = $project;
-                    $my_result['program_id'] = $project->program_id;
-                    $my_result['program_desc'] = $project->project_name;
+                    $my_result['program_id'] = isset($project->program_id)?$project->program_id: '';
+                    $my_result['program_desc'] = isset($project->project_name)?$project->project_name: '';
                     $my_result['grant'] = $grant;
                     $my_result['invoice_title'] = $row['payable']['expense_desc'];
-                    $my_result['account_number'] = $account->account_code;
-                    $my_result['account_description'] = $account->account_desc;
+                    $my_result['account_number'] = isset($account->account_code)?$account->account_code:'';
+                    $my_result['account_description'] = isset($account->account_desc)?$account->account_desc:'';
                     $my_result['allocation_amount'] = $allocation['amount_allocated'];
                     $my_result['currecny'] = $currency;
                     $my_result['payable_id'] = $row['payable']['id'];
@@ -202,8 +202,8 @@ class ReportsApi extends Controller
                     if($row['payable_type'] == 'invoices'){ $prefix = 'INV'; }
                     elseif($row['payable_type'] == 'advances'){ $prefix = 'ADV'; }
                     elseif($row['payable_type'] == 'claims'){ $prefix = 'CLM'; }
-                    else { $prefix = 'CHAI'; }
-                    $my_result['voucher_number'] = $prefix.''.$row['payable']['id'];
+                    else { $prefix = 'MMTS'; }
+                    $my_result['voucher_number'] = 'CHAI'.$this->pad_zeros(5, $row['payable']['id']).'-'.$prefix;
     
     
                     array_push($report_data, $my_result);
@@ -231,10 +231,11 @@ class ReportsApi extends Controller
                 $excel_row['account_description'] = $row['account_description'];
                 $excel_row['general_jr'] = $row['general_jr'];
                 $excel_row['specific_jr'] = $row['specific_jr'];
-                $excel_row['allocation_amount0'] = $row['allocation_amount'];
+                $excel_row['allocation_amount'] = $row['allocation_amount'];
+                $row['payable_id'] != $payment_id ? $excel_row['total'] = $row['total_amount'] : $excel_row['total'] = '';
+                $excel_row['transaction_type'] = $row['transaction_type'];
                 $excel_row['voucher_number'] = $row['voucher_number'];
 
-                $row['payable_id'] != $payment_id ? $excel_row['total'] = $row['total_amount'] : $excel_row['total'] = '';
                 
                 $payment_id = $row['payable_id'];
                 array_push($excel_data, $excel_row);
@@ -260,7 +261,7 @@ class ReportsApi extends Controller
     
                 $excel->setDescription('A report of the transactions from '.$fromDateOnly.' to '.$toDateOnly);
     
-                $headings = array('Vendor Name', 'Post Date', 'Project ID', 'Grant Details', 'Account Number', 'Account Description', 'General JR - Main Memo', 'Specific JR - Expense Allocations', 'Allocation', 'Voucher number', 'Total');
+                $headings = array('Vendor Name', 'Post Date', 'Project ID', 'Grant ID', 'Account Number', 'Account Description', 'Invoice Title(Main Memo - General JR)', 'Allocation Memo - Specific JR', 'Allocation Amount', 'Total Amount', 'Transaction Type (Payment Mode)', 'Voucher number');
     
                 $excel->sheet($account_name, function ($sheet) use ($excel_data, $headings, $account_name) {
                     $sheet->setStyle([
@@ -323,9 +324,12 @@ class ReportsApi extends Controller
                         'F' => 35,
                         'G' => 50,
                         'H' => 50,
-                        'I' => 15,
-                        'J' => 15
+                        'I' => 20,
+                        'J' => 15,
+                        'K' => 20,
+                        'L' => 20
                     ));
+                    $sheet->getStyle('K1')->getAlignment()->setWrapText(true);
 
                     $sheet->setFreeze('C2');
                     $sheet->setAutoFilter('C1:C1');
