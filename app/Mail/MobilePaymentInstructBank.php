@@ -47,12 +47,12 @@ class MobilePaymentInstructBank extends Mailable
         $this->PM = Staff::findOrFail($mobile_payment->project_manager_id);
 
         $this->bank_to = array('first_name'=>'Christine', 'last_name'=>'Kithembe', 'email'=>'Christine.Kithembe@nic-bank.com');
-        $this->bank_cc = array(
-            array('first_name'=>'Dennis', 'last_name'=>'Owino', 'email'=>'Dennis.Owino@nic-bank.com'),
-            array('first_name'=>'Maureen', 'last_name'=>'Adega', 'email'=>'Maureen.Adega@nic-bank.com'),
-            array('first_name'=>'NIC', 'last_name'=>'Bank', 'email'=>'niconline@nic-bank.com'),
-            array('first_name'=>'Leonard', 'last_name'=>'Kerika', 'email'=>'Leonard.Kerika@nic-bank.com')
-        );
+        // $this->bank_cc = array(
+        //     array('first_name'=>'Dennis', 'last_name'=>'Owino', 'email'=>'Dennis.Owino@nic-bank.com'),
+        //     array('first_name'=>'Maureen', 'last_name'=>'Adega', 'email'=>'Maureen.Adega@nic-bank.com'),
+        //     array('first_name'=>'NIC', 'last_name'=>'Bank', 'email'=>'niconline@nic-bank.com'),
+        //     array('first_name'=>'Leonard', 'last_name'=>'Kerika', 'email'=>'Leonard.Kerika@nic-bank.com')
+        // );
         $this->chai_cc = array(
             array('first_name'=>$this->financial_controller->f_name, 'last_name'=>$this->financial_controller->l_name, 'email'=>$this->financial_controller->email),
             array('first_name'=>$this->accountant->f_name, 'last_name'=>$this->accountant->l_name, 'email'=>$this->accountant->email),
@@ -105,8 +105,8 @@ class MobilePaymentInstructBank extends Mailable
             ->attachData($pdf_file, 'ALLOWANCES_'.$this->pad_zeros(5,$this->mobile_payment->id).'.pdf')
             ->attachData($csv_file, 'ALLOWANCES_'.$this->pad_zeros(5,$this->mobile_payment->id).'.csv');      
 
-        return $this->to($this->bank_to['email'])
-        // return $this->to('kennlebu@live.com') // for test
+        // return $this->to($this->bank_to['email'])
+        return $this->to('dkarambi@clintonhealthaccess.org') // for test
             ->with([
                     'mobile_payment' => $this->mobile_payment,
                     'addressed_to' => $this->accountant,
