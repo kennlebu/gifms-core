@@ -375,6 +375,7 @@ class SupplierApi extends Controller
         $qb = DB::table('suppliers');
 
         $qb->whereNull('suppliers.deleted_at');
+        $qb->where('status_id', '!=', '1');
 
         $response;
         $response_dt;
