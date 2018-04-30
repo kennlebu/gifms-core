@@ -40,6 +40,7 @@ class CreateMobilePaymentsTable extends Migration
             $table->integer('rejected_by_id')->nullable();
             $table->timestamp('rejected_at')->nullable();
             $table->timestamp('management_approval_at')->nullable();
+            $table->integer('voucher_no')->nullable();
             $table->integer('migration_requested_by_id')->nullable();
             $table->integer('migration_project_id')->nullable();
             $table->integer('migration_account_id')->nullable();

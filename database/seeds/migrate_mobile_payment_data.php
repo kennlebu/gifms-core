@@ -54,6 +54,7 @@ class migrate_mobile_payment_data extends Seeder
             $data_to_migrate[$key]['migration_project_manager_id']         	= $data[$key]['ProjectManager'];
             $data_to_migrate[$key]['migration_id'] 							= $data[$key]['ID'];
             $data_to_migrate[$key]['migration_deleted'] 					= $data[$key]['Deleted'];
+            $data_to_migrate[$key]['management_approval_at']                = $data[$key]['ManagementApprovalDate'];
 
 
 

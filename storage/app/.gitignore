@@ -1,7 +1,9 @@
 invoices/
 lpo/
+lpo_quotations/
 lpo_quotation/
 mobile_payment/
+mobile_payments/
 signsheets/
 staff/
 advances/

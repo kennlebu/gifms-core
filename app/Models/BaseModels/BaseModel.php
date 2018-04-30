@@ -130,5 +130,55 @@ class BaseModel extends Model
         }
 	}
 
+	protected function generate_voucher_no($payable_id, $payable_type, $creation_date){
+		// $prefix = '';
+		// // Now update the invoices, claims and advances
+		// if($payable_type == 'invoices'){
+		// 	$prefix = '-INV';
+		// }
+		// elseif($payable_type == 'advances'){
+		// 	$prefix = '-ADV';
+		// }
+		// elseif($payable_type == 'claims'){
+		// 	$prefix = '-CLM';
+		// }
+		
+		$last_voucher_no = '';
+
+		$new_voucher = new App\Models\PaymentModels\VoucherNumber;
+		$new_voucher->payable_type = $payable_type;
+		$new_voucher->payable_id = $payable_id;
+
+		$previous_voucher = App\Models\PaymentModels\VoucherNumber::latest()->first();
+		if(empty($previous_voucher->voucher_number)){
+			$last_voucher_no = 'KE180000-NEW';
+		}
+		else {
+			$last_voucher_no = $previous_voucher->voucher_number;
+		}
+
+		$year = date_format($creation_date,'Y');
+		$year = substr($year, -2);
+
+		if($year != substr($last_voucher_no, 2, 2)){
+			// start new series
+			$last_voucher_no = 'KE180000-NEW';
+		}
+		
+		$voucher_no = ((int) substr($last_voucher_no, 4, 4)) + 1;
+		$voucher_no = 'KE'.$year.$this->pad_zeros(4, $voucher_no);
+		
+		$new_voucher->voucher_number = $voucher_no;
+
+		if($new_voucher->save()){
+			return array(
+				'id' => $new_voucher->id,
+				'voucher' => $new_voucher->voucher_number
+			);
+		}
+		
+
+	}
+
 
 }

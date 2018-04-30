@@ -33,6 +33,7 @@ use App\Models\StaffModels\Staff;
 use App\Models\GrantModels\Grant;
 use App\Models\ProjectsModels\Project;
 use App\Models\AccountingModels\Account;
+use App\Models\PaymentModels\VoucherNumber;
 
 class ReportsApi extends Controller
 {
@@ -138,9 +139,19 @@ class ReportsApi extends Controller
         if($is_pm == 'true'){
             $mobile_payments = MobilePayment::whereBetween('management_approval_at', [$fromDate, $toDate])->where('currency_id', $currency)
                                 ->where('project_manager_id', $user_id)->get();
+
+            // $mobile_payments = MobilePayment::whereHas('approvals', function($query) use ($fromDate, $toDate){
+            //     $query->whereBetween('created_at', [$fromDate, $toDate]);
+            //     $query->whereNotIn('approval_level_id', [1,2,3,7,8,9,14,15,16]);
+            // })->where('currency_id', $currency)->where('project_manager_id', $user_id)->get();
         }
         else{
             $mobile_payments = MobilePayment::whereBetween('management_approval_at', [$fromDate, $toDate])->where('currency_id', $currency)->get();
+
+            // $mobile_payments = MobilePayment::whereHas('approvals', function($query) use ($fromDate, $toDate){
+            //     $query->whereBetween('created_at', [$fromDate, $toDate]);
+            //     $query->whereNotIn('approval_level_id', [1,2,3,7,8,9,14,15,16]);
+            // })->where('currency_id', $currency)->get();
         }
 
         foreach($mobile_payments as $mobile_payment){
@@ -150,6 +161,21 @@ class ReportsApi extends Controller
         }
 
         foreach($payables as $row){if(isset($row['payable']['allocations'])){
+            $voucher_no = '';
+            if(empty($row['payable']['migration_id'])){
+                $voucher_no = VoucherNumber::first($row['payable']['voucher_no']);
+                $voucher_no = $voucher_no->voucher_number;
+            }
+            else{
+                if($row['payable_type']=='mobile_payments'){
+                    $voucher_no = 'CHAI'.$this->pad_zeros(5, $row['payable']['migration_invoice_id']);
+                    // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , '\nSQL:: '.json_encode($row['payable']) , FILE_APPEND);
+                }
+                else {
+                    $voucher_no = 'CHAI'.$this->pad_zeros(5, $row['payable']['migration_id']);
+                }
+                
+            }
                 
                 foreach($row['payable']['allocations'] as $allocation){
 
@@ -182,7 +208,7 @@ class ReportsApi extends Controller
     
                         $my_result['vendor_name'] = $mpesa_payee;
                         $my_result['general_jr'] = $mpesa_payee.': '.$row['payable']['expense_desc'].'; '.$row['payable']['expense_purpose'];
-                        $my_result['specific_jr'] = $mpesa_payee.': '.$row['payable']['expense_desc'].'; '.$allocation['allocation_purpose'];
+                        $my_result['specific_jr'] = 'MOH OFFICIALS c/o '.$mpesa_payee.': '.$row['payable']['expense_desc'].'; '.$allocation['allocation_purpose'];
                         $my_result['total_amount'] = $row['payable']['totals'];
                         $my_result['transaction_type'] = 'Bulk MMTS';
                     }
@@ -197,13 +223,7 @@ class ReportsApi extends Controller
                         elseif($row['payment']['payment_mode_id'] == 2){ $my_result['transaction_type'] = 'MMTS'; }
                     }
     
-    
-                    $prefix = '';
-                    if($row['payable_type'] == 'invoices'){ $prefix = 'INV'; }
-                    elseif($row['payable_type'] == 'advances'){ $prefix = 'ADV'; }
-                    elseif($row['payable_type'] == 'claims'){ $prefix = 'CLM'; }
-                    else { $prefix = 'MMTS'; }
-                    $my_result['voucher_number'] = 'CHAI'.$this->pad_zeros(5, $row['payable']['id']).'-'.$prefix;
+                    $my_result['voucher_number'] = $voucher_no;
     
     
                     array_push($report_data, $my_result);

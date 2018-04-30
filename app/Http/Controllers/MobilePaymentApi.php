@@ -458,6 +458,10 @@ class MobilePaymentApi extends Controller
                 }
                 // Management approval or accountant approval after corrections
                 elseif($mobile_payment->status_id==4||$mobile_payment->status_id==12){
+                    $mgt_approval_time = new \DateTime();
+                    $v = $this->generate_voucher_no($mobile_payment->id, 'mobile_payments', $mgt_approval_time);
+                    $voucher_number = $v['voucher'];
+                    $voucher_id = (int) $v['id'];
                     
                     /* Get CSV data */
                     date_default_timezone_set('Africa/Nairobi'); // Set timezone to Nairobi
@@ -481,7 +485,7 @@ class MobilePaymentApi extends Controller
                             '', // blank space
                             'KES', // currency
                             $row['total'], // amount
-                            'CHAI'.$this->pad_zeros(5, $mobile_payment->id).'-MMTS' // chaipv
+                            $voucher_number // chaipv
                         );
                         
                         // Add the data to the csv_data array
@@ -495,7 +499,7 @@ class MobilePaymentApi extends Controller
                         'addressee'=>'Maureen Adega',
                         'deputy_director'=>$deputy_director,
                         'director'=>$director,
-                        'our_ref'=>'CHAI'.$this->pad_zeros(5, $row['id'])
+                        'our_ref'=>$voucher_number
                     );
 
                     /* Send Email */
@@ -504,7 +508,8 @@ class MobilePaymentApi extends Controller
                     // Save the approval if the bank has been notified successfully
                     if($mobile_payment->status_id==4){
                         $approval->approval_level_id = 4;
-                        $mobile_payment->management_approval_at = new \DateTime();
+                        $mobile_payment->management_approval_at = $mgt_approval_time;
+                        $mobile_payment->voucher_no = $voucher_id;
                         $mobile_payment->save();
                     }
                     $approval->save();

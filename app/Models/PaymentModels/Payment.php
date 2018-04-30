@@ -52,4 +52,7 @@ class Payment extends BaseModel
         $timestamp = strtotime($this->attributes['created_at']); 
         return $new_date = date('Ymd', $timestamp);
     }
+    public function voucher_number(){
+        return $this->belongsTo('App\Models\PaymentModels\VoucherNumber', 'voucher_no', 'id');
+    }
 }

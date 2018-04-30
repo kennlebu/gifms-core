@@ -107,6 +107,8 @@ class PaymentBatchApi extends Controller
                     $payment->save();
 
                     $payment->ref = "CHAI/PYMT/#$payment->id/".date_format($payment->created_at,"Y/m/d");
+                    $voucher = $this->generate_voucher_no($payment->id, $payment->payable_type, $payment_batch->created_at);
+                    $payment->voucher_no = (int) $voucher['id'];
                     $payment->save();
 
                     // Now update the invoices, claims and advances

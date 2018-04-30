@@ -106,6 +106,9 @@ class MobilePayment extends BaseModel
     {
         return $this->morphMany('App\Models\PaymentModels\PaymentVoucher', 'vouchable')->orderBy('created_at','asc');
     }
+    public function voucher_number(){
+        return $this->belongsTo('App\Models\PaymentModels\VoucherNumber', 'voucher_no');
+    }
 
 
 
