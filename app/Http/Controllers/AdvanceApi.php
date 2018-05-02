@@ -224,19 +224,21 @@ class AdvanceApi extends Controller
 
         if($advance->save()) {
 
-            FTP::connection()->makeDir('/advances/'.$advance->id);
+            if($file!=0){
+                FTP::connection()->makeDir('/advances/'.$advance->id);
                 FTP::connection()->makeDir('/advances/'.$advance->id);
                 FTP::connection()->uploadFile($file->getPathname(), '/advances/'.$advance->id.'/'.$advance->id.'.'.$file->getClientOriginalExtension());
 
                 $advance->advance_document           =   $advance->id.'.'.$file->getClientOriginalExtension();
+            }
 
             return Response()->json(array('msg' => 'Success: Advance updated','advance' => $advance), 200);
         }
-    }catch (JWTException $e){
+        }catch (JWTException $e){
 
-        return response()->json(['error'=>'You are not Authenticated'], 500);
+            return response()->json(['error'=>'You are not Authenticated'], 500);
 
-    }
+        }
     }
 
 

@@ -366,14 +366,14 @@ class InvoiceApi extends Controller
                 // $invoice->received_at                       =   date('Y-m-d H:i:s');
                 // $invoice->raised_at                         =   date('Y-m-d H:i:s');
 
-                $invoice->status_id                         =   $this->default_status;
+                // $invoice->status_id                         =   $this->default_status;
 
             // }
 
 
             if($invoice->save()) {
 
-                if($form['submission_type']=='full'){
+                if($form['submission_type']=='full' && $file!=0){
 
                     FTP::connection()->makeDir('/invoices');
                     FTP::connection()->makeDir('/invoices/'.$invoice->id);
