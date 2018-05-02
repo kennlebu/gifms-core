@@ -52,22 +52,6 @@ class MigrateFiles extends Command
         $ftp        = FTP::connection()->getDirListing();
         $ftp_mig    = FTP::connection("connection_migration")->getDirListing();
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         //invoices
         $invoices               =   Invoice::all();
         $invoice_mig_folder     =   "invoices";
@@ -75,14 +59,12 @@ class MigrateFiles extends Command
 
         foreach ($invoices as $key => $value) {
             if ($value["invoice_document"]!='') {
-
-
                 FTP::connection()->makeDir("/$invoice_folder");
                 FTP::connection()->makeDir("/$invoice_folder/".$value["id"]);
-                $file_contents   =   FTP::connection("connection_migration")
-                                    ->readFile("$invoice_mig_folder"."/".$value["invoice_document"]);
-
-                Storage::put("$invoice_folder"."/".$value["invoice_document"], $file_contents);
+                // $file_contents   =   FTP::connection("connection_migration")
+                //                     ->readFile("$invoice_mig_folder"."/".$value["invoice_document"]);
+ 
+                // Storage::put("$invoice_folder"."/".$value["invoice_document"], $file_contents);
 
                 // echo storage_path("$invoice_folder"."/".$value["invoice_document"])."\n";
 
@@ -120,10 +102,10 @@ class MigrateFiles extends Command
 
                 FTP::connection()->makeDir("/$claim_folder");
                 FTP::connection()->makeDir("/$claim_folder/".$value["id"]);
-                $file_contents   =   FTP::connection("connection_migration")
-                                    ->readFile("$claim_mig_folder"."/".$value["claim_document"]);
+                // $file_contents   =   FTP::connection("connection_migration")
+                //                     ->readFile("$claim_mig_folder"."/".$value["claim_document"]);
 
-                Storage::put("$claim_folder"."/".$value["claim_document"], $file_contents);
+                // Storage::put("$claim_folder"."/".$value["claim_document"], $file_contents);
 
                 // echo storage_path("$claim_folder"."/".$value["claim_document"])."\n";
 
@@ -163,10 +145,10 @@ class MigrateFiles extends Command
                 FTP::connection()->makeDir("/lpos/".$value["lpo_id"]);
                 FTP::connection()->makeDir("/lpos/".$value["lpo_id"]."/quotations");
                 FTP::connection()->makeDir("/lpos/".$value["lpo_id"]."/quotations/".$value["id"]);
-                $file_contents   =   FTP::connection("connection_migration")
-                                    ->readFile("$lpo_quotation_mig_folder"."/".$value["quotation_doc"]);
+                // $file_contents   =   FTP::connection("connection_migration")
+                //                     ->readFile("$lpo_quotation_mig_folder"."/".$value["quotation_doc"]);
 
-                Storage::put("$lpo_quotation_folder"."/".$value["quotation_doc"], $file_contents);
+                // Storage::put("$lpo_quotation_folder"."/".$value["quotation_doc"], $file_contents);
 
                 // echo storage_path("$lpo_quotation_folder"."/".$value["quotation_doc"])."\n";
 
@@ -205,10 +187,10 @@ class MigrateFiles extends Command
                 FTP::connection()->makeDir("/$mobile_payment_folder");
                 FTP::connection()->makeDir("/$mobile_payment_folder/".$value["id"]);
                 FTP::connection()->makeDir("/$mobile_payment_folder/".$value["id"]."/signsheet");
-                $file_contents   =   FTP::connection("connection_migration")
-                                    ->readFile("$mobile_payment_mig_folder"."/".$value["attendance_sheet"]);
+                // $file_contents   =   FTP::connection("connection_migration")
+                //                     ->readFile("$mobile_payment_mig_folder"."/".$value["attendance_sheet"]);
 
-                Storage::put("$mobile_payment_folder"."/".$value["attendance_sheet"], $file_contents);
+                // Storage::put("$mobile_payment_folder"."/".$value["attendance_sheet"], $file_contents);
 
                 // echo storage_path("$mobile_payment_folder"."/".$value["attendance_sheet"])."\n";
 
