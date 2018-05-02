@@ -17,7 +17,8 @@ class Kernel extends ConsoleKernel
         Commands\MigratePasswords::class,
         Commands\GenerateTransactionDocuments::class,
         Commands\ReformatPhoneNumbers::class,
-        Commands\TestSeed::class
+        Commands\TestSeed::class,
+        Commands\MigrateMobilePaymentDates::class
     ];
 
     /**
