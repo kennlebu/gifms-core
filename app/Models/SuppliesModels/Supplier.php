@@ -28,9 +28,13 @@ class Supplier extends BaseModel
     {
         return $this->belongsTo('App\Models\LookupModels\Currency','currency_id');
     }
-    public function city()
+    public function county()
     {
-        return $this->belongsTo('App\Models\LookupModels\City','city_id');
+        return $this->belongsTo('App\Models\LookupModels\County','county_id');
+    }
+    public function supply_category()
+    {
+        return $this->belongsTo('App\Models\SuppliesModels\SupplyCategory','supply_category_id');
     }
     public function staff()
     {

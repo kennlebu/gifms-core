@@ -1457,6 +1457,13 @@ Route::GET('/supplier/{supplier_id}', 'SupplierApi@getSupplierById')->middleware
 
  */
 Route::GET('/suppliers', 'SupplierApi@suppliersGet')->middleware('jwt.auth');
+/**
+ * GET suppliersGet
+ * Summary: search result suppliers List
+ * Notes: The supplier endpoint returns multiple suppliers searched given the parameters injected.  
+
+ */
+Route::GET('/suppliers/search', 'SupplierApi@suppliersSearch')->middleware('jwt.auth');
 
 
 
@@ -4232,6 +4239,66 @@ Route::DELETE('/country/{country_id}', 'CountryApi@deleteCountry')->middleware('
  */
 Route::GET('/country/{country_id}', 'CountryApi@getCountryById')->middleware('jwt.auth');
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * GET countiesGet
+ * Summary: Counties List
+ * Notes: The county endpoint returns multiple county requested given the parameters injected.  
+
+ */
+Route::GET('/counties', 'CountyApi@countiesGet')->middleware('jwt.auth');
+/**
+ * POST addCounty
+ * Summary: Add a new county
+ * Notes: new county
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/county', 'CountyApi@addCounty')->middleware('jwt.auth');
+/**
+ * PUT updateCounty
+ * Summary: Update an existing county
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/county', 'CountyApi@updateCounty')->middleware('jwt.auth');
+/**
+ * DELETE deleteCounty
+ * Summary: Deletes an county
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/county/{county_id}', 'CountyApi@deleteCounty')->middleware('jwt.auth');
+/**
+ * GET getCountyById
+ * Summary: Find county by ID
+ * Notes: Returns a single county
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/county/{county_id}', 'CountyApi@getCountyById')->middleware('jwt.auth');
 
 
 

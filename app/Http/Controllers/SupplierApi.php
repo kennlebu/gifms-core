@@ -99,7 +99,9 @@ class SupplierApi extends Controller
             'contact_name_2',
             'contact_email_2',
             'contact_phone_2',
-            'requires_lpo'
+            'requires_lpo',
+            'supply_category_id',
+            'county_id'
             );
 
         $supplier = new Supplier;
@@ -136,6 +138,8 @@ class SupplierApi extends Controller
             $supplier->contact_email_2         =         $form['contact_email_2'];
             $supplier->contact_phone_2         =         $form['contact_phone_2'];
             $supplier->requires_lpo            =         $form['requires_lpo'];
+            $supplier->supply_category_id = $form['supply_category_id'];
+            $supplier->county_id = $form['county_id'];
 
         if($supplier->save()) {
 
@@ -205,7 +209,9 @@ class SupplierApi extends Controller
             'contact_name_2',
             'contact_email_2',
             'contact_phone_2',
-            'requires_lpo'
+            'requires_lpo',
+            'supply_category_id',
+            'county_id'
             );
 
         $supplier = Supplier::find($form['id']);
@@ -241,6 +247,8 @@ class SupplierApi extends Controller
             $supplier->contact_email_2         =         $form['contact_email_2'];
             $supplier->contact_phone_2         =         $form['contact_phone_2'];
             $supplier->requires_lpo            =         $form['requires_lpo'];
+            $supplier->supply_category_id = $form['supply_category_id'];
+            $supplier->county_id = $form['county_id'];
         if($supplier->save()) {
 
             return Response()->json(array('msg' => 'Success: supplier updated','supplier' => $supplier), 200);
@@ -631,5 +639,28 @@ class SupplierApi extends Controller
         return $data;
 
 
+    }
+
+
+
+    public function suppliersSearch(){
+        $input = Request::all();
+        $search_term = $input['search_term'];
+        $category = $input['category'];
+        $location = $input['location'];
+
+        $suppliers = Supplier::with(['county', 'supply_category', 'payment_mode'])->where('status_id', '!=', '1');
+        if(!empty($search_term)){
+            $suppliers->where('supplier_name', 'like', '%'.$search_term.'%');
+        }
+        if(!empty($category)){
+            $suppliers->where('supply_category_id', $category);
+        }
+        if(!empty($location)){
+            $suppliers->where('county_id', $location);
+        }
+
+        $results = $suppliers->get();
+        return response()->json($results, 200,array(),JSON_PRETTY_PRINT);
     }
 }
