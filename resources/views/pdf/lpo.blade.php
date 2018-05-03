@@ -12,19 +12,19 @@
   </style>
 </head>
 <body  style="font-family: monospace;">
-  <header><div><img style="width: 100%;height:120px;" src = "img/letter_head_top_1200x240.png"></div></header>
-  <footer><div><img style="width: 100%;height:80px;" src = "img/letter_head_bottom_1200x125.png"></div></footer>
+  <header><div><img style="width: 100%;height:120px;" src="img/letter_head_top_1200x240.png"></div></header>
+  <footer><div><img style="width: 100%;height:80px;" src="img/letter_head_bottom_1200x125.png"></div></footer>
   <main>
     <div>
-      <table style="width: 100%;font-size: smaller;"  cellspacing="0">
+      <table style="width: 100%;font-size:11px;;" cellspacing="0">
         <tbody>
           <tr>
-            <td style="text-align: center;" colspan="10"  height="30"><span style="text-decoration: underline;"><strong><span style="color: #092d50; font-size: x-large; text-decoration: underline;">LOCAL PURCHASE ORDER </span></strong></span></td>
+            <td style="text-align:center;" colspan="10"  height="30"><span style="text-decoration: underline;"><strong><span style="color: #092d50; font-size: x-large; text-decoration: underline;">LOCAL PURCHASE ORDER </span></strong></span></td>
           </tr>
           <tr>
             <td colspan="7" ></td>
-            <td colspan="1"  bgcolor="#092d50" height="20"><strong><span style="color: #ffffff;">REF:</span></strong></td>
-            <td style="text-align: right;" bgcolor="#092d50" colspan="2" ><strong><span style="color: #ffffff;">{{$lpo->ref}}</span></strong></td>
+            <td colspan="1" bgcolor="#092d50" height="20"><strong><span style="color: #ffffff;">REF:</span></strong></td>
+            <td style="text-align:right;" bgcolor="#092d50" colspan="2" ><strong><span style="color: #ffffff;">{{$lpo->ref}}</span></strong></td>
           </tr>
           <tr>
             <td style="border: 1px solid #000000; border-bottom: 1px solid #c0c0c0;" colspan="2"  ><strong>Attn:</strong></td>
@@ -174,8 +174,7 @@
           @foreach ($unique_approvals as $key => $approval)
             <tr>
                 <td colspan="4">Authorized by:<br/>
-                  {{-- <div style="height:70px;width:200px; background:url({{asset('storage/app/staff/signature'.$approval->approver_id.'.png')}}; background-repeat:no-repeat;background-size:contain;"></div> --}}
-                  <img style="height:70px;width:200px; alt="." src="{{asset('/storage/app/staff/signature'.$approval->approver_id.'.png')}}"><br/>
+                  <img style="height:70px;width:200px; alt="." src="{{asset('storage/signatures/signature'.$approval->approver_id.'.png')}}"><br/>
                   @isset($approval->approver_id)
                       <strong>{{$approval->approver->full_name}}</strong>
                   @endisset
