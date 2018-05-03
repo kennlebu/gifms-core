@@ -37,7 +37,7 @@ class MobilePaymentInstructBank extends Mailable
         $this->mobile_payment = $mobile_payment;
         $this->csv_data = $csv_data;
         $this->pdf_data = $pdf_data;
-        $this->director2_id = 32;
+        $this->director2_id = 37;
 
         $this->accountant           = Staff::findOrFail(    (int)   Config::get('app.accountant_id'));
         $this->financial_controller = Staff::findOrFail(    (int)   Config::get('app.financial_controller_id'));
@@ -75,7 +75,7 @@ class MobilePaymentInstructBank extends Mailable
         /* Generate CSV */
         if (!$fp = fopen('php://temp', 'w+')) return false; // Open temp file pointer
         foreach ($this->csv_data as $line){
-            fputcsv_eol($fp, $line, "\r\n");
+            $this->fputcsv_eol($fp, $line, "\r\n");
         }
         rewind($fp); // Place stream pointer at beginning
         $csv_file = stream_get_contents($fp);
@@ -85,9 +85,9 @@ class MobilePaymentInstructBank extends Mailable
         $pdf_file = $pdf->stream();
 
         $ccs = [];
-        // foreach($this->bank_cc as $bank_cc){
-        //     array_push($ccs, $bank_cc['email']);
-        // }
+        foreach($this->bank_cc as $bank_cc){
+            array_push($ccs, $bank_cc['email']);
+        }
         foreach($this->chai_cc as $chai_cc){
             array_push($ccs, $chai_cc['email']);
         }

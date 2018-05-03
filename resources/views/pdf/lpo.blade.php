@@ -11,19 +11,19 @@
     }
   </style>
 </head>
-<body  style="font-family: monospace;">
+<body  style="font-family: arial;">
   <header><div><img style="width: 100%;height:120px;" src="img/letter_head_top_1200x240.png"></div></header>
   <footer><div><img style="width: 100%;height:80px;" src="img/letter_head_bottom_1200x125.png"></div></footer>
   <main>
     <div>
-      <table style="width: 100%;font-size:11px;;" cellspacing="0">
+      <table style="width: 100%;font-size:13px;" cellspacing="0">
         <tbody>
           <tr>
-            <td style="text-align:center;" colspan="10"  height="30"><span style="text-decoration: underline;"><strong><span style="color: #092d50; font-size: x-large; text-decoration: underline;">LOCAL PURCHASE ORDER </span></strong></span></td>
+            <td style="text-align:center;font-size:14px;" colspan="10"  height="30"><span style="text-decoration: underline;"><strong><span style="color: #092d50; font-size: x-large; text-decoration: underline;">LOCAL PURCHASE ORDER </span></strong></span></td>
           </tr>
           <tr>
             <td colspan="7" ></td>
-            <td colspan="1" bgcolor="#092d50" height="20"><strong><span style="color: #ffffff;">REF:</span></strong></td>
+            <td colspan="1" bgcolor="#092d50" height="20"><strong><span style="color: #ffffff;font-size:12px;">REF:</span></strong></td>
             <td style="text-align:right;" bgcolor="#092d50" colspan="2" ><strong><span style="color: #ffffff;">{{$lpo->ref}}</span></strong></td>
           </tr>
           <tr>
@@ -68,26 +68,26 @@
             <td colspan="9" >&nbsp;</td>
           </tr>
           <tr>
-            <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #c0c0c0;" bgcolor="#092d50" ><strong><span style="color: #ffffff;">ITEM #</span></strong></td>
-            <td style="border: 1px solid #c0c0c0;" colspan="3" bgcolor="#092d50"><span style="color: #ffffff;width:30%;"><strong>PARTICULARS</strong></span></td>
-            <td style="border: 1px solid #c0c0c0;" bgcolor="#092d50"><strong><span style="color: #ffffff;">QTY</span></strong></td>
-            <td style="border: 1px solid #c0c0c0;" bgcolor="#092d50"><strong><span style="color: #ffffff;">UNIT-PRICE</span></strong></td>
-            <td style="border: 1px solid #c0c0c0;" bgcolor="#092d50"><strong><span style="color: #ffffff;"></span></strong></td>
-            <td style="border: 1px solid #c0c0c0;" bgcolor="#092d50"><span style="color: #ffffff;"><strong>SUBTOTAL</strong></span></td>
-            <td style="border: 1px solid #c0c0c0;" bgcolor="#092d50"><span style="color: #ffffff;"><strong>VAT</strong></span></td>
-            <td style="border: 1px solid #c0c0c0;" bgcolor="#092d50"><strong><span style="color: #ffffff;">TOTAL({{$lpo->currency->currency_name}})</span></strong></td>
+            <td style="font-size:13px;border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #c0c0c0;" bgcolor="#092d50" ><strong><span style="color: #ffffff;">ITEM #</span></strong></td>
+            <td style="font-size:13px;border: 1px solid #c0c0c0;" colspan="3" bgcolor="#092d50"><span style="color: #ffffff;width:30%;"><strong>PARTICULARS</strong></span></td>
+            <td style="font-size:13px;border: 1px solid #c0c0c0;" bgcolor="#092d50"><strong><span style="color: #ffffff;">QTY</span></strong></td>
+            <td style="font-size:13px;border: 1px solid #c0c0c0;" bgcolor="#092d50"><strong><span style="color: #ffffff;">UNIT-PRICE</span></strong></td>
+            <td style="font-size:13px;border: 1px solid #c0c0c0;" bgcolor="#092d50"><strong><span style="color: #ffffff;"></span></strong></td>
+            <td style="font-size:13px;border: 1px solid #c0c0c0;" bgcolor="#092d50"><span style="color: #ffffff;"><strong>SUBTOTAL</strong></span></td>
+            <td style="font-size:13px;border: 1px solid #c0c0c0;" bgcolor="#092d50"><span style="color: #ffffff;"><strong>VAT</strong></span></td>
+            <td style="font-size:13px;border: 1px solid #c0c0c0;" bgcolor="#092d50"><strong><span style="color: #ffffff;">TOTAL({{$lpo->currency->currency_name}})</span></strong></td>
           </tr>
 
           @foreach ($lpo->items as $key => $item)
           <tr>
-            <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #000000; border-right: 1px solid #000000;"  >{{$key+1}}</td>
-            <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #000000; border-right: 1px solid #000000;" colspan="3" >{{$item->item_description}}</td>
-            <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #000000; border-right: 1px solid #000000;" align="center">{{$item->qty_description}}</td>
-            <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #000000; border-right: 1px solid #000000;" align="right">{{number_format($item->calculated_unit_price,2)}}</td>
-            <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #000000; border-right: 1px solid #000000;" align="right"></td>
-            <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #000000; border-right: 1px solid #000000;" align="right">{{number_format($item->calculated_sub_total,2)}}</td>
-            <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #000000; border-right: 1px solid #000000;" align="right">{{number_format($item->calculated_vat,2)}}</td>
-            <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #000000; border-right: 1px solid #000000;" align="right" bgcolor="#E4E8F3">{{number_format($item->calculated_total,2)}}</td>
+            <td style="border-top:1px solid #c0c0c0;border-bottom:1px solid #c0c0c0;border-left:1px solid #000000;border-right:1px solid #000000;font-size:12px;">{{$key+1}}</td>
+            <td style="border-top:1px solid #c0c0c0;border-bottom:1px solid #c0c0c0;border-left:1px solid #000000;border-right:1px solid #000000;font-size:12px;" colspan="3" >{{$item->item_description}}</td>
+            <td style="border-top:1px solid #c0c0c0;border-bottom:1px solid #c0c0c0;border-left:1px solid #000000;border-right:1px solid #000000;font-size:12px;" align="center">{{$item->qty_description}}</td>
+            <td style="border-top:1px solid #c0c0c0;border-bottom:1px solid #c0c0c0;border-left:1px solid #000000;border-right:1px solid #000000;font-size:12px;" align="right">{{number_format($item->calculated_unit_price,2)}}</td>
+            <td style="border-top:1px solid #c0c0c0;border-bottom:1px solid #c0c0c0;border-left:1px solid #000000;border-right:1px solid #000000;font-size:12px;" align="right"></td>
+            <td style="border-top:1px solid #c0c0c0;border-bottom:1px solid #c0c0c0;border-left:1px solid #000000;border-right:1px solid #000000;font-size:12px;" align="right">{{number_format($item->calculated_sub_total,2)}}</td>
+            <td style="border-top:1px solid #c0c0c0;border-bottom:1px solid #c0c0c0;border-left:1px solid #000000;border-right:1px solid #000000;font-size:12px;" align="right">{{number_format($item->calculated_vat,2)}}</td>
+            <td style="border-top:1px solid #c0c0c0;border-bottom:1px solid #c0c0c0;border-left:1px solid #000000;border-right:1px solid #000000;font-size:12px;" align="right" bgcolor="#E4E8F3">{{number_format($item->calculated_total,2)}}</td>
           </tr>
           @endforeach
 
@@ -148,7 +148,7 @@
             <td style="border: 1px solid #666666;margin-right: 20px;" colspan="10" valign="top" >
               <ul style="list-style-type: square;">
                 @foreach ($lpo->terms as $term)
-                <li>{{$term->terms}}</li>
+                <li><span style="font-size:12px;">{{$term->terms}}</span></li>
                 @endforeach
               </ul>
             </td>
@@ -159,10 +159,10 @@
             <td colspan="10">&nbsp;</td>
           </tr>
           <tr>
-              <td style="border: 1px solid #666666;margin-right: 20px;" colspan="10"  bgcolor="#C0C0C0" ><strong>Quote exempt reason</strong></td>
+              <td style="border:1px solid #666666;margin-right:20px;" colspan="10"  bgcolor="#C0C0C0" ><strong>Quote exempt reason</strong></td>
           </tr>
           <tr>
-            <td style="border: 1px solid #666666;margin-right: 20px;" colspan="10" valign="top" >
+            <td style="border:1px solid #666666;margin-right:20px;font-size:12px;" colspan="10" valign="top" >
                 {{$lpo->quote_exempt_explanation}}: {{$lpo->quote_exempt_details}}
             </td>
           </tr>
@@ -173,7 +173,7 @@
 
           @foreach ($unique_approvals as $key => $approval)
             <tr>
-                <td colspan="4">Authorized by:<br/>
+                <td colspan="3">Authorized by:<br/>
                   <img style="height:70px;width:200px; alt="." src="{{asset('storage/signatures/signature'.$approval->approver_id.'.png')}}"><br/>
                   @isset($approval->approver_id)
                       <strong>{{$approval->approver->full_name}}</strong>
