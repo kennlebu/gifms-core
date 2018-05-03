@@ -75,7 +75,7 @@ class MobilePaymentInstructBank extends Mailable
         /* Generate CSV */
         if (!$fp = fopen('php://temp', 'w+')) return false; // Open temp file pointer
         foreach ($this->csv_data as $line){
-            fputcsv($fp, $line);
+            fputcsv_eol($fp, $line, "\r\n");
         }
         rewind($fp); // Place stream pointer at beginning
         $csv_file = stream_get_contents($fp);
@@ -105,8 +105,8 @@ class MobilePaymentInstructBank extends Mailable
             ->attachData($pdf_file, 'ALLOWANCES_'.$this->pad_zeros(5,$this->mobile_payment->id).'.pdf')
             ->attachData($csv_file, 'ALLOWANCES_'.$this->pad_zeros(5,$this->mobile_payment->id).'.csv');      
 
-        // return $this->to($this->bank_to['email'])
-        return $this->to('dkarambi@clintonhealthaccess.org') // for test
+        return $this->to($this->bank_to['email'])
+        // return $this->to('dkarambi@clintonhealthaccess.org') // for test
             ->with([
                     'mobile_payment' => $this->mobile_payment,
                     'addressed_to' => $this->accountant,
@@ -127,5 +127,18 @@ class MobilePaymentInstructBank extends Mailable
         else{
             return $data;
         }
+    }
+
+
+    // Writes an array to an open CSV file with a custom end of line.
+    //
+    // $fp: a seekable file pointer. Most file pointers are seekable, 
+    //   but some are not. example: fopen('php://output', 'w') is not seekable.
+    // $eol: probably one of "\r\n", "\n", or for super old macs: "\r"
+    function fputcsv_eol($fp, $array, $eol) {
+    fputcsv($fp, $array);
+    if("\n" != $eol && 0 === fseek($fp, -1, SEEK_CUR)) {
+        fwrite($fp, $eol);
+    }
     }
 }
