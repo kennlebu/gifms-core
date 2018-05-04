@@ -46,9 +46,10 @@ class MigrateMobilePaymentDates extends Command
         //
 
 
-        $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('Allowances')->get();
+        // $data = DB::connection(env('DB_MIGRATE_FROM','sqlsrv'))->table('Allowances')->get();
 
         $data_to_update=array();
+        $data = array();
         $path = '/reports/dates2.csv';
         $url            = storage_path("app".$path);
         // $file           = File::get($url);
@@ -59,20 +60,20 @@ class MigrateMobilePaymentDates extends Command
                 $header = false;
             } else {
                 $row = array();
-                $row['migration_id'] = $csvLine[0];
-                $row['management_approval_at'] = $csvLine[1];
-                array_push($data_to_update, $row);
+                $row['id'] = $csvLine[0];
+                $row['date'] = $csvLine[1];
+                array_push($data, $row);
             }
         }
 
         foreach ($data as $key => $value) {
 
-            $data_to_update[$key]['management_approval_at']                = $data[$key]['ManagementApprovalDate'];
-            $data_to_update[$key]['migration_id'] 						   = $data[$key]['ID'];
+            $data_to_update[$key]['management_approval_at']                = $data[$key]['date'];
+            $data_to_update[$key]['migration_id'] 						   = $data[$key]['id'];
 
 
             echo "\n MPESA Payments -$key---";
-        	echo $data[$key]['Title'];
+        	echo $data[$key]['id'];
         }
 
         
