@@ -84,8 +84,10 @@ class MigrateMobilePaymentDates extends Command
             foreach($batch as $record){
                 // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , PHP_EOL.'ROW:: '.json_encode($batch) , FILE_APPEND);
                 $mp = MobilePayment::where('migration_id', $record['migration_id'])->first();
+                if(!empty($mp->management_approval_at)){
                 $mp->management_approval_at = $record['management_approval_at'];
                 $mp->save();
+                }
             }
              echo "\n-------------------------------------------------------Batch updated\n";
         }
