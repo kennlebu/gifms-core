@@ -494,7 +494,7 @@ class MobilePaymentApi extends Controller
 
                     /* Get PDF data */                    
                     $deputy_director = Staff::findOrFail((int) Config::get('app.director_id'));
-                    $director = Staff::findOrFail(32); //TODO: Pick this from config
+                    $director = Staff::findOrFail(37); //TODO: Pick this from config
                     $pdf_data = array('mobile_payment' => $mobile_payment,
                         'addressee'=>'Maureen Adega',
                         'deputy_director'=>$deputy_director,
