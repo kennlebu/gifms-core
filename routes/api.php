@@ -1842,6 +1842,13 @@ Route::GET('/mobile_payment/{mobile_payment_id}/get_document', 'MobilePaymentApi
  */
 Route::GET('/mobile_payment/{mobile_payment_id}/get_attendance_sheet', 'MobilePaymentApi@getAttendanceSheetById')->middleware('jwt.auth');
 /**
+ * GET getPaymentVoucherById
+ * Summary: get payment voucher document by ID
+ * Notes: get Mobile Payment Voucher
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/mobile_payment/{mobile_payment_id}/get_payment_voucher', 'MobilePaymentApi@getPaymentVoucherById')->middleware('jwt.auth');
+/**
  * PATCH approveSeveralMobilePayments
  * Summary: Approve several Mobile Payments
  * Notes: Approve

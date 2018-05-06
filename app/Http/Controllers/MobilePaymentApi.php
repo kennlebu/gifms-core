@@ -47,6 +47,7 @@ use App\Models\LookupModels\Currency;
 use App\Models\BankingModels\BankBranch;
 use App\Exceptions\NotFullyAllocatedException;
 use App\Exceptions\ApprovalException;
+use App\Models\PaymentModels\VoucherNumber;
 
 class MobilePaymentApi extends Controller
 {
@@ -927,6 +928,66 @@ class MobilePaymentApi extends Controller
             $response       = Response::make(array('error'=>$e), 500);
 
             // $response->header('Content-Type', 'application/pdf');
+
+            return $response;  
+
+        }
+    }
+
+
+        /**
+     * Operation getPaymentVoucherById
+     *
+     * get mobile_payment payment voucher by ID.
+     *
+     * @param int $mobile_payment_id ID of mobile_payment to return object (required)
+     *
+     * @return Http response
+     */
+    public function getPaymentVoucherById($mobile_payment_id)
+    {
+
+        try{
+            $mobile_payment   = MobilePayment::findOrFail($mobile_payment_id);
+            $voucher_no = '';
+            if(empty($mobile_payment->migration_id)){
+                if(empty($mobile_payment->voucher_no)) $voucher_no = '-';
+                else{
+                    $voucher_no = VoucherNumber::first($mobile_payment->voucher_no);
+                    $voucher_no = $voucher_no->voucher_number;
+                }
+            }
+            else{
+                $voucher_no = 'CHAI'.$this->pad_zeros(5, $mobile_payment->migration_invoice_id);
+            }
+            $vendor = 'MOH OFFICIALS c/o '.Staff::find($mobile_payment->requested_by_id)->full_name;
+
+            $data = array(
+                'mobile_payment'   => $mobile_payment,
+                'voucher_no' => $voucher_no,
+                'vendor' => $vendor
+                );
+
+            $pdf = PDF::loadView('pdf/mobile_payment_payment_voucher', $data);
+
+            $file_contents  = $pdf->stream();
+
+            Storage::put('mobile_payment/'.$mobile_payment_id.'.temp', $file_contents);
+
+            $url       = storage_path("app/mobile_payment/".$mobile_payment_id.'.temp');
+
+            $file = File::get($url);
+
+            $response = Response::make($file, 200);
+
+            $response->header('Content-Type', 'application/pdf');
+
+            return $response;
+        }catch (Exception $e ){            
+
+            $response       = Response::make("", 500);
+
+            $response->header('Content-Type', 'application/pdf');
 
             return $response;  
 
