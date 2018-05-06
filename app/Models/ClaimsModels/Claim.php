@@ -62,7 +62,7 @@ class Claim extends BaseModel
     }
     public function approvals()
     {
-        return $this->morphMany('App\Models\ApprovalsModels\Approval', 'approvable');
+        return $this->morphMany('App\Models\ApprovalsModels\Approval', 'approvable')->where('created_at', 'NOT LIKE', '%2018-04-28 22%')->where('approver_id', '!=', 0)->orderBy('approval_level_id', 'asc');
     }
     public function allocations()
     {
