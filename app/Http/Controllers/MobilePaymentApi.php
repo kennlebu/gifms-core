@@ -953,7 +953,7 @@ class MobilePaymentApi extends Controller
             if(empty($mobile_payment->migration_id)){
                 if(empty($mobile_payment->voucher_no)) $voucher_no = '-';
                 else{
-                    $voucher_no = VoucherNumber::first($mobile_payment->voucher_no);
+                    $voucher_no = VoucherNumber::find($mobile_payment->voucher_no);
                     $voucher_no = $voucher_no->voucher_number;
                 }
             }
