@@ -184,9 +184,9 @@
             <div style="display:inline-block">
                 <div style="display:inline-block;margin-right:60px;">
                     <br/>
-                    <img style="height:70px;width:200px; alt="." src="{{asset('storage/signatures/signature'.$director->id.'.png')}}"><br/>
+                    <img style="height:70px;width:200px;" alt="." src="{{asset('storage/signatures/signature'.$director->id.'.png')}}"><br/>
                     <strong>{{$director->f_name.' '.$director->l_name}}</strong>
-                    <br/><strong>{{$director->post}}</strong>
+                    <br/><strong>{{$director->official_post}}</strong>
                 </div>
             </div>
         </div>

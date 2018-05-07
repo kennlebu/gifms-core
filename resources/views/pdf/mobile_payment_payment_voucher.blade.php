@@ -46,7 +46,11 @@
                     <tr>
                         <td style="border: 1px solid #000000; border-top: 0px solid #c0c0c0;" colspan="2">
                             <strong style="float: left;">
+                                @if(empty($mobile_payment->management_approval_at))
+                                <span> - </span>
+                                @else
                                 <span>{{date('d F, Y', strtotime($mobile_payment->management_approval_at)) }}</span>
+                                @endif
                             </strong>
                         </td>
                         <td style="border: 1px solid #000000; border-top: 0px solid #c0c0c0;" colspan="4" >

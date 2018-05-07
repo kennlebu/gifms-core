@@ -42,6 +42,7 @@ use App\Models\LookupModels\Currency;
 use App\Models\BankingModels\BankBranch;
 use App\Exceptions\NotFullyAllocatedException;
 use App\Exceptions\ApprovalException;
+use App\Models\PaymentModels\VoucherNumber;
 
 class InvoiceApi extends Controller
 {
@@ -930,42 +931,61 @@ class InvoiceApi extends Controller
 
         try{
             $invoice        = Invoice::findOrFail($invoice_id);
-
-            //signatures
-
-            foreach ($invoice->approvals as $key => $value) {                
-
-                $path           = '/staff/'.$value->approver_id.'/signature/signature.png';
-
-                $file_contents  = FTP::connection()->readFile($path);
-
-                Storage::put('staff/signature'.$value->approver_id.'.png', $file_contents);
-
-                $url            = storage_path("app/staff/signature".$value->approver_id.'.png');
-
-                $file           = File::get($url);
+            file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , 'what of here' , FILE_APPEND);
+            $voucher_date = '-';
+            $vendor = '-';
+            $voucher_no = '-';
+            if(empty($invoice->voucher_no)){
+                if(empty($invoice->voucher_no)) $voucher_no = '-';
+                else{
+                    
+                file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , 'or here' , FILE_APPEND);
+                    $voucher_no = 'CHAI'.$this->pad_zeros(5, $invoice->voucher_no);
+                }
+            }
+            else{
+                file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , 'here' , FILE_APPEND);
+                $voucher_no = VoucherNumber::first($invoice->voucher_no);
+                $voucher_no = $voucher_no->voucher_number;
             }
 
+            if(empty($invoice->payment_date)){
+                $payment = Payment::where('payable_id', $invoice->id)->where('payable_type', 'invoices')->first();
+                if(!empty($payment->payment_batch_id) && $payment->payment_batch_id > 0){
+                    $batch = PaymentBatch::find($payment->payment_batch_id);
+                    $voucher_date = $batch->created_at;
+                }
+            }
+            else{
+                $voucher_date = $invoice->payment_date;
+            }
 
-            $data           = array(
-                                'invoice'   => $invoice
-                                );
+            $vendor = $invoice->supplier->supplier_name;
 
-            $pdf            = PDF::loadView('pdf/invoice_payment_voucher', $data);
+            $data = array(
+                    'payable'   => $invoice,
+                    'voucher_date' => $voucher_date,
+                    'vendor'=>$vendor,
+                    'voucher_no'=>$voucher_no,
+                    'payable_type'=>'Invoice'
+                    );
 
-            $file_contents  = $pdf->stream();
+            $pdf            = PDF::loadView('pdf/payment_voucher', $data);
 
-            Storage::put('invoices/'.$invoice_id.'.voucher.temp', $file_contents);
+            // $file_contents  = $pdf->stream();
 
-            $url            = storage_path("app/invoices/".$invoice_id.'.voucher.temp');
+            // Storage::put('invoices/'.$invoice_id.'.voucher.temp', $file_contents);
 
-            $file           = File::get($url);
+            // $url            = storage_path("app/invoices/".$invoice_id.'.voucher.temp');
 
-            $response       = Response::make($file, 200);
+            // $file           = File::get($url);
 
-            $response->header('Content-Type', 'application/pdf');
+            // $response       = Response::make($file, 200);
 
-            return $response;
+            // $response->header('Content-Type', 'application/pdf');
+
+            // return $response;
+            return $pdf->download();
         }catch (Exception $e ){            
 
             $response       = Response::make("", 200);
@@ -1525,6 +1545,19 @@ class InvoiceApi extends Controller
         return $data;
 
 
+    }
+
+        /**
+     * Adds zeros at the beginning of string until the desired
+     * length is reached.
+     */
+    public function pad_zeros($desired_length, $data){
+        if(strlen($data)<$desired_length){
+            return str_repeat('0', $desired_length-strlen($data)).$data;
+        }
+        else{
+            return $data;
+        }
     }
 
 
