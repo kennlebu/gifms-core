@@ -59,7 +59,7 @@ class MobilePaymentInstructBank extends Mailable
             array('first_name'=>$this->accountant->f_name, 'last_name'=>$this->accountant->l_name, 'email'=>$this->accountant->email),
             array('first_name'=>$this->director->f_name, 'last_name'=>$this->director->l_name, 'email'=>$this->director->email),
             array('first_name'=>$this->director2->f_name, 'last_name'=>$this->director2->l_name, 'email'=>$this->director2->email),
-            array('first_name'=>$this->requester->f_name, 'last_name'=>$this->requester->l_name, 'email'=>$this->requester->email),
+            // array('first_name'=>$this->requester->f_name, 'last_name'=>$this->requester->l_name, 'email'=>$this->requester->email),
             array('first_name'=>$this->PM->f_name, 'last_name'=>$this->PM->l_name, 'email'=>$this->PM->email),
             
             array('first_name'=>'Rosemary', 'last_name'=>'Kihoto', 'email'=>'rkihoto@clintonhealthaccess.org')
@@ -86,9 +86,9 @@ class MobilePaymentInstructBank extends Mailable
         $pdf_file = $pdf->stream();
 
         $ccs = [];
-        foreach($this->bank_cc as $bank_cc){
-            array_push($ccs, $bank_cc['email']);
-        }
+        // foreach($this->bank_cc as $bank_cc){
+        //     array_push($ccs, $bank_cc['email']);
+        // }
         foreach($this->chai_cc as $chai_cc){
             array_push($ccs, $chai_cc['email']);
         }
@@ -106,8 +106,8 @@ class MobilePaymentInstructBank extends Mailable
             ->attachData($pdf_file, 'ALLOWANCES_'.$this->voucher_number.'.pdf')
             ->attachData($csv_file, 'ALLOWANCES_'.$this->voucher_number.'.csv');      
 
-        return $this->to($this->bank_to['email'])
-        // return $this->to('dkarambi@clintonhealthaccess.org') // for test
+        // return $this->to($this->bank_to['email'])
+        return $this->to('rwangatia@clintonhealthaccess.org') // for test
             ->with([
                     'mobile_payment' => $this->mobile_payment,
                     'addressed_to' => $this->accountant,
