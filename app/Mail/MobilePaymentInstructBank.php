@@ -32,12 +32,13 @@ class MobilePaymentInstructBank extends Mailable
      *
      * @return void
      */
-    public function __construct(MobilePayment $mobile_payment, $csv_data, $pdf_data)
+    public function __construct(MobilePayment $mobile_payment, $csv_data, $pdf_data, $voucher_number)
     {
         $this->mobile_payment = $mobile_payment;
         $this->csv_data = $csv_data;
         $this->pdf_data = $pdf_data;
         $this->director2_id = 37;
+        $this->voucher_number = $voucher_number;
 
         $this->accountant           = Staff::findOrFail(    (int)   Config::get('app.accountant_id'));
         $this->financial_controller = Staff::findOrFail(    (int)   Config::get('app.financial_controller_id'));
@@ -102,8 +103,8 @@ class MobilePaymentInstructBank extends Mailable
 
                 ])           
             ->cc($ccs)
-            ->attachData($pdf_file, 'ALLOWANCES_'.$this->pad_zeros(5,$this->mobile_payment->id).'.pdf')
-            ->attachData($csv_file, 'ALLOWANCES_'.$this->pad_zeros(5,$this->mobile_payment->id).'.csv');      
+            ->attachData($pdf_file, 'ALLOWANCES_'.$this->voucher_number.'.pdf')
+            ->attachData($csv_file, 'ALLOWANCES_'.$this->voucher_number.'.csv');      
 
         return $this->to($this->bank_to['email'])
         // return $this->to('dkarambi@clintonhealthaccess.org') // for test

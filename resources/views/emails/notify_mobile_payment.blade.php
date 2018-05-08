@@ -51,18 +51,6 @@
             </strong>
           </td>
         </tr>
-        <!-- <tr>
-          <td style="text-align: left; border-bottom: 1px dotted #ccbcbc;" colspan="1"  bgcolor="#ffffff" height="20">
-            <strong>
-              <span style="color: #7c7c7c;">Project:</span>
-            </strong>
-          </td>
-          <td style="text-align: left; border-bottom: 1px dotted #ccbcbc;" bgcolor="#ffffff" colspan="2" >
-            <strong>
-              <span style="color: #092d50;">{{$mobile_payment->project->project_name}}</span>
-            </strong>
-          </td>
-        </tr>  -->
         <tr>
           <td style="text-align: left; border-bottom: 1px dotted #ccbcbc;" colspan="1"  bgcolor="#ffffff" height="20">
             <strong>
@@ -129,20 +117,6 @@
             </strong>
           </td>
         </tr>
-      <!--   @if ($mobile_payment->status_id==99)    
-        <tr>
-          <td style="text-align: left; border-bottom: 1px dotted #ccbcbc;" colspan="1"  bgcolor="#ffffff" height="20">
-            <strong>
-              <span style="color: #7c7c7c;">Cancelled by:</span>
-            </strong>
-          </td>
-          <td style="text-align: left; border-bottom: 1px dotted #ccbcbc;" bgcolor="#ffffff" colspan="2" >
-            <strong>
-              <span style="color: #092d50;">{{$mobile_payment->cancelled_by->name}}</span>
-            </strong>
-          </td>
-        </tr> 
-        @endif  -->
         @if ($mobile_payment->status_id==7) 
         <tr>
           <td style="text-align: left; border-bottom: 1px dotted #ccbcbc;" colspan="1"  bgcolor="#ffffff" height="20">

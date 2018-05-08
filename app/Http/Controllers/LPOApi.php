@@ -454,7 +454,7 @@ class LPOApi extends Controller
                 }
                 elseif($lpo->status_id==7){
                     try{ 
-                        Mail::queue(new NotifyLpoDispatch($lpo));
+                        Mail::send(new NotifyLpoDispatch($lpo));
                     }catch(Exception $e){
                     }
                 }

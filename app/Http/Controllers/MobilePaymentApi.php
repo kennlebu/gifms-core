@@ -504,7 +504,7 @@ class MobilePaymentApi extends Controller
                     );
 
                     /* Send Email */
-                    Mail::queue(new MobilePaymentInstructBank($mobile_payment, $csv_data, $pdf_data));
+                    Mail::send(new MobilePaymentInstructBank($mobile_payment, $csv_data, $pdf_data, $voucher_number));
                     
                     // Save the approval if the bank has been notified successfully
                     if($mobile_payment->status_id==4){
