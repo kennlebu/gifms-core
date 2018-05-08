@@ -241,8 +241,7 @@
                         </td>
                         <td style="border-top: 1px solid #C0C0C0; border-bottom: 1px solid #C0C0C0; border-left: 1px solid #000000; border-right: 1px solid #000000;  vertical-align: top;" colspan="3" >
                             <small>signed:</small><br/>
-                            <div style="height:70px;width:200px; background:url({{asset('storage/signatures/signature'.$approval->approver_id.'.png')}}; background-repeat:no-repeat;background-size:contain;"></div>
-                            {{-- <img height = "60" alt="." src="{{asset('storage/app/staff/signature'.$approval->approver_id.'.png')}}"></img> --}}
+                            <img style="height:70px;width:200px;" alt="." src="{{asset('storage/signatures/signature'.$approval->approver_id.'.png')}}"></img>
                         </td>
                         <td style="border-top: 1px solid #C0C0C0; border-bottom: 1px solid #C0C0C0; border-left: 1px solid #000000; border-right: 1px solid #000000;   vertical-align: top;  background-color: #f7f8fb;"  colspan="2" >                  
                                 <small>Date</small><br/><br/><br/>          

@@ -931,20 +931,16 @@ class InvoiceApi extends Controller
 
         try{
             $invoice        = Invoice::findOrFail($invoice_id);
-            file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , 'what of here' , FILE_APPEND);
             $voucher_date = '-';
             $vendor = '-';
             $voucher_no = '-';
             if(empty($invoice->voucher_no)){
                 if(empty($invoice->voucher_no)) $voucher_no = '-';
                 else{
-                    
-                file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , 'or here' , FILE_APPEND);
                     $voucher_no = 'CHAI'.$this->pad_zeros(5, $invoice->voucher_no);
                 }
             }
             else{
-                file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , 'here' , FILE_APPEND);
                 $voucher_no = VoucherNumber::first($invoice->voucher_no);
                 $voucher_no = $voucher_no->voucher_number;
             }
