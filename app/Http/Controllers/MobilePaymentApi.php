@@ -469,29 +469,23 @@ class MobilePaymentApi extends Controller
                     $date = date('Ymd');
 
                     $csv_data = [];
-                    $qb = DB::table('mobile_payment_payees')
-                        ->whereNull('deleted_at')
-                        ->where('mobile_payment_id', '=', ''.$mobile_payment->id)
-                        ->select('id', 'registered_name', 'mobile_number', 'total')
-                        ->get();
                     
-                    foreach($qb as $row){
+                    foreach($mobile_payment->payees as $payee){
                         $data = array(
                             $date, // date
                             '99001', // bank_code
                             '', // blank space
-                            preg_replace("/[^0-9]/", "", $row['mobile_number']), // phone
-                            $row['registered_name'], // mobile_name
+                            preg_replace("/[^0-9]/", "", $payee->mobile_number), // phone
+                            $payee->full_name, // mobile_name
                             'NIC', // bank_name
                             '', // blank space
                             'KES', // currency
-                            $row['total'], // amount
+                            $payee->calculated_total, // amount
                             $voucher_number // chaipv
                         );
                         
                         // Add the data to the csv_data array
-                        array_push($csv_data, $data);
-                    }
+                        array_push($csv_data, $data);}
 
                     /* Get PDF data */                    
                     $deputy_director = Staff::findOrFail((int) Config::get('app.director_id'));
@@ -1203,29 +1197,23 @@ class MobilePaymentApi extends Controller
             $date = date('Ymd');
 
             $csv_data = [];
-            $qb = DB::table('mobile_payment_payees')
-                ->whereNull('deleted_at')
-                ->where('mobile_payment_id', '=', ''.$mobile_payment->id)
-                ->select('id', 'registered_name', 'mobile_number', 'total')
-                ->get();
             
-            foreach($qb as $row){
+            foreach($mobile_payment->payees as $payee){
                 $data = array(
                     $date, // date
                     '99001', // bank_code
                     '', // blank space
-                    preg_replace("/[^0-9]/", "", $row['mobile_number']), // phone
-                    $row['registered_name'], // mobile_name
+                    preg_replace("/[^0-9]/", "", $payee->mobile_number), // phone
+                    $payee->full_name, // mobile_name
                     'NIC', // bank_name
                     '', // blank space
                     'KES', // currency
-                    $row['total'], // amount
+                    $payee->calculated_total, // amount
                     $voucher_number // chaipv
                 );
                 
                 // Add the data to the csv_data array
-                array_push($csv_data, $data);
-            }
+                array_push($csv_data, $data);}
 
             /* Get PDF data */                    
             $deputy_director = Staff::findOrFail((int) Config::get('app.director_id'));
@@ -1242,7 +1230,7 @@ class MobilePaymentApi extends Controller
             return response()->json(['msg'=>"Mobile Payment deleted"], 200,array(),JSON_PRETTY_PRINT);
             
         } catch (Exception $e) {
-             return response()->json(['error'=>"An rerror occured during processing"], 500,array(),JSON_PRETTY_PRINT);
+             return response()->json(['error'=>$e.getMessage()], 500,array(),JSON_PRETTY_PRINT);
             
         }
         
