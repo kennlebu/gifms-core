@@ -683,7 +683,9 @@ class ClaimApi extends Controller
            }
 
             $claim->status_id = $claim->status->next_status_id;
-            $claim->requested_at = date('Y-m-d H:i:s');
+            if($claim->status_id  != 9){ // Only set request time if its not after corrections
+                $claim->requested_at = date('Y-m-d H:i:s');
+            }
 
             if($claim->save()) {
 

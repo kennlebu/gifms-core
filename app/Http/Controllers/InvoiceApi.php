@@ -1045,7 +1045,9 @@ class InvoiceApi extends Controller
            }
 
             $invoice->status_id = $invoice->status->next_status_id;
-            $invoice->raised_at = date('Y-m-d H:i:s');
+            if($invoice->status_id  != 9){ // Only set request time if its not after corrections
+                $invoice->raised_at = date('Y-m-d H:i:s');
+            }
 
             if($invoice->save()) {
 

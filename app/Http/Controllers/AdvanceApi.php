@@ -199,8 +199,12 @@ class AdvanceApi extends Controller
             'project_manager_id',
             'payment_mode_id',
             'total',
-            'currency_id'
+            'currency_id',
+            'file'
             );
+
+            $ftp = FTP::connection()->getDirListing();
+            $file = $form['file'];
 
         $advance = Advance::findOrFail($form['id']);
 
@@ -219,6 +223,14 @@ class AdvanceApi extends Controller
 
 
         if($advance->save()) {
+
+            if($file!=0){
+                FTP::connection()->makeDir('/advances/'.$advance->id);
+                FTP::connection()->makeDir('/advances/'.$advance->id);
+                FTP::connection()->uploadFile($file->getPathname(), '/advances/'.$advance->id.'/'.$advance->id.'.'.$file->getClientOriginalExtension());
+
+                $advance->advance_document           =   $advance->id.'.'.$file->getClientOriginalExtension();
+            }
 
             return Response()->json(array('msg' => 'Success: Advance updated','advance' => $advance), 200);
         }
@@ -622,7 +634,9 @@ class AdvanceApi extends Controller
                                 )->findOrFail($advance_id);
            
             $advance->status_id = $advance->status->next_status_id;
-            $advance->requested_at = date('Y-m-d H:i:s');
+            if($advance->status_id  != 11){ // Only set request time if its not after corrections
+                $advance->requested_at = date('Y-m-d H:i:s');
+            }
 
             if($advance->save()) {
                 

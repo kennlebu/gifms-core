@@ -1100,7 +1100,7 @@ class MobilePaymentApi extends Controller
              
            }
             $mobile_payment->status_id = $mobile_payment->status->next_status_id;
-            if($mobile_payment->status_id != 11){ // Only set request time if its not after corrections
+            if($mobile_payment->status_id != 11 || $mobile_payment->status_id != 7){ // Only set request time if its not after corrections
                 $mobile_payment->requested_at = date('Y-m-d H:i:s');
             }
 
