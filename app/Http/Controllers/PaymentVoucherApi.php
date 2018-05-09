@@ -23,6 +23,8 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Response;
 use App\Models\PaymentModels\PaymentVoucher;
+use App\Models\InvoicesModels\Invoice;
+use App\Models\PaymentModels\VoucherNumber;
 
 class PaymentVoucherApi extends Controller
 {
@@ -263,33 +265,51 @@ class PaymentVoucherApi extends Controller
     public function getDocumentById($payment_voucher_id)
     {       
 
-        try {
-
-            $payment_voucher        = PaymentVoucher::findOrFail($payment_voucher_id);
-
-            //load signatures
-
-            foreach ($payment_voucher->vouchable->approvals as $key => $approval) {
-                try {    
-                    if ($approval->approver) {
-                        $signature = $approval->approver->signature_url;
-                    }                
-                } catch (Exception $e) {
-                    
+        try{
+            $invoice        = Invoice::findOrFail($payment_voucher_id);
+            $voucher_date = '-';
+            $vendor = '-';
+            $voucher_no = '-';
+            if(empty($invoice->voucher_no)){
+                if(empty($invoice->voucher_no)) $voucher_no = '-';
+                else{
+                    $voucher_no = 'CHAI'.$this->pad_zeros(5, $invoice->voucher_no);
                 }
             }
+            else{
+                $voucher_no = VoucherNumber::first($invoice->voucher_no);
+                $voucher_no = $voucher_no->voucher_number;
+            }
 
-            $data           = array(
-                'payment_voucher'   => $payment_voucher
-            );
+            if(empty($invoice->payment_date)){
+                $payment = Payment::where('payable_id', $invoice->id)->where('payable_type', 'invoices')->first();
+                if(!empty($payment->payment_batch_id) && $payment->payment_batch_id > 0){
+                    $batch = PaymentBatch::find($payment->payment_batch_id);
+                    $voucher_date = $batch->created_at;
+                }
+            }
+            else{
+                $voucher_date = $invoice->payment_date;
+            }
+
+            $vendor = $invoice->supplier->supplier_name;
+
+            $data = array(
+                    'payable'   => $invoice,
+                    'voucher_date' => $voucher_date,
+                    'vendor'=>$vendor,
+                    'voucher_no'=>$voucher_no,
+                    'payable_type'=>'Invoice'
+                    );
+            file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , '\nSQL:: '.json_encode($data) , FILE_APPEND);
 
             $pdf            = PDF::loadView('pdf/payment_voucher', $data);
 
             $file_contents  = $pdf->stream();
 
-            Storage::put('payment_voucher/'.$payment_voucher_id.'.voucher.temp', $file_contents);
+            Storage::put('invoices/'.$invoice_id.'.voucher.temp', $file_contents);
 
-            $url            = storage_path("app/payment_voucher/".$payment_voucher_id.'.voucher.temp');
+            $url            = storage_path("app/invoices/".$invoice_id.'.voucher.temp');
 
             $file           = File::get($url);
 
@@ -298,7 +318,6 @@ class PaymentVoucherApi extends Controller
             $response->header('Content-Type', 'application/pdf');
 
             return $response;
-
         }catch (Exception $e ){            
 
             $response       = Response::make("", 200);

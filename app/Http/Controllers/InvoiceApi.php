@@ -877,7 +877,7 @@ class InvoiceApi extends Controller
 
             $path_info      = pathinfo($path);
 
-            $ext            = $path_info['extension'];
+            // $ext            = $path_info['extension'];
 
             // if($ext==""){
             //     throw new Exception("Error Processing Request", 500);                
@@ -968,20 +968,19 @@ class InvoiceApi extends Controller
 
             $pdf            = PDF::loadView('pdf/payment_voucher', $data);
 
-            // $file_contents  = $pdf->stream();
+            $file_contents  = $pdf->stream();
 
-            // Storage::put('invoices/'.$invoice_id.'.voucher.temp', $file_contents);
+            Storage::put('invoices/'.$invoice_id.'.voucher.temp', $file_contents);
 
-            // $url            = storage_path("app/invoices/".$invoice_id.'.voucher.temp');
+            $url            = storage_path("app/invoices/".$invoice_id.'.voucher.temp');
 
-            // $file           = File::get($url);
+            $file           = File::get($url);
 
-            // $response       = Response::make($file, 200);
+            $response       = Response::make($file, 200);
 
-            // $response->header('Content-Type', 'application/pdf');
+            $response->header('Content-Type', 'application/pdf');
 
-            // return $response;
-            return $pdf->download();
+            return $response;
         }catch (Exception $e ){            
 
             $response       = Response::make("", 200);
