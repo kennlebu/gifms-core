@@ -1869,6 +1869,13 @@ Route::GET('/mobile_payments/template', 'MobilePaymentApi@getTemplate')->middlew
  * Output-Formats: [application/json, application/xml]
  */
 Route::POST('/mobile_payment/upload_bankfile', 'MobilePaymentApi@uploadBankFile')->middleware('jwt.auth');
+/**
+ * POST resendBankInstruction
+ * Summary: resend bank instruction
+ * Notes: Resend Bank Instruction email
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/mobile_payment/{mobile_payment_id}/resend_bank_instruction', 'MobilePaymentApi@resendBankInstruction')->middleware('jwt.auth');
 
 
 
