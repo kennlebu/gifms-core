@@ -339,7 +339,13 @@ class PaymentBatchApi extends Controller
                         
                     }
 
-                    $rtgs_data['bank_code'] = $this->pad_zeros(2,(string)$payment->paid_to_bank->bank_code).$this->pad_zeros(3,(string)$payment->paid_to_bank_branch->branch_code);
+                    $bank_code = 'n/a';
+                    $branch_code = 'n/a';
+                    if(empty($payment->paid_to_bank->bank_code)) $bank_code = 0;
+                    else $bank_code = $payment->paid_to_bank->bank_code;
+                    if(empty($payment->paid_to_bank_branch->branch_code)) $branch_code = 0;
+                    else $branch_code = $payment->paid_to_bank_branch->branch_code;
+                    $rtgs_data['bank_code'] = $this->pad_zeros(2,(string)$bank_code).$this->pad_zeros(3,(string)$branch_code);
                     // $rtgs_data['branch'] = $this->pad_zeros(3,$payment->paid_to_bank_branch->brach_code);
                     $rtgs_data['account'] = $payment->paid_to_bank_account_no;
                     $rtgs_data['chaipv'] = $voucher_no;
@@ -393,14 +399,7 @@ class PaymentBatchApi extends Controller
                     $mmts_data['chaipv'] = $voucher_no;
 
                     // if($payment->payable_type == 'invoices'){
-                    //     $invoice                = Invoice::find($payment->payable_id);
-
-                    //     $qb_invoice = DB::table('invoices')
-                    //         ->join('suppliers', 'invoices.supplier_id', '=', 'suppliers.id')
-                    //         ->where('invoices.id', '=', $invoice->raised_by_id)
-                    //         ->select('suppliers.mobile_payment_number','suppliers.mobile_payment_name')
-                    //         ->get();
-                    //         foreach($qb_invoice as $row){
+                    //     
                     //             $mmts_data['phone'] = $row['mobile_payment_number'];
                     //             $mmts_data['mobile_name'] = $row['mobile_payment_name'];
                     //             $mmts_data['chaipv'] = $voucher_no;
