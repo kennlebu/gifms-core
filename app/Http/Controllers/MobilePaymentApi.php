@@ -449,7 +449,7 @@ class MobilePaymentApi extends Controller
                 $approval->approval_level_id        =   $approvable_status->approval_level_id;
                 $approval->approver_id              =   (int)   $user->id;
 
-                if($mobile_payment->status_id!=4 && $mobile_payment->status_id!=8){   
+                if($mobile_payment->status_id!=4 && $mobile_payment->status_id!=8 && $mobile_payment->status_id!=13){
                 
                     $approval->save();
                     try{                     
@@ -458,11 +458,20 @@ class MobilePaymentApi extends Controller
                     }
                 }
                 // Management approval or accountant approval after corrections
-                elseif($mobile_payment->status_id==4||$mobile_payment->status_id==12){
+                elseif($mobile_payment->status_id==4||$mobile_payment->status_id==13){
                     $mgt_approval_time = new \DateTime();
-                    $v = $this->generate_voucher_no($mobile_payment->id, 'mobile_payments', $mgt_approval_time);
-                    $voucher_number = $v['voucher'];
-                    $voucher_id = (int) $v['id'];
+
+                    // Only create a payment voucher if it's management approval
+                    if($mobile_payment->status_id==4){
+                        $v = $this->generate_voucher_no($mobile_payment->id, 'mobile_payments', $mgt_approval_time);
+                        $voucher_number = $v['voucher'];
+                        $voucher_id = (int) $v['id'];
+                    }
+
+                    else{
+                        $voucher = VoucherNumber::where('payable_id', $mobile_payment_id)->firstOrFail();
+                        $voucher_number = $voucher->voucher_number;
+                    }
                     
                     /* Get CSV data */
                     date_default_timezone_set('Africa/Nairobi'); // Set timezone to Nairobi
