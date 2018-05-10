@@ -319,7 +319,7 @@ class InvoiceApi extends Controller
                 'expense_desc',
                 'expense_purpose',
                 'external_ref',
-                // 'invoice_date',
+                'invoice_date',
                 'payment_mode_id',
                 'lpo_id',
                 'supplier_id',
@@ -341,9 +341,9 @@ class InvoiceApi extends Controller
             $file = $form['file'];
 
 
-
-
-            // $invoice_date = date('Y-m-d H:i:s', strtotime($form['invoice_date']));
+            $DT = new \DateTime();
+            $dt = $DT->createFromFormat('D M d Y H:i:s T +',$form['invoice_date']);
+            $invoice_date = $dt->format('Y-m-d');
 
             // if($form['submission_type']=='full'){
 
@@ -357,7 +357,7 @@ class InvoiceApi extends Controller
                 $invoice->expense_purpose                   =               $form['expense_purpose'];
                 $invoice->external_ref                      =               $form['external_ref'];
                 // $invoice->invoice_date                      =               $form['invoice_date'];
-                // $invoice->invoice_date                      =               $invoice_date;
+                $invoice->invoice_date                      =               $invoice_date;
                 $invoice->lpo_id                            =   (((int) $form['lpo_id'])>0)?$form['lpo_id']:null;;
                 $invoice->supplier_id                       =   (int)       $form['supplier_id'];
                 $invoice->payment_mode_id                   =   (int)       $form['payment_mode_id'];
