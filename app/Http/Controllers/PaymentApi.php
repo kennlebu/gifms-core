@@ -548,7 +548,7 @@ class PaymentApi extends Controller
 
         foreach ($data as $key => $value) {
 
-            $payment = Payment::find($data[$key]['id']);
+            $payment = Payment::with('payable.project_manager')->find($data[$key]['id']);
 
             $data[$key]['payable']                      = $payment->payable;
             $data[$key]['simple_date']                  = $payment->simple_date;
@@ -560,6 +560,7 @@ class PaymentApi extends Controller
             $data[$key]['payment_mode']                 = $payment->payment_mode;
             $data[$key]['payment_batch']                = $payment->payment_batch;
             $data[$key]['status']                       = $payment->status;
+            $data[$key]['project_manager']              = $payment->payable->project_manager;
 
         }
 
