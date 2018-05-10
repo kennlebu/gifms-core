@@ -114,7 +114,7 @@ class MobilePaymentInstructBank extends Mailable
                     'bank_to' => $this->bank_to,
                     'js_url' => Config::get('app.js_url'),
                 ])
-            ->subject("Bulk MPESA Payment - ".$this->pad_zeros(5,$this->mobile_payment->id));
+            ->subject("Bulk MPESA Payment - ".$this->voucher_number);
     }
 
     /**
