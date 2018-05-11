@@ -701,6 +701,11 @@ class InvoiceApi extends Controller
 
 
                 if($approval->approval_level_id==4){
+                    $v = $this->generate_voucher_no($invoice->id, 'invoices', $invoice->created_at);
+                    $voucher_number = $v['voucher'];
+                    $voucher_id = (int) $v['id'];
+                    $invoice->voucher_no = $voucher_id;
+                    $invoice->save();
 
                     $payable    =   array(
                         'payable_type'                  =>  'invoices', 
@@ -716,7 +721,8 @@ class InvoiceApi extends Controller
                         'payment_mode_id'               =>  $invoice->payment_mode->id, 
                         'amount'                        =>  $invoice->total, 
                         'payment_batch_id'              =>  "", 
-                        'bank_charges'                  =>  ""
+                        'bank_charges'                  =>  "",
+                        'voucher_no'                    => $voucher_id
                     );
                     
                     $this->generate_payable_payment($payable);

@@ -460,6 +460,7 @@ class MobilePaymentApi extends Controller
                 // Management approval or accountant approval after corrections
                 elseif($mobile_payment->status_id==4||$mobile_payment->status_id==13){
                     $mgt_approval_time = new \DateTime();
+                    $voucher_number = '';
 
                     // Only create a payment voucher if it's management approval
                     if($mobile_payment->status_id==4){

@@ -32,7 +32,8 @@ class CreateClaimsTable extends Migration
             $table->integer('requested_by_id')->nullable();
             $table->integer('request_action_by_id')->nullable();
             $table->integer('project_id')->nullable();
-            $table->integer('project_manager_id')->nullable();
+            $table->integer('project_manager_id')->nullable();            
+            $table->integer('voucher_no')->nullable();
             $table->integer('migration_requested_by_id')->nullable();
             $table->integer('migration_project_id')->nullable();
             $table->integer('migration_project_manager_id')->nullable();

@@ -178,7 +178,7 @@ class Controller extends BaseController
         $payment->amount                    =   $payable['amount'];
         $payment->payment_batch_id          =   $payable['payment_batch_id'];
         $payment->bank_charges              =   $payable['bank_charges'];
-
+        $payment->voucher_no                =   $payable['voucher_no'];
         $payment->status_id                 =   $default_status;
 
         if($payment->save()) {
@@ -202,17 +202,6 @@ class Controller extends BaseController
 
 
     protected function generate_voucher_no($payable_id, $payable_type, $creation_date){
-		// $prefix = '';
-		// // Now update the invoices, claims and advances
-		// if($payable_type == 'invoices'){
-		// 	$prefix = '-INV';
-		// }
-		// elseif($payable_type == 'advances'){
-		// 	$prefix = '-ADV';
-		// }
-		// elseif($payable_type == 'claims'){
-		// 	$prefix = '-CLM';
-		// }
 		
 		$last_voucher_no = '';
 
@@ -228,7 +217,8 @@ class Controller extends BaseController
 			$last_voucher_no = $previous_voucher->voucher_number;
 		}
 
-		$year = date_format($creation_date,'Y');
+        // $year = date_format($creation_date,'Y');
+        $year = (new \DateTime)->format("Y");
 		$year = substr($year, -2);
 
 		if($year != substr($last_voucher_no, 2, 2)){
@@ -237,7 +227,7 @@ class Controller extends BaseController
 		}
 		
 		$voucher_no = ((int) substr($last_voucher_no, 4, 4)) + 1;
-		$voucher_no = 'KE'.$year.$this->pad_zeros(4, $voucher_no);
+		$voucher_no = 'KE'.$year.$this->pad_with_zeros(4, $voucher_no);
 		
 		$new_voucher->voucher_number = $voucher_no;
 
@@ -249,5 +239,18 @@ class Controller extends BaseController
 		}
 		
 
-	}
+    }
+    
+    /**
+     * Adds zeros at the beginning of string until the desired
+     * length is reached.
+     */
+    public function pad_with_zeros($desired_length, $data){
+        if(strlen($data)<$desired_length){
+            return str_repeat('0', $desired_length-strlen($data)).$data;
+        }
+        else{
+            return $data;
+        }
+    }
 }
