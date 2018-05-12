@@ -94,11 +94,9 @@ class MobilePaymentApi extends Controller
 
         try{
 
-
             $form = Request::only(
                 'requested_by_id',
                 'request_action_by_id',
-                //'project_id',
                 'account_id',
                 'mobile_payment_type_id',
                 'expense_desc',
@@ -115,19 +113,13 @@ class MobilePaymentApi extends Controller
                 'rejected_by_id'
                 );
 
-
             $ftp = FTP::connection()->getDirListing();
-
-
             $file = $form['file'];
-
 
             $mobile_payment = new MobilePayment;
 
             $mobile_payment->requested_by_id                =   (int)   $form['requested_by_id'];
             $mobile_payment->request_action_by_id           =   (int)   $form['request_action_by_id'];
-            //$mobile_payment->project_id                     =   (int)   $form['project_id'];
-            // $mobile_payment->account_id                     =   (int)   $form['account_id'];
             $mobile_payment->mobile_payment_type_id         =   (int)   $form['mobile_payment_type_id'];
             $mobile_payment->expense_desc                   =           $form['expense_desc'];
             $mobile_payment->expense_purpose                =           $form['expense_purpose'];
@@ -141,13 +133,10 @@ class MobilePaymentApi extends Controller
             $mobile_payment->rejection_reason               =           $form['rejection_reason'];
             $mobile_payment->rejected_by_id                 =   (int)   $form['rejected_by_id'];
 
-
             $mobile_payment->status_id                      =   $this->default_status;
-
             
             $user = JWTAuth::parseToken()->authenticate();
             $mobile_payment->request_action_by_id            =   (int)   $user->id;
-
 
             if($mobile_payment->save()) {
 
@@ -203,57 +192,22 @@ class MobilePaymentApi extends Controller
      */
     public function updateMobilePayment()
     {
-        $form = Request::only(
-            'id',
-            'requested_by_id',
-            'request_action_by_id',
-            'project_id',
-            'account_id',
-            'mobile_payment_type_id',
-            'expense_desc',
-            'expense_purpose',
-            'payment_document',
-            'status_id',
-            'project_manager_id',
-            'region_id',
-            'county_id',
-            'attendance_sheet',
-            'payees_upload_mode_id',
-            'rejection_reason',
-            'rejected_by_id'
-        );
+        $form = Request::all();
 
-        // if (!isset($input['body'])) {
-        //     throw new \InvalidArgumentException('Missing the required parameter $body when calling updateMobilePayment');
-        // }
-        
-        // $body = $input['body'];
-
+        $file = $form['file'];
         $mobile_payment = MobilePayment::find($form['id']);
-
-
-
-       
-            $mobile_payment->requested_by_id                =   (int)   $form['requested_by_id'];
-            $mobile_payment->request_action_by_id           =   (int)   $form['request_action_by_id'];
-            $mobile_payment->project_id                     =   (int)   $form['project_id'];
-            // $mobile_payment->account_id                     =   (int)   $form['account_id'];
-            $mobile_payment->mobile_payment_type_id         =   (int)   $form['mobile_payment_type_id'];
-            $mobile_payment->expense_desc                   =           $form['expense_desc'];
-            $mobile_payment->expense_purpose                =           $form['expense_purpose'];
-            $mobile_payment->payment_document               =   (int)   $form['payment_document'];
-            $mobile_payment->status_id                      =   (int)   $form['status_id'];
-            $mobile_payment->project_manager_id             =   (int)   $form['project_manager_id'];
-            $mobile_payment->region_id                      =   (int)   $form['region_id'];
-            $mobile_payment->county_id                      =   (int)   $form['county_id'];
-            $mobile_payment->attendance_sheet               =           $form['attendance_sheet'];
-            $mobile_payment->payees_upload_mode_id          =   (int)   $form['payees_upload_mode_id'];
-            $mobile_payment->rejection_reason               =           $form['rejection_reason'];
-            $mobile_payment->rejected_by_id                 =   (int)   $form['rejected_by_id'];
-
-
+        $mobile_payment->expense_desc                   =           $form['expense_desc'];
+        $mobile_payment->expense_purpose                =           $form['expense_purpose'];
+        $mobile_payment->project_manager_id             =   (int)   $form['project_manager_id'];
 
         if($mobile_payment->save()) {
+
+            if($file!=0){
+                FTP::connection()->makeDir('/mobile_payments');
+                FTP::connection()->makeDir('/mobile_payments/'.$mobile_payment->id);
+                FTP::connection()->makeDir('/mobile_payments/'.$mobile_payment->id.'/signsheet');
+                FTP::connection()->uploadFile($file->getPathname(), '/mobile_payments/'.$mobile_payment->id.'/signsheet/'.$mobile_payment->id.'.'.$file->getClientOriginalExtension());
+            }
 
             return Response()->json(array('msg' => 'Success: Mobile payment updated','mobile_payment' => $mobile_payment), 200);
         }
@@ -910,7 +864,7 @@ class MobilePaymentApi extends Controller
 
             $path_info      = pathinfo($path);
 
-            $ext            = $path_info['extension'];
+            // $ext            = $path_info['extension'];
 
             $basename       = $path_info['basename'];
 
@@ -924,16 +878,16 @@ class MobilePaymentApi extends Controller
 
             $response       = Response::make($file, 200);
 
-            $response->header('Content-Type', $this->get_mime_type($basename));
+            $response->header('Content-Type', 'application/pdf');
 
             return $response;  
         }catch (Exception $e ){            
 
-            $response       = Response::make(array('error'=>$e), 500);
+            $response       = Response::make(array('error'=>$e->getMessage()), 500);
 
             // $response->header('Content-Type', 'application/pdf');
 
-            return $response;  
+            return $response;   
 
         }
     }

@@ -345,33 +345,19 @@ class InvoiceApi extends Controller
             $dt = $DT->createFromFormat('D M d Y H:i:s T +',$form['invoice_date']);
             $invoice_date = $dt->format('Y-m-d');
 
-            // if($form['submission_type']=='full'){
+            $invoice = Invoice::findOrFail($form['id']);
 
-                // print_r($form);
-
-                $invoice = Invoice::findOrFail($form['id']);
-
-                // $invoice->received_by_id                    =   (int)       $form['raised_by_id'];//received_by_id must be =raised_by_id
-                $invoice->raised_by_id                      =   (int)       $form['raised_by_id'];
-                $invoice->expense_desc                      =               $form['expense_desc'];
-                $invoice->expense_purpose                   =               $form['expense_purpose'];
-                $invoice->external_ref                      =               $form['external_ref'];
-                // $invoice->invoice_date                      =               $form['invoice_date'];
-                $invoice->invoice_date                      =               $invoice_date;
-                $invoice->lpo_id                            =   (((int) $form['lpo_id'])>0)?$form['lpo_id']:null;;
-                $invoice->supplier_id                       =   (int)       $form['supplier_id'];
-                $invoice->payment_mode_id                   =   (int)       $form['payment_mode_id'];
-                $invoice->project_manager_id                =   (int)       $form['project_manager_id'];
-                $invoice->total                             =   (double)    $form['total'];
-                $invoice->currency_id                       =   (int)       $form['currency_id'];
-                // $invoice->received_at                       =   date('Y-m-d H:i:s');
-                // $invoice->raised_at                         =   date('Y-m-d H:i:s');
-
-                // $invoice->status_id                         =   $this->default_status;
-
-            // }
-
-
+            $invoice->raised_by_id                      =   (int)       $form['raised_by_id'];
+            $invoice->expense_desc                      =               $form['expense_desc'];
+            $invoice->expense_purpose                   =               $form['expense_purpose'];
+            $invoice->external_ref                      =               $form['external_ref'];
+            $invoice->invoice_date                      =               $invoice_date;
+            $invoice->lpo_id                            =   (((int) $form['lpo_id'])>0)?$form['lpo_id']:null;;
+            $invoice->supplier_id                       =   (int)       $form['supplier_id'];
+            $invoice->payment_mode_id                   =   (int)       $form['payment_mode_id'];
+            $invoice->project_manager_id                =   (int)       $form['project_manager_id'];
+            $invoice->total                             =   (double)    $form['total'];
+                
             if($invoice->save()) {
 
                 if($form['submission_type']=='full' && $file!=0){
@@ -385,15 +371,8 @@ class InvoiceApi extends Controller
                     $invoice->save();
 
                 }
-                // else if($form['submission_type']=='log'){
-                //     $invoice->ref                        = "CHAI/INV/#$invoice->id/".date_format($invoice->created_at,"Y/m/d");
-                //     $invoice->save();
-
-                //     Mail::queue(new NotifyInvoice($invoice));
-
-                // }
                 
-                return Response()->json(array('success' => 'Invoice Added','invoice' => $invoice), 200);
+                return Response()->json(array('success' => 'Invoice updated','invoice' => $invoice), 200);
             }
 
 

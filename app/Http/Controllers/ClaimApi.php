@@ -88,13 +88,7 @@ class ClaimApi extends Controller
                 'file'
                 );
 
-
-            // FTP::connection()->changeDir('/lpos');
-
             $ftp = FTP::connection()->getDirListing();
-
-            // print_r($form['file']);
-
             $file = $form['file'];
 
 
@@ -158,21 +152,10 @@ class ClaimApi extends Controller
      */
     public function updateClaim()
     {
-         $form = Request::only(
-            'id',
-            'requested_by_id',
-            'expense_desc',
-            'expense_purpose',
-            'project_manager_id',
-            'payment_mode_id',
-            'total',
-            'currency_id'
-            );
+        $form = Request::all();
+        $file = $form['file'];
 
         $claim = Claim::find($form['id']);
-
-
-
 
             $claim->requested_by_id                   =   (int)       $form['requested_by_id'];
             $claim->expense_desc                      =               $form['expense_desc'];
@@ -182,9 +165,12 @@ class ClaimApi extends Controller
             $claim->total                             =   (double)    $form['total'];
             $claim->currency_id                       =   (int)       $form['currency_id'];   
 
-
-
         if($claim->save()) {
+            if($file != 0){
+                FTP::connection()->makeDir('/claims');
+                FTP::connection()->makeDir('/claims/'.$claim->id);
+                FTP::connection()->uploadFile($file->getPathname(), '/claims/'.$claim->id.'/'.$claim->id.'.'.$file->getClientOriginalExtension());
+            }
 
             return Response()->json(array('msg' => 'Success: Claim updated','claim' => $claim), 200);
         }

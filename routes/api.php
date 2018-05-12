@@ -1770,7 +1770,7 @@ Route::POST('/mobile_payment', 'MobilePaymentApi@addMobilePayment')->middleware(
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::PUT('/mobile_payment', 'MobilePaymentApi@updateMobilePayment')->middleware('jwt.auth');
+Route::POST('/mobile_payment/update', 'MobilePaymentApi@updateMobilePayment')->middleware('jwt.auth');
 /**
  * GET getMobilePaymentById
  * Summary: Find mobile_payment by ID
@@ -2393,7 +2393,7 @@ Route::POST('/claim', 'ClaimApi@addClaim')->middleware('jwt.auth');
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::PUT('/claim', 'ClaimApi@updateClaim')->middleware('jwt.auth');
+Route::POST('/claim/edit', 'ClaimApi@updateClaim')->middleware('jwt.auth');
 /**
  * DELETE deleteClaim
  * Summary: Deletes an claim
