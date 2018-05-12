@@ -162,14 +162,15 @@ class ReportsApi extends Controller
 
         foreach($payables as $row){if(isset($row['payable']['allocations'])){
             $voucher_no = '';
-            if(empty($row['payable']['migration_id'])){
-                $voucher_no = VoucherNumber::first($row['payable']['voucher_no']);
-                $voucher_no = $voucher_no->voucher_number;
+            if(($row['payable_type']=='mobile_payments' && empty($row['payable']['migration_invoice_id'])) || 
+                ($row['payable_type']!='mobile_payments' && empty($row['payable']['migration_id']))){
+                $voucher_no = VoucherNumber::find($row['payable']['voucher_no']);
+                if(!empty($voucher_no->voucher_number)) $voucher_no = $voucher_no->voucher_number;
+                else $voucher_no = '-';
             }
             else{
                 if($row['payable_type']=='mobile_payments'){
                     $voucher_no = 'CHAI'.$this->pad_zeros(5, $row['payable']['migration_invoice_id']);
-                    // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , '\nSQL:: '.json_encode($row['payable']) , FILE_APPEND);
                 }
                 else {
                     $voucher_no = 'CHAI'.$this->pad_zeros(5, $row['payable']['migration_id']);
@@ -206,8 +207,8 @@ class ReportsApi extends Controller
                     if($row['payable_type'] == 'mobile_payments'){
                         $mpesa_payee = Staff::find($row['payable']['requested_by_id'])->full_name;
     
-                        $my_result['vendor_name'] = $mpesa_payee;
-                        $my_result['general_jr'] = $mpesa_payee.': '.$row['payable']['expense_desc'].'; '.$row['payable']['expense_purpose'];
+                        $my_result['vendor_name'] = 'MOH OFFICIALS';
+                        $my_result['general_jr'] = 'MOH OFFICIALS c/o '.$mpesa_payee.': '.$row['payable']['expense_desc'].'; '.$row['payable']['expense_purpose'];
                         $my_result['specific_jr'] = 'MOH OFFICIALS c/o '.$mpesa_payee.': '.$row['payable']['expense_desc'].'; '.$allocation['allocation_purpose'];
                         $my_result['total_amount'] = $row['payable']['totals'];
                         $my_result['transaction_type'] = 'Bulk MMTS';
