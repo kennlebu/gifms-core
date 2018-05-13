@@ -50,14 +50,9 @@ class LPOQuotationApi extends Controller
      */
     public function addLpoQuotation()
     {
-        // $input = Request::all();
 
         $lpo_quotation = new LpoQuotation;
-
-
         try{
-
-
             $form = Request::only(
                 'lpo_id',
                 'uploaded_by_id',
@@ -66,21 +61,13 @@ class LPOQuotationApi extends Controller
                 'file'
                 );
 
-
-            // FTP::connection()->changeDir('/lpos');
-
             $ftp = FTP::connection()->getDirListing();
-
-            // print_r($form['file']);
-
             $file = $form['file'];
-
 
             $lpo_quotation->uploaded_by_id                      =   (int)       $form['uploaded_by_id'];
             $lpo_quotation->supplier_id                         =   (int)       $form['supplier_id'];
             $lpo_quotation->amount                              =   (double)    $form['amount'];
             $lpo_quotation->lpo_id                              =   (int)       $form['lpo_id'];
-
 
             if($lpo_quotation->save()) {
 
@@ -91,8 +78,7 @@ class LPOQuotationApi extends Controller
                 FTP::connection()->uploadFile($file->getPathname(), '/lpos/'.$lpo_quotation->lpo_id.'/quotations/'.$lpo_quotation->id.'/'.$lpo_quotation->id.'.'.$file->getClientOriginalExtension());
 
                 $lpo_quotation->quotation_doc                   =   $lpo_quotation->id.'.'.$file->getClientOriginalExtension();
-                $lpo_quotation->save();
-                
+                $lpo_quotation->save();                
 
                 $lpo    =       Lpo::with("preffered_quotation")->findOrFail($lpo_quotation->lpo_id);
                 if (is_null($lpo->preffered_quotation)) {
@@ -157,48 +143,29 @@ class LPOQuotationApi extends Controller
      */
     public function updateLpoQuotation()
     {
-
-        $input = Request::all();
-
-
-
-
         try{
 
-
-            $form = Request::only(
-                'id',
-                'lpo_id',
-                'uploaded_by_id',
-                'supplier_id',
-                'amount',
-                'file'
-                );
-
-
+            $form = Request::all();
             $quotation = LpoQuotation::findOrFail($form['id']);
+            $file = $form['file'];
 
-
-            $quotation->lpo_id                   =               $form['lpo_id'];
-            $quotation->uploaded_by_id           =               $form['uploaded_by_id'];
+            // $quotation->lpo_id                   =               $form['lpo_id'];
+            // $quotation->uploaded_by_id           =               $form['uploaded_by_id'];
             $quotation->supplier_id              =               $form['supplier_id'];
             $quotation->amount                   =               $form['amount'];
-            // $item->file               =               $form['file'];
-
-            // $user = JWTAuth::parseToken()->authenticate();
-            // $allocation->allocated_by_id            =   (int)   $user->id;
 
 
             if($quotation->save()) {
 
+                if($file!=0){
+                    FTP::connection()->makeDir('/lpos');
+                    FTP::connection()->makeDir('/lpos/'.$quotation->lpo_id);
+                    FTP::connection()->makeDir('/lpos/'.$quotation->lpo_id.'/quotations');
+                    FTP::connection()->makeDir('/lpos/'.$quotation->lpo_id.'/quotations/'.$quotation->id);
+                    FTP::connection()->uploadFile($file->getPathname(), '/lpos/'.$quotation->lpo_id.'/quotations/'.$quotation->id.'/'.$quotation->id.'.'.$file->getClientOriginalExtension());
+                }
 
-                // $user = JWTAuth::parseToken()->authenticate();
-                // activity()
-                //    ->performedOn($allocation->allocatable)
-                //    ->causedBy($user)
-                //    ->log('re-allocated');
-                // $allocation->save();
-                return Response()->json(array('success' => 'Item updated','lpo_quotation' => $quotation), 200);
+                return Response()->json(array('success' => 'Quotation updated','lpo_quotation' => $quotation), 200);
             }
 
 

@@ -319,12 +319,12 @@ Route::GET('/lpo_statuses', 'LPOStatusApi@lpoStatusesGet')->middleware('jwt.auth
  */
 Route::POST('/lpo_quotation', 'LPOQuotationApi@addLpoQuotation')->middleware('jwt.auth');
 /**
- * PUT updateLpoQuotation
+ * POST updateLpoQuotation
  * Summary: Update an existing LPO Quotation
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::PUT('/lpo_quotation', 'LPOQuotationApi@updateLpoQuotation')->middleware('jwt.auth');
+Route::POST('/lpo_quotation/edit', 'LPOQuotationApi@updateLpoQuotation')->middleware('jwt.auth');
 /**
  * DELETE deleteLpoQuotation
  * Summary: Deletes an lpo_quotation
