@@ -628,15 +628,14 @@ class LPOApi extends Controller
            
            
             $lpo->status_id = $lpo->status->next_status_id;
-            $lpo->requested_at = date('Y-m-d H:i:s');
+            // Set request time only if it's going to accountant
+            if($lpo->status_id == 2) $lpo->requested_at = date('Y-m-d H:i:s');
 
             if($lpo->save()) {
 
                 try{
                 Mail::queue(new NotifyLpo($lpo));
                 }catch(Exception $e){
-            //$response =  ["error"=>"lpo could not be found"];
-            //return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
         }
 
                 return Response()->json(array('msg' => 'Success: lpo submitted','lpo' => $lpo), 200);
