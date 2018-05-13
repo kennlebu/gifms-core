@@ -100,8 +100,8 @@
             <div style="display:inline-block;margin-top:25px;">
                 <div style="display:inline-block;margin-right:80px;">
                     Signed:<br/>
-                    {{-- <div style="height:70px;width:200px; background:url({{asset('storage/signatures/signature'.$director->id.'.png')}}; background-repeat:no-repeat;background-size:contain;"></div> --}}
-                    <img style="height:70px;width:200px;" alt="." src="{{asset('storage/signatures/signature'.$director->id.'.png')}}"></img>
+                    {{-- <img style="height:70px;width:200px;" alt="." src="{{asset('storage/signatures/signature'.$director->id.'.png')}}"></img> --}}
+                    <img style="height:70px;width:200px;" alt="." src="img/signatures/signature{{$director->id}}.png" />                    
                     <br/> 
                     {{trim($director->f_name).' '.trim($director->l_name)}}
                     <br/>{{$director->official_post}}
@@ -109,8 +109,8 @@
 
                 <div style="display:inline-block;margin-left:80px;">
                     Signed:<br/>
-                    {{-- <div style="height:70px;width:200px; background:url({{asset('storage/signatures/signature'.$deputy_director->id.'.png')}}; background-repeat:no-repeat;background-size:contain;"></div> --}}
-                    <img style="height:70px;width:200px;" alt="." src="{{asset('storage/signatures/signature'.$deputy_director->id.'.png')}}"></img>
+                    {{-- <img style="height:70px;width:200px;" alt="." src="{{asset('storage/signatures/signature'.$deputy_director->id.'.png')}}"></img> --}}
+                    <img style="height:70px;width:200px;" alt="." src="img/signatures/signature{{$deputy_director->id}}.png" />
                     <br/> 
                     {{trim($deputy_director->f_name).' '.trim($deputy_director->l_name)}}
                     <br/>{{$deputy_director->official_post}}

@@ -103,8 +103,8 @@ class MobilePaymentInstructBank extends Mailable
 
                 ])           
             ->cc($ccs)
-            ->attachData($pdf_file, 'ALLOWANCES_'.$this->voucher_number.'.pdf')
-            ->attachData($csv_file, 'ALLOWANCES_'.$this->voucher_number.'.csv');      
+            ->attachData($pdf_file, 'ALLOWANCES_'.$this->pdf_data['our_ref'].'.pdf')
+            ->attachData($csv_file, 'ALLOWANCES_'.$this->pdf_data['our_ref'].'.csv');      
 
         return $this->to($this->bank_to['email'])
         // return $this->to('dkarambi@clintonhealthaccess.org') // for test
@@ -114,7 +114,7 @@ class MobilePaymentInstructBank extends Mailable
                     'bank_to' => $this->bank_to,
                     'js_url' => Config::get('app.js_url'),
                 ])
-            ->subject("Bulk MPESA Payment - ".$this->voucher_number);
+            ->subject("Bulk MPESA Payment - ".$this->pdf_data['our_ref']);
     }
 
     /**
