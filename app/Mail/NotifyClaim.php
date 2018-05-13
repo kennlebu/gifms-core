@@ -56,28 +56,12 @@ class NotifyClaim extends Mailable
     {
 
         $ccs = [] ;
-        // $ccs[0] = $this->accountant;
-        // $ccs[1] = $this->financial_controller;
-        // $ccs[2] = $this->director;
-        // $ccs[3] = $this->claim->requested_by;
-
 
         $this->view('emails/notify_claim')         
             ->replyTo([
                     'email' => Config::get('mail.reply_to')['address'],
 
                 ]);
-            // ->cc($ccs);
-
-
-
-
-
-
-
-
-
-
 
         if($this->claim->status_id == 10){
             $ccs[0] = $this->claim->requested_by;
@@ -92,8 +76,6 @@ class NotifyClaim extends Mailable
                     ->subject("Claim Approval Request ".$this->claim->ref);
         }else if($this->claim->status_id == 2){
 
-
-
             return $this->to($this->claim->project_manager)
                     ->with([
                             'claim' => $this->claim,
@@ -102,8 +84,6 @@ class NotifyClaim extends Mailable
                         ])
                     ->subject("Claim Approval Request ".$this->claim->ref);
         }else if($this->claim->status_id == 3){
-
-
 
             return $this->to($this->financial_controller)
                     ->with([
@@ -114,8 +94,6 @@ class NotifyClaim extends Mailable
                     ->subject("Claim Approval Request ".$this->claim->ref);
         }else if($this->claim->status_id == 4){
 
-
-
             return $this->to($this->director)
                     ->with([
                             'claim' => $this->claim,
@@ -124,8 +102,6 @@ class NotifyClaim extends Mailable
                         ])
                     ->subject("Claim Approval Request ".$this->claim->ref);
         }else if($this->claim->status_id == 5){
-
-
 
             return $this->to($this->financial_controller)
                     ->with([
@@ -137,8 +113,6 @@ class NotifyClaim extends Mailable
         }
 
         else if($this->claim->status_id == 9){
-
-
 
             return $this->to($this->claim->requested_by)
                     ->with([

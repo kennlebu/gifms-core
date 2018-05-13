@@ -59,28 +59,12 @@ class NotifyInvoice extends Mailable
     {
 
         $ccs = [] ;
-        // $ccs[0] = $this->accountant;
-        // $ccs[1] = $this->financial_controller;
-        // $ccs[2] = $this->director;
-        // $ccs[3] = $this->invoice->raised_by;
-
 
         $this->view('emails/notify_invoice')         
             ->replyTo([
                     'email' => Config::get('mail.reply_to')['address'],
 
-                ]);      
-            // ->cc($ccs);
-
-
-
-
-
-
-
-
-
-
+                ]);
 
         if($this->invoice->status_id == 11){
             
@@ -117,8 +101,6 @@ class NotifyInvoice extends Mailable
                     ->subject("Invoice Approval Request ".$this->invoice->external_ref);
         }else if($this->invoice->status_id == 2){
 
-
-
             return $this->to($this->financial_controller)
                     ->with([
                             'invoice' => $this->invoice,
@@ -128,8 +110,6 @@ class NotifyInvoice extends Mailable
                     ->subject("Invoice Approval Request ".$this->invoice->external_ref);
         }else if($this->invoice->status_id == 3){
 
-
-
             return $this->to($this->director)
                     ->with([
                             'invoice' => $this->invoice,
@@ -138,8 +118,6 @@ class NotifyInvoice extends Mailable
                         ])
                     ->subject("Invoice Approval Request ".$this->invoice->external_ref);
         }else if($this->invoice->status_id == 4){
-
-
 
             return $this->to($this->financial_controller)
                     ->with([
@@ -151,8 +129,6 @@ class NotifyInvoice extends Mailable
         }
 
         else if($this->invoice->status_id == 9){
-
-
 
             return $this->to($this->invoice->raised_by)
                     ->with([

@@ -56,6 +56,30 @@
         <tr>
           <td style="text-align: left; border-bottom: 1px dotted #ccbcbc;" colspan="1"  bgcolor="#ffffff" height="20">
             <strong>
+              <span style="color: #7c7c7c;">Purpose:</span>
+            </strong>
+          </td>
+          <td style="text-align: left; border-bottom: 1px dotted #ccbcbc;" bgcolor="#ffffff" colspan="2" >
+            <strong>
+              <span style="color: #092d50;">{{$lpo->expense_purpose}}</span>
+            </strong>
+          </td>
+        </tr>
+        <tr>
+          <td style="text-align: left; border-bottom: 1px dotted #ccbcbc;" colspan="1"  bgcolor="#ffffff" height="20">
+            <strong>
+              <span style="color: #7c7c7c;">Supplier:</span>
+            </strong>
+          </td>
+          <td style="text-align: left; border-bottom: 1px dotted #ccbcbc;" bgcolor="#ffffff" colspan="2" >
+            <strong>
+              <span style="color: #092d50;">{{$lpo->preffered_quotation->supplier->supplier_name}}</span>
+            </strong>
+          </td>
+        </tr>
+        <tr>
+          <td style="text-align: left; border-bottom: 1px dotted #ccbcbc;" colspan="1"  bgcolor="#ffffff" height="20">
+            <strong>
               <span style="color: #7c7c7c;">Project:</span>
             </strong>
           </td>

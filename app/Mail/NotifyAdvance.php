@@ -56,28 +56,12 @@ class NotifyAdvance extends Mailable
     {
 
         $ccs = [] ;
-        // $ccs[0] = $this->accountant;
-        // $ccs[1] = $this->financial_controller;
-        // $ccs[2] = $this->director;
-        // $ccs[3] = $this->advance->requested_by;
-
 
         $this->view('emails/notify_advance')         
             ->replyTo([
                     'email' => Config::get('mail.reply_to')['address'],
 
-                ]);            
-            // ->cc($ccs);
-
-
-
-
-
-
-
-
-
-
+                ]);  
 
         if($this->advance->status_id == 13){
             $ccs[0] = $this->advance->requested_by;
@@ -92,8 +76,6 @@ class NotifyAdvance extends Mailable
                     ->subject("Advance Approval Request ".$this->advance->ref);
         }else if($this->advance->status_id == 2){
 
-
-
             return $this->to($this->advance->project_manager)
                     ->with([
                             'advance' => $this->advance,
@@ -102,8 +84,6 @@ class NotifyAdvance extends Mailable
                         ])
                     ->subject("Advance Approval Request ".$this->advance->ref);
         }else if($this->advance->status_id == 3){
-
-
 
             return $this->to($this->financial_controller)
                     ->with([
@@ -114,8 +94,6 @@ class NotifyAdvance extends Mailable
                     ->subject("Advance Approval Request ".$this->advance->ref);
         }else if($this->advance->status_id == 4){
 
-
-
             return $this->to($this->director)
                     ->with([
                             'advance' => $this->advance,
@@ -124,8 +102,6 @@ class NotifyAdvance extends Mailable
                         ])
                     ->subject("Advance Approval Request ".$this->advance->ref);
         }else if($this->advance->status_id == 8){
-
-
 
             return $this->to($this->financial_controller)
                     ->with([
@@ -136,28 +112,8 @@ class NotifyAdvance extends Mailable
                     ->subject("Advance Approval Request ".$this->advance->ref);
         }
 
-
-
-
-
-
-
-        // else if($this->advance->status_id == 99){
-
-
-
-        //     return $this->to($this->advance->requested_by)
-        //             ->with([
-        //                     'advance' => $this->advance,
-        //                     'addressed_to' => $this->advance->requested_by,
-        //                     'js_url' => Config::get('app.js_url'),
-        //                 ])
-        //             ->subject("Advance Cancelled ".$this->advance->ref);
-        // }
         else if($this->advance->status_id == 11){
-
-
-
+            
             return $this->to($this->advance->requested_by)
                     ->with([
                             'advance' => $this->advance,

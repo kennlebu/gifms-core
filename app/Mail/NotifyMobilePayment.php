@@ -48,7 +48,6 @@ class NotifyMobilePayment extends Mailable
             $this->mobile_payment->approvals[$key]['approver'] = Staff::find($this->mobile_payment->approvals[$key]['approver_id']);
         }
 
-
         $this->accountant           = Staff::findOrFail(    (int)   Config::get('app.accountant_id'));
         $this->financial_controller = Staff::findOrFail(    (int)   Config::get('app.financial_controller_id'));
         $this->director             = Staff::findOrFail(    (int)   Config::get('app.director_id'));
@@ -63,29 +62,12 @@ class NotifyMobilePayment extends Mailable
     {
 
         $ccs = [] ;
-        // $ccs[0] = $this->accountant;
-        // $ccs[1] = $this->financial_controller;
-        // $ccs[2] = $this->director;
-        // $ccs[3] = $this->mobile_payment->requested_by;
-
-
         $this->view('emails/notify_mobile_payment')         
             ->replyTo([
                     'email' => Config::get('mail.reply_to')['address'],
 
                 ]);
-            // ->cc($ccs);
-
-
-
-
-
-
-
-
-
-
-
+                
         if($this->mobile_payment->status_id == 9){
             $ccs[0] = $this->mobile_payment->requested_by;
 
@@ -100,8 +82,6 @@ class NotifyMobilePayment extends Mailable
                     ->subject("Mobile Payment Approval Request ".$this->mobile_payment->ref);
         }else if($this->mobile_payment->status_id == 2){
 
-
-
             return $this->to($this->mobile_payment->project_manager)
                     ->with([
                             'mobile_payment' => $this->mobile_payment,
@@ -111,8 +91,6 @@ class NotifyMobilePayment extends Mailable
                     ->subject("Mobile Payment Approval Request ".$this->mobile_payment->ref);
         }else if($this->mobile_payment->status_id == 3){
 
-
-
             return $this->to($this->financial_controller)
                     ->with([
                             'mobile_payment' => $this->mobile_payment,
@@ -121,8 +99,6 @@ class NotifyMobilePayment extends Mailable
                         ])
                     ->subject("Mobile Payment Approval Request ".$this->mobile_payment->ref);
         }else if($this->mobile_payment->status_id == 4){
-
-
 
             return $this->to($this->director)
                     ->with([
@@ -134,8 +110,6 @@ class NotifyMobilePayment extends Mailable
         }
 
         else if($this->mobile_payment->status_id == 7){
-
-
 
             return $this->to($this->mobile_payment->requested_by)
                     ->with([

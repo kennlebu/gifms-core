@@ -34,7 +34,7 @@
         <tr>
           <td style="text-align: left; border-bottom: 1px dotted #ccbcbc;" colspan="1"  bgcolor="#092d50" height="20">
             <strong>
-              <span style="color: #ffffff;">External REF:</span>
+              <span style="color: #ffffff;">Invoice No.:</span>
             </strong>
           </td>
           <td style="text-align: left; border-bottom: 1px dotted #ccbcbc;" bgcolor="#ffffff" colspan="2" >
@@ -70,6 +70,19 @@
           </td>
         </tr>
         <tr>
+          <tr>
+            <td style="text-align: left; border-bottom: 1px dotted #ccbcbc;" colspan="1"  bgcolor="#ffffff" height="20">
+              <strong>
+                <span style="color: #7c7c7c;">Purpose:</span>
+              </strong>
+            </td>
+            <td style="text-align: left; border-bottom: 1px dotted #ccbcbc;" bgcolor="#ffffff" colspan="2" >
+              <strong>
+                <span style="color: #092d50;">{{$invoice->expense_purpose}}</span>
+              </strong>
+            </td>
+          </tr>
+          <tr>
           <td style="text-align: left; border-bottom: 1px dotted #ccbcbc;" colspan="1"  bgcolor="#ffffff" height="20">
             <strong>
               <span style="color: #7c7c7c;">Project Manager:</span>

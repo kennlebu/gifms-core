@@ -54,6 +54,18 @@
         <tr>
           <td style="text-align: left; border-bottom: 1px dotted #ccbcbc;" colspan="1"  bgcolor="#ffffff" height="20">
             <strong>
+              <span style="color: #7c7c7c;">Purpsoe:</span>
+            </strong>
+          </td>
+          <td style="text-align: left; border-bottom: 1px dotted #ccbcbc;" bgcolor="#ffffff" colspan="2" >
+            <strong>
+              <span style="color: #092d50;">{{$mobile_payment->expense_purpose}}</span>
+            </strong>
+          </td>
+        </tr>
+        <tr>
+          <td style="text-align: left; border-bottom: 1px dotted #ccbcbc;" colspan="1"  bgcolor="#ffffff" height="20">
+            <strong>
               <span style="color: #7c7c7c;">Project Manager:</span>
             </strong>
           </td>

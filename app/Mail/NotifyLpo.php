@@ -50,7 +50,6 @@ class NotifyLpo extends Mailable
             $this->lpo->approvals[$key]['approver'] = Staff::find($this->lpo->approvals[$key]['approver_id']);
         }
 
-
         $this->accountant           = Staff::findOrFail(    (int)   Config::get('app.accountant_id'));
         $this->financial_controller = Staff::findOrFail(    (int)   Config::get('app.financial_controller_id'));
         $this->director             = Staff::findOrFail(    (int)   Config::get('app.director_id'));
@@ -66,28 +65,12 @@ class NotifyLpo extends Mailable
     {
 
         $ccs = [] ;
-        // $ccs[0] = $this->accountant;
-        // $ccs[1] = $this->financial_controller;
-        // $ccs[2] = $this->director;
-        // $ccs[3] = $this->lpo->requested_by;
-
 
         $this->view('emails/notify_lpo')         
             ->replyTo([
                     'email' => Config::get('mail.reply_to')['address'],
 
                 ]);
-            // ->cc($ccs);
-
-
-
-
-
-
-
-
-
-
 
         if($this->lpo->status_id == 13){
             $ccs[0] = $this->lpo->requested_by;
@@ -102,8 +85,6 @@ class NotifyLpo extends Mailable
                     ->subject("LPO Approval Request ".$this->lpo->ref);
         }else if($this->lpo->status_id == 3){
 
-
-
             return $this->to($this->lpo->project_manager)
                     ->with([
                             'lpo' => $this->lpo,
@@ -112,8 +93,6 @@ class NotifyLpo extends Mailable
                         ])
                     ->subject("LPO Approval Request ".$this->lpo->ref);
         }else if($this->lpo->status_id == 4){
-
-
 
             return $this->to($this->financial_controller)
                     ->with([
@@ -124,8 +103,6 @@ class NotifyLpo extends Mailable
                     ->subject("LPO Approval Request ".$this->lpo->ref);
         }else if($this->lpo->status_id == 5){
 
-
-
             return $this->to($this->director)
                     ->with([
                             'lpo' => $this->lpo,
@@ -134,12 +111,6 @@ class NotifyLpo extends Mailable
                         ])
                     ->subject("LPO Approval Request ".$this->lpo->ref);
         }
-
-
-
-
-
-
 
         else if($this->lpo->status_id == 11){
 
@@ -153,8 +124,6 @@ class NotifyLpo extends Mailable
                         ])
                     ->subject("LPO Cancelled ".$this->lpo->ref);
         }else if($this->lpo->status_id == 12){
-
-
 
             return $this->to($this->lpo->requested_by)
                     ->with([
