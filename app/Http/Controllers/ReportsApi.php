@@ -139,19 +139,10 @@ class ReportsApi extends Controller
         if($is_pm == 'true'){
             $mobile_payments = MobilePayment::whereBetween('management_approval_at', [$fromDate, $toDate])->where('currency_id', $currency)
                                 ->where('project_manager_id', $user_id)->get();
-
-            // $mobile_payments = MobilePayment::whereHas('approvals', function($query) use ($fromDate, $toDate){
-            //     $query->whereBetween('created_at', [$fromDate, $toDate]);
-            //     $query->whereNotIn('approval_level_id', [1,2,3,7,8,9,14,15,16]);
-            // })->where('currency_id', $currency)->where('project_manager_id', $user_id)->get();
         }
         else{
-            $mobile_payments = MobilePayment::whereBetween('management_approval_at', [$fromDate, $toDate])->where('currency_id', $currency)->get();
-
-            // $mobile_payments = MobilePayment::whereHas('approvals', function($query) use ($fromDate, $toDate){
-            //     $query->whereBetween('created_at', [$fromDate, $toDate]);
-            //     $query->whereNotIn('approval_level_id', [1,2,3,7,8,9,14,15,16]);
-            // })->where('currency_id', $currency)->get();
+            $mobile_payments = MobilePayment::whereBetween('management_approval_at', [$fromDate, $toDate])
+                                ->where('currency_id', $currency)->get();
         }
 
         foreach($mobile_payments as $mobile_payment){
@@ -162,9 +153,13 @@ class ReportsApi extends Controller
 
         foreach($payables as $row){if(isset($row['payable']['allocations'])){
             $voucher_no = '';
-            if(($row['payable_type']=='mobile_payments' && empty($row['payable']['migration_invoice_id'])) || 
-                ($row['payable_type']!='mobile_payments' && empty($row['payable']['migration_id']))){
+            if(($row['payable_type']=='mobile_payments' && empty($row['payable']['migration_invoice_id']))){
                 $voucher_no = VoucherNumber::find($row['payable']['voucher_no']);
+                if(!empty($voucher_no->voucher_number)) $voucher_no = $voucher_no->voucher_number;
+                else $voucher_no = '-';
+            }
+            elseif(($row['payable_type']!='mobile_payments' && empty($row['payable']['migration_id']))){
+                $voucher_no = VoucherNumber::find($row['payment']['voucher_no']);
                 if(!empty($voucher_no->voucher_number)) $voucher_no = $voucher_no->voucher_number;
                 else $voucher_no = '-';
             }
