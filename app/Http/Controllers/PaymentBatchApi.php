@@ -116,16 +116,19 @@ class PaymentBatchApi extends Controller
                     if($payment->payable_type == 'invoices'){
                         $invoice                = Invoice::find($payment->payable_id);
                         $invoice->status_id     = $invoice->status->next_status_id;
+                        $invoice->voucher_no = (int) $voucher['id'];
                         $invoice->save();
                     }
                     elseif($payment->payable_type == 'advances'){
                         $advance                = Advance::find($payment->payable_id);
                         $advance->status_id     = $advance->status->next_status_id;
+                        $advance->voucher_no = (int) $voucher['id'];
                         $advance->save();
                     }
                     elseif($payment->payable_type == 'claims'){
                         $claim                = Claim::find($payment->payable_id);
                         $claim->status_id     = $claim->status->next_status_id;
+                        $claim->voucher_no = (int) $voucher['id'];
                         $claim->save();
                     }
 
