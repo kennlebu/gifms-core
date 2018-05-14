@@ -466,11 +466,6 @@ class AdvanceApi extends Controller
                 $approval->save();
 
                 if($approval->approval_level_id ==4){
-                    $v = $this->generate_voucher_no($advance->id, 'advances', $advance->created_at);
-                    $voucher_number = $v['voucher'];
-                    $voucher_id = (int) $v['id'];
-                    $advance->voucher_no = $voucher_id;
-                    $advance->save();
 
                     $payable    =   array(
                         'payable_type'                  =>  'advances', 
@@ -486,8 +481,7 @@ class AdvanceApi extends Controller
                         'payment_mode_id'               =>  $advance->payment_mode->id, 
                         'amount'                        =>  $advance->total, 
                         'payment_batch_id'              =>  "", 
-                        'bank_charges'                  =>  "",
-                        'voucher_no'                    =>  $voucher_id
+                        'bank_charges'                  =>  ""
                     );
 
                     $this->generate_payable_payment($payable);

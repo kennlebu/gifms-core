@@ -421,11 +421,6 @@ class ClaimApi extends Controller
 
 
                 if($approval->approval_level_id==4){
-                    $v = $this->generate_voucher_no($claim->id, 'claims', $claim->created_at);
-                    $voucher_number = $v['voucher'];
-                    $voucher_id = (int) $v['id'];
-                    $claim->voucher_no = $voucher_id;
-                    $claim->save();
 
                     $payable    =   array(
                         'payable_type'                  =>  'claims', 
@@ -441,8 +436,7 @@ class ClaimApi extends Controller
                         'payment_mode_id'               =>  $claim->payment_mode->id, 
                         'amount'                        =>  $claim->total, 
                         'payment_batch_id'              =>  "", 
-                        'bank_charges'                  =>  "",
-                        'voucher_no'                    =>  $voucher_id
+                        'bank_charges'                  =>  ""
                     );
                     
                     $this->generate_payable_payment($payable);
