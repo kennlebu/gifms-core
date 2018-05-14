@@ -178,7 +178,6 @@ class Controller extends BaseController
         $payment->amount                    =   $payable['amount'];
         $payment->payment_batch_id          =   $payable['payment_batch_id'];
         $payment->bank_charges              =   $payable['bank_charges'];
-        $payment->voucher_no                =   $payable['voucher_no'];
         $payment->status_id                 =   $default_status;
 
         if($payment->save()) {
