@@ -90,7 +90,7 @@
                         <td style="border: 1px solid #000000; border-top: 0px solid #c0c0c0;" colspan="3">
                             <strong style="float: left;">
                                 @if($payable_type=='Invoice')
-                                <span>{{$payable->ref}}</span>
+                                <span>{{$payable->external_ref}}</span>
                                 @else
                                 <span>{{$payable->ref}}</span>
                                 @endif
