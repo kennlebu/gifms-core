@@ -84,8 +84,7 @@ class MobilePaymentPayeeApi extends Controller
                 'registered_name',
                 'id_number',
                 'mobile_number',
-                'amount',
-                'email'
+                'amount'
                 );
 
 
@@ -95,7 +94,6 @@ class MobilePaymentPayeeApi extends Controller
             $mobile_payment_payee->id_number                  =               $form['id_number'];
             $mobile_payment_payee->mobile_number              =               $form['mobile_number'];
             $mobile_payment_payee->amount                     =   (double)    $form['amount'];
-            $mobile_payment_payee->email                      =               $form['email'];
             $mobile_payment_payee->withdrawal_charges         =               $mobile_payment_payee->calculated_withdrawal_charges;
             $mobile_payment_payee->total                      =               $mobile_payment_payee->calculated_total;
 
@@ -171,8 +169,7 @@ class MobilePaymentPayeeApi extends Controller
                 'registered_name',
                 'id_number',
                 'mobile_number',
-                'amount',
-                'email'
+                'amount'
                 );
             $mobile_payment_payee = MobilePaymentPayee::findOrFail((int)$form['id']);
 
@@ -184,7 +181,6 @@ class MobilePaymentPayeeApi extends Controller
             $mobile_payment_payee->id_number                  =               $form['id_number'];
             $mobile_payment_payee->mobile_number              =               $form['mobile_number'];
             $mobile_payment_payee->amount                     =   (double)    $form['amount'];
-            $mobile_payment_payee->email                      =               $form['email'];
             $mobile_payment_payee->withdrawal_charges         =               $mobile_payment_payee->calculated_withdrawal_charges;
             $mobile_payment_payee->total                      =               $mobile_payment_payee->calculated_total;
 
