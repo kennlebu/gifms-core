@@ -909,30 +909,31 @@ class InvoiceApi extends Controller
     {
 
         try{
-            $invoice        = Invoice::findOrFail($invoice_id);
+            $invoice = Invoice::findOrFail($invoice_id);
+            $payment = Payment::with('voucher_number')->where('payable_id', $invoice->id)->where('payable_type', 'invoices')->first();
             $voucher_date = '-';
             $vendor = '-';
             $voucher_no = '-';
-            if(empty($invoice->voucher_no)){
-                if(empty($invoice->voucher_no)) $voucher_no = '-';
-                else{
-                    $voucher_no = 'CHAI'.$this->pad_zeros(5, $invoice->voucher_no);
-                }
-            }
-            else{
-                $voucher_no = VoucherNumber::first($invoice->voucher_no);
-                $voucher_no = $voucher_no->voucher_number;
-            }
 
-            if(empty($invoice->payment_date)){
-                $payment = Payment::where('payable_id', $invoice->id)->where('payable_type', 'invoices')->first();
-                if(!empty($payment->payment_batch_id) && $payment->payment_batch_id > 0){
-                    $batch = PaymentBatch::find($payment->payment_batch_id);
-                    $voucher_date = $batch->created_at;
-                }
+            if(!empty($payment->voucher_number)) $voucher_no = $payment->voucher_number->voucher_number;
+            else {
+                if(empty($invoice->migration_id)) $voucher_no = '-';
+                else $voucher_no = 'CHAI'.$this->pad_zeros(5, $invoice->migration_id);
             }
-            else{
-                $voucher_date = $invoice->payment_date;
+            // if(empty($invoice->voucher_no)){
+            //     if(empty($invoice->voucher_no)) $voucher_no = '-';
+            //     else{
+            //         $voucher_no = 'CHAI'.$this->pad_zeros(5, $invoice->voucher_no);
+            //     }
+            // }
+            // else{
+            //     $voucher_no = VoucherNumber::first($invoice->voucher_no);
+            //     $voucher_no = $voucher_no->voucher_number;
+            // }
+
+            if(!empty($payment->payment_batch_id) && $payment->payment_batch_id > 0){
+                $batch = PaymentBatch::find($payment->payment_batch_id);
+                $voucher_date = $batch->created_at;
             }
 
             $vendor = $invoice->supplier->supplier_name;
