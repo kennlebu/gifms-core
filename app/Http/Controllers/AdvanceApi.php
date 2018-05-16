@@ -40,6 +40,7 @@ use App\Models\LookupModels\Currency;
 use App\Models\BankingModels\BankBranch;
 use App\Exceptions\NotFullyAllocatedException;
 use App\Exceptions\ApprovalException;
+use PDF;
 
 class AdvanceApi extends Controller
 {
@@ -584,6 +585,74 @@ class AdvanceApi extends Controller
 
 
 
+
+
+
+    /**
+     * Operation getPaymentVoucherById
+     *
+     * get payment Voucher by ID.
+     *
+     * @param int $invoice_id ID of invoice to return object (required)
+     *
+     * @return Http response
+     */
+    public function getPaymentVoucherById($advance_id)
+    {
+
+        try{
+            $advance = Advance::with('requested_by')->findOrFail($advance_id);
+            $payment = Payment::with('voucher_number')->where('payable_id', $advance->id)->where('payable_type', 'advances')->first();
+            $voucher_date = '-';
+            $vendor = '-';
+            $voucher_no = '-';
+
+            if(!empty($payment->voucher_number)) $voucher_no = $payment->voucher_number->voucher_number;
+            else {
+                if(empty($advance->migration_id)) $voucher_no = '-';
+                else $voucher_no = 'CHAI'.$this->pad_with_zeros(5, $advance->migration_id);
+            }
+
+            if(!empty($payment->payment_batch_id) && $payment->payment_batch_id > 0){
+                $batch = PaymentBatch::find($payment->payment_batch_id);
+                $voucher_date = $batch->created_at;
+            }
+
+            $vendor = $advance->requested_by->full_name;
+
+            $data = array(
+                    'payable'   => $advance,
+                    'voucher_date' => $voucher_date,
+                    'vendor'=>$vendor,
+                    'voucher_no'=>$voucher_no,
+                    'payable_type'=>'Advance'
+                    );
+
+            $pdf            = PDF::loadView('pdf/payment_voucher', $data);
+
+            $file_contents  = $pdf->stream();
+
+            Storage::put('advances/'.$advance_id.'.voucher.temp', $file_contents);
+
+            $url            = storage_path("app/advances/".$claim_id.'.voucher.temp');
+
+            $file           = File::get($url);
+
+            $response       = Response::make($file, 200);
+
+            $response->header('Content-Type', 'application/pdf');
+
+            return $response;
+        }catch (Exception $e ){            
+
+            $response       = Response::make("", 200);
+
+            $response->header('Content-Type', 'application/pdf');
+
+            return $response;  
+
+        }
+    }
 
 
 

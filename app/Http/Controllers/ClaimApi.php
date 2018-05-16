@@ -40,6 +40,7 @@ use App\Models\LookupModels\Currency;
 use App\Models\BankingModels\BankBranch;
 use App\Exceptions\NotFullyAllocatedException;
 use App\Exceptions\ApprovalException;
+use PDF;
 
 class ClaimApi extends Controller
 {
@@ -604,6 +605,74 @@ class ClaimApi extends Controller
             $response->header('Content-Type', $this->get_mime_type($basename));
 
             return $response;  
+        }catch (Exception $e ){            
+
+            $response       = Response::make("", 200);
+
+            $response->header('Content-Type', 'application/pdf');
+
+            return $response;  
+
+        }
+    }
+
+
+
+    /**
+     * Operation getPaymentVoucherById
+     *
+     * get payment Voucher by ID.
+     *
+     * @param int $invoice_id ID of invoice to return object (required)
+     *
+     * @return Http response
+     */
+    public function getPaymentVoucherById($claim_id)
+    {
+
+        try{
+            $claim = Claim::with('requested_by')->findOrFail($claim_id);
+            $payment = Payment::with('voucher_number')->where('payable_id', $claim->id)->where('payable_type', 'claims')->first();
+            $voucher_date = '-';
+            $vendor = '-';
+            $voucher_no = '-';
+
+            if(!empty($payment->voucher_number)) $voucher_no = $payment->voucher_number->voucher_number;
+            else {
+                if(empty($claim->migration_id)) $voucher_no = '-';
+                else $voucher_no = 'CHAI'.$this->pad_zeros(5, $claim->migration_id);
+            }
+
+            if(!empty($payment->payment_batch_id) && $payment->payment_batch_id > 0){
+                $batch = PaymentBatch::find($payment->payment_batch_id);
+                $voucher_date = $batch->created_at;
+            }
+
+            $vendor = $claim->requested_by->full_name;
+
+            $data = array(
+                    'payable'   => $claim,
+                    'voucher_date' => $voucher_date,
+                    'vendor'=>$vendor,
+                    'voucher_no'=>$voucher_no,
+                    'payable_type'=>'Claim'
+                    );
+
+            $pdf            = PDF::loadView('pdf/payment_voucher', $data);
+
+            $file_contents  = $pdf->stream();
+
+            Storage::put('claims/'.$claim_id.'.voucher.temp', $file_contents);
+
+            $url            = storage_path("app/claims/".$claim_id.'.voucher.temp');
+
+            $file           = File::get($url);
+
+            $response       = Response::make($file, 200);
+
+            $response->header('Content-Type', 'application/pdf');
+
+            return $response;
         }catch (Exception $e ){            
 
             $response       = Response::make("", 200);

@@ -2437,6 +2437,13 @@ Route::PATCH('/claim/{claim_id}/reject', 'ClaimApi@rejectClaim')->middleware('jw
  */
 Route::GET('/claim/{claim_id}/get_document', 'ClaimApi@getDocumentById')->middleware('jwt.auth');
 /**
+ * GET getPaymentVoucherById
+ * Summary: get payment Voucher by ID
+ * Notes: get payment Voucher
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/claim/{claim_id}/get_payment_voucher', 'ClaimApi@getPaymentVoucherById')->middleware('jwt.auth');
+/**
  * PATCH submitClaimForApproval
  * Summary: Submit claim by ID
  * Notes: Submits claim for approval
@@ -2685,7 +2692,13 @@ Route::GET('/advance/{advance_id}', 'AdvanceApi@getAdvanceById')->middleware('jw
  * Notes: Approves Advance
  * Output-Formats: [application/json, application/xml]
  */
-Route::PATCH('/advance/{advance_id}/approve', 'AdvanceApi@approveAdvance')->middleware('jwt.auth');
+Route::PATCH('/advance/{advance_id}/approve', 'AdvanceApi@approveAdvance')->middleware('jwt.auth');/**
+* GET getPaymentVoucherById
+* Summary: get payment Voucher by ID
+* Notes: get payment Voucher
+* Output-Formats: [application/json, application/xml]
+*/
+Route::GET('/advance/{advance_id}/get_payment_voucher', 'AdvanceApi@getPaymentVoucherById')->middleware('jwt.auth');
 /**
  * PATCH rejectAdvance
  * Summary: Approve advance by ID
