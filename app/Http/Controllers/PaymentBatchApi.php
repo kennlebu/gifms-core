@@ -108,8 +108,11 @@ class PaymentBatchApi extends Controller
                     $payment->save();
 
                     $payment->ref = "CHAI/PYMT/#$payment->id/".date_format($payment->created_at,"Y/m/d");
-                    $voucher = $this->generate_voucher_no($payment->id, $payment->payable_type, $payment_batch->created_at);
-                    $payment->voucher_no = (int) $voucher['id'];
+                    // $voucher = $this->generate_voucher_no($payment->id, $payment->payable_type, $payment_batch->created_at);
+                    // $payment->voucher_no = (int) $voucher['id'];
+                    $v = DB::select('call generate_voucher_no(?,?)',array($payment->id, $payment->payable_type));
+                    $v_result = $v[0];
+                    $voucher_number = $v_result['voucher_number'];
                     $payment->save();
 
                     // Now update the invoices, claims and advances
@@ -361,13 +364,6 @@ class PaymentBatchApi extends Controller
             elseif($payment_mode=='2'){
                 $mmts_result = [];
                 
-                //Getting the payments
-                // $qb = DB::table('payments')
-                //     ->whereNull('deleted_at')
-                //     ->where('payment_batch_id', '=', ''.$payment_batch_id)
-                //     ->where('payment_mode_id', '=', $payment_mode)
-                //     ->select('id')
-                //     ->get();
                 $payments = Payment::with(['currency','paid_to_bank','paid_to_bank_branch','payable'])
                             ->where('payment_mode_id',$payment_mode)
                             ->where('payment_batch_id',$payment_batch_id)
@@ -394,51 +390,27 @@ class PaymentBatchApi extends Controller
                         }
                         
                     } 
-                    $mmts_data['phone'] = $payment->payable->mobile_payment_number;
-                    $mmts_data['mobile_name'] = $payment->payable->mobile_payment_name;
+                    // $mmts_data['phone'] = $payment->payable->mobile_payment_number;
+                    // $mmts_data['mobile_name'] = $payment->payable->mobile_payment_name;
                     $mmts_data['chaipv'] = $voucher_no;
 
-                    // if($payment->payable_type == 'invoices'){
-                    //     
-                    //             $mmts_data['phone'] = $row['mobile_payment_number'];
-                    //             $mmts_data['mobile_name'] = $row['mobile_payment_name'];
-                    //             $mmts_data['chaipv'] = $voucher_no;
-                    //         }
+                    if($payment->payable_type == 'invoices'){      
+                        $invoice = Invoice::with('supplier')->find($payment->payable_id);                  
+                        $mmts_data['phone'] = $this->format_phone($invoice->supplier->mobile_payment_number);
+                        $mmts_data['mobile_name'] = $invoice->supplier->mobile_payment_name;
+                    }
 
-                    //         array_push($mmts_result, $mmts_data);
-                    // }
-                    // elseif($payment->payable_type == 'advances'){
-                    //     $advance                = Advance::find($payment->payable_id);
-                        
-                    //     $advance_qb = DB::table('staff')
-                    //     ->where('staff.id', '=', $advance->requested_by_id)
-                    //     ->select('staff.mpesa_no','staff.cheque_addressee')
-                    //     ->get();
-                        
-                    //     foreach($advance_qb as $row){
-                    //         $mmts_data['phone'] = $row['mpesa_no'];
-                    //         $mmts_data['mobile_name'] = $row['cheque_addressee'];
-                    //         $mmts_data['chaipv'] = $voucher_no;
-                    //     }
+                    elseif($payment->payable_type == 'advances'){
+                        $advance = Advance::with('requested_by')->find($payment->payable_id);                
+                        $mmts_data['phone'] = $this->format_phone($advance->requested_by->mpesa_no);
+                        $mmts_data['mobile_name'] = $advance->requested_by->cheque_addressee;
+                    }
 
-                    //     array_push($mmts_result, $mmts_data);
-                    // }
-                    // elseif($payment->payable_type == 'claims'){
-                    //     $claim                = Claim::find($payment->payable_id);
-                        
-                    //     $claim_qb = DB::table('staff')
-                    //     ->where('staff.id', '=', $claim->requested_by_id)
-                    //     ->select('staff.mpesa_no','staff.cheque_addressee')
-                    //     ->get();
-                        
-                    //     foreach($claim_qb as $row){
-                    //         $mmts_data['phone'] = $row['mpesa_no'];
-                    //         $mmts_data['mobile_name'] = $row['cheque_addressee'];
-                    //         $mmts_data['chaipv'] = $voucher_no;
-                    //     }
-
-                    //     array_push($mmts_result, $mmts_data);
-                    // }
+                    elseif($payment->payable_type == 'claims'){
+                        $claim = Claim::with('requested_by')->find($payment->payable_id);             
+                        $mmts_data['phone'] = $this->format_phone($claim->requested_by->mpesa_no);
+                        $mmts_data['mobile_name'] = $claim->requested_by->cheque_addressee;                        
+                    }
                     array_push($mmts_result, $mmts_data);
                 }
                 
@@ -935,6 +907,16 @@ class PaymentBatchApi extends Controller
         }
     }
 
+    public function format_phone($phone){
+        if((strlen($phone) == 9) && (substr($phone, 0, 1) == '7')){
+            return '254'.$phone;
+        }
+        if((strlen($phone) == 10) && (substr($phone, 0, 2) == '07')){
+            return '254'.substr($phone, 1);
+        }
+        return $phone;
+    }
+
 
 
 
@@ -958,37 +940,6 @@ class PaymentBatchApi extends Controller
 
 
         foreach ($data as $key => $value) {
-
-            // if($value["payable"]==null){
-            //     $data[$key]['payable'] = array("expense_desc"=>"N/A");
-                
-            // }
-            // if($value["debit_bank_account"]==null){
-            //     $data[$key]['debit_bank_account'] = array("title"=>"N/A","account_number"=>"N/A");
-                
-            // }
-            // if($value["currency"]==null){
-            //     $data[$key]['currency'] = array("currency_name"=>"N/A");
-                
-            // }
-            // if($value["paid_to_bank"]==null){
-            //     $data[$key]['paid_to_bank'] = array("bank_name"=>"N/A");
-                
-            // }
-            // if($value["paid_to_bank_branch"]==null){
-            //     $data[$key]['paid_to_bank_branch'] = array("branch_name"=>"N/A");
-                
-            // }
-            // if($value["payment_mode"]==null){
-            //     $data[$key]['payment_mode'] = array("payment_mode_description"=>"N/A");
-                
-            // }
-            // if($value["payment_batch"]==null){
-            //     $data[$key]['payment_batch'] = array("ref"=>"N/A");
-                
-            // }
-
-
         }
 
         return $data;

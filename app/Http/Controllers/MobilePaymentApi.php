@@ -418,14 +418,9 @@ class MobilePaymentApi extends Controller
 
                     // Only create a payment voucher if it's management approval
                     if($mobile_payment->status_id==4){
-                        $v = $this->generate_voucher_no($mobile_payment->id, 'mobile_payments', $mgt_approval_time);
-                        $voucher_number = $v['voucher'];
-                        $voucher_id = (int) $v['id'];
-                    }
-
-                    else{
-                        $voucher = VoucherNumber::where('payable_id', $mobile_payment_id)->firstOrFail();
-                        $voucher_number = $voucher->voucher_number;
+                        $v = DB::select('call generate_voucher_no(?,?)',array($mobile_payment->id,"mobile_payments"));
+                        $v_result = $v[0];
+                        $voucher_number = $v_result['voucher_number'];
                     }
                     
                     /* Get CSV data */
@@ -435,12 +430,15 @@ class MobilePaymentApi extends Controller
                     $csv_data = [];
                     
                     foreach($mobile_payment->payees as $payee){
+                        $name = '';
+                        if(empty($payee->registered_name)) $name = $payee->full_name;
+                        else $name = $payee->registered_name;
                         $data = array(
                             $date, // date
                             '99001', // bank_code
                             '', // blank space
                             preg_replace("/[^0-9]/", "", $payee->mobile_number), // phone
-                            $payee->full_name, // mobile_name
+                            $name, // mobile_name
                             'NIC', // bank_name
                             '', // blank space
                             'KES', // currency
@@ -468,7 +466,7 @@ class MobilePaymentApi extends Controller
                     if($mobile_payment->status_id==4){
                         $approval->approval_level_id = 4;
                         $mobile_payment->management_approval_at = $mgt_approval_time;
-                        $mobile_payment->voucher_no = $voucher_id;
+                        // $mobile_payment->voucher_no = $voucher_id;
                         $mobile_payment->save();
                     }
                     $approval->save();
