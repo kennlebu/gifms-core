@@ -26,6 +26,8 @@ use App\Models\ClaimsModels\Claim;
 use App\Models\InvoicesModels\Invoice;
 use App\Models\LPOModels\Lpo;
 use App\Models\PaymentModels\VoucherNumber;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\NotifyBatch;
 
 class PaymentBatchApi extends Controller
 {
@@ -134,6 +136,8 @@ class PaymentBatchApi extends Controller
 
 
                 }
+
+                Mail::queue(new NotifyBatch($payment_batch->id));
 
                 return Response()->json(array('msg' => 'Success: Payment Batch added','payment_batch' => PaymentBatch::find((int)$payment_batch->id)), 200);
             }
@@ -413,7 +417,7 @@ class PaymentBatchApi extends Controller
                     }
                     array_push($mmts_result, $mmts_data);
                 }
-                
+              
             return Response()->json(array('msg' => 'Success: csv generated','csv_data' => $mmts_result), 200);
             }
 
