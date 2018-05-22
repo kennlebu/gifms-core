@@ -226,6 +226,7 @@ class LPOApi extends Controller
             $lpo->account_id                        =   (int)   $form['account_id'];
             $lpo->currency_id                       =   (int)   $form['currency_id'];
             $lpo->project_manager_id                =   (int)   $form['project_manager_id'];
+            if((int) $form['preffered_quotation_id'] != 0)
             $lpo->preffered_quotation_id            =   (int)   $form['preffered_quotation_id'];
             $lpo->quote_exempt_explanation = $form['quote_exempt_explanation'];
             $lpo->quote_exempt_details = $form['quote_exempt_details'];
