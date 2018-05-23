@@ -68,7 +68,7 @@ class NotifyMobilePayment extends Mailable
 
                 ]);
                 
-        if($this->mobile_payment->status_id == 9){
+        if($this->mobile_payment->status_id == 9 || $this->mobile_payment->status_id == 12){
             $ccs[0] = $this->mobile_payment->requested_by;
 
 
@@ -119,6 +119,18 @@ class NotifyMobilePayment extends Mailable
                         ])
                     ->subject("Mobile Payment Rejected ".$this->mobile_payment->ref);
         }
+
+        // else if($this->mobile_payment->status_id == 11){
+
+        //     return $this->to($this->accountant)
+        //             ->with([
+        //                     'mobile_payment' => $this->mobile_payment,
+        //                     'addressed_to' => $this->accountant,
+        //                     'js_url' => Config::get('app.js_url'),
+        //                 ])
+        //             // ->cc($ccs)
+        //             ->subject("Corrected Mobile Payment Approval Request ".$this->mobile_payment->ref);
+        // }
 
     }
 }

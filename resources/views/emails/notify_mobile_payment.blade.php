@@ -11,6 +11,8 @@
         The below detailed Bulk Mobile Payment has been posted and awaits your approval.
       @elseif ($mobile_payment->status_id==7)
         The below detailed Bulk Mobile Payment has been Rejected by {{$mobile_payment->rejected_by->name}}
+      @elseif ($mobile_payment->status_id==12)
+      The below detailed Bulk Mobile Payment has been corrected and awaits your approval.
       @endif
       <br/>
 
