@@ -698,6 +698,11 @@ class InvoiceApi extends Controller
                         'bank_charges'                  =>  ""
                     );
                     
+                    // Pick USD account if currency is USD
+                    if($invoice->currency_id == 2){
+                        $payable['paid_to_bank_account_no'] = $invoice->supplier->usd_account;
+                    }
+                    
                     $this->generate_payable_payment($payable);
 
                 }
