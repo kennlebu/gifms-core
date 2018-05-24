@@ -85,8 +85,8 @@ class AccountApi extends Controller
             'account_name',
             'account_desc',
             'account_format',
-            'office_cost',
-            'account_type'
+            // 'office_cost',
+            'account_type_id'
             );
 
         $account = new Account;
@@ -95,8 +95,8 @@ class AccountApi extends Controller
             $account->account_name                     =         $form['account_name'];
             $account->account_desc                     =         $form['account_desc'];
             $account->account_format                   =         $form['account_format'];
-            $account->office_cost                      =  (int)  $form['office_cost'];
-            $account->account_type                     =  (int)  $form['account_type'];
+            // $account->office_cost                      =  (int)  $form['office_cost'];
+            $account->account_type_id                  =  (int)  $form['account_type_id'];
 
         if($account->save()) {
 
@@ -151,7 +151,7 @@ class AccountApi extends Controller
             'account_name',
             'account_desc',
             'account_format',
-            'account_type'
+            'account_type_id'
             );
 
         $account = Account::find($form['id']);
@@ -160,8 +160,8 @@ class AccountApi extends Controller
             $account->account_name                     =         $form['account_name'];
             $account->account_desc                     =         $form['account_desc'];
             $account->account_format                   =         $form['account_format'];
-            $account->office_cost                      =  (int)  $form['office_cost'];
-            $account->account_type                     =  (int)  $form['account_type'];
+            // $account->office_cost                      =  (int)  $form['office_cost'];
+            $account->account_type_id                  =  (int)  $form['account_type_id'];
 
         if($account->save()) {
 
@@ -354,6 +354,7 @@ class AccountApi extends Controller
 
         //query builder
         $qb = DB::table('accounts');
+        $qb->whereNull('accounts.deleted_at');
 
         if(array_key_exists('account_format', $input)){
             $qb->where('account_format', $input['account_format']);
@@ -534,9 +535,11 @@ class AccountApi extends Controller
 
         foreach ($data as $key => $value) {
 
-            $accounts = Account::find($data[$key]['id']);
-
-            $data[$key]['account_type']                  = $accounts->account_type;
+            $accounts = Account::with('account_type')->find($data[$key]['id']);
+            
+            if(!empty($accounts->account_type_id) && $accounts->account_type_id!=0)
+                $data[$key]['account_type'] = $accounts->account_type;
+            else $data[$key]['account_type'] = array("account_type_name"=>"N/A");
 
         }
 
@@ -565,7 +568,7 @@ class AccountApi extends Controller
         foreach ($data as $key => $value) {
 
 
-            if($data[$key]["account_type"]==null){
+            if(empty($data[$key]["account_type"])){
                 $data[$key]["account_type"] = array("account_type_name"=>"N/A");
             }
 
