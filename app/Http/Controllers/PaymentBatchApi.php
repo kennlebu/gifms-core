@@ -28,6 +28,8 @@ use App\Models\LPOModels\Lpo;
 use App\Models\PaymentModels\VoucherNumber;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\NotifyBatch;
+use App\Models\MobilePaymentModels\MobilePayment;
+use App\Mail\RequestBankSigning;
 
 class PaymentBatchApi extends Controller
 {
@@ -226,6 +228,27 @@ class PaymentBatchApi extends Controller
                 return Response()->json(array('msg' => 'Success: batch uploaded','payment_batch' => $payment_batch), 200);
             }
 
+
+        }catch(Exception $e){
+
+            $response =  ["error"=>"There was an error uploading the batch"];
+            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+        }
+    }
+
+
+
+
+    /**
+     * request Bank Signitorie
+     * 
+     * Send mail request bank signitories to approve payments
+     * 
+     * @return Http response
+     */
+    public function requestBankSignitories($payment_batch_id){
+        try{
+            Mail::queue(new RequestBankSigning($payment_batch_id));
 
         }catch(Exception $e){
 
@@ -460,10 +483,12 @@ class PaymentBatchApi extends Controller
      */
     public function uploadBankFile(){
         
-        $input = Request::all();
         try{
-            $payment_ids = [];
+            $result = [];
+            $voucher_nos = [];
             $payments = [];
+            $csv_data = [];
+            $missing_payments = [];
             $form = Request::only('file');
             $file = $form['file'];
 
@@ -473,68 +498,118 @@ class PaymentBatchApi extends Controller
                 if ($header) {
                     $header = false;
                 } else {
-                    $ref = explode(" ", $csvLine[1])[0];
-                    array_push($payment_ids, (int)preg_replace("/[^0-9,.]/", "", $ref)); 
+                    // $chai_ref = explode(" ", $csvLine[1])[0];
+                    // array_push($voucher_nos, (int)preg_replace("/[^0-9,.]/", "", $chai_ref)); 
+
+                    $csv_row = array();
+                    $csv_row['bank_ref'] = $csvLine[0];
+                    $csv_row['chai_ref'] = explode(" ", $csvLine[1])[0];
+                    $csv_row['inputter'] = $csvLine[2];
+                    $csv_row['approver'] = $csvLine[3];
+                    $csv_row['amount'] = $csvLine[5];
+                    $csv_row['bank_date'] = $csvLine[7];
+                    $csv_row['time'] = $csvLine[8];
+                    $csv_row['narrative'] = $csvLine[10];
+
+                    array_push($csv_data, $csv_row);
                 }
+            }
+            // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , '\nSQL:: '.json_encode($csv_data) , FILE_APPEND);
+
+            foreach($csv_data as $csv_data_row){
+                $voucher_no = $csv_data_row['chai_ref'];
+                $res = array();
+                $res['csv_data'] = $csv_data_row;
+                try{
+                    $payment = "";
+                    // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , substr($voucher_no, 0, 2) , FILE_APPEND);
+
+                    // New voucher nos.
+                    if(substr($voucher_no, 0, 2) == 'KE'){
+                        $voucher = VoucherNumber::where('voucher_number', $voucher_no)->firstOrFail();
+                        if($voucher->payable_type != 'mobile_payments')
+                        $payment = Payment::with('payment_mode')->findOrFail($voucher->payable_id);
+                        elseif($voucher->payable_type == 'mobile_payments')
+                        $payment = MobilePayment::findOrFail($voucher->payable_id);
+                        $payable_type = $voucher->payable_type;
+                        $res['payment'] = $payment;
+                        $res['payable_type'] = $payable_type;
+                        // array_push($result, $res);
+                    }
+
+                    // Old voucher nos.
+                    elseif(substr($voucher_no, 0, 4) == 'CHAI'){
+                        $invoice_id = (int)preg_replace("/[^0-9,.]/", "", $voucher_no);
+                        $payment = Payment::where('payable_id', $invoice_id)->firstOrFail();
+                        $res['payment'] = $payment;
+                        $res['payable_type'] = $payment->payable_type;
+                        // array_push($result, $res);
+                    }
+                } catch(\Exception $e){                    
+                    file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , $e->getMessage() , FILE_APPEND);
+                    $res['payable_type'] = 'missing';
+                    // array_push($result, $res);
+                }
+                array_push($result, $res);
             }
             
             // Change the status of the payment to reconciled
-            foreach($payment_ids as $id){
-                $payment = Payment::find($id);
-                // $payment->status_id = $payment->status->next_status_id;
-                if($payment->status_id==3){
-                    $payment->status_id = 4; // Hard-coded
-                    $payment->save();
-                }           
+            // foreach($payment_ids as $id){
+            //     $payment = Payment::find($id);
+            //     // $payment->status_id = $payment->status->next_status_id;
+            //     if($payment->status_id==3){
+            //         $payment->status_id = 4; // Hard-coded
+            //         $payment->save();
+            //     }           
 
-                // Change invoice status
-                if($payment->payable_type=='invoices'){
-                    $invoice = Invoice::find($payment->payable_id);
-                    // $invoice->status_id = $invoice->status->next_status_id;
-                    if($invoice->status_id==7){
-                        $invoice->status_id = 8;
-                        $invoice->save();
-                        array_push($payments, ['type'=>'Invoice', 'ref'=>'INV'.$invoice->id, 'paid'=>true]);
+            //     // Change invoice status
+            //     if($payment->payable_type=='invoices'){
+            //         $invoice = Invoice::find($payment->payable_id);
+            //         // $invoice->status_id = $invoice->status->next_status_id;
+            //         if($invoice->status_id==7){
+            //             $invoice->status_id = 8;
+            //             $invoice->save();
+            //             array_push($payments, ['type'=>'Invoice', 'ref'=>'INV'.$invoice->id, 'paid'=>true]);
 
-                        // Change LPO to paid
-                        $lpo = Lpo::findOrFail($invoice->lpo_id);
-                        $lpo->invoice_paid = 'True';
-                        $lpo->status_id = 9;
-                        $lpo->save();
-                    }
-                    else{
-                        array_push($payments, ['type'=>'Invoice', 'ref'=>'INV'.$invoice->id, 'paid'=>false]);
-                    }
-                }
-                // Change advance status
-                if($payment->payable_type=='advances'){
-                    $advance = Advance::find($payment->payable_id);
-                    // $advance->status_id = $advance->status->next_status_id;
-                    if($advance->status_id==7){
-                        $advance->status_id = 6;
-                        $advance->save();
-                        array_push($payments, ['type'=>'Advance', 'ref'=>'ADV'.$advance->id, 'paid'=>true]);
-                    }
-                    else{
-                        array_push($payments, ['type'=>'Advance', 'ref'=>'ADV'.$advance->id, 'paid'=>false]);
-                    }
-                }
-                // Change claim status
-                if($payment->payable_type=='claims'){
-                    $claim = Claim::find($payment->payable_id);
-                    // $claim->status_id = $claim->status->next_status_id;
-                    if($claim->status_id==7){
-                        $claim->status_id = 8;
-                        $claim->save();
-                        array_push($payments, ['type'=>'Claim', 'ref'=>'CLM'.$claim->id, 'paid'=>true]);
-                    }
-                    else{
-                        array_push($payments, ['type'=>'Claim', 'ref'=>'CLM'.$claim->id, 'paid'=>false]);
-                    }
-                }
-            }
+            //             // Change LPO to paid
+            //             $lpo = Lpo::findOrFail($invoice->lpo_id);
+            //             $lpo->invoice_paid = 'True';
+            //             $lpo->status_id = 9;
+            //             $lpo->save();
+            //         }
+            //         else{
+            //             array_push($payments, ['type'=>'Invoice', 'ref'=>'INV'.$invoice->id, 'paid'=>false]);
+            //         }
+            //     }
+            //     // Change advance status
+            //     if($payment->payable_type=='advances'){
+            //         $advance = Advance::find($payment->payable_id);
+            //         // $advance->status_id = $advance->status->next_status_id;
+            //         if($advance->status_id==7){
+            //             $advance->status_id = 6;
+            //             $advance->save();
+            //             array_push($payments, ['type'=>'Advance', 'ref'=>'ADV'.$advance->id, 'paid'=>true]);
+            //         }
+            //         else{
+            //             array_push($payments, ['type'=>'Advance', 'ref'=>'ADV'.$advance->id, 'paid'=>false]);
+            //         }
+            //     }
+            //     // Change claim status
+            //     if($payment->payable_type=='claims'){
+            //         $claim = Claim::find($payment->payable_id);
+            //         // $claim->status_id = $claim->status->next_status_id;
+            //         if($claim->status_id==7){
+            //             $claim->status_id = 8;
+            //             $claim->save();
+            //             array_push($payments, ['type'=>'Claim', 'ref'=>'CLM'.$claim->id, 'paid'=>true]);
+            //         }
+            //         else{
+            //             array_push($payments, ['type'=>'Claim', 'ref'=>'CLM'.$claim->id, 'paid'=>false]);
+            //         }
+            //     }
+            // }
 
-            return Response()->json(array('msg' => 'Success: payments reconciled','payments' => $payments), 200);
+            return Response()->json($result, 200);
         }
         catch(Exception $e){
             return response()->json(['error'=>'There was an error uploading the file'], 500);

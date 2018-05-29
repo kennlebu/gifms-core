@@ -3305,10 +3305,17 @@ Route::POST('/payment_batch/download_csv', 'PaymentBatchApi@getCSVData')->middle
 /**
  * POST uploadBankFile
  * Summary: upload the bank file
- * Notes: get Bank file
+ * Notes: post Bank file
  * Output-Formats: [application/json, application/xml]
  */
 Route::POST('/payment_batch/upload_bankfile', 'PaymentBatchApi@uploadBankFile')->middleware('jwt.auth');
+/**
+ * POST requestBankSignitories
+ * Summary: send mail requesting bank approval
+ * Notes: post Request Bank Signitories
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/payment_batch/request_signitories/{payment_batch_id}', 'PaymentBatchApi@requestBankSignitories')->middleware('jwt.auth');
 
 
 
