@@ -1311,12 +1311,8 @@ class MobilePaymentApi extends Controller
 
         // Sent to bank, awaiting reconciliation
         if(array_key_exists('bank_approvable', $input) && $input['bank_approvable']==true){
-            // $qb->where(function ($query) {
-            //     $query->where('status_id', '4')
-            //      ->orWhere('status_id', '13');
-            // });
             $qb->whereIn('status_id', ['4','13']);
-            $qb->orderByRaw('created_at DESC');
+            $qb->orderBy('created_at', 'desc');
         }
 
         // Corrected, awaiting accountant approval

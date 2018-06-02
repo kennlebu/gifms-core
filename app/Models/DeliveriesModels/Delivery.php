@@ -30,10 +30,14 @@ class Delivery extends BaseModel
     }
     public function lpo()
     {
-        return $this->belongsTo('App\Models\LPOModels\Lpo');
+        return $this->belongsTo('App\Models\LPOModels\Lpo')->with('supplier');
     }
     public function logs()
     {
         return $this->morphMany('App\Models\LogsModels\HistoryLog', 'subject')->orderBy('created_at','asc');
+    }
+    public function items()
+    {
+        return $this->hasMany('App\Models\DeliveriesModels\DeliveryItem');
     }
 }

@@ -3670,7 +3670,7 @@ Route::POST('/delivery', 'DeliveryApi@addDelivery')->middleware('jwt.auth');
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::PUT('/delivery', 'DeliveryApi@updateDelivery')->middleware('jwt.auth');
+Route::POST('/delivery/update', 'DeliveryApi@updateDelivery')->middleware('jwt.auth');
 /**
  * DELETE deleteDelivery
  * Summary: Deletes an delivery
@@ -3713,6 +3713,71 @@ Route::GET('/delivery/{delivery_id}/get_document', 'DeliveryApi@getDocumentById'
  * Output-Formats: [application/json, application/xml]
  */
 Route::PATCH('/delivery/{delivery_id}/submit_for_approval', 'DeliveryApi@submitDeliveryForApproval')->middleware('jwt.auth');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * GET getDeliveryItems
+ * Summary: delivery items List
+ * Notes: The delivery item endpoint returns multiple delivery items requested given the parameters injected.  
+
+ */
+Route::GET('/delivery_items', 'DeliveryItemApi@getDeliveryItems')->middleware('jwt.auth');
+/**
+ * POST addDeliveryItem
+ * Summary: Add a new delivery item
+ * Notes: new delivery item
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/delivery_item', 'DeliveryItemApi@addDeliveryItem')->middleware('jwt.auth');
+/**
+ * PUT updateDeliveryItem
+ * Summary: Update an existing delivery item
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/delivery_item/update', 'DeliveryItemApi@updateDeliveryItem')->middleware('jwt.auth');
+/**
+ * DELETE deleteDeliveryItem
+ * Summary: Deletes a delivery item
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/delivery_item/{delivery_item_id}', 'DeliveryItemApi@deleteDeliveryItem')->middleware('jwt.auth');
+/**
+ * GET getDeliveryItemById
+ * Summary: Find delivery item by ID
+ * Notes: Returns a single delivery item
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/delivery_item/{delivery_item_id}', 'DeliveryItemApi@getDeliveryItemById')->middleware('jwt.auth');
 
 
 

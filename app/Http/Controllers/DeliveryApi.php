@@ -97,19 +97,21 @@ class DeliveryApi extends Controller
             $delivery->received_for_id = (int)$form['received_for_id'];
 
             if($delivery->save()) {
-                // Mark LPO as delivered
-                $lpo = Lpo::find($delivery->lpo_id);
-                $lpo->date_delivered = date("Y-m-d H:i:s");
-                $lpo->delivery_Comment = $delivery->comment;
-                $lpo->delivery_made = $delivery->delivery_made;
-                $lpo->status_id = $lpo->status->next_status_id;
-                $lpo->save();
+                // Mark LPO as delivered if it's a partial delivery
+                if($delivery->delivery_made == 'full'){
+                    $lpo = Lpo::find($delivery->lpo_id);
+                    $lpo->date_delivered = date("Y-m-d H:i:s");
+                    $lpo->delivery_Comment = $delivery->comment;
+                    $lpo->delivery_made = $delivery->delivery_made;
+                    $lpo->status_id = $lpo->status->next_status_id;
+                    $lpo->save();
 
                 // Email delivery owner
-                try{
-                    Mail::queue(new NotifyDelivery($delivery, $lpo));
-                }catch(Exception $e){
+                    try{
+                        Mail::queue(new NotifyDelivery($delivery, $lpo));
+                    }catch(Exception $e){
 
+                    }
                 }
 
                 FTP::connection()->makeDir('/deliveries');
@@ -169,10 +171,13 @@ class DeliveryApi extends Controller
             'received_for_id',
             'comment',
             'external_ref',
-            'lpo_id'
+            'lpo_id',
+            'file'
             );
 
         $delivery = Delivery::find($form['id']);
+        $ftp = FTP::connection()->getDirListing();
+        $file = $form['file'];
 
 
 
@@ -184,6 +189,11 @@ class DeliveryApi extends Controller
             $delivery->lpo_id                =   (int)       $form['lpo_id']; 
 
         if($delivery->save()) {
+            if($file!=0){
+                FTP::connection()->makeDir('/deliveries');
+                FTP::connection()->makeDir('/deliveries/'.$delivery->id);
+                FTP::connection()->uploadFile($file->getPathname(), '/deliveries/'.$delivery->id.'/'.$delivery->id.'.'.$file->getClientOriginalExtension());
+            }
 
             return Response()->json(array('msg' => 'Success: Delivery updated','delivery' => $delivery), 200);
         }
@@ -290,7 +300,7 @@ class DeliveryApi extends Controller
 
         }catch(Exception $e){
 
-            $response =  ["error"=>"Delivery could not be found"];
+            $response =  ["error"=>$e->getMessage()];
             return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
         }
     }
@@ -548,7 +558,18 @@ class DeliveryApi extends Controller
         $records_filtered       = 0;
 
 
+        //if type is set
 
+        if(array_key_exists('type', $input)){
+
+            $type_ = (int) $input['type'];
+
+            if($type_==1){
+                $qb->where('received_by_id',$this->current_user()->id);
+            }elseif ($type_==2) {
+                $qb->where('received_for_id',$this->current_user()->id);
+            }
+        }
 
 
 
