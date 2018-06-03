@@ -81,6 +81,7 @@ class DeliveryApi extends Controller
                 'comment',
                 'external_ref',
                 'lpo_id',
+                'supplier_id',
                 'delivery_made',
                 'received_for_id',
                 'file'
@@ -93,8 +94,9 @@ class DeliveryApi extends Controller
             $delivery->comment                           =           $form['comment'];
             $delivery->external_ref                      =           $form['external_ref'];
             $delivery->lpo_id                            =   (int)   $form['lpo_id'];
+            $delivery->supplier_id = (int) $form['supplier_id'];
             $delivery->delivery_made = $form['delivery_made'];
-            $delivery->received_for_id = (int)$form['received_for_id'];
+            $delivery->received_for_id = (int) $form['received_for_id'];
 
             if($delivery->save()) {
                 // Mark LPO as delivered if it's a partial delivery
@@ -172,12 +174,14 @@ class DeliveryApi extends Controller
             'comment',
             'external_ref',
             'lpo_id',
+            'supplier_id',
             'file'
             );
 
         $delivery = Delivery::find($form['id']);
         $ftp = FTP::connection()->getDirListing();
         $file = $form['file'];
+        file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , '\nSQL:: '.$file , FILE_APPEND);
 
 
 
@@ -187,6 +191,7 @@ class DeliveryApi extends Controller
             $delivery->comment                      =               $form['comment'];
             $delivery->external_ref                   =               $form['external_ref'];
             $delivery->lpo_id                =   (int)       $form['lpo_id']; 
+            $delivery->supplier_id = (int) $form['supplier_id'];
 
         if($delivery->save()) {
             if($file!=0){
@@ -436,7 +441,7 @@ class DeliveryApi extends Controller
 
             $path_info      = pathinfo($path);
 
-            $ext            = $path_info['extension'];
+            // $ext            = $path_info['extension'];
 
             $basename       = $path_info['basename'];
 
@@ -780,11 +785,12 @@ class DeliveryApi extends Controller
 
         foreach ($data as $key => $value) {
 
-            $delivery = Delivery::find($data[$key]['id']);
+            $delivery = Delivery::with('supplier')->find($data[$key]['id']);
 
             $data[$key]['lpo']                      = $delivery->lpo;
             $data[$key]['received_by']              = $delivery->received_by;
             $data[$key]['received_for']             = $delivery->received_for;
+            $data[$key]['supplier']                 = $delivery->supplier;
 
         }
 
