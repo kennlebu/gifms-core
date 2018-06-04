@@ -13,7 +13,7 @@ class Program extends BaseModel
 
     public function managers()
     {
-        return $this->hasMany('App\Models\ProgramModels\ProgramManager');
+        return $this->hasOne('App\Models\ProgramModels\ProgramManager')->with('program_manager');
     }
 
     public function staffs()

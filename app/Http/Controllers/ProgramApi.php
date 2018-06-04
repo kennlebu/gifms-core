@@ -72,7 +72,8 @@ class ProgramApi extends Controller
     {
         $form = Request::only(
             'program_name',
-            'program_desc'
+            'program_desc',
+            'pm_id'
             );
 
         $program = new Program;
@@ -81,6 +82,11 @@ class ProgramApi extends Controller
             $program->program_desc                   =         $form['program_desc'];
 
         if($program->save()) {
+            $pm = new ProgramManager;
+            $pm->program_id = $program->id;
+            $pm->program_manager_id = $form['pm_id'];
+            $pm->default_approver = 1;
+            $pm->save();
 
             return Response()->json(array('msg' => 'Success: program added','program' => $program), 200);
         }
@@ -119,7 +125,8 @@ class ProgramApi extends Controller
         $form = Request::only(
             'id',
             'program_name',
-            'program_desc'
+            'program_desc',
+            'pm_id'
             );
 
         $program = Program::find($form['id']);
@@ -128,6 +135,18 @@ class ProgramApi extends Controller
             $program->program_desc                   =         $form['program_desc'];
 
         if($program->save()) {
+            $pm = ProgramManager::where('program_id', $form['id'])->first();
+            if(!empty($pm)){
+                $pm->program_manager_id = $form['pm_id'];
+            }
+            else {
+                $pm = new ProgramManager;
+                $pm->program_id = $form['id'];
+                $pm->program_manager_id = $form['pm_id'];
+                $pm->default_approver = 1;
+            }
+            $pm->save();
+
 
             return Response()->json(array('msg' => 'Success: program updated','program' => $program), 200);
         }
@@ -166,6 +185,9 @@ class ProgramApi extends Controller
     {
         $input = Request::all();
 
+        // Find and delete program manager entry
+        $pm = ProgramManager::where('program_id', $program_id)->first();
+        $deleted_pm = ProgramManager::destroy($pm->id);
 
         $deleted = Program::destroy($program_id);
 
