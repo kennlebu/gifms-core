@@ -85,7 +85,7 @@ class AccountApi extends Controller
             'account_name',
             'account_desc',
             'account_format',
-            // 'office_cost',
+            'status',
             'account_type_id'
             );
 
@@ -95,7 +95,7 @@ class AccountApi extends Controller
             $account->account_name                     =         $form['account_name'];
             $account->account_desc                     =         $form['account_desc'];
             $account->account_format                   =         $form['account_format'];
-            // $account->office_cost                      =  (int)  $form['office_cost'];
+            $account->status                           =         $form['status'];
             $account->account_type_id                  =  (int)  $form['account_type_id'];
 
         if($account->save()) {
@@ -151,7 +151,8 @@ class AccountApi extends Controller
             'account_name',
             'account_desc',
             'account_format',
-            'account_type_id'
+            'account_type_id',
+            'status'
             );
 
         $account = Account::find($form['id']);
@@ -160,7 +161,7 @@ class AccountApi extends Controller
             $account->account_name                     =         $form['account_name'];
             $account->account_desc                     =         $form['account_desc'];
             $account->account_format                   =         $form['account_format'];
-            // $account->office_cost                      =  (int)  $form['office_cost'];
+            $account->status                           =         $form['status'];
             $account->account_type_id                  =  (int)  $form['account_type_id'];
 
         if($account->save()) {
@@ -364,6 +365,17 @@ class AccountApi extends Controller
             $qb->where('id','>=','122');
         }
 
+        // Get inactive
+        if(array_key_exists('status', $input)){
+            // Inactive only
+            if($input['status']=='inactive'){
+                $qb->where('accounts.status', '\'inactive\'');
+            }
+        }
+        else{
+            $qb->where('accounts.status', '\'active\'');
+        }
+
 
         //searching
         if(array_key_exists('searchval', $input)){
@@ -372,6 +384,7 @@ class AccountApi extends Controller
                 $query->orWhere('accounts.id','like', '\'%' . $input['searchval']. '%\'');
                 $query->orWhere('accounts.account_name','like', '\'%' . $input['searchval']. '%\'');
                 $query->orWhere('accounts.account_desc','like', '\'%' . $input['searchval']. '%\'');
+                $query->orWhere('accounts.account_code','like', '\'%' . $input['searchval']. '%\'');
 
             });
 
@@ -434,6 +447,7 @@ class AccountApi extends Controller
                 $query->orWhere('accounts.id','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('accounts.account_name','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('accounts.account_desc','like', '\'%' . $input['search']['value']. '%\'');
+                $query->orWhere('accounts.account_code','like', '\'%' . $input['search']['value']. '%\'');
 
             });
 
