@@ -542,4 +542,41 @@ class RolesApi extends Controller
 
 
     }
+
+    public function assignUserRoles(){
+        try{
+            $form = Request::all();
+            $user_id = $form['user_id'];
+            $new_roles = $form['roles'];
+            $old_roles = array();
+
+            $user_roles = DB::table('user_roles')->select('user_id', 'role_id')->where('user_id', $user_id)->get();
+            foreach($user_roles as $user_role){
+                array_push($old_roles, $user_role['role_id']);
+            }
+
+            // Remove removed roles
+            foreach($old_roles as $old_role){
+                if(!in_array($old_role, $new_roles)){
+                    DB::table('user_roles')->where('user_id', $user_id)->where('role_id', $old_role)->delete();
+                }
+            }
+
+            // Add new roles
+            $insert_array = array();
+            foreach($new_roles as $new_role){
+                if(!in_array($new_role, $old_roles)){
+                    $new_record = array('user_id'=>$user_id, 'role_id'=>$new_role);
+                    array_push($insert_array, array('user_id'=>$user_id, 'role_id'=>$new_role));
+                }
+            }
+            if(!empty($insert_array))
+                DB::table('user_roles')->insert($insert_array);
+
+            return Response()->json(array('msg' => 'Success: roles updated'), 200);
+        }
+        catch(\Exception $e){
+            return response()->json(['error'=>'Something went wrong'], 500);
+        }
+    }
 }

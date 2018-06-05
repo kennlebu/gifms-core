@@ -875,6 +875,13 @@ Route::PATCH('/role/{role_id}/permissions', 'RolesApi@updateRolePermissions')->m
 
  */
 Route::GET('/roles', 'RolesApi@rolesGet')->middleware('jwt.auth');
+/**
+ * PUT assignUserRoles
+ * Summary: assign user roles
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/user_roles', 'RolesApi@assignUserRoles')->middleware('jwt.auth');
 
 
 
