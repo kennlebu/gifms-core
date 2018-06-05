@@ -204,14 +204,14 @@ class ReportsApi extends Controller
     
                         $my_result['vendor_name'] = 'MOH OFFICIALS';
                         $my_result['general_jr'] = 'MOH OFFICIALS c/o '.$mpesa_payee.': '.$row['payable']['expense_desc'].'; '.$row['payable']['expense_purpose'];
-                        $my_result['specific_jr'] = 'MOH OFFICIALS c/o '.$mpesa_payee.': '.$row['payable']['expense_desc'].'; '.$allocation['allocation_purpose'];
+                        $my_result['specific_jr'] = 'MOH OFFICIALS c/o '.$mpesa_payee.': '.$allocation['allocation_purpose'];
                         $my_result['total_amount'] = $row['payable']['totals'];
                         $my_result['transaction_type'] = 'Bulk MMTS';
                     }
                     else{
                         $my_result['vendor_name'] = $row['payment']['paid_to_name']; 
-                        $my_result['general_jr'] = $row['payment']['paid_to_name'].': '.$row['payable']['expense_desc'].'; '.$row['payable']['expense_purpose'];
-                        $my_result['specific_jr'] = $row['payment']['paid_to_name'].': '.$row['payable']['expense_desc'].'; '.$allocation['allocation_purpose'];
+                        $my_result['general_jr'] = $row['payment']['paid_to_name'].': '.$row['payable']['expense_desc'];
+                        $my_result['specific_jr'] = $row['payment']['paid_to_name'].': '.$allocation['allocation_purpose'];
                         $my_result['total_amount'] = $row['payment']['amount'];
     
                         if($row['payment']['payment_mode_id'] == 1){ $my_result['transaction_type'] = 'EFT'; }
