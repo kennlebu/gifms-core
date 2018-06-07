@@ -514,7 +514,6 @@ class PaymentBatchApi extends Controller
                     array_push($csv_data, $csv_row);
                 }
             }
-            // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , '\nSQL:: '.json_encode($csv_data) , FILE_APPEND);
 
             foreach($csv_data as $csv_data_row){
                 $voucher_no = $csv_data_row['chai_ref'];

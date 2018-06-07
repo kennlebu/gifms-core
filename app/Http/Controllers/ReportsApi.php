@@ -240,7 +240,7 @@ class ReportsApi extends Controller
             foreach($report_data as $row){
                 $excel_row = array();
                 $excel_row['vendor_name'] = $row['vendor_name'];
-                $excel_row['date'] = DateTime::createFromFormat('Y-m-d H:i:s', $row['date_posted'])->format('d-M-Y'); //'08 Jan 2018';
+                $excel_row['date'] = DateTime::createFromFormat('Y-m-d H:i:s', $row['date_posted'])->format('M-d-Y'); //'Jan 08 2018';
                 $excel_row['project_id'] = $row['project']['project_code'];
                 $excel_row['grant_details'] = $row['grant']['grant_code'];
                 $excel_row['account_number'] = $row['account_number'];
