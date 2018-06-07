@@ -635,6 +635,7 @@ class StaffApi extends Controller
             $data[$key]['payment_mode']             =   $staff->payment_mode;
             $data[$key]['bank']                     =   $staff->bank;
             $data[$key]['bank_branch']              =   $staff->bank_branch;
+            $data[$key]['name']                     =   $staff->name;
 
         }
 

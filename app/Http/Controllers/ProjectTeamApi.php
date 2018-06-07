@@ -16,6 +16,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\DB;
+
+use Exception;
+use App;
+use Illuminate\Support\Facades\Response;
 
 class ProjectTeamApi extends Controller
 {
@@ -122,19 +127,40 @@ class ProjectTeamApi extends Controller
      */
     public function updateProjectTeam()
     {
-        $input = Request::all();
+        try{
+            $form = Request::all();
+            $project_id = $form['project_id'];
+            $new_staffs = $form['staffs'];
+            $old_staffs = array();
 
-        //path params validation
+            $project_team = DB::table('project_teams')->select('project_id', 'staff_id')->where('project_id', $project_id)->get();
+            foreach($project_team as $team_member){
+                array_push($old_staffs, $team_member['staff_id']);
+            }
 
+            // Remove removed team members
+            foreach($old_staffs as $old_staff){
+                if(!in_array($old_staff, $new_staffs)){
+                    DB::table('project_teams')->where('project_id', $project_id)->where('staff_id', $old_staff)->delete();
+                }
+            }
 
-        //not path params validation
-        if (!isset($input['body'])) {
-            throw new \InvalidArgumentException('Missing the required parameter $body when calling updateProjectTeam');
+            // Add new team members
+            $insert_array = array();
+            foreach($new_staffs as $new_staff){
+                if(!in_array($new_staff, $old_staffs)){
+                    $new_record = array('project_id'=>$project_id, 'staff_id'=>$new_staff);
+                    array_push($insert_array, array('project_id'=>$project_id, 'staff_id'=>$new_staff));
+                }
+            }
+            if(!empty($insert_array))
+                DB::table('project_teams')->insert($insert_array);
+
+            return Response()->json(array('msg' => 'Success: Project Team updated'), 200);
         }
-        $body = $input['body'];
-
-
-        return response('How about implementing updateProjectTeam as a PUT method ?');
+        catch(\Exception $e){
+            return response()->json(['error'=>'Something went wrong'], 500);
+        }
     }
 
 
