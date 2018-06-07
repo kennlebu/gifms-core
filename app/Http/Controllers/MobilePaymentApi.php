@@ -422,6 +422,18 @@ class MobilePaymentApi extends Controller
                         $v_result = $v[0];
                         $voucher_number = $v_result['voucher_number'];
                     }
+                    // Get original voucher number if it's being resent to bank
+                    else if($mobile_payment->status_id==13){
+                        if(empty($mobile_payment->migration_id)){
+                            $v = VoucherNumber::where('payable_type', 'mobile_payments')
+                                            ->where('payable_id', $mobile_payment->id)
+                                            ->first();
+                            $voucher_number = $v->voucher_number;
+                        }
+                        else{
+                            $voucher_number = 'CHAI'.$this->pad_zeros(5, $mobile_payment->migration_invoice_id);
+                        }
+                    }
                     
                     /* Get CSV data */
                     date_default_timezone_set('Africa/Nairobi'); // Set timezone to Nairobi
@@ -484,7 +496,6 @@ class MobilePaymentApi extends Controller
             $response =  ["error"=>"You do not have the permissions to perform this action at this point"];
             return response()->json($response, 403,array(),JSON_PRETTY_PRINT);
         }catch(Exception $e){
-
             $response =  ["error"=>$e->getMessage()];
             return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
         }
