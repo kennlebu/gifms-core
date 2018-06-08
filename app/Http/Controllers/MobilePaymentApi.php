@@ -140,6 +140,8 @@ class MobilePaymentApi extends Controller
 
             if($mobile_payment->save()) {
 
+                $mobile_payment->disableLogging(); // Do not log the subsequent update(s)
+
                 FTP::connection()->makeDir('/mobile_payments');
                 FTP::connection()->makeDir('/mobile_payments/'.$mobile_payment->id);
                 FTP::connection()->makeDir('/mobile_payments/'.$mobile_payment->id.'/signsheet');
@@ -374,6 +376,7 @@ class MobilePaymentApi extends Controller
             $mobile_payment->status_id = $mobile_payment->status->next_status_id;
 
 
+            $mobile_payment->disableLogging(); //! Do not log the update
             if($mobile_payment->save()) {
 
                 $mobile_payment   = MobilePayment::with(
@@ -487,6 +490,13 @@ class MobilePaymentApi extends Controller
                     $approval->save();
                 }
 
+                // Logging
+                $mobile_payment->enableLogging(); //! Re-enable logging
+                activity()
+                   ->performedOn($approval->approvable)
+                   ->causedBy($user)
+                   ->log('approved');
+
                 if($several!=true)
                 return Response()->json(array('result' => 'Success: mobile_payment approved','mobile_payment' => $mobile_payment), 200);
             }
@@ -574,10 +584,17 @@ class MobilePaymentApi extends Controller
             $mobile_payment->rejected_at              =   date('Y-m-d H:i:s');
             $mobile_payment->rejection_reason             =   $form['rejection_reason'];
 
+            $mobile_payment->disableLogging(); //! Disable logging for the update
             if($mobile_payment->save()) {
-                try{
+                
+            // Logging
+            $mobile_payment->enableLogging();
+            activity()
+            ->performedOn($mobile_payment)
+            ->causedBy($user)
+            ->log('rejected');
+
                 Mail::queue(new NotifyMobilePayment($mobile_payment));
-                }catch(Exception $e){}
 
                 return Response()->json(array('msg' => 'Success: mobile_payment approved','mobile_payment' => $mobile_payment), 200);
             }
@@ -645,7 +662,8 @@ class MobilePaymentApi extends Controller
         //not path params validation
 
         try{
-
+            
+            $user = JWTAuth::parseToken()->authenticate();
             $form = Request::only('file');
 
             $file = $form['file'];
@@ -688,6 +706,11 @@ class MobilePaymentApi extends Controller
 
                 $payee->save();
             }
+
+            activity()
+            ->performedOn($mobile_payment)
+            ->causedBy($user)
+            ->log('uploaded payees');
 
 
 
@@ -1039,6 +1062,7 @@ class MobilePaymentApi extends Controller
 
 
         $response = [];
+        $user = JWTAuth::parseToken()->authenticate();
 
         try{
             $mobile_payment   = MobilePayment::with(
@@ -1066,15 +1090,29 @@ class MobilePaymentApi extends Controller
              throw new NotFullyAllocatedException("This mobile payment has not been fully allocated");
              
            }
-            $mobile_payment->status_id = $mobile_payment->status->next_status_id;
-            if($mobile_payment->status_id != 11 || $mobile_payment->status_id != 7){ // Only set request time if its not after corrections
+            if($mobile_payment->status_id == 1){ // Only set request time if its not after corrections
                 $mobile_payment->requested_at = date('Y-m-d H:i:s');
+
+                // Logging submission
+                activity()
+                   ->performedOn($mobile_payment)
+                   ->causedBy($user)
+                   ->log('submitted');
+            }
+            else{
+                // Logging resubmission
+                activity()
+                   ->performedOn($mobile_payment)
+                   ->causedBy($user)
+                   ->log('re-submitted');
             }
 
+            $mobile_payment->disableLogging(); //! Do not log the update
+            
+            $mobile_payment->status_id = $mobile_payment->status->next_status_id;
             if($mobile_payment->save()) {
-                try{
+                
                 Mail::queue(new NotifyMobilePayment($mobile_payment));
-                }catch(Exception $e){}
 
                 return Response()->json(array('msg' => 'Success: mobile_payment submitted','mobile_payment' => $mobile_payment), 200);
             }

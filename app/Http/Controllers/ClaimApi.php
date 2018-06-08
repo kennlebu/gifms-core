@@ -105,6 +105,7 @@ class ClaimApi extends Controller
 
 
             if($claim->save()) {
+                $claim->disableLogging();
 
                 FTP::connection()->makeDir('/claims');
                 FTP::connection()->makeDir('/claims/'.$claim->id);
@@ -388,6 +389,7 @@ class ClaimApi extends Controller
                                         'approvals',
                                         'allocations'
                                     )->findOrFail($claim_id);
+            
 
            
             if (!$user->can("APPROVE_CLAIM_".$claim->status_id)){
@@ -396,7 +398,9 @@ class ClaimApi extends Controller
             $approvable_status  = $claim->status;
             $claim->status_id = $claim->status->next_status_id;
 
+            $claim->disableLogging();
             if($claim->save()) {
+                $claim->enableLogging();
 
                 $claim   = Claim::with( 
                                         'requested_by',
@@ -417,6 +421,12 @@ class ClaimApi extends Controller
                 $approval->approvable_type          =   "claims";
                 $approval->approval_level_id        =   $approvable_status->approval_level_id;
                 $approval->approver_id              =   (int)   $user->id;
+
+                // Logging
+                activity()
+                   ->performedOn($approval->approvable)
+                   ->causedBy($user)
+                   ->log('approved');
 
                 $approval->save();
 
@@ -529,7 +539,15 @@ class ClaimApi extends Controller
             $claim->rejected_at              =   date('Y-m-d H:i:s');
             $claim->rejection_reason             =   $form['rejection_reason'];
 
+            $claim->disableLogging();
             if($claim->save()) {
+
+                // Logging
+                $claim->enableLogging();
+                activity()
+                   ->performedOn($claim)
+                   ->causedBy($user)
+                   ->log('rejected');
 
                 Mail::queue(new NotifyClaim($claim));
 
@@ -713,7 +731,8 @@ class ClaimApi extends Controller
     public function submitClaimForApproval($claim_id)
     {
         
-        $claim = [];
+        $claim = [];        
+        $user = JWTAuth::parseToken()->authenticate();
 
         try{
             $claim   = Claim::with( 
@@ -736,10 +755,27 @@ class ClaimApi extends Controller
              
            }
 
-            $claim->status_id = $claim->status->next_status_id;
-            if($claim->status_id  != 9){ // Only set request time if its not after corrections
+            if($claim->status_id  == 1){ // Only set request time if its not after corrections
+                
                 $claim->requested_at = date('Y-m-d H:i:s');
+
+                // Logging submission
+                activity()
+                   ->performedOn($claim)
+                   ->causedBy($user)
+                   ->log('submitted');
             }
+            else{                
+                // Logging resubmission
+                activity()
+                   ->performedOn($claim)
+                   ->causedBy($user)
+                   ->log('re-submitted');
+            }
+
+            $claim->status_id = $claim->status->next_status_id;
+
+            $claim->disableLogging(); //! Do not log the update
 
             if($claim->save()) {
 

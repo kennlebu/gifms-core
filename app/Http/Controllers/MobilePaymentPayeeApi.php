@@ -18,6 +18,8 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Request;
 use App\Models\MobilePaymentModels\MobilePaymentPayee;
 use DB;
+use JWTAuth;
+use App\Models\MobilePaymentModels\MobilePayment;
 
 class MobilePaymentPayeeApi extends Controller
 {
@@ -187,8 +189,14 @@ class MobilePaymentPayeeApi extends Controller
 
             if($mobile_payment_payee->save()) {
 
+                // Logging update
+                $user = JWTAuth::parseToken()->authenticate();
+                $mobile_payment = MobilePayment::findOrFail($mobile_payment_payee->mobile_payment_id);
+                activity()
+                   ->performedOn($mobile_payment)
+                   ->causedBy($user)
+                   ->log('updated payee');
 
-                $mobile_payment_payee->save();
                 return Response()->json(array('success' => 'mobile payment payee updated','mobile_payment_payee' => $mobile_payment_payee), 200);
             }
 
