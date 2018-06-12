@@ -34,6 +34,8 @@ use App\Models\GrantModels\Grant;
 use App\Models\ProjectsModels\Project;
 use App\Models\AccountingModels\Account;
 use App\Models\PaymentModels\VoucherNumber;
+use App\Models\ReportModels\ReportingCategories;
+use App\Models\ReportModels\ReportingObjective;
 
 class ReportsApi extends Controller
 {
@@ -354,6 +356,138 @@ class ReportsApi extends Controller
             })->download('xlsx', $headers);
         }
 
+    }
+
+
+
+
+    /**
+     * Operation getReportingCategories
+     * Get reporting categories
+     * @return Http response
+     */
+    public function getReportingCategories(){
+        try{
+            $qb = DB::table('reporting_categories')->whereNull('deleted_at');
+            $response = $qb->get();
+
+            return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+        }
+        catch(\Exception $e){
+            $response =  ["error"=>"reporting_category could not be found", "message"=>$e->getMessage()];
+            return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
+        }
+    }
+
+
+
+
+    /**
+     * Operation getReportingObjectives
+     * Get reporting objectives
+     * @return Http response
+     */
+    public function getReportingObjectives(){
+        try{
+            $qb = DB::table('reporting_objectives')->whereNull('deleted_at');
+            $response = $qb->get();
+
+            return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+        }
+        catch(\Exception $e){
+            $response =  ["error"=>"reporting_objective could not be found", "message"=>$e->getMessage()];
+            return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
+        }
+    }
+
+
+
+
+
+
+    /**
+     * Operation setReportingCategoryObjective
+     * Set or Update reporting categories/objectives
+     * @return Htpp response
+     */
+    public function setReportingCategoryObjective(){
+        try{            
+            $user = JWTAuth::parseToken()->authenticate();
+            $form = Request::only(
+                'id',
+                'reporting_objective_id',
+                'reporting_categories_id',
+                'payable_type'
+                );
+                
+
+            if($form['payable_type'] == 'claims'){
+                $claim = Claim::find($form['id']);
+                $claim->reporting_objective_id = $form['reporting_objective_id'];
+                $claim->reporting_categories_id = $form['reporting_categories_id'];
+                $claim->disableLogging();
+                $claim->save();
+
+                // Logging
+                activity()
+                ->performedOn($claim)
+                ->causedBy($user)
+                ->log('set reporting objective/category');
+
+                return Response()->json(array('msg' => 'Success: objective/category set','claim' => $claim), 200);
+            }
+
+            else if($form['payable_type'] == 'advances'){
+                $advance = Advance::find($form['id']);
+                $advance->reporting_objective_id = $form['reporting_objective_id'];
+                $advance->reporting_categories_id = $form['reporting_categories_id'];
+                $advance->disableLogging();
+                $advance->save();
+
+                // Logging
+                activity()
+                ->performedOn($advance)
+                ->causedBy($user)
+                ->log('set reporting objective/category');
+
+                return Response()->json(array('msg' => 'Success: objective/category set','advance' => $advance), 200);
+            }
+
+            else if($form['payable_type'] == 'invoices'){
+                $invoice = Invoice::find($form['id']);
+                $invoice->reporting_objective_id = $form['reporting_objective_id'];
+                $invoice->reporting_categories_id = $form['reporting_categories_id'];
+                $invoice->disableLogging();
+                $invoice->save();
+
+                // Logging
+                activity()
+                ->performedOn($invoice)
+                ->causedBy($user)
+                ->log('set reporting objective/category');
+
+                return Response()->json(array('msg' => 'Success: objective/category set','invoice' => $invoice), 200);
+            }
+
+            else if($form['payable_type'] == 'mobile_payments'){
+                $mobile_payment = MobilePayment::find($form['id']);
+                $mobile_payment->reporting_objective_id = $form['reporting_objective_id'];
+                $mobile_payment->reporting_categories_id = $form['reporting_categories_id'];
+                $mobile_payment->disableLogging();
+                $mobile_payment->save();
+
+                // Logging
+                activity()
+                ->performedOn($mobile_payment)
+                ->causedBy($user)
+                ->log('set reporting objective/category');
+
+                return Response()->json(array('msg' => 'Success: objective/category set','mobile_payment' => $mobile_payment), 200);
+            }
+        }
+        catch(\Exception $e){
+
+        }
     }
 
 

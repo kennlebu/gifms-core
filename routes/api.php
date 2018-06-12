@@ -5032,3 +5032,27 @@ Route::GET('/budget_items', 'BudgetItemApi@budgetItemsGet')->middleware('jwt.aut
  * Output-Formats: [application/json, application/xml]
  */
 Route::GET('/reports/2016', 'ReportsApi@get2016Report')->middleware('jwt.auth');
+
+/**
+ * GET getReportingCategories
+ * Summary: Get reporting categories
+ * Notes: get reporting categories
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/reports/categories', 'ReportsApi@getReportingCategories')->middleware('jwt.auth');
+
+/**
+ * GET getReportingObjectives
+ * Summary: Get reporting objectives
+ * Notes: get reporting objectives
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/reports/objectives', 'ReportsApi@getReportingObjectives')->middleware('jwt.auth');
+
+/**
+ * PUT setReportingCategoryObjective
+ * Summary: Add new or update an existing objective/category
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/reports/set_category_objective', 'ReportsApi@setReportingCategoryObjective')->middleware('jwt.auth');
