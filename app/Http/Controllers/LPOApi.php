@@ -997,6 +997,7 @@ class LPOApi extends Controller
         $input = Request::all();
         //query builder
         $qb = DB::table('lpos');
+        $qb->select('lpos.*');
 
         $qb->whereNull('lpos.deleted_at');
 
@@ -1215,25 +1216,20 @@ class LPOApi extends Controller
         if(array_key_exists('datatables', $input)){
 
             //searching
-            //$qb->join('lpo_quotations', 'lpos.id', '=', 'lpo_quotations.lpo_id');
-            //$qb->join('suppliers', 'lpo_quotations.supplier_id', '=', 'suppliers.id');
+            $qb->join('lpo_quotations', 'lpos.id', '=', 'lpo_quotations.lpo_id');
+            $qb->join('suppliers', 'lpo_quotations.supplier_id', '=', 'suppliers.id');
             $qb->where(function ($query) use ($input) {
                 
                 $query->orWhere('lpos.id','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('lpos.ref','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('lpos.expense_desc','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('lpos.expense_purpose','like', '\'%' . $input['search']['value']. '%\'');
-                //$query->orWhere('suppliers.supplier_name','like','\'%' .$input['search']['value']. '%\'');
+                $query->orWhere('suppliers.supplier_name','like','\'%' .$input['search']['value']. '%\'');
 
             });
-            
-            //    $qb->select(DB::raw('lpos.*, count(*) AS count', 'suppliers.supplier_name'));
-
-
-
 
             $sql = Lpo::bind_presql($qb->toSql(),$qb->getBindings());
-            $sql = str_replace("*"," count(*) AS count ", $sql);
+            $sql = str_replace("`lpos`.*"," count(*) AS count ", $sql);
             $dt = json_decode(json_encode(DB::select($sql)), true);
 
             $records_filtered = (int) $dt[0]['count'];
@@ -1244,23 +1240,11 @@ class LPOApi extends Controller
             $order_column_name  = $input['columns'][$order_column_id]['order_by'];
             $order_direction    = $input['order'][0]['dir'];
 
-            // if ($order_column_id == 0){
-            //     $order_column_name = "created_at";
-            // }
-            // if ($order_column_id == 1){
-            //     $order_column_name = "id";
-            // }
-
             if($order_column_name!=''){
 
                 $qb->orderBy('lpos.'.$order_column_name, $order_direction);
 
             }
-
-
-
-
-
 
             //limit $ offset
             if((int)$input['start']!= 0 ){
@@ -1276,10 +1260,7 @@ class LPOApi extends Controller
 
 
             $sql = Lpo::bind_presql($qb->toSql(),$qb->getBindings());
-           // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , '\nSQL:: '.$sql , FILE_APPEND);
-            // $response_dt = DB::select($qb->toSql(),$qb->getBindings());         //pseudo
             $response_dt = DB::select($sql);
-
 
             $response_dt = json_decode(json_encode($response_dt), true);
 
@@ -1290,8 +1271,6 @@ class LPOApi extends Controller
                 $total_records,
                 $records_filtered
                 );
-
-
         }else{
 
             $sql            = Lpo::bind_presql($qb->toSql(),$qb->getBindings());
@@ -1302,12 +1281,7 @@ class LPOApi extends Controller
             }
         }
 
-
-
-
         return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
-
-
     }
 
 
@@ -1330,8 +1304,6 @@ class LPOApi extends Controller
 
 
     public function append_relationships_objects($data = array()){
-
-        // print_r($data);
 
         foreach ($data as $key => $value) {
 
