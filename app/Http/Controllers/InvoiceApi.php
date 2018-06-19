@@ -98,13 +98,9 @@ class InvoiceApi extends Controller
     public function addInvoice()
     {
 
-        // $input = Request::all();
-
         $invoice = new Invoice;
 
-
         try{
-
 
             $form = Request::only(
                 'id',
@@ -124,24 +120,19 @@ class InvoiceApi extends Controller
                 'submission_type'
                 );
 
-
-            // FTP::connection()->changeDir('/lpos');
-
             $ftp = FTP::connection()->getDirListing();
-
-            // print_r($form['file']);
 
             $file = $form['file'];
 
-
-
-
-            // $invoice_date = date('Y-m-d H:i:s', strtotime($form['invoice_date']));
-            // $value = DateTime::createFromFormat('D M d Y H:i:s T +',$z);
             if($form['submission_type']=='full' || $form['submission_type']=='log'){
                 $DT = new \DateTime();
                 $dt = $DT->createFromFormat('D M d Y H:i:s T +',$form['invoice_date']);
                 $invoice_date = $dt->format('Y-m-d');
+            }
+
+            $exists = Invoice::where('external_ref', $form['external_ref'])->first();
+            if(!empty($exists)){
+                return response()->json(['error'=>'This invoice number already exists'], 409);
             }
 
             if($form['submission_type']=='full'){
@@ -151,7 +142,6 @@ class InvoiceApi extends Controller
                 $invoice->external_ref                      =               $form['external_ref'];
                 $invoice->expense_desc                      =               $form['expense_desc'];
                 $invoice->expense_purpose                   =               $form['expense_purpose'];
-                // $invoice->invoice_date                      =               $form['invoice_date'];
                 $invoice->invoice_date                      =               $invoice_date;
                 $invoice->lpo_id                            =   (((int) $form['lpo_id'])>0)?$form['lpo_id']:null;
                 $invoice->supplier_id                       =   (int)       $form['supplier_id'];
@@ -164,17 +154,13 @@ class InvoiceApi extends Controller
 
                 $invoice->status_id                         =   $this->default_status;
 
-                // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , 'Full: '.$invoice->payment_mode_id , FILE_APPEND);
-
             }else if($form['submission_type']=='log'){
 
                 $invoice->received_by_id                    =   (int)       $form['received_by_id'];
                 $invoice->raised_by_id                      =   (int)       $form['raised_by_id'];
-                $invoice->external_ref                      =               $form['external_ref'];
-                // $invoice->invoice_date                      =               $form['invoice_date'];  
+                $invoice->external_ref                      =               $form['external_ref']; 
                 $invoice->invoice_date                      =               $invoice_date;              
                 $invoice->lpo_id                            =   (((int) $form['lpo_id'])>0)?$form['lpo_id']:null;
-                // $invoice->lpo_id                            =               $form['lpo_id'];
                 $invoice->supplier_id                       =   (int)       $form['supplier_id'];
                 $invoice->payment_mode_id                  =   (int)       $form['payment_mode_id'];
                 $invoice->total                             =   (double)    $form['total'];
@@ -182,10 +168,8 @@ class InvoiceApi extends Controller
                 $invoice->received_at                       =   date('Y-m-d H:i:s');
 
                 $invoice->status_id                         =   $this->default_log_status;
-                // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , 'Log: '.$invoice->payment_mode_id , FILE_APPEND);
 
             }else if($form['submission_type']=='upload_logged'){
-
 
                 $invoice = Invoice::with( 
                                         'raised_by',
@@ -194,7 +178,6 @@ class InvoiceApi extends Controller
                                         'status',
                                         'project_manager',
                                         'supplier',
-                                        // 'payment_mode',
                                         'currency',
                                         'lpo',
                                         'rejected_by',
@@ -208,17 +191,13 @@ class InvoiceApi extends Controller
                 $invoice->external_ref                      =               $form['external_ref'];
                 $invoice->expense_desc                      =               $form['expense_desc'];
                 $invoice->expense_purpose                   =               $form['expense_purpose'];
-                // $invoice->invoice_date                      =               $form['invoice_date'];
-                // $invoice->invoice_date                      =               $invoice_date;
                 $invoice->lpo_id                            =   (((int) $form['lpo_id'])>0)?$form['lpo_id']:null;
                 $invoice->supplier_id                       =   (int)       $form['supplier_id'];
-                // $invoice->payment_mode_id                   =   (int)       $form['payment_mode_id'];
                 $invoice->project_manager_id                =   (int)       $form['project_manager_id'];
                 $invoice->total                             =   (double)    $form['total'];
                 $invoice->currency_id                       =   (int)       $form['currency_id'];
                 $invoice->received_at                       =   date('Y-m-d H:i:s');
                 $invoice->raised_at                         =   date('Y-m-d H:i:s');
-                // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , 'Upload logged: '.$invoice->payment_mode_id , FILE_APPEND);
                 if (($invoice->total - $invoice->amount_allocated) <= 1 ){ //allowance of 1
                     $invoice->status_id = $invoice->status->next_status_id;  
                 }
@@ -227,8 +206,6 @@ class InvoiceApi extends Controller
 
 
                 $invoice = Invoice::find((int) $form['id']);
-
-                // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , $form['total'] , FILE_APPEND);
                 $invoice->total = (double)    $form['total'];
 
                 if ((($invoice->total - $invoice->amount_allocated) <= 1 ) && $invoice->status_id==11){ //allowance of 1
@@ -236,7 +213,6 @@ class InvoiceApi extends Controller
                 }
                 
             }
-
 
             if($invoice->save()) {
 
@@ -265,7 +241,7 @@ class InvoiceApi extends Controller
 
         }catch (JWTException $e){
 
-            return response()->json(['error'=>'You are not Authenticated'], 500);
+            return response()->json(['error'=>'Something went wrong'], 500);
 
         }
 
