@@ -17,6 +17,13 @@ namespace App\Http\Controllers;
 use JWTAuth;
 use Illuminate\Support\Facades\Request;
 use App\Models\AllocationModels\Allocation;
+use App\Models\AdvancesModels\Advance;
+use App\Models\ClaimsModels\Claim;
+use App\Models\InvoicesModels\Invoice;
+use App\Models\MobilePaymentModels\MobilePayment;
+use App\Models\AccountingModels\Account;
+use App\Models\ProjectsModels\Project;
+use Excel;
 
 class AllocationApi extends Controller
 {
@@ -96,14 +103,10 @@ class AllocationApi extends Controller
 
 
             if($allocation->save()) {
-
-
-                $user = JWTAuth::parseToken()->authenticate();
                 activity()
                    ->performedOn($allocation->allocatable)
                    ->causedBy($user)
                    ->log('allocated');
-                $allocation->save();
                 return Response()->json(array('success' => 'allocation added','allocation' => $allocation), 200);
             }
 
@@ -344,5 +347,92 @@ class AllocationApi extends Controller
 
 
         return response('How about implementing getAllocations as a GET method ?');
+    }
+
+
+
+
+
+    /**
+     * Operation uploadAllocations
+     * CSV file with allocations
+     * @return Http response
+     */
+    public function uploadAllocations(){
+        $form = Request::all();
+
+        try{
+            $file = $form['file'];
+            $payable_type = $form['payable_type'];
+            $payable_id = $form['payable_id'];            
+            $user = JWTAuth::parseToken()->authenticate();
+            $payable = null;
+            $total = 0;
+
+            if($payable_type=='claims'){
+                $payable = Claim::find($payable_id);
+                $total = $payable->total;
+            }
+            else if($payable_type=='advances'){
+                $payable = Advance::find($payable_id);
+                $total = $payable->total;
+            }
+            else if($payable_type=='invoices'){
+                $payable = Invoice::find($payable_id);
+                $total = $payable->total;
+            }
+            else if($payable_type=='mobile_payments'){
+                $payable = MobilePayment::find($payable_id)->with('totals');
+                $total = $payable->totals;
+            }
+
+            $data = Excel::load($file->getPathname(), function($reader) {
+            })->get()->toArray();
+
+            $allocations_array = array();
+            foreach ($data as $key => $value) {
+                $allocation = new Allocation();
+
+                try{
+                    $project = Project::where('project_code','like', '%'.trim($value['pid']).'%')->firstOrFail();
+                    $account = Account::where('account_code', 'like', '%'.trim($value['account_code']).'%')->firstOrFail();
+
+                    $allocation->allocatable_id = $payable_id;
+                    $allocation->allocatable_type = $payable_type;
+                    $allocation->amount_allocated = $value['amount_allocation'];
+                    $allocation->allocation_purpose = $value['specific_journal_rference'];
+                    $allocation->percentage_allocated = (string) $this->getPercentage($value['amount_allocation'], $total);
+                    $allocation->allocated_by_id =  (int) $user->id;
+                    $allocation->account_id =  $account->id;
+                    $allocation->project_id = $project->id;
+                    array_push($allocations_array, $allocation);
+
+                }
+                catch(\Exception $e){
+                    $response =  ["error"=>'Account or Project not found. Please use form to allocate.',
+                                    "msg"=>$e->getMessage()];
+                    return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+                }
+            }
+
+            foreach($allocations_array as $allocation){
+                $allocation->save();
+            }
+
+            // Logging
+            activity()
+                ->performedOn($payable)
+                ->causedBy($user)
+                ->log('uploaded allocations');
+            return Response()->json(array('success' => 'allocations added','payable' => $payable), 200);
+
+        }
+        catch(\Exception $e){
+            return response()->json(['error'=>'Something went wrong'], 500);
+        }
+    }
+
+    public function getPercentage($amount, $total){
+        return ($amount / $total) * 100;
     }
 }

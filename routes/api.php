@@ -3315,6 +3315,13 @@ Route::POST('/payment_batch/download_csv', 'PaymentBatchApi@getCSVData')->middle
  * Notes: post Bank file
  * Output-Formats: [application/json, application/xml]
  */
+Route::POST('/payment_batch/mark_as_paid', 'PaymentBatchApi@markPaymentsAsPaid')->middleware('jwt.auth');
+/**
+ * POST markPaymentsAsPaid
+ * Summary: mark payments as paid
+ * Notes: mark payments as paid
+ * Output-Formats: [application/json, application/xml]
+ */
 Route::POST('/payment_batch/upload_bankfile', 'PaymentBatchApi@uploadBankFile')->middleware('jwt.auth');
 /**
  * POST requestBankSignitories
@@ -3627,6 +3634,14 @@ Route::GET('/allocation/{allocation_id}', 'AllocationApi@getAllocationById')->mi
 
  */
 Route::GET('/allocations', 'AllocationApi@getAllocations')->middleware('jwt.auth');
+
+/**
+ * POST uploadAllocations
+ * Summary: Upload allocations using CSV
+ * Notes: upload allocation
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/allocation/csv_upload', 'AllocationApi@uploadAllocations')->middleware('jwt.auth');
 
 
 
