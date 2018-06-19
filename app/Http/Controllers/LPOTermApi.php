@@ -17,6 +17,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Request;
 use App\Models\LPOModels\LpoTerm;
+use JWTAuth;
+use App\Models\LPOModels\Lpo;
 
 class LPOTermApi extends Controller
 {
@@ -91,6 +93,13 @@ class LPOTermApi extends Controller
 
 
             if($lpo_term->save()) {
+
+                $lpo = LPO::find($lpo_term->lpo_id);
+                $user = JWTAuth::parseToken()->authenticate();
+                activity()
+                   ->performedOn($lpo)
+                   ->causedBy($user)
+                   ->log('added terms');
 
                 return Response()->json(array('success' => 'lpo term added','lpo_term' => $lpo_term), 200);
             }
@@ -167,19 +176,19 @@ class LPOTermApi extends Controller
             $term->lpo_id              =               $form['lpo_id'];
             $term->terms               =               $form['terms'];
 
-            // $user = JWTAuth::parseToken()->authenticate();
+            $user = JWTAuth::parseToken()->authenticate();
             // $allocation->allocated_by_id            =   (int)   $user->id;
 
 
             if($term->save()) {
 
 
-                // $user = JWTAuth::parseToken()->authenticate();
-                // activity()
-                //    ->performedOn($allocation->allocatable)
-                //    ->causedBy($user)
-                //    ->log('re-allocated');
-                // $allocation->save();
+                $lpo = LPO::find($term->lpo_id);
+                activity()
+                   ->performedOn($lpo)
+                   ->causedBy($user)
+                   ->log('terms updated');
+
                 return Response()->json(array('success' => 'Terms updated','lpo_term' => $term), 200);
             }
 
