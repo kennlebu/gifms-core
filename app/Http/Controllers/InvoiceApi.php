@@ -357,6 +357,7 @@ class InvoiceApi extends Controller
             $invoice->payment_mode_id                   =   (int)       $form['payment_mode_id'];
             $invoice->project_manager_id                =   (int)       $form['project_manager_id'];
             $invoice->total                             =   (double)    $form['total'];
+            $invoice->currency_id                       =   (int)       $form['currency_id'];
                 
             if($invoice->save()) {
 
