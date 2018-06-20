@@ -130,7 +130,9 @@ class InvoiceApi extends Controller
                 $invoice_date = $dt->format('Y-m-d');
             }
 
-            $exists = Invoice::where('external_ref', $form['external_ref'])->first();
+            $exists = Invoice::where('external_ref', $form['external_ref'])
+                        ->where('supplier_id', $form['supplier_id'])
+                        ->first();
             if(!empty($exists) && $form['submission_type']!='upload_logged'){
                 return response()->json(['error'=>'This invoice number already exists'], 409);
             }
