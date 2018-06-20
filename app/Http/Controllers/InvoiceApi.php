@@ -131,7 +131,7 @@ class InvoiceApi extends Controller
             }
 
             $exists = Invoice::where('external_ref', $form['external_ref'])->first();
-            if(!empty($exists)){
+            if(!empty($exists) && $form['submission_type']!='upload_logged'){
                 return response()->json(['error'=>'This invoice number already exists'], 409);
             }
 
