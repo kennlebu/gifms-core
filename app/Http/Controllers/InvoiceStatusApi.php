@@ -288,6 +288,9 @@ class InvoiceStatusApi extends Controller
         $total_records          = $qb->count();
         $records_filtered       = 0;
         $user = JWTAuth::parseToken()->authenticate();
+        if(array_key_exists('displayable_only',$input)){
+            $qb->whereIn('invoice_statuses.id', [11,10,9]);
+        }
 
 
 

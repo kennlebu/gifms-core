@@ -288,6 +288,9 @@ class LpoStatusApi extends Controller
         $total_records          = $qb->count();
         $records_filtered       = 0;
         $user = JWTAuth::parseToken()->authenticate();
+        if(array_key_exists('displayable_only',$input)){
+            $qb->whereIn('lpo_statuses.id', [1,2,11,12]);
+        }
 
 
 
