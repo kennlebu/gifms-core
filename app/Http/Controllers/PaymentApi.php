@@ -631,6 +631,47 @@ class PaymentApi extends Controller
     }
 
 
+    public function getPaymentByPV(){
+        $input = Request::all();
+        try{
+            $payment = "";
+
+            // New voucher nos.
+            if(substr($voucher_no, 0, 2) == 'KE'){
+                $voucher = VoucherNumber::where('voucher_number', $voucher_no)->firstOrFail();
+                if($voucher->payable_type != 'mobile_payments'){
+                    $payment = Payment::with('payment_mode')->findOrFail($voucher->payable_id);
+                    $res['vendor'] = $payment->paid_to_name;
+                    $res['payment_mode'] = $payment->payment_mode->abrv;
+                }
+                elseif($voucher->payable_type == 'mobile_payments'){
+                    $payment = MobilePayment::with('requested_by')->findOrFail($voucher->payable_id);
+                    $res['vendor'] = $payment->requested_by->name;
+                    $res['payment_mode'] = 'Bulk MMTS';
+                }
+                $payable_type = $voucher->payable_type;
+                $res['payment'] = $payment;
+                $res['payable_type'] = $payable_type;
+            }
+
+            // Old voucher nos.
+            elseif(substr($voucher_no, 0, 4) == 'CHAI'){
+                $invoice_id = (int)preg_replace("/[^0-9,.]/", "", $voucher_no);
+                $payment = Payment::where('payable_id', $invoice_id)->firstOrFail();
+                $res['payment'] = $payment;
+                $res['payable_type'] = $payment->payable_type;                        
+                $res['vendor'] = $payment->paid_to_name;
+            }
+            else
+                throw new \Exception("Invalid voucher number");
+        } catch(\Exception $e){                    
+            $res['payable_type'] = 'missing';
+            // array_push($result, $res);
+        }
+        
+    }
+
+
 
 
 
