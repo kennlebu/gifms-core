@@ -206,14 +206,13 @@ class ClaimApi extends Controller
      */
     public function deleteClaim($claim_id)
     {
-        $input = Request::all();
+        $deleted = Claim::destroy($claim_id);
 
-        //path params validation
-
-
-        //not path params validation
-
-        return response('How about implementing deleteClaim as a DELETE method ?');
+        if($deleted){
+            return response()->json(['msg'=>"Claim deleted"], 200,array(),JSON_PRETTY_PRINT);
+        }else{
+            return response()->json(['error'=>"Claim not found"], 404,array(),JSON_PRETTY_PRINT);
+        }
     }
 
 
