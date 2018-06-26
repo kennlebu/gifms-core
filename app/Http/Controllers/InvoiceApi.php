@@ -899,21 +899,19 @@ class InvoiceApi extends Controller
             $vendor = '-';
             $voucher_no = '-';
 
-            if(!empty($payment->voucher_number)) $voucher_no = $payment->voucher_number->voucher_number;
-            else {
-                if(empty($invoice->migration_id)) $voucher_no = '-';
-                else $voucher_no = 'CHAI'.$this->pad_zeros(5, $invoice->migration_id);
+            if(empty($invoice->migration_id)) {
+                $voucher = VoucherNumber::find($payment->voucher_no);
+                if(!empty($voucher->voucher_number)) $voucher_no = $voucher->voucher_number;
+                else $voucher_no = '-';
             }
-            // if(empty($invoice->voucher_no)){
-            //     if(empty($invoice->voucher_no)) $voucher_no = '-';
-            //     else{
-            //         $voucher_no = 'CHAI'.$this->pad_zeros(5, $invoice->voucher_no);
-            //     }
-            // }
-            // else{
-            //     $voucher_no = VoucherNumber::first($invoice->voucher_no);
-            //     $voucher_no = $voucher_no->voucher_number;
-            // }
+            else {
+                $voucher_no = 'CHAI'.$this->pad_zeros(5, $invoice->migration_id);
+            }
+
+            file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , PHP_EOL.$voucher_no , FILE_APPEND);
+
+
+            
 
             if(!empty($payment->payment_batch_id) && $payment->payment_batch_id > 0){
                 $batch = PaymentBatch::find($payment->payment_batch_id);
@@ -981,9 +979,6 @@ class InvoiceApi extends Controller
      */
     public function submitInvoiceForApproval($invoice_id)
     {
-
-        $invoice = [];
-
         try{
             $invoice   = Invoice::with( 
                                         'raised_by',
@@ -1015,9 +1010,7 @@ class InvoiceApi extends Controller
 
             if($invoice->save()) {
 
-                try{
                 Mail::queue(new NotifyInvoice($invoice));
-                }catch(Exception $e){}
 
                 $user = JWTAuth::parseToken()->authenticate();
                 activity()
