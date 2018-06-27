@@ -911,6 +911,7 @@ class InvoiceApi extends Controller
             // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , PHP_EOL.$voucher_no , FILE_APPEND);
 
 
+
             
 
             if(!empty($payment->payment_batch_id) && $payment->payment_batch_id > 0){
