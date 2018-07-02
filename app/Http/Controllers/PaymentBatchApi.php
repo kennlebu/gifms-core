@@ -28,6 +28,7 @@ use App\Models\LPOModels\Lpo;
 use App\Models\PaymentModels\VoucherNumber;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\NotifyBatch;
+use App\Mail\NotifyPayment;
 use App\Models\MobilePaymentModels\MobilePayment;
 use App\Mail\RequestBankSigning;
 
@@ -533,6 +534,7 @@ class PaymentBatchApi extends Controller
                 $res['bank_date'] = $csv_data_row['bank_date'];
                 $res['time'] = $csv_data_row['time'];
                 $res['narrative'] = $csv_data_row['narrative'];
+                $res['notify_vendor'] = true;
                 try{
                     $payment = "";
 
@@ -584,61 +586,86 @@ class PaymentBatchApi extends Controller
         try{
             $input = Request::all();
             foreach($input as $row){
+                $already_paid = false;
                 if($row['payable_type'] != 'mobile_payments'){
                     $payment = Payment::find($row['payment']['id']);
-                    $payment->status_id = 4; // Reconciled
-                    $payment->save();
+                    if($payment->status_id==4) $already_paid = true;
+                    else{
+                        $payment->status_id = 4; // Reconciled
+                        $payment->save();
 
-                    // Change invoice status
-                    if($payment->payable_type=='invoices'){
-                        $invoice = Invoice::find($payment->payable_id);
-                        $invoice->status_id = 8; //Paid
-                        $invoice->save();
+                        // Change invoice status
+                        if($payment->payable_type=='invoices'){
+                            $invoice = Invoice::with('raised_by','supplier')->find($payment->payable_id);
+                            $invoice->status_id = 8; //Paid
+                            $invoice->save();
 
-                        // Change LPO to paid
-                        $lpo = Lpo::findOrFail($invoice->lpo_id);
-                        $lpo->invoice_paid = 'True';
-                        $lpo->status_id = 14; // Paid and completed
-                        $lpo->save();
+                            // Change LPO to paid
+                            $lpo = Lpo::findOrFail($invoice->lpo_id);
+                            $lpo->invoice_paid = 'True';
+                            $lpo->status_id = 14; // Paid and completed
+                            $lpo->save();
+
+                            // Send email
+                            if($row['notify_vendor'])
+                            Mail::queue(new NotifyPayment($invoice, $payment->payable_type));
+                        }
+                        // Change advance status
+                        if($payment->payable_type=='advances'){
+                            $advance = Advance::with('requested_by')->find($payment->payable_id);
+                            $advance->status_id = 6; // Issued and Paid
+                            $advance->save();
+
+                            // Send email
+                            if($row['notify_vendor'])
+                            Mail::queue(new NotifyPayment($advance, $payment->payable_type));
+                        }
+                        // Change claim status
+                        if($payment->payable_type=='claims'){
+                            $claim = Claim::with('requested_by')->find($payment->payable_id);
+                            $claim->status_id = 8; // Paid
+                            $claim->save();
+
+                            // Send email
+                            if($row['notify_vendor'])
+                            Mail::queue(new NotifyPayment($claim, $payment->payable_type));
+                        }
                     }
-                    // Change advance status
-                    if($payment->payable_type=='advances'){
-                        $advance = Advance::find($payment->payable_id);
-                        $advance->status_id = 6; // Issued and Paid
-                        $advance->save();
-                    }
-                    // Change claim status
-                    if($payment->payable_type=='claims'){
-                        $claim = Claim::find($payment->payable_id);
-                        $claim->status_id = 8; // Paid
-                        $claim->save();
-                    }
+
                 }
                 elseif($row['payable_type'] == 'mobile_payments'){
-                    $mobile_payment = MobilePayment::find($row['payment']['id']);
-                    $mobile_payment->status_id = 5; //Paid
-                    $mobile_payment->save();
+                    $mobile_payment = MobilePayment::with('requested_by')->find($row['payment']['id']);
+                    if($mobile_payment->status_id==5) $already_paid = true;
+                    else {
+                        $mobile_payment->status_id = 5; //Paid
+                        $mobile_payment->save();
+
+                        // Send email
+                        if($row['notify_vendor'])
+                        Mail::queue(new NotifyPayment($mobile_payment, $row['payable_type']));
+                    }
                 }
 
-                // Save transaction details
-                $bank_transaction = array();
-                $bank_transaction['bank_ref'] = $row['bank_ref'];
-                $bank_transaction['chai_ref'] = $row['chai_ref'];
-                $bank_transaction['inputter'] = $row['inputter'];
-                $bank_transaction['approver'] = $row['approver'];
-                $bank_transaction['amount'] = preg_replace("/[^0-9.]/", "", $row['amount']);
-                $bank_transaction['txn_date'] =  date('Y-m-d', strtotime(str_replace('/', '-', $row['bank_date'])));
-                $bank_transaction['txn_time'] = $row['time'];
-                // $bank_transaction['processing_date'] = $row['processing_date'];
-                $bank_transaction['narrative'] = $row['narrative'];
-                DB::table('bank_transactions')->insert($bank_transaction);
+                if(!$already_paid){
+                    // Save transaction details
+                    $bank_transaction = array();
+                    $bank_transaction['bank_ref'] = $row['bank_ref'];
+                    $bank_transaction['chai_ref'] = $row['chai_ref'];
+                    $bank_transaction['inputter'] = $row['inputter'];
+                    $bank_transaction['approver'] = $row['approver'];
+                    $bank_transaction['amount'] = preg_replace("/[^0-9.]/", "", $row['amount']);
+                    $bank_transaction['txn_date'] =  date('Y-m-d', strtotime(str_replace('/', '-', $row['bank_date'])));
+                    $bank_transaction['txn_time'] = $row['time'];
+                    // $bank_transaction['processing_date'] = $row['processing_date'];
+                    $bank_transaction['narrative'] = $row['narrative'];
+                    DB::table('bank_transactions')->insert($bank_transaction);
+                }
             }
 
             return response()->json(['success'=>'Payments marked as paid'], 200);
         }
         catch(\Exception $e){
-            file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , PHP_EOL.$e->getTraceAsString() , FILE_APPEND);
-            return response()->json(['error'=>'An error occured', 'msg'=>$e->getMessage], 500);
+            return response()->json(['error'=>'An error occured', 'msg'=>$e->getMessage()], 500);
         }
     }
 
