@@ -2215,6 +2215,41 @@ Route::GET('/mobile_payment_tariffs', 'MobilePaymentTariffApi@mobilePaymentTarif
 
 
 
+/**
+ * POST addTaxRate
+ * Summary: Add a new tax_rate
+ * Notes: new tax_rate
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/tax_rate', 'TaxRatesApi@addTaxRate')->middleware('jwt.auth');
+/**
+ * PUT updateTaxRate
+ * Summary: Update an existing tax_rate
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PUT('/tax_rate', 'TaxRatesApi@updateTaxRate')->middleware('jwt.auth');
+/**
+ * DELETE deleteTaxRate
+ * Summary: Deletes a tax_rate
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::DELETE('/tax_rate/{tax_rate_id}', 'TaxRatesApi@deleteTaxRate')->middleware('jwt.auth');
+/**
+ * GET getTaxRateById
+ * Summary: Find tax_rate by ID
+ * Notes: Returns a single tax_rate
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/tax_rate/{tax_rate_id}', 'TaxRatesApi@getTaxRateById')->middleware('jwt.auth');
+/**
+ * GET taxRatesGet
+ * Summary: tax_rate List
+ * Notes: The tax_rates endpoint returns multiple tax_rate requested given the parameters injected.  
+
+ */
+Route::GET('/tax_rates', 'TaxRatesApi@taxRatesGet')->middleware('jwt.auth');
 
 
 
