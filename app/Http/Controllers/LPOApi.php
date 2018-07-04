@@ -1216,8 +1216,8 @@ class LPOApi extends Controller
         if(array_key_exists('datatables', $input)){
 
             //searching
-            $qb->join('lpo_quotations', 'lpos.id', '=', 'lpo_quotations.lpo_id');
-            $qb->join('suppliers', 'lpo_quotations.supplier_id', '=', 'suppliers.id');
+            $qb->leftJoin('lpo_quotations', 'lpos.preffered_quotation_id', '=', 'lpo_quotations.id');
+            $qb->leftJoin('suppliers', 'lpo_quotations.supplier_id', '=', 'suppliers.id');
             $qb->where(function ($query) use ($input) {
                 
                 $query->orWhere('lpos.id','like', '\'%' . $input['search']['value']. '%\'');
