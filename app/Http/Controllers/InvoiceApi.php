@@ -218,6 +218,7 @@ class InvoiceApi extends Controller
 
             if($invoice->save()) {
 
+                $invoice->disableLogging(); //! Do not log the update
                 if($form['submission_type']=='full'||$form['submission_type']=='upload_logged'){
                     
                     FTP::connection()->makeDir('/invoices');
@@ -339,6 +340,7 @@ class InvoiceApi extends Controller
                 
             if($invoice->save()) {
 
+                $invoice->disableLogging(); //! Do not log the update again
                 if($form['submission_type']=='full' && $file!=0){
 
                     FTP::connection()->makeDir('/invoices');
@@ -628,7 +630,8 @@ class InvoiceApi extends Controller
 
             $approvable_status  = $invoice->status;
             $invoice->status_id = $invoice->status->next_status_id;
-
+            
+            $invoice->disableLogging(); //! Do not log the update
             if($invoice->save()) {
 
                 $invoice   = Invoice::with( 
@@ -773,6 +776,7 @@ class InvoiceApi extends Controller
             $invoice->rejected_at                 =   date('Y-m-d H:i:s');
             $invoice->rejection_reason             =   $form['rejection_reason'];
 
+            $invoice->disableLogging(); //! Do not log the update
             if($invoice->save()) {
 
                 try{
@@ -1009,6 +1013,7 @@ class InvoiceApi extends Controller
                 $invoice->raised_at = date('Y-m-d H:i:s');
             }
 
+            $invoice->disableLogging(); //! Do not log the update
             if($invoice->save()) {
 
                 Mail::queue(new NotifyInvoice($invoice));

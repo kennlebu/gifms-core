@@ -550,17 +550,17 @@ class PaymentApi extends Controller
 
             $payment = Payment::with('payable.project_manager')->find($data[$key]['id']);
 
-            $data[$key]['payable']                      = $payment->payable;
-            $data[$key]['simple_date']                  = $payment->simple_date;
-            $data[$key]['payable']['currency']          = $payment->payable->currency;
-            $data[$key]['debit_bank_account']           = $payment->debit_bank_account;
-            $data[$key]['currency']                     = $payment->currency;
-            $data[$key]['paid_to_bank']                 = $payment->paid_to_bank;
-            $data[$key]['paid_to_bank_branch']          = $payment->paid_to_bank_branch;
-            $data[$key]['payment_mode']                 = $payment->payment_mode;
-            $data[$key]['payment_batch']                = $payment->payment_batch;
-            $data[$key]['status']                       = $payment->status;
-            $data[$key]['project_manager']              = $payment->payable->project_manager;
+            !empty($payment->payable) && ($data[$key]['payable'] = $payment->payable);
+            !empty($payment->simple_date) && ($data[$key]['simple_date'] = $payment->simple_date);
+            !empty($payment->payable->currency) && ($data[$key]['payable']['currency'] = $payment->payable->currency);
+            !empty($payment->debit_bank_account) && ($data[$key]['debit_bank_account'] = $payment->debit_bank_account);
+            !empty($payment->currency) && ($data[$key]['currency'] = $payment->currency);
+            !empty($payment->paid_to_bank) && ($data[$key]['paid_to_bank'] = $payment->paid_to_bank);
+            !empty($payment->paid_to_bank_branch) && ($data[$key]['paid_to_bank_branch'] = $payment->paid_to_bank_branch);
+            !empty($payment->payment_mode) && ($data[$key]['payment_mode'] = $payment->payment_mode);
+            !empty($payment->payment_batch) && ($data[$key]['payment_batch'] = $payment->payment_batch);
+            !empty($payment->status) && ($data[$key]['status'] = $payment->status);
+            !empty($payment->payable->project_manager) && ($data[$key]['project_manager'] = $payment->payable->project_manager);
 
         }
 
@@ -593,31 +593,31 @@ class PaymentApi extends Controller
 
         foreach ($data as $key => $value) {
 
-            if($value["payable"]==null){
+            if(!empty($value["payable"]) && $value["payable"]==null){
                 $data[$key]['payable'] = array("expense_desc"=>"N/A");
                 
             }
-            if($value["debit_bank_account"]==null){
+            if(!empty($value["debit_bank_account"]) && $value["debit_bank_account"]==null){
                 $data[$key]['debit_bank_account'] = array("title"=>"N/A","account_number"=>"N/A");
                 
             }
-            if($value["currency"]==null){
+            if(!empty($value["currency"]) && $value["currency"]==null){
                 $data[$key]['currency'] = array("currency_name"=>"N/A");
                 
             }
-            if($value["paid_to_bank"]==null){
+            if(!empty($value["paid_to_bank"]) && $value["paid_to_bank"]==null){
                 $data[$key]['paid_to_bank'] = array("bank_name"=>"N/A");
                 
             }
-            if($value["paid_to_bank_branch"]==null){
+            if(!empty($value["paid_to_bank_branch"]) && $value["paid_to_bank_branch"]==null){
                 $data[$key]['paid_to_bank_branch'] = array("branch_name"=>"N/A");
                 
             }
-            if($value["payment_mode"]==null){
+            if(!empty($value["payment_mode"]) && $value["payment_mode"]==null){
                 $data[$key]['payment_mode'] = array("payment_mode_description"=>"N/A");
                 
             }
-            if($value["payment_batch"]==null){
+            if(!empty($value["payment_batch"]) && $value["payment_batch"]==null){
                 $data[$key]['payment_batch'] = array("ref"=>"N/A");
                 
             }
