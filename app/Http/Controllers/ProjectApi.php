@@ -91,6 +91,7 @@ class ProjectApi extends Controller
             'start_date',
             'end_date',
             'status_id',
+            'grant_id',
             'country_id'
             );
 
@@ -104,6 +105,7 @@ class ProjectApi extends Controller
             $project->end_date                         =         $form['end_date'];
             $project->status_id                        =  1;
             $project->country_id                       =  (int)  $form['country_id'];
+            $project->grant_id                         = (int) $form['grant_id'];
 
         if($project->save()) {
 
@@ -161,6 +163,7 @@ class ProjectApi extends Controller
             'start_date',
             'end_date',
             'status_id',
+            'grant_id',
             'country_id'
             );
 
@@ -174,6 +177,7 @@ class ProjectApi extends Controller
             $project->end_date                         =         $form['end_date'];
             $project->status_id                        =  (int)  $form['status_id'];
             $project->country_id                       =  (int)  $form['country_id'];
+            $project->grant_id                         = (int) $form['grant_id'];
 
         if($project->save()) {
 
@@ -281,7 +285,7 @@ class ProjectApi extends Controller
 
         try{
 
-            $response   = Project::with(["budget","project_manager","staffs"])
+            $response   = Project::with(["budget","project_manager","staffs", "grant"])
                                     ->findOrFail($project_id);
 
 
@@ -693,6 +697,7 @@ class ProjectApi extends Controller
             $data[$key]['country']                  = $projects->country;
             $data[$key]['staffs']                   = $projects->staffs;
             $data[$key]['budget']                   = $projects->budget;
+            $data[$key]['grant']                    = $projects->grant;
 
         }
 
@@ -732,6 +737,9 @@ class ProjectApi extends Controller
             }
             if($data[$key]["budget"]==null){
                 $data[$key]["budget"] = array("budget_desc"=>"N/A","totals"=>0);
+            }
+            if($data[$key]["grant"]==null){
+                $data[$key]["grant"] = array("grant_name"=>"");
             }
 
 

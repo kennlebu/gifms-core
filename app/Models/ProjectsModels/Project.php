@@ -47,6 +47,10 @@ class Project extends BaseModel
     {
         return $this->hasMany('App\Models\AllocationModels\Allocation','project_id');
     }
+    public function grant()
+    {
+        return $this->belongsTo('App\Models\GrantModels\Grant', 'grant_id');
+    }
     // public function getAmountAllocatedAttribute(){
 
     //     $grant_allocations     =   $this->grant_allocations;
