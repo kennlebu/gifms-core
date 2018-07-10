@@ -1251,6 +1251,40 @@ class MobilePaymentApi extends Controller
 
 
 
+    /**
+     * Operation recallMobilepayment
+     * 
+     * Recalls a Mobile Payment.
+     * 
+     * @param int $mobile_payment_id Mobile Payment id to recall (required)
+     * 
+     * @return Http response
+     */
+    public function recallMobilePayment($mobile_payment_id)
+    {
+        $input = Request::all();
+        
+        $mobile_payment = MobilePayment::find($mobile_payment_id);        
+
+        // Ensure Mobile Payment is in the recallable statuses
+        if(!in_array($mobile_payment->status_id, [9,3,3,8])){
+            return response()->json(['msg'=>"you do not have permission to do this"], 403, array(), JSON_PRETTY_PRINT);
+        }
+
+        $mobile_payment->status_id = 14;
+        
+        if($mobile_payment->save()){
+            return response()->json(['msg'=>"mobile payment recalled"], 200,array(),JSON_PRETTY_PRINT);
+        }else{
+            return response()->json(['error'=>"could not recall mobile payment"], 404,array(),JSON_PRETTY_PRINT);
+        }
+
+    }
+
+
+
+
+
 
 
 

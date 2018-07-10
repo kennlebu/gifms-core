@@ -290,7 +290,7 @@ class MobilePaymentStatusApi extends Controller
         $user = JWTAuth::parseToken()->authenticate();
 
         if(array_key_exists('displayable_only',$input)){
-            $qb->whereIn('id', [1,7,11]);
+            $qb->whereIn('id', [1,7,11,14]);
         }
 
 

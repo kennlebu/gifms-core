@@ -1884,6 +1884,14 @@ Route::POST('/mobile_payment/upload_bankfile', 'MobilePaymentApi@uploadBankFile'
  */
 Route::POST('/mobile_payment/{mobile_payment_id}/resend_bank_instruction', 'MobilePaymentApi@resendBankInstruction')->middleware('jwt.auth');
 
+/**
+ * PATCH recallMobilePayment
+ * Summary: Recall Mobile Payment
+ * Notes: Recall Mobile Payment
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PATCH('/mobile_payment/{mobile_payment_id}/recall', 'MobilePaymentApi@recallMobilePayment')->middleware('jwt.auth');
+
 
 
 
