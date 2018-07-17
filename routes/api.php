@@ -3294,6 +3294,14 @@ Route::GET('/payments', 'PaymentApi@getPayments')->middleware('jwt.auth');
  */
 Route::POST('/payment/get_by_voucher', 'PaymentApi@getPaymentByPV')->middleware('jwt.auth');
 
+/**
+ * POST searchTransactions
+ * Summary: Search for transactions
+ * Notes: search transactions
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::POST('/payments/search', 'PaymentApi@searchTransactions')->middleware('jwt.auth');
+
 
 
 
@@ -5146,9 +5154,21 @@ Route::PUT('/reports/set_category_objective', 'ReportsApi@setReportingCategoryOb
 
 
 /**
- * PUT transferUserRoles
+ * POST transferUserRoles
  * Summary: Transfer user roles to another user
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
 Route::POST('/roles/transfer', 'RolesApi@transferUserRoles')->middleware('jwt.auth');
+
+
+
+
+
+/**
+ * GET downloadTemplate
+ * Summary: Download template
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/resources/template/{type}', 'ResourcesApi@downloadTemplate')->middleware('jwt.auth');
