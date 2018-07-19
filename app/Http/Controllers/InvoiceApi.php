@@ -844,12 +844,6 @@ class InvoiceApi extends Controller
 
             $path_info      = pathinfo($path);
 
-            // $ext            = $path_info['extension'];
-
-            // if($ext==""){
-            //     throw new Exception("Error Processing Request", 500);                
-            // }
-
             $basename       = $path_info['basename'];
 
             $file_contents  = FTP::connection()->readFile($path);
@@ -862,7 +856,7 @@ class InvoiceApi extends Controller
 
             $response       = Response::make($file, 200);
 
-            $response->header('Content-Type', $this->get_mime_type($basename));
+            $response->header('Content-Type', 'application/pdf');
 
             return $response;  
         }catch (Exception $e ){            
