@@ -18,6 +18,11 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\PaymentModels\Payment;
+use App\Models\MobilePaymentModels\MobilePayment;
+use App\Models\PaymentModels\VoucherNumber;
+use App\Models\AdvancesModels\Advance;
+use App\Models\ClaimsModels\Claim;
+use App\Models\InvoicesModels\Invoice;
 
 class PaymentApi extends Controller
 {
@@ -667,6 +672,296 @@ class PaymentApi extends Controller
         } catch(\Exception $e){                    
             $res['payable_type'] = 'missing';
             // array_push($result, $res);
+        }
+        
+    }
+
+
+    function searchTransactions(){
+        try{
+            $form = Request::all();
+
+            $voucher_no = $form['voucher_no'];
+            $chai_ref = $form['chai_ref'];
+            $start_date = $form['start_date'];
+            $end_date = $form['end_date'];
+            $supplier_id = $form['supplier_id'];
+            $project_id = $form['project_id'];
+    
+            $result = [];
+
+            // For voucher nos
+            if(!empty($voucher_no)){
+                $pv_nos = VoucherNumber::where('voucher_number', 'like', '%' . $voucher_no. '%')->get();
+                foreach($pv_nos as $record){
+                    $row = array();
+                    if($record->payable_type == 'invoices'){
+                        $payment = Payment::find($record->payable_id);
+                        $invoice = Invoice::with('supplier')->where('id', $payment->payable_id);
+                        if(!empty($start_date) && !empty($end_date)){
+                            $invoice = $invoice->whereBetween('created_at', [$start_date, $end_date]);
+                        }
+                        elseif(!empty($start_date)){
+                            $invoice = $invoice->where('created_at', '>=', $start_date);
+                        }
+                        elseif(!empty($end_date)){
+                            $invoice = $invoice->where('created_at', '<=', $end_date);
+                        }
+
+                        if(!empty($supplier_id)){
+                            $invoice = $invoice->where('supplier_id', $supplier_id);
+                        }
+
+                        if(!empty($chai_ref)){
+                            $invoice = $invoice->where('ref', 'like', '%'.$chai_ref.'%');
+                        }
+
+                        if(!empty($project_id)){
+                            $invoice = $invoice->whereHas('allocations', function($query) use ($project_id){
+                                $query->where('project_id', $project_id);  
+                            });
+                        }
+                        
+                        $invoice = $invoice->with('status')->first();
+                        
+                        if(!empty($invoice)){
+                            $row['payable_type'] = $record->payable_type;
+                            $row['payable'] = $invoice;
+                            array_push($result, $row);
+                        } 
+                    }
+                    elseif($record->payable_type == 'claims' && empty($supplier_id)){
+                        $payment = Payment::find($record->payable_id);
+                        $claim = Claim::where('id', $payment->payable_id);
+                        if(!empty($start_date) && !empty($end_date)){
+                            $claim->whereBetween('created_at', [$start_date, $end_date]);
+                        }
+                        elseif(!empty($start_date)){
+                            $claim->where('created_at', '>=', $start_date);
+                        }
+                        elseif(!empty($end_date)){
+                            $claim->where('created_at', '<=', $end_date);
+                        }
+
+                        if(!empty($chai_ref)){
+                            $claim = $claim->where('ref', 'like', '%'.$chai_ref.'%');
+                        }
+
+                        if(!empty($project_id)){
+                            $claim->whereHas('allocations', function($query) use ($project_id){
+                                $query->where('project_id', $project_id);  
+                            });
+                        }
+                        $claim->with('status')->first();
+
+                        if(!empty($claim)){
+                            $row['payable_type'] = $record->payable_type;
+                            $row['payable'] = $claim;
+                            array_push($result, $row);
+                        }                         
+                    }
+                    elseif($record->payable_type == 'advances' && empty($supplier_id)){
+                        $payment = Payment::find($record->payable_id);
+                        $advance = Advance::where('id', $payment->payable_id);
+                        if(!empty($start_date) && !empty($end_date)){
+                            $advance->whereBetween('created_at', [$start_date, $end_date]);
+                        }
+                        elseif(!empty($start_date)){
+                            $advance->where('created_at', '>=', $start_date);
+                        }
+                        elseif(!empty($end_date)){
+                            $advance->where('created_at', '<=', $end_date);
+                        }
+
+                        if(!empty($chai_ref)){
+                            $advance = $advance->where('ref', 'like', '%'.$chai_ref.'%');
+                        }
+
+                        if(!empty($project_id)){
+                            $advance->whereHas('allocations', function($query) use ($project_id){
+                                $query->where('project_id', $project_id);  
+                            });
+                        }
+                        $advance->with('status')->first();
+
+                        if(!empty($advance)){
+                            $row['payable'] = $advance;
+                            $row['payable_type'] = $record->payable_type;
+                            array_push($result, $row);
+                        } 
+                    }
+                    elseif($record->payable_type == 'mobile_payments' && empty($supplier_id)){
+                        $mobile_payment = MobilePayment::where('id', $record->payable_id);
+                        if(!empty($start_date) && !empty($end_date)){
+                            $mobile_payment->whereBetween('created_at', [$start_date, $end_date]);
+                        }
+                        elseif(!empty($start_date)){
+                            $mobile_payment->where('created_at', '>=', $start_date);
+                        }
+                        elseif(!empty($end_date)){
+                            $mobile_payment->where('created_at', '<=', $end_date);
+                        }
+
+                        if(!empty($chai_ref)){
+                            $mobile_payment = $mobile_payment->where('ref', 'like', '%'.$chai_ref.'%');
+                        }
+
+                        if(!empty($project_id)){
+                            $mobile_payment->whereHas('allocations', function($query) use ($project_id){
+                                $query->where('project_id', $project_id);  
+                            });
+                        }
+                        $mobile_payment->with('status')->first();
+
+                        if(!empty($mobile_payment)){
+                            $row['payable'] = $mobile_payment;
+                            $row['payable_type'] = $record->payable_type;
+                            array_push($result, $row);
+                        }
+                    }
+                }
+            }
+
+            // No voucher number
+            elseif(empty($voucher_no)){
+                $row = array();
+
+                // Invoice
+                $invoice = Invoice::with('status','supplier');
+                if(!empty($start_date) && !empty($end_date)){
+                    $invoice = $invoice->whereBetween('created_at', [$start_date, $end_date]);
+                }
+                else{
+                    if(!empty($start_date)){
+                        $invoice = $invoice->where('created_at', '>', $start_date);
+                    }
+                    elseif(!empty($end_date)){
+                        $invoice = $invoice->where('created_at', '<', $end_date);
+                    }
+                }
+
+                if(!empty($supplier_id)){
+                    $invoice = $invoice->where('supplier_id', $supplier_id);
+                }
+
+                if(!empty($chai_ref)){
+                    $invoice = $invoice->where('ref', 'like', '%'.$chai_ref.'%');
+                }
+
+                if(!empty($project_id)){
+                    $invoice = $invoice->whereHas('allocations', function($query) use ($project_id){
+                        $query->where('project_id', $project_id);  
+                    });
+                }
+                $invoice = $invoice->get();
+
+                foreach($invoice as $record){
+                    $row['payable_type'] = 'invoices';
+                    $row['payable'] = $record;
+                    array_push($result, $row);
+                }
+
+                // Search claims, advances, mobile payments only if supplier is not selected
+                if(empty($supplier_id)){
+                    // Claim
+                    $claim = Claim::with('status','requested_by');
+                    if(!empty($start_date) && !empty($end_date)){
+                        $claim = $claim->whereBetween('created_at', [$start_date, $end_date]);
+                    }
+                    else{
+                        if(!empty($start_date)){
+                            $claim = $claim->where('created_at', '>', $start_date);
+                        }
+                        elseif(!empty($end_date)){
+                            $claim = $claim->where('created_at', '<', $end_date);
+                        }
+                    }
+
+                    if(!empty($chai_ref)){
+                        $claim = $claim->where('ref', 'like', '%'.$chai_ref.'%');
+                    }
+
+                    if(!empty($project_id)){
+                        $claim = $claim->whereHas('allocations', function($query) use ($project_id){
+                            $query->where('project_id', $project_id);  
+                        });
+                    }
+                    $claim = $claim->get();
+
+                    foreach($claim as $record){
+                        $row['payable_type'] = 'claims';
+                        $row['payable'] = $record;
+                        array_push($result, $row);
+                    }
+
+                    // Advance
+                    $advance = Advance::with('status','requested_by');
+                    if(!empty($start_date) && !empty($end_date)){
+                        $advance = $advance->whereBetween('created_at', [$start_date, $end_date]);
+                    }
+                    else{
+                        if(!empty($start_date)){
+                            $advance = $advance->where('created_at', '>', $start_date);
+                        }
+                        elseif(!empty($end_date)){
+                            $advance = $advance->where('created_at', '<', $end_date);
+                        }
+                    }
+
+                    if(!empty($chai_ref)){
+                        $advance = $advance->where('ref', 'like', '%'.$chai_ref.'%');
+                    }
+
+                    if(!empty($project_id)){
+                        $advance = $advance->whereHas('allocations', function($query) use ($project_id){
+                            $query->where('project_id', $project_id);  
+                        });
+                    }
+                    $advance = $advance->get();
+
+                    foreach($advance as $record){
+                        $row['payable_type'] = 'advances';
+                        $row['payable'] = $record;
+                        array_push($result, $row);
+                    }
+
+                    // Mobile Payment
+                    $mobile_payment = MobilePayment::with('status','requested_by');
+                    if(!empty($start_date) && !empty($end_date)){
+                        $mobile_payment = $mobile_payment->whereBetween('created_at', [$start_date, $end_date]);
+                    }
+                    else{
+                        if(!empty($start_date)){
+                            $mobile_payment = $mobile_payment->where('created_at', '>', $start_date);
+                        }
+                        elseif(!empty($end_date)){
+                            $mobile_payment = $mobile_payment->where('created_at', '<', $end_date);
+                        }
+                    }
+
+                    if(!empty($chai_ref)){
+                        $mobile_payment = $mobile_payment->where('ref', 'like', '%'.$chai_ref.'%');
+                    }
+
+                    if(!empty($project_id)){
+                        $mobile_payment = $mobile_payment->whereHas('allocations', function($query) use ($project_id){
+                            $query->where('project_id', $project_id);  
+                        });
+                    }
+                    $mobile_payment = $mobile_payment->get();
+
+                    foreach($mobile_payment as $record){
+                        $row['payable_type'] = 'mobile_payments';
+                        $row['payable'] = $record;
+                        array_push($result, $row);
+                    }
+                }
+            }
+
+            return Response()->json($result, 200);
+        }
+        catch(\Exception $e){
+            return response()->json(['error'=>'There was an error finding the transactions'], 500);
         }
         
     }
