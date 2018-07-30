@@ -252,4 +252,26 @@ class Controller extends BaseController
             return $data;
         }
     }
+    
+
+    /**
+     * Returns an array with unique array elements for a
+     * multi-dimensional array
+     * $array is the array to be parsed
+     * $key is the field that you need to be unique
+     */
+    function unique_multidim_array($array, $key) {
+        $temp_array = array();
+        $i = 0;
+        $key_array = array();
+       
+        foreach($array as $val) {
+            if (!in_array($val[$key], $key_array)) {
+                $key_array[$i] = $val[$key];
+                $temp_array[$i] = $val;
+            }
+            $i++;
+        }
+        return $temp_array;
+    }
 }

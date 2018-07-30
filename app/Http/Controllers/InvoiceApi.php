@@ -906,11 +906,6 @@ class InvoiceApi extends Controller
             else {
                 $voucher_no = 'CHAI'.$this->pad_zeros(5, $invoice->migration_id);
             }
-            // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , PHP_EOL.$voucher_no , FILE_APPEND);
-
-
-
-            
 
             if(!empty($payment->payment_batch_id) && $payment->payment_batch_id > 0){
                 $batch = PaymentBatch::find($payment->payment_batch_id);
@@ -919,12 +914,14 @@ class InvoiceApi extends Controller
 
             $vendor = $invoice->supplier->supplier_name;
 
+            $unique_approvals = $this->unique_multidim_array($invoice->approvals, 'approver_id');
             $data = array(
                     'payable'   => $invoice,
                     'voucher_date' => $voucher_date,
                     'vendor'=>$vendor,
                     'voucher_no'=>$voucher_no,
-                    'payable_type'=>'Invoice'
+                    'payable_type'=>'Invoice',
+                    'unique_approvals' => $unique_approvals
                     );
 
             $pdf            = PDF::loadView('pdf/payment_voucher', $data);

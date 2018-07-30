@@ -951,11 +951,12 @@ class MobilePaymentApi extends Controller
                 $voucher_no = 'CHAI'.$this->pad_zeros(5, $mobile_payment->migration_invoice_id);
             }
             $vendor = 'MOH OFFICIALS c/o '.Staff::find($mobile_payment->requested_by_id)->full_name;
-
+            $unique_approvals = $this->unique_multidim_array($mobile_payment->approvals, 'approver_id');
             $data = array(
                 'mobile_payment'   => $mobile_payment,
                 'voucher_no' => $voucher_no,
-                'vendor' => $vendor
+                'vendor' => $vendor,
+                'unique_approvals' => $unique_approvals
                 );
 
             $pdf = PDF::loadView('pdf/mobile_payment_payment_voucher', $data);

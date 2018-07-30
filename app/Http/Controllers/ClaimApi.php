@@ -666,13 +666,14 @@ class ClaimApi extends Controller
             }
 
             $vendor = $claim->requested_by->full_name;
-
+            $unique_approvals = $this->unique_multidim_array($claim->approvals, 'approver_id');
             $data = array(
                     'payable'   => $claim,
                     'voucher_date' => $voucher_date,
                     'vendor'=>$vendor,
                     'voucher_no'=>$voucher_no,
-                    'payable_type'=>'Claim'
+                    'payable_type'=>'Claim',
+                    'unique_approvals' => $unique_approvals
                     );
 
             $pdf            = PDF::loadView('pdf/payment_voucher', $data);

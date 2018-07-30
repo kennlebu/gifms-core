@@ -619,13 +619,14 @@ class AdvanceApi extends Controller
             }
 
             $vendor = $advance->requested_by->full_name;
-
+            $unique_approvals = $this->unique_multidim_array($advance->approvals, 'approver_id');
             $data = array(
                     'payable'   => $advance,
                     'voucher_date' => $voucher_date,
                     'vendor'=>$vendor,
                     'voucher_no'=>$voucher_no,
-                    'payable_type'=>'Advance'
+                    'payable_type'=>'Advance',
+                    'unique_approvals' => $unique_approvals
                     );
 
             $pdf            = PDF::loadView('pdf/payment_voucher', $data);
