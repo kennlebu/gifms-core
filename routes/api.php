@@ -3270,7 +3270,7 @@ Route::GET('/payment/{payment_id}', 'PaymentApi@getPaymentById')->middleware('jw
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::DELETE('/payment/{payment_id}/get_voucher', 'PaymentApi@deletePayment')->middleware('jwt.auth');
+Route::DELETE('/payment/{payment_id}', 'PaymentApi@deletePayment')->middleware('jwt.auth');
 /**
  * GET getDocumentById
  * Summary: get payment document by ID
@@ -5161,6 +5161,14 @@ Route::PUT('/reports/set_category_objective', 'ReportsApi@setReportingCategoryOb
  */
 Route::POST('/roles/transfer', 'RolesApi@transferUserRoles')->middleware('jwt.auth');
 
+/**
+ * GET getRightsTransfers
+ * Summary: Get rights transfers.
+ * Notes: 
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::GET('/role_transfers', 'RolesApi@getRightsTransfers')->middleware('jwt.auth');
+
 
 
 
@@ -5172,3 +5180,15 @@ Route::POST('/roles/transfer', 'RolesApi@transferUserRoles')->middleware('jwt.au
  * Output-Formats: [application/json, application/xml]
  */
 Route::GET('/resources/template/{type}', 'ResourcesApi@downloadTemplate')->middleware('jwt.auth');
+
+Route::POST('/resources', 'ResourcesApi@addResource')->middleware('jwt.auth');
+
+Route::GET('/resources', 'ResourcesApi@getResources')->middleware('jwt.auth');
+
+Route::GET('/resource/{id}/download', 'ResourcesApi@downloadResource')->middleware('jwt.auth');
+
+Route::DELETE('/resource/{id}', 'ResourcesApi@deleteResource')->middleware('jwt.auth');
+
+Route::get('/resources/{id}', 'ResourcesApi@getResourceById')->middleware('jwt.auth');
+
+Route::POST('/resources/edit', 'ResourcesApi@editResource')->middleware('jwt.auth');
