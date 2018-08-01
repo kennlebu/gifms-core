@@ -324,11 +324,11 @@ class PaymentBatchApi extends Controller
                         
                     } 
 
-                    $eft_data['bank_code'] = $this->pad_zeros(2,(string)$payment->paid_to_bank->bank_code);
-                    $eft_data['branch'] = $this->pad_zeros(3,(string)$payment->paid_to_bank_branch->branch_code);
-                    $eft_data['account'] = $payment->paid_to_bank_account_no;
+                    empty($payment->paid_to_bank->bank_code) ? $eft_data['bank_code'] = 0 : $eft_data['bank_code'] = $this->pad_zeros(2,(string)$payment->paid_to_bank->bank_code);
+                    empty($payment->paid_to_bank_branch->branch_code) ? $eft_data['branch'] = 0 : $eft_data['branch'] = $this->pad_zeros(3,(string)$payment->paid_to_bank_branch->branch_code);
+                    empty($payment->paid_to_bank_account_no) ? $eft_data['account'] = 0 : $eft_data['account'] = $payment->paid_to_bank_account_no;
                     $eft_data['chaipv'] = $voucher_no;
-                    $eft_data['acct_name'] = $payment->paid_to_name;
+                    empty($payment->paid_to_name) ? $eft_data['acct_name'] = 0 : $eft_data['acct_name'] = $payment->paid_to_name;
 
                     array_push($eft_result, $eft_data);
                 }
