@@ -214,7 +214,7 @@
                     <tr><td colspan="9">&nbsp;</td></tr> 
                     <tr><td colspan="9">&nbsp;</td></tr>
 
-                    @foreach ($unique_approvals->approvals as $key => $approval)
+                    @foreach ($unique_approvals as $key => $approval)
                         @isset($approval->approver_id)
                         @if($approval->approval_level_id == 2)
                         <tr style="    height: 55px; ">
