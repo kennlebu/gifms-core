@@ -619,7 +619,7 @@ class AdvanceApi extends Controller
             }
 
             $vendor = $advance->requested_by->full_name;
-            $unique_approvals = $this->unique_multidim_array($advance->approvals, 'approver_id');
+            $unique_approvals = $this->unique_multidim_array($advance->approvals, 'approval_level_id');
             $data = array(
                     'payable'   => $advance,
                     'voucher_date' => $voucher_date,

@@ -951,7 +951,7 @@ class MobilePaymentApi extends Controller
                 $voucher_no = 'CHAI'.$this->pad_zeros(5, $mobile_payment->migration_invoice_id);
             }
             $vendor = 'MOH OFFICIALS c/o '.Staff::find($mobile_payment->requested_by_id)->full_name;
-            $unique_approvals = $this->unique_multidim_array($mobile_payment->approvals, 'approver_id');
+            $unique_approvals = $this->unique_multidim_array($mobile_payment->approvals, 'approval_level_id');
             $data = array(
                 'mobile_payment'   => $mobile_payment,
                 'voucher_no' => $voucher_no,
@@ -975,7 +975,7 @@ class MobilePaymentApi extends Controller
 
             return $response;
         }catch (Exception $e ){            
-
+            file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , PHP_EOL.$e->getMessage().PHP_EOL.$e->getTraceAsString() , FILE_APPEND);
             $response       = Response::make("", 500);
 
             $response->header('Content-Type', 'application/pdf');

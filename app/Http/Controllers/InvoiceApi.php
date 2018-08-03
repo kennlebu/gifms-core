@@ -914,7 +914,7 @@ class InvoiceApi extends Controller
 
             $vendor = $invoice->supplier->supplier_name;
 
-            $unique_approvals = $this->unique_multidim_array($invoice->approvals, 'approver_id');
+            $unique_approvals = $this->unique_multidim_array($invoice->approvals, 'approval_level_id');
             $data = array(
                     'payable'   => $invoice,
                     'voucher_date' => $voucher_date,
