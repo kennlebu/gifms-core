@@ -974,8 +974,7 @@ class MobilePaymentApi extends Controller
             $response->header('Content-Type', 'application/pdf');
 
             return $response;
-        }catch (Exception $e ){            
-            file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , PHP_EOL.$e->getMessage().PHP_EOL.$e->getTraceAsString() , FILE_APPEND);
+        }catch (Exception $e ){  
             $response       = Response::make("", 500);
 
             $response->header('Content-Type', 'application/pdf');
