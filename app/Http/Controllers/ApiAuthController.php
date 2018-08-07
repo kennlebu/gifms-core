@@ -7,6 +7,7 @@ use Tymon\JWTAuth\Exceptions\JWTException;
 use App\Models\StaffModels\Staff;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\NotifyChangePassword;
+use Illuminate\Support\Facades\DB;
 
 
 class ApiAuthController extends Controller{
@@ -244,5 +245,40 @@ class ApiAuthController extends Controller{
         }catch (JWTException $e){
             return response()->json(['error'=>'something went wrong'], 500);
         }
+    }
+
+
+
+
+
+
+
+
+    public function canTransferRights(){
+        try{
+            $user;
+            $can_transfer = false;
+            
+            if (! $user = JWTAuth::parseToken()->authenticate()) {
+                return response()->json(['user_not_found'], 404);
+            }
+
+            // If they had transferred rights before
+            $transfers = DB::table('rights_transfers')->where('from_staff_id', $user->id)->whereNull('returned_on')->get();
+            if(count($transfers)>=1){
+                $can_transfer = true;
+            }
+
+            // If they are an approver
+            if ($user->hasRole(array("program-manager","director","financial-controller","accountant", "assistant-accountant"))) {
+                $can_transfer = true;
+            }
+
+            return response()->json(['status'=>$can_transfer], 200);
+
+        }catch (JWTException $e){
+            return response()->json(['error'=>'something went wrong'], 500);
+        }
+
     }
 }

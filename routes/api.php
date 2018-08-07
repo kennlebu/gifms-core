@@ -37,6 +37,7 @@ Route::post('/user_has_role', [	'uses' => 'ApiAuthController@userHasRole'])->mid
 Route::post('/update_my_profile', [	'uses' => 'ApiAuthController@UpdateMyProfile'])->middleware('jwt.auth');
 Route::post('/change_password', [	'uses' => 'ApiAuthController@changePassword'])->middleware('jwt.auth');
 Route::post('/forgot_password', [	'uses' => 'ApiAuthController@forgotPassword']);
+Route::post('/can_transfer_rights', [	'uses' => 'ApiAuthController@canTransferRights'])->middleware('jwt.auth');
 
 
 
