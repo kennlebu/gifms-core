@@ -457,8 +457,7 @@ class ProjectApi extends Controller
 
         
         //my_assigned
-        if((array_key_exists('my_assigned', $input)&& $input['my_assigned'] = "true")&&($current_user->hasRole(['accountant','assistant-accountant','financial-controller'])
-           || $current_user->id == 36)){// If Jane Ayuma. This is a hack. TODO: Find a way to make this dynamic
+        if((array_key_exists('my_assigned', $input)&& $input['my_assigned'] = "true")&&($current_user->hasRole(['accountant','assistant-accountant','financial-controller','admin-manager']))){
 
             $qb->whereNotNull('project_code');
         }elseif (array_key_exists('my_assigned', $input)&& $input['my_assigned'] = "true") {
