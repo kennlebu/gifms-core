@@ -27,6 +27,8 @@ use Illuminate\Support\Facades\Response;
 use App\Models\StaffModels\Staff;
 use App\Models\ProjectsModels\Project;
 use Config;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\NotifyNewStaff;
 
 class StaffApi extends Controller
 {
@@ -99,13 +101,11 @@ class StaffApi extends Controller
 
         $default_pwd        = strtolower($form['f_name']);
         $encr_pwd           = bcrypt($default_pwd);
-        $encr_old_pwd       = $this->encrypt_password( $default_pwd);
 
         $staff->username                     =         $form['username'];
         $staff->email                        =         $form['email'];
 
         $staff->password                     =         $encr_pwd;
-        $staff->old_password                 =         $encr_old_pwd;
 
         $staff->security_group_id            =  (int)  $form['security_group_id'];
         $staff->f_name                       =         $form['f_name'];
@@ -129,7 +129,8 @@ class StaffApi extends Controller
         $staff->receive_global_email_bcc     =         $form['receive_global_email_bcc'];
 
         if($staff->save()) {
-
+            // Send email with password to the new user
+            Mail::queue(new NotifyNewStaff($staff, $default_pwd));
             return Response()->json(array('msg' => 'Success: staff added','staff' => $staff), 200);
         }
     }
