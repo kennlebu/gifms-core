@@ -76,7 +76,7 @@ class StaffApi extends Controller
             'security_group_id',
             'f_name',
             'l_name',
-            'o_names',
+            'o_name',
             'department_id',
             'official_post',
             'mobile_no',
@@ -97,36 +97,36 @@ class StaffApi extends Controller
 
         $staff = new Staff;
 
-            $default_pwd        = Config::get('app.default_password');
-            $encr_pwd           = bcrypt($default_pwd);
-            $encr_old_pwd       = $this->encrypt_password( $default_pwd);
+        $default_pwd        = strtolower($form['f_name']);
+        $encr_pwd           = bcrypt($default_pwd);
+        $encr_old_pwd       = $this->encrypt_password( $default_pwd);
 
-            $staff->username                     =         $form['username'];
-            $staff->email                        =         $form['email'];
+        $staff->username                     =         $form['username'];
+        $staff->email                        =         $form['email'];
 
-            $staff->password                     =         $encr_pwd;
-            $staff->old_password                 =         $encr_old_pwd;
+        $staff->password                     =         $encr_pwd;
+        $staff->old_password                 =         $encr_old_pwd;
 
-            $staff->security_group_id            =  (int)  $form['security_group_id'];
-            $staff->f_name                       =         $form['f_name'];
-            $staff->l_name                       =         $form['l_name'];
-            $staff->o_names                      =         $form['o_names'];
-            $staff->department_id                =  (int)  $form['department_id'];
-            $staff->official_post                         =         $form['official_post'];
-            $staff->mobile_no                    =         $form['mobile_no'];
-            $staff->mpesa_no                     =         $form['mpesa_no'];
-            $staff->bank_account                 =         $form['bank_account'];
-            $staff->cheque_addressee             =         $form['cheque_addressee'];
-            $staff->payment_mode_id              =  (int)  $form['payment_mode_id'];
-            $staff->bank_id                      =  (int)  $form['bank_id'];
-            $staff->bank_branch_id               =  (int)  $form['bank_branch_id'];
-            $staff->station                      =         $form['station'];
-            $staff->swift_code                   =         $form['swift_code'];
-            $staff->active                       =         $form['active'];
-            $staff->receives_global_bccs         =         $form['receives_global_bccs'];
-            $staff->signature                    =         $form['signature'];
-            $staff->bank_signatory               =         $form['bank_signatory'];
-            $staff->receive_global_email_bcc     =         $form['receive_global_email_bcc'];
+        $staff->security_group_id            =  (int)  $form['security_group_id'];
+        $staff->f_name                       =         $form['f_name'];
+        $staff->l_name                       =         $form['l_name'];
+        $staff->o_names                      =         $form['o_name'];
+        $staff->department_id                =  (int)  $form['department_id'];
+        $staff->official_post                         =         $form['official_post'];
+        $staff->mobile_no                    =         $form['mobile_no'];
+        $staff->mpesa_no                     =         $form['mpesa_no'];
+        $staff->bank_account                 =         $form['bank_account'];
+        $staff->cheque_addressee             =         $form['cheque_addressee'];
+        $staff->payment_mode_id              =  (int)  $form['payment_mode_id'];
+        $staff->bank_id                      =  (int)  $form['bank_id'];
+        $staff->bank_branch_id               =  (int)  $form['bank_branch_id'];
+        $staff->station                      =         $form['station'];
+        $staff->swift_code                   =         $form['swift_code'];
+        $staff->active                       =         $form['active'];
+        $staff->receives_global_bccs         =         $form['receives_global_bccs'];
+        $staff->signature                    =         $form['signature'];
+        $staff->bank_signatory               =         $form['bank_signatory'];
+        $staff->receive_global_email_bcc     =         $form['receive_global_email_bcc'];
 
         if($staff->save()) {
 
@@ -173,7 +173,7 @@ class StaffApi extends Controller
             'security_group_id',
             'f_name',
             'l_name',
-            'o_names',
+            'o_name',
             'department_id',
             'official_post',
             'mobile_no',
@@ -201,7 +201,7 @@ class StaffApi extends Controller
             $staff->security_group_id            =  (int)  $form['security_group_id'];
             $staff->f_name                       =         $form['f_name'];
             $staff->l_name                       =         $form['l_name'];
-            $staff->o_names                      =         $form['o_names'];
+            $staff->o_names                      =         $form['o_name'];
             $staff->department_id                =  (int)  $form['department_id'];
             $staff->official_post                         =         $form['official_post'];
             $staff->mobile_no                    =         $form['mobile_no'];
