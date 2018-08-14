@@ -43,6 +43,7 @@ use App\Models\BankingModels\BankBranch;
 use App\Exceptions\NotFullyAllocatedException;
 use App\Exceptions\ApprovalException;
 use App\Models\PaymentModels\VoucherNumber;
+use Excel;
 
 class InvoiceApi extends Controller
 {
@@ -1492,6 +1493,113 @@ class InvoiceApi extends Controller
         else{
             return $data;
         }
+    }
+
+
+    public function exportInvoices(){
+        $invoices = Invoice::with('raised_by','received_by','status','project_manager','supplier','payment_mode',
+                'rejected_by','currency','lpo')->get();
+
+        $excel_data = array();
+        
+        foreach($invoices as $invoice){
+            $row = array();
+            $row['id'] = $invoice->id;
+            $row['ref'] = $invoice->ref;
+            $row['lpo_id'] = $invoice->lpo_id;
+            $row['supplier'] = empty($invoice->supplier->supplier_name)?"":$invoice->supplier->supplier_name;
+            $row['expense_description'] = $invoice->expense_desc;
+            $row['expense_purpose'] = $invoice->expense_purpose;
+            $row['invoice_no'] = $invoice->external_ref;
+            $row['invoice_date'] = $invoice->invoice_date;
+            $row['received_by'] = empty($invoice->received_by->full_name)?'':$invoice->received_by->full_name;
+            $row['received_at'] = $invoice->received_at;
+            $row['total'] = $invoice->total;
+            $row['project_manager'] = empty($invoice->project_manager->full_name)?"":$invoice->project_manager->full_name;
+            $row['status'] = empty($invoice->status->invoice_status)?"":$invoice->status->invoice_status;
+            $row['payment_mode'] = empty($invoice->payment_mode->abrv)?"":$invoice->payment_mode->abrv;
+            $row['comments'] = $invoice->comments;
+            $row['currency'] = empty($invoice->currency->currency_name)?'':$invoice->currency->currency_name;
+            $row['rejection_reason'] = $invoice->rejection_reason;
+            // $row['project'] = empty($invoice->project->project_code)?"":$invoice->project->project_code;
+            // $row['account'] = empty($invoice->account->account_name)?"":$invoice->account->account_name;
+            $row['rejected_by'] = empty($invoice->rejected_by->full_name)?"":$invoice->rejected_by->full_name;
+            $row['rejected_at'] = $invoice->rejected_at;
+            if(!empty($invoice->migration_id)) {
+                $row['pv_no'] = 'CHAI'.$this->pad_zeros(5, $invoice->id);
+            }
+            else {
+                $payment = Payment::where('payable_id',$invoice->id)->where('payable_type', 'invoices')->first();
+                $voucher_no = '-';
+                if(!empty($payment)) $voucher = VoucherNumber::find($payment->voucher_no);
+                if(!empty($voucher->voucher_number)) $voucher_no = $voucher->voucher_number;
+                $row['pv_no'] = $voucher_no;
+            }
+            
+            foreach($invoice->allocations as $allocation){
+                $row['allocation_account_code'] = empty($allocation->account->account_code)?"":$allocation->account->account_code;
+                $row['allocation_account_name'] = empty($allocation->account->account_name)?"":$allocation->account->account_name;
+                $row['allocation_purpose'] = $allocation->allocation_purpose;
+                $row['project'] = empty($allocation->project->project_code)?"":$allocation->project->project_code;
+
+                array_push($excel_data, $row);
+            }
+            
+
+        }
+
+        $headers = [
+            'Access-Control-Allow-Origin'      => '*',
+            'Allow'                            => 'GET, POST, OPTIONS',
+            'Access-Control-Allow-Headers'     => 'Origin, Content-Type, Accept, Authorization, X-Requested-With',
+            'Access-Control-Allow-Credentials' => 'true'
+        ];
+        // Build excel
+        $file = Excel::create('Invoices', function($excel) use ($excel_data) {
+
+            // Set the title
+            $excel->setTitle('Invoices');
+
+            // Chain the setters
+            $excel->setCreator('GIFMS')->setCompany('Clinton Health Access Initiative - Kenya');
+
+            $excel->setDescription('A list of invoices and their allocations and pv numbers');
+
+            $headings = array('id','ref','lpo_id',
+            'supplier','expense_description','expense_purpose','invoice_no','invoice_date','received_by','received_at','total','project_manager','status','payment_mode',
+            'comments','currency','rejection_reason','rejected_by','rejected_at','pv_no','allocation_account_code','allocation_account_name','allocation_purpose','project');
+
+            $excel->sheet('Invoices', function ($sheet) use ($excel_data, $headings) {
+                foreach($excel_data as $data_row){
+
+                    $sheet->appendRow($data_row);
+                }
+                
+                $sheet->prependRow(1, $headings);
+                $sheet->setFontSize(10);
+                $sheet->setHeight(1, 25);
+                $sheet->row(1, function($row){
+                    $row->setFontSize(11);
+                    $row->setFontWeight('bold');
+                    $row->setAlignment('center');
+                    $row->setValignment('center');
+                    $row->setBorder('none', 'thin', 'none', 'thin');
+                    $row->setBackground('#004080');                        
+                    $row->setFontColor('#ffffff');
+                });
+                $sheet->setWidth(array(
+                    'B' => 15,
+                    'C' => 20,
+                    'D' => 20,
+                    'E' => 15,
+                    'F' => 35,
+                    'J' => 15,
+                    'K' => 20,
+                    'L' => 20
+                ));
+            });
+
+        })->download('xlsx', $headers);
     }
 
 

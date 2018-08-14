@@ -40,6 +40,7 @@ use App\Models\SuppliesModels\Supplier;
 use App\Exceptions\NoLpoItemsException;
 use App\Exceptions\LpoQuotationAmountMismatchException;
 use App\Exceptions\ApprovalException;
+use Excel;
 
 
 class LPOApi extends Controller
@@ -1406,6 +1407,110 @@ class LPOApi extends Controller
         return $data;
 
 
+    }
+
+
+
+    public function downloadAll(){
+        $lpos = LPO::with('items', 'supplier', 
+        'requested_by', 'project', 'project', 'account',
+        'account', 'invoices', 'status', 'project_manager',
+        'rejected_by', 'preffered_quotation')->get();
+
+        $excel_data = array();
+        
+        foreach($lpos as $lpo){
+            $row = array();
+            $row['lpo_id'] = $lpo->id;
+            $row['ref'] = $lpo->ref;
+            $row['supplier'] = empty($lpo->preffered_quotation->supplier->supplier_name)?"":$lpo->preffered_quotation->supplier->supplier_name;
+            $row['expense_description'] = $lpo->expense_desc;
+            $row['expense_purpose'] = $lpo->expense_purpose;
+            $row['requested_by'] = empty($lpo->requested_by->full_name)?'':$lpo->requested_by->full_name;
+            $row['requested_at'] = $lpo->created_at;
+            $row['status'] = empty($lpo->status->lpo_status)?"":$lpo->status->lpo_status;
+            $row['currency'] = empty($lpo->currency->currency_name)?'':$lpo->currency->currency_name;
+            $row['comments'] = $lpo->comments;
+            $row['project'] = empty($lpo->project->project_code)?"":$lpo->project->project_code;
+            $row['account'] = empty($lpo->account->account_name)?"":$lpo->account->account_name;
+            $row['project_manager'] = empty($lpo->project_manager->full_name)?"":$lpo->project_manager->full_name;
+            $row['rejection_reason'] = $lpo->rejection_reason;
+            $row['rejected_by'] = empty($lpo->rejected_by->full_name)?"":$lpo->rejected_by->full_name;
+            $row['rejected_at'] = $lpo->rejected_at;
+            $row['cancellation_reason'] = $lpo->cancellation_reason;
+            $row['quote_exempt'] = $lpo->quote_exempt;
+            $row['quote_exempt_explanation'] = $lpo->quote_exempt_explanation;
+            $row['quote_exempt_details'] = $lpo->quote_exempt_details;
+            $row['expensive_quotation_reason'] = $lpo->expensive_quotation_reason;
+
+            foreach($lpo->items as $item){
+                $row['item'] = $item->item;
+                $row['item_description'] = $item->item_description;
+                $row['quantity'] = $item->qty;
+                $row['qty_description'] = $item->qty_description;
+                $row['unit_price'] = $item->unit_price;
+                $row['calculated_unit_price'] = number_format((float)$item->calculated_unit_price, 2, '.', '');
+                $row['total'] = $item->calculated_total;
+                $row['calculated_total'] = number_format((float)$item->calculated_sub_total, 2, '.', '');
+                $row['vat'] = number_format((float)$item->calculated_vat, 2, '.', '');
+
+                array_push($excel_data, $row);
+            }
+        }
+
+        $headers = [
+            'Access-Control-Allow-Origin'      => '*',
+            'Allow'                            => 'GET, POST, OPTIONS',
+            'Access-Control-Allow-Headers'     => 'Origin, Content-Type, Accept, Authorization, X-Requested-With',
+            'Access-Control-Allow-Credentials' => 'true'
+        ];
+        // Build excel
+        $file = Excel::create('LPOs', function($excel) use ($excel_data) {
+
+            // Set the title
+            $excel->setTitle('LPOs');
+
+            // Chain the setters
+            $excel->setCreator('GIFMS')->setCompany('Clinton Health Access Initiative - Kenya');
+
+            $excel->setDescription('A list of LPOs and their items');
+
+            $headings = array('lpo_id','ref','supplier','expense_description','expense_purpose','requested_by','requested_at','status','currency','comments','project',
+            'account','project_manager','rejection_reason','rejected_by','rejected_at','cancellation_reason','quote_exempt','quote_exempt_explanation',
+            'quote_exempt_details','expensive_quotation_reason','item','item_description','quantity','qty_description','unit_price','calculated_unit_price','total','calculated_total','vat');
+
+            $excel->sheet('LPOs', function ($sheet) use ($excel_data, $headings) {
+                foreach($excel_data as $data_row){
+
+                    $sheet->appendRow($data_row);
+                }
+                
+                $sheet->prependRow(1, $headings);
+                $sheet->setFontSize(10);
+                $sheet->setHeight(1, 25);
+                $sheet->row(1, function($row){
+                    $row->setFontSize(11);
+                    $row->setFontWeight('bold');
+                    $row->setAlignment('center');
+                    $row->setValignment('center');
+                    $row->setBorder('none', 'thin', 'none', 'thin');
+                    $row->setBackground('#004080');                        
+                    $row->setFontColor('#ffffff');
+                });
+                $sheet->setWidth(array(
+                    'B' => 15,
+                    'C' => 20,
+                    'D' => 20,
+                    'E' => 15,
+                    'F' => 35,
+                    'J' => 15,
+                    'K' => 20,
+                    'L' => 20
+                ));
+            });
+
+        })->download('xlsx', $headers);
+        
     }
 
 

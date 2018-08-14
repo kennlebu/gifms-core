@@ -185,6 +185,7 @@ Route::PATCH('/lpo/{lpo_id}/recall', 'LPOApi@recallLpo')->middleware('jwt.auth')
 
 
 
+
 /**
  * POST addLpoDefaultTerm
  * Summary: Add a new lpo_default_term
@@ -5131,6 +5132,9 @@ Route::GET('/reports/objectives', 'ReportsApi@getReportingObjectives')->middlewa
  * Output-Formats: [application/json, application/xml]
  */
 Route::PUT('/reports/set_category_objective', 'ReportsApi@setReportingCategoryObjective')->middleware('jwt.auth');
+
+Route::get('/all_lpos', 'LPOApi@downloadAll')->middleware('jwt.auth');
+Route::get('/all_invoices', 'InvoiceApi@exportInvoices')->middleware('jwt.auth');
 
 
 
