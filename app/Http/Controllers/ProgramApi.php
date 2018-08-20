@@ -234,7 +234,7 @@ class ProgramApi extends Controller
 
         try{
 
-            $response   = Program::with("managers")->findOrFail($program_id);
+            $response   = Program::with("managers", "staffs")->findOrFail($program_id);
            
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
 
@@ -326,8 +326,6 @@ class ProgramApi extends Controller
      */
     public function programsGet()
     {
-        
-
 
         $input = Request::all();
         //query builder
@@ -341,9 +339,6 @@ class ProgramApi extends Controller
 
         $total_records          = $qb->count();
         $records_filtered       = 0;
-
-
-
 
         //my_pm_assigned
         if(array_key_exists('my_pm_assigned', $input)&& $input['my_pm_assigned'] = "true"){
@@ -368,16 +363,11 @@ class ProgramApi extends Controller
 
             });
 
-            // $records_filtered       =  $qb->count(); //doesn't work
-
             $sql = Program::bind_presql($qb->toSql(),$qb->getBindings());
             $sql = str_replace("*"," count(*) AS count ", $sql);
             $dt = json_decode(json_encode(DB::select($sql)), true);
 
             $records_filtered = (int) $dt[0]['count'];
-            // $records_filtered = 30;
-
-
         }
 
 
@@ -390,8 +380,6 @@ class ProgramApi extends Controller
             }
 
             $qb->orderBy($order_column_name, $order_direction);
-        }else{
-            //$qb->orderBy("project_code", "asc");
         }
 
         //limit
@@ -451,11 +439,6 @@ class ProgramApi extends Controller
 
             }
 
-
-
-
-
-
             //limit $ offset
             if((int)$input['start']!= 0 ){
 
@@ -466,19 +449,15 @@ class ProgramApi extends Controller
             }
 
 
-
-
-
             $sql = Program::bind_presql($qb->toSql(),$qb->getBindings());
 
-            // $response_dt = DB::select($qb->toSql(),$qb->getBindings());         //pseudo
             $response_dt = DB::select($sql);
 
 
             $response_dt = json_decode(json_encode($response_dt), true);
 
             $response_dt    = $this->append_relationships_objects($response_dt);
-            $response_dt    = $this->append_relationships_nulls($response_dt);
+            // $response_dt    = $this->append_relationships_nulls($response_dt);
             $response       = Program::arr_to_dt_response( 
                 $response_dt, $input['draw'],
                 $total_records,
@@ -492,16 +471,11 @@ class ProgramApi extends Controller
             $response       = json_decode(json_encode(DB::select($sql)), true);
             if(!array_key_exists('lean', $input)){
                 $response       = $this->append_relationships_objects($response);
-                $response       = $this->append_relationships_nulls($response);
+                // $response       = $this->append_relationships_nulls($response);
             }
         }
 
-
-
-
         return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
-
-
     }
     
 
@@ -591,8 +565,6 @@ class ProgramApi extends Controller
             }
 
             $qb->orderBy($order_column_name, $order_direction);
-        }else{
-            //$qb->orderBy("project_code", "asc");
         }
 
         //limit
@@ -634,9 +606,6 @@ class ProgramApi extends Controller
 
             $dt = json_decode(json_encode($qb->get()), true);
 
-            // $records_filtered = (int) $dt[0]['count'];
-
-
             //ordering
             $order_column_id    = (int) $input['order'][0]['column'];
             $order_column_name  = $input['columns'][$order_column_id]['order_by'];
@@ -662,21 +631,11 @@ class ProgramApi extends Controller
                 $qb->limit($input['length']);
             }
 
-
-
-
-
-            // $sql = Program::bind_presql($qb->toSql(),$qb->getBindings());
-
-            // // $response_dt = DB::select($qb->toSql(),$qb->getBindings());         //pseudo
-            // $response_dt = DB::select($sql);
             $response_dt = $qb->get();
 
 
             $response_dt = json_decode(json_encode($response_dt), true);
 
-            // $response_dt    = $this->append_relationships_objects($response_dt);
-            // $response_dt    = $this->append_relationships_nulls($response_dt);
             $response       = Program::arr_to_dt_response( 
                 $response_dt, $input['draw'],
                 $total_records,
@@ -686,11 +645,8 @@ class ProgramApi extends Controller
 
         }else{
 
-            // $sql            = Program::bind_presql($qb->toSql(),$qb->getBindings());
             $response       = json_decode(json_encode($qb->get()), true);
             if(!array_key_exists('lean', $input)){
-                // $response       = $this->append_relationships_objects($response);
-                // $response       = $this->append_relationships_nulls($response);
             }
         }
 
@@ -741,32 +697,42 @@ class ProgramApi extends Controller
 
 
 
+    public function updateProgramTeam()
+    {
+        try{
+            $form = Request::all();
+            $program_id = $form['program_id'];
+            $new_staff = $form['staff'];
+            $old_staff = array();
 
+            $program_team = DB::table('program_teams')->select('program_id', 'staff_id')->where('program_id', $program_id)->get();
+            foreach($program_team as $team_member){
+                array_push($old_staff, $team_member['staff_id']);
+            }
 
+            // Remove removed team members
+            foreach($old_staff as $old){
+                if(!in_array($old, $new_staff)){
+                    DB::table('program_teams')->where('program_id', $program_id)->where('staff_id', $old)->delete();
+                }
+            }
 
+            // Add new team members
+            $insert_array = array();
+            foreach($new_staff as $new){
+                if(!in_array($new, $old_staff)){
+                    $new_record = array('program_id'=>$program_id, 'staff_id'=>$new);
+                    array_push($insert_array, array('program_id'=>$program_id, 'staff_id'=>$new));
+                }
+            }
+            if(!empty($insert_array))
+                DB::table('program_teams')->insert($insert_array);
 
-
-
-
-    
-
-
-
-    public function append_relationships_nulls($data = array()){
-
-
-        foreach ($data as $key => $value) {
-
-
-            // if($data[$key]["account"]==null){
-            //     $data[$key]["account"] = array("account_name"=>"N/A");
-            // }
-
-
+            return Response()->json(array('msg' => 'Success: Program Team updated'), 200);
         }
-
-        return $data;
-
-
+        catch(\Exception $e){
+            file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , PHP_EOL.$e->getTraceAsString() , FILE_APPEND);
+            return response()->json(['error'=>'Something went wrong', 'msg'=>$e->getMessage()], 500);
+        }
     }
 }

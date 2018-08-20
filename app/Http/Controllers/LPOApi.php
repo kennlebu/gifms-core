@@ -1415,7 +1415,7 @@ class LPOApi extends Controller
         $lpos = LPO::with('items', 'supplier', 
         'requested_by', 'project', 'project', 'account',
         'account', 'invoices', 'status', 'project_manager',
-        'rejected_by', 'preffered_quotation')->get();
+        'rejected_by', 'preffered_quotation', 'invoices')->get();
 
         $excel_data = array();
         

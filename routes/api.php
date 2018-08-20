@@ -4366,6 +4366,8 @@ Route::GET('/programs', 'ProgramApi@programsGet')->middleware('jwt.auth');
  */
 Route::GET('/program_managers', 'ProgramApi@programManagersGet')->middleware('jwt.auth');
 
+Route::PUT('program/update_team', 'ProgramApi@updateProgramTeam')->middleware('jwt.auth');
+
 
 
 
