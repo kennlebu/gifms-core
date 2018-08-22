@@ -1330,18 +1330,14 @@ class LPOApi extends Controller
             $data[$key]['deliveries']               = $lpo->deliveries;
             $data[$key]['totals']                   = $lpo->totals;
 
-            if($lpo->preffered_quotation_id > 0 && $lpo->preffered_quotation->supplier_id > 0 ){
-
-                $data[$key]['preffered_quotation']['supplier']      = $lpo->preffered_quotation->supplier;
-
+            if(!empty($lpo->preffered_quotation_id) && !empty($lpo->preffered_quotation->supplier_id)){
+                if($lpo->preffered_quotation_id > 0 && $lpo->preffered_quotation->supplier_id > 0 ){
+                    $data[$key]['preffered_quotation']['supplier']      = $lpo->preffered_quotation->supplier;
+                }
             }
-
         }
 
-
         return $data;
-
-
     }
 
 
