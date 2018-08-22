@@ -13,7 +13,7 @@ use Config;
 use PDF;
 use Illuminate\Support\Facades\File;
 
-class NotifyLpoDispatch extends Mailable
+class NotifyLpoCancellation extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -96,9 +96,9 @@ class NotifyLpoDispatch extends Mailable
         $pdf = PDF::loadView('pdf/notify_lpo_dispatch', $pdf_data);
         $pdf_file = $pdf->stream();
 
-        $subject = "LPO ".$lpo_no." ".$this->lpo->preffered_quotation->supplier->supplier_name;
+        $subject = "Cancellation of LPO ".$lpo_no." ".$this->lpo->preffered_quotation->supplier->supplier_name;
 
-        $this->view('emails/notify_lpo_dispatch')         
+        $this->view('emails/notify_lpo_cancellation')         
             ->replyTo([
                     'email' => Config::get('mail.reply_to')['address']
                 ])           
@@ -106,7 +106,6 @@ class NotifyLpoDispatch extends Mailable
             ->attachData($pdf_file, 'LPO_'.$lpo_no.'_'.$this->lpo->preffered_quotation->supplier->supplier_name.'.pdf');   
 
         return $this->to($supplier_to['email'])
-        // return $this->to('kennlebu@live.com') // for test
             ->with([
                     'lpo' => $this->lpo,
                     'lpo_no' => $lpo_no,

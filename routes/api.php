@@ -166,6 +166,14 @@ Route::GET('lpos/exempt_reasons', 'LPOApi@getLpoExemptReasons')->middleware('jwt
  */
 Route::PATCH('/lpo/{lpo_id}/recall', 'LPOApi@recallLpo')->middleware('jwt.auth');
 
+/**
+ * PATCH cancelLpo
+ * Summary: Cancel LPO
+ * Notes: Cancel LPO
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PATCH('/lpo/{lpo_id}/cancel', 'LPOApi@cancelLpo')->middleware('jwt.auth');
+
 
 
 

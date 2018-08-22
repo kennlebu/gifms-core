@@ -32,6 +32,7 @@ use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\NotifyLpo;
 use App\Mail\NotifyLpoDispatch;
+use App\Mail\NotifyLpoCancellation;
 use App\Models\AllocationModels\Allocation;
 use App\Models\ApprovalsModels\Approval;
 use App\Models\ApprovalsModels\ApprovalLevel;
@@ -315,6 +316,40 @@ class LPOApi extends Controller
             return response()->json(['msg'=>"lpo recalled"], 200,array(),JSON_PRETTY_PRINT);
         }else{
             return response()->json(['error'=>"could not recall lpo"], 404,array(),JSON_PRETTY_PRINT);
+        }
+
+    }
+
+
+
+
+        /**
+     * Operation cancelLpo
+     * 
+     * Cancels an LPO.
+     * 
+     * @param int $lpo_id LPO id to cancel (required)
+     * 
+     * @return Http response
+     */
+    public function cancelLpo($lpo_id)
+    {
+        $input = Request::all();
+        
+        $lpo = Lpo::find($lpo_id);        
+
+        // Ensure LPO is in the cancelable status
+        if($lpo->status_id != 7){
+            return response()->json(['msg'=>"you do not have permission to do this"], 403, array(), JSON_PRETTY_PRINT);
+        }
+
+        $lpo->status_id = 15;
+        
+        if($lpo->save()){
+            Mail::queue(new NotifyLpoCancellation($lpo));
+            return response()->json(['msg'=>"lpo cancelled"], 200,array(),JSON_PRETTY_PRINT);
+        }else{
+            return response()->json(['error'=>"could not cancel lpo"], 404,array(),JSON_PRETTY_PRINT);
         }
 
     }

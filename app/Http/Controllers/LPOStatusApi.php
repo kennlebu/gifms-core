@@ -289,7 +289,7 @@ class LpoStatusApi extends Controller
         $records_filtered       = 0;
         $user = JWTAuth::parseToken()->authenticate();
         if(array_key_exists('displayable_only',$input)){
-            $qb->whereIn('lpo_statuses.id', [1,2,11,12]);
+            $qb->whereIn('lpo_statuses.id', [1,2,11,12,15]);
         }
 
 
