@@ -896,19 +896,17 @@ class MobilePaymentApi extends Controller
 
             $path_info      = pathinfo($path);
 
-            // $ext            = $path_info['extension'];
-
             $basename       = $path_info['basename'];
 
             $file_contents  = FTP::connection()->readFile($path);
 
-            Storage::put('signsheets/'.$mobile_payment->id.'.temp', $file_contents);
+            // Storage::put('signsheets/'.$mobile_payment->id.'.temp', $file_contents);
 
-            $url            = storage_path("app/signsheets/".$mobile_payment->id.'.temp');
+            // $url            = storage_path("app/signsheets/".$mobile_payment->id.'.temp');
 
-            $file           = File::get($url);
+            // $file           = File::get($url);
 
-            $response       = Response::make($file, 200);
+            $response       = Response::make($file_contents, 200);
 
             $response->header('Content-Type', 'application/pdf');
 
