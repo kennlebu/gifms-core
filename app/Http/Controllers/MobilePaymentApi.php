@@ -209,6 +209,8 @@ class MobilePaymentApi extends Controller
                 FTP::connection()->makeDir('/mobile_payments/'.$mobile_payment->id);
                 FTP::connection()->makeDir('/mobile_payments/'.$mobile_payment->id.'/signsheet');
                 FTP::connection()->uploadFile($file->getPathname(), '/mobile_payments/'.$mobile_payment->id.'/signsheet/'.$mobile_payment->id.'.'.$file->getClientOriginalExtension());
+                $mobile_payment->attendance_sheet           =   $mobile_payment->id.'.'.$file->getClientOriginalExtension();
+                $mobile_payment->save();
             }
 
             return Response()->json(array('msg' => 'Success: Mobile payment updated','mobile_payment' => $mobile_payment), 200);
@@ -829,19 +831,11 @@ class MobilePaymentApi extends Controller
                 'mobile_payment'   => $mobile_payment
                 );
 
-        // return view('pdf/mobile_payment',$data);
-
             $pdf = PDF::loadView('pdf/mobile_payment', $data);
 
             $file_contents  = $pdf->stream();
 
-            Storage::put('mobile_payment/'.$mobile_payment_id.'.temp', $file_contents);
-
-            $url       = storage_path("app/mobile_payment/".$mobile_payment_id.'.temp');
-
-            $file = File::get($url);
-
-            $response = Response::make($file, 200);
+            $response = Response::make($file_contents, 200);
 
             $response->header('Content-Type', 'application/pdf');
 
@@ -900,12 +894,6 @@ class MobilePaymentApi extends Controller
 
             $file_contents  = FTP::connection()->readFile($path);
 
-            // Storage::put('signsheets/'.$mobile_payment->id.'.temp', $file_contents);
-
-            // $url            = storage_path("app/signsheets/".$mobile_payment->id.'.temp');
-
-            // $file           = File::get($url);
-
             $response       = Response::make($file_contents, 200);
 
             $response->header('Content-Type', 'application/pdf');
@@ -961,13 +949,7 @@ class MobilePaymentApi extends Controller
 
             $file_contents  = $pdf->stream();
 
-            Storage::put('mobile_payment/'.$mobile_payment_id.'.temp', $file_contents);
-
-            $url       = storage_path("app/mobile_payment/".$mobile_payment_id.'.temp');
-
-            $file = File::get($url);
-
-            $response = Response::make($file, 200);
+            $response = Response::make($file_contents, 200);
 
             $response->header('Content-Type', 'application/pdf');
 
