@@ -734,13 +734,13 @@ class PaymentApi extends Controller
                         $payment = Payment::find($record->payable_id);
                         $claim = Claim::where('id', $payment->payable_id);
                         if(!empty($start_date) && !empty($end_date)){
-                            $claim->whereBetween('created_at', [$start_date, $end_date]);
+                            $claim = $claim->whereBetween('created_at', [$start_date, $end_date]);
                         }
                         elseif(!empty($start_date)){
-                            $claim->where('created_at', '>=', $start_date);
+                            $claim = $claim->where('created_at', '>=', $start_date);
                         }
                         elseif(!empty($end_date)){
-                            $claim->where('created_at', '<=', $end_date);
+                            $claim = $claim->where('created_at', '<=', $end_date);
                         }
 
                         if(!empty($chai_ref)){
@@ -748,11 +748,11 @@ class PaymentApi extends Controller
                         }
 
                         if(!empty($project_id)){
-                            $claim->whereHas('allocations', function($query) use ($project_id){
+                            $claim = $claim->whereHas('allocations', function($query) use ($project_id){
                                 $query->where('project_id', $project_id);  
                             });
                         }
-                        $claim->with('status')->first();
+                        $claim = $claim->with('status')->first();
 
                         if(!empty($claim)){
                             $row['payable_type'] = $record->payable_type;
@@ -764,25 +764,25 @@ class PaymentApi extends Controller
                         $payment = Payment::find($record->payable_id);
                         $advance = Advance::where('id', $payment->payable_id);
                         if(!empty($start_date) && !empty($end_date)){
-                            $advance->whereBetween('created_at', [$start_date, $end_date]);
+                            $advance = $advance->whereBetween('created_at', [$start_date, $end_date]);
                         }
                         elseif(!empty($start_date)){
-                            $advance->where('created_at', '>=', $start_date);
+                            $advance = $advance->where('created_at', '>=', $start_date);
                         }
                         elseif(!empty($end_date)){
-                            $advance->where('created_at', '<=', $end_date);
+                            $advance = $advance->where('created_at', '<=', $end_date);
                         }
 
                         if(!empty($chai_ref)){
-                            $advance = $advance->where('ref', 'like', '%'.$chai_ref.'%');
+                            $advance = $advance = $advance->where('ref', 'like', '%'.$chai_ref.'%');
                         }
 
                         if(!empty($project_id)){
-                            $advance->whereHas('allocations', function($query) use ($project_id){
+                            $advance = $advance->whereHas('allocations', function($query) use ($project_id){
                                 $query->where('project_id', $project_id);  
                             });
                         }
-                        $advance->with('status')->first();
+                        $advance = $advance->with('status')->first();
 
                         if(!empty($advance)){
                             $row['payable'] = $advance;
@@ -793,13 +793,13 @@ class PaymentApi extends Controller
                     elseif($record->payable_type == 'mobile_payments' && empty($supplier_id)){
                         $mobile_payment = MobilePayment::where('id', $record->payable_id);
                         if(!empty($start_date) && !empty($end_date)){
-                            $mobile_payment->whereBetween('created_at', [$start_date, $end_date]);
+                            $mobile_payment = $mobile_payment->whereBetween('created_at', [$start_date, $end_date]);
                         }
                         elseif(!empty($start_date)){
-                            $mobile_payment->where('created_at', '>=', $start_date);
+                            $mobile_payment = $mobile_payment->where('created_at', '>=', $start_date);
                         }
                         elseif(!empty($end_date)){
-                            $mobile_payment->where('created_at', '<=', $end_date);
+                            $mobile_payment = $mobile_payment->where('created_at', '<=', $end_date);
                         }
 
                         if(!empty($chai_ref)){
@@ -807,11 +807,11 @@ class PaymentApi extends Controller
                         }
 
                         if(!empty($project_id)){
-                            $mobile_payment->whereHas('allocations', function($query) use ($project_id){
+                            $mobile_payment = $mobile_payment->whereHas('allocations', function($query) use ($project_id){
                                 $query->where('project_id', $project_id);  
                             });
                         }
-                        $mobile_payment->with('status')->first();
+                        $mobile_payment = $mobile_payment->with('status')->first();
 
                         if(!empty($mobile_payment)){
                             $row['payable'] = $mobile_payment;
