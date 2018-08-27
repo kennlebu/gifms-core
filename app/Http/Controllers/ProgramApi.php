@@ -731,7 +731,6 @@ class ProgramApi extends Controller
             return Response()->json(array('msg' => 'Success: Program Team updated'), 200);
         }
         catch(\Exception $e){
-            file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , PHP_EOL.$e->getTraceAsString() , FILE_APPEND);
             return response()->json(['error'=>'Something went wrong', 'msg'=>$e->getMessage()], 500);
         }
     }

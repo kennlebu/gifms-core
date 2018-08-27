@@ -29,6 +29,7 @@ use App\Models\ProjectsModels\Project;
 use Config;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\NotifyNewStaff;
+use App\Models\ProgramModels\ProgramStaff;
 
 class StaffApi extends Controller
 {
@@ -489,23 +490,17 @@ class StaffApi extends Controller
 
             //select the projects of the user
             $user = JWTAuth::parseToken()->authenticate();
-            $user_roles = DB::table('user_roles')->where('user_id', $user->id)->pluck('role_id')->toArray();
-            $roles_arr = [1,2,3,4,5,6,8,9,10,11];
+            $program_teams = ProgramStaff::with('program.managers')->where('staff_id', $user->id)->get();
 
-            $project_managers = Project::whereHas('staffs', function($query) use ($user){
-                $query->where('staff.id', $user->id);  
-            })->pluck('project_manager_id')->toArray();
+            $program_managers = array();
+            
+            foreach($program_teams as $team){
+                array_push($program_managers, $team->program->managers->program_manager_id);
+            }
 
             $qb->select(DB::raw('staff.*'))
-                 ->leftJoin('user_roles', 'user_roles.user_id', '=', 'staff.id')
-                 ->leftJoin('roles', 'roles.id', '=', 'user_roles.role_id')
-                 ->where('roles.acronym', '=', "'pm'");
-
-            if(empty(array_intersect($user_roles, $roles_arr))){
-                $qb->whereIn('staff.id',$project_managers);
-            }
-            
-            $qb->groupBy('staff.id');
+                 ->whereIn('staff.id',$program_managers)
+                 ->groupBy('staff.id');
         }
 
         //migrated
