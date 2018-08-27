@@ -267,6 +267,52 @@ class RolesApi extends Controller
             return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
         }
     }
+
+
+
+
+
+
+
+
+
+    /**
+ * Operation getRightsTransfers
+ *
+ * Get rights transfers.
+ *
+ * @return Http response
+ */
+public function getRightsTransfers()
+{
+    $input = Request::all();        
+
+    try{
+        $qb = DB::table('rights_transfers');
+
+        if(array_key_exists('from_staff_id', $input)){
+            $qb = $qb->where('from_staff_id', $input['from_staff_id']);
+        }
+
+        if(array_key_exists('to_staff_id', $input)){
+            $qb = $qb->where('to_staff_id', $input['to_staff_id']);
+        }
+
+        if(array_key_exists('type', $input)){
+            $qb = $qb->where('right_type', $input['type']);
+        }
+
+        $response = $qb->first();
+       
+        return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+
+    }catch(Exception $e){
+
+        $response =  ["error"=>"rights could not be found", "msg"=>$e->getMessage()];
+        return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+    }
+
+}
     
 
 
@@ -348,8 +394,6 @@ class RolesApi extends Controller
             }
 
             $qb->orderBy($order_column_name, $order_direction);
-        }else{
-            //$qb->orderBy("project_code", "asc");
         }
 
         //limit
@@ -359,6 +403,15 @@ class RolesApi extends Controller
             $qb->limit($input['limit']);
 
 
+        }
+
+        //for a staff member
+        if(array_key_exists('for_staff_id', $input)){
+            $qb->select(DB::raw('roles.*'))
+                ->leftJoin('user_roles', 'user_roles.role_id', '=', 'roles.id')
+                ->leftJoin('staff', 'staff.id', '=', 'user_roles.user_id')
+                ->where('staff.id', '=', "'".$input['for_staff_id']."'")
+                ->groupBy('roles.id');
         }
 
         //migrated
@@ -578,5 +631,78 @@ class RolesApi extends Controller
         catch(\Exception $e){
             return response()->json(['error'=>'Something went wrong'], 500);
         }
+    }
+
+
+
+
+
+    /**
+     * transferUserRoles
+     * Transfer user roles to another user
+     */
+    public function transferUserRoles(){
+        try{
+            $input = Request::all();
+            $user = JWTAuth::parseToken()->authenticate();
+            
+            // Roles being transfered to another user
+            $outgoing_roles = $input['roles'];
+            $outgoing_role_ids = array();
+            foreach($outgoing_roles as $role){
+                array_push($outgoing_role_ids, (int)$role);
+            }
+
+            $receiver_id = $input['to_user_id'];
+
+            // Roles the receiver already has
+            $receiver_roles = DB::table('user_roles')->select('role_id')->where('user_id', (int)$receiver_id)->get();
+            $receiver_role_ids = array();
+            foreach($receiver_roles as $role){
+                array_push($receiver_role_ids, $role['role_id']);
+            }
+            
+            $role_ids_to_transfer = array();
+            $transfered_roles_in_db = array(); // The 'rights' column data
+
+            // Get the role ids not in the receiver's roles
+            // foreach($outgoing_role_ids as $role_id){
+            //     if(!in_array($role_id, $receiver_role_ids)){
+            //         array_push($role_ids_to_transfer, $role_id);
+                    // array_push($transfered_roles_in_db, array('id'=>$role_id, 'existed'=>false));
+            //     }
+            //     else {
+                    // array_push($transfered_roles_in_db, array('id'=>$role_id, 'existed'=>true));
+            //     }
+            // }
+
+            $roles_inserts = array();
+            $transfers_inserts = array();
+            foreach($outgoing_role_ids as $to_role){
+                array_push($roles_inserts, array('user_id'=>(int)$receiver_id, 'role_id'=>(int)$to_role));
+            }
+
+            // Transfer roles
+            DB::table('user_roles')->insert($roles_inserts);
+            DB::table('user_roles')->where('user_id', $user->id)
+                                       ->whereIn('role_id', $outgoing_role_ids)
+                                       ->delete();
+            
+            // Insert into right_transfers table
+            $transfers_inserts = array('from_staff_id'=>(int)$user->id, 
+                'to_staff_id'=>(int)$receiver_id, 
+                'right_type'=>'role', 
+                'rights'=>json_encode($outgoing_role_ids),
+                'transfered_on'=>date("Y-m-d H:i:s")
+            );
+            DB::table('rights_transfers')->insert($transfers_inserts);
+
+
+            return Response()->json(array('msg' => 'Success: roles transfered'), 200);
+        }
+        catch(\Exception $e){
+            return response()->json(['error'=>'Something went wrong'], 500);
+        }
+
     }
 }
