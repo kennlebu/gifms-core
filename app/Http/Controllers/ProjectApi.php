@@ -83,17 +83,7 @@ class ProjectApi extends Controller
      */
     public function addProject()
     {
-        $form = Request::only(
-            'program_id',
-            'project_code',
-            'project_name',
-            'project_desc',
-            'start_date',
-            'end_date',
-            'status_id',
-            'grant_id',
-            'country_id'
-            );
+        $form = Request::all();
 
         $project = new Project;
 
@@ -101,11 +91,9 @@ class ProjectApi extends Controller
             $project->project_code                     =         $form['project_code'];
             $project->project_name                     =         $form['project_name'];
             $project->project_desc                     =         $form['project_desc'];
-            $project->start_date                       =         $form['start_date'];
-            $project->end_date                         =         $form['end_date'];
-            $project->status_id                        =  1;
             $project->country_id                       =  (int)  $form['country_id'];
             $project->grant_id                         = (int) $form['grant_id'];
+            $project->status_id                        = (int) $form['status_id'] || 1;
 
         if($project->save()) {
 
@@ -154,18 +142,7 @@ class ProjectApi extends Controller
      */
     public function updateProject()
     {
-        $form = Request::only(
-            'id',
-            'program_id',
-            'project_code',
-            'project_name',
-            'project_desc',
-            'start_date',
-            'end_date',
-            'status_id',
-            'grant_id',
-            'country_id'
-            );
+        $form = Request::all();
 
         $project = Project::find($form['id']);
 
@@ -173,8 +150,6 @@ class ProjectApi extends Controller
             $project->project_code                     =         $form['project_code'];
             $project->project_name                     =         $form['project_name'];
             $project->project_desc                     =         $form['project_desc'];
-            $project->start_date                       =         $form['start_date'];
-            $project->end_date                         =         $form['end_date'];
             $project->status_id                        =  (int)  $form['status_id'];
             $project->country_id                       =  (int)  $form['country_id'];
             $project->grant_id                         = (int) $form['grant_id'];
@@ -640,7 +615,7 @@ class ProjectApi extends Controller
 
         }else{
 
-            // $qb->orderBy("project_name", "asc");
+            $qb->where('status_id', 1);
 
             $sql            = Project::bind_presql($qb->toSql(),$qb->getBindings());
             $response       = json_decode(json_encode(DB::select($sql)), true);
@@ -650,12 +625,7 @@ class ProjectApi extends Controller
             }
         }
 
-
-
-
         return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
-
-
     }
 
 

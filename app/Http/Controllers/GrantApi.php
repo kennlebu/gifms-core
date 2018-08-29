@@ -93,15 +93,7 @@ class GrantApi extends Controller
      */
     public function addGrant()
     {
-        $form = Request::only(
-            'grant_name',
-            'grant_code',
-            'grant_amount',
-            'currency_id',
-            'donor_id',
-            'start_date',
-            'end_date'
-            );
+        $form = Request::all();
 
         $grant = new Grant;
 
@@ -110,8 +102,7 @@ class GrantApi extends Controller
             $grant->grant_amount                 =         $form['grant_amount'];
             $grant->currency_id                  =         $form['currency_id'];
             $grant->donor_id                     =         $form['donor_id'];
-            $grant->start_date                   =         $form['start_date'];
-            $grant->end_date                     =         $form['end_date'];
+            $grant->status_id                    =         (int)$form['status_id'];
 
         if($grant->save()) {
 
@@ -151,16 +142,7 @@ class GrantApi extends Controller
      */
     public function updateGrant()
     {
-        $form = Request::only(
-            'id',
-            'grant_name',
-            'grant_code',
-            'grant_amount',
-            'currency_id',
-            'donor_id',
-            'start_date',
-            'end_date'
-            );
+        $form = Request::all();
 
         $grant = Grant::find($form['id']);
 
@@ -169,8 +151,7 @@ class GrantApi extends Controller
             $grant->grant_amount                 =         $form['grant_amount'];
             $grant->currency_id                  =         $form['currency_id'];
             $grant->donor_id                     =         $form['donor_id'];
-            $grant->start_date                   =         $form['start_date'];
-            $grant->end_date                     =         $form['end_date'];
+            $grant->status_id                    =         (int)$form['status_id'];
 
         if($grant->save()) {
 
@@ -497,6 +478,7 @@ class GrantApi extends Controller
 
 
         }else{
+            $qb->where('status_id', 1);
 
             $sql            = Grant::bind_presql($qb->toSql(),$qb->getBindings());
             $response       = json_decode(json_encode(DB::select($sql)), true);
