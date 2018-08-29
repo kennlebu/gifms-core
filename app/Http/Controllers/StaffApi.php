@@ -490,17 +490,33 @@ class StaffApi extends Controller
 
             //select the projects of the user
             $user = JWTAuth::parseToken()->authenticate();
-            $program_teams = ProgramStaff::with('program.managers')->where('staff_id', $user->id)->get();
+            $admin_role = Staff::whereHas('roles', function($query){
+                $query->whereIn('role_id', [1,2,3,4,5,6,8,9,10,11]);  
+            })->where('id', $user->id)->get();
 
-            $program_managers = array();
-            
-            foreach($program_teams as $team){
-                array_push($program_managers, $team->program->managers->program_manager_id);
+            // Get only user PMs if user doesn't have admin or finance role
+            if(count($admin_role)<=0){
+                $program_teams = ProgramStaff::with('program.managers')->where('staff_id', $user->id)->get();
+
+                $program_managers = array();
+                
+                foreach($program_teams as $team){
+                    array_push($program_managers, $team->program->managers->program_manager_id);
+                }
+
+                $qb->select(DB::raw('staff.*'))
+                    ->whereIn('staff.id',$program_managers)
+                    ->groupBy('staff.id');
             }
 
-            $qb->select(DB::raw('staff.*'))
-                 ->whereIn('staff.id',$program_managers)
+            // Get all PMs for administrative and finance staff
+            else{
+                $qb->select(DB::raw('staff.*'))
+                 ->leftJoin('user_roles', 'user_roles.user_id', '=', 'staff.id')
+                 ->leftJoin('roles', 'roles.id', '=', 'user_roles.role_id')
+                 ->where('roles.acronym', '=', "'pm'")
                  ->groupBy('staff.id');
+            }
         }
 
         //migrated
