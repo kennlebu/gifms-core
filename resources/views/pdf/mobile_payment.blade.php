@@ -50,7 +50,7 @@
             <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #000000; border-right: 1px solid #000000;" colspan="3" >{{$payee->full_name}}</td>
             <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #000000; border-right: 1px solid #000000;" align="right">{{$payee->mobile_number}}</td>
             <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #000000; border-right: 1px solid #000000;" align="right"></td>
-            <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #000000; border-right: 1px solid #000000;" align="right" bgcolor="#E4E8F3">{{number_format($payee->calculated_total,2)}}</td>
+            <td style="border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #000000; border-right: 1px solid #000000;" align="right" bgcolor="#E4E8F3">{{number_format($payee->total,2)}}</td>
           </tr>
 
 
@@ -90,7 +90,6 @@
               </tr>
               <tr>
                 <td colspan="4" rowspan="5" >
-                    {{-- <div style="height:70px;width:200px; background:url({{asset('storage/app/signatures/signature'.$approval->approver_id.'.png')}}; background-repeat:no-repeat;background-size:contain;"></div> --}}
                   <img height = "60" alt="." src="{{asset('storage/signatures/signature'.$approval->approver_id.'.png')}}"></img>
                 </td>
                 <td ></td>
