@@ -459,7 +459,7 @@ class MobilePaymentApi extends Controller
                             'NIC', // bank_name
                             '', // blank space
                             'KES', // currency
-                            $payee->calculated_total, // amount
+                            $payee->total, // amount
                             $voucher_number // chaipv
                         );
                         
