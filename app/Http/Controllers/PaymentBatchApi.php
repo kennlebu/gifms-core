@@ -548,7 +548,7 @@ class PaymentBatchApi extends Controller
                         }
                         elseif($voucher->payable_type == 'mobile_payments'){
                             $payment = MobilePayment::with('requested_by')->findOrFail($voucher->payable_id);
-                            $res['vendor'] = $payment->requested_by->name;
+                            $res['vendor'] = "MOH OFFICIALS c/o ".$payment->requested_by->name;
                             $res['payment_mode'] = 'Bulk MMTS';
                         }
                         $payable_type = $voucher->payable_type;
