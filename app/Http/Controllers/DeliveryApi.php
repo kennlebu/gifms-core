@@ -28,6 +28,7 @@ use Illuminate\Support\Facades\Response;
 use App\Models\LPOModels\Lpo;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\NotifyDelivery;
+use PDF;
 
 class DeliveryApi extends Controller
 {
@@ -334,94 +335,6 @@ class DeliveryApi extends Controller
 
 
     /**
-     * Operation allocateDelivery
-     *
-     * Allocate delivery by ID.
-     *
-     * @param int $delivery_id ID of delivery to return object (required)
-     *
-     * @return Http response
-     */
-    public function allocateDelivery($delivery_id)
-    {
-        $input = Request::all();
-
-        //path params validation
-
-
-        //not path params validation
-
-        return response('How about implementing allocateDelivery as a PATCH method ?');
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    /**
-     * Operation approveDelivery
-     *
-     * Approve delivery by ID.
-     *
-     * @param int $delivery_id ID of delivery to return object (required)
-     *
-     * @return Http response
-     */
-    public function approveDelivery($delivery_id)
-    {
-        $input = Request::all();
-
-        //path params validation
-
-
-        //not path params validation
-
-        return response('How about implementing approveDelivery as a PATCH method ?');
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    /**
      * Operation getDocumentById
      *
      * get delivery document by ID.
@@ -466,6 +379,29 @@ class DeliveryApi extends Controller
 
             return $response;  
 
+        }
+    }
+
+
+
+    public function getDeliveryNote($delivery_id){
+        try{
+            $delivery = Delivery::findOrFail($delivery_id);
+            $data = array('delivery' => $delivery);
+
+            $pdf = PDF::loadView('pdf/goods_received_note', $data);
+            $file_contents  = $pdf->stream();
+
+            $response = Response::make($file_contents, 200);
+            $response->header('Content-Type', 'application/pdf');
+
+            return $response;
+        }catch (Exception $e ){            
+
+            $response       = Response::make("", 200);
+            $response->header('Content-Type', 'application/pdf');
+
+            return $response;  
         }
     }
 

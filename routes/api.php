@@ -3805,6 +3805,7 @@ Route::GET('/delivery/{delivery_id}/get_document', 'DeliveryApi@getDocumentById'
  */
 Route::PATCH('/delivery/{delivery_id}/submit_for_approval', 'DeliveryApi@submitDeliveryForApproval')->middleware('jwt.auth');
 
+Route::GET('/delivery/{delivery_id}/get_delivery_note', 'DeliveryApi@getDeliveryNote')->middleware('jwt.auth');
 
 
 

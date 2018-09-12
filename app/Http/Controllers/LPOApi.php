@@ -879,19 +879,11 @@ class LPOApi extends Controller
                 'unique_approvals' => $unique_approvals
                 );
 
-        // return view('pdf/lpo',$data);
-
             $pdf = PDF::loadView('pdf/lpo', $data);
 
             $file_contents  = $pdf->stream();
 
-            Storage::put('lpo/'.$lpo_id.'.temp', $file_contents);
-
-            $url       = storage_path("app/lpo/".$lpo_id.'.temp');
-
-            $file = File::get($url);
-
-            $response = Response::make($file, 200);
+            $response = Response::make($file_contents, 200);
 
             $response->header('Content-Type', 'application/pdf');
 
