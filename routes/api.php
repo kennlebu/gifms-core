@@ -5208,3 +5208,9 @@ Route::DELETE('/resource/{id}', 'ResourcesApi@deleteResource')->middleware('jwt.
 Route::get('/resources/{id}', 'ResourcesApi@getResourceById')->middleware('jwt.auth');
 
 Route::POST('/resources/edit', 'ResourcesApi@editResource')->middleware('jwt.auth');
+
+
+/**
+ * Meeting/Conference rooms routes
+ */
+Route::POST('/rooms/search_available', 'RoomsApi@searchAvailable')->middleware('jwt.auth');
