@@ -16,6 +16,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Request;
+use App\Models\SuppliesModels\SupplierRate;
+use Illuminate\Support\Facades\DB;
 
 class SupplierRateApi extends Controller
 {
@@ -65,46 +67,22 @@ class SupplierRateApi extends Controller
      */
     public function addSupplierRate()
     {
+        try{
         $input = Request::all();
+        $rate = new SupplierRate;
+        $rate->service_id = (int) $input['service_id'];
+        $rate->supplier_id = (int) $input['supplier_id'];
+        $rate->rate = $input['rate'];
+        $rate->currency_id = (int) $input['currency_id'];
 
-        //path params validation
-
-
-        //not path params validation
-        if (!isset($input['body'])) {
-            throw new \InvalidArgumentException('Missing the required parameter $body when calling addSupplierRate');
+        if($rate->save()){
+            return response()->json(['msg'=>"rate added"], 200,array(),JSON_PRETTY_PRINT);
         }
-        $body = $input['body'];
-
-
-        return response('How about implementing addSupplierRate as a POST method ?');
+        }
+        catch(\Exception $e){
+            return response()->json(['error'=>'something went wrong', 'msg'=>$e->getMessage()], 500);
+        }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     
@@ -118,44 +96,22 @@ class SupplierRateApi extends Controller
      */
     public function updateSupplierRate()
     {
-        $input = Request::all();
-
-        //path params validation
-
-
-        //not path params validation
-        if (!isset($input['body'])) {
-            throw new \InvalidArgumentException('Missing the required parameter $body when calling updateSupplierRate');
-        }
-        $body = $input['body'];
-
-
-        return response('How about implementing updateSupplierRate as a PUT method ?');
+        try{
+            $input = Request::all();
+            $rate =  SupplierRate::findOrFail($input['id']);
+            $rate->service_id = (int) $input['service_id'];
+            $rate->supplier_id = (int) $input['supplier_id'];
+            $rate->rate = $input['rate'];
+            $rate->currency_id = (int) $input['currency_id'];
+    
+            if($rate->save()){
+                return response()->json(['msg'=>"rate updated"], 200,array(),JSON_PRETTY_PRINT);
+            }
+            }
+            catch(\Exception $e){
+                return response()->json(['error'=>'something went wrong', 'msg'=>$e->getMessage()], 500);
+            }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -172,39 +128,14 @@ class SupplierRateApi extends Controller
      */
     public function deleteSupplierRate($supplier_rate_id)
     {
-        $input = Request::all();
+        $deleted = SupplierRate::destroy($supplier_rate_id);
 
-        //path params validation
-
-
-        //not path params validation
-
-        return response('How about implementing deleteSupplierRate as a DELETE method ?');
+        if($deleted){
+            return response()->json(['msg'=>"supplier rate deleted"], 200,array(),JSON_PRETTY_PRINT);
+        }else{
+            return response()->json(['error'=>"supplier rate not found"], 404,array(),JSON_PRETTY_PRINT);
+        }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -221,14 +152,189 @@ class SupplierRateApi extends Controller
      */
     public function getSupplierRateById($supplier_rate_id)
     {
+        try{
+            $response   = SupplierRate::findOrFail($supplier_rate_id);           
+            return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+
+        }catch(\Exception $e){
+
+            $response =  ["error"=>"supplier rate could not be found"];
+            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+        }
+    }
+
+
+
+    
+    /**
+     * Operation supplierRatesGet
+     *
+     * supplier_rates List.
+     *
+     *
+     * @return Http response
+     */
+    public function supplierRatesGet()
+    {
         $input = Request::all();
+        //query builder
+        $qb = DB::table('supplier_rates');
+        $qb->leftJoin('suppliers', 'supplier_rates.supplier_id', '=', 'suppliers.id');
+        $qb->select('supplier_rates.*');
 
-        //path params validation
+        $qb->whereNull('supplier_rates.deleted_at');
+
+        $response;
+        $response_dt;
+
+        $total_records          = $qb->count();
+        $records_filtered       = 0;
 
 
-        //not path params validation
+        // For county
+        if(array_key_exists('county_id', $input) && !empty($input['county_id'])){
+            $qb->where('suppliers.county_id', $input['county_id']);
+        }
 
-        return response('How about implementing getSupplierRateById as a GET method ?');
+        // For supply category
+        if(array_key_exists('supply_category_id', $input) && !empty($input['supply_category_id'])){
+            $qb->where('suppliers.supply_category_id', $input['supply_category_id']);
+        }
+
+        // For service
+        if(array_key_exists('service_id', $input) && !empty($input['service_id'])){
+            $qb->where('supplier_rates.service_id', $input['service_id']);
+        }
+
+
+        //searching
+        if(array_key_exists('searchval', $input)){
+            $qb->where(function ($query) use ($input) {
+                
+                $query->orWhere('supplier_rates.id','like', '\'%' . $input['searchval']. '%\'');
+                $query->orWhere('supplier_rates.rate','like', '\'%' . $input['searchval']. '%\'');
+                $query->orWhere('suppliers.supplier_name','like', '\'%' . $input['searchval']. '%\'');
+
+            });
+
+            $sql = SupplierRate::bind_presql($qb->toSql(),$qb->getBindings());
+            $sql = str_replace("supplier_rates.*"," count(*) AS count ", $sql);
+            $dt = json_decode(json_encode(DB::select($sql)), true);
+
+            $records_filtered = (int) $dt[0]['count'];
+            // $records_filtered = 30;
+
+
+        }
+
+
+        //ordering
+        if(array_key_exists('order_by', $input)&&$input['order_by']!=''){
+            $order_direction     = "asc";
+            $order_column_name   = $input['order_by'];
+            if(array_key_exists('order_dir', $input)&&$input['order_dir']!=''){                
+                $order_direction = $input['order_dir'];
+            }
+
+            $qb->orderBy($order_column_name, $order_direction);
+        }else{
+            // $qb->orderBy("supply_category_name", "asc");
+        }
+
+        //limit
+        if(array_key_exists('limit', $input)){
+
+
+            $qb->limit($input['limit']);
+
+
+        }
+
+
+
+        if(array_key_exists('datatables', $input)){
+
+            //searching
+            $qb->where(function ($query) use ($input) {
+                
+                $query->orWhere('supplier_rates.id','like', '\'%' . $input['search']['value']. '%\'');
+                $query->orWhere('supplier_rates.rate','like', '\'%' . $input['search']['value']. '%\'');
+                $query->orWhere('suppliers.supplier_name','like', '\'%' . $input['search']['value']. '%\'');
+
+            });
+
+
+
+
+            $sql = SupplierRate::bind_presql($qb->toSql(),$qb->getBindings());
+            $sql = str_replace("`supplier_rates`.*"," count(*) AS count ", $sql);
+            $dt = json_decode(json_encode(DB::select($sql)), true);
+
+            $records_filtered = (int) $dt[0]['count'];
+
+
+            //ordering
+            $order_column_id    = (int) $input['order'][0]['column'];
+            $order_column_name  = $input['columns'][$order_column_id]['order_by'];
+            $order_direction    = $input['order'][0]['dir'];
+
+            if($order_column_name!=''){
+
+                $qb->orderBy($order_column_name, $order_direction);
+
+            }
+
+
+
+
+
+
+            //limit $ offset
+            if((int)$input['start']!= 0 ){
+
+                $response_dt    =   $qb->limit($input['length'])->offset($input['start']);
+
+            }else{
+                $qb->limit($input['length']);
+            }
+
+
+
+
+
+            $sql = SupplierRate::bind_presql($qb->toSql(),$qb->getBindings());
+
+            // $response_dt = DB::select($qb->toSql(),$qb->getBindings());         //pseudo
+            $response_dt = DB::select($sql);
+
+
+            $response_dt = json_decode(json_encode($response_dt), true);
+
+            $response_dt    = $this->append_relationships_objects($response_dt);
+            $response_dt    = $this->append_relationships_nulls($response_dt);
+            $response       = SupplierRate::arr_to_dt_response( 
+                $response_dt, $input['draw'],
+                $total_records,
+                $records_filtered
+                );
+
+
+        }else{
+
+            $sql            = SupplierRate::bind_presql($qb->toSql(),$qb->getBindings());
+            $response       = json_decode(json_encode(DB::select($sql)), true);
+            if(!array_key_exists('lean', $input)){
+                $response       = $this->append_relationships_objects($response);
+                $response       = $this->append_relationships_nulls($response);
+            }
+        }
+
+
+
+
+        return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+
+
     }
 
 
@@ -250,34 +356,32 @@ class SupplierRateApi extends Controller
 
 
 
+    private function append_relationships_objects($data = array()){
+        foreach ($data as $key => $value) {
 
+            $supplier_rate = SupplierRate::find($data[$key]['id']);
 
+            $data[$key]['service'] = $supplier_rate->service;
+            $data[$key]['supplier'] = $supplier_rate->supplier;
+            $data[$key]['currency'] = $supplier_rate->currency;
 
+        }
+        return $data;
+    }
 
+    private function append_relationships_nulls($data = array()){
 
-
-
-
-    
-    /**
-     * Operation supplierRatesGet
-     *
-     * supplier_rates List.
-     *
-     *
-     * @return Http response
-     */
-    public function supplierRatesGet()
-    {
-        $input = Request::all();
-
-        //path params validation
-
-
-        //not path params validation
-        $supplier_rate_id = $input['supplier_rate_id'];
-
-
-        return response('How about implementing supplierRatesGet as a GET method ?');
+        foreach ($data as $key => $value) {
+            if($data[$key]["service"]==null){
+                $data[$key]["service"] = array("service_name"=>"N/A");
+            }
+            if($data[$key]["supplier"]==null){
+                $data[$key]["supplier"] = array("supplier_name"=>"N/A");
+            }
+            if($data[$key]["currency"]==null){
+                $data[$key]["currency"] = array("currency_name"=>"N/A");
+            }
+        }
+        return $data;
     }
 }

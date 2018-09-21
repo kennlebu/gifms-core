@@ -73,7 +73,11 @@
           </td>
           <td style="text-align: left; border-bottom: 1px dotted #ccbcbc;" bgcolor="#ffffff" colspan="2" >
             <strong>
-              <span style="color: #092d50;">{{$lpo->preffered_quotation->supplier->supplier_name}}</span>
+                @if(empty($lpo->lpo_type)||$lpo->lpo_type!='prenegotiated')
+                <span style="color: #092d50;">{{$lpo->preffered_quotation->supplier->supplier_name}}</span>
+                @elseif(!empty($lpo->lpo_type)&&$lpo->lpo_type=='prenegotiated')
+                <span style="color: #092d50;">{{$lpo->supplier->supplier_name}}</span>
+                @endif
             </strong>
           </td>
         </tr>
@@ -109,7 +113,11 @@
           </td>
           <td style="text-align: left; border-bottom: 1px dotted #ccbcbc;" bgcolor="#ffffff" colspan="2" >
             <strong>
-              <span style="color: #092d50;"> {{$lpo->currency->currency_name}}. {{number_format($lpo->amount, 2)}}</span>
+                @if(empty($lpo->lpo_type)||$lpo->lpo_type!='prenegotiated')
+                <span style="color: #092d50;"> {{$lpo->currency->currency_name}}. {{number_format($lpo->amount, 2)}}</span>
+                @elseif(!empty($lpo->lpo_type)&&$lpo->lpo_type=='prenegotiated')
+                <span style="color: #092d50;"> {{$lpo->currency->currency_name}}. {{number_format($lpo->totals, 2)}}</span>
+                @endif
             </strong>
           </td>
         </tr>    

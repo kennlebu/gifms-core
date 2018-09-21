@@ -47,12 +47,32 @@ class NotifyLpoDispatch extends Mailable
     public function build()
     {
         $supplier_cc = [];
-        $supplier_to = array('name'=>$this->lpo->preffered_quotation->supplier->supplier_name,
-            'email'=>$this->lpo->preffered_quotation->supplier->email);
-        // CC second supplier email if it exists
-        if(!empty($this->lpo->preffered_quotation->supplier->contact_email_1)){
-            $supplier_cc = array('name'=>$this->lpo->preffered_quotation->supplier->supplier_name,
-            'email'=>$this->lpo->preffered_quotation->supplier->contact_email_1);
+        if(empty($lpo->lpo_type)||$lpo->lpo_type!='prenegotiated'){
+            $supplier_to = array('name'=>$this->lpo->preffered_quotation->supplier->supplier_name,
+                'email'=>$this->lpo->preffered_quotation->supplier->email);
+            // CC second supplier email if it exists
+            if(!empty($this->lpo->preffered_quotation->supplier->contact_email_1)){
+                $supplier_cc = array('name'=>$this->lpo->preffered_quotation->supplier->supplier_name,
+                'email'=>$this->lpo->preffered_quotation->supplier->contact_email_1);
+            }
+        }
+        elseif(!empty($lpo->lpo_type)&&$lpo->lpo_type=='prenegotiated'){
+            $supplier_to = array('name'=>$this->supplier->supplier_name,
+                'email'=>$this->lpo->supplier->email);
+            // CC second supplier email if it exists
+            if(!empty($this->lpo->supplier->contact_email_1)){
+                $supplier_cc = array('name'=>$this->lpo->supplier->supplier_name,
+                'email'=>$this->lpo->supplier->contact_email_1);
+            }
+        }
+        else {
+            $supplier_to = array('name'=>$this->lpo->preffered_quotation->supplier->supplier_name,
+                'email'=>$this->lpo->preffered_quotation->supplier->email);
+            // CC second supplier email if it exists
+            if(!empty($this->lpo->preffered_quotation->supplier->contact_email_1)){
+                $supplier_cc = array('name'=>$this->lpo->preffered_quotation->supplier->supplier_name,
+                'email'=>$this->lpo->preffered_quotation->supplier->contact_email_1);
+            }
         }
 
         // CHAI cc
@@ -96,14 +116,24 @@ class NotifyLpoDispatch extends Mailable
         $pdf = PDF::loadView('pdf/notify_lpo_dispatch', $pdf_data);
         $pdf_file = $pdf->stream();
 
+        if(empty($lpo->lpo_type)||$lpo->lpo_type!='prenegotiated')
+        $subject = "LPO ".$lpo_no." ".$this->lpo->preffered_quotation->supplier->supplier_name;
+        elseif(!empty($lpo->lpo_type)&&$lpo->lpo_type=='prenegotiated')
+        $subject = "LPO ".$lpo_no." ".$this->lpo->supplier->supplier_name;
+        else
         $subject = "LPO ".$lpo_no." ".$this->lpo->preffered_quotation->supplier->supplier_name;
 
         $this->view('emails/notify_lpo_dispatch')         
             ->replyTo([
                     'email' => Config::get('mail.reply_to')['address']
                 ])           
-            ->cc($ccs)
-            ->attachData($pdf_file, 'LPO_'.$lpo_no.'_'.$this->lpo->preffered_quotation->supplier->supplier_name.'.pdf');   
+            ->cc($ccs);
+        if(empty($lpo->lpo_type)||$lpo->lpo_type!='prenegotiated')
+        $this->attachData($pdf_file, 'LPO_'.$lpo_no.'_'.$this->lpo->preffered_quotation->supplier->supplier_name.'.pdf');  
+        elseif(!empty($lpo->lpo_type)&&$lpo->lpo_type=='prenegotiated')
+        $this->attachData($pdf_file, 'LPO_'.$lpo_no.'_'.$this->lpo->supplier->supplier_name.'.pdf');  
+        else
+        $this->attachData($pdf_file, 'LPO_'.$lpo_no.'_'.$this->lpo->preffered_quotation->supplier->supplier_name.'.pdf');   
 
         return $this->to($supplier_to['email'])
         // return $this->to('kennlebu@live.com') // for test

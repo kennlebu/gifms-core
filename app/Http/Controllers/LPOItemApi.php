@@ -18,6 +18,7 @@ namespace App\Http\Controllers;
 use JWTAuth;
 use Illuminate\Support\Facades\Request;
 use App\Models\LPOModels\LpoItem;
+use App\Models\LPOModels\Lpo;
 
 class LPOItemApi extends Controller
 {
@@ -66,21 +67,12 @@ class LPOItemApi extends Controller
      */
     public function addLpoItem()
     {
-        $input = Request::all();
 
         $lpo_item = new LpoItem;
 
         try{
 
-            $form = Request::only(
-                        'lpo_id',
-                        'item',
-                        'item_description',
-                        'qty',
-                        'qty_description',
-                        'unit_price',
-                        'vat_charge'
-                    );
+            $form = Request::all();
 
             $lpo_item->lpo_id                       =               $form['lpo_id'];
             $lpo_item->item                         =               $form['item'];
@@ -89,8 +81,12 @@ class LPOItemApi extends Controller
             $lpo_item->qty_description              =               $form['qty_description'];
             $lpo_item->unit_price                   =   (double)    $form['unit_price'];
             $lpo_item->vat_charge                   =   (int)       $form['vat_charge'];
-            $lpo_item->migration_id = 0;
-            $lpo_item->lpo_migration_id = 0;
+            if(array_key_exists('lpo_type', $form) && $form['lpo_type']=='prenegotiated'){
+                $lpo = Lpo::findOrFail($form['lpo_id']);
+                $lpo->supplier_id = $form['supplier_id'];
+                $lpo->currency_id = $form['currency_id'];
+                $lpo->save();
+            }
 
             if($lpo_item->save()) {
                 return Response()->json(array('success' => 'lpo quoatation added','lpo_item' => $lpo_item), 200);

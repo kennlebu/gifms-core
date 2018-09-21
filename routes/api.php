@@ -174,6 +174,9 @@ Route::PATCH('/lpo/{lpo_id}/recall', 'LPOApi@recallLpo')->middleware('jwt.auth')
  */
 Route::PATCH('/lpo/{lpo_id}/cancel', 'LPOApi@cancelLpo')->middleware('jwt.auth');
 
+// New pre-negotiated LPO
+Route::POST('/prenegotiated', 'LPOApi@addPrenegotiatedLpoRate')->middleware('jwt.auth');
+
 
 
 
@@ -1520,35 +1523,45 @@ Route::GET('/suppliers/search', 'SupplierApi@suppliersSearch')->middleware('jwt.
  * Notes: new supplier_rate
  * Output-Formats: [application/json, application/xml]
  */
-Route::POST('/supplier_rate', 'SupplierRateApi@addSupplierRate')->middleware('jwt.auth');
+Route::POST('/supplier-rate', 'SupplierRateApi@addSupplierRate')->middleware('jwt.auth');
 /**
  * PUT updateSupplierRate
  * Summary: Update an existing supplier_rate
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::PUT('/supplier_rate', 'SupplierRateApi@updateSupplierRate')->middleware('jwt.auth');
+Route::PUT('/supplier-rate', 'SupplierRateApi@updateSupplierRate')->middleware('jwt.auth');
 /**
  * DELETE deleteSupplierRate
  * Summary: Deletes an supplier_rate
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::DELETE('/supplier_rate/{supplier_rate_id}', 'SupplierRateApi@deleteSupplierRate')->middleware('jwt.auth');
+Route::DELETE('/supplier-rate/{supplier_rate_id}', 'SupplierRateApi@deleteSupplierRate')->middleware('jwt.auth');
 /**
  * GET getSupplierRateById
  * Summary: Find supplier_rate by ID
  * Notes: Returns a single supplier_rate
  * Output-Formats: [application/json, application/xml]
  */
-Route::GET('/supplier_rate/{supplier_rate_id}', 'SupplierRateApi@getSupplierRateById')->middleware('jwt.auth');
+Route::GET('/supplier-rate/{supplier_rate_id}', 'SupplierRateApi@getSupplierRateById')->middleware('jwt.auth');
 /**
  * GET supplierRatesGet
  * Summary: supplier_rates List
  * Notes: The supplier_rate endpoint returns multiple supplier_rate requested given the parameters injected.  
 
  */
-Route::GET('/supplier_rates', 'SupplierRateApi@supplierRatesGet')->middleware('jwt.auth');
+Route::GET('/supplier-rates', 'SupplierRateApi@supplierRatesGet')->middleware('jwt.auth');
+
+
+/**
+ * Supplier Services
+ */
+Route::POST('/supplier-services', 'SupplierServiceApi@addSupplierService')->middleware('jwt.auth');
+Route::PUT('/supplier-services', 'SupplierServiceApi@updateSupplierService')->middleware('jwt.auth');
+Route::DELETE('/supplier-services/{supplier_service_id}', 'SupplierServiceApi@deleteSupplierService')->middleware('jwt.auth');
+Route::GET('/supplier-services/{supplier_service_id}', 'SupplierServiceApi@getSupplierServiceById')->middleware('jwt.auth');
+Route::GET('/supplier-services', 'SupplierServiceApi@supplierServicesGet')->middleware('jwt.auth');
 
 
 
