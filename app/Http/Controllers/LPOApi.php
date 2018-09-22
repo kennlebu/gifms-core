@@ -355,7 +355,8 @@ class LPOApi extends Controller
             return response()->json(['msg'=>"you do not have permission to do this"], 403, array(), JSON_PRETTY_PRINT);
         }
 
-        $lpo->status_id = 15;
+        $lpo->status_id = 15;        
+        $lpo->cancellation_reason = $input['cancellation_reason'];
         
         if($lpo->save()){
             Mail::queue(new NotifyLpoCancellation($lpo));
@@ -534,7 +535,7 @@ class LPOApi extends Controller
     {
 
         $form = Request::only(
-            'rejection_reason'
+            'cancellation_reason'
             );
 
         $user = JWTAuth::parseToken()->authenticate();
@@ -1071,11 +1072,6 @@ class LPOApi extends Controller
             }elseif ($status_==-3) {
                 $qb->where('project_manager_id',$this->current_user()->id);
             }
-
-
-
-
-            // $total_records          = $qb->count();     //may need this
         }
 
 
