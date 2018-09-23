@@ -17,6 +17,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Request;
 use App\Models\SuppliesModels\SupplierRate;
+use App\Models\SuppliesModels\SupplierRateTerms;
 use Illuminate\Support\Facades\DB;
 
 class SupplierRateApi extends Controller
@@ -74,6 +75,7 @@ class SupplierRateApi extends Controller
         $rate->supplier_id = (int) $input['supplier_id'];
         $rate->rate = $input['rate'];
         $rate->currency_id = (int) $input['currency_id'];
+        $rate->vat = (int) $input['vat'];
 
         if($rate->save()){
             return response()->json(['msg'=>"rate added"], 200,array(),JSON_PRETTY_PRINT);
@@ -103,6 +105,7 @@ class SupplierRateApi extends Controller
             $rate->supplier_id = (int) $input['supplier_id'];
             $rate->rate = $input['rate'];
             $rate->currency_id = (int) $input['currency_id'];
+            $rate->vat = (int) $input['vat'];
     
             if($rate->save()){
                 return response()->json(['msg'=>"rate updated"], 200,array(),JSON_PRETTY_PRINT);
@@ -153,7 +156,7 @@ class SupplierRateApi extends Controller
     public function getSupplierRateById($supplier_rate_id)
     {
         try{
-            $response   = SupplierRate::findOrFail($supplier_rate_id);           
+            $response   = SupplierRate::with('terms')->findOrFail($supplier_rate_id);           
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
 
         }catch(\Exception $e){
@@ -337,25 +340,6 @@ class SupplierRateApi extends Controller
 
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     private function append_relationships_objects($data = array()){
         foreach ($data as $key => $value) {
 
@@ -363,7 +347,8 @@ class SupplierRateApi extends Controller
 
             $data[$key]['service'] = $supplier_rate->service;
             $data[$key]['supplier'] = $supplier_rate->supplier;
-            $data[$key]['currency'] = $supplier_rate->currency;
+            $data[$key]['currency'] = $supplier_rate->currency;            
+            $data[$key]['terms'] = $supplier_rate->terms;
 
         }
         return $data;
@@ -381,7 +366,65 @@ class SupplierRateApi extends Controller
             if($data[$key]["currency"]==null){
                 $data[$key]["currency"] = array("currency_name"=>"N/A");
             }
+            if($data[$key]["terms"]==null){
+                $data[$key]["terms"] = array("terms"=>"N/A");
+            }
         }
         return $data;
+    }
+
+
+    /**
+     * Add Supplier Rate terms
+     */
+    public function addSupplierRateTerm()
+    {
+        try{
+        $input = Request::all();
+        $rate_term = new SupplierRateTerms;
+        $rate_term->terms = $input['terms'];
+        $rate_term->supplier_rate_id = (int) $input['rate_id'];
+
+        if($rate_term->save()){
+            return response()->json(['msg'=>"term added"], 200,array(),JSON_PRETTY_PRINT);
+        }
+        }
+        catch(\Exception $e){
+            return response()->json(['error'=>'something went wrong', 'msg'=>$e->getMessage()], 500);
+        }
+    }
+
+
+    /**
+     * Update Supplier Rate terms
+     */
+    public function updateSupplierRateTerm()
+    {
+        try{
+        $input = Request::all();
+        $rate_term = SupplierRateTerms::findOrFail($input['id']);
+        $rate_term->terms = $input['terms'];
+
+        if($rate_term->save()){
+            return response()->json(['msg'=>"term updated"], 200,array(),JSON_PRETTY_PRINT);
+        }
+        }
+        catch(\Exception $e){
+            return response()->json(['error'=>'something went wrong', 'msg'=>$e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Delete rate term
+     */
+    public function deleteSupplierRateTerm($term_id)
+    {
+        $deleted = SupplierRateTerms::destroy($term_id);
+
+        if($deleted){
+            return response()->json(['msg'=>"term deleted"], 200,array(),JSON_PRETTY_PRINT);
+        }else{
+            return response()->json(['error'=>"term not found"], 404,array(),JSON_PRETTY_PRINT);
+        }
     }
 }

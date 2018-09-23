@@ -25,4 +25,9 @@ class SupplierRate extends BaseModel
     {
         return $this->belongsTo('App\Models\LookupModels\Currency','currency_id');
     }
+
+    public function terms()
+    {
+        return $this->hasMany('App\Models\SuppliesModels\SupplierRateTerms','supplier_rate_id');
+    }
 }
