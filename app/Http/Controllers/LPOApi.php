@@ -1050,9 +1050,6 @@ class LPOApi extends Controller
         if(array_key_exists('lpo_type',$input) && $input['lpo_type']=='prenegotiated'){
             $qb->where('lpos.lpo_type', '\'prenegotiated\'');
         }
-        else {
-            $qb->where('lpos.lpo_type', '!=', '\'prenegotiated\'')->orWhereNull('lpos.lpo_type');
-        }
 
 
 
