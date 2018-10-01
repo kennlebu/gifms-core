@@ -12,7 +12,7 @@ $NO_LOGIN = false;
 // Single-user credentials
 // Example: $USER = 'user'; $PASSWORD = 'password';
 $USER = 'gifms';
-$PASSWORD = 'Gifms123.';
+$PASSWORD = '1234567890';
 
 // Multi-user credentials
 // Example: $ACCOUNTS = array('user1' => 'password1', 'user2' => 'password2');
@@ -26,7 +26,7 @@ $PASSWORD_HASH_ALGORITHM = '';
 // Home directory (multi-user mode supported)
 // Example: $HOME_DIRECTORY = '/tmp';
 //          $HOME_DIRECTORY = array('user1' => '/home/user1', 'user2' => '/home/user2');
-$HOME_DIRECTORY = '/home/gifms';
+$HOME_DIRECTORY = '';
 
 // Code below is automatically generated from different components
 // For more information see: https://github.com/nickola/web-console

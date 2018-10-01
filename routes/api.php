@@ -5231,3 +5231,13 @@ Route::POST('/resources/edit', 'ResourcesApi@editResource')->middleware('jwt.aut
  * Meeting/Conference rooms routes
  */
 Route::POST('/rooms/search_available', 'RoomsApi@searchAvailable')->middleware('jwt.auth');
+
+
+/**
+* Funds Request routes
+*/
+Route::POST('/funds-request', 'FundsRequestApi@addFundsRequest')->middleware('jwt.auth');
+Route::GET('/funds-request', 'FundsRequestApi@getFundsRequests')->middleware('jwt.auth');
+Route::GET('/funds-request/{id}', 'FundsRequestApi@getFundsRequestById')->middleware('jwt.auth');
+Route::DELETE('/funds-request/{id}', 'FundsRequestApi@deleteFundsRequest')->middleware('jwt.auth');
+Route::PUT('/funds-request', 'FundsRequestApi@updateFundsRequest')->middleware('jwt.auth');
