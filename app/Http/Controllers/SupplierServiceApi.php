@@ -28,6 +28,7 @@ class SupplierServiceApi extends Controller
         $input = Request::all();
         $service = new SupplierService;
         $service->service_name = $input['service_name'];
+        $service->supply_category_id = (int) $input['supply_category_id'];
 
         if($service->save()){
             return response()->json(['msg'=>"service added"], 200,array(),JSON_PRETTY_PRINT);
@@ -44,6 +45,7 @@ class SupplierServiceApi extends Controller
             $input = Request::all();
             $service =  SupplierService::findOrFail($input['id']);
             $service->service_name = $input['service_name'];
+            $service->supply_category_id = (int) $input['supply_category_id'];
     
             if($service->save()){
                 return response()->json(['msg'=>"service updated"], 200,array(),JSON_PRETTY_PRINT);
@@ -70,7 +72,7 @@ class SupplierServiceApi extends Controller
     public function getSupplierServiceById($supplier_service_id)
     {
         try{
-            $response   = SupplierService::findOrFail($supplier_service_id);           
+            $response = SupplierService::findOrFail($supplier_service_id);           
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
 
         }catch(\Exception $e){
@@ -120,6 +122,11 @@ class SupplierServiceApi extends Controller
             $qb->orderBy($order_column_name, $order_direction);
         }
 
+        // Supply category
+        if(array_key_exists('category', $input)){
+            $qb->where('supply_category_id', $input['limit']);
+        }
+
         //limit
         if(array_key_exists('limit', $input)){
             $qb->limit($input['limit']);
@@ -161,6 +168,8 @@ class SupplierServiceApi extends Controller
             $response_dt = DB::select($sql);
             $response_dt = json_decode(json_encode($response_dt), true);
 
+            $response_dt    = $this->append_relationships_objects($response_dt);
+
             $response       = SupplierService::arr_to_dt_response( 
                 $response_dt, $input['draw'],
                 $total_records,
@@ -173,5 +182,21 @@ class SupplierServiceApi extends Controller
         }
 
         return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+    }
+
+
+    public function append_relationships_objects($data = array()){
+
+        foreach ($data as $key => $value) {
+            $supplier_service = SupplierService::find($data[$key]['id']);
+
+            if($data[$key]["supply_category"]==null){
+                $data[$key]["supply_category"] = array("supply_category_name"=>"N/A");
+            }
+            else{
+                $data[$key]['supply_category'] = $suppliers->supply_category;
+            }
+        }
+        return $data;
     }
 }
