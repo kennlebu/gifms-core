@@ -370,7 +370,7 @@ class AccountApi extends Controller
             // Just skip over. You saw nothing
         }
         else{
-            $qb->where('accounts.status', '\'public\'');
+            $qb->where('accounts.view_mode', '\'public\'');
         }
 
         //searching
