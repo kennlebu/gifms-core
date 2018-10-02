@@ -124,7 +124,7 @@ class SupplierServiceApi extends Controller
 
         // Supply category
         if(array_key_exists('category', $input)){
-            $qb->where('supply_category_id', $input['limit']);
+            $qb->where('supply_category_id', $input['category']);
         }
 
         //limit
@@ -188,13 +188,11 @@ class SupplierServiceApi extends Controller
     public function append_relationships_objects($data = array()){
 
         foreach ($data as $key => $value) {
-            $supplier_service = SupplierService::find($data[$key]['id']);
+            $supplier_service = SupplierService::with('supply_category')->find($data[$key]['id']);
 
+            $data[$key]['supply_category'] = $supplier_service->supply_category;
             if($data[$key]["supply_category"]==null){
                 $data[$key]["supply_category"] = array("supply_category_name"=>"N/A");
-            }
-            else{
-                $data[$key]['supply_category'] = $suppliers->supply_category;
             }
         }
         return $data;
