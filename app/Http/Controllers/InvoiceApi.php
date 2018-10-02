@@ -118,7 +118,8 @@ class InvoiceApi extends Controller
                 'total',
                 'currency_id',
                 'file',
-                'submission_type'
+                'submission_type',
+                'lpo_variation_reason'
                 );
 
             $ftp = FTP::connection()->getDirListing();
@@ -154,6 +155,8 @@ class InvoiceApi extends Controller
                 $invoice->currency_id                       =   (int)       $form['currency_id'];
                 $invoice->received_at                       =   date('Y-m-d H:i:s');
                 $invoice->raised_at                         =   date('Y-m-d H:i:s');
+                if(!empty($form['lpo_variation_reason']))
+                $invoice->lpo_variation_reason = $form['lpo_variation_reason'];
 
                 $invoice->status_id                         =   $this->default_status;
 
@@ -169,8 +172,19 @@ class InvoiceApi extends Controller
                 $invoice->total                             =   (double)    $form['total'];
                 $invoice->currency_id                       =   (int)       $form['currency_id'];
                 $invoice->received_at                       =   date('Y-m-d H:i:s');
+                if(!empty($form['lpo_variation_reason']))
+                $invoice->lpo_variation_reason = $form['lpo_variation_reason'];
 
                 $invoice->status_id                         =   $this->default_log_status;
+
+                if(!empty($invoice->lpo_id)){
+                    $lpo = Lpo::find($invoice->lpo_id);
+                    if(!empty($lpo)){
+                        $invoice->expense_desc = $lpo->expense_desc;
+                        $invoice->expense_purpose = $lpo->expense_purpose;
+                        $invoice->project_manager_id = $lpo->project_manager_id;
+                    }
+                }
 
             }else if($form['submission_type']=='upload_logged'){
 
@@ -296,11 +310,10 @@ class InvoiceApi extends Controller
                 'id',
                 'raised_by_id',
                 'received_by_id',
+                'external_ref',
                 'expense_desc',
                 'expense_purpose',
-                'external_ref',
                 'invoice_date',
-                'payment_mode_id',
                 'lpo_id',
                 'supplier_id',
                 'payment_mode_id',
@@ -308,18 +321,13 @@ class InvoiceApi extends Controller
                 'total',
                 'currency_id',
                 'file',
-                'submission_type'
+                'submission_type',
+                'lpo_variation_reason'
                 );
 
-
-            // FTP::connection()->changeDir('/lpos');
-
             $ftp = FTP::connection()->getDirListing();
-
-            // print_r($form['file']);
-
+            
             $file = $form['file'];
-
 
             $DT = new \DateTime();
             $dt = $DT->createFromFormat('D M d Y H:i:s T +',$form['invoice_date']);
@@ -338,7 +346,9 @@ class InvoiceApi extends Controller
             $invoice->project_manager_id                =   (int)       $form['project_manager_id'];
             $invoice->total                             =   (double)    $form['total'];
             $invoice->currency_id                       =   (int)       $form['currency_id'];
-                
+            if(!empty($form['lpo_variation_reason']))
+                $invoice->lpo_variation_reason = $form['lpo_variation_reason'];    
+
             if($invoice->save()) {
 
                 $invoice->disableLogging(); //! Do not log the update again
