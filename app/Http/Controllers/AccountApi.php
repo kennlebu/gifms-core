@@ -90,8 +90,11 @@ class AccountApi extends Controller
             $account->account_format                   =         $form['account_format'];
             $account->status                           =         $form['status'];
             $account->account_type_id                  =  (int)  $form['account_type_id'];
-            if(!empty($form['view_mode'])) 
-            $account->view_mode = $form['view_mode'];
+            if(!empty($form['view_mode'])&&((int)$form['view_mode'])==1) 
+            $account->view_mode = 'public';
+            else if(!empty($form['view_mode'])&&((int)$form['view_mode'])==0){
+                $account->view_mode = '';
+            }
 
         if($account->save()) {
 
@@ -150,8 +153,11 @@ class AccountApi extends Controller
             $account->account_format                   =         $form['account_format'];
             $account->status                           =         $form['status'];
             $account->account_type_id                  =  (int)  $form['account_type_id'];
-            if(!empty($form['view_mode'])) 
-            $account->view_mode = $form['view_mode'];
+            if(!empty($form['view_mode'])&&((int)$form['view_mode'])==1) 
+            $account->view_mode = 'public';
+            else {
+                $account->view_mode = '';
+            }
 
         if($account->save()) {
 
@@ -366,7 +372,7 @@ class AccountApi extends Controller
         }
 
         // Show only public accounts unless specified
-        if(array_key_exists('view_mode', $input)){
+        if(array_key_exists('view_mode', $input) && $input['view_mode']=='all'){
             // Just skip over. You saw nothing
         }
         else{
