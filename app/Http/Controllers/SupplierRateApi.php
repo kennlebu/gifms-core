@@ -76,6 +76,8 @@ class SupplierRateApi extends Controller
         $rate->rate = $input['rate'];
         $rate->currency_id = (int) $input['currency_id'];
         $rate->vat = (int) $input['vat'];
+        $rate->daily_charge = (int) $input['daily_charge'];
+        $rate->unit = $input['unit'];
 
         if($rate->save()){
             return response()->json(['msg'=>"rate added"], 200,array(),JSON_PRETTY_PRINT);
@@ -106,6 +108,8 @@ class SupplierRateApi extends Controller
             $rate->rate = $input['rate'];
             $rate->currency_id = (int) $input['currency_id'];
             $rate->vat = (int) $input['vat'];
+            $rate->daily_charge = (int) $input['daily_charge'];
+            $rate->unit = $input['unit'];
     
             if($rate->save()){
                 return response()->json(['msg'=>"rate updated"], 200,array(),JSON_PRETTY_PRINT);

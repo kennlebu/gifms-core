@@ -87,6 +87,13 @@ class LPOItemApi extends Controller
                 $lpo->currency_id = $form['currency_id'];
                 $lpo->save();
             }
+            if(!empty($form['unit'])){
+                $lpo_item->qty_description = $form['qty'].' '.$form['unit'];                                // Get quantity description from
+            }                                                                                               // the quantity and the unit of 
+            if(!empty($form['no_of_days'])){                                                                // measure.
+                $lpo_item->no_of_days = $form['no_of_days'];
+                $lpo_item->qty_description = $lpo_item->qty_description.'; '.$form['no_of_days'].' days';   // Add the number of days to the
+            }                                                                                               // quantity description.
 
             if($lpo_item->save()) {
                 return Response()->json(array('success' => 'lpo quoatation added','lpo_item' => $lpo_item), 200);
@@ -143,16 +150,7 @@ class LPOItemApi extends Controller
         try{
 
 
-            $form = Request::only(
-                'id',
-                'lpo_id',
-                'item',
-                'item_description',
-                'qty',
-                'qty_description',
-                'unit_price',
-                'vat_charge'
-                );
+            $form = Request::all();
 
 
             $item = LpoItem::findOrFail($form['id']);
@@ -165,6 +163,16 @@ class LPOItemApi extends Controller
             $item->qty_description          =               $form['qty_description'];
             $item->unit_price               =               $form['unit_price'];
             $item->vat_charge               =               $form['vat_charge'];
+            
+            if(array_key_exists('lpo_type', $form) && $form['lpo_type']=='prenegotiated'){
+                $lpo = Lpo::findOrFail($form['lpo_id']);
+                $lpo->supplier_id = $form['supplier_id'];
+                $lpo->currency_id = $form['currency_id'];
+                $lpo->save();
+            }
+            if(!empty($form['no_of_days'])){
+                $lpo_item->no_of_days = $form['no_of_days'];
+            }
 
 
             if($item->save()) {
