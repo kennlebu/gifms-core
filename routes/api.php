@@ -5241,3 +5241,24 @@ Route::GET('/funds-request', 'FundsRequestApi@getFundsRequests')->middleware('jw
 Route::GET('/funds-request/{id}', 'FundsRequestApi@getFundsRequestById')->middleware('jwt.auth');
 Route::DELETE('/funds-request/{id}', 'FundsRequestApi@deleteFundsRequest')->middleware('jwt.auth');
 Route::PUT('/funds-request', 'FundsRequestApi@updateFundsRequest')->middleware('jwt.auth');
+
+
+/**
+* Activity routes
+*/
+Route::POST('/activity', 'ActivityApi@addActivity')->middleware('jwt.auth');
+Route::GET('/activities', 'ActivityApi@getActivities')->middleware('jwt.auth');
+Route::GET('/activity/{id}', 'ActivityApi@getActivityById')->middleware('jwt.auth');
+Route::DELETE('/activity/{id}', 'ActivityApi@deleteActivity')->middleware('jwt.auth');
+Route::PUT('/activity', 'ActivityApi@updateActivity')->middleware('jwt.auth');
+// Approvals
+Route::PATCH('activity/{activity_id}/approve', 'ActivityApi@approveActivity')->middleware('jwt.auth');
+Route::PATCH('activities/approve', 'ActivityApi@approveSeveralActivities')->middleware('jwt.auth');
+Route::PATCH('activity/{activity_id}/rejected', 'ActivityApi@rejectActivity')->middleware('jwt.auth');
+Route::PATCH('activity/{activity_id}/submit_for_approval', 'ActivityApi@submitActivityForApproval')->middleware('jwt.auth');
+// Statuses
+Route::POST('/activity_status', 'ActivityStatusApi@addActivityStatus')->middleware('jwt.auth');
+Route::PUT('/activity_status', 'ActivityStatusApi@updateActivityStatus')->middleware('jwt.auth');
+Route::DELETE('/activity_status/{activity_status_id}', 'ActivityStatusApi@deleteActivityStatus')->middleware('jwt.auth');
+Route::GET('/activity_status/{activity_status_id}', 'ActivityStatusApi@getActivityStatusById')->middleware('jwt.auth');
+Route::GET('/activity_statuses', 'ActivityStatusApi@getActivityStatuses')->middleware('jwt.auth');
