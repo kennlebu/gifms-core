@@ -27,5 +27,9 @@ class Activity extends BaseModel
     {
         return $this->belongsTo('App\Models\StaffModels\Staff','rejected_by_id');
     }
+    public function logs()
+    {
+        return $this->morphMany('App\Models\LogsModels\HistoryLog', 'subject')->orderBy('created_at','asc');
+    }
     
 }

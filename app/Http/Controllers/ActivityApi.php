@@ -290,7 +290,7 @@ class ActivityApi extends Controller
     public function append_relationships_objects($data = array()){
 
         foreach ($data as $key => $value) {
-            $activity = Activity::with('program', 'program.managers')->find($data[$key]['id']);
+            $activity = Activity::with('program', 'program.managers', 'logs')->find($data[$key]['id']);
             
             if(!empty($activity->program_id) && $activity->program_id!=0){
                 $data[$key]['program'] = $activity->program;
@@ -306,6 +306,8 @@ class ActivityApi extends Controller
                 $data[$key]['requested_by'] = $activity->requested_by;
             }
             else $data[$key]['requested_by'] = array("name"=>"N/A");
+
+            $data[$key]['logs'] = $activity->logs;
         }
 
         return $data;
