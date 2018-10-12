@@ -73,7 +73,7 @@ class ActivityApi extends Controller
         if(!empty($form['end_date']))
             $activity->end_date = date('Y-m-d', strtotime($form['end_date']));
             
-        $pm = ProgramManager::where('program_id', $form['program_id']);     
+        $pm = ProgramManager::where('program_id', $form['program_id'])->first(); ;     
         $activity->program_manager_id = $pm->program_manager_id;            
 
         if($activity->save()) {
@@ -104,7 +104,7 @@ class ActivityApi extends Controller
     public function getActivityById($activity_id)
     {
         try{
-            $response = Activity::findOrFail($activity_id);           
+            $response = Activity::with('requested_by','program.managers.program_manager','status','rejected_by')->findOrFail($activity_id);           
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
 
         }catch(Exception $e){
