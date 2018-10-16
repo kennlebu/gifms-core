@@ -222,15 +222,20 @@ class ActivityStatusApi extends Controller
                         "activities_count"=> Activity::where('requested_by_id',$this->current_user()->id)->count()
                       );
 
-                if ($user->hasRole('program-manager')){
-                    $response[]=array(
-                            "id"=> -3,
-                            "status"=> "Program Activities",
-                            "order_priority"=> 999,
-                            "display_color"=> "#49149c7a",
-                            "activities_count"=> Activity::where('program_manager_id',$this->current_user()->id)->count()
-                          );
-                }
+                $response[]=array(
+                        "id"=> -3,
+                        "status"=> "Program Activities",
+                        "order_priority"=> 999,
+                        "display_color"=> "#49149c7a",
+                        "activities_count"=> count(DB::table('activities')
+                            ->rightJoin('program_teams', 'program_teams.program_id', '=', 'activities.program_id')
+                            ->rightJoin('staff', 'staff.id', '=', 'program_teams.staff_id')
+                            ->where('staff.id', '=', $this->current_user()->id)
+                            ->where('activities.status_id', 3)
+                            ->whereNotNull('activities.id')
+                            ->groupBy('activities.id'))
+                        );
+
                 if ($user->hasRole([
                     'super-admin',
                     'admin',

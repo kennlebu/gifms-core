@@ -139,24 +139,25 @@ class ActivityApi extends Controller
             $status_ = (int) $input['status'];
 
             if($status_ >-1){
-                $qb->where('status_id', $input['status']);
-                $qb->where('requested_by_id',$this->current_user()->id);
+                $qb->where('activities.status_id', $input['status']);
+                $qb->where('activities.requested_by_id',$this->current_user()->id);
             }elseif ($status_==-1) {
-                $qb->where('requested_by_id',$this->current_user()->id);
+                $qb->where('activities.requested_by_id',$this->current_user()->id);
             }elseif ($status_==-2) {
                 
             }elseif ($status_==-3) {
-                $qb->where('program_manager_id',$this->current_user()->id);
+                $qb->where('activities.program_manager_id',$this->current_user()->id);
             }
         }
         
         //my program activities
-        if (array_key_exists('my_assigned', $input)&& $input['my_assigned'] = "true"&&(!$current_user->hasRole(['accountant','assistant-accountant','financial-controller','admin-manager']))) {
+        if (array_key_exists('my_assigned', $input)&& $input['my_assigned'] = "true"||(!$current_user->hasRole(['accountant','assistant-accountant','financial-controller','admin-manager']))) {
 
             $qb->select(DB::raw('activities.*'))
-                 ->rightJoin('program_teams', 'program_teams.id', '=', 'activities.program_id')
+                 ->rightJoin('program_teams', 'program_teams.program_id', '=', 'activities.program_id')
                  ->rightJoin('staff', 'staff.id', '=', 'program_teams.staff_id')
                  ->where('staff.id', '=', $current_user->id)
+                 ->where('activities.status_id', 3)
                  ->whereNotNull('activities.id')
                  ->groupBy('activities.id');
         }
@@ -180,8 +181,8 @@ class ActivityApi extends Controller
         if(array_key_exists('my_approvables', $input)){
 
             if($current_user->hasRole('program-manager')){               
-                $qb->where('status_id',2); 
-                $qb->where('program_manager_id', $current_user->id);
+                $qb->where('activities.status_id',2); 
+                $qb->where('activities.program_manager_id', $current_user->id);
             }
             else{ 
                 $qb->where('id',0);
@@ -211,7 +212,7 @@ class ActivityApi extends Controller
             });
 
             $sql = Activity::bind_presql($qb->toSql(),$qb->getBindings());
-            $sql = str_replace("*"," count(*) AS count ", $sql);
+            $sql = str_replace("activities.*"," count(*) AS count ", $sql);
             $dt = json_decode(json_encode(DB::select($sql)), true);
 
             $records_filtered = (int) $dt[0]['count'];
