@@ -27,7 +27,7 @@ class Allocation extends BaseModel
     {
         return $this->belongsTo('App\Models\AccountingModels\Account');
     }   
-    public function activity()
+    public function program_activity()
     {
         return $this->belongsTo('App\Models\ActivityModels\Activity','activity_id');
     }

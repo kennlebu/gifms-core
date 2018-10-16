@@ -128,7 +128,7 @@ class Invoice extends BaseModel
         return $this->morphMany('App\Models\LogsModels\HistoryLog', 'subject')->orderBy('created_at','asc');
     }
        
-    public function activity()
+    public function program_activity()
     {
         return $this->belongsTo('App\Models\ActivityModels\Activity','activity_id');
     }
