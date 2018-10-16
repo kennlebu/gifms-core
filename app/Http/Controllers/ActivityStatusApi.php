@@ -233,7 +233,8 @@ class ActivityStatusApi extends Controller
                             ->where('staff.id', '=', $this->current_user()->id)
                             ->where('activities.status_id', 3)
                             ->whereNotNull('activities.id')
-                            ->groupBy('activities.id'))
+                            ->groupBy('activities.id')
+                            ->get())
                         );
 
                 if ($user->hasRole([
