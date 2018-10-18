@@ -5262,3 +5262,32 @@ Route::PUT('/activity_status', 'ActivityStatusApi@updateActivityStatus')->middle
 Route::DELETE('/activity_status/{activity_status_id}', 'ActivityStatusApi@deleteActivityStatus')->middleware('jwt.auth');
 Route::GET('/activity_status/{activity_status_id}', 'ActivityStatusApi@getActivityStatusById')->middleware('jwt.auth');
 Route::GET('/activity_statuses', 'ActivityStatusApi@getActivityStatuses')->middleware('jwt.auth');
+
+
+
+/**
+ * Fixed assets routes
+ */
+Route::POST('/asset', 'FixedAssetsApi@addAsset')->middleware('jwt.auth');
+Route::GET('/assets', 'FixedAssetsApi@assetsGet')->middleware('jwt.auth');
+Route::GET('/asset/{id}', 'FixedAssetsApi@getAssetById')->middleware('jwt.auth');
+Route::DELETE('/asset/{id}', 'FixedAssetsApi@deleteAsset')->middleware('jwt.auth');
+Route::PUT('/asset', 'FixedAssetsApi@updateAsset')->middleware('jwt.auth');
+// Locations
+Route::POST('/asset-location', 'FixedAssetsApi@addAssetLocation')->middleware('jwt.auth');
+Route::GET('/asset-locations', 'FixedAssetsApi@assetLocationsGet')->middleware('jwt.auth');
+Route::GET('/asset-location/{id}', 'FixedAssetsApi@getAssetLocationById')->middleware('jwt.auth');
+Route::DELETE('/asset-location/{id}', 'FixedAssetsApi@deleteAssetLocation')->middleware('jwt.auth');
+Route::PUT('/asset-location', 'FixedAssetsApi@updateAssetLocation')->middleware('jwt.auth');
+// Categories
+Route::POST('/asset-category', 'FixedAssetsApi@addAssetCategory')->middleware('jwt.auth');
+Route::GET('/asset-categories', 'FixedAssetsApi@assetCategoriesGet')->middleware('jwt.auth');
+Route::GET('/asset-category/{id}', 'FixedAssetsApi@getAssetCategoryById')->middleware('jwt.auth');
+Route::DELETE('/asset-category/{id}', 'FixedAssetsApi@deleteAssetCategory')->middleware('jwt.auth');
+Route::PUT('/asset-category', 'FixedAssetsApi@updateAssetCategory')->middleware('jwt.auth');
+// Statuses
+Route::POST('/asset-status', 'FixedAssetsApi@addAssetStatus')->middleware('jwt.auth');
+Route::GET('/asset-statuses', 'FixedAssetsApi@assetStatusesGet')->middleware('jwt.auth');
+Route::GET('/asset-status/{id}', 'FixedAssetsApi@getAssetStatusById')->middleware('jwt.auth');
+Route::DELETE('/asset-status/{id}', 'FixedAssetsApi@deleteAssetStatus')->middleware('jwt.auth');
+Route::PUT('/asset-status', 'FixedAssetsApi@updateAssetStatus')->middleware('jwt.auth');
