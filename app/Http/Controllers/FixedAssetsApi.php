@@ -29,7 +29,63 @@ class FixedAssetsApi extends Controller
      */
     public function assetStatusesGet()
     {
-        $response = FixedAssetStatus::all();
+        $response;
+        $response_dt;
+
+        $total_records          = FixedAssetStatus::count();
+        $records_filtered       = 0;
+        $input = Request::all();
+        $asset_status = FixedAssetStatus::query();
+
+        //ordering
+        if(array_key_exists('order_by', $input)&&$input['order_by']!=''){
+            $order_direction     = "asc";
+            $order_column_name   = $input['order_by'];
+            if(array_key_exists('order_dir', $input)&&$input['order_dir']!=''){                
+                $order_direction = $input['order_dir'];
+            }
+
+            $asset_status = $asset_status->orderBy($order_column_name, $order_direction);
+        }
+
+        //limit
+        if(array_key_exists('limit', $input)){
+            $asset_status = $asset_status->limit($input['limit']);
+        }
+
+        if(array_key_exists('datatables', $input)){
+
+            $records_filtered = $asset_status->count();
+
+            //ordering
+            $order_column_id    = (int) $input['order'][0]['column'];
+            $order_column_name  = $input['columns'][$order_column_id]['order_by'];
+            $order_direction    = $input['order'][0]['dir'];
+
+            if($order_column_name!=''){
+                $asset_status = $asset_status->orderBy($order_column_name, $order_direction);
+            }
+
+            //limit $ offset
+            if((int)$input['start']!= 0 ){
+                $response_dt = $asset_status->limit($input['length'])->offset($input['start']);
+            }
+            else{
+                $asset_status = $asset_status->limit($input['length']);
+            }
+
+            $response_dt = $asset_status->get();
+
+            $response = FixedAssetStatus::arr_to_dt_response( 
+                $response_dt, $input['draw'],
+                $total_records,
+                $records_filtered
+                );
+        }
+        else{
+            $response = $asset_status->get();
+        }
+
         return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
     }
 
@@ -39,9 +95,9 @@ class FixedAssetsApi extends Controller
 
         $status = new FixedAssetStatus;
         $status->status = $input['status'];
-        $status->next_status_id = $input['next_status_id'];
-        $status->order_priority = $input['order_priority'];
-        $status->display_color = $input['display_color'];
+        if(!empty($input['next_status_id'])) $status->next_status_id = $input['next_status_id'];
+        if(!empty($input['order_priority'])) $status->order_priority = $input['order_priority'];
+        if(!empty($input['display_color'])) $status->display_color = $input['display_color'];
 
         if($status->save()) {
             return Response()->json(array('msg' => 'Success: status added','status' => $status), 200);
@@ -54,9 +110,9 @@ class FixedAssetsApi extends Controller
 
         $status = FixedAssetStatus::find($input['id']);
         $status->status = $input['status'];
-        $status->next_status_id = $input['next_status_id'];
-        $status->order_priority = $input['order_priority'];
-        $status->display_color = $input['display_color'];
+        if(!empty($input['next_status_id'])) $status->next_status_id = $input['next_status_id'];
+        if(!empty($input['order_priority'])) $status->order_priority = $input['order_priority'];
+        if(!empty($input['display_color'])) $status->display_color = $input['display_color'];
 
         if($status->save()) {
             return Response()->json(array('msg' => 'Success: status updated','status' => $status), 200);
@@ -316,7 +372,64 @@ class FixedAssetsApi extends Controller
      */
     public function assetLocationsGet()
     {
-        $response = FixedAssetLocation::all();
+        $response;
+        $response_dt;
+
+        $total_records          = FixedAssetLocation::count();
+        $records_filtered       = 0;
+
+        $input = Request::all(); 
+        $asset_location = FixedAssetLocation::query();
+
+        //ordering
+        if(array_key_exists('order_by', $input)&&$input['order_by']!=''){
+            $order_direction     = "asc";
+            $order_column_name   = $input['order_by'];
+            if(array_key_exists('order_dir', $input)&&$input['order_dir']!=''){                
+                $order_direction = $input['order_dir'];
+            }
+
+            $asset_location = $asset_location->orderBy($order_column_name, $order_direction);
+        }
+
+        //limit
+        if(array_key_exists('limit', $input)){
+            $asset_location = $asset_location->limit($input['limit']);
+        }
+
+        if(array_key_exists('datatables', $input)){
+
+            $records_filtered = $asset_location->count();
+
+            //ordering
+            $order_column_id    = (int) $input['order'][0]['column'];
+            $order_column_name  = $input['columns'][$order_column_id]['order_by'];
+            $order_direction    = $input['order'][0]['dir'];
+
+            if($order_column_name!=''){
+                $asset_location = $asset_location->orderBy($order_column_name, $order_direction);
+            }
+
+            //limit $ offset
+            if((int)$input['start']!= 0 ){
+                $response_dt = $asset_location->limit($input['length'])->offset($input['start']);
+            }
+            else{
+                $asset_location = $asset_location->limit($input['length']);
+            }
+
+            $response_dt = $asset_location->get();
+
+            $response = FixedAssetLocation::arr_to_dt_response( 
+                $response_dt, $input['draw'],
+                $total_records,
+                $records_filtered
+                );
+        }
+        else{
+            $response = $asset_location->get();
+        }
+
         return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
     }
 
@@ -401,7 +514,64 @@ class FixedAssetsApi extends Controller
      */
     public function assetCategoriesGet()
     {
-        $response = FixedAssetCategory::all();
+        $response;
+        $response_dt;
+
+        $total_records          = FixedAssetCategory::count();
+        $records_filtered       = 0;
+
+        $input = Request::all(); 
+        $asset_category = FixedAssetCategory::query();
+
+        //ordering
+        if(array_key_exists('order_by', $input)&&$input['order_by']!=''){
+            $order_direction     = "asc";
+            $order_column_name   = $input['order_by'];
+            if(array_key_exists('order_dir', $input)&&$input['order_dir']!=''){                
+                $order_direction = $input['order_dir'];
+            }
+
+            $asset_category = $asset_category->orderBy($order_column_name, $order_direction);
+        }
+
+        //limit
+        if(array_key_exists('limit', $input)){
+            $asset_category = $asset_category->limit($input['limit']);
+        }
+
+        if(array_key_exists('datatables', $input)){
+
+            $records_filtered = $asset_category->count();
+
+            //ordering
+            $order_column_id    = (int) $input['order'][0]['column'];
+            $order_column_name  = $input['columns'][$order_column_id]['order_by'];
+            $order_direction    = $input['order'][0]['dir'];
+
+            if($order_column_name!=''){
+                $asset_category = $asset_category->orderBy($order_column_name, $order_direction);
+            }
+
+            //limit $ offset
+            if((int)$input['start']!= 0 ){
+                $response_dt = $asset_category->limit($input['length'])->offset($input['start']);
+            }
+            else{
+                $asset_category = $asset_category->limit($input['length']);
+            }
+
+            $response_dt = $asset_category->get();
+
+            $response = FixedAssetCategory::arr_to_dt_response( 
+                $response_dt, $input['draw'],
+                $total_records,
+                $records_filtered
+                );
+        }
+        else{
+            $response = $asset_category->get();
+        }
+
         return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
     }
 
