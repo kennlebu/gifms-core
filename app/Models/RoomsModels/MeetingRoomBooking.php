@@ -8,7 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\BaseModels\BaseModel;
 
-class MeetingRoom extends BaseModel
+class MeetingRoomBooking extends BaseModel
 {
     
     use SoftDeletes;
