@@ -270,14 +270,14 @@ class FixedAssetsApi extends Controller
 
         $asset = new FixedAsset;
         $asset->asset_name = $input['asset_name'];
-        if(!empty($input['purchase_date']))     $asset->purchase_date = $input['purchase_date'];
+        if(!empty($input['purchase_date']))     $asset->purchase_date = date('Y-m-d', strtotime($input['purchase_date']));
         if(!empty($input['cost']))              $asset->cost = $input['cost'];
         if(!empty($input['donated_value']))     $asset->donated_value = $input['donated_value'];
-        if(!empty($input['date_donated']))      $asset->date_donated = $input['date_donated'];
+        if(!empty($input['date_donated']))      $asset->date_donated = date('Y-m-d', strtotime($input['date_donated']));
         if(!empty($input['obsolete_value']))    $asset->obsolete_value = $input['obsolete_value'];
-        if(!empty($input['obsolescence_date'])) $asset->obsolescence_date = $input['obsolescence_date'];
+        if(!empty($input['obsolescence_date'])) $asset->obsolescence_date = date('Y-m-d', strtotime($input['obsolescence_date']));
         if(!empty($input['scrapped_value']))    $asset->scrapped_value = $input['scrapped_value'];
-        if(!empty($input['date_scrapped']))     $asset->date_scrapped = $input['date_scrapped'];
+        if(!empty($input['date_scrapped']))     $asset->date_scrapped = date('Y-m-d', strtotime($input['date_scrapped']));
         if(!empty($input['insured_value']))     $asset->insured_value = $input['insured_value'];
         if(!empty($input['status_id']))         $asset->status_id = $input['status_id'];
         if(!empty($input['location_id']))       $asset->asset_location_id = $input['location_id'];
