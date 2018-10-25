@@ -44,8 +44,17 @@ class RoomsApi extends Controller
 
     public function getRooms(){
         try{
-            $rooms = MeetingRoom::all();
-            return response()->json($rooms, 200);
+            $input = Request::all();
+            $rooms = MeetingRoom::query();
+
+            // not booked
+            if(array_key_exists('not_booked', $input)){
+                $from = date('Y-m-d', strtotime($input['from_date'])).' '.$input['from_time'].':00';
+                $to = date('Y-m-d', strtotime($input['to_date'])).' '.$input['to_time'].':00';
+            }
+
+            $response = $rooms->get();
+            return response()->json($response, 200);
         }
         catch(\Exception $e){
             return response()->json(['error'=>'something went wrong', 'msg'=>$e->getMessage()], 500);
@@ -110,16 +119,18 @@ class RoomsApi extends Controller
                 $available_rooms = MeetingRoom::all();
             }
             else{
-                // $available_rooms = MeetingRoom::whereHas('bookings', function ($query) use ($from, $to){
-                //     $query->whereNotBetween('from', [$from, $to])->orWhereNull('from');
-                //     $query->whereNotBetween('to', [$from, $to])->orWhereNull('to');
-                //     // $query->whereNotBetween('from', [$from, $to]);
-                //     // $query->whereNotBetween('to', [$from, $to]);
-                // })->where('capacity', '<=', $input['capacity'])->get();
-                $sql = MeetingRoom::where('capacity', '<=', $input['capacity'])->toSql();
+                $available_rooms = MeetingRoom::whereDoesntHave('bookings', function ($query) use ($input, $from, $to){
+                    $query->whereBetween(DB::raw("cast(CONCAT(`from_date`, ' ', `from_time`) as datetime)"), [$from, $to]);
+                    $query->whereBetween(DB::raw("cast(CONCAT(`from_date`, ' ', `from_time`) as datetime)"), [$from, $to]);
+                    // $query->where('from_date', $input['from_date']);
+                    // $query->where('to_date', $input['to_date']);
+                    // $query->whereNotBetween('from_time', [$input['from_time'], $input['to_time']]);
+                    // $query->whereNotBetween('to_time', [$input['from_time'], $input['to_time']]);
+                })->where('capacity', '>=', $input['capacity'])->get();
+                // $sql = MeetingRoom::where('capacity', '<=', $input['capacity'])->toSql();
                 // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , PHP_EOL.$sql , FILE_APPEND);
 
-                $available_rooms = MeetingRoom::where('capacity', '>=', $input['capacity'])->get();
+                // $available_rooms = MeetingRoom::where('capacity', '>=', $input['capacity'])->get();
             }
             
 
@@ -140,14 +151,17 @@ class RoomsApi extends Controller
     public function addRoomBooking(){
         $input = Request::all();
         try{
+            $user = JWTAuth::parseToken()->authenticate();
 
             $booking = new MeetingRoomBooking;
             $booking->room_id = $input['room_id'];
-            $booking->booked_by_id = $input['booked_by_id'];
+            $booking->booked_by_id = $user->id;
             $booking->reason = $input['reason'];
-            $booking->reason_desc = $input['reason_desc'];
-            $booking->from = $input['from'];
-            $booking->to = $input['to'];
+            if(!empty($input['reason_desc'])) $booking->reason_desc = $input['reason_desc'];
+            $booking->from_date = date('Y-m-d', strtotime($input['from_date']));
+            $booking->to_date = date('Y-m-d', strtotime($input['to_date']));
+            $booking->from_time = $input['from_time'].':00';
+            $booking->to_time = $input['to_time'].':00';
             $booking->save();
 
             return response()->json(array('msg' => 'Room booked'), 200);
@@ -183,7 +197,8 @@ class RoomsApi extends Controller
                 $room_bookings = $room_bookings->where('to', $input['to']);
             }
 
-            return response()->json($room_bookings, 200);
+            $response = $room_bookings->get();
+            return response()->json($response, 200);
         }
         catch(\Exception $e){
             return response()->json(['error'=>'something went wrong', 'msg'=>$e->getMessage()], 500);
@@ -212,16 +227,18 @@ class RoomsApi extends Controller
 
     }
 
-    public function editRoomBooking($booking_id){
+    public function editRoomBooking(){
         try{
-            $booking = MeetingRoomBooking::findOrFail($booking_id);
+            $input = Request::all();
+            $booking = MeetingRoomBooking::findOrFail($input['id']);
 
             $booking->room_id = $input['room_id'];
-            $booking->booked_by_id = $input['booked_by_id'];
             $booking->reason = $input['reason'];
-            $booking->reason_desc = $input['reason_desc'];
-            $booking->from = $input['from'];
-            $booking->to = $input['to'];
+            if(!empty($input['reason_desc'])) $booking->reason_desc = $input['reason_desc'];
+            $booking->from_date = date('Y-m-d', strtotime($input['from_date']));
+            $booking->to_date = date('Y-m-d', strtotime($input['to_date']));
+            $booking->from_time = $input['from_time'];
+            $booking->to_time = $input['to_time'];
 
             if($booking->save()){
                 return Response()->json(array('msg' => 'Booking updated','resource' => $booking), 200);
