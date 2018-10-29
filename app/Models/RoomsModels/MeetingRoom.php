@@ -14,10 +14,10 @@ class MeetingRoom extends BaseModel
     use SoftDeletes;    
     use Notifiable;
       
-    protected $hidden = ['bookings'];
+    // protected $hidden = ['bookings'];
 
     public function bookings()
     {
-        return $this->hasMany('App\Models\RoomsModels\MeetingRoomBooking','room_id');
+        return $this->hasMany('App\Models\RoomsModels\MeetingRoomBooking','room_id')->orderBy('from_date', 'asc');
     }
 }

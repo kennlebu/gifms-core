@@ -5231,6 +5231,17 @@ Route::POST('/resources/edit', 'ResourcesApi@editResource')->middleware('jwt.aut
  * Meeting/Conference rooms routes
  */
 Route::POST('/rooms/search_available', 'RoomsApi@searchAvailable')->middleware('jwt.auth');
+Route::POST('/room', 'RoomsApi@addRoom')->middleware('jwt.auth');
+Route::GET('/rooms', 'RoomsApi@getRooms')->middleware('jwt.auth');
+Route::GET('/room/{id}', 'RoomsApi@getRoomById')->middleware('jwt.auth');
+Route::DELETE('/room/{id}', 'RoomsApi@deleteRoom')->middleware('jwt.auth');
+Route::PUT('/room', 'RoomsApi@editRoom')->middleware('jwt.auth');
+// Bookings
+Route::POST('/room-booking', 'RoomsApi@addRoomBooking')->middleware('jwt.auth');
+Route::GET('/room-bookings', 'RoomsApi@getRoomBookings')->middleware('jwt.auth');
+Route::GET('/room-booking/{id}', 'RoomsApi@getRoomBookingById')->middleware('jwt.auth');
+Route::DELETE('/room-booking/{id}', 'RoomsApi@deleteRoomBooking')->middleware('jwt.auth');
+Route::PUT('/room-booking', 'RoomsApi@editRoomBooking')->middleware('jwt.auth');
 
 
 /**
