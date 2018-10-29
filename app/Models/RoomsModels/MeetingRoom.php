@@ -18,6 +18,6 @@ class MeetingRoom extends BaseModel
 
     public function bookings()
     {
-        return $this->hasMany('App\Models\RoomsModels\MeetingRoomBooking','room_id')->orderBy('from', 'asc');
+        return $this->hasMany('App\Models\RoomsModels\MeetingRoomBooking','room_id')->orderBy('from_date', 'asc');
     }
 }

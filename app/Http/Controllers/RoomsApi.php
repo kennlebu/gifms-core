@@ -119,9 +119,9 @@ class RoomsApi extends Controller
                 $available_rooms = MeetingRoom::all();
             }
             else{
-                $available_rooms = MeetingRoom::whereDoesntHave('bookings', function ($query) use ($input, $from, $to){
+                $available_rooms = MeetingRoom::with('bookings')->whereDoesntHave('bookings', function ($query) use ($input, $from, $to){
                     $query->whereBetween(DB::raw("cast(CONCAT(`from_date`, ' ', `from_time`) as datetime)"), [$from, $to]);
-                    $query->whereBetween(DB::raw("cast(CONCAT(`from_date`, ' ', `from_time`) as datetime)"), [$from, $to]);
+                    $query->orwhereBetween(DB::raw("cast(CONCAT(`to_date`, ' ', `to_time`) as datetime)"), [$from, $to]);
                     // $query->where('from_date', $input['from_date']);
                     // $query->where('to_date', $input['to_date']);
                     // $query->whereNotBetween('from_time', [$input['from_time'], $input['to_time']]);
@@ -160,8 +160,8 @@ class RoomsApi extends Controller
             if(!empty($input['reason_desc'])) $booking->reason_desc = $input['reason_desc'];
             $booking->from_date = date('Y-m-d', strtotime($input['from_date']));
             $booking->to_date = date('Y-m-d', strtotime($input['to_date']));
-            $booking->from_time = $input['from_time'].':00';
-            $booking->to_time = $input['to_time'].':00';
+            $booking->from_time = $input['from_time'];
+            $booking->to_time = $input['to_time'];
             $booking->save();
 
             return response()->json(array('msg' => 'Room booked'), 200);
@@ -217,7 +217,7 @@ class RoomsApi extends Controller
 
     public function deleteRoomBooking($booking_id)
     {
-        $deleted = MeetingRoom::destroy($booking_id);
+        $deleted = MeetingRoomBooking::destroy($booking_id);
 
         if($deleted){
             return response()->json(['msg'=>"Booking removed"], 200,array(),JSON_PRETTY_PRINT);
