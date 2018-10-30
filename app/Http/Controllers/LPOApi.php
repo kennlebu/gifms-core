@@ -102,8 +102,6 @@ class LPOApi extends Controller
     */
     public function add()
     {
-        $input = Request::all();
-
         $form = Request::all();
 
         try{
@@ -128,10 +126,11 @@ class LPOApi extends Controller
             if(!empty($form['lpo_type'])){
                 $lpo->lpo_type = $form['lpo_type'];
             }
+            if(!empty($form['program_activity_id'])) 
+            $lpo->program_activity_id = $form['program_activity_id'];
 
             $user = JWTAuth::parseToken()->authenticate();
             $lpo->request_action_by_id            =   (int)   $user->id;
-
 
 
             if($lpo->save()) {
@@ -148,7 +147,6 @@ class LPOApi extends Controller
             }
 
         }catch (JWTException $e){
-
             return response()->json(['error'=>'something went wrong'], 500);
 
         }
@@ -213,7 +211,7 @@ class LPOApi extends Controller
             if(!empty($form['currency_id'])) 
             $lpo->currency_id                       =   (int)   $form['currency_id'];
             $lpo->project_manager_id                =   (int)   $form['project_manager_id'];
-            if((int) $form['preffered_quotation_id'] != 0)
+            if(!empty($form['preffered_quotation_id']) && (int) $form['preffered_quotation_id'] != 0)
             $lpo->preffered_quotation_id            =   (int)   $form['preffered_quotation_id'];
             if(!empty($form['quote_exempt_explanation']))
             $lpo->quote_exempt_explanation = $form['quote_exempt_explanation'];
@@ -221,8 +219,8 @@ class LPOApi extends Controller
             $lpo->quote_exempt_details = $form['quote_exempt_details'];
             if(!empty($form['expensive_quotation_reason']))
             $lpo->expensive_quotation_reason = $form['expensive_quotation_reason'];
-
-
+            if(!empty($form['program_activity_id'])) 
+            $lpo->program_activity_id = $form['program_activity_id'];
 
         if($lpo->save()) {
 
@@ -742,7 +740,8 @@ class LPOApi extends Controller
                                             'terms',
                                             'approvals',
                                             'logs',
-                                            'deliveries'
+                                            'deliveries',
+                                            'program_activity'
                                 )->findOrFail($lpo_id);
 
 
@@ -1349,10 +1348,11 @@ class LPOApi extends Controller
             $data[$key]['approvals']                = $lpo->approvals;
             $data[$key]['deliveries']               = $lpo->deliveries;
             $data[$key]['totals']                   = $lpo->totals;
+            $data[$key]['program_activity']         = $lpo->program_activity;
 
             if(!empty($lpo->preffered_quotation_id) && !empty($lpo->preffered_quotation->supplier_id)){
                 if($lpo->preffered_quotation_id > 0 && $lpo->preffered_quotation->supplier_id > 0 ){
-                    $data[$key]['preffered_quotation']['supplier']      = $lpo->preffered_quotation->supplier;
+                    $data[$key]['preffered_quotation']['supplier'] = $lpo->preffered_quotation->supplier;
                 }
             }
         }
@@ -1417,6 +1417,9 @@ class LPOApi extends Controller
             }
             if($data[$key]["preffered_quotation"]==null){
                 $data[$key]["preffered_quotation"] = array("supplier"=>array("supplier_name"=>"N/A"));
+            }
+            if($data[$key]["program_activity"]==null){
+                $data[$key]["program_activity"] = array("program_activity"=>array("title"=>"N/A", "description"=>"N/A"));
             }
         }
 

@@ -130,7 +130,7 @@ class Invoice extends BaseModel
        
     public function program_activity()
     {
-        return $this->belongsTo('App\Models\ActivityModels\Activity','activity_id');
+        return $this->belongsTo('App\Models\ActivityModels\Activity','program_activity_id');
     }
 
 

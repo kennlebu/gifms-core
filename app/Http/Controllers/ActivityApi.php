@@ -160,24 +160,18 @@ class ActivityApi extends Controller
                  ->where('activities.status_id', 3)
                  ->whereNotNull('activities.id')
                  ->groupBy('activities.id');
+
+            if($current_user->hasRole('program-manager')){
+                $qb->where('program_manager_id', $current_user->id);
+            }
         }
 
         //my_pm_assigned
         if(array_key_exists('my_pm_assigned', $input)&& $input['my_pm_assigned'] = "true"){
-
-
-            $qb->select(DB::raw('activities.*'))
-                //  ->rightJoin('programs', 'programs.id', '=', 'activities.program_id')
-                //  ->rightJoin('program_managers', 'program_managers.program_id', '=', 'programs.id')
-                //  ->rightJoin('staff', 'staff.id', '=', 'program_managers.program_manager_id')
-                //  ->where('staff.id', '=', $current_user->id)
-                //  ->whereNotNull('activities.id')
-                //  ->groupBy('activities.id');
-                    ->where('program_manager_id', $current_user->id);
+            $qb->select(DB::raw('activities.*'))->where('program_manager_id', $current_user->id);
         }
 
         // my approvables
-        // $app_stat = $this->approvable_statuses;
         if(array_key_exists('my_approvables', $input)){
 
             if($current_user->hasRole('program-manager')){               
@@ -333,8 +327,6 @@ class ActivityApi extends Controller
             $activity->status_id = $activity->status->next_status_id;
 
             if($activity->save()) {
-
-                $activity   = Activity::findOrFail($activity_id);
 
                 $approval = new Approval;
 

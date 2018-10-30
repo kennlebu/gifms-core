@@ -119,7 +119,8 @@ class InvoiceApi extends Controller
                 'currency_id',
                 'file',
                 'submission_type',
-                'lpo_variation_reason'
+                'lpo_variation_reason',
+                'program_activity_id'
                 );
 
             $ftp = FTP::connection()->getDirListing();
@@ -157,6 +158,8 @@ class InvoiceApi extends Controller
                 $invoice->raised_at                         =   date('Y-m-d H:i:s');
                 if(!empty($form['lpo_variation_reason']))
                 $invoice->lpo_variation_reason = $form['lpo_variation_reason'];
+                if(!empty($form['program_activity_id']))
+                $invoice->program_activity_id = $form['program_activity_id'];
 
                 $invoice->status_id                         =   $this->default_status;
 
@@ -174,6 +177,8 @@ class InvoiceApi extends Controller
                 $invoice->received_at                       =   date('Y-m-d H:i:s');
                 if(!empty($form['lpo_variation_reason']))
                 $invoice->lpo_variation_reason = $form['lpo_variation_reason'];
+                if(!empty($form['program_activity_id']))
+                $invoice->program_activity_id = $form['program_activity_id'];
 
                 $invoice->status_id                         =   $this->default_log_status;
 
@@ -201,7 +206,8 @@ class InvoiceApi extends Controller
                                         'approvals',
                                         'allocations',
                                         'vouchers',
-                                        'comments'
+                                        'comments',
+                                        'program_activity'
                                     )->find((int) $form['id']);
 
                 $invoice->raised_by_id                      =   (int)       $form['raised_by_id'];
@@ -322,7 +328,8 @@ class InvoiceApi extends Controller
                 'currency_id',
                 'file',
                 'submission_type',
-                'lpo_variation_reason'
+                'lpo_variation_reason',
+                'program_activity_id'
                 );
 
             $ftp = FTP::connection()->getDirListing();
@@ -348,6 +355,8 @@ class InvoiceApi extends Controller
             $invoice->currency_id                       =   (int)       $form['currency_id'];
             if(!empty($form['lpo_variation_reason']))
                 $invoice->lpo_variation_reason = $form['lpo_variation_reason'];    
+            if(!empty($form['program_activity_id']))
+                $invoice->program_activity_id = $form['program_activity_id'];
 
             if($invoice->save()) {
 
@@ -487,7 +496,8 @@ class InvoiceApi extends Controller
                                         'allocations',
                                         'logs',
                                         'vouchers',
-                                        'comments'
+                                        'comments',
+                                        'program_activity'
                                     )->findOrFail($invoice_id);
 
 
@@ -1410,6 +1420,7 @@ class InvoiceApi extends Controller
             $data[$key]['logs']                  = $invoice->logs;
             $data[$key]['vouchers']                     = $invoice->vouchers;
             $data[$key]['comments']                     = $invoice->comments;
+            $data[$key]['program_activity']             = $invoice->program_activity;
 
             foreach ($invoice->allocations as $key1 => $value1) {
                 $project = Project::find((int)$value1['project_id']);
@@ -1451,45 +1462,35 @@ class InvoiceApi extends Controller
 
 
             if($value["raised_by"]==null){
-                $data[$key]['raised_by'] = array("full_name"=>"N/A");
-                
+                $data[$key]['raised_by'] = array("full_name"=>"N/A");                
             }
             if($value["received_by"]==null){
-                $data[$key]['received_by'] = array("full_name"=>"N/A");
-                
+                $data[$key]['received_by'] = array("full_name"=>"N/A");                
             }
             if($value["raise_action_by"]==null){
-                $data[$key]['raise_action_by'] = array("full_name"=>"N/A");
-                
+                $data[$key]['raise_action_by'] = array("full_name"=>"N/A");                
             }
-            // if($value["project"]==null){
-            //     $data[$key]['project'] = array("project_name"=>"N/A");
-                
-            // }
             if($value["status"]==null){
-                $data[$key]['status'] = array("invoice_status"=>"N/A");
-                
+                $data[$key]['status'] = array("invoice_status"=>"N/A");                
             }
             if($value["project_manager"]==null){
-                $data[$key]['project_manager'] = array("full_name"=>"N/A");
-                
+                $data[$key]['project_manager'] = array("full_name"=>"N/A");                
             }
             if($value["supplier"]==null){
-                $data[$key]['supplier'] = array("supplier_name"=>"N/A");
-                
+                $data[$key]['supplier'] = array("supplier_name"=>"N/A");                
             }
             if($value["rejected_by"]==null){
-                $data[$key]['rejected_by'] = array("full_name"=>"N/A");
-                
+                $data[$key]['rejected_by'] = array("full_name"=>"N/A");                
             }
             if($data[$key]["currency"]==null){
                 $data[$key]["currency"] = array("currency_name"=>"N/A");
             }
+            if($data[$key]["program_activity"]==null){
+                $data[$key]["program_activity"] = array("program_activity"=>array("title"=>"N/A", "description"=>"N/A"));
+            }
         }
 
         return $data;
-
-
     }
 
         /**
