@@ -47,13 +47,84 @@ class RoomsApi extends Controller
             $input = Request::all();
             $rooms = MeetingRoom::query();
 
+            $response;
+            $response_dt;
+
+            $total_records          = $rooms->count();
+            $records_filtered       = 0;
+
+            //searching
+            if(array_key_exists('searchval', $input)){
+                $rooms = $rooms->where(function ($query) use ($input) {                    
+                    $query->orWhere('name','like', '\'%' . $input['searchval']. '%\'');
+                    $query->orWhere('capacity','like', '\'%' . $input['searchval']. '%\'');
+                });
+
+                $dt = $rooms->get();
+
+                $records_filtered = $rooms->count();
+            }
+
+            //ordering
+            if(array_key_exists('order_by', $input)&&$input['order_by']!=''){
+                $order_direction     = "asc";
+                $order_column_name   = $input['order_by'];
+                if(array_key_exists('order_dir', $input)&&$input['order_dir']!=''){                
+                    $order_direction = $input['order_dir'];
+                }
+
+                $rooms = $rooms->orderBy($order_column_name, $order_direction);
+            }
+
+            //limit
+            if(array_key_exists('limit', $input)){
+                $rooms = $rooms->limit($input['limit']);
+            }
+
             // not booked
             if(array_key_exists('not_booked', $input)){
                 $from = date('Y-m-d', strtotime($input['from_date'])).' '.$input['from_time'].':00';
                 $to = date('Y-m-d', strtotime($input['to_date'])).' '.$input['to_time'].':00';
             }
 
-            $response = $rooms->get();
+            if(array_key_exists('datatables', $input)){
+
+                //searching
+                // $rooms = $rooms->where(function ($query) use ($input) {                    
+                //     $query->orWhere('name','like', '\'%' . $input['search']['value']. '%\'');
+                //     $query->orWhere('capacity','like', '\'%' . $input['search']['value']. '%\'');  
+                // });
+  
+                $records_filtered = $rooms->count();    
+    
+                //ordering
+                $order_column_id    = (int) $input['order'][0]['column'];
+                $order_column_name  = $input['columns'][$order_column_id]['order_by'];
+                $order_direction    = $input['order'][0]['dir'];
+    
+                if($order_column_name!=''){    
+                    $rooms = $rooms->orderBy($order_column_name, $order_direction);    
+                }    
+    
+                //limit $ offset
+                if((int)$input['start']!= 0 ){    
+                    $response_dt =  $rooms->limit($input['length'])->offset($input['start']);
+                }else{
+                    $rooms = $rooms->limit($input['length']);
+                }
+    
+                $response_dt = $rooms->get();
+
+                $response = MeetingRoom::arr_to_dt_response( 
+                    $response_dt, $input['draw'],
+                    $total_records,
+                    $records_filtered
+                    );
+            }
+            else{    
+                $response = $rooms->get();
+            }
+
             return response()->json($response, 200);
         }
         catch(\Exception $e){
@@ -90,7 +161,7 @@ class RoomsApi extends Controller
             $location = $input['location'];
             $capacity = $input['capacity'];
 
-            $room = MeetingRoom::findOrFail($input['room_id']);
+            $room = MeetingRoom::findOrFail($input['id']);
 
             $room->name = $name;
             $room->location = $location;
