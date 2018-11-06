@@ -897,11 +897,14 @@ class InvoiceApi extends Controller
             $voucher_date = '-';
             $vendor = '-';
             $voucher_no = '-';
+            $bank_ref = '-';
 
             if(empty($invoice->migration_id)) {
                 if(!empty($payment->voucher_no)) {
                     $voucher = VoucherNumber::find($payment->voucher_no);
                     $voucher_no = $voucher->voucher_number;
+                    if(!empty($voucher->bank_transaction)) 
+                        $bank_ref = $voucher->bank_transaction->bank_ref;
                 }
             }
             else {
@@ -922,7 +925,8 @@ class InvoiceApi extends Controller
                     'vendor'=>$vendor,
                     'voucher_no'=>$voucher_no,
                     'payable_type'=>'Invoice',
-                    'unique_approvals' => $unique_approvals
+                    'unique_approvals' => $unique_approvals,
+                    'bank_ref' => $bank_ref
                     );
 
             $pdf            = PDF::loadView('pdf/payment_voucher', $data);
