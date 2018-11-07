@@ -5253,6 +5253,16 @@ Route::GET('/funds-request/{id}', 'FundsRequestApi@getFundsRequestById')->middle
 Route::DELETE('/funds-request/{id}', 'FundsRequestApi@deleteFundsRequest')->middleware('jwt.auth');
 Route::PUT('/funds-request', 'FundsRequestApi@updateFundsRequest')->middleware('jwt.auth');
 
+Route::GET('/funds-request-items', 'FundsRequestApi@getFundsRequestItems')->middleware('jwt.auth');
+Route::PUT('/funds-request-item', 'FundsRequestApi@updateFundsRequest')->middleware('jwt.auth');
+Route::GET('/funds-request-item/{id}', 'FundsRequestApi@getFundsRequestItemById')->middleware('jwt.auth');
+// Statuses
+Route::POST('/funds_requests_status', 'FundsRequestApi@addFundsRequestStatus')->middleware('jwt.auth');
+Route::GET('/funds_requests_statuses', 'FundsRequestApi@getFundsRequestStatuses')->middleware('jwt.auth');
+Route::GET('/funds_requests_status/{id}', 'FundsRequestApi@getFundsRequestStatusById')->middleware('jwt.auth');
+Route::DELETE('/funds_requests_status/{id}', 'FundsRequestApi@deleteFundsRequestStatus')->middleware('jwt.auth');
+Route::PUT('/funds_requests_status', 'FundsRequestApi@updateFundsRequestStatus')->middleware('jwt.auth');
+
 
 /**
 * Activity routes
