@@ -1247,7 +1247,7 @@ class MobilePaymentApi extends Controller
         $mobile_payment = MobilePayment::find($mobile_payment_id);        
 
         // Ensure Mobile Payment is in the recallable statuses
-        if(!in_array($mobile_payment->status_id, [9,3,3,8])){
+        if(!in_array($mobile_payment->status_id, [9,2,3,8])){
             return response()->json(['msg'=>"you do not have permission to do this"], 403, array(), JSON_PRETTY_PRINT);
         }
 
