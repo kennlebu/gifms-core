@@ -250,7 +250,7 @@ class FixedAssetsApi extends Controller
 
             $response_dt = $asset->get();
 
-            $response = Claim::arr_to_dt_response( 
+            $response = FixedAsset::arr_to_dt_response( 
                 $response_dt, $input['draw'],
                 $total_records,
                 $records_filtered
