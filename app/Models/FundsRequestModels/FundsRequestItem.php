@@ -14,7 +14,7 @@ class FundsRequestItem extends BaseModel
 
     public function funds_request()
     {
-        return $this->belongsTo('App\Models\FundsRequestModels\FundsRequest','funds_requests_id');
+        return $this->belongsTo('App\Models\FundsRequestModels\FundsRequest','funds_request_id');
     }
     public function project()
     {

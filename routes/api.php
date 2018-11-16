@@ -5248,14 +5248,18 @@ Route::PUT('/room-booking', 'RoomsApi@editRoomBooking')->middleware('jwt.auth');
 * Funds Request routes
 */
 Route::POST('/funds-request', 'FundsRequestApi@addFundsRequest')->middleware('jwt.auth');
-Route::GET('/funds-request', 'FundsRequestApi@getFundsRequests')->middleware('jwt.auth');
+Route::GET('/funds-requests', 'FundsRequestApi@getFundsRequests')->middleware('jwt.auth');
 Route::GET('/funds-request/{id}', 'FundsRequestApi@getFundsRequestById')->middleware('jwt.auth');
 Route::DELETE('/funds-request/{id}', 'FundsRequestApi@deleteFundsRequest')->middleware('jwt.auth');
 Route::PUT('/funds-request', 'FundsRequestApi@updateFundsRequest')->middleware('jwt.auth');
-
+Route::PATCH('funds-request/{id}/submit_for_approval', 'FundsRequestApi@submitFundsRequestForApproval')->middleware('jwt.auth');
+Route::PATCH('/funds-request/{id}/approve', 'FundsRequestApi@approveFundsRequest')->middleware('jwt.auth');
+Route::PATCH('/funds-request/approve', 'FundsRequestApi@approveSeveralFundsRequests')->middleware('jwt.auth');
+// Items
 Route::GET('/funds-request-items', 'FundsRequestApi@getFundsRequestItems')->middleware('jwt.auth');
-Route::PUT('/funds-request-item', 'FundsRequestApi@updateFundsRequest')->middleware('jwt.auth');
+Route::PUT('/funds-request-item', 'FundsRequestApi@updateFundsRequestItem')->middleware('jwt.auth');
 Route::GET('/funds-request-item/{id}', 'FundsRequestApi@getFundsRequestItemById')->middleware('jwt.auth');
+Route::DELETE('/funds-request-item/{id}', 'FundsRequestApi@deleteFundsRequestItem')->middleware('jwt.auth');
 // Statuses
 Route::POST('/funds_requests_status', 'FundsRequestApi@addFundsRequestStatus')->middleware('jwt.auth');
 Route::GET('/funds_requests_statuses', 'FundsRequestApi@getFundsRequestStatuses')->middleware('jwt.auth');
