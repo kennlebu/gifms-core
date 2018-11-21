@@ -1609,6 +1609,41 @@ class InvoiceApi extends Controller
 
 
 
+    /**
+     * Operation recallInvoice
+     * 
+     * Recalls an Invoice.
+     * 
+     * @param int $invoice_id Invoice id to recall (required)
+     * 
+     * @return Http response
+     */
+    public function recallInvoice($invoice_id)
+    {
+        $input = Request::all();
+        
+        $invoice = Invoice::find($invoice_id); 
+        $user = $this->current_user();       
+
+        // Ensure Invoice is in the recallable statuses
+        if(!in_array($invoice->status_id, [1,2,3,12])){
+            return response()->json(['msg'=>"you do not have permission to do this"], 403, array(), JSON_PRETTY_PRINT);
+        }
+
+        $invoice->status_id = 13;   // 13 is the recalled status id
+        
+        $invoice->disableLogging(); //! Do not log the update
+        if($invoice->save()){
+            activity()
+                   ->performedOn($invoice)
+                   ->causedBy($user)
+                   ->log('recalled');
+            return response()->json(['msg'=>"invoice recalled"], 200,array(),JSON_PRETTY_PRINT);
+        }else{
+            return response()->json(['error'=>"could not recall invoice"], 404,array(),JSON_PRETTY_PRINT);
+        }
+
+    }
 
 
 

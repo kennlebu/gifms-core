@@ -3064,6 +3064,14 @@ Route::GET('/invoices', 'InvoiceApi@getInvoices')->middleware('jwt.auth');
  */
 Route::PATCH('/invoices/approve', 'InvoiceApi@approveSeveralInvoices')->middleware('jwt.auth');
 
+/**
+ * PATCH recallInvoice
+ * Summary: Recall Invoice
+ * Notes: Recall Invoice
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PATCH('/invoice/{invoice_id}/recall', 'InvoiceApi@recallInvoice')->middleware('jwt.auth');
+
 
 
 
