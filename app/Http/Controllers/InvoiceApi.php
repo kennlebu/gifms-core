@@ -201,7 +201,7 @@ class InvoiceApi extends Controller
                 $invoice->currency_id                       =   (int)       $form['currency_id'];
                 $invoice->received_at                       =   date('Y-m-d H:i:s');
                 $invoice->raised_at                         =   date('Y-m-d H:i:s');
-                if (($invoice->total - $invoice->amount_allocated) <= 1 ){ //allowance of 1
+                if (($invoice->total - $invoice->amount_allocated) <= 0 && abs($invoice->total - $invoice->amount_allocated == 0)){
                     $invoice->status_id = $invoice->status->next_status_id;  
                 }
                 
