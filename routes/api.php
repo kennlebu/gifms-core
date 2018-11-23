@@ -5316,3 +5316,20 @@ Route::GET('/asset-statuses', 'FixedAssetsApi@assetStatusesGet')->middleware('jw
 Route::GET('/asset-status/{id}', 'FixedAssetsApi@getAssetStatusById')->middleware('jwt.auth');
 Route::DELETE('/asset-status/{id}', 'FixedAssetsApi@deleteAssetStatus')->middleware('jwt.auth');
 Route::PUT('/asset-status', 'FixedAssetsApi@updateAssetStatus')->middleware('jwt.auth');
+
+
+/**
+ * Leave Management
+ */
+// Holidays
+Route::POST('/holiday', 'LeaveManagementApi@addHoliday')->middleware('jwt.auth');
+Route::GET('/holidays', 'LeaveManagementApi@holidaysGet')->middleware('jwt.auth');
+Route::GET('/holiday/{id}', 'LeaveManagementApi@getHolidayById')->middleware('jwt.auth');
+Route::DELETE('/holiday/{id}', 'LeaveManagementApi@deleteHoliday')->middleware('jwt.auth');
+Route::PUT('/holiday', 'LeaveManagementApi@updateHoliday')->middleware('jwt.auth');
+// LeaveTypes
+Route::POST('/leave_type', 'LeaveManagementApi@addLeaveType')->middleware('jwt.auth');
+Route::GET('/leave_types', 'LeaveManagementApi@leaveTypesGet')->middleware('jwt.auth');
+Route::GET('/leave_type/{id}', 'LeaveManagementApi@getLeaveTypeById')->middleware('jwt.auth');
+Route::DELETE('/leave_type/{id}', 'LeaveManagementApi@deleteLeaveType')->middleware('jwt.auth');
+Route::PUT('/leave_type', 'LeaveManagementApi@updateLeaveType')->middleware('jwt.auth');
