@@ -18,6 +18,8 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Request;
 use App\Models\LookupModels\Holiday;
 use App\Models\LeaveManagementModels\LeaveType;
+use App\Models\LeaveManagementModels\LeaveRequest;
+use App\Models\LeaveManagementModels\LeaveStatus;
 
 class LeaveManagementApi extends Controller
 {
@@ -347,5 +349,196 @@ class LeaveManagementApi extends Controller
         catch(\Exception $e){
             return response()->json(['error'=>'something went wrong', 'msg'=>$e->getMessage()], 500);
         }
+    }
+   
+
+    // ------------------------------------------------------------------------------------ //
+    // Leave Requests //
+    /**
+     * Operation getLeaveRequests
+     * holidays List.
+     * @return Http response
+     */
+    public function leaveRequestsGet()
+    {
+        try{
+            $input = Request::all();
+            $leave_requests = LeaveRequest::query();
+
+            $response;
+            $response_dt;
+
+            $total_records          = $leave_requests->count();
+            $records_filtered       = 0;
+
+            //searching
+            if(array_key_exists('searchval', $input)){
+                $leave_requests = $leave_requests->where(function ($query) use ($input) {                    
+                    $query->orWhere('start_date','like', '\'%' . $input['searchval']. '%\'');
+                    $query->orWhere('end_date','like', '\'%' . $input['searchval']. '%\'');
+                });
+
+                $dt = $leave_requests->get();
+
+                $records_filtered = $leave_requests->count();
+            }
+
+            //ordering
+            if(array_key_exists('order_by', $input)&&$input['order_by']!=''){
+                $order_direction     = "asc";
+                $order_column_name   = $input['order_by'];
+                if(array_key_exists('order_dir', $input)&&$input['order_dir']!=''){                
+                    $order_direction = $input['order_dir'];
+                }
+
+                $leave_requests = $leave_requests->orderBy($order_column_name, $order_direction);
+            }
+
+            //limit
+            if(array_key_exists('limit', $input)){
+                $leave_requests = $leave_requests->limit($input['limit']);
+            }
+
+            if(array_key_exists('datatables', $input)){
+  
+                $records_filtered = $leave_requests->count();    
+    
+                //ordering
+                $order_column_id    = (int) $input['order'][0]['column'];
+                $order_column_name  = $input['columns'][$order_column_id]['order_by'];
+                $order_direction    = $input['order'][0]['dir'];
+    
+                if($order_column_name!=''){    
+                    $leave_requests = $leave_requests->orderBy($order_column_name, $order_direction);    
+                }    
+    
+                //limit $ offset
+                if((int)$input['start']!= 0 ){    
+                    $response_dt =  $leave_requests->limit($input['length'])->offset($input['start']);
+                }else{
+                    $leave_requests = $leave_requests->limit($input['length']);
+                }
+    
+                $response_dt = $leave_requests->get();
+
+                $response = LeaveType::arr_to_dt_response( 
+                    $response_dt, $input['draw'],
+                    $total_records,
+                    $records_filtered
+                    );
+            }
+            else{    
+                $response = $leave_requests->get();
+            }
+
+            return response()->json($response, 200);
+        }
+        catch(\Exception $e){
+            return response()->json(['error'=>'something went wrong', 'msg'=>$e->getMessage()], 500);
+        }
+    }
+    
+    /**
+     * Operation addLeaveRequest
+     * Add a new leave request.
+     * @return Http response
+     */
+    public function addLeaveRequest()
+    {
+        $input = Request::all();
+
+        $leave_request = new LeaveRequest;
+        $leave_request->requested_by_id = $input['requested_by_id'];
+        $leave_request->leave_type_id = $input['leave_type_id'];
+        $leave_request->status_id = $input['status_id'];
+        $leave_request->line_manager_id = $input['line_manager_id'];
+        $leave_request->start_date = $input['start_date'];
+        $leave_request->end_date = $this->getEndDate($input['start_date'], $input['no_of_days']);
+        $leave_request->no_of_days = $input['no_of_days'];
+        $leave_request->alternate_phone_1 = $input['alternate_phone_1'];
+        $leave_request->alternate_phone_2 = $input['alternate_phone_2'];
+        $leave_request->alternate_email_1 = $input['alternate_email_1'];
+        $leave_request->alternate_email_2 = $input['alternate_email_2'];
+        $leave_request->rejected_by_id = $input['rejected_by_id'];
+        $leave_request->rejection_reason = $input['rejection_reason'];
+        $leave_request->requester_comments = $input['requester_comments'];
+        $leave_request->approver_comments = $input['approver_comments'];
+
+        if($leave_request->save()){
+            return response()->json($leave_request, 200,array(),JSON_PRETTY_PRINT);
+        }
+    }
+    
+    /**
+     * Operation updateLeaveRequest
+     * Update an existing leave request.
+     * @return Http response
+     */
+    public function updateLeaveRequest()
+    {
+        $input = Request::all();
+        try{
+            $leave_request = LeaveRequest::findOrFail($input['id']);
+            $leave_request->requested_by_id = $input['requested_by_id'];
+            $leave_request->leave_type_id = $input['leave_type_id'];
+            $leave_request->status_id = $input['status_id'];
+            $leave_request->line_manager_id = $input['line_manager_id'];
+            $leave_request->start_date = $input['start_date'];
+            $leave_request->end_date = $this->getEndDate($input['start_date'], $input['no_of_days']);
+            $leave_request->no_of_days = $input['no_of_days'];
+            $leave_request->alternate_phone_1 = $input['alternate_phone_1'];
+            $leave_request->alternate_phone_2 = $input['alternate_phone_2'];
+            $leave_request->alternate_email_1 = $input['alternate_email_1'];
+            $leave_request->alternate_email_2 = $input['alternate_email_2'];
+            $leave_request->rejected_by_id = $input['rejected_by_id'];
+            $leave_request->rejection_reason = $input['rejection_reason'];
+            $leave_request->requester_comments = $input['requester_comments'];
+            $leave_request->approver_comments = $input['approver_comments'];
+
+            if($leave_request->save()){
+                return Response()->json(array('msg' => 'Leave request updated','leave_request' => $leave_request), 200);
+            }
+        }
+        catch(\Exception $e){
+            return response()->json(['error'=>'something went wrong', 'msg'=>$e->getMessage()], 500);
+        }
+    }
+    
+    /**
+     * Operation deleteLeaveRequest
+     * Deletes a leave request.
+     * @param int $request_id leave request id to delete (required)
+     * @return Http response
+     */
+    public function deleteLeaveRequest($request_id)
+    {
+        $deleted = LeaveRequest::destroy($request_id);
+
+        if($deleted){
+            return response()->json(['msg'=>"Leave request removed"], 200,array(),JSON_PRETTY_PRINT);
+        }else{
+            return response()->json(['error'=>"Leave request not found"], 404,array(),JSON_PRETTY_PRINT);
+        }
+    }
+    
+    /**
+     * Operation getLeaveRequestById
+     * Find leave request by ID.
+     * @param int $request_id ID of leave request to return object (required)
+     * @return Http response
+     */
+    public function getLeaveRequestById($request_id)
+    {
+        try{
+            $leave_request = LeaveRequest::find($request_id);
+            return response()->json($leave_request, 200,array(),JSON_PRETTY_PRINT);
+        }
+        catch(\Exception $e){
+            return response()->json(['error'=>'something went wrong', 'msg'=>$e->getMessage()], 500);
+        }
+    }
+
+    private function getEndDate($start_date, $days){
+        
     }
 }
