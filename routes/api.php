@@ -5333,3 +5333,9 @@ Route::GET('/leave_types', 'LeaveManagementApi@leaveTypesGet')->middleware('jwt.
 Route::GET('/leave_type/{id}', 'LeaveManagementApi@getLeaveTypeById')->middleware('jwt.auth');
 Route::DELETE('/leave_type/{id}', 'LeaveManagementApi@deleteLeaveType')->middleware('jwt.auth');
 Route::PUT('/leave_type', 'LeaveManagementApi@updateLeaveType')->middleware('jwt.auth');
+// Leave Requests
+Route::POST('/leave_type', 'LeaveManagementApi@addLeaveType')->middleware('jwt.auth');
+Route::GET('/leave_types', 'LeaveManagementApi@leaveTypesGet')->middleware('jwt.auth');
+Route::GET('/leave_type/{id}', 'LeaveManagementApi@getLeaveTypeById')->middleware('jwt.auth');
+Route::DELETE('/leave_type/{id}', 'LeaveManagementApi@deleteLeaveType')->middleware('jwt.auth');
+Route::PUT('/leave_type', 'LeaveManagementApi@updateLeaveType')->middleware('jwt.auth');
