@@ -10,4 +10,11 @@ class Holiday extends BaseModel
 {
     //
     use SoftDeletes;
+    protected $appends = ['full_date'];
+
+    public function getFullDateAttribute()
+    {
+        return date('Y').'-'.$this->date;
+
+    }
 }

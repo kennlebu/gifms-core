@@ -16,7 +16,7 @@ class LeaveStatus extends BaseModel
 
     public function getCountAttribute()
     {
-        return LeaveType::where("deleted_at",null)
+        return LeaveRequest::where("deleted_at",null)
 		        ->where('status_id', $this->attributes['id'])
 		        ->count();
 

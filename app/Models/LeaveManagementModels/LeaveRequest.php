@@ -12,6 +12,8 @@ class LeaveRequest extends BaseModel
 {
     use SoftDeletes;
 
+    protected $appends = ['ref'];
+
     protected $fillable = [
         'id',
         'requested_by_id',
@@ -58,7 +60,7 @@ class LeaveRequest extends BaseModel
     }
     public function leave_type()
     {
-        return $this->belongsTo('App\Models\LeaveManagementModels\LeaveType','received_by_id');
+        return $this->belongsTo('App\Models\LeaveManagementModels\LeaveType','leave_type_id');
     }
     public function status()
     {
@@ -75,5 +77,8 @@ class LeaveRequest extends BaseModel
     public function logs()
     {
         return $this->morphMany('App\Models\LogsModels\HistoryLog', 'subject')->orderBy('created_at','asc');
+    }
+    public function getRefAttribute(){
+        return '#'.$this->pad(5, $this->attributes['id']);
     }
 }

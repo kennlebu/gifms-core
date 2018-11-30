@@ -23,11 +23,14 @@ use App\Models\LeaveManagementModels\LeaveStatus;
 
 class LeaveManagementApi extends Controller
 {
+    private $default_status = '';
     /**
      * Constructor
      */
     public function __construct()
     {
+        $status = LeaveStatus::where('default_status','1')->first();
+        $this->default_status = $status->id;
     }
    
 
@@ -282,12 +285,12 @@ class LeaveManagementApi extends Controller
      */
     public function addLeaveType()
     {
-        $input = Request::all();
+        $input = Request::all(); 
 
         $leave_type = new LeaveType;
         $leave_type->name = $input['name'];
         $leave_type->days_entitled = $input['days_entitled'];
-        $leave_type->include_weekends = $input['include_weekends'];
+        if(!empty($input['include_weekends'])) $leave_type->include_weekends = $input['include_weekends'];
 
         if($leave_type->save()){
             return response()->json($leave_type, 200,array(),JSON_PRETTY_PRINT);
@@ -350,20 +353,22 @@ class LeaveManagementApi extends Controller
             return response()->json(['error'=>'something went wrong', 'msg'=>$e->getMessage()], 500);
         }
     }
+    // End Leave Types
+    // ------------------------------------------------------------------------------------ //
    
 
     // ------------------------------------------------------------------------------------ //
     // Leave Requests //
     /**
      * Operation getLeaveRequests
-     * holidays List.
+     * leave requests List.
      * @return Http response
      */
     public function leaveRequestsGet()
     {
         try{
             $input = Request::all();
-            $leave_requests = LeaveRequest::query();
+            $leave_requests = LeaveRequest::with('requested_by','leave_type','status','line_manager','rejected_by','logs');
 
             $response;
             $response_dt;
@@ -427,6 +432,64 @@ class LeaveManagementApi extends Controller
                     $records_filtered
                     );
             }
+            elseif(array_key_exists('fullcalendar', $input)){
+                $final_requests = [];
+                $holidays = [];
+                $holiday_list = Holiday::all();
+                foreach($holiday_list as $h){
+                    array_push($holidays, $h->full_date);
+                }
+                $requests_ = $leave_requests->get();
+                foreach($requests_ as $req){
+                    if(!empty($req->leave_type->include_weekends)){
+                        array_push($final_requests, $req);
+                    }
+                    else{
+                        $begin = new \DateTime($req->start_date);
+                        $end   = new \DateTime($req->end_date);
+                        $temp_start = $begin->format("Y-m-d");
+                        $temp_end = $begin->format("Y-m-d");
+                        $current_date = $temp_end;
+
+                        for($i = $begin; $i <= $end; $i->modify('+1 day')){
+                            file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , PHP_EOL.'Start: '.$temp_start.' End: '.$current_date , FILE_APPEND);
+                            
+                            // $temp_end = $current_date;
+                            if(in_array($current_date, $holidays)){                 // If current day is a holiday,
+                                $req->start_date = $temp_start;                     // create a new event with the 
+                                $req->end_date = $current_date;                     // temp start and end dates
+
+                                $temp_start = ((new \DateTime($req->end_date))->modify('+1 day'))->format("Y-m-d");     // Then set the day after the holiday 
+                                // $temp_end = $temp_start;       
+                                array_push($final_requests, $req);      // Add this 'sub-event' to the list of events                                                         // as the next temp start date
+                                file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , PHP_EOL.'Holiday: '.$current_date , FILE_APPEND);
+                            }
+
+                            if($this->isSaturday($current_date)){                   // If current day is a saturday,
+                                $req->start_date = $temp_start;                     // create a new event with the 
+                                $req->end_date = $current_date;                     // temp start and current dates
+    
+                                array_push($final_requests, $req);          // Add this 'sub-event' to the list of events   
+                                file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , PHP_EOL.'Weekend : '.$current_date , FILE_APPEND);                                                       // as the next temp start date
+                            }
+                            
+                            if($this->isSunday($current_date)){                 // Then set the day after the weekend as the next event start
+                                $temp_start = ((new \DateTime($current_date))->modify('+1 day'))->format("Y-m-d");    
+                            } 
+
+                            if($i == $end){
+                                // $temp_end = $i->format("Y-m-d");
+                                $req->start_date = $temp_start;
+                                $req->end_date = $current_date;
+                                array_push($final_requests, $req);          // Add this 'sub-event' to the list of events 
+                            }
+                            $current_date = $i->format("Y-m-d");
+
+                        }
+                    }
+                }
+                $response = $final_requests;
+            }
             else{    
                 $response = $leave_requests->get();
             }
@@ -450,18 +513,24 @@ class LeaveManagementApi extends Controller
         $leave_request = new LeaveRequest;
         $leave_request->requested_by_id = $input['requested_by_id'];
         $leave_request->leave_type_id = $input['leave_type_id'];
-        $leave_request->status_id = $input['status_id'];
+        $leave_request->status_id = $this->default_status;
         $leave_request->line_manager_id = $input['line_manager_id'];
-        $leave_request->start_date = $input['start_date'];
-        $leave_request->end_date = $this->getEndDate($input['start_date'], $input['no_of_days']);
+        $leave_request->start_date = date('Y-m-d', strtotime($input['start_date']));
+        $leave_request->end_date = date('Y-m-d', strtotime($input['end_date']));
         $leave_request->no_of_days = $input['no_of_days'];
         $leave_request->alternate_phone_1 = $input['alternate_phone_1'];
+        if(!empty($input['alternate_phone_2'])) 
         $leave_request->alternate_phone_2 = $input['alternate_phone_2'];
         $leave_request->alternate_email_1 = $input['alternate_email_1'];
+        if(!empty($input['alternate_email_2']))
         $leave_request->alternate_email_2 = $input['alternate_email_2'];
+        if(!empty($input['rejected_by_id']))
         $leave_request->rejected_by_id = $input['rejected_by_id'];
+        if(!empty($input['rejection_reason']))
         $leave_request->rejection_reason = $input['rejection_reason'];
+        if(!empty($input['requester_comments']))
         $leave_request->requester_comments = $input['requester_comments'];
+        if(!empty($input['approver_comments']))
         $leave_request->approver_comments = $input['approver_comments'];
 
         if($leave_request->save()){
@@ -479,20 +548,33 @@ class LeaveManagementApi extends Controller
         $input = Request::all();
         try{
             $leave_request = LeaveRequest::findOrFail($input['id']);
+            if(!empty($input['requested_by_id']))
             $leave_request->requested_by_id = $input['requested_by_id'];
+            if(!empty($input['leave_type_id']))
             $leave_request->leave_type_id = $input['leave_type_id'];
-            $leave_request->status_id = $input['status_id'];
+            if(!empty($input['line_manager_id']))
             $leave_request->line_manager_id = $input['line_manager_id'];
-            $leave_request->start_date = $input['start_date'];
-            $leave_request->end_date = $this->getEndDate($input['start_date'], $input['no_of_days']);
+            if(!empty($input['start_date']))
+            $leave_request->start_date = date('Y-m-d', strtotime($input['start_date']));
+            if(!empty($input['end_date']))
+            $leave_request->end_date = date('Y-m-d', strtotime($input['end_date']));
+            if(!empty($input['no_of_days']))
             $leave_request->no_of_days = $input['no_of_days'];
+            if(!empty($input['alternate_phone_1']))
             $leave_request->alternate_phone_1 = $input['alternate_phone_1'];
+            if(!empty($input['alternate_phone_2'])) 
             $leave_request->alternate_phone_2 = $input['alternate_phone_2'];
+            if(!empty($input['alternate_email_1']))
             $leave_request->alternate_email_1 = $input['alternate_email_1'];
+            if(!empty($input['alternate_email_2']))
             $leave_request->alternate_email_2 = $input['alternate_email_2'];
+            if(!empty($input['rejected_by_id']))
             $leave_request->rejected_by_id = $input['rejected_by_id'];
+            if(!empty($input['rejection_reason']))
             $leave_request->rejection_reason = $input['rejection_reason'];
+            if(!empty($input['requester_comments']))
             $leave_request->requester_comments = $input['requester_comments'];
+            if(!empty($input['approver_comments']))
             $leave_request->approver_comments = $input['approver_comments'];
 
             if($leave_request->save()){
@@ -537,8 +619,366 @@ class LeaveManagementApi extends Controller
             return response()->json(['error'=>'something went wrong', 'msg'=>$e->getMessage()], 500);
         }
     }
+    // End Leave Requests
+    // ------------------------------------------------------------------------------------ //
 
-    private function getEndDate($start_date, $days){
-        
+
+
+    // ------------------------------------------------------------------------------------ //
+    // Leave Requests //
+    /**
+     * Operation approveLeaveRequest
+     * Approve a leave request.
+     * @param int $request_id leave request id to approve (required)
+     * @return Http response
+     */
+    public function approveLeaveRequest($request_id, $several=null)
+    {
+
+        $input = Request::all();
+        try{
+            $leave_request   = LeaveRequest::findOrFail($request_id);
+           
+            $approvable_status  = $leave_request->status;
+            $leave_request->status_id = $activity->status->next_status_id;
+
+            if($leave_request->save()) {
+
+                $approval = new Approval;
+
+                $approval->approvable_id            =   (int) $leave_request->id;
+                $approval->approvable_type          =   "leave_requests";
+                $approval->approval_level_id        =   $approvable_status->approval_level_id;
+                $approval->approver_id              =   (int) $this->current_user()->id;
+
+                $approval->save();
+                
+                //TODO: Mail::queue(new NotifyLeaveApproval($leave_request));
+
+                if($several!=true)
+                return Response()->json(array('msg' => 'Success: Leave Request approved','leave_request' => $leave_request), 200);
+            }
+
+
+        }catch(ApprovalException $ae){
+
+            $response =  ["error"=>"You do not have the permissions to perform this action at this point"];
+            return response()->json($response, 403,array(),JSON_PRETTY_PRINT);
+        }catch(Exception $e){
+
+            $response =  ["error"=>"leave_request could not be found"];
+            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+        }
     }
+
+
+    /**
+     * Operation approveSeveralLeaveRequests
+     * Approve several leave requests.
+     * @return Http response
+     */
+    public function approveSeveralLeaveRequests()
+    {
+        try {
+            $form = Request::only("leave_requests");
+            $request_ids = $form['leave_requests'];
+
+            foreach ($request_ids as $key => $request_id) {
+                $this->approveLeaveRequest($request_id, true);
+            }
+
+            return response()->json(['leave_requests'=>$form['leave_requests']], 201,array(),JSON_PRETTY_PRINT);
+            
+        } catch (Exception $e) {
+             return response()->json(['error'=>"An rerror occured during processing"], 500,array(),JSON_PRETTY_PRINT);
+            
+        }
+    }
+
+
+    /**
+     * Operation rejectLeaveRequest
+     * Reject a leave request.
+     * @param int $request_id leave request id to reject (required)
+     * @return Http response
+     */
+    public function rejectLeaveRequest($request_id)
+    {
+
+        $form = Request::only(
+            'rejection_reason'
+            );
+
+        try{
+            $leave_request   = LeaveRequest::findOrFail($request_id);
+           
+            $leave_request->status_id = 4;    // Rejected status
+            $leave_request->rejected_by_id = (int) $user->id;
+            $leave_request->rejected_at = date('Y-m-d H:i:s');
+            $leave_request->rejection_reason = $form['rejection_reason'];
+
+            if($leave_request->save()) {
+                //TODO: Mail::queue(new NotifyLeaveRequest($activity));
+
+                return Response()->json(array('msg' => 'Success: leave_request approved','leave_request' => $leave_request), 200);
+            }
+
+        }catch(ApprovalException $ae){
+
+            $response =  ["error"=>"You do not have the permissions to perform this action at this point"];
+            return response()->json($response, 403,array(),JSON_PRETTY_PRINT);
+        }catch(Exception $e){
+
+            $response =  ["error"=>"Leave Request could not be found"];
+            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+        }
+    }
+
+
+    /**
+     * Submit activity for approval
+     */
+    public function submitLeaveRequestForApproval($request_id)
+    {
+        try{
+            $leave_request = Activity::findOrFail($activity_id);
+           
+            $leave_request->status_id = $activity->status->next_status_id;
+
+            if($leave_request->save()) {
+                //TODO: Mail::queue(new NotifyLeaveRequest($leave_request));
+
+                return Response()->json(array('msg' => 'Success: Leave Request submitted','leave_request' => $leave_request), 200);
+            }
+
+        }catch(Exception $e){
+
+            $response =  ["error"=>"Leave request could not be found", "msg"=>$e->getMessage()];
+            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+        }
+    }
+   
+
+    // ------------------------------------------------------------------------------------ //
+    // Leave Statises //
+    /**
+     * Operation getLeaveStatuses
+     * leave statuses List.
+     * @return Http response
+     */
+    public function leaveStatusesGet()
+    {
+        try{
+            $input = Request::all();
+            $leave_statuses = LeaveStatus::query();
+
+            $response;
+            $response_dt;
+
+            $total_records          = $leave_statuses->count();
+            $records_filtered       = 0;
+
+            //searching
+            if(array_key_exists('searchval', $input)){
+                $leave_statuses = $leave_statuses->where(function ($query) use ($input) {                    
+                    $query->orWhere('status','like', '\'%' . $input['searchval']. '%\'');
+                    $query->orWhere('short_name','like', '\'%' . $input['searchval']. '%\'');
+                });
+
+                $dt = $leave_statuses->get();
+
+                $records_filtered = $leave_statuses->count();
+            }
+
+            //ordering
+            if(array_key_exists('order_by', $input)&&$input['order_by']!=''){
+                $order_direction     = "asc";
+                $order_column_name   = $input['order_by'];
+                if(array_key_exists('order_dir', $input)&&$input['order_dir']!=''){                
+                    $order_direction = $input['order_dir'];
+                }
+
+                $leave_statuses = $leave_statuses->orderBy($order_column_name, $order_direction);
+            }
+
+            //limit
+            if(array_key_exists('limit', $input)){
+                $leave_statuses = $leave_statuses->limit($input['limit']);
+            }
+
+            if(array_key_exists('datatables', $input)){
+  
+                $records_filtered = $leave_statuses->count();    
+    
+                //ordering
+                $order_column_id    = (int) $input['order'][0]['column'];
+                $order_column_name  = $input['columns'][$order_column_id]['order_by'];
+                $order_direction    = $input['order'][0]['dir'];
+    
+                if($order_column_name!=''){    
+                    $leave_statuses = $leave_statuses->orderBy($order_column_name, $order_direction);    
+                }    
+    
+                //limit $ offset
+                if((int)$input['start']!= 0 ){    
+                    $response_dt =  $leave_statuses->limit($input['length'])->offset($input['start']);
+                }else{
+                    $leave_statuses = $leave_statuses->limit($input['length']);
+                }
+    
+                $response_dt = $leave_statuses->get();
+
+                $response = LeaveStatus::arr_to_dt_response( 
+                    $response_dt, $input['draw'],
+                    $total_records,
+                    $records_filtered
+                    );
+            }
+            else{    
+                $response = $leave_statuses->get();
+                foreach ($response as $key => $value) {
+                    $response[$key]['count'] = LeaveRequest::where('requested_by_id',$this->current_user()->id)
+                                                ->where('status_id', $value['id'] )
+                                                ->count();
+                }
+
+                //add -1 and -2 statuses
+            if(array_key_exists('allowed_only', $input)){
+
+                //-1
+                $response[]=array(
+                        "id"=> -1,
+                        "lpo_status"=> "My Leave Requests",
+                        "order_priority"=> 998,
+                        "display_color"=> "#37A9E17A",
+                        "count"=> LeaveRequest::where('requested_by_id',$this->current_user()->id)->count()
+                      );
+
+                // TODO: Line Manager
+                if ($this->current_user()->hasRole('program-manager')){
+                    $response[]=array(
+                            "id"=> -3,
+                            "lpo_status"=> "My Manager-Assigned Leave Requests",
+                            "order_priority"=> 999,
+                            "display_color"=> "#49149c7a",
+                            "count"=> LeaveRequest::where('project_manager_id',$this->current_user()->id)->count()
+                          );
+                }
+
+                if ($this->current_user()->hasRole(['accountant','admin','director','financial-controller','admin-manager'])){
+
+                    //-1
+                    $response[]=array(
+                            "id"=> -2,
+                            "lpo_status"=> "All Leave Requests",
+                            "order_priority"=> 1000,
+                            "display_color"=> "#092D50",
+                            "count"=> LeaveRequest::count()
+                          );
+                }
+
+
+            }
+
+            }
+
+            return response()->json($response, 200);
+        }
+        catch(\Exception $e){
+            file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , PHP_EOL.$e->getTraceAsString() , FILE_APPEND);
+            return response()->json(['error'=>'something went wrong', 'msg'=>$e->getMessage()], 500);
+        }
+    }
+    
+    /**
+     * Operation addLeaveStatus
+     * Add a new leave status.
+     * @return Http response
+     */
+    public function addLeaveStatus()
+    {
+        $input = Request::all();
+
+        $leave_status = new LeaveStatus;
+        $leave_status->status = $input['status'];
+        $leave_status->next_status_id  = $input['next_status_id '];
+        $leave_status->short_name = $input['short_name'];
+        $leave_status->order_priority = $input['order_priority'];
+        if(!empty($input['display_color'])) 
+        $leave_status->display_color = $input['display_color'];
+        if(!empty($input['default_status']))
+        $leave_status->default_status = $input['default_status'];
+        if(!empty($input['approval_level_id ']))
+        $leave_status->approval_level_id  = $input['approval_level_id '];
+
+        if($leave_status->save()){
+            return response()->json($leave_status, 200,array(),JSON_PRETTY_PRINT);
+        }
+    }
+    
+    /**
+     * Operation updateLeaveStatus
+     * Update an existing leave status.
+     * @return Http response
+     */
+    public function updateLeaveStatus()
+    {
+        $input = Request::all();
+        try{
+            $leave_status = LeaveStatus::findOrFail($input['id']);
+            $leave_status->status = $input['status'];
+            $leave_status->next_status_id  = $input['next_status_id '];
+            $leave_status->short_name = $input['short_name'];
+            $leave_status->order_priority = $input['order_priority'];
+            if(!empty($input['display_color'])) 
+            $leave_status->display_color = $input['display_color'];
+            if(!empty($input['default_status']))
+            $leave_status->default_status = $input['default_status'];
+            if(!empty($input['approval_level_id ']))
+            $leave_status->approval_level_id  = $input['approval_level_id '];
+
+            if($leave_status->save()){
+                return Response()->json(array('msg' => 'Leave status updated','leave_status' => $leave_status), 200);
+            }
+        }
+        catch(\Exception $e){
+            return response()->json(['error'=>'something went wrong', 'msg'=>$e->getMessage()], 500);
+        }
+    }
+    
+    /**
+     * Operation deleteLeaveStatus
+     * Deletes a leave status.
+     * @param int $request_id leave status id to delete (required)
+     * @return Http response
+     */
+    public function deleteLeaveStatus($request_id)
+    {
+        $deleted = LeaveStatus::destroy($request_id);
+
+        if($deleted){
+            return response()->json(['msg'=>"Leave status removed"], 200,array(),JSON_PRETTY_PRINT);
+        }else{
+            return response()->json(['error'=>"Leave status not found"], 404,array(),JSON_PRETTY_PRINT);
+        }
+    }
+    
+    /**
+     * Operation getLeaveStatusById
+     * Find leave status by ID.
+     * @param int $request_id ID of leave status to return object (required)
+     * @return Http response
+     */
+    public function getLeaveStatusById($request_id)
+    {
+        try{
+            $leave_status = LeaveStatus::find($request_id);
+            return response()->json($leave_status, 200,array(),JSON_PRETTY_PRINT);
+        }
+        catch(\Exception $e){
+            return response()->json(['error'=>'something went wrong', 'msg'=>$e->getMessage()], 500);
+        }
+    }
+    // End Leave Statuses
+    // ------------------------------------------------------------------------------------ //
 }
