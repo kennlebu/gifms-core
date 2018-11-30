@@ -284,6 +284,7 @@ class FixedAssetsApi extends Controller
         if(!empty($input['category_id']))       $asset->asset_category_id = $input['category_id'];
         if(!empty($input['assigned_to_id']))    $asset->assigned_to_id = $input['assigned_to_id'];
         if(!empty($input['serial_number']))     $asset->serial_number = $input['serial_number'];
+        if(!empty($input['tag_number']))        $asset->tag_number = $input['tag_number'];
         
         $asset->added_by_id = $user->id;
 
@@ -311,6 +312,8 @@ class FixedAssetsApi extends Controller
         if(!empty($input['location_id']))       $asset->asset_location_id = $input['location_id'];
         if(!empty($input['category_id']))       $asset->asset_category_id = $input['category_id'];
         if(!empty($input['assigned_to_id']))    $asset->assigned_to_id = $input['assigned_to_id'];
+        if(!empty($input['serial_number']))     $asset->serial_number = $input['serial_number'];
+        if(!empty($input['tag_number']))        $asset->tag_number = $input['tag_number'];
 
         if($asset->save()) {
             return Response()->json(array('msg' => 'Success: asset updated','asset' => $asset), 200);
