@@ -21,6 +21,10 @@ use App\Models\LeaveManagementModels\LeaveType;
 use App\Models\LeaveManagementModels\LeaveRequest;
 use App\Models\LeaveManagementModels\LeaveStatus;
 use App\Models\ApprovalsModels\Approval;
+use PDF;
+use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\NotifyLeaveRequest;
 
 class LeaveManagementApi extends Controller
 {
@@ -640,12 +644,44 @@ class LeaveManagementApi extends Controller
     public function getLeaveRequestById($request_id)
     {
         try{
-            $leave_request = LeaveRequest::with('requested_by','leave_type','status','line_manager','rejected_by','logs')
+            $leave_request = LeaveRequest::with('requested_by','leave_type','status','line_manager','rejected_by','logs','approvals')
                                 ->find($request_id);
             return response()->json($leave_request, 200,array(),JSON_PRETTY_PRINT);
         }
         catch(\Exception $e){
             return response()->json(['error'=>'something went wrong', 'msg'=>$e->getMessage()], 500);
+        }
+    }
+    
+    /**
+     * Operation getDocumentById
+     * Find leave request document by ID.
+     * @param int $request_id ID of leave request to return object (required)
+     * @return Http response
+     */
+    public function getDocumentById($request_id)
+    {
+        try{
+            $leave_request = LeaveRequest::with('requested_by','leave_type','status','line_manager','rejected_by','approvals')
+                                ->findOrFail($request_id);
+            $unique_approvals = $this->unique_multidim_array($leave_request->approvals, 'approver_id');
+
+            $data = array(
+                'leave_request' => $leave_request,
+                'unique_approvals' => $unique_approvals
+                );
+
+            $pdf = PDF::loadView('pdf/leave_request', $data);
+            $file_contents  = $pdf->stream();
+            $response = Response::make($file_contents, 200);
+            $response->header('Content-Type', 'application/pdf');
+
+            return $response;
+        }catch (Exception $e ){            
+
+            $response       = Response::make("", 200);
+            $response->header('Content-Type', 'application/pdf');
+            return $response;  
         }
     }
     // End Leave Requests
@@ -747,7 +783,7 @@ class LeaveManagementApi extends Controller
             $leave_request->rejection_reason = $form['rejection_reason'];
 
             if($leave_request->save()) {
-                //TODO: Mail::queue(new NotifyLeaveRequest($activity));
+                Mail::queue(new NotifyLeaveRequest($activity));
 
                 return Response()->json(array('msg' => 'Success: leave_request approved','leave_request' => $leave_request), 200);
             }
@@ -775,7 +811,7 @@ class LeaveManagementApi extends Controller
             $leave_request->status_id = $leave_request->status->next_status_id;
 
             if($leave_request->save()) {
-                //TODO: Mail::queue(new NotifyLeaveRequest($leave_request));
+                Mail::queue(new NotifyLeaveRequest($leave_request));
 
                 return Response()->json(array('msg' => 'Success: Leave Request submitted','leave_request' => $leave_request), 200);
             }
