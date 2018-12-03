@@ -20,6 +20,7 @@ use App\Models\LookupModels\Holiday;
 use App\Models\LeaveManagementModels\LeaveType;
 use App\Models\LeaveManagementModels\LeaveRequest;
 use App\Models\LeaveManagementModels\LeaveStatus;
+use App\Models\ApprovalsModels\Approval;
 
 class LeaveManagementApi extends Controller
 {
@@ -376,6 +377,34 @@ class LeaveManagementApi extends Controller
             $total_records          = $leave_requests->count();
             $records_filtered       = 0;
 
+            //if status is set
+            if(array_key_exists('status', $input)){
+
+                $status_ = (int) $input['status'];
+
+                if($status_ >-1){
+                    $leave_requests = $leave_requests->where('status_id', $input['status']);
+                    $leave_requests = $leave_requests->where('requested_by_id',$this->current_user()->id);
+                }elseif ($status_==-1) {
+                    $leave_requests = $leave_requests->where('requested_by_id',$this->current_user()->id);
+                }elseif ($status_==-2) {
+                    
+                }elseif ($status_==-3) {
+                    $leave_requests = $leave_requests->where('line_manager_id',$this->current_user()->id);
+                }
+            }
+
+            // My Approvables
+            if(array_key_exists('my_approvables', $input)){
+                $current_user = $this->current_user();
+                if($current_user->hasRole(['director','program-manager'])){
+                    $leave_requests = $leave_requests->where('status_id',2)
+                                        ->where('line_manager_id',$current_user->id);
+                }else{
+                    $leave_requests = $leave_requests->where('id',0);
+                }
+            }
+
             //searching
             if(array_key_exists('searchval', $input)){
                 $leave_requests = $leave_requests->where(function ($query) use ($input) {                    
@@ -441,52 +470,51 @@ class LeaveManagementApi extends Controller
                 }
                 $requests_ = $leave_requests->get();
                 foreach($requests_ as $req){
-                    if(!empty($req->leave_type->include_weekends)){
+                    // if(!empty($req->leave_type->include_weekends)){
                         array_push($final_requests, $req);
-                    }
-                    else{
-                        $begin = new \DateTime($req->start_date);
-                        $end   = new \DateTime($req->end_date);
-                        $temp_start = $begin->format("Y-m-d");
-                        $temp_end = $begin->format("Y-m-d");
-                        $current_date = $temp_end;
+                    // }
+                    // else{
+                    //     $begin = new \DateTime($req->start_date);
+                    //     $end   = new \DateTime($req->end_date);
+                    //     $temp_start = $begin->format("Y-m-d");
+                    //     $temp_end = $begin->format("Y-m-d");
+                    //     $current_date = $temp_end;
 
-                        for($i = $begin; $i <= $end; $i->modify('+1 day')){
-                            file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , PHP_EOL.'Start: '.$temp_start.' End: '.$current_date , FILE_APPEND);
-                            
-                            // $temp_end = $current_date;
-                            if(in_array($current_date, $holidays)){                 // If current day is a holiday,
-                                $req->start_date = $temp_start;                     // create a new event with the 
-                                $req->end_date = $current_date;                     // temp start and end dates
+                    //     for($i = $begin; $i <= $end; $i->modify('+1 day')){
+                    //         // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , PHP_EOL.'Start: '.$temp_start.' End: '.$current_date , FILE_APPEND);
 
-                                $temp_start = ((new \DateTime($req->end_date))->modify('+1 day'))->format("Y-m-d");     // Then set the day after the holiday 
-                                // $temp_end = $temp_start;       
-                                array_push($final_requests, $req);      // Add this 'sub-event' to the list of events                                                         // as the next temp start date
-                                file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , PHP_EOL.'Holiday: '.$current_date , FILE_APPEND);
-                            }
+                    //         $current_date = $i->format("Y-m-d");
+                    //         // $temp_end = $current_date;
+                    //         if(in_array($current_date, $holidays)){                 // If current day is a holiday,
+                    //             $req->start_date = $temp_start;                     // create a new event with the 
+                    //             $req->end_date = $current_date;                     // temp start and end dates
 
-                            if($this->isSaturday($current_date)){                   // If current day is a saturday,
-                                $req->start_date = $temp_start;                     // create a new event with the 
-                                $req->end_date = $current_date;                     // temp start and current dates
+                    //             $temp_start = ((new \DateTime($req->end_date))->modify('+1 day'))->format("Y-m-d");     // Then set the day after the holiday 
+                    //             // $temp_end = $temp_start;       
+                    //             array_push($final_requests, $req);      // Add this 'sub-event' to the list of events                                                         // as the next temp start date
+                    //             // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , PHP_EOL.'Holiday: '.$current_date , FILE_APPEND);
+                    //         }
+
+                    //         if($this->isSaturday($current_date)){                   // If current day is a saturday,
+                    //             $req->start_date = $temp_start;                     // create a new event with the 
+                    //             $req->end_date = $current_date;                     // temp start and current dates
     
-                                array_push($final_requests, $req);          // Add this 'sub-event' to the list of events   
-                                file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , PHP_EOL.'Weekend : '.$current_date , FILE_APPEND);                                                       // as the next temp start date
-                            }
+                    //             array_push($final_requests, $req);          // Add this 'sub-event' to the list of events   
+                    //             // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , PHP_EOL.'Weekend : '.$current_date , FILE_APPEND);                                                       // as the next temp start date
+                    //         }
                             
-                            if($this->isSunday($current_date)){                 // Then set the day after the weekend as the next event start
-                                $temp_start = ((new \DateTime($current_date))->modify('+1 day'))->format("Y-m-d");    
-                            } 
+                    //         if($this->isSunday($current_date)){                 // Then set the day after the weekend as the next event start
+                    //             $temp_start = ((new \DateTime($current_date))->modify('+1 day'))->format("Y-m-d");    
+                    //         } 
 
-                            if($i == $end){
-                                // $temp_end = $i->format("Y-m-d");
-                                $req->start_date = $temp_start;
-                                $req->end_date = $current_date;
-                                array_push($final_requests, $req);          // Add this 'sub-event' to the list of events 
-                            }
-                            $current_date = $i->format("Y-m-d");
-
-                        }
-                    }
+                    //         if($i == $end){
+                    //             // $temp_end = $i->format("Y-m-d");
+                    //             $req->start_date = $temp_start;
+                    //             $req->end_date = $current_date;
+                    //             array_push($final_requests, $req);          // Add this 'sub-event' to the list of events 
+                    //         }
+                    //     }
+                    // }
                 }
                 $response = $final_requests;
             }
@@ -612,7 +640,8 @@ class LeaveManagementApi extends Controller
     public function getLeaveRequestById($request_id)
     {
         try{
-            $leave_request = LeaveRequest::find($request_id);
+            $leave_request = LeaveRequest::with('requested_by','leave_type','status','line_manager','rejected_by','logs')
+                                ->find($request_id);
             return response()->json($leave_request, 200,array(),JSON_PRETTY_PRINT);
         }
         catch(\Exception $e){
@@ -625,7 +654,7 @@ class LeaveManagementApi extends Controller
 
 
     // ------------------------------------------------------------------------------------ //
-    // Leave Requests //
+    // Leave Request Approvals //
     /**
      * Operation approveLeaveRequest
      * Approve a leave request.
@@ -640,7 +669,7 @@ class LeaveManagementApi extends Controller
             $leave_request   = LeaveRequest::findOrFail($request_id);
            
             $approvable_status  = $leave_request->status;
-            $leave_request->status_id = $activity->status->next_status_id;
+            $leave_request->status_id = $leave_request->status->next_status_id;
 
             if($leave_request->save()) {
 
@@ -741,9 +770,9 @@ class LeaveManagementApi extends Controller
     public function submitLeaveRequestForApproval($request_id)
     {
         try{
-            $leave_request = Activity::findOrFail($activity_id);
+            $leave_request = LeaveRequest::findOrFail($request_id);
            
-            $leave_request->status_id = $activity->status->next_status_id;
+            $leave_request->status_id = $leave_request->status->next_status_id;
 
             if($leave_request->save()) {
                 //TODO: Mail::queue(new NotifyLeaveRequest($leave_request));
@@ -848,7 +877,7 @@ class LeaveManagementApi extends Controller
                 //-1
                 $response[]=array(
                         "id"=> -1,
-                        "lpo_status"=> "My Leave Requests",
+                        "status"=> "My Leave Requests",
                         "order_priority"=> 998,
                         "display_color"=> "#37A9E17A",
                         "count"=> LeaveRequest::where('requested_by_id',$this->current_user()->id)->count()
@@ -858,10 +887,10 @@ class LeaveManagementApi extends Controller
                 if ($this->current_user()->hasRole('program-manager')){
                     $response[]=array(
                             "id"=> -3,
-                            "lpo_status"=> "My Manager-Assigned Leave Requests",
+                            "status"=> "My Manager-Assigned Leave Requests",
                             "order_priority"=> 999,
                             "display_color"=> "#49149c7a",
-                            "count"=> LeaveRequest::where('project_manager_id',$this->current_user()->id)->count()
+                            "count"=> LeaveRequest::where('line_manager_id',$this->current_user()->id)->count()
                           );
                 }
 
@@ -870,7 +899,7 @@ class LeaveManagementApi extends Controller
                     //-1
                     $response[]=array(
                             "id"=> -2,
-                            "lpo_status"=> "All Leave Requests",
+                            "status"=> "All Leave Requests",
                             "order_priority"=> 1000,
                             "display_color"=> "#092D50",
                             "count"=> LeaveRequest::count()

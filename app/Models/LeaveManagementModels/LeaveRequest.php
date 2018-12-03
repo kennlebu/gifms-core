@@ -78,6 +78,10 @@ class LeaveRequest extends BaseModel
     {
         return $this->morphMany('App\Models\LogsModels\HistoryLog', 'subject')->orderBy('created_at','asc');
     }
+    public function approvals()
+    {
+        return $this->morphMany('App\Models\ApprovalsModels\Approval', 'approvable')->where('approver_id', '!=', 0);
+    }
     public function getRefAttribute(){
         return '#'.$this->pad(5, $this->attributes['id']);
     }
