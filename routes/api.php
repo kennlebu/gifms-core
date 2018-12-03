@@ -5316,3 +5316,37 @@ Route::GET('/asset-statuses', 'FixedAssetsApi@assetStatusesGet')->middleware('jw
 Route::GET('/asset-status/{id}', 'FixedAssetsApi@getAssetStatusById')->middleware('jwt.auth');
 Route::DELETE('/asset-status/{id}', 'FixedAssetsApi@deleteAssetStatus')->middleware('jwt.auth');
 Route::PUT('/asset-status', 'FixedAssetsApi@updateAssetStatus')->middleware('jwt.auth');
+
+
+/**
+ * Leave Management
+ */
+// Holidays
+Route::POST('/holiday', 'LeaveManagementApi@addHoliday')->middleware('jwt.auth');
+Route::GET('/holidays', 'LeaveManagementApi@holidaysGet')->middleware('jwt.auth');
+Route::GET('/holiday/{id}', 'LeaveManagementApi@getHolidayById')->middleware('jwt.auth');
+Route::DELETE('/holiday/{id}', 'LeaveManagementApi@deleteHoliday')->middleware('jwt.auth');
+Route::PUT('/holiday', 'LeaveManagementApi@updateHoliday')->middleware('jwt.auth');
+// LeaveTypes
+Route::POST('/leave_type', 'LeaveManagementApi@addLeaveType')->middleware('jwt.auth');
+Route::GET('/leave_types', 'LeaveManagementApi@leaveTypesGet')->middleware('jwt.auth');
+Route::GET('/leave_type/{id}', 'LeaveManagementApi@getLeaveTypeById')->middleware('jwt.auth');
+Route::DELETE('/leave_type/{id}', 'LeaveManagementApi@deleteLeaveType')->middleware('jwt.auth');
+Route::PUT('/leave_type', 'LeaveManagementApi@updateLeaveType')->middleware('jwt.auth');
+// Leave Requests
+Route::POST('/leave-request', 'LeaveManagementApi@addLeaveRequest')->middleware('jwt.auth');
+Route::GET('/leave-requests', 'LeaveManagementApi@leaveRequestsGet')->middleware('jwt.auth');
+Route::GET('/leave-request/{id}', 'LeaveManagementApi@getLeaveRequestById')->middleware('jwt.auth');
+Route::DELETE('/leave-request/{id}', 'LeaveManagementApi@deleteLeaveRequest')->middleware('jwt.auth');
+Route::PUT('/leave-request', 'LeaveManagementApi@updateLeaveRequest')->middleware('jwt.auth');
+// LeaveStatuses
+Route::POST('/leave_status', 'LeaveManagementApi@addLeaveStatus')->middleware('jwt.auth');
+Route::GET('/leave_statuses', 'LeaveManagementApi@leaveStatusesGet')->middleware('jwt.auth');
+Route::GET('/leave_status/{id}', 'LeaveManagementApi@getLeaveStatusById')->middleware('jwt.auth');
+Route::DELETE('/leave_status/{id}', 'LeaveManagementApi@deleteLeaveStatus')->middleware('jwt.auth');
+Route::PUT('/leave_status', 'LeaveManagementApi@updateLeaveStatus')->middleware('jwt.auth');
+// Approvals
+Route::PATCH('leave-request/{request_id}/approve', 'LeaveManagementApi@approveLeaveRequest')->middleware('jwt.auth');
+Route::PATCH('leave-requests/approve', 'LeaveManagementApi@approveSeveralLeaveRequests')->middleware('jwt.auth');
+Route::PATCH('leave-request/{request_id}/rejected', 'LeaveManagementApi@rejectLeaveRequest')->middleware('jwt.auth');
+Route::PATCH('leave-request/{request_id}/submit_for_approval', 'LeaveManagementApi@submitLeaveRequestForApproval')->middleware('jwt.auth');

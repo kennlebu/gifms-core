@@ -401,7 +401,7 @@ class ActivityApi extends Controller
             if($activity->save()) {
                 // Mail::queue(new NotifyActivity($activity));
 
-                return Response()->json(array('msg' => 'Success: advance approved','advance' => $activity), 200);
+                return Response()->json(array('msg' => 'Success: activity approved','advance' => $activity), 200);
             }
 
         }catch(ApprovalException $ae){
