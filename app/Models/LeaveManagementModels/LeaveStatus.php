@@ -2,7 +2,7 @@
 
 namespace App\Models\LeaveManagementModels;
 
-
+use JWTAuth;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\BaseModels\BaseModel;
@@ -16,8 +16,10 @@ class LeaveStatus extends BaseModel
 
     public function getCountAttribute()
     {
+        $user = JWTAuth::parseToken()->authenticate();
         return LeaveRequest::where("deleted_at",null)
-		        ->where('status_id', $this->attributes['id'])
+                ->where('status_id', $this->attributes['id'])
+                ->where('requested_by_id', $user->id)
 		        ->count();
 
     }

@@ -485,8 +485,8 @@ class StaffApi extends Controller
                  ->groupBy('staff.id');
         }
 
-        //PMs for a user
-        if(array_key_exists('my_pms', $input)){
+        //PMs for a user OR line managers for leave requests
+        if(array_key_exists('my_pms', $input) || array_key_exists('line_managers', $input)){
 
             //select the projects of the user
             $user = JWTAuth::parseToken()->authenticate();
@@ -507,6 +507,18 @@ class StaffApi extends Controller
                 $qb->select(DB::raw('staff.*'))
                     ->whereIn('staff.id',$program_managers)
                     ->groupBy('staff.id');
+            }
+
+            // Get only directors for PMs and above if it's line managers required
+            if(array_key_exists('line_managers', $input)){
+                if($user->hasRole(['program-manager','financial-controller','admin-manager','director'])){
+                    $qb->select(DB::raw('staff.*'))
+                    ->leftJoin('user_roles', 'user_roles.user_id', '=', 'staff.id')
+                    ->leftJoin('roles', 'roles.id', '=', 'user_roles.role_id')
+                    ->where('roles.acronym', '=', "'dir'")
+                    ->orWhere('roles.acronym', '=', "'a-dir'")
+                    ->groupBy('staff.id');
+                }
             }
 
             // Get all PMs for administrative and finance staff

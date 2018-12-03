@@ -5348,5 +5348,5 @@ Route::PUT('/leave_status', 'LeaveManagementApi@updateLeaveStatus')->middleware(
 // Approvals
 Route::PATCH('leave-request/{request_id}/approve', 'LeaveManagementApi@approveLeaveRequest')->middleware('jwt.auth');
 Route::PATCH('leave-requests/approve', 'LeaveManagementApi@approveSeveralLeaveRequests')->middleware('jwt.auth');
-Route::PATCH('leave-request/{request_id}/rejected', 'LeaveManagementApi@rejectLeaveRequest')->middleware('jwt.auth');
+Route::PATCH('leave-request/{request_id}/reject', 'LeaveManagementApi@rejectLeaveRequest')->middleware('jwt.auth');
 Route::PATCH('leave-request/{request_id}/submit_for_approval', 'LeaveManagementApi@submitLeaveRequestForApproval')->middleware('jwt.auth');
