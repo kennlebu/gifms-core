@@ -105,44 +105,45 @@ class SupplierApi extends Controller
             );
 
         $supplier = new Supplier;
+        $supplier->bank_id                 =  (int)  $form['bank_id'];
+        $supplier->bank_branch_id          =  (int)  $form['bank_branch_id'];
+        $supplier->supplier_name           =         $form['supplier_name'];
+        $supplier->address                 =         $form['address'];
+        $supplier->telephone               =         $form['telephone'];
+        $supplier->email                   =         $form['email'];
+        $supplier->website                 =         $form['website'];
+        $supplier->bank_account            =         $form['bank_account'];
+        $supplier->mobile_payment_number   =         $form['mobile_payment_number'];
+        $supplier->chaque_address          =         $form['chaque_address'];
+        $supplier->payment_mode_id         =  (int)  $form['payment_mode_id'];
+        $supplier->bank_code               =         $form['bank_code'];
+        $supplier->swift_code              =         $form['swift_code'];
+        $supplier->usd_account             =         $form['usd_account'];
+        $supplier->alternative_email       =         $form['alternative_email'];
+        $supplier->currency_id             =  (int)  $form['currency_id'];
+        $supplier->mobile_payment_name     =         $form['mobile_payment_name'];
+        $supplier->city_id                 =  (int)  $form['city_id'];
+        $supplier->qb                      =         $form['qb'];
+        $supplier->status_id               =  (int)  $form['status_id'];
+        $supplier->staff_id                =  (int)  $form['staff_id'];
+        $supplier->password                =         $form['password'];
+        $supplier->quick_books             =         $form['quick_books'];
+        $supplier->tax_pin                 =         trim($form['tax_pin']);
+        $supplier->contact_name_1          =         $form['contact_name_1'];
+        $supplier->contact_email_1         =         $form['contact_email_1'];
+        $supplier->contact_phone_1         =         $form['contact_phone_1'];
+        $supplier->contact_name_2          =         $form['contact_name_2'];
+        $supplier->contact_email_2         =         $form['contact_email_2'];
+        $supplier->contact_phone_2         =         $form['contact_phone_2'];
+        $supplier->requires_lpo            =         $form['requires_lpo'];
+        $supplier->supply_category_id = $form['supply_category_id'];
+        $supplier->county_id = $form['county_id'];
 
-
-            $supplier->bank_id                 =  (int)  $form['bank_id'];
-            $supplier->bank_branch_id          =  (int)  $form['bank_branch_id'];
-            $supplier->supplier_name           =         $form['supplier_name'];
-            $supplier->address                 =         $form['address'];
-            $supplier->telephone               =         $form['telephone'];
-            $supplier->email                   =         $form['email'];
-            $supplier->website                 =         $form['website'];
-            $supplier->bank_account            =         $form['bank_account'];
-            $supplier->mobile_payment_number   =         $form['mobile_payment_number'];
-            $supplier->chaque_address          =         $form['chaque_address'];
-            $supplier->payment_mode_id         =  (int)  $form['payment_mode_id'];
-            $supplier->bank_code               =         $form['bank_code'];
-            $supplier->swift_code              =         $form['swift_code'];
-            $supplier->usd_account             =         $form['usd_account'];
-            $supplier->alternative_email       =         $form['alternative_email'];
-            $supplier->currency_id             =  (int)  $form['currency_id'];
-            $supplier->mobile_payment_name     =         $form['mobile_payment_name'];
-            $supplier->city_id                 =  (int)  $form['city_id'];
-            $supplier->qb                      =         $form['qb'];
-            $supplier->status_id               =  (int)  $form['status_id'];
-            $supplier->staff_id                =  (int)  $form['staff_id'];
-            $supplier->password                =         $form['password'];
-            $supplier->quick_books             =         $form['quick_books'];
-            $supplier->tax_pin                 =         $form['tax_pin'];
-            $supplier->contact_name_1          =         $form['contact_name_1'];
-            $supplier->contact_email_1         =         $form['contact_email_1'];
-            $supplier->contact_phone_1         =         $form['contact_phone_1'];
-            $supplier->contact_name_2          =         $form['contact_name_2'];
-            $supplier->contact_email_2         =         $form['contact_email_2'];
-            $supplier->contact_phone_2         =         $form['contact_phone_2'];
-            $supplier->requires_lpo            =         $form['requires_lpo'];
-            $supplier->supply_category_id = $form['supply_category_id'];
-            $supplier->county_id = $form['county_id'];
+        if(Supplier::where('tax_pin', $supplier->tax_pin)->exists()){
+            return response()->json(["error"=>"Supplier with the same tax pin already exists"], 409,array(),JSON_PRETTY_PRINT);
+        }
 
         if($supplier->save()) {
-
             return Response()->json(array('msg' => 'Success: supplier added','supplier' => $supplier), 200);
         }
     }
@@ -215,42 +216,45 @@ class SupplierApi extends Controller
             );
 
         $supplier = Supplier::find($form['id']);
+        $supplier->bank_id                 =  (int)  $form['bank_id'];
+        $supplier->bank_branch_id          =  (int)  $form['bank_branch_id'];
+        $supplier->supplier_name           =         $form['supplier_name'];
+        $supplier->address                 =         $form['address'];
+        $supplier->telephone               =         $form['telephone'];
+        $supplier->email                   =         $form['email'];
+        $supplier->website                 =         $form['website'];
+        $supplier->bank_account            =         $form['bank_account'];
+        $supplier->mobile_payment_number   =         $form['mobile_payment_number'];
+        $supplier->chaque_address          =         $form['chaque_address'];
+        $supplier->payment_mode_id         =  (int)  $form['payment_mode_id'];
+        $supplier->bank_code               =         $form['bank_code'];
+        $supplier->swift_code              =         $form['swift_code'];
+        $supplier->usd_account             =         $form['usd_account'];
+        $supplier->alternative_email       =         $form['alternative_email'];
+        $supplier->currency_id             =  (int)  $form['currency_id'];
+        $supplier->mobile_payment_name     =         $form['mobile_payment_name'];
+        $supplier->city_id                 =  (int)  $form['city_id'];
+        $supplier->qb                      =         $form['qb'];
+        $supplier->status_id               =  (int)  $form['status_id'];
+        $supplier->staff_id                =  (int)  $form['staff_id'];
+        $supplier->password                =         $form['password'];
+        $supplier->quick_books             =         $form['quick_books'];
+        $supplier->tax_pin                 =         trim($form['tax_pin']);
+        $supplier->contact_name_1          =         $form['contact_name_1'];
+        $supplier->contact_email_1         =         $form['contact_email_1'];
+        $supplier->contact_phone_1         =         $form['contact_phone_1'];
+        $supplier->contact_name_2          =         $form['contact_name_2'];
+        $supplier->contact_email_2         =         $form['contact_email_2'];
+        $supplier->contact_phone_2         =         $form['contact_phone_2'];
+        $supplier->requires_lpo            =         $form['requires_lpo'];
+        $supplier->supply_category_id = $form['supply_category_id'];
+        $supplier->county_id = $form['county_id'];
 
-            $supplier->bank_id                 =  (int)  $form['bank_id'];
-            $supplier->bank_branch_id          =  (int)  $form['bank_branch_id'];
-            $supplier->supplier_name           =         $form['supplier_name'];
-            $supplier->address                 =         $form['address'];
-            $supplier->telephone               =         $form['telephone'];
-            $supplier->email                   =         $form['email'];
-            $supplier->website                 =         $form['website'];
-            $supplier->bank_account            =         $form['bank_account'];
-            $supplier->mobile_payment_number   =         $form['mobile_payment_number'];
-            $supplier->chaque_address          =         $form['chaque_address'];
-            $supplier->payment_mode_id         =  (int)  $form['payment_mode_id'];
-            $supplier->bank_code               =         $form['bank_code'];
-            $supplier->swift_code              =         $form['swift_code'];
-            $supplier->usd_account             =         $form['usd_account'];
-            $supplier->alternative_email       =         $form['alternative_email'];
-            $supplier->currency_id             =  (int)  $form['currency_id'];
-            $supplier->mobile_payment_name     =         $form['mobile_payment_name'];
-            $supplier->city_id                 =  (int)  $form['city_id'];
-            $supplier->qb                      =         $form['qb'];
-            $supplier->status_id               =  (int)  $form['status_id'];
-            $supplier->staff_id                =  (int)  $form['staff_id'];
-            $supplier->password                =         $form['password'];
-            $supplier->quick_books             =         $form['quick_books'];
-            $supplier->tax_pin                 =         $form['tax_pin'];
-            $supplier->contact_name_1          =         $form['contact_name_1'];
-            $supplier->contact_email_1         =         $form['contact_email_1'];
-            $supplier->contact_phone_1         =         $form['contact_phone_1'];
-            $supplier->contact_name_2          =         $form['contact_name_2'];
-            $supplier->contact_email_2         =         $form['contact_email_2'];
-            $supplier->contact_phone_2         =         $form['contact_phone_2'];
-            $supplier->requires_lpo            =         $form['requires_lpo'];
-            $supplier->supply_category_id = $form['supply_category_id'];
-            $supplier->county_id = $form['county_id'];
+        if(Supplier::where('tax_pin', $supplier->tax_pin)->where('id', '!=', $form['id'])->exists()){
+            return response()->json(["error"=>"Supplier with the same tax pin already exists"], 409,array(),JSON_PRETTY_PRINT);
+        }
+
         if($supplier->save()) {
-
             return Response()->json(array('msg' => 'Success: supplier updated','supplier' => $supplier), 200);
         }
     }
