@@ -9,6 +9,7 @@ use App\Models\ActivityModels\Activity;
 use App\Models\ActivityModels\ActivityStatus;
 use App\Models\ProgramModels\ProgramManager;
 use App\Models\ApprovalsModels\Approval;
+use App\Models\ProgramModels\ProgramStaff;
 
 use Exception;
 use App;
@@ -74,7 +75,11 @@ class ActivityApi extends Controller
             $activity->end_date = date('Y-m-d', strtotime($form['end_date']));
             
         $pm = ProgramManager::where('program_id', $form['program_id'])->first(); ;     
-        $activity->program_manager_id = $pm->program_manager_id;            
+        $activity->program_manager_id = $pm->program_manager_id;    
+        
+        if($activity->status_id==3) {               // If activity was already approved, send
+            $activity->status_id = 2;               // it back for approval on editing.
+        }
 
         if($activity->save()) {
 
@@ -146,7 +151,11 @@ class ActivityApi extends Controller
             }elseif ($status_==-2) {
                 
             }elseif ($status_==-3) {
-                $qb->where('activities.program_manager_id',$this->current_user()->id);
+                $program_ids = ProgramStaff::select('program_id')->where('staff_id', $this->current_user()->id)->get();
+                $qb->whereIn('activities.program_id', $program_ids)
+                    ->where('activities.status_id', 3)
+                    ->whereNotNull('activities.id')
+                    ->groupBy('activities.id');
             }
         }
         
@@ -215,7 +224,7 @@ class ActivityApi extends Controller
         //ordering
         if(array_key_exists('order_by', $input)&&$input['order_by']!=''){
             $order_direction     = "asc";
-            $order_column_name   = $input['order_by'];
+            $order_column_name   = 'activities.'.$input['order_by'];
             if(array_key_exists('order_dir', $input)&&$input['order_dir']!=''){                
                 $order_direction = $input['order_dir'];
             }
@@ -245,7 +254,7 @@ class ActivityApi extends Controller
 
             //ordering
             $order_column_id    = (int) $input['order'][0]['column'];
-            $order_column_name  = $input['columns'][$order_column_id]['order_by'];
+            $order_column_name  = 'activities.'.$input['columns'][$order_column_id]['order_by'];
             $order_direction    = $input['order'][0]['dir'];
 
             if($order_column_name!=''){
@@ -302,7 +311,7 @@ class ActivityApi extends Controller
             }
             else $data[$key]['requested_by'] = array("name"=>"N/A");
 
-            $data[$key]['logs'] = $activity->logs;
+            // $data[$key]['logs'] = $activity->logs;
         }
 
         return $data;
