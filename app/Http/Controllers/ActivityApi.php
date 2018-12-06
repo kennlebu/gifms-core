@@ -10,6 +10,8 @@ use App\Models\ActivityModels\ActivityStatus;
 use App\Models\ProgramModels\ProgramManager;
 use App\Models\ApprovalsModels\Approval;
 use App\Models\ProgramModels\ProgramStaff;
+use App\Models\ProgramModels\Program;
+use App\Models\ProjectsModels\Project;
 
 use Exception;
 use App;
@@ -41,15 +43,18 @@ class ActivityApi extends Controller
         $activity->requested_by_id = $form['requested_by_id'];
         $activity->title = $form['title'];
         $activity->description = $form['description'];
-        $activity->program_id = $form['program_id'];
+        $activity->project_id = $form['project_id'];
         $activity->start_date = date('Y-m-d', strtotime($form['start_date']));
         if(!empty($form['end_date'])){
             $activity->end_date = date('Y-m-d', strtotime($form['end_date']));
         }
         $activity->status_id = $this->default_status;
 
-        $pm = ProgramManager::where('program_id', $form['program_id'])->first();    // Save the PM of the program at that time
-        $activity->program_manager_id = $pm->program_manager_id;                    // to the activity
+        $proj = Project::findOrFail($activity->project_id);
+        $program = Program::find($proj->program_id);                                // Save the PM and Program of the Project
+        $activity->program_id = $program->id;                                       // that has been selected. It's redundant
+        $pm = ProgramManager::where('program_id', $program->id)->first();           // but much easier to deal with and the 
+        $activity->program_manager_id = $program->program_manager_id;               // overhead isn't significant. Laziness 101.
 
         if($activity->save()) {
             return Response()->json(array('msg' => 'Success: activity added','activity' => $activity), 200);
@@ -69,13 +74,16 @@ class ActivityApi extends Controller
         $activity->requested_by_id = $form['requested_by_id'];
         $activity->title = $form['title'];
         $activity->description = $form['description'];
-        $activity->program_id = $form['program_id'];
+        $activity->project_id = $form['project_id'];
         $activity->start_date = date('Y-m-d', strtotime($form['start_date']));
         if(!empty($form['end_date']))
             $activity->end_date = date('Y-m-d', strtotime($form['end_date']));
             
-        $pm = ProgramManager::where('program_id', $form['program_id'])->first(); ;     
-        $activity->program_manager_id = $pm->program_manager_id;    
+        $proj = Project::findOrFail($activity->project_id);
+        $program = Program::find($proj->program_id);
+        $activity->program_id = $program->id;
+        $pm = ProgramManager::where('program_id', $program->id)->first();
+        $activity->program_manager_id = $program->program_manager_id;
         
         if($activity->status_id==3) {               // If activity was already approved, send
             $activity->status_id = 2;               // it back for approval on editing.
@@ -109,12 +117,12 @@ class ActivityApi extends Controller
     public function getActivityById($activity_id)
     {
         try{
-            $response = Activity::with('requested_by','program.managers.program_manager','status','rejected_by')->findOrFail($activity_id);           
+            $response = Activity::with('requested_by','program.managers.program_manager','project','status','rejected_by','logs')->findOrFail($activity_id);           
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
 
         }catch(Exception $e){
 
-            $response =  ["error"=>"activity could not be found"];
+            $response =  ["error"=>"something went wrong", 'msg'=>$e->getMessage()];
             return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
         }
     }
@@ -200,6 +208,17 @@ class ActivityApi extends Controller
             if($program_id==0){
             }else if($program_id==1){
                 $qb->where('program_id',$program_id);
+            }
+        }
+
+        //project_id
+         if(array_key_exists('project_id', $input)){
+
+            $project_id = (int) $input['project_id'];
+
+            if($project_id==0){
+            }else if($project_id==1){
+                $qb->where('project_id',$project_id);
             }
         }
 
@@ -294,12 +313,17 @@ class ActivityApi extends Controller
     public function append_relationships_objects($data = array()){
 
         foreach ($data as $key => $value) {
-            $activity = Activity::with('program', 'program.managers', 'logs')->find($data[$key]['id']);
+            $activity = Activity::with('program', 'project', 'program.managers', 'logs')->find($data[$key]['id']);
             
             if(!empty($activity->program_id) && $activity->program_id!=0){
                 $data[$key]['program'] = $activity->program;
             }
             else $data[$key]['program'] = array("program_name"=>"N/A", array("managers"=>['program_manager'=>['name'=>'N/A']]));
+
+            if(!empty($activity->project_id) && $activity->project_id!=0){
+                $data[$key]['project'] = $activity->project;
+            }
+            else $data[$key]['project'] = array("project_code"=>"N/A", "project_name"=>"N/A");
 
             if(!empty($activity->status_id) && $activity->status_id!=0){
                 $data[$key]['status'] = $activity->status;
