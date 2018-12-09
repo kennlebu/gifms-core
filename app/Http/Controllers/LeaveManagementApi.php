@@ -563,7 +563,7 @@ class LeaveManagementApi extends Controller
         $leave_request->requester_comments = $input['requester_comments'];
         if(!empty($input['approver_comments']))
         $leave_request->approver_comments = $input['approver_comments'];
-        file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , PHP_EOL.$leave_request->start_date , FILE_APPEND);
+        // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , PHP_EOL.$leave_request->start_date , FILE_APPEND);
 
         if($leave_request->save()){
             return response()->json($leave_request, 200,array(),JSON_PRETTY_PRINT);
@@ -684,6 +684,36 @@ class LeaveManagementApi extends Controller
             return $response;  
         }
     }
+
+    /**
+     * Operation getLeaveSummary
+     * Get summary of user's leave for the calendar year.
+     * @return Http response
+     */
+    public function getLeaveSummary()
+    {
+        try{
+            $response = [];
+
+            // Add requests to the response
+            $requests = LeaveRequest::with('leave_type','status')->where('requested_by_id', $this->current_user()->id)
+                        ->whereYear('start_date','=',date('Y'))
+                        ->get();
+            $response['requests'] = $requests;
+
+            // Get and add the total days taken and days left to the response
+            $days_taken = LeaveRequest::where('requested_by_id', $this->current_user()->id)
+                        ->whereYear('start_date','=',date('Y'))
+                        ->where('status_id', 3) // Count only approved
+                        ->sum('no_of_days');
+            $response['days_taken'] = $days_taken;
+
+
+            return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+        }catch (Exception $e ){            
+            return response()->json(['error'=>'something went wrong', 'msg'=>$e->getMessage()], 500); 
+        }
+    }
     // End Leave Requests
     // ------------------------------------------------------------------------------------ //
 
@@ -706,6 +736,10 @@ class LeaveManagementApi extends Controller
            
             $approvable_status  = $leave_request->status;
             $leave_request->status_id = $leave_request->status->next_status_id;
+
+            // Update the days left
+            $days_left = (int) $leave_request->no_of_days - (int) $leave_request->leave_type->days_entitled;
+            $leave_request->days_left = $days_left;
 
             if($leave_request->save()) {
 
@@ -952,7 +986,7 @@ class LeaveManagementApi extends Controller
             return response()->json($response, 200);
         }
         catch(\Exception $e){
-            file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , PHP_EOL.$e->getTraceAsString() , FILE_APPEND);
+            // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , PHP_EOL.$e->getTraceAsString() , FILE_APPEND);
             return response()->json(['error'=>'something went wrong', 'msg'=>$e->getMessage()], 500);
         }
     }
