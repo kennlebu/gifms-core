@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\BaseModels\BaseModel;
 use Spatie\Activitylog\Traits\LogsActivity;
+use App\Models\BankingModels\BankTransaction;
+use App\Models\PaymentModels\Payment;
 
 class Invoice extends BaseModel
 {
@@ -60,7 +62,7 @@ class Invoice extends BaseModel
         'lpo_id'
     ];
 
-    protected $appends = ['amount_allocated'];
+    protected $appends = ['amount_allocated', 'bank_transaction'];
 
     
     public function raised_by()
@@ -140,8 +142,16 @@ class Invoice extends BaseModel
         }
 
         return $amount_allocated;
+    }
 
-
-
+    public function getBankTransactionAttribute(){
+        $payment = Payment::where('payable_id', $this->attributes['id'])
+                    ->where('payable_type', 'invoices')
+                    ->first();
+                
+        if(!empty($payment->bank_transaction)){
+            return $payment->bank_transaction;
+        }
+        else return null;
     }
 }

@@ -9,9 +9,38 @@
     footer:after {
         content: "[Page : " counter(page) "]";
     }
+    div.stamp.stamped-paid:after
+    {
+        content:"PAID";
+        position:absolute;
+        top:-10px;
+        left:10px;
+        z-index:1;
+        font-family:Arial,sans-serif;
+        -webkit-transform: rotate(-15deg); /* Safari */
+        -moz-transform: rotate(-15deg); /* Firefox */
+        -ms-transform: rotate(-15deg); /* IE */
+        -o-transform: rotate(-15deg); /* Opera */
+        transform: rotate(-15deg);
+        font-size:40px;
+        color:#4CAF50;
+        background:#fff;
+        border:solid 4px #4CAF50;
+        padding:5px;
+        border-radius:5px;
+        zoom:1;
+        filter:alpha(opacity=20);
+        opacity:0.2;
+        -webkit-text-shadow: 0 0 2px #4CAF50;
+        text-shadow: 0 0 2px #4CAF50;
+        box-shadow: 0 0 2px #4CAF50;
+    }
 </style>
 </head>
 <body style="font-family:arial;">
+    @if($bank_transaction)
+    <div class="stamp stamped-paid"></div>
+    @endif
     <header><div><img style="width: 100%;height:120px;" src = "img/letter_head_top_1200x240.png"></div></header>
     <footer><div><img style="width: 100%;height:80px;" src = "img/letter_head_bottom_1200x125.png"></div></footer>
     <main>
@@ -72,9 +101,18 @@
                     </tr>
 
                     <tr>
+                        @if($bank_transaction)
+                        <td style="border: 1px solid #000000; border-bottom: 0px solid #c0c0c0;" colspan="2">
+                            <small><span>{{$payable_type}} #:</span></small>
+                        </td>
+                        <td style="border: 1px solid #000000; border-bottom: 0px solid #c0c0c0;" colspan="1">
+                            <small><span>Bank Ref:</span></small>
+                        </td>
+                        @else
                         <td style="border: 1px solid #000000; border-bottom: 0px solid #c0c0c0;" colspan="3">
                             <small><span>{{$payable_type}} #:</span></small>
                         </td>
+                        @endif
                         <td style="border: 1px solid #000000; border-bottom: 0px solid #c0c0c0;" colspan="3" >
                             <small>Journal Description:</small>
                         </td>
@@ -87,7 +125,8 @@
                     </tr>
 
                     <tr>
-                        <td style="border: 1px solid #000000; border-top: 0px solid #c0c0c0;" colspan="3">
+                        @if($bank_transaction)
+                        <td style="border: 1px solid #000000; border-top: 0px solid #c0c0c0;" colspan="2">
                             <strong style="float: left;">
                                 @if($payable_type=='Invoice')
                                 <span>{{$payable->external_ref}}</span>
@@ -96,6 +135,20 @@
                                 @endif
                             </strong>
                         </td>
+                        <td style="border: 1px solid #000000; border-top: 0px solid #c0c0c0;text-align:left;" colspan="1" >
+                            <strong>{{$bank_transaction->bank_ref}}</strong>
+                        </td>
+                        @else
+                        <td style="border: 1px solid #000000; border-top: 0px solid #c0c0c0;" colspan="3">
+                                <strong style="float: left;">
+                                    @if($payable_type=='Invoice')
+                                    <span>{{$payable->external_ref}}</span>
+                                    @else
+                                    <span>{{$payable->ref}}</span>
+                                    @endif
+                                </strong>
+                            </td>
+                        @endif
                         <td style="border: 1px solid #000000; border-top: 0px solid #c0c0c0;text-align:left;" colspan="3" >
                             {{$payable->expense_desc}}
                         </td>

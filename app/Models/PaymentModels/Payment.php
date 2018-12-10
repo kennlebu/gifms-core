@@ -6,13 +6,14 @@ namespace App\Models\PaymentModels;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\BaseModels\BaseModel;
+use App\Models\BankingModels\BankTransaction;
 
 class Payment extends BaseModel
 {
     //
     use SoftDeletes;
 
-    protected $appends = ['simple_date'];
+    protected $appends = ['simple_date', 'bank_transaction'];
     
     public function payable()
     {
@@ -54,5 +55,13 @@ class Payment extends BaseModel
     }
     public function voucher_number(){
         return $this->belongsTo('App\Models\PaymentModels\VoucherNumber', 'voucher_no', 'id');
+    }
+
+    public function getBankTransactionAttribute(){
+        $voucher = VoucherNumber::find($this->attributes['voucher_no']);
+        if(!empty($voucher))
+            return BankTransaction::where('chai_ref', $voucher->voucher_number)->first();
+        else
+            return null;
     }
 }

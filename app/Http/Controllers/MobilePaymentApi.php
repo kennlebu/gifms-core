@@ -942,7 +942,8 @@ class MobilePaymentApi extends Controller
                 'mobile_payment'   => $mobile_payment,
                 'voucher_no' => $voucher_no,
                 'vendor' => $vendor,
-                'unique_approvals' => $unique_approvals
+                'unique_approvals' => $unique_approvals,
+                'bank_transaction' => $mobile_payment->bank_transaction
                 );
 
             $pdf = PDF::loadView('pdf/mobile_payment_payment_voucher', $data);
