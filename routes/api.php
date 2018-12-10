@@ -5341,6 +5341,7 @@ Route::GET('/leave-request/{id}', 'LeaveManagementApi@getLeaveRequestById')->mid
 Route::DELETE('/leave-request/{id}', 'LeaveManagementApi@deleteLeaveRequest')->middleware('jwt.auth');
 Route::PUT('/leave-request', 'LeaveManagementApi@updateLeaveRequest')->middleware('jwt.auth');
 Route::GET('/leave-request/{request_id}/get_document', 'LeaveManagementApi@getDocumentById')->middleware('jwt.auth');
+Route::GET('/leave-request-summary', 'LeaveManagementApi@getLeaveSummary')->middleware('jwt.auth');
 // LeaveStatuses
 Route::POST('/leave_status', 'LeaveManagementApi@addLeaveStatus')->middleware('jwt.auth');
 Route::GET('/leave_statuses', 'LeaveManagementApi@leaveStatusesGet')->middleware('jwt.auth');

@@ -398,6 +398,20 @@ class LeaveManagementApi extends Controller
                 }
             }
 
+            // My Assigned
+            if(array_key_exists('my_assigned', $input)){
+                if(!$this->current_user()->hasRole([
+                    'admin',
+                    'director',
+                    'associate-director']
+                )){
+                    $leave_requests = $leave_requests->where('requested_by_id',$this->current_user()->id);
+                 }
+                 if($this->current_user()->hasRole('program-manager')){
+                    $leave_requests = $leave_requests->where('line_manager_id',$this->current_user()->id);
+                 }
+            }
+
             // My Approvables
             if(array_key_exists('my_approvables', $input)){
                 $current_user = $this->current_user();
@@ -473,53 +487,50 @@ class LeaveManagementApi extends Controller
                     array_push($holidays, $h->full_date);
                 }
                 $requests_ = $leave_requests->get();
-                foreach($requests_ as $req){
-                    if(!empty($req->leave_type->include_weekends && $req->leave_type->include_weekends==1)){
-                        array_push($final_requests, $req);
-                        // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , PHP_EOL.'Not Annual' , FILE_APPEND);
-                    }
-                    else{
-                        $begin = new \DateTime($req->start_date);
-                        $end   = new \DateTime($req->end_date);
-                        $temp_start = $begin->format("Y-m-d");
-                        $temp_end = $begin->format("Y-m-d");
-                        $current_date = $temp_end;
+                // foreach($requests_ as $req){
+                //     if(!empty($req->leave_type->include_weekends && $req->leave_type->include_weekends==1)){
+                //         array_push($final_requests, $req);
+                //     }
+                //     else{
+                //         $begin = new \DateTime($req->start_date);
+                //         $end   = new \DateTime($req->end_date);
+                //         $temp_start = $begin->format("Y-m-d");
+                //         $temp_end = $begin->format("Y-m-d");
+                //         $current_date = $temp_start;
 
-                        for($i = $begin; $i <= $end; $i->modify('+1 day')){
-                            $current_date = $i->format("Y-m-d");
-                            if(in_array($current_date, $holidays)){
-                                $temp_end = ((new \DateTime($current_date))->modify('-1 day'))->format("Y-m-d");
-                                // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , PHP_EOL.$temp_start.' to '.$temp_end, FILE_APPEND);
-                                $req->start_date = $temp_start;         // If current day is a holiday, create a new
-                                $req->end_date = $temp_end;             // event with the temp start and end dates
-                                array_push($final_requests, $req);      // then add this 'sub-event' to the list of events
-                                // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , PHP_EOL.'Holiday', FILE_APPEND);
-                                $temp_start = ((new \DateTime($current_date))->modify('+1 day'))->format("Y-m-d"); 
-                            }
-                            elseif($this->isSaturday($current_date)){
-                                $temp_end = ((new \DateTime($current_date))->modify('-1 day'))->format("Y-m-d");
-                                // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , PHP_EOL.$temp_start.' to '.$temp_end, FILE_APPEND);
-                                $req->start_date = $temp_start;         // If current day is a saturday, create a new
-                                $req->end_date = $temp_end;             // event with the temp start and end dates
-                                array_push($final_requests, $req);      // then add this 'sub-event' to the list of events
-                                // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , PHP_EOL.'Saturday', FILE_APPEND);
-                            }
-                            elseif($this->isSunday($current_date)){
-                                $temp_start = ((new \DateTime($current_date))->modify('+1 day'))->format("Y-m-d"); 
-                                // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , PHP_EOL.'Sunday', FILE_APPEND);
-                            }
-                            elseif($i == $end){
-                                $temp_end = $current_date;
-                                // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , PHP_EOL.$temp_start.' to '.$temp_end, FILE_APPEND);
-                                $req->start_date = $temp_start;
-                                $req->end_date = $temp_end;
-                                array_push($final_requests, $req);      // Add this 'sub-event' to the list of events
-                            }
-                        }
-                    }
-                }
-                $response = $final_requests;
-                // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , PHP_EOL.json_encode($final_requests) , FILE_APPEND);
+                //         for($i = $begin; $i <= $end; $i->modify('+1 day')){
+                //             $current_date = $i->format("Y-m-d");
+                //             if(in_array($current_date, $holidays)){
+                //                 $temp_end = ((new \DateTime($current_date))->modify('-1 day'))->format("Y-m-d");
+                //                 $req->start_date = $temp_start;         // If current day is a holiday, create a new
+                //                 $req->end_date = $temp_end;             // event with the temp start and end dates
+                //                 array_push($final_requests, $req);      // then add this 'sub-event' to the list of events
+                //                 $temp_start = ((new \DateTime($current_date))->modify('+1 day'))->format("Y-m-d"); 
+                //                 continue;
+                //             }
+                //             elseif($this->isSaturday($current_date)){
+                //                 $temp_end = ((new \DateTime($current_date))->modify('-1 day'))->format("Y-m-d");
+                //                 $req->start_date = $temp_start;         // If current day is a saturday, create a new
+                //                 $req->end_date = $temp_end;             // event with the temp start and end dates
+                //                 array_push($final_requests, $req);      // then add this 'sub-event' to the list of events
+                //                 continue;
+                //             }
+                //             elseif($this->isSunday($current_date)){
+                //                 $temp_start = ((new \DateTime($current_date))->modify('+1 day'))->format("Y-m-d"); 
+                //                 continue;
+                //             }
+                //             elseif($i == $end){
+                //                 $temp_end = $current_date;
+                //                 $req->start_date = $temp_start;
+                //                 $req->end_date = $temp_end;
+                //                 array_push($final_requests, $req);      // Add this 'sub-event' to the list of events
+                //                 continue;
+                //             }
+                //         }
+                // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , PHP_EOL.json_encode($req->start_date.' to '.$req->end_date) , FILE_APPEND);
+                //     }
+                // }
+                $response = $requests_;
             }
             else{    
                 $response = $leave_requests->get();
@@ -563,7 +574,6 @@ class LeaveManagementApi extends Controller
         $leave_request->requester_comments = $input['requester_comments'];
         if(!empty($input['approver_comments']))
         $leave_request->approver_comments = $input['approver_comments'];
-        file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , PHP_EOL.$leave_request->start_date , FILE_APPEND);
 
         if($leave_request->save()){
             return response()->json($leave_request, 200,array(),JSON_PRETTY_PRINT);
@@ -684,6 +694,36 @@ class LeaveManagementApi extends Controller
             return $response;  
         }
     }
+
+    /**
+     * Operation getLeaveSummary
+     * Get summary of user's leave for the calendar year.
+     * @return Http response
+     */
+    public function getLeaveSummary()
+    {
+        try{
+            $response = [];
+
+            // Add requests to the response
+            $requests = LeaveRequest::with('leave_type','status')->where('requested_by_id', $this->current_user()->id)
+                        ->whereYear('start_date','=',date('Y'))
+                        ->get();
+            $response['requests'] = $requests;
+
+            // Get and add the total days taken and days left to the response
+            $days_taken = LeaveRequest::where('requested_by_id', $this->current_user()->id)
+                        ->whereYear('start_date','=',date('Y'))
+                        ->where('status_id', 3) // Count only approved
+                        ->sum('no_of_days');
+            $response['days_taken'] = $days_taken;
+
+
+            return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+        }catch (Exception $e ){            
+            return response()->json(['error'=>'something went wrong', 'msg'=>$e->getMessage()], 500); 
+        }
+    }
     // End Leave Requests
     // ------------------------------------------------------------------------------------ //
 
@@ -706,6 +746,10 @@ class LeaveManagementApi extends Controller
            
             $approvable_status  = $leave_request->status;
             $leave_request->status_id = $leave_request->status->next_status_id;
+
+            // Update the days left
+            $days_left = (int) $leave_request->no_of_days - (int) $leave_request->leave_type->days_entitled;
+            $leave_request->days_left = $days_left;
 
             if($leave_request->save()) {
 
@@ -952,7 +996,7 @@ class LeaveManagementApi extends Controller
             return response()->json($response, 200);
         }
         catch(\Exception $e){
-            file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , PHP_EOL.$e->getTraceAsString() , FILE_APPEND);
+            // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , PHP_EOL.$e->getTraceAsString() , FILE_APPEND);
             return response()->json(['error'=>'something went wrong', 'msg'=>$e->getMessage()], 500);
         }
     }
