@@ -12,6 +12,8 @@ use App\Models\AssetsModels\FixedAsset;
 use App\Models\AssetsModels\FixedAssetStatus;
 use App\Models\AssetsModels\FixedAssetCategory;
 use App\Models\AssetsModels\FixedAssetLocation;
+use App\Models\AssetsModels\LostAsset;
+use Anchu\Ftp\Facades\Ftp;
 
 class FixedAssetsApi extends Controller
 {
@@ -84,6 +86,24 @@ class FixedAssetsApi extends Controller
         }
         else{
             $response = $asset_status->get();
+
+            $response[]=array(
+                "id"=> -1,
+                "status"=> "All My Assets",
+                "order_priority"=> 997,
+                "display_color"=> "#37A9E17A",
+                "count"=> FixedAsset::where('assigned_to_id',$this->current_user()->id)->count()
+              );
+
+            if ($this->current_user()->hasRole(['admin-manager','admin'])){
+                $response[]=array(
+                    "id"=> -2,
+                    "status"=> "All Assets",
+                    "order_priority"=> 998,
+                    "display_color"=> "#37A9E17A",
+                    "count"=> FixedAsset::count()
+                );
+            }
         }
 
         return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
@@ -336,7 +356,7 @@ class FixedAssetsApi extends Controller
         $input = Request::all();
 
         try{
-            $response = FixedAsset::findOrFail($id);           
+            $response = FixedAsset::with('status','category','location','assigned_to','added_by')->findOrFail($id);           
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
         }
         catch(Exception $e){
@@ -344,6 +364,47 @@ class FixedAssetsApi extends Controller
             return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
         }
     }
+
+    public function reportLost()
+    {
+        try{
+            $input = Request::only(
+                'file',
+                'fixed_asset_id',
+                'date_lost',
+                'explanation'
+            );
+
+            $lost_asset = new LostAsset;
+            $lost_asset->fixed_asset_id = $input['fixed_asset_id'];
+            $lost_asset->date_lost = date('Y-m-d', strtotime($input['date_lost']));
+            $lost_asset->explanation = $input['explanation'];
+            $file = $input['file'];
+
+            // $lost_status = FixedAssetStatus::where('status','like', '\'%stolen%\'')
+            //                 ->orWhere('status','like', '\'%lost%\'')->first();
+            $lost_status = FixedAssetStatus::find(5);   // Lost/Stolen status id
+
+            $asset = FixedAsset::findOrFail($input['fixed_asset_id']);
+            $asset->status_id = $lost_status->id;
+
+            if($lost_asset->save()) {
+                $asset->save();
+
+                FTP::connection()->makeDir('/fixed-assets');
+                FTP::connection()->makeDir('/fixed-assets/'.$lost_asset->id);
+                FTP::connection()->uploadFile($file->getPathname(), '/fixed-assets/'.$lost_asset->id.'/'.$lost_asset->id.'.'.$file->getClientOriginalExtension());
+
+                $lost_asset->police_abstract = $lost_asset->id.'.'.$file->getClientOriginalExtension();
+                $lost_asset->save();
+
+                return Response()->json(array('msg' => 'Success: asset loss reported','asset' => $lost_asset), 200);
+            }
+        }
+        catch(Exception $e){
+            return response()->json(['error'=>"something went wrong", 'msg'=>$e->getMessage()], 404,array(),JSON_PRETTY_PRINT);
+        }
+    } 
 
 
 
