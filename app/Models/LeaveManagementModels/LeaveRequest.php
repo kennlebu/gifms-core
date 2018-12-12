@@ -12,7 +12,7 @@ class LeaveRequest extends BaseModel
 {
     use SoftDeletes;
 
-    protected $appends = ['ref'];
+    protected $appends = ['ref', 'days_taken'];
     private $left;
 
     protected $fillable = [
@@ -86,25 +86,26 @@ class LeaveRequest extends BaseModel
     public function getRefAttribute(){
         return '#'.$this->pad(5, $this->attributes['id']);
     }
-    // public function getDaysTakenAttribute(){
-    //     $req = LeaveRequest::where('requested_by_id', $this->attributes['requested_by_id'])
-    //     ->whereYear('start_date', '=', date('Y'))
-    //             ->where('leave_type_id', $this->attributes['leave_type_id'])
-    //             ->get();
-    //     $type = LeaveType::find($this->attributes['leave_type_id']);
+    public function getDaysTakenAttribute(){
+        $req = LeaveRequest::where('requested_by_id', $this->attributes['requested_by_id'])
+        ->whereYear('start_date', '=', date('Y'))
+                ->where('leave_type_id', $this->attributes['leave_type_id'])
+                ->where('status_id', 3)
+                ->get();
+        $type = LeaveType::find($this->attributes['leave_type_id']);
 
-    //     if(empty($req)){
-    //         return $type->days_entitled;
-    //     }
-    //     else{
-    //         $total_taken = 0;
-    //         foreach($req as $r){
-    //             $total_taken += (int) $r->no_of_days;
-    //         }
-    //         $this->left = (int)$type->days_entitled - $total_taken;
-    //         return $total_taken;
-    //     }
-    // }
+        if(empty($req)){
+            return $type->days_entitled;
+        }
+        else{
+            $total_taken = 0;
+            foreach($req as $r){
+                $total_taken += (int) $r->no_of_days;
+            }
+            $this->left = (int)$type->days_entitled - $total_taken;
+            return $total_taken;
+        }
+    }
     // public function getDaysLeftAttribute(){
     //     $req = LeaveRequest::where('requested_by_id', $this->attributes['requested_by_id'])
     //             ->whereYear('start_date', '=', date('Y'))
