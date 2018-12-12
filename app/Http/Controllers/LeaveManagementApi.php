@@ -675,10 +675,12 @@ class LeaveManagementApi extends Controller
             $leave_request = LeaveRequest::with('requested_by','leave_type','status','line_manager','rejected_by','approvals')
                                 ->findOrFail($request_id);
             $unique_approvals = $this->unique_multidim_array($leave_request->approvals, 'approver_id');
+            $leave_request_types = LeaveType::all();
 
             $data = array(
                 'leave_request' => $leave_request,
-                'unique_approvals' => $unique_approvals
+                'unique_approvals' => $unique_approvals,
+                'leave_request_types' => $leave_request_types
                 );
 
             $pdf = PDF::loadView('pdf/leave_request', $data);
