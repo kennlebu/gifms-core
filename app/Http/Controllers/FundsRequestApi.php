@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Request;
 use App\Models\FundsRequestModels\FundsRequest;
 use App\Models\FundsRequestModels\FundsRequestStatus;
 use App\Models\FundsRequestModels\FundsRequestItem;
+use App\Models\FundsRequestModels\ConsolidatedFunds;
 use App\Models\ApprovalsModels\Approval;
 
 class FundsRequestApi extends Controller
@@ -227,6 +228,16 @@ class FundsRequestApi extends Controller
             $funds_request = $funds_request->where('status_id', 2); // Finance approval status
         }
 
+        // Batch
+        if(array_key_exists('batch', $input)){
+            $funds_request = $funds_request->where('consolidated_funds_id', $input['batch']);
+        }
+
+        // Unconsolidated
+        if(array_key_exists('unconsolidated', $input)){
+            $funds_request = $funds_request->where('status_id', 3); // Approved status
+        }
+
         //ordering
         if(array_key_exists('order_by', $input)&&$input['order_by']!=''){
             $order_direction     = "asc";
@@ -279,15 +290,6 @@ class FundsRequestApi extends Controller
 
         return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
     }
-
-    // function append_relationship_items($data){
-    //     $requests = [];
-    //     foreach($data as $request){
-    //         $request = FundsRequest::with('status','requested_by','funds_request_items.currency','funds_request_items.project')->find($funds_request->id);
-    //         array_push($requests, $request);
-    //     }
-    //     return $requests;
-    // }
 
     public function addFundsRequest()
     {
@@ -459,6 +461,98 @@ class FundsRequestApi extends Controller
              return response()->json(['error'=>"An rerror occured during processing", 'msg'=>$e->getMessage()], 500,array(),JSON_PRETTY_PRINT);
             
         }
+    }
+
+    public function consolidateFunds()
+    {
+        $form = Request::only('requests');
+
+        try{
+            $consolidated_funds = new ConsolidatedFunds;
+
+            $consolidated_funds->consolidated_by_id = (int) $this->current_user()->id;
+
+            if($consolidated_funds->save()) {
+
+                foreach ($form['requests'] as $key => $value) {                   
+
+                    $funds_request = FundsRequest::find($value);
+                    
+                    $funds_request->status_id = $funds_request->status->next_status_id;
+                    $funds_request->consolidated_funds_id = $consolidated_funds->id;
+
+                    $funds_request->save();
+                }
+                // Mail::queue(new NotifyBatch($payment_batch->id));
+
+                return Response()->json(array('msg' => 'Success: Funds consolidated','consolidated_funds' => $consolidated_funds), 200);
+            }
+        }
+        catch (JWTException $e){
+            return response()->json(['error'=>'something went wrong'], 500);
+        }
+    }
+
+    /**
+     * Operation getConsolidatedFunds
+     * consolidated funds List.
+     * @return Http response
+     */
+    public function getConsolidatedFunds()
+    {
+
+        $input = Request::all();
+
+        $consolidated_funds = ConsolidatedFunds::query();
+
+        $response;
+        $response_dt;
+
+        $total_records          = $consolidated_funds->count();
+        $records_filtered       = 0;
+
+        //searching
+        if(array_key_exists('searchval', $input)){
+            $consolidated_funds = $consolidated_funds->where(function ($query) use ($input) {
+                $query->orWhere('id','like', '\'%' . $input['searchval']. '%\'');
+            });
+
+            $records_filtered = $consolidated_funds->count();
+        }
+
+        if(array_key_exists('datatables', $input)){
+
+            $records_filtered = $consolidated_funds->count();
+
+            //ordering
+            $order_column_id    = (int) $input['order'][0]['column'];
+            $order_column_name  = $input['columns'][$order_column_id]['order_by'];
+            $order_direction    = $input['order'][0]['dir'];
+
+            if($order_column_name!=''){
+                $consolidated_funds = $consolidated_funds->orderBy($order_column_name, $order_direction);
+            }
+
+            //limit $ offset
+            if((int)$input['start']!= 0 ){
+                $response_dt = $consolidated_funds->limit($input['length'])->offset($input['start']);
+
+            }else{
+                $consolidated_funds = $consolidated_funds->limit($input['length']);
+            }
+
+            $response_dt = $consolidated_funds->get();
+            $response = ConsolidatedFunds::arr_to_dt_response( 
+                $response_dt, $input['draw'],
+                $total_records,
+                $records_filtered
+                );
+        }
+        else{
+            $response = $consolidated_funds->get();
+        }
+
+        return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
     }
 
 
