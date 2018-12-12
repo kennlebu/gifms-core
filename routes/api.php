@@ -5255,6 +5255,8 @@ Route::PUT('/funds-request', 'FundsRequestApi@updateFundsRequest')->middleware('
 Route::PATCH('funds-request/{id}/submit_for_approval', 'FundsRequestApi@submitFundsRequestForApproval')->middleware('jwt.auth');
 Route::PATCH('/funds-request/{id}/approve', 'FundsRequestApi@approveFundsRequest')->middleware('jwt.auth');
 Route::PATCH('/funds-request/approve', 'FundsRequestApi@approveSeveralFundsRequests')->middleware('jwt.auth');
+Route::POST('/consolidate-funds', 'FundsRequestApi@consolidateFunds')->middleware('jwt.auth');
+Route::GET('/consolidated-funds', 'FundsRequestApi@getConsolidatedFunds')->middleware('jwt.auth');
 // Items
 Route::GET('/funds-request-items', 'FundsRequestApi@getFundsRequestItems')->middleware('jwt.auth');
 Route::PUT('/funds-request-item', 'FundsRequestApi@updateFundsRequestItem')->middleware('jwt.auth');
