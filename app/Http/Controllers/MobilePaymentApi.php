@@ -1253,6 +1253,14 @@ class MobilePaymentApi extends Controller
         }
 
         $mobile_payment->status_id = 14;
+
+        // Logging recall
+        activity()
+        ->performedOn($mobile_payment)
+        ->causedBy($this->current_user())
+        ->log('recalled');
+
+        $mobile_payment->disableLogging(); //! Do not log the update
         
         if($mobile_payment->save()){
             return response()->json(['msg'=>"mobile payment recalled"], 200,array(),JSON_PRETTY_PRINT);

@@ -83,6 +83,14 @@ class LPOQuotationApi extends Controller
                 $lpo    =       Lpo::with("preffered_quotation")->findOrFail($lpo_quotation->lpo_id);
                 if (is_null($lpo->preffered_quotation)) {
                     $lpo->preffered_quotation_id = $lpo_quotation->id;
+
+                    activity()
+                        ->performedOn($lpo)
+                        ->causedBy($this->current_user())
+                        ->log('quotation added');
+
+                    $lpo->disableLogging(); //! Do not log the update
+
                     $lpo->save();
                 }
 

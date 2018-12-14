@@ -311,6 +311,14 @@ class LPOApi extends Controller
         }
 
         $lpo->status_id = 11;
+
+        // Logging recall
+        activity()
+        ->performedOn($lpo)
+        ->causedBy($this->current_user())
+        ->log('recalled');
+
+        $lpo->disableLogging(); //! Do not log the update
         
         if($lpo->save()){
             return response()->json(['msg'=>"lpo recalled"], 200,array(),JSON_PRETTY_PRINT);
@@ -344,6 +352,14 @@ class LPOApi extends Controller
         }
 
         $lpo->status_id = 15;
+
+        // Logging cancelation
+        activity()
+        ->performedOn($lpo)
+        ->causedBy($this->current_user())
+        ->log('canceled');
+
+        $lpo->disableLogging(); //! Do not log the update
         
         if($lpo->save()){
             Mail::queue(new NotifyLpoCancellation($lpo));
@@ -450,6 +466,7 @@ class LPOApi extends Controller
             $approvable_status  = $lpo->status;
             $lpo->status_id = $lpo->status->next_status_id;
 
+            $lpo->disableLogging(); //! Do not log the update
             if($lpo->save()) {
 
                 $lpo   = LPO::with(
@@ -481,6 +498,13 @@ class LPOApi extends Controller
                 $approval->approver_id              =   (int)   $user->id;
 
                 $approval->save();
+
+                // Logging
+                $lpo->enableLogging(); //! Re-enable logging
+                activity()
+                   ->performedOn($approval->approvable)
+                   ->causedBy($user)
+                   ->log('approved');
 
                 if($lpo->status_id!=7){
                     try{
@@ -578,7 +602,15 @@ class LPOApi extends Controller
             $lpo->rejected_at              =   date('Y-m-d H:i:s');
             $lpo->rejection_reason             =   $form['rejection_reason'];
 
+            $lpo->disableLogging(); //! Disable logging for the update
             if($lpo->save()) {
+
+            // Logging
+            $lpo->enableLogging();
+                activity()
+                ->performedOn($lpo)
+                ->causedBy($user)
+                ->log('rejected');
 
                 try{
                 Mail::queue(new NotifyLpo($lpo));
@@ -666,8 +698,24 @@ class LPOApi extends Controller
            
             $lpo->status_id = $lpo->status->next_status_id;
             // Set request time only if it's going to accountant
-            if($lpo->status_id == 2) $lpo->requested_at = date('Y-m-d H:i:s');
+            if($lpo->status_id == 2) {
+                $lpo->requested_at = date('Y-m-d H:i:s');
 
+                // Logging submission
+                activity()
+                   ->performedOn($lpo)
+                   ->causedBy($this->current_user())
+                   ->log('submitted');
+            }
+            else{
+                // Logging resubmission
+                activity()
+                    ->performedOn($lpo)
+                    ->causedBy($this->current_user())
+                    ->log('submitted');
+            }
+
+            $lpo->disableLogging(); //! Do not log the update
             if($lpo->save()) {
 
                 try{
@@ -842,7 +890,6 @@ class LPOApi extends Controller
                 return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
             }
             catch (Exception $e){
-                file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , 'EXCEPTION:: '.$e.getMessage() , FILE_APPEND);
                 $response = ['error'=>'Failed to retrieve records'];
                 return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
             }
