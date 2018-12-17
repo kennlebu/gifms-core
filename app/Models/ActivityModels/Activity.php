@@ -73,7 +73,13 @@ class Activity extends BaseModel
     }
     
     public function getGrantAttribute(){
-        $project = Project::with('grant')->find($this->attributes['project_id']);
-        return $project->grant;
+        if(!empty($this->attributes['project_id'])){
+            $project = Project::with('grant')->find($this->attributes['project_id']);
+            return $project->grant;
+        }
+        else{
+            return 'N/A';
+        }
+        
     }
 }
