@@ -80,6 +80,5 @@ class Activity extends BaseModel
         else{
             return 'N/A';
         }
-        
     }
 }

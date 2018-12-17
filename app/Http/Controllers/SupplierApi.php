@@ -250,7 +250,7 @@ class SupplierApi extends Controller
         $supplier->supply_category_id = $form['supply_category_id'];
         $supplier->county_id = $form['county_id'];
 
-        if(Supplier::where('tax_pin', $supplier->tax_pin)->where('id', '!=', $form['id'])->exists()){
+        if(!empty($form['tax_pin']) && Supplier::where('tax_pin', $supplier->tax_pin)->where('id', '!=', $form['id'])->exists()){
             return response()->json(["error"=>"Supplier with the same tax pin already exists"], 409,array(),JSON_PRETTY_PRINT);
         }
 
