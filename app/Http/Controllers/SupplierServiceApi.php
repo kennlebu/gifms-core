@@ -123,8 +123,8 @@ class SupplierServiceApi extends Controller
         }
 
         // Supply category
-        if(array_key_exists('category', $input)){
-            $qb->where('supply_category_id', $input['category']);
+        if(array_key_exists('supply_category_id', $input)){
+            $qb->where('supply_category_id', $input['supply_category_id']);
         }
 
         //limit

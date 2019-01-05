@@ -1552,6 +1552,7 @@ Route::GET('/supplier-rate/{supplier_rate_id}', 'SupplierRateApi@getSupplierRate
 
  */
 Route::GET('/supplier-rates', 'SupplierRateApi@supplierRatesGet')->middleware('jwt.auth');
+Route::POST('/supplier-rates/find-vendors', 'SupplierRateApi@findVendors')->middleware('jwt.auth');
 
 Route::POST('/supplier-rate-term', 'SupplierRateApi@addSupplierRateTerm')->middleware('jwt.auth');
 Route::PUT('/supplier-rate-term', 'SupplierRateApi@updateSupplierRateTerm')->middleware('jwt.auth');
