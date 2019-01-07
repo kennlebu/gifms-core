@@ -95,6 +95,13 @@ class LPOItemApi extends Controller
                 $lpo_item->qty_description = $lpo_item->qty_description.'; '.$form['no_of_days'].' days';   // Add the number of days to the
             }                                                                                               // quantity description.
 
+            if(!empty($form['expensive_quotation_reason'])){
+                $lpo = Lpo::find($lpo_item->lpo_id);
+                $lpo->expensive_quotation_reason = $form['expensive_quotation_reason'];
+                $lpo->disableLogging(); //! Do not log the update
+                $lpo->save();
+            }
+
             if($lpo_item->save()) {
                 return Response()->json(array('success' => 'lpo quoatation added','lpo_item' => $lpo_item), 200);
             }
