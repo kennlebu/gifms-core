@@ -29,5 +29,8 @@ class FixedAsset extends BaseModel
     public function added_by()
     {
         return $this->belongsTo('App\Models\StaffModels\Staff','added_by_id');
+    }public function logs()
+    {
+        return $this->morphMany('App\Models\LogsModels\HistoryLog', 'subject')->orderBy('created_at','asc');
     }
 }

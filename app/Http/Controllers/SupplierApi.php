@@ -379,9 +379,6 @@ class SupplierApi extends Controller
      */
     public function suppliersGet()
     {
-        
-
-
         $input = Request::all();
         //query builder
         $qb = DB::table('suppliers');
@@ -395,30 +392,24 @@ class SupplierApi extends Controller
         $total_records          = $qb->count();
         $records_filtered       = 0;
 
-
-
-
         //searching
         if(array_key_exists('searchval', $input)){
-            $qb->where(function ($query) use ($input) {
-                
+            $qb->where(function ($query) use ($input) {                
                 $query->orWhere('suppliers.id','like', '\'%' . $input['searchval']. '%\'');
                 $query->orWhere('suppliers.supplier_name','like', '\'%' . $input['searchval']. '%\'');
-
             });
-
-            // $records_filtered       =  $qb->count(); //doesn't work
 
             $sql = Supplier::bind_presql($qb->toSql(),$qb->getBindings());
             $sql = str_replace("*"," count(*) AS count ", $sql);
             $dt = json_decode(json_encode(DB::select($sql)), true);
 
             $records_filtered = (int) $dt[0]['count'];
-            // $records_filtered = 30;
-
-
         }
 
+        // Supply category
+        if(array_key_exists('supply_category_id', $input) && !empty($input['supply_category_id'])){
+            $qb->where('supply_category_id', $input['supply_category_id']);
+        }
 
         //ordering
         if(array_key_exists('order_by', $input)&&$input['order_by']!=''){
@@ -429,22 +420,15 @@ class SupplierApi extends Controller
             }
 
             $qb->orderBy($order_column_name, $order_direction);
-        }else{
-            // $qb->orderBy("supplier_name", "asc");
         }
 
         //limit
         if(array_key_exists('limit', $input)){
-
-
             $qb->limit($input['limit']);
-
-
         }
 
         //migrated
         if(array_key_exists('migrated', $input)){
-
             $mig = (int) $input['migrated'];
 
             if($mig==0){
@@ -452,17 +436,12 @@ class SupplierApi extends Controller
             }else if($mig==1){
                 $qb->whereNotNull('migration_id');
             }
-
-
         }
-
-
 
         if(array_key_exists('datatables', $input)){
 
             //searching
-            $qb->where(function ($query) use ($input) {
-                
+            $qb->where(function ($query) use ($input) {                
                 $query->orWhere('suppliers.id','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('suppliers.supplier_name','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('suppliers.address','like', '\'%' . $input['search']['value']. '%\'');
@@ -473,11 +452,7 @@ class SupplierApi extends Controller
                 $query->orWhere('suppliers.city_id','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('suppliers.contact_name_1','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('suppliers.contact_name_2','like', '\'%' . $input['search']['value']. '%\'');
-
             });
-
-
-
 
             $sql = Supplier::bind_presql($qb->toSql(),$qb->getBindings());
             $sql = str_replace("*"," count(*) AS count ", $sql);
@@ -485,43 +460,28 @@ class SupplierApi extends Controller
 
             $records_filtered = (int) $dt[0]['count'];
 
-
             //ordering
             $order_column_id    = (int) $input['order'][0]['column'];
             $order_column_name  = $input['columns'][$order_column_id]['order_by'];
             $order_direction    = $input['order'][0]['dir'];
 
             if($order_column_name!=''){
-
                 $qb->orderBy($order_column_name, $order_direction);
-
-            }else{
+            }
+            else {
                 $qb->orderBy("supplier_name", "desc");
             }
 
-
-
-
-
-
             //limit $ offset
             if((int)$input['start']!= 0 ){
-
                 $response_dt    =   $qb->limit($input['length'])->offset($input['start']);
-
-            }else{
+            }
+            else {
                 $qb->limit($input['length']);
             }
 
-
-
-
-
             $sql = Supplier::bind_presql($qb->toSql(),$qb->getBindings());
-
-            // $response_dt = DB::select($qb->toSql(),$qb->getBindings());         //pseudo
             $response_dt = DB::select($sql);
-
 
             $response_dt = json_decode(json_encode($response_dt), true);
 
@@ -532,10 +492,8 @@ class SupplierApi extends Controller
                 $total_records,
                 $records_filtered
                 );
-
-
-        }else{
-
+        }
+        else {
 
             $qb->orderBy("supplier_name", "asc");
 
@@ -547,15 +505,9 @@ class SupplierApi extends Controller
                 $response       = $this->append_relationships_objects($response);
                 $response       = $this->append_relationships_nulls($response);
             }
-
         }
 
-
-
-
         return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
-
-
     }
 
 

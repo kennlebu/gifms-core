@@ -13,6 +13,7 @@ use App\Models\AssetsModels\FixedAssetStatus;
 use App\Models\AssetsModels\FixedAssetCategory;
 use App\Models\AssetsModels\FixedAssetLocation;
 use App\Models\AssetsModels\LostAsset;
+use App\Models\AssetsModels\ClaimedAsset;
 use Anchu\Ftp\Facades\Ftp;
 
 class FixedAssetsApi extends Controller
@@ -90,7 +91,7 @@ class FixedAssetsApi extends Controller
             $response[]=array(
                 "id"=> -1,
                 "status"=> "All My Assets",
-                "order_priority"=> 997,
+                "order_priority"=> 2,
                 "display_color"=> "#37A9E17A",
                 "count"=> FixedAsset::where('assigned_to_id',$this->current_user()->id)->count()
               );
@@ -99,7 +100,7 @@ class FixedAssetsApi extends Controller
                 $response[]=array(
                     "id"=> -2,
                     "status"=> "All Assets",
-                    "order_priority"=> 998,
+                    "order_priority"=> 1,
                     "display_color"=> "#37A9E17A",
                     "count"=> FixedAsset::count()
                 );
@@ -356,7 +357,7 @@ class FixedAssetsApi extends Controller
         $input = Request::all();
 
         try{
-            $response = FixedAsset::with('status','category','location','assigned_to','added_by')->findOrFail($id);           
+            $response = FixedAsset::with('status','category','location','assigned_to','added_by','logs.causer')->findOrFail($id);           
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
         }
         catch(Exception $e){
@@ -405,6 +406,40 @@ class FixedAssetsApi extends Controller
             return response()->json(['error'=>"something went wrong", 'msg'=>$e->getMessage()], 404,array(),JSON_PRETTY_PRINT);
         }
     } 
+
+    public function claimAsset(){
+        try{
+            $input = Request::only(
+                'file',
+                'fixed_asset_id',
+                'insurer_id'
+            );
+
+            $claimed_asset = new ClaimedAsset;
+            $claimed_asset->fixed_asset_id = $input['fixed_asset_id'];
+            $claimed_asset->insurer_id = $input['insurer_id'];
+            $file = $input['file'];
+
+            $asset = FixedAsset::findOrFail($input['fixed_asset_id']);
+            $asset->status_id = 7;      // Lost & Claimed status id
+
+            if($claimed_asset->save()) {
+                $asset->save();
+
+                FTP::connection()->makeDir('/asset-claims');
+                FTP::connection()->makeDir('/asset-claims/'.$claimed_asset->id);
+                FTP::connection()->uploadFile($file->getPathname(), '/asset-claims/'.$claimed_asset->id.'/'.$claimed_asset->id.'.'.$file->getClientOriginalExtension());
+
+                $claimed_asset->claim_document = $claimed_asset->id.'.'.$file->getClientOriginalExtension();
+                $claimed_asset->save();
+
+                return Response()->json(array('msg' => 'Success: asset claimed','asset' => $claimed_asset), 200);
+            }
+        }
+        catch(Exception $e){
+            return response()->json(['error'=>"something went wrong", 'msg'=>$e->getMessage()], 404,array(),JSON_PRETTY_PRINT);
+        }
+    }
 
 
 
