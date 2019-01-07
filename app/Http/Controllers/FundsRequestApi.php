@@ -198,7 +198,7 @@ class FundsRequestApi extends Controller
         $user = JWTAuth::parseToken()->authenticate();
 
         $input = Request::all();        
-        $funds_request = FundsRequest::with('status','requested_by','funds_request_items.currency','funds_request_items.project');
+        $funds_request = FundsRequest::with('funds_request_items.program_activity', 'status','requested_by','funds_request_items.currency','funds_request_items.project');
 
         // Status
         if(array_key_exists('status', $input)){
@@ -320,9 +320,10 @@ class FundsRequestApi extends Controller
         if(!empty($input['project_id']))    $request_item->project_id = $input['project_id'];
         if(!empty($input['amount']))        $request_item->amount = $input['amount'];
         if(!empty($input['currency_id']))   $request_item->currency_id = $input['currency_id'];
+        if(!empty($input['program_activity_id']))   $request_item->program_activity_id = $input['program_activity_id'];
 
         if($request_item->save()) {
-            $request_item = FundsRequestItem::with('project','currency')->find($request_item->id);
+            $request_item = FundsRequestItem::with('project','currency','program_activity')->find($request_item->id);
             return Response()->json(array('msg' => 'Success: request added','request_item' => $request_item, 'request'=>$request), 200);
         }
     }   
@@ -355,7 +356,7 @@ class FundsRequestApi extends Controller
         $input = Request::all();
 
         try{
-            $response = FundsRequest::with('status','requested_by','funds_request_items.currency','funds_request_items.project')->findOrFail($id);           
+            $response = FundsRequest::with('status','requested_by','funds_request_items.program_activity','funds_request_items.currency','funds_request_items.project')->findOrFail($id);           
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
         }
         catch(Exception $e){
@@ -569,6 +570,7 @@ class FundsRequestApi extends Controller
         if(!empty($input['project_id']))    $request_item->project_id = $input['project_id'];
         if(!empty($input['amount']))        $request_item->amount = $input['amount'];
         if(!empty($input['currency_id']))   $request_item->currency_id = $input['currency_id'];
+        if(!empty($input['program_activity_id']))   $request_item->program_activity_id = $input['program_activity_id'];
 
         if($request_item->save()) {
             return Response()->json(array('msg' => 'Success: funds request item updated','funds_request_item' => $request_item), 200);
@@ -585,7 +587,7 @@ class FundsRequestApi extends Controller
         $user = JWTAuth::parseToken()->authenticate();
 
         $input = Request::all();        
-        $funds_request = FundsRequestItem::with('status','requested_by','funds_request_items');
+        $funds_request = FundsRequestItem::with('program_activity','status','requested_by','funds_request_items');
 
         // Project
         if(array_key_exists('project_id',$input)){
@@ -595,6 +597,11 @@ class FundsRequestApi extends Controller
         // Currency
         if(array_key_exists('currency_id',$input)){
             $funds_request = $funds_request->where('currency_id', $input['currency_id']);
+        }
+
+        // Activity
+        if(array_key_exists('program_activity_id', $input)){
+            $funds_request = $funds_request->where('program_activity_id', $input['program_activity_id']);
         }
 
         //ordering
@@ -661,7 +668,7 @@ class FundsRequestApi extends Controller
         $input = Request::all();
 
         try{
-            $response = FundsRequestItem::with('project','currency')->findOrFail($id);           
+            $response = FundsRequestItem::with('program_activity','project','currency')->findOrFail($id);           
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
         }
         catch(Exception $e){

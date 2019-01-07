@@ -24,4 +24,8 @@ class FundsRequestItem extends BaseModel
     {
         return $this->belongsTo('App\Models\LookupModels\Currency','currency_id');
     }
+    public function program_activity()
+    {
+        return $this->belongsTo('App\Models\ActivityModels\Activity','program_activity_id');
+    }
 }
