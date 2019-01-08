@@ -462,7 +462,7 @@ class SupplierRateApi extends Controller
                 array_push($supply_category_ids, $service['supply_category_id']);
             }
             $qb->whereIn('supplier_rates.service_id', $service_ids);
-            $qb->whereIn('suppliers.county_id', $county_ids);
+            $qb->where('suppliers.county_id', $county_ids[0]);
             if(!empty($supply_category_ids)){
                 $qb->whereIn('suppliers.supply_category_id', $supply_category_ids);
             }
@@ -494,12 +494,15 @@ class SupplierRateApi extends Controller
                         $no_of_days = $sl['no_of_days'];
                     }
                 }
+                $subtotal = 0;
+                $subtotal = $response[$key]['rate'] * $qty;
+                if(!empty($no_of_days)) $subtotal *= $no_of_days;
                 array_push($items, array(
                     'service'=>$response[$key]['service'], 
                     'service_id'=>$response[$key]['service_id'], 
                     'rate'=>$response[$key]['rate'],
                     'rate_id'=>$response[$key]['id'],
-                    'subtotal'=>$response[$key]['rate'], // Change this
+                    'subtotal'=>$subtotal,
                     'vat'=>$response[$key]['vat'],
                     'unit'=>$response[$key]['unit'],
                     'daily_charge'=>$response[$key]['daily_charge'],
@@ -513,7 +516,7 @@ class SupplierRateApi extends Controller
                     'supplier'=>$response[$key-1]['supplier'],
                     'currency'=>$response[$key-1]['currency'],
                     'items'=>$items,
-                    'total'=>array_sum(array_column($items, 'rate'))
+                    'total'=>array_sum(array_column($items, 'subtotal'))
                 );      
                 $items = [];
                 $qty = 1;
@@ -524,12 +527,15 @@ class SupplierRateApi extends Controller
                         $no_of_days = $sl['no_of_days'];
                     }
                 }
+                $subtotal = 0;
+                $subtotal = $response[$key]['rate'] * $qty;
+                if(!empty($no_of_days)) $subtotal *= $no_of_days;
                 array_push($items, array(
                     'service'=>$response[$key]['service'], 
                     'service_id'=>$response[$key]['service_id'], 
                     'rate'=>$response[$key]['rate'],
                     'rate_id'=>$response[$key]['id'],
-                    'subtotal'=>$response[$key]['rate'], // Change this
+                    'subtotal'=>$subtotal,
                     'vat'=>$response[$key]['vat'],
                     'unit'=>$response[$key]['unit'],
                     'daily_charge'=>$response[$key]['daily_charge'],
@@ -544,7 +550,7 @@ class SupplierRateApi extends Controller
                     'supplier'=>$response[$key]['supplier'],
                     'currency'=>$response[$key]['currency'],
                     'items'=>$items,
-                    'total'=>array_sum(array_column($items, 'rate'))
+                    'total'=>array_sum(array_column($items, 'subtotal'))
                 ); 
             }
             // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , PHP_EOL.json_encode($items) , FILE_APPEND);
