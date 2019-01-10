@@ -5303,6 +5303,7 @@ Route::DELETE('/asset/{id}', 'FixedAssetsApi@deleteAsset')->middleware('jwt.auth
 Route::PUT('/asset', 'FixedAssetsApi@updateAsset')->middleware('jwt.auth');
 Route::POST('/lost-asset', 'FixedAssetsApi@reportLost')->middleware('jwt.auth');
 Route::POST('/claim-asset', 'FixedAssetsApi@claimAsset')->middleware('jwt.auth');
+Route::PATCH('/assets/return', 'FixedAssetsApi@returnAssets')->middleware('jwt.auth');
 // Locations
 Route::POST('/asset-location', 'FixedAssetsApi@addAssetLocation')->middleware('jwt.auth');
 Route::GET('/asset-locations', 'FixedAssetsApi@assetLocationsGet')->middleware('jwt.auth');

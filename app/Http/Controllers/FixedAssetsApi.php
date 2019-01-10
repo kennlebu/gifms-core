@@ -442,6 +442,34 @@ class FixedAssetsApi extends Controller
     }
 
 
+    public function returnAssets(){
+        try {
+            $form = Request::only("assets");
+            $asset_ids = $form['assets'];
+
+            foreach ($asset_ids as $key => $asset_id) {
+                $asset = FixedAsset::findOrFail($asset_id);
+                $asset->status_id = 8;  // Returned Pending Approval
+
+                $asset->disableLogging(); //! Do not log the update
+
+                if($asset->save()){
+                    // Logging submission
+                    activity()
+                        ->performedOn($asset)
+                        ->causedBy($this->current_user())
+                        ->log('returned');
+                }
+            }
+
+            return response()->json(['assets'=>$form['assets']], 201,array(),JSON_PRETTY_PRINT);
+            
+        } catch (Exception $e) {
+             return response()->json(['error'=>"An rerror occured during processing"], 500,array(),JSON_PRETTY_PRINT);
+        }
+    }
+
+
 
 
 
