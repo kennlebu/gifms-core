@@ -53,8 +53,8 @@ class ActivityApi extends Controller
         $proj = Project::findOrFail($activity->project_id);
         $program = Program::find($proj->program_id);                                // Save the PM and Program of the Project
         $activity->program_id = $program->id;                                       // that has been selected. It's redundant
-        $pm = ProgramManager::where('program_id', $program->id)->first();           // but much easier to deal with and the 
-        $activity->program_manager_id = $program->program_manager_id;               // overhead isn't significant. Laziness 101.
+        $activity->program_manager_id = $program->managers->program_manager_id;     // but much easier to deal with and the 
+                                                                                    // overhead isn't significant. Laziness 101.
 
         if($activity->save()) {
             return Response()->json(array('msg' => 'Success: activity added','activity' => $activity), 200);
@@ -82,8 +82,7 @@ class ActivityApi extends Controller
         $proj = Project::findOrFail($activity->project_id);
         $program = Program::find($proj->program_id);
         $activity->program_id = $program->id;
-        $pm = ProgramManager::where('program_id', $program->id)->first();
-        $activity->program_manager_id = $program->program_manager_id;
+        $activity->program_manager_id = $program->managers->program_manager_id;
         
         if($activity->status_id==3) {               // If activity was already approved, send
             $activity->status_id = 2;               // it back for approval on editing.
