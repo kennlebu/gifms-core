@@ -29,6 +29,7 @@ class SupplierServiceApi extends Controller
         $service = new SupplierService;
         $service->service_name = $input['service_name'];
         $service->supply_category_id = (int) $input['supply_category_id'];
+        $service->daily_charge = (int) $input['daily_charge'];
 
         if($service->save()){
             return response()->json(['msg'=>"service added"], 200,array(),JSON_PRETTY_PRINT);
@@ -46,6 +47,7 @@ class SupplierServiceApi extends Controller
             $service =  SupplierService::findOrFail($input['id']);
             $service->service_name = $input['service_name'];
             $service->supply_category_id = (int) $input['supply_category_id'];
+            $service->daily_charge = (int) $input['daily_charge'];
     
             if($service->save()){
                 return response()->json(['msg'=>"service updated"], 200,array(),JSON_PRETTY_PRINT);

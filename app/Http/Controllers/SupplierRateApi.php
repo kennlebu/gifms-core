@@ -76,6 +76,7 @@ class SupplierRateApi extends Controller
         $rate->rate = $input['rate'];
         $rate->currency_id = (int) $input['currency_id'];
         $rate->vat = (int) $input['vat'];
+        if(!empty($input['daily_charge']))
         $rate->daily_charge = (int) $input['daily_charge'];
         $rate->unit = $input['unit'];
 
@@ -108,6 +109,7 @@ class SupplierRateApi extends Controller
             $rate->rate = $input['rate'];
             $rate->currency_id = (int) $input['currency_id'];
             $rate->vat = (int) $input['vat'];
+            if(!empty($input['daily_charge']))
             $rate->daily_charge = (int) $input['daily_charge'];
             $rate->unit = $input['unit'];
     
