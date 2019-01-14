@@ -517,7 +517,6 @@ class ActivityApi extends Controller
                 $sort[$key] = strtotime($part['created_at']);
             }
             array_multisort($sort, SORT_DESC, $transactions);
-            file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , PHP_EOL.json_encode($transactions) , FILE_APPEND);
 
             return Response()->json($transactions, 200,array(),JSON_PRETTY_PRINT);
 
