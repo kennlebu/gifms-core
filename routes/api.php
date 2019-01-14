@@ -5279,6 +5279,7 @@ Route::GET('/activities', 'ActivityApi@getActivities')->middleware('jwt.auth');
 Route::GET('/activity/{id}', 'ActivityApi@getActivityById')->middleware('jwt.auth');
 Route::DELETE('/activity/{id}', 'ActivityApi@deleteActivity')->middleware('jwt.auth');
 Route::PUT('/activity', 'ActivityApi@updateActivity')->middleware('jwt.auth');
+Route::GET('activity_transactions', 'ActivityApi@getActivityTransactions')->middleware('jwt.auth');
 // Approvals
 Route::PATCH('activity/{activity_id}/approve', 'ActivityApi@approveActivity')->middleware('jwt.auth');
 Route::PATCH('activities/approve', 'ActivityApi@approveSeveralActivities')->middleware('jwt.auth');

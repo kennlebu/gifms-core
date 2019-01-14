@@ -12,6 +12,10 @@ use App\Models\ApprovalsModels\Approval;
 use App\Models\ProgramModels\ProgramStaff;
 use App\Models\ProgramModels\Program;
 use App\Models\ProjectsModels\Project;
+use App\Models\AllocationModels\Allocation;
+use App\Models\InvoicesModels\Invoice;
+use App\Models\MobilePaymentModels\MobilePayment;
+use App\Models\LPOModels\Lpo;
 
 use Exception;
 use App;
@@ -116,7 +120,7 @@ class ActivityApi extends Controller
     public function getActivityById($activity_id)
     {
         try{
-            $response = Activity::with('requested_by','program.managers.program_manager','project','status','rejected_by','logs')->findOrFail($activity_id);           
+            $response = Activity::with('requested_by','program.managers.program_manager','project','status','rejected_by','logs.causer')->findOrFail($activity_id);           
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
 
         }catch(Exception $e){
@@ -463,6 +467,59 @@ class ActivityApi extends Controller
 
                 return Response()->json(array('msg' => 'Success: Activity submitted','activity' => $activity), 200);
             }
+
+        }catch(Exception $e){
+
+            $response =  ["error"=>"Activity could not be found", "msg"=>$e->getMessage()];
+            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+        }
+    }
+
+
+
+    /**
+     * Get activity transactions
+     */
+    public function getActivityTransactions(){
+
+        try{
+            $input = Request::all();
+            $activity_id = $input['activity_id'];
+            $transactions = [];
+            
+            $allocations = Allocation::where('activity_id', $activity_id)->get();
+            foreach($allocations as $alloc){
+                $alloc['tran_type'] = 'allocation';
+                array_push($transactions, $alloc);
+            }
+
+            $invoices = Invoice::where('program_activity_id', $activity_id)->get();
+            foreach($invoices as $inv){
+                $inv['tran_type'] = 'invoice';
+                array_push($transactions, $inv);
+            }
+
+            $mobile_payments = MobilePayment::where('activity_id', $activity_id)->get();
+            foreach($mobile_payments as $mp){
+                $mp['tran_type'] = 'mobile_payment';
+                array_push($transactions, $mp);
+            }
+
+            $lpos = Lpo::where('program_activity_id', $activity_id)->get();
+            foreach($lpos as $lpo){
+                $lpo['tran_type'] = 'lpo';
+                array_push($transactions, $lpo);
+            }
+
+
+            $sort = $transactions;
+            foreach ($transactions as $key => $part) {
+                $sort[$key] = strtotime($part['created_at']);
+            }
+            array_multisort($sort, SORT_DESC, $transactions);
+            file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , PHP_EOL.json_encode($transactions) , FILE_APPEND);
+
+            return Response()->json($transactions, 200,array(),JSON_PRETTY_PRINT);
 
         }catch(Exception $e){
 
