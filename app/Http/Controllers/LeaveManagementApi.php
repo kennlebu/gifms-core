@@ -373,7 +373,7 @@ class LeaveManagementApi extends Controller
     {
         try{
             $input = Request::all();
-            $leave_requests = LeaveRequest::with('requested_by','leave_type','status','line_manager','rejected_by','logs');
+            $leave_requests = LeaveRequest::with('requested_by','leave_type','status','line_manager','rejected_by');
 
             $response;
             $response_dt;
@@ -400,15 +400,20 @@ class LeaveManagementApi extends Controller
 
             // My Assigned
             if(array_key_exists('my_assigned', $input)){
-                if(!$this->current_user()->hasRole([
-                    'admin',
-                    'director',
-                    'associate-director']
-                )){
-                    $leave_requests = $leave_requests->where('requested_by_id',$this->current_user()->id);
-                 }
+                // if(!($this->current_user()->hasRole([
+                //     'admin',
+                //     'director',
+                //     'associate-director']
+                // ))){
+                //     // $leave_requests = $leave_requests->where('status_id', 3);
+                //     $leave_requests = $leave_requests->where('requested_by_id',$this->current_user()->id);
+                //  }
                  if($this->current_user()->hasRole('program-manager')){
                     $leave_requests = $leave_requests->where('line_manager_id',$this->current_user()->id);
+                    // $leave_requests = $leave_requests->where('status_id',3);
+                 }
+                 else {
+                    $leave_requests = $leave_requests->where('requested_by_id',$this->current_user()->id);
                  }
             }
 
@@ -421,6 +426,11 @@ class LeaveManagementApi extends Controller
                 }else{
                     $leave_requests = $leave_requests->where('id',0);
                 }
+            }
+
+            // Approved only
+            if(array_key_exists('approved', $input)){
+                $leave_requests = $leave_requests->where('status_id', 3);   // Approved
             }
 
             //searching
@@ -654,7 +664,7 @@ class LeaveManagementApi extends Controller
     public function getLeaveRequestById($request_id)
     {
         try{
-            $leave_request = LeaveRequest::with('requested_by','leave_type','status','line_manager','rejected_by','logs','approvals')
+            $leave_request = LeaveRequest::with('requested_by','leave_type','status','line_manager','rejected_by','logs.causer','approvals.approver')
                                 ->find($request_id);
             return response()->json($leave_request, 200,array(),JSON_PRETTY_PRINT);
         }
@@ -753,7 +763,13 @@ class LeaveManagementApi extends Controller
             $days_left = (int) $leave_request->no_of_days - (int) $leave_request->leave_type->days_entitled;
             $leave_request->days_left = $days_left;
 
+            $leave_request->disableLogging();
             if($leave_request->save()) {
+                // Logging
+                activity()
+                   ->performedOn($leave_request)
+                   ->causedBy($this->current_user())
+                   ->log('approved');
 
                 $approval = new Approval;
 
@@ -828,8 +844,15 @@ class LeaveManagementApi extends Controller
             $leave_request->rejected_at = date('Y-m-d H:i:s');
             $leave_request->rejection_reason = $form['rejection_reason'];
 
+            $leave_request->disableLogging();
             if($leave_request->save()) {
-                Mail::queue(new NotifyLeaveRequest($activity));
+                // Logging
+                activity()
+                   ->performedOn($leave_request)
+                   ->causedBy($this->current_user())
+                   ->log('rejected');
+
+                // Mail::queue(new NotifyLeaveRequest($activity));
 
                 return Response()->json(array('msg' => 'Success: leave_request approved','leave_request' => $leave_request), 200);
             }
@@ -855,8 +878,15 @@ class LeaveManagementApi extends Controller
             $leave_request = LeaveRequest::findOrFail($request_id);
            
             $leave_request->status_id = $leave_request->status->next_status_id;
-
+            
+            $leave_request->disableLogging();
             if($leave_request->save()) {
+                // Logging
+                activity()
+                   ->performedOn($leave_request)
+                   ->causedBy($this->current_user())
+                   ->log('submitted for approval');
+
                 Mail::queue(new NotifyLeaveRequest($leave_request));
 
                 return Response()->json(array('msg' => 'Success: Leave Request submitted','leave_request' => $leave_request), 200);
