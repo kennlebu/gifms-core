@@ -13,6 +13,7 @@ use App\Models\FundsRequestModels\FundsRequestStatus;
 use App\Models\FundsRequestModels\FundsRequestItem;
 use App\Models\FundsRequestModels\ConsolidatedFunds;
 use App\Models\ApprovalsModels\Approval;
+use Excel;
 
 class FundsRequestApi extends Controller
 {
@@ -90,22 +91,28 @@ class FundsRequestApi extends Controller
         }
         else{
             $response = $funds_request_status->get();
-            $response[] = array(
-                "id"=> -1,
-                "status"=> "All my funds requests",
-                "order_priority"=> 998,
-                "display_color"=> "#37A9E17A",
-                "count"=> FundsRequest::where('requested_by_id',$user->id)->count()
-              );
+            foreach ($response as $key => $value) {
+                $response[$key]['count'] = FundsRequest::where('requested_by_id',$user->id)->where('status_id', $value['id'])->count();
+            }
 
-            if($user->hasRole('financial-controller')){
+            if(array_key_exists('allowed_only', $input)){
                 $response[] = array(
-                    "id"=> -2,
-                    "status"=> "All Funds Requests",
-                    "order_priority"=> 1000,
-                    "display_color"=> "#092D50",
-                    "count"=> FundsRequest::count()
-                  );
+                    "id"=> -1,
+                    "status"=> "All my funds requests",
+                    "order_priority"=> 998,
+                    "display_color"=> "#37A9E17A",
+                    "count"=> FundsRequest::where('requested_by_id',$user->id)->count()
+                );
+
+                if($user->hasRole('financial-controller')){
+                    $response[] = array(
+                        "id"=> -2,
+                        "status"=> "All Funds Requests",
+                        "order_priority"=> 1000,
+                        "display_color"=> "#092D50",
+                        "count"=> FundsRequest::count()
+                    );
+                }
             }
         }
 
@@ -198,7 +205,7 @@ class FundsRequestApi extends Controller
         $user = JWTAuth::parseToken()->authenticate();
 
         $input = Request::all();        
-        $funds_request = FundsRequest::with('status','requested_by','funds_request_items.currency','funds_request_items.project');
+        $funds_request = FundsRequest::with('funds_request_items.program_activity', 'status','requested_by','funds_request_items.currency','funds_request_items.project');
 
         // Status
         if(array_key_exists('status', $input)){
@@ -210,6 +217,8 @@ class FundsRequestApi extends Controller
                 $funds_request = $funds_request->where('requested_by_id',$user->id);
             }elseif ($status_==-1) {
                 $funds_request = $funds_request->where('requested_by_id',$user->id);
+            }elseif ($status_==-2) {
+
             }
         }   
 
@@ -320,9 +329,10 @@ class FundsRequestApi extends Controller
         if(!empty($input['project_id']))    $request_item->project_id = $input['project_id'];
         if(!empty($input['amount']))        $request_item->amount = $input['amount'];
         if(!empty($input['currency_id']))   $request_item->currency_id = $input['currency_id'];
+        if(!empty($input['program_activity_id']))   $request_item->program_activity_id = $input['program_activity_id'];
 
         if($request_item->save()) {
-            $request_item = FundsRequestItem::with('project','currency')->find($request_item->id);
+            $request_item = FundsRequestItem::with('project','currency','program_activity')->find($request_item->id);
             return Response()->json(array('msg' => 'Success: request added','request_item' => $request_item, 'request'=>$request), 200);
         }
     }   
@@ -355,11 +365,11 @@ class FundsRequestApi extends Controller
         $input = Request::all();
 
         try{
-            $response = FundsRequest::with('status','requested_by','funds_request_items.currency','funds_request_items.project')->findOrFail($id);           
+            $response = FundsRequest::with('status','requested_by','funds_request_items.program_activity','funds_request_items.currency','funds_request_items.project', 'logs.causer', 'approvals')->findOrFail($id);           
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
         }
         catch(Exception $e){
-            $response =  ["error"=>"request could not be found"];
+            $response =  ["error"=>"request could not be found", "msg"=>$e->getMessage()];
             return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
         }
     }
@@ -378,7 +388,14 @@ class FundsRequestApi extends Controller
            
             $request->status_id = $request->status->next_status_id;
 
+            $request->disableLogging(); //! Do not log the update
             if($request->save()) {
+
+                // Logging submission
+                activity()
+                   ->performedOn($request)
+                   ->causedBy($this->current_user())
+                   ->log('submitted for approval');
                 
                 // Mail::queue(new NotifyFundsRequest($request));
 
@@ -400,16 +417,10 @@ class FundsRequestApi extends Controller
 
         try{
             $request = FundsRequest::findOrFail($id);
-           
-            // if (!$user->can("APPROVE_CLAIM_".$claim->status_id)){
-            //     throw new ApprovalException("No approval permission");             
-            // }
-            // $approvable_status  = $claim->status;
             $request->status_id = $request->status->next_status_id;
 
-            // $claim->disableLogging();
+            $request->disableLogging();
             if($request->save()) {
-                // $claim->enableLogging();
 
                 $request = FundsRequest::findOrFail($id);
 
@@ -421,10 +432,10 @@ class FundsRequestApi extends Controller
                 $approval->approver_id              =   (int)   $user->id;
 
                 // Logging
-                // activity()
-                //    ->performedOn($approval->approvable)
-                //    ->causedBy($user)
-                //    ->log('approved');
+                activity()
+                   ->performedOn($request)
+                   ->causedBy($user)
+                   ->log('approved');
 
                 $approval->save();
 
@@ -542,6 +553,19 @@ class FundsRequestApi extends Controller
             }
 
             $response_dt = $consolidated_funds->get();
+
+            
+            foreach($response_dt as $key => $value){
+                $total_kes = 0;
+                $total_usd = 0;
+                foreach($response_dt[$key]['funds_requests'] as $req){
+                    $total_kes += $req['total_kes'];
+                    $total_usd += $req['total_usd'];
+                }
+                $response_dt[$key]['total_kes'] = $total_kes;
+                $response_dt[$key]['total_usd'] = $total_usd;
+            }
+
             $response = ConsolidatedFunds::arr_to_dt_response( 
                 $response_dt, $input['draw'],
                 $total_records,
@@ -553,6 +577,112 @@ class FundsRequestApi extends Controller
         }
 
         return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+    }
+
+
+    public function downloadConsolidatedFunds(){
+        try{
+            $input = Request::only('batch_id');
+
+            $consolidated_funds = ConsolidatedFunds::find($input['batch_id']);
+            $requests = $consolidated_funds->funds_requests;
+            $excel_data = [];
+
+            foreach($requests as $req){
+                foreach($req->funds_request_items as $item){
+                    $row = [];
+                    $row['project_id'] = $item->project->project_code;
+                    empty($item->project->grant_id) ? $row['grant_id'] = '' : $row['grant_id'] = $item->project->grant->grant_code;
+                    $row['activity'] = $item->program_activity->title;
+                    $row['expense_item'] = $item->expense_item;
+                    $row['currency'] = $item->currency->currency_name;
+                    $row['amount'] = $item->amount;
+                }
+                array_push($excel_data, $row);
+            }
+
+            $headers = [
+                'Access-Control-Allow-Origin'      => '*',
+                'Allow'                            => 'GET, POST, OPTIONS',
+                'Access-Control-Allow-Headers'     => 'Origin, Content-Type, Accept, Authorization, X-Requested-With',
+                'Access-Control-Allow-Credentials' => 'true'
+            ];
+            // Build excel
+            $file = Excel::create("Consolidated Funds Batch_".$input['batch_id'], function($excel) use ($excel_data, $input) {
+                
+                // Set the title
+                $excel->setTitle("Consolidated Funds Batch_".$input['batch_id']);
+    
+                // Chain the setters
+                $excel->setCreator('GIFMS')->setCompany('Clinton Health Access Initiative - Kenya');
+    
+                $excel->setDescription('A report of approved and consolidated funds for batch'.$input['batch_id']);
+    
+                $headings = array('Project ID', 'Grant ID', 'Activity', 'Expense Item', 'Currency', 'Amount');
+    
+                $excel->sheet('Consolidated funds', function ($sheet) use ($excel_data, $headings) {
+                    $sheet->setStyle([
+                        'borders' => [
+                            'allborders' => [
+                                'color' => [
+                                    'rgb' => '000000'
+                                ]
+                            ]
+                        ]
+                    ]);
+                    $i = 1;
+                    $alternate = true;
+                    foreach($excel_data as $data_row){
+
+                        $sheet->appendRow($data_row);
+                        $sheet->row($i, function($row) use ($data_row, $alternate){
+                            
+                        });
+                        if($alternate){
+                            $sheet->cells('A'.$i.':F'.$i, function($cells) {
+                                $cells->setBackground('#edf1f3');  
+                                $cells->setFontSize(11);                          
+                            });
+                        }
+                        $i++;
+                        $alternate = !$alternate;
+                    }
+                    
+                    $sheet->prependRow(1, $headings);
+                    $sheet->setFontSize(11);
+                    $sheet->setHeight(1, 25);
+                    $sheet->row(1, function($row){
+                        $row->setFontSize(11);
+                        $row->setFontWeight('bold');
+                        $row->setAlignment('center');
+                        $row->setValignment('center');
+                        $row->setBorder('none', 'thin', 'none', 'thin');
+                        $row->setBackground('#004080');                        
+                        $row->setFontColor('#ffffff');
+                    }); 
+                    // $sheet->row(2, function($row){
+                    //     $row->setFontSize(12);
+                    //     $row->setFontWeight('bold');
+                    //     $row->setBorder('none', 'thin', 'none', 'thin');
+                    // }); 
+                    $sheet->setWidth(array(
+                        'A' => 25,
+                        'B' => 15,
+                        'C' => 35,
+                        'D' => 40,
+                        'E' => 10,
+                        'F' => 25
+                    ));
+                    $sheet->getStyle('D1')->getAlignment()->setWrapText(true);
+
+                    $sheet->setFreeze('A2');
+                });
+    
+            })->download('xlsx', $headers);
+        }
+        catch(Exception $e){
+            return response()->json(['error'=>"An rerror occured during processing", 'msg'=>$e->getMessage()], 500,array(),JSON_PRETTY_PRINT);
+        }
     }
 
 
@@ -569,6 +699,7 @@ class FundsRequestApi extends Controller
         if(!empty($input['project_id']))    $request_item->project_id = $input['project_id'];
         if(!empty($input['amount']))        $request_item->amount = $input['amount'];
         if(!empty($input['currency_id']))   $request_item->currency_id = $input['currency_id'];
+        if(!empty($input['program_activity_id']))   $request_item->program_activity_id = $input['program_activity_id'];
 
         if($request_item->save()) {
             return Response()->json(array('msg' => 'Success: funds request item updated','funds_request_item' => $request_item), 200);
@@ -585,7 +716,7 @@ class FundsRequestApi extends Controller
         $user = JWTAuth::parseToken()->authenticate();
 
         $input = Request::all();        
-        $funds_request = FundsRequestItem::with('status','requested_by','funds_request_items');
+        $funds_request = FundsRequestItem::with('program_activity','status','requested_by','funds_request_items');
 
         // Project
         if(array_key_exists('project_id',$input)){
@@ -595,6 +726,11 @@ class FundsRequestApi extends Controller
         // Currency
         if(array_key_exists('currency_id',$input)){
             $funds_request = $funds_request->where('currency_id', $input['currency_id']);
+        }
+
+        // Activity
+        if(array_key_exists('program_activity_id', $input)){
+            $funds_request = $funds_request->where('program_activity_id', $input['program_activity_id']);
         }
 
         //ordering
@@ -661,7 +797,7 @@ class FundsRequestApi extends Controller
         $input = Request::all();
 
         try{
-            $response = FundsRequestItem::with('project','currency')->findOrFail($id);           
+            $response = FundsRequestItem::with('program_activity','project','currency')->findOrFail($id);           
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
         }
         catch(Exception $e){

@@ -214,6 +214,16 @@ class ActivityApi extends Controller
             }
         }
 
+        // For funds requests (More than a month from ending)
+        if(array_key_exists('funds_requests', $input)){
+            if( date('d') == 31 || (date('m') == 1 && date('d') > 28)){
+                $date = strtotime('last day of next month');
+            } else {
+                $date = strtotime('+1 months');
+            }
+            $date = date('Y-m-d', $date);
+            $qb->whereRaw('CAST(end_date as datetime) >= '.$date.'');
+        }
         //project_id
          if(array_key_exists('project_id', $input)){
 
