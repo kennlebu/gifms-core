@@ -401,9 +401,6 @@ class StaffApi extends Controller
      */
     public function staffsGet()
     {
-        
-        // ini_set('memory_limit', '2048M');
-
         $input = Request::all();
         //query builder
         $qb = DB::table('staff');
@@ -510,15 +507,15 @@ class StaffApi extends Controller
             }
 
             // Get only directors for PMs and above if it's line managers required
-            if(array_key_exists('line_managers', $input)){
-                if($user->hasRole(['program-manager','financial-controller','admin-manager','director'])){
+            else if(array_key_exists('line_managers', $input)){
+                // if($user->hasRole(['program-manager','financial-controller','admin-manager','director'])){
                     $qb->select(DB::raw('staff.*'))
                     ->leftJoin('user_roles', 'user_roles.user_id', '=', 'staff.id')
                     ->leftJoin('roles', 'roles.id', '=', 'user_roles.role_id')
                     ->where('roles.acronym', '=', "'dir'")
                     ->orWhere('roles.acronym', '=', "'a-dir'")
                     ->groupBy('staff.id');
-                }
+                // }
             }
 
             // Get all PMs for administrative and finance staff
