@@ -453,21 +453,24 @@ class SupplierRateApi extends Controller
         $records_filtered       = 0;
 
         // Services
+        $service_id_count;
         if(array_key_exists('services', $input) && !empty($input['services'])){
             $service_list = $input['services'];
             $service_ids = [];
             $county_ids = [];
-            $supply_category_ids = [];
+            // $supply_category_ids = [];
             foreach($service_list as $service){
                 array_push($service_ids, $service['id']);
                 array_push($county_ids, $service['county_id']);
-                array_push($supply_category_ids, $service['supply_category_id']);
+                // array_push($supply_category_ids, $service['supply_category_id']);
             }
-            $qb->whereIn('supplier_rates.service_id', $service_ids);
+            $service_id_count = count($service_ids);
+            // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , PHP_EOL.$service_id_count , FILE_APPEND);
             $qb->where('suppliers.county_id', $county_ids[0]);
-            if(!empty($supply_category_ids)){
-                $qb->whereIn('suppliers.supply_category_id', $supply_category_ids);
-            }
+            $qb->whereIn('supplier_rates.service_id', $service_ids);
+            // if(!empty($supply_category_ids)){
+            //     $qb->whereIn('suppliers.supply_category_id', $supply_category_ids);
+            // }
             
         }
 
@@ -558,8 +561,15 @@ class SupplierRateApi extends Controller
             // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , PHP_EOL.json_encode($items) , FILE_APPEND);
             $prev_supplier_id = $response[$key]['supplier_id'];
         }
+
+        $real_final_response = [];
+        foreach($final_response as $key => $value){
+            if(count($final_response[$key]['items']) == $service_id_count){
+                array_push($real_final_response, $final_response[$key]);
+            }
+        }
         
-        return response()->json($final_response, 200,array(),JSON_PRETTY_PRINT);
+        return response()->json($real_final_response, 200,array(),JSON_PRETTY_PRINT);
     }
 
     
