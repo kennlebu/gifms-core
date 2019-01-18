@@ -24,14 +24,12 @@ class RoomsApi extends Controller
     public function addRoom(){
         $input = Request::all();
         try{
-            $name = $input['name'];
-            $location = $input['location'];
-            $capacity = $input['capacity'];
 
             $room = new MeetingRoom;
-            $room->name = $name;
-            $room->location = $location;
-            $room->capacity = $capacity;
+            $room->name = $input['name'];
+            $room->location = $input['location'];
+            $room->capacity = $input['capacity'];
+            $room->display_color = $input['display_color'];
             $room->save();
 
             return response()->json(array('msg' => 'Room added'), 200);
@@ -44,6 +42,12 @@ class RoomsApi extends Controller
 
     public function getRooms(){
         try{
+            $response;
+            $response_dt;
+
+            $total_records          = MeetingRoom::count();
+            $records_filtered       = 0;
+
             $input = Request::all();
             $rooms = MeetingRoom::query();
 
@@ -90,41 +94,43 @@ class RoomsApi extends Controller
             if(array_key_exists('datatables', $input)){
 
                 //searching
-                // $rooms = $rooms->where(function ($query) use ($input) {                    
+                // $rooms = $rooms->where(function ($query) use ($input) {                
                 //     $query->orWhere('name','like', '\'%' . $input['search']['value']. '%\'');
-                //     $query->orWhere('capacity','like', '\'%' . $input['search']['value']. '%\'');  
+                //     $query->orWhere('capacity','like', '\'%' . $input['search']['value']. '%\'');
+                //     $query->orWhere('location','like', '\'%' . $input['search']['value']. '%\'');
                 // });
-  
-                $records_filtered = $rooms->count();    
+    
+                $records_filtered = $rooms->count();
     
                 //ordering
                 $order_column_id    = (int) $input['order'][0]['column'];
                 $order_column_name  = $input['columns'][$order_column_id]['order_by'];
                 $order_direction    = $input['order'][0]['dir'];
     
-                if($order_column_name!=''){    
-                    $rooms = $rooms->orderBy($order_column_name, $order_direction);    
-                }    
+                if($order_column_name!=''){
+                    $rooms = $rooms->orderBy($order_column_name, $order_direction);
+                }
     
                 //limit $ offset
-                if((int)$input['start']!= 0 ){    
-                    $response_dt =  $rooms->limit($input['length'])->offset($input['start']);
-                }else{
+                if((int)$input['start']!= 0 ){
+                    $response_dt = $rooms->limit($input['length'])->offset($input['start']);
+                }
+                else{
                     $rooms = $rooms->limit($input['length']);
                 }
     
                 $response_dt = $rooms->get();
-
+    
                 $response = MeetingRoom::arr_to_dt_response( 
                     $response_dt, $input['draw'],
                     $total_records,
                     $records_filtered
                     );
             }
-            else{    
+            else{
                 $response = $rooms->get();
             }
-
+            
             return response()->json($response, 200);
         }
         catch(\Exception $e){
@@ -156,16 +162,14 @@ class RoomsApi extends Controller
 
     public function editRoom(){
         try{
-            $input = Request::all();         
-            $name = $input['name'];
-            $location = $input['location'];
-            $capacity = $input['capacity'];
+            $input = Request::all();
 
             $room = MeetingRoom::findOrFail($input['id']);
 
-            $room->name = $name;
-            $room->location = $location;
-            $room->capacity = $capacity;
+            $room->name = $input['name'];
+            $room->location = $input['location'];
+            $room->capacity = $input['capacity'];
+            $room->display_color = $input['display_color'];
 
             if($room->save()){
                 return Response()->json(array('msg' => 'Room updated','resource' => $room), 200);
@@ -258,7 +262,7 @@ class RoomsApi extends Controller
     public function getRoomBookings(){
         try{
             $input = Request::all();
-            $room_bookings = MeetingRoomBooking::query();
+            $room_bookings = MeetingRoomBooking::with('room');
             
             // Room id
             if(array_key_exists('room_id', $input)){
