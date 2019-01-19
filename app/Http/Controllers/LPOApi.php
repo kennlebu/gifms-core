@@ -1220,14 +1220,19 @@ class LPOApi extends Controller
 
             $sup = (int) $input['supplier'];
 
-            if($sup>-1){
-                $qb->leftJoin('lpo_quotations', 'lpos.id', '=', 'lpo_quotations.lpo_id');
-                $qb->leftJoin('suppliers', 'lpo_quotations.supplier_id', '=', 'suppliers.id');
-                $qb->where('lpo_quotations.supplier_id', $sup);
-                $qb->orderBy('lpos.id', 'desc');
-                $qb->select('lpos.*');
+            if($sup>0){
+                if(array_key_exists('prenegotiated', $input)){
+                    $qb->where('lpos.supplier_id', $sup);
+                }
+                else{
+                    $qb->leftJoin('lpo_quotations', 'lpos.id', '=', 'lpo_quotations.lpo_id');
+                    $qb->leftJoin('suppliers', 'lpo_quotations.supplier_id', '=', 'suppliers.id');
+                    $qb->where('lpo_quotations.supplier_id', $sup);
+                    $qb->orderBy('lpos.id', 'desc');
+                    $qb->select('lpos.*');
+                }
+                $qb->orderBy('lpos.id','desc');
             }
-
 
         }
 
