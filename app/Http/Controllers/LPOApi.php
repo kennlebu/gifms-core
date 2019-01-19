@@ -1231,6 +1231,7 @@ class LPOApi extends Controller
                     $qb->orderBy('lpos.id', 'desc');
                     $qb->select('lpos.*');
                 }
+                $qb->whereIn('lpos.status_id', array(6,7,8));
                 $qb->orderBy('lpos.id','desc');
             }
 
