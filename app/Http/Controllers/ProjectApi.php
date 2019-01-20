@@ -396,13 +396,23 @@ class ProjectApi extends Controller
         //my_assigned
         if((array_key_exists('my_assigned', $input)&& $input['my_assigned'] = "true")&&($current_user->hasRole(['accountant','assistant-accountant','financial-controller','admin-manager']))){
 
+            if(array_key_exists('staff_responsible', $input)){
+                $user_id = (int) $input['staff_responsible'];
+                $qb->select(DB::raw('projects.*'))
+                 ->rightJoin('project_teams', 'project_teams.project_id', '=', 'projects.id')
+                 ->rightJoin('staff', 'staff.id', '=', 'project_teams.staff_id')
+                 ->where('staff.id', '=', $user_id)
+                 ->whereNotNull('projects.id')
+                 ->whereNotNull('projects.project_code')
+                 ->groupBy('projects.id');
+            }
             $qb->whereNotNull('project_code');
         }elseif (array_key_exists('my_assigned', $input)&& $input['my_assigned'] = "true") {
 
             $qb->select(DB::raw('projects.*'))
                  ->rightJoin('project_teams', 'project_teams.project_id', '=', 'projects.id')
                  ->rightJoin('staff', 'staff.id', '=', 'project_teams.staff_id')
-                 ->where('staff.id', '=', $current_user->id)
+                 ->where('staff.id', '=', $current_user)
                  ->whereNotNull('projects.id')
                  ->whereNotNull('projects.project_code')
                  ->groupBy('projects.id');
