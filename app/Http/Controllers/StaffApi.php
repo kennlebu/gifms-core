@@ -492,8 +492,12 @@ class StaffApi extends Controller
             })->where('id', $user->id)->get();
 
             // Get only user PMs if user doesn't have admin or finance role
-            if(count($admin_role)<=0){
-                $program_teams = ProgramStaff::with('program.managers')->where('staff_id', $user->id)->get();
+            if((count($admin_role)<=0) || array_key_exists('for_requester', $input)){
+                $uid = $user->id;
+                if(array_key_exists('for_requester', $input)){
+                    $uid = $input['for_requester'];
+                }
+                $program_teams = ProgramStaff::with('program.managers')->where('staff_id', $uid)->get();
 
                 $program_managers = array();
                 

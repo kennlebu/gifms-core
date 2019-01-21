@@ -562,6 +562,17 @@ class LeaveManagementApi extends Controller
     {
         $input = Request::all();
 
+        $last_request = LeaveRequest::whereYear('start_date', '=', date('Y'))
+                                        ->where('status_id', 3)
+                                        ->where('leave_type_id', $leave_request->leave_type_id)
+                                        ->where('requested_by_id', $this->current_user()->id)
+                                        ->orderBy('id', 'desc')
+                                        ->first();
+
+        if(!empty($last_request) && (($last_request->days_taken + (int)$input['no_of_days']) > $last_request->leave_type->days_entitled)){
+            return response()->json(['error'=>'You cannot request more than '.($last_request->leave_type->days_entitled - $last_request->days_taken).' more days for this leave type'], 403);
+        }
+
         $leave_request = new LeaveRequest;
         $leave_request->requested_by_id = $input['requested_by_id'];
         $leave_request->leave_type_id = $input['leave_type_id'];
@@ -755,6 +766,16 @@ class LeaveManagementApi extends Controller
         $input = Request::all();
         try{
             $leave_request   = LeaveRequest::findOrFail($request_id);
+            $last_request = LeaveRequest::whereYear('start_date', '=', date('Y'))
+                                        ->where('status_id', 3)
+                                        ->where('leave_type_id', $leave_request->leave_type_id)
+                                        ->where('requested_by_id', $leave_request->requested_by_id)
+                                        ->orderBy('id', 'desc')
+                                        ->first();
+
+            if(!empty($last_request) && (($last_request->days_taken + (int)$leave_request->no_of_days) > $last_request->leave_type->days_entitled)){
+                return response()->json(['error'=>'You cannot approve more than '.($last_request->leave_type->days_entitled - $last_request->days_taken).' more days for this leave type'], 403);
+            }
            
             $approvable_status  = $leave_request->status;
             $leave_request->status_id = $leave_request->status->next_status_id;
@@ -876,6 +897,16 @@ class LeaveManagementApi extends Controller
     {
         try{
             $leave_request = LeaveRequest::findOrFail($request_id);
+            $last_request = LeaveRequest::whereYear('start_date', '=', date('Y'))
+                                        ->where('status_id', 3)
+                                        ->where('leave_type_id', $leave_request->leave_type_id)
+                                        ->where('requested_by_id', $this->current_user()->id)
+                                        ->orderBy('id', 'desc')
+                                        ->first();
+
+            if(!empty($last_request) && (($last_request->days_taken + (int)$leave_request->no_of_days) > $last_request->leave_type->days_entitled)){
+                return response()->json(['error'=>'You cannot request more than '.($last_request->leave_type->days_entitled - $last_request->days_taken).' more days for this leave type'], 403);
+            }
            
             $leave_request->status_id = $leave_request->status->next_status_id;
             
@@ -901,7 +932,7 @@ class LeaveManagementApi extends Controller
    
 
     // ------------------------------------------------------------------------------------ //
-    // Leave Statises //
+    // Leave Statuses //
     /**
      * Operation getLeaveStatuses
      * leave statuses List.
