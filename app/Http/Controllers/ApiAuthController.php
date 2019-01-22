@@ -69,8 +69,8 @@ class ApiAuthController extends Controller{
         }catch (Tymon\JWTAuth\Exceptions\JWTException $e) {
             return response()->json(['token_absent'], $e->getStatusCode());
         }
-// the token is valid and we have found the user via the sub claim
-        $user = Staff::with(['roles','programs','assigned_projects'])->find($user['id']);
+        // the token is valid and we have found the user via the sub claim
+        $user = Staff::with(['roles','programs'])->find($user['id']);
 
         return response()->json(compact('user'));
     }
