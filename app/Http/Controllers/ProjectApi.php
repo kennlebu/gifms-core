@@ -383,7 +383,7 @@ class ProjectApi extends Controller
         $qb = DB::table('projects');
 
         $qb->whereNull('projects.deleted_at');
-        $qb->whereNotNull('program_id');    // Not showing PIDs without an attached program id
+        $qb->whereNotNull('projects.program_id');    // Not showing PIDs without an attached program id
         $current_user = JWTAuth::parseToken()->authenticate();
 
         $response;

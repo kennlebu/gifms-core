@@ -166,7 +166,7 @@ class ActivityApi extends Controller
                 $program_ids = ProgramStaff::select('program_id')->where('staff_id', $this->current_user()->id)->get();
                 $objective_ids = ReportingObjective::select('id')->whereIn('program_id', $program_ids)->get();
                 $qb->whereIn('activities.objective_id', $objective_ids)
-                    ->where('activities.status_id', 3)
+                    // ->where('activities.status_id', 3)
                     ->whereNotNull('activities.id')
                     ->groupBy('activities.id');
             }
