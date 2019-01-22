@@ -5153,6 +5153,10 @@ Route::GET('/reports/categories', 'ReportsApi@getReportingCategories')->middlewa
  * Output-Formats: [application/json, application/xml]
  */
 Route::GET('/reports/objectives', 'ReportsApi@getReportingObjectives')->middleware('jwt.auth');
+Route::POST('/objective', 'ReportsApi@addReportingObjective')->middleware('jwt.auth');
+Route::PUT('/objective', 'ReportsApi@updateReportingObjective')->middleware('jwt.auth');
+Route::DELETE('/objective/{objective_id}', 'ReportsApi@deleteReportingObjective')->middleware('jwt.auth');
+Route::GET('/objective/{objective_id}', 'ReportsApi@getReportingObjectiveById')->middleware('jwt.auth');
 
 /**
  * PUT setReportingCategoryObjective
