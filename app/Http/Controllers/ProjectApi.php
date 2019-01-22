@@ -412,7 +412,7 @@ class ProjectApi extends Controller
             $qb->select(DB::raw('projects.*'))
                  ->rightJoin('project_teams', 'project_teams.project_id', '=', 'projects.id')
                  ->rightJoin('staff', 'staff.id', '=', 'project_teams.staff_id')
-                 ->where('staff.id', '=', $current_user)
+                 ->where('staff.id', '=', $current_user->id)
                  ->whereNotNull('projects.id')
                  ->whereNotNull('projects.project_code')
                  ->groupBy('projects.id');
