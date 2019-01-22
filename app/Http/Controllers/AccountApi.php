@@ -80,14 +80,7 @@ class AccountApi extends Controller
      */
     public function addAccount()
     {
-        $form = Request::only(
-            'account_code',
-            'account_name',
-            'account_desc',
-            'account_format',
-            'status',
-            'account_type_id'
-            );
+        $form = Request::all();
 
         $account = new Account;
 
@@ -97,6 +90,11 @@ class AccountApi extends Controller
             $account->account_format                   =         $form['account_format'];
             $account->status                           =         $form['status'];
             $account->account_type_id                  =  (int)  $form['account_type_id'];
+            if(!empty($form['view_mode'])&&((int)$form['view_mode'])==1) 
+            $account->view_mode = 'public';
+            else if(!empty($form['view_mode'])&&((int)$form['view_mode'])==0){
+                $account->view_mode = '';
+            }
 
         if($account->save()) {
 
@@ -145,15 +143,7 @@ class AccountApi extends Controller
      */
     public function updateAccount()
     {
-        $form = Request::only(
-            'id',
-            'account_code',
-            'account_name',
-            'account_desc',
-            'account_format',
-            'account_type_id',
-            'status'
-            );
+        $form = Request::all();
 
         $account = Account::find($form['id']);
 
@@ -163,6 +153,11 @@ class AccountApi extends Controller
             $account->account_format                   =         $form['account_format'];
             $account->status                           =         $form['status'];
             $account->account_type_id                  =  (int)  $form['account_type_id'];
+            if(!empty($form['view_mode'])&&((int)$form['view_mode'])==1) 
+            $account->view_mode = 'public';
+            else {
+                $account->view_mode = '';
+            }
 
         if($account->save()) {
 
@@ -376,6 +371,13 @@ class AccountApi extends Controller
             $qb->where('accounts.status', '\'active\'');
         }
 
+        // Show only public accounts unless specified
+        if(array_key_exists('view_mode', $input) && $input['view_mode']=='all'){
+            // Just skip over. You saw nothing
+        }
+        else{
+            $qb->where('accounts.view_mode', '\'public\'');
+        }
 
         //searching
         if(array_key_exists('searchval', $input)){

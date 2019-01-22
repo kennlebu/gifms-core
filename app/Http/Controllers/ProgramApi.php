@@ -353,6 +353,17 @@ class ProgramApi extends Controller
                  ->orderBy('programs.program_name', 'asc');
         }
 
+        // my assigned
+        if (array_key_exists('my_assigned', $input)&& $input['my_assigned'] = "true") {
+
+            $qb->select(DB::raw('programs.*'))
+                 ->rightJoin('program_teams', 'program_teams.program_id', '=', 'programs.id')
+                 ->rightJoin('staff', 'staff.id', '=', 'program_teams.staff_id')
+                 ->where('staff.id', '=', $current_user->id)
+                 ->whereNotNull('programs.id')
+                 ->groupBy('programs.id');
+        }
+
         //searching
         if(array_key_exists('searchval', $input)){
             $qb->where(function ($query) use ($input) {

@@ -118,7 +118,9 @@ class InvoiceApi extends Controller
                 'total',
                 'currency_id',
                 'file',
-                'submission_type'
+                'submission_type',
+                'lpo_variation_reason',
+                'program_activity_id'
                 );
 
             $ftp = FTP::connection()->getDirListing();
@@ -135,14 +137,14 @@ class InvoiceApi extends Controller
                         ->where('supplier_id', $form['supplier_id'])
                         ->first();
             if(!empty($exists) && $form['submission_type']!='upload_logged'){
-                return response()->json(['error'=>'This invoice number already exists'], 409);
+                return response()->json(['error'=>'Invoice with the same invoice number already exists'], 409);
             }
 
             if($form['submission_type']=='full'){
 
                 $invoice->received_by_id                    =   (int)       $form['raised_by_id'];//received_by_id must be =raised_by_id
                 $invoice->raised_by_id                      =   (int)       $form['raised_by_id'];
-                $invoice->external_ref                      =               $form['external_ref'];
+                $invoice->external_ref                      =               trim($form['external_ref']);
                 $invoice->expense_desc                      =               $form['expense_desc'];
                 $invoice->expense_purpose                   =               $form['expense_purpose'];
                 $invoice->invoice_date                      =               $invoice_date;
@@ -154,14 +156,22 @@ class InvoiceApi extends Controller
                 $invoice->currency_id                       =   (int)       $form['currency_id'];
                 $invoice->received_at                       =   date('Y-m-d H:i:s');
                 $invoice->raised_at                         =   date('Y-m-d H:i:s');
+                if(!empty($form['lpo_variation_reason']))
+                $invoice->lpo_variation_reason = $form['lpo_variation_reason'];
+                if(!empty($form['program_activity_id']))
+                $invoice->program_activity_id = $form['program_activity_id'];
 
                 $invoice->status_id                         =   $this->default_status;
+
+                if(Invoice::where('external_ref', $invoice->external_ref)->exists()){
+                    return response()->json(["error"=>"Invoice with the same invoice number already exists"], 409,array(),JSON_PRETTY_PRINT);
+                }
 
             }else if($form['submission_type']=='log'){
 
                 $invoice->received_by_id                    =   (int)       $form['received_by_id'];
                 $invoice->raised_by_id                      =   (int)       $form['raised_by_id'];
-                $invoice->external_ref                      =               $form['external_ref']; 
+                $invoice->external_ref                      =               trim($form['external_ref']); 
                 $invoice->invoice_date                      =               $invoice_date;              
                 $invoice->lpo_id                            =   (((int) $form['lpo_id'])>0)?$form['lpo_id']:null;
                 $invoice->supplier_id                       =   (int)       $form['supplier_id'];
@@ -169,8 +179,25 @@ class InvoiceApi extends Controller
                 $invoice->total                             =   (double)    $form['total'];
                 $invoice->currency_id                       =   (int)       $form['currency_id'];
                 $invoice->received_at                       =   date('Y-m-d H:i:s');
+                if(!empty($form['lpo_variation_reason']))
+                $invoice->lpo_variation_reason = $form['lpo_variation_reason'];
+                if(!empty($form['program_activity_id']))
+                $invoice->program_activity_id = $form['program_activity_id'];
 
                 $invoice->status_id                         =   $this->default_log_status;
+
+                if(Invoice::where('external_ref', $invoice->external_ref)->exists()){
+                    return response()->json(["error"=>"Invoice with the same invoice number already exists"], 409,array(),JSON_PRETTY_PRINT);
+                }
+
+                if(!empty($invoice->lpo_id)){
+                    $lpo = Lpo::find($invoice->lpo_id);
+                    if(!empty($lpo)){
+                        $invoice->expense_desc = $lpo->expense_desc;
+                        $invoice->expense_purpose = $lpo->expense_purpose;
+                        $invoice->project_manager_id = $lpo->project_manager_id;
+                    }
+                }
 
             }else if($form['submission_type']=='upload_logged'){
 
@@ -187,11 +214,12 @@ class InvoiceApi extends Controller
                                         'approvals',
                                         'allocations',
                                         'vouchers',
-                                        'comments'
+                                        'comments',
+                                        'program_activity'
                                     )->find((int) $form['id']);
 
                 $invoice->raised_by_id                      =   (int)       $form['raised_by_id'];
-                $invoice->external_ref                      =               $form['external_ref'];
+                $invoice->external_ref                      =               trim($form['external_ref']);
                 $invoice->expense_desc                      =               $form['expense_desc'];
                 $invoice->expense_purpose                   =               $form['expense_purpose'];
                 $invoice->lpo_id                            =   (((int) $form['lpo_id'])>0)?$form['lpo_id']:null;
@@ -203,6 +231,10 @@ class InvoiceApi extends Controller
                 $invoice->raised_at                         =   date('Y-m-d H:i:s');
                 if (($invoice->total - $invoice->amount_allocated) <= 0 && abs($invoice->total - $invoice->amount_allocated == 0)){
                     $invoice->status_id = $invoice->status->next_status_id;  
+                }
+
+                if(Invoice::where('external_ref', $invoice->external_ref)->where('id', '!=', $form['id'])->exists()){
+                    return response()->json(["error"=>"Invoice with the same invoice number already exists"], 409,array(),JSON_PRETTY_PRINT);
                 }
                 
             }else if($form['submission_type']=='finish_allocations'){
@@ -296,11 +328,10 @@ class InvoiceApi extends Controller
                 'id',
                 'raised_by_id',
                 'received_by_id',
+                'external_ref',
                 'expense_desc',
                 'expense_purpose',
-                'external_ref',
                 'invoice_date',
-                'payment_mode_id',
                 'lpo_id',
                 'supplier_id',
                 'payment_mode_id',
@@ -308,18 +339,14 @@ class InvoiceApi extends Controller
                 'total',
                 'currency_id',
                 'file',
-                'submission_type'
+                'submission_type',
+                'lpo_variation_reason',
+                'program_activity_id'
                 );
 
-
-            // FTP::connection()->changeDir('/lpos');
-
             $ftp = FTP::connection()->getDirListing();
-
-            // print_r($form['file']);
-
+            
             $file = $form['file'];
-
 
             $DT = new \DateTime();
             $dt = $DT->createFromFormat('D M d Y H:i:s T +',$form['invoice_date']);
@@ -330,7 +357,7 @@ class InvoiceApi extends Controller
             $invoice->raised_by_id                      =   (int)       $form['raised_by_id'];
             $invoice->expense_desc                      =               $form['expense_desc'];
             $invoice->expense_purpose                   =               $form['expense_purpose'];
-            $invoice->external_ref                      =               $form['external_ref'];
+            $invoice->external_ref                      =               trim($form['external_ref']);
             $invoice->invoice_date                      =               $invoice_date;
             $invoice->lpo_id                            =   (((int) $form['lpo_id'])>0)?$form['lpo_id']:null;;
             $invoice->supplier_id                       =   (int)       $form['supplier_id'];
@@ -338,7 +365,15 @@ class InvoiceApi extends Controller
             $invoice->project_manager_id                =   (int)       $form['project_manager_id'];
             $invoice->total                             =   (double)    $form['total'];
             $invoice->currency_id                       =   (int)       $form['currency_id'];
-                
+            if(!empty($form['lpo_variation_reason']))
+                $invoice->lpo_variation_reason = $form['lpo_variation_reason'];    
+            if(!empty($form['program_activity_id']))
+                $invoice->program_activity_id = $form['program_activity_id'];
+
+            if(Invoice::where('external_ref', $invoice->external_ref)->where('id', '!=', $form['id'])->exists()){
+                return response()->json(["error"=>"Invoice with the same invoice number already exists"], 409,array(),JSON_PRETTY_PRINT);
+            }
+
             if($invoice->save()) {
 
                 $invoice->disableLogging(); //! Do not log the update again
@@ -477,7 +512,8 @@ class InvoiceApi extends Controller
                                         'allocations',
                                         'logs',
                                         'vouchers',
-                                        'comments'
+                                        'comments',
+                                        'program_activity'
                                     )->findOrFail($invoice_id);
 
 
@@ -1402,6 +1438,7 @@ class InvoiceApi extends Controller
             $data[$key]['logs']                  = $invoice->logs;
             $data[$key]['vouchers']                     = $invoice->vouchers;
             $data[$key]['comments']                     = $invoice->comments;
+            $data[$key]['program_activity']             = $invoice->program_activity;
 
             foreach ($invoice->allocations as $key1 => $value1) {
                 $project = Project::find((int)$value1['project_id']);
@@ -1443,45 +1480,35 @@ class InvoiceApi extends Controller
 
 
             if($value["raised_by"]==null){
-                $data[$key]['raised_by'] = array("full_name"=>"N/A");
-                
+                $data[$key]['raised_by'] = array("full_name"=>"N/A");                
             }
             if($value["received_by"]==null){
-                $data[$key]['received_by'] = array("full_name"=>"N/A");
-                
+                $data[$key]['received_by'] = array("full_name"=>"N/A");                
             }
             if($value["raise_action_by"]==null){
-                $data[$key]['raise_action_by'] = array("full_name"=>"N/A");
-                
+                $data[$key]['raise_action_by'] = array("full_name"=>"N/A");                
             }
-            // if($value["project"]==null){
-            //     $data[$key]['project'] = array("project_name"=>"N/A");
-                
-            // }
             if($value["status"]==null){
-                $data[$key]['status'] = array("invoice_status"=>"N/A");
-                
+                $data[$key]['status'] = array("invoice_status"=>"N/A");                
             }
             if($value["project_manager"]==null){
-                $data[$key]['project_manager'] = array("full_name"=>"N/A");
-                
+                $data[$key]['project_manager'] = array("full_name"=>"N/A");                
             }
             if($value["supplier"]==null){
-                $data[$key]['supplier'] = array("supplier_name"=>"N/A");
-                
+                $data[$key]['supplier'] = array("supplier_name"=>"N/A");                
             }
             if($value["rejected_by"]==null){
-                $data[$key]['rejected_by'] = array("full_name"=>"N/A");
-                
+                $data[$key]['rejected_by'] = array("full_name"=>"N/A");                
             }
             if($data[$key]["currency"]==null){
                 $data[$key]["currency"] = array("currency_name"=>"N/A");
             }
+            if($data[$key]["program_activity"]==null){
+                $data[$key]["program_activity"] = array("program_activity"=>array("title"=>"N/A", "description"=>"N/A"));
+            }
         }
 
         return $data;
-
-
     }
 
         /**

@@ -174,6 +174,9 @@ Route::PATCH('/lpo/{lpo_id}/recall', 'LPOApi@recallLpo')->middleware('jwt.auth')
  */
 Route::PATCH('/lpo/{lpo_id}/cancel', 'LPOApi@cancelLpo')->middleware('jwt.auth');
 
+// New pre-negotiated LPO
+Route::POST('/prenegotiated', 'LPOApi@addPrenegotiatedLpoRate')->middleware('jwt.auth');
+
 
 
 
@@ -1520,35 +1523,50 @@ Route::GET('/suppliers/search', 'SupplierApi@suppliersSearch')->middleware('jwt.
  * Notes: new supplier_rate
  * Output-Formats: [application/json, application/xml]
  */
-Route::POST('/supplier_rate', 'SupplierRateApi@addSupplierRate')->middleware('jwt.auth');
+Route::POST('/supplier-rate', 'SupplierRateApi@addSupplierRate')->middleware('jwt.auth');
 /**
  * PUT updateSupplierRate
  * Summary: Update an existing supplier_rate
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::PUT('/supplier_rate', 'SupplierRateApi@updateSupplierRate')->middleware('jwt.auth');
+Route::PUT('/supplier-rate', 'SupplierRateApi@updateSupplierRate')->middleware('jwt.auth');
 /**
  * DELETE deleteSupplierRate
  * Summary: Deletes an supplier_rate
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::DELETE('/supplier_rate/{supplier_rate_id}', 'SupplierRateApi@deleteSupplierRate')->middleware('jwt.auth');
+Route::DELETE('/supplier-rate/{supplier_rate_id}', 'SupplierRateApi@deleteSupplierRate')->middleware('jwt.auth');
 /**
  * GET getSupplierRateById
  * Summary: Find supplier_rate by ID
  * Notes: Returns a single supplier_rate
  * Output-Formats: [application/json, application/xml]
  */
-Route::GET('/supplier_rate/{supplier_rate_id}', 'SupplierRateApi@getSupplierRateById')->middleware('jwt.auth');
+Route::GET('/supplier-rate/{supplier_rate_id}', 'SupplierRateApi@getSupplierRateById')->middleware('jwt.auth');
 /**
  * GET supplierRatesGet
  * Summary: supplier_rates List
  * Notes: The supplier_rate endpoint returns multiple supplier_rate requested given the parameters injected.  
 
  */
-Route::GET('/supplier_rates', 'SupplierRateApi@supplierRatesGet')->middleware('jwt.auth');
+Route::GET('/supplier-rates', 'SupplierRateApi@supplierRatesGet')->middleware('jwt.auth');
+Route::POST('/supplier-rates/find-vendors', 'SupplierRateApi@findVendors')->middleware('jwt.auth');
+
+Route::POST('/supplier-rate-term', 'SupplierRateApi@addSupplierRateTerm')->middleware('jwt.auth');
+Route::PUT('/supplier-rate-term', 'SupplierRateApi@updateSupplierRateTerm')->middleware('jwt.auth');
+Route::DELETE('/supplier-rate-term/{term_id}', 'SupplierRateApi@deleteSupplierRateTerm')->middleware('jwt.auth');
+
+
+/**
+ * Supplier Services
+ */
+Route::POST('/supplier-services', 'SupplierServiceApi@addSupplierService')->middleware('jwt.auth');
+Route::PUT('/supplier-services', 'SupplierServiceApi@updateSupplierService')->middleware('jwt.auth');
+Route::DELETE('/supplier-services/{supplier_service_id}', 'SupplierServiceApi@deleteSupplierService')->middleware('jwt.auth');
+Route::GET('/supplier-services/{supplier_service_id}', 'SupplierServiceApi@getSupplierServiceById')->middleware('jwt.auth');
+Route::GET('/supplier-services', 'SupplierServiceApi@supplierServicesGet')->middleware('jwt.auth');
 
 
 
@@ -5143,6 +5161,10 @@ Route::GET('/reports/categories', 'ReportsApi@getReportingCategories')->middlewa
  * Output-Formats: [application/json, application/xml]
  */
 Route::GET('/reports/objectives', 'ReportsApi@getReportingObjectives')->middleware('jwt.auth');
+Route::POST('/objective', 'ReportsApi@addReportingObjective')->middleware('jwt.auth');
+Route::PUT('/objective', 'ReportsApi@updateReportingObjective')->middleware('jwt.auth');
+Route::DELETE('/objective/{objective_id}', 'ReportsApi@deleteReportingObjective')->middleware('jwt.auth');
+Route::GET('/objective/{objective_id}', 'ReportsApi@getReportingObjectiveById')->middleware('jwt.auth');
 
 /**
  * PUT setReportingCategoryObjective
@@ -5216,3 +5238,137 @@ Route::DELETE('/resource/{id}', 'ResourcesApi@deleteResource')->middleware('jwt.
 Route::get('/resources/{id}', 'ResourcesApi@getResourceById')->middleware('jwt.auth');
 
 Route::POST('/resources/edit', 'ResourcesApi@editResource')->middleware('jwt.auth');
+
+
+/**
+ * Meeting/Conference rooms routes
+ */
+Route::POST('/rooms/search_available', 'RoomsApi@searchAvailable')->middleware('jwt.auth');
+Route::POST('/room', 'RoomsApi@addRoom')->middleware('jwt.auth');
+Route::GET('/rooms', 'RoomsApi@getRooms')->middleware('jwt.auth');
+Route::GET('/room/{id}', 'RoomsApi@getRoomById')->middleware('jwt.auth');
+Route::DELETE('/room/{id}', 'RoomsApi@deleteRoom')->middleware('jwt.auth');
+Route::PUT('/room', 'RoomsApi@editRoom')->middleware('jwt.auth');
+// Bookings
+Route::POST('/room-booking', 'RoomsApi@addRoomBooking')->middleware('jwt.auth');
+Route::GET('/room-bookings', 'RoomsApi@getRoomBookings')->middleware('jwt.auth');
+Route::GET('/room-booking/{id}', 'RoomsApi@getRoomBookingById')->middleware('jwt.auth');
+Route::DELETE('/room-booking/{id}', 'RoomsApi@deleteRoomBooking')->middleware('jwt.auth');
+Route::PUT('/room-booking', 'RoomsApi@editRoomBooking')->middleware('jwt.auth');
+
+
+/**
+* Funds Request routes
+*/
+Route::POST('/funds-request', 'FundsRequestApi@addFundsRequest')->middleware('jwt.auth');
+Route::GET('/funds-requests', 'FundsRequestApi@getFundsRequests')->middleware('jwt.auth');
+Route::GET('/funds-request/{id}', 'FundsRequestApi@getFundsRequestById')->middleware('jwt.auth');
+Route::DELETE('/funds-request/{id}', 'FundsRequestApi@deleteFundsRequest')->middleware('jwt.auth');
+Route::PUT('/funds-request', 'FundsRequestApi@updateFundsRequest')->middleware('jwt.auth');
+Route::PATCH('funds-request/{id}/submit_for_approval', 'FundsRequestApi@submitFundsRequestForApproval')->middleware('jwt.auth');
+Route::PATCH('/funds-request/{id}/approve', 'FundsRequestApi@approveFundsRequest')->middleware('jwt.auth');
+Route::PATCH('/funds-request/approve', 'FundsRequestApi@approveSeveralFundsRequests')->middleware('jwt.auth');
+Route::POST('/consolidate-funds', 'FundsRequestApi@consolidateFunds')->middleware('jwt.auth');
+Route::GET('/consolidated-funds', 'FundsRequestApi@getConsolidatedFunds')->middleware('jwt.auth');
+Route::GET('/download-consolidated-funds', 'FundsRequestApi@downloadConsolidatedFunds')->middleware('jwt.auth');
+// Items
+Route::GET('/funds-request-items', 'FundsRequestApi@getFundsRequestItems')->middleware('jwt.auth');
+Route::PUT('/funds-request-item', 'FundsRequestApi@updateFundsRequestItem')->middleware('jwt.auth');
+Route::GET('/funds-request-item/{id}', 'FundsRequestApi@getFundsRequestItemById')->middleware('jwt.auth');
+Route::DELETE('/funds-request-item/{id}', 'FundsRequestApi@deleteFundsRequestItem')->middleware('jwt.auth');
+// Statuses
+Route::POST('/funds_requests_status', 'FundsRequestApi@addFundsRequestStatus')->middleware('jwt.auth');
+Route::GET('/funds_requests_statuses', 'FundsRequestApi@getFundsRequestStatuses')->middleware('jwt.auth');
+Route::GET('/funds_requests_status/{id}', 'FundsRequestApi@getFundsRequestStatusById')->middleware('jwt.auth');
+Route::DELETE('/funds_requests_status/{id}', 'FundsRequestApi@deleteFundsRequestStatus')->middleware('jwt.auth');
+Route::PUT('/funds_requests_status', 'FundsRequestApi@updateFundsRequestStatus')->middleware('jwt.auth');
+
+
+/**
+* Activity routes
+*/
+Route::POST('/activity', 'ActivityApi@addActivity')->middleware('jwt.auth');
+Route::GET('/activities', 'ActivityApi@getActivities')->middleware('jwt.auth');
+Route::GET('/activity/{id}', 'ActivityApi@getActivityById')->middleware('jwt.auth');
+Route::DELETE('/activity/{id}', 'ActivityApi@deleteActivity')->middleware('jwt.auth');
+Route::PUT('/activity', 'ActivityApi@updateActivity')->middleware('jwt.auth');
+Route::GET('activity_transactions', 'ActivityApi@getActivityTransactions')->middleware('jwt.auth');
+// Approvals
+Route::PATCH('activity/{activity_id}/approve', 'ActivityApi@approveActivity')->middleware('jwt.auth');
+Route::PATCH('activities/approve', 'ActivityApi@approveSeveralActivities')->middleware('jwt.auth');
+Route::PATCH('activity/{activity_id}/rejected', 'ActivityApi@rejectActivity')->middleware('jwt.auth');
+Route::PATCH('activity/{activity_id}/submit_for_approval', 'ActivityApi@submitActivityForApproval')->middleware('jwt.auth');
+// Statuses
+Route::POST('/activity_status', 'ActivityStatusApi@addActivityStatus')->middleware('jwt.auth');
+Route::PUT('/activity_status', 'ActivityStatusApi@updateActivityStatus')->middleware('jwt.auth');
+Route::DELETE('/activity_status/{activity_status_id}', 'ActivityStatusApi@deleteActivityStatus')->middleware('jwt.auth');
+Route::GET('/activity_status/{activity_status_id}', 'ActivityStatusApi@getActivityStatusById')->middleware('jwt.auth');
+Route::GET('/activity_statuses', 'ActivityStatusApi@getActivityStatuses')->middleware('jwt.auth');
+
+
+
+/**
+ * Fixed assets routes
+ */
+Route::POST('/asset', 'FixedAssetsApi@addAsset')->middleware('jwt.auth');
+Route::GET('/assets', 'FixedAssetsApi@assetsGet')->middleware('jwt.auth');
+Route::GET('/asset/{id}', 'FixedAssetsApi@getAssetById')->middleware('jwt.auth');
+Route::DELETE('/asset/{id}', 'FixedAssetsApi@deleteAsset')->middleware('jwt.auth');
+Route::PUT('/asset', 'FixedAssetsApi@updateAsset')->middleware('jwt.auth');
+Route::POST('/lost-asset', 'FixedAssetsApi@reportLost')->middleware('jwt.auth');
+Route::POST('/claim-asset', 'FixedAssetsApi@claimAsset')->middleware('jwt.auth');
+Route::PATCH('/assets/return', 'FixedAssetsApi@returnAssets')->middleware('jwt.auth');
+// Locations
+Route::POST('/asset-location', 'FixedAssetsApi@addAssetLocation')->middleware('jwt.auth');
+Route::GET('/asset-locations', 'FixedAssetsApi@assetLocationsGet')->middleware('jwt.auth');
+Route::GET('/asset-location/{id}', 'FixedAssetsApi@getAssetLocationById')->middleware('jwt.auth');
+Route::DELETE('/asset-location/{id}', 'FixedAssetsApi@deleteAssetLocation')->middleware('jwt.auth');
+Route::PUT('/asset-location', 'FixedAssetsApi@updateAssetLocation')->middleware('jwt.auth');
+// Categories
+Route::POST('/asset-category', 'FixedAssetsApi@addAssetCategory')->middleware('jwt.auth');
+Route::GET('/asset-categories', 'FixedAssetsApi@assetCategoriesGet')->middleware('jwt.auth');
+Route::GET('/asset-category/{id}', 'FixedAssetsApi@getAssetCategoryById')->middleware('jwt.auth');
+Route::DELETE('/asset-category/{id}', 'FixedAssetsApi@deleteAssetCategory')->middleware('jwt.auth');
+Route::PUT('/asset-category', 'FixedAssetsApi@updateAssetCategory')->middleware('jwt.auth');
+// Statuses
+Route::POST('/asset-status', 'FixedAssetsApi@addAssetStatus')->middleware('jwt.auth');
+Route::GET('/asset-statuses', 'FixedAssetsApi@assetStatusesGet')->middleware('jwt.auth');
+Route::GET('/asset-status/{id}', 'FixedAssetsApi@getAssetStatusById')->middleware('jwt.auth');
+Route::DELETE('/asset-status/{id}', 'FixedAssetsApi@deleteAssetStatus')->middleware('jwt.auth');
+Route::PUT('/asset-status', 'FixedAssetsApi@updateAssetStatus')->middleware('jwt.auth');
+
+
+/**
+ * Leave Management
+ */
+// Holidays
+Route::POST('/holiday', 'LeaveManagementApi@addHoliday')->middleware('jwt.auth');
+Route::GET('/holidays', 'LeaveManagementApi@holidaysGet')->middleware('jwt.auth');
+Route::GET('/holiday/{id}', 'LeaveManagementApi@getHolidayById')->middleware('jwt.auth');
+Route::DELETE('/holiday/{id}', 'LeaveManagementApi@deleteHoliday')->middleware('jwt.auth');
+Route::PUT('/holiday', 'LeaveManagementApi@updateHoliday')->middleware('jwt.auth');
+// LeaveTypes
+Route::POST('/leave_type', 'LeaveManagementApi@addLeaveType')->middleware('jwt.auth');
+Route::GET('/leave_types', 'LeaveManagementApi@leaveTypesGet')->middleware('jwt.auth');
+Route::GET('/leave_type/{id}', 'LeaveManagementApi@getLeaveTypeById')->middleware('jwt.auth');
+Route::DELETE('/leave_type/{id}', 'LeaveManagementApi@deleteLeaveType')->middleware('jwt.auth');
+Route::PUT('/leave_type', 'LeaveManagementApi@updateLeaveType')->middleware('jwt.auth');
+// Leave Requests
+Route::POST('/leave-request', 'LeaveManagementApi@addLeaveRequest')->middleware('jwt.auth');
+Route::GET('/leave-requests', 'LeaveManagementApi@leaveRequestsGet')->middleware('jwt.auth');
+Route::GET('/leave-request/{id}', 'LeaveManagementApi@getLeaveRequestById')->middleware('jwt.auth');
+Route::DELETE('/leave-request/{id}', 'LeaveManagementApi@deleteLeaveRequest')->middleware('jwt.auth');
+Route::PUT('/leave-request', 'LeaveManagementApi@updateLeaveRequest')->middleware('jwt.auth');
+Route::GET('/leave-request/{request_id}/get_document', 'LeaveManagementApi@getDocumentById')->middleware('jwt.auth');
+Route::GET('/leave-request-summary', 'LeaveManagementApi@getLeaveSummary')->middleware('jwt.auth');
+// LeaveStatuses
+Route::POST('/leave_status', 'LeaveManagementApi@addLeaveStatus')->middleware('jwt.auth');
+Route::GET('/leave_statuses', 'LeaveManagementApi@leaveStatusesGet')->middleware('jwt.auth');
+Route::GET('/leave_status/{id}', 'LeaveManagementApi@getLeaveStatusById')->middleware('jwt.auth');
+Route::DELETE('/leave_status/{id}', 'LeaveManagementApi@deleteLeaveStatus')->middleware('jwt.auth');
+Route::PUT('/leave_status', 'LeaveManagementApi@updateLeaveStatus')->middleware('jwt.auth');
+// Approvals
+Route::PATCH('leave-request/{request_id}/approve', 'LeaveManagementApi@approveLeaveRequest')->middleware('jwt.auth');
+Route::PATCH('leave-requests/approve', 'LeaveManagementApi@approveSeveralLeaveRequests')->middleware('jwt.auth');
+Route::PATCH('leave-request/{request_id}/reject', 'LeaveManagementApi@rejectLeaveRequest')->middleware('jwt.auth');
+Route::PATCH('leave-request/{request_id}/submit_for_approval', 'LeaveManagementApi@submitLeaveRequestForApproval')->middleware('jwt.auth');

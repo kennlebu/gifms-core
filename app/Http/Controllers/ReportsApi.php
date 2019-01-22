@@ -30,6 +30,8 @@ use App\Models\ClaimsModels\Claim;
 use App\Models\InvoicesModels\Invoice;
 use App\Models\MobilePaymentModels\MobilePayment;
 use App\Models\StaffModels\Staff;
+use App\Models\ProgramModels\ProgramStaff;
+use App\Models\ProgramModels\ProgramManager;
 use App\Models\GrantModels\Grant;
 use App\Models\ProjectsModels\Project;
 use App\Models\AccountingModels\Account;
@@ -389,14 +391,164 @@ class ReportsApi extends Controller
      */
     public function getReportingObjectives(){
         try{
-            $qb = DB::table('reporting_objectives')->whereNull('deleted_at');
-            $response = $qb->get();
+            $input = Request::all();
+
+            $objectives = array();
+            if(array_key_exists('lean', $input)){
+                $objectives = ReportingObjective::query();
+            }
+            else{
+                $objectives = ReportingObjective::with('program');
+            }
+
+            $response;
+            $response_dt;
+            $total_records          = $objectives->count();
+            $records_filtered       = 0;
+
+            //ordering
+            if(array_key_exists('order_by', $input)&&$input['order_by']!=''){
+                $order_direction     = "asc";
+                $order_column_name   = $input['order_by'];
+                if(array_key_exists('order_dir', $input)&&$input['order_dir']!=''){                
+                    $order_direction = $input['order_dir'];
+                }
+
+                $objectives = $objectives->orderBy($order_column_name, $order_direction);
+            }
+
+            //limit
+            if(array_key_exists('limit', $input)){
+                $objectives = $objectives->limit($input['limit']);
+            }
+
+            // My assigned
+            if(array_key_exists('my_assigned', $input)){
+                // If PM
+                if($this->current_user()->hasRole(['program-manager'])){
+                    $programs = ProgramManager::where('program_manager_id', $this->current_user()->id)->get();
+                    $program_ids = array();
+                    foreach($programs as $prog){
+                        array_push($program_ids, $prog->program_id);
+                    }
+                    $objectives = $objectives->whereIn('program_id', $program_ids);
+                }
+                else {
+                    $program_teams = ProgramStaff::where('staff_id', $this->current_user()->id)->get();
+
+                    $program_ids = array();
+                    
+                    foreach($program_teams as $team){
+                        array_push($program_ids, $team->program_id);
+                    }
+                    $program_ids = array_unique($program_ids);
+
+                    $objectives = $objectives->whereIn('program_id', $program_ids);
+                }
+            }
+
+            //limit $ offset
+            if((int)$input['start']!= 0 ){
+                $response_dt = $objectives->limit($input['length'])->offset($input['start']);
+            }else{
+                $objectives = $objectives->limit($input['length']);
+            }
+
+            if(array_key_exists('datatables', $input)){
+                $records_filtered = (int) $objectives->count();
+                $response_dt = $objectives->get();
+
+                $response = ReportingObjective::arr_to_dt_response( 
+                    $response_dt, $input['draw'],
+                    $total_records,
+                    $records_filtered
+                    );
+            }
+            else{
+                $response = $objectives->get();
+            }
 
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
         }
         catch(\Exception $e){
             $response =  ["error"=>"reporting_objective could not be found", "message"=>$e->getMessage()];
             return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
+        }
+    }
+
+
+    /**
+     * Add Reporting Objective
+     */
+    public function addReportingObjective(){
+        try{
+            $form = Request::all();
+            $objective = new ReportingObjective;
+            $objective->objective = $form['objective'];
+            $objective->description = $form['description'];
+            $objective->program_id = $form['program_id'];
+            $objective->disableLogging();
+
+            if($objective->save()){
+                return Response()->json(array('msg' => 'Success: Objective created'), 200);
+            }
+        }
+        catch(\Exception $e){
+            $response =  ["error"=>"An error occurred during processing", "message"=>$e->getMessage()];
+            return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
+        }
+    }
+
+
+    /**
+     * Update Reporting Objective
+     */
+    public function updateReportingObjective(){
+        try{
+            $form = Request::all();
+            $objective = ReportingObjective::find($form['id']);
+            $objective->objective = $form['objective'];
+            $objective->description = $form['description'];
+            $objective->program_id = $form['program_id'];
+            $objective->disableLogging();
+
+            if($objective->save()){
+                return Response()->json(array('msg' => 'Success: Objective updated'), 200);
+            }
+        }
+        catch(\Exception $e){
+            $response =  ["error"=>"An error occurred during processing", "message"=>$e->getMessage()];
+            return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
+        }
+    }
+
+
+    /**
+     * Delete Reporting Objective
+     */
+    public function deleteReportingObjective($objective_id)
+    {
+        $deleted = ReportingObjective::destroy($objective_id);
+
+        if($deleted){
+            return response()->json(['msg'=>"Objective removed"], 200,array(),JSON_PRETTY_PRINT);
+        }else{
+            return response()->json(['error'=>"Objective not found"], 404,array(),JSON_PRETTY_PRINT);
+        }
+
+    }
+
+
+    /**
+     * Get Reporting Objective by ID
+     */
+    public function getReportingObjectiveById($objective_id){
+        try{
+            $objective = ReportingObjective::with('program')->find($objective_id);
+            return response()->json($objective, 200,array(),JSON_PRETTY_PRINT);
+        }
+        catch(\Exception $e){
+            return response()->json(['error'=>'something went wrong', 'msg'=>$e->getMessage()], 500);
         }
     }
 

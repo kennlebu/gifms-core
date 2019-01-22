@@ -38,6 +38,7 @@ use App\Models\ApprovalsModels\Approval;
 use App\Models\ApprovalsModels\ApprovalLevel;
 use App\Models\StaffModels\Staff;
 use App\Models\SuppliesModels\Supplier;
+use App\Models\SuppliesModels\SupplierRate;
 use App\Exceptions\NoLpoItemsException;
 use App\Exceptions\LpoQuotationAmountMismatchException;
 use App\Exceptions\ApprovalException;
@@ -101,20 +102,7 @@ class LPOApi extends Controller
     */
     public function add()
     {
-        $input = Request::all();
-
-        $form = Request::only(
-            'requested_by_id',
-            'expense_desc',
-            'expense_purpose',
-            'project_id',
-            'account_id',
-            'currency_id',
-            'project_manager_id',
-            'quote_exempt_explanation',
-            'quote_exempt_details',
-            'expensive_quotation_reason'
-            );
+        $form = Request::all();
 
         try{
 
@@ -125,28 +113,40 @@ class LPOApi extends Controller
             $lpo->expense_purpose                   =           $form['expense_purpose'];
             $lpo->project_id                        =   (int)   $form['project_id'];
             $lpo->account_id                        =   (int)   $form['account_id'];
+            if(!empty($form['currency_id'])) 
             $lpo->currency_id                       =   (int)   $form['currency_id'];
             $lpo->project_manager_id                =   (int)   $form['project_manager_id'];
             $lpo->status_id                         =   $this->default_status;
+            if(!empty($form['quote_exempt_explanation']))
             $lpo->quote_exempt_explanation          = $form['quote_exempt_explanation'];
+            if(!empty($form['quote_exempt_details']))
             $lpo->quote_exempt_details = $form['quote_exempt_details'];
+            if(!empty($form['expensive_quotation_reason']))
             $lpo->expensive_quotation_reason = $form['expensive_quotation_reason'];
+            if(!empty($form['lpo_type'])){
+                $lpo->lpo_type = $form['lpo_type'];
+            }
+            if(!empty($form['program_activity_id'])) 
+            $lpo->program_activity_id = $form['program_activity_id'];
 
             $user = JWTAuth::parseToken()->authenticate();
             $lpo->request_action_by_id            =   (int)   $user->id;
 
 
-
             if($lpo->save()) {
 
-                $lpo->ref = "CHAI/LPO/#$lpo->id/".date_format($lpo->created_at,"Y/m/d");
+                if(!empty($form['lpo_type']) && $form['lpo_type']=='prenegotiated'){
+                    $lpo->ref = "CHAI/PLPO/#$lpo->id/".date_format($lpo->created_at,"Y/m/d");
+                }
+                else{
+                    $lpo->ref = "CHAI/LPO/#$lpo->id/".date_format($lpo->created_at,"Y/m/d");
+                }
                 $lpo->save();
 
                 return Response()->json(array('msg' => 'Success: lpo added','lpo' => Lpo::find((int)$lpo->id)), 200);
             }
 
         }catch (JWTException $e){
-
             return response()->json(['error'=>'something went wrong'], 500);
 
         }
@@ -195,26 +195,8 @@ class LPOApi extends Controller
     */
     public function updateLpo()
     {
-        // $input = Request::all();
 
-        // if (!isset($input['body'])) {
-        //     throw new \InvalidArgumentException('Missing the required parameter $body when calling updateLpo');
-        // }
-
-        $form = Request::only(
-            'id',
-            'requested_by_id',
-            'expense_desc',
-            'expense_purpose',
-            'project_id',
-            'account_id',
-            'currency_id',
-            'project_manager_id',
-            'preffered_quotation_id',
-            'quote_exempt_explanation',
-            'quote_exempt_details',
-            'expensive_quotation_reason'
-            );
+        $form = Request::all();
 
         $lpo = Lpo::find($form['id']);
 
@@ -226,19 +208,47 @@ class LPOApi extends Controller
             $lpo->expense_purpose                   =           $form['expense_purpose'];
             $lpo->project_id                        =   (int)   $form['project_id'];
             $lpo->account_id                        =   (int)   $form['account_id'];
+            if(!empty($form['currency_id'])) 
             $lpo->currency_id                       =   (int)   $form['currency_id'];
             $lpo->project_manager_id                =   (int)   $form['project_manager_id'];
-            if((int) $form['preffered_quotation_id'] != 0)
+            if(!empty($form['preffered_quotation_id']) && (int) $form['preffered_quotation_id'] != 0)
             $lpo->preffered_quotation_id            =   (int)   $form['preffered_quotation_id'];
+            if(!empty($form['quote_exempt_explanation']))
             $lpo->quote_exempt_explanation = $form['quote_exempt_explanation'];
+            if(!empty($form['quote_exempt_details']))
             $lpo->quote_exempt_details = $form['quote_exempt_details'];
+            if(!empty($form['expensive_quotation_reason']))
             $lpo->expensive_quotation_reason = $form['expensive_quotation_reason'];
-
-
+            if(!empty($form['program_activity_id'])) 
+            $lpo->program_activity_id = $form['program_activity_id'];
 
         if($lpo->save()) {
 
             return Response()->json(array('msg' => 'Success: lpo updated','lpo' => $lpo), 200);
+        }
+    }
+
+
+
+
+    /**
+     * Add item to pre-negotiated LPO
+     */
+    public function addPrenegotiatedLpoRate(){
+        try{
+            $input = Request::all();
+            $rate = SupplierRate::findOrFail($input['rate_id']);
+            $lpo = Lpo::findOrFail($input['lpo_id']);
+            $lpo->supplier_id = $rate->supplier_id;
+            
+            
+            if($lpo->save()){
+                return Response()->json(array('msg' => 'Success: lpo updated','lpo' => $lpo), 200);
+            }
+
+        }
+        catch(\Exception $e){
+            return response()->json(['error'=>"Something went wrong", 'msg'=>$e->getMessage()], 500,array(),JSON_PRETTY_PRINT);
         }
     }
 
@@ -351,7 +361,8 @@ class LPOApi extends Controller
             return response()->json(['msg'=>"you do not have permission to do this"], 403, array(), JSON_PRETTY_PRINT);
         }
 
-        $lpo->status_id = 15;
+        $lpo->status_id = 15;        
+        $lpo->cancellation_reason = $input['cancellation_reason'];
 
         // Logging cancelation
         activity()
@@ -438,26 +449,7 @@ class LPOApi extends Controller
 
         try{
 
-            $lpo   = LPO::with(
-                                            'requested_by',
-                                            'request_action_by',
-                                            'project',
-                                            'account',
-                                            'invoices',
-                                            'status',
-                                            'project_manager',
-                                            'rejected_by',
-                                            'cancelled_by',
-                                            'received_by',
-                                            'supplier',
-                                            'currency',
-                                            'quotations',
-                                            'preffered_quotation',
-                                            'items',
-                                            'terms',
-                                            'approvals',
-                                            'deliveries'
-                                )->findOrFail($lpo_id);
+            $lpo   = LPO::findOrFail($lpo_id);
            
             if (!$user->can("APPROVE_LPO_".$lpo->status_id)){
                 throw new ApprovalException("No approval permission");             
@@ -565,7 +557,7 @@ class LPOApi extends Controller
     {
 
         $form = Request::only(
-            'rejection_reason'
+            'cancellation_reason'
             );
 
         $user = JWTAuth::parseToken()->authenticate();
@@ -685,7 +677,7 @@ class LPOApi extends Controller
                                             'deliveries'
                                 )->findOrFail($lpo_id);
 
-            if ($lpo->preffered_quotation->amount != $lpo->totals ){
+            if ((empty($lpo->lpo_type) || $lpo->lpo_type!='prenegotiated') && $lpo->preffered_quotation->amount != $lpo->totals ){
                 throw new LpoQuotationAmountMismatchException("Total amount does not match with quotation amount");             
             }
 
@@ -796,7 +788,8 @@ class LPOApi extends Controller
                                             'terms',
                                             'approvals',
                                             'logs',
-                                            'deliveries'
+                                            'deliveries',
+                                            'program_activity'
                                 )->findOrFail($lpo_id);
 
 
@@ -1100,6 +1093,11 @@ class LPOApi extends Controller
             });
         }
 
+        // prenogotiated
+        if(array_key_exists('lpo_type',$input) && $input['lpo_type']=='prenegotiated'){
+            $qb->where('lpos.lpo_type', '\'prenegotiated\'');
+        }
+
 
 
         //if status is set
@@ -1118,11 +1116,6 @@ class LPOApi extends Controller
             }elseif ($status_==-3) {
                 $qb->where('project_manager_id',$this->current_user()->id);
             }
-
-
-
-
-            // $total_records          = $qb->count();     //may need this
         }
 
 
@@ -1275,14 +1268,20 @@ class LPOApi extends Controller
 
             $sup = (int) $input['supplier'];
 
-            if($sup>-1){
-                $qb->leftJoin('lpo_quotations', 'lpos.id', '=', 'lpo_quotations.lpo_id');
-                $qb->leftJoin('suppliers', 'lpo_quotations.supplier_id', '=', 'suppliers.id');
-                $qb->where('lpo_quotations.supplier_id', $sup);
-                $qb->orderBy('lpos.id', 'desc');
-                $qb->select('lpos.*');
+            if($sup>0){
+                if(array_key_exists('prenegotiated', $input)){
+                    $qb->where('lpos.supplier_id', $sup);
+                }
+                else{
+                    $qb->leftJoin('lpo_quotations', 'lpos.id', '=', 'lpo_quotations.lpo_id');
+                    $qb->leftJoin('suppliers', 'lpo_quotations.supplier_id', '=', 'suppliers.id');
+                    $qb->where('lpo_quotations.supplier_id', $sup);
+                    $qb->orderBy('lpos.id', 'desc');
+                    $qb->select('lpos.*');
+                }
+                $qb->whereIn('lpos.status_id', array(6,7,8));
+                $qb->orderBy('lpos.id','desc');
             }
-
 
         }
 
@@ -1403,10 +1402,11 @@ class LPOApi extends Controller
             $data[$key]['approvals']                = $lpo->approvals;
             $data[$key]['deliveries']               = $lpo->deliveries;
             $data[$key]['totals']                   = $lpo->totals;
+            $data[$key]['program_activity']         = $lpo->program_activity;
 
             if(!empty($lpo->preffered_quotation_id) && !empty($lpo->preffered_quotation->supplier_id)){
                 if($lpo->preffered_quotation_id > 0 && $lpo->preffered_quotation->supplier_id > 0 ){
-                    $data[$key]['preffered_quotation']['supplier']      = $lpo->preffered_quotation->supplier;
+                    $data[$key]['preffered_quotation']['supplier'] = $lpo->preffered_quotation->supplier;
                 }
             }
         }
@@ -1471,6 +1471,9 @@ class LPOApi extends Controller
             }
             if($data[$key]["preffered_quotation"]==null){
                 $data[$key]["preffered_quotation"] = array("supplier"=>array("supplier_name"=>"N/A"));
+            }
+            if($data[$key]["program_activity"]==null){
+                $data[$key]["program_activity"] = array("program_activity"=>array("title"=>"N/A", "description"=>"N/A"));
             }
         }
 

@@ -105,44 +105,45 @@ class SupplierApi extends Controller
             );
 
         $supplier = new Supplier;
+        $supplier->bank_id                 =  (int)  $form['bank_id'];
+        $supplier->bank_branch_id          =  (int)  $form['bank_branch_id'];
+        $supplier->supplier_name           =         $form['supplier_name'];
+        $supplier->address                 =         $form['address'];
+        $supplier->telephone               =         $form['telephone'];
+        $supplier->email                   =         $form['email'];
+        $supplier->website                 =         $form['website'];
+        $supplier->bank_account            =         $form['bank_account'];
+        $supplier->mobile_payment_number   =         $form['mobile_payment_number'];
+        $supplier->chaque_address          =         $form['chaque_address'];
+        $supplier->payment_mode_id         =  (int)  $form['payment_mode_id'];
+        $supplier->bank_code               =         $form['bank_code'];
+        $supplier->swift_code              =         $form['swift_code'];
+        $supplier->usd_account             =         $form['usd_account'];
+        $supplier->alternative_email       =         $form['alternative_email'];
+        $supplier->currency_id             =  (int)  $form['currency_id'];
+        $supplier->mobile_payment_name     =         $form['mobile_payment_name'];
+        $supplier->city_id                 =  (int)  $form['city_id'];
+        $supplier->qb                      =         $form['qb'];
+        $supplier->status_id               =  (int)  $form['status_id'];
+        $supplier->staff_id                =  (int)  $form['staff_id'];
+        $supplier->password                =         $form['password'];
+        $supplier->quick_books             =         $form['quick_books'];
+        $supplier->tax_pin                 =         trim($form['tax_pin']);
+        $supplier->contact_name_1          =         $form['contact_name_1'];
+        $supplier->contact_email_1         =         $form['contact_email_1'];
+        $supplier->contact_phone_1         =         $form['contact_phone_1'];
+        $supplier->contact_name_2          =         $form['contact_name_2'];
+        $supplier->contact_email_2         =         $form['contact_email_2'];
+        $supplier->contact_phone_2         =         $form['contact_phone_2'];
+        $supplier->requires_lpo            =         $form['requires_lpo'];
+        $supplier->supply_category_id = $form['supply_category_id'];
+        $supplier->county_id = $form['county_id'];
 
-
-            $supplier->bank_id                 =  (int)  $form['bank_id'];
-            $supplier->bank_branch_id          =  (int)  $form['bank_branch_id'];
-            $supplier->supplier_name           =         $form['supplier_name'];
-            $supplier->address                 =         $form['address'];
-            $supplier->telephone               =         $form['telephone'];
-            $supplier->email                   =         $form['email'];
-            $supplier->website                 =         $form['website'];
-            $supplier->bank_account            =         $form['bank_account'];
-            $supplier->mobile_payment_number   =         $form['mobile_payment_number'];
-            $supplier->chaque_address          =         $form['chaque_address'];
-            $supplier->payment_mode_id         =  (int)  $form['payment_mode_id'];
-            $supplier->bank_code               =         $form['bank_code'];
-            $supplier->swift_code              =         $form['swift_code'];
-            $supplier->usd_account             =         $form['usd_account'];
-            $supplier->alternative_email       =         $form['alternative_email'];
-            $supplier->currency_id             =  (int)  $form['currency_id'];
-            $supplier->mobile_payment_name     =         $form['mobile_payment_name'];
-            $supplier->city_id                 =  (int)  $form['city_id'];
-            $supplier->qb                      =         $form['qb'];
-            $supplier->status_id               =  (int)  $form['status_id'];
-            $supplier->staff_id                =  (int)  $form['staff_id'];
-            $supplier->password                =         $form['password'];
-            $supplier->quick_books             =         $form['quick_books'];
-            $supplier->tax_pin                 =         $form['tax_pin'];
-            $supplier->contact_name_1          =         $form['contact_name_1'];
-            $supplier->contact_email_1         =         $form['contact_email_1'];
-            $supplier->contact_phone_1         =         $form['contact_phone_1'];
-            $supplier->contact_name_2          =         $form['contact_name_2'];
-            $supplier->contact_email_2         =         $form['contact_email_2'];
-            $supplier->contact_phone_2         =         $form['contact_phone_2'];
-            $supplier->requires_lpo            =         $form['requires_lpo'];
-            $supplier->supply_category_id = $form['supply_category_id'];
-            $supplier->county_id = $form['county_id'];
+        if(Supplier::where('tax_pin', $supplier->tax_pin)->exists()){
+            return response()->json(["error"=>"Supplier with the same tax pin already exists"], 409,array(),JSON_PRETTY_PRINT);
+        }
 
         if($supplier->save()) {
-
             return Response()->json(array('msg' => 'Success: supplier added','supplier' => $supplier), 200);
         }
     }
@@ -215,42 +216,45 @@ class SupplierApi extends Controller
             );
 
         $supplier = Supplier::find($form['id']);
+        $supplier->bank_id                 =  (int)  $form['bank_id'];
+        $supplier->bank_branch_id          =  (int)  $form['bank_branch_id'];
+        $supplier->supplier_name           =         $form['supplier_name'];
+        $supplier->address                 =         $form['address'];
+        $supplier->telephone               =         $form['telephone'];
+        $supplier->email                   =         $form['email'];
+        $supplier->website                 =         $form['website'];
+        $supplier->bank_account            =         $form['bank_account'];
+        $supplier->mobile_payment_number   =         $form['mobile_payment_number'];
+        $supplier->chaque_address          =         $form['chaque_address'];
+        $supplier->payment_mode_id         =  (int)  $form['payment_mode_id'];
+        $supplier->bank_code               =         $form['bank_code'];
+        $supplier->swift_code              =         $form['swift_code'];
+        $supplier->usd_account             =         $form['usd_account'];
+        $supplier->alternative_email       =         $form['alternative_email'];
+        $supplier->currency_id             =  (int)  $form['currency_id'];
+        $supplier->mobile_payment_name     =         $form['mobile_payment_name'];
+        $supplier->city_id                 =  (int)  $form['city_id'];
+        $supplier->qb                      =         $form['qb'];
+        $supplier->status_id               =  (int)  $form['status_id'];
+        $supplier->staff_id                =  (int)  $form['staff_id'];
+        $supplier->password                =         $form['password'];
+        $supplier->quick_books             =         $form['quick_books'];
+        $supplier->tax_pin                 =         trim($form['tax_pin']);
+        $supplier->contact_name_1          =         $form['contact_name_1'];
+        $supplier->contact_email_1         =         $form['contact_email_1'];
+        $supplier->contact_phone_1         =         $form['contact_phone_1'];
+        $supplier->contact_name_2          =         $form['contact_name_2'];
+        $supplier->contact_email_2         =         $form['contact_email_2'];
+        $supplier->contact_phone_2         =         $form['contact_phone_2'];
+        $supplier->requires_lpo            =         $form['requires_lpo'];
+        $supplier->supply_category_id = $form['supply_category_id'];
+        $supplier->county_id = $form['county_id'];
 
-            $supplier->bank_id                 =  (int)  $form['bank_id'];
-            $supplier->bank_branch_id          =  (int)  $form['bank_branch_id'];
-            $supplier->supplier_name           =         $form['supplier_name'];
-            $supplier->address                 =         $form['address'];
-            $supplier->telephone               =         $form['telephone'];
-            $supplier->email                   =         $form['email'];
-            $supplier->website                 =         $form['website'];
-            $supplier->bank_account            =         $form['bank_account'];
-            $supplier->mobile_payment_number   =         $form['mobile_payment_number'];
-            $supplier->chaque_address          =         $form['chaque_address'];
-            $supplier->payment_mode_id         =  (int)  $form['payment_mode_id'];
-            $supplier->bank_code               =         $form['bank_code'];
-            $supplier->swift_code              =         $form['swift_code'];
-            $supplier->usd_account             =         $form['usd_account'];
-            $supplier->alternative_email       =         $form['alternative_email'];
-            $supplier->currency_id             =  (int)  $form['currency_id'];
-            $supplier->mobile_payment_name     =         $form['mobile_payment_name'];
-            $supplier->city_id                 =  (int)  $form['city_id'];
-            $supplier->qb                      =         $form['qb'];
-            $supplier->status_id               =  (int)  $form['status_id'];
-            $supplier->staff_id                =  (int)  $form['staff_id'];
-            $supplier->password                =         $form['password'];
-            $supplier->quick_books             =         $form['quick_books'];
-            $supplier->tax_pin                 =         $form['tax_pin'];
-            $supplier->contact_name_1          =         $form['contact_name_1'];
-            $supplier->contact_email_1         =         $form['contact_email_1'];
-            $supplier->contact_phone_1         =         $form['contact_phone_1'];
-            $supplier->contact_name_2          =         $form['contact_name_2'];
-            $supplier->contact_email_2         =         $form['contact_email_2'];
-            $supplier->contact_phone_2         =         $form['contact_phone_2'];
-            $supplier->requires_lpo            =         $form['requires_lpo'];
-            $supplier->supply_category_id = $form['supply_category_id'];
-            $supplier->county_id = $form['county_id'];
+        if(!empty($form['tax_pin']) && Supplier::where('tax_pin', $supplier->tax_pin)->where('id', '!=', $form['id'])->exists()){
+            return response()->json(["error"=>"Supplier with the same tax pin already exists"], 409,array(),JSON_PRETTY_PRINT);
+        }
+
         if($supplier->save()) {
-
             return Response()->json(array('msg' => 'Success: supplier updated','supplier' => $supplier), 200);
         }
     }
@@ -375,9 +379,6 @@ class SupplierApi extends Controller
      */
     public function suppliersGet()
     {
-        
-
-
         $input = Request::all();
         //query builder
         $qb = DB::table('suppliers');
@@ -391,30 +392,24 @@ class SupplierApi extends Controller
         $total_records          = $qb->count();
         $records_filtered       = 0;
 
-
-
-
         //searching
         if(array_key_exists('searchval', $input)){
-            $qb->where(function ($query) use ($input) {
-                
+            $qb->where(function ($query) use ($input) {                
                 $query->orWhere('suppliers.id','like', '\'%' . $input['searchval']. '%\'');
                 $query->orWhere('suppliers.supplier_name','like', '\'%' . $input['searchval']. '%\'');
-
             });
-
-            // $records_filtered       =  $qb->count(); //doesn't work
 
             $sql = Supplier::bind_presql($qb->toSql(),$qb->getBindings());
             $sql = str_replace("*"," count(*) AS count ", $sql);
             $dt = json_decode(json_encode(DB::select($sql)), true);
 
             $records_filtered = (int) $dt[0]['count'];
-            // $records_filtered = 30;
-
-
         }
 
+        // Supply category
+        if(array_key_exists('supply_category_id', $input) && !empty($input['supply_category_id'])){
+            $qb->where('supply_category_id', $input['supply_category_id']);
+        }
 
         //ordering
         if(array_key_exists('order_by', $input)&&$input['order_by']!=''){
@@ -425,22 +420,15 @@ class SupplierApi extends Controller
             }
 
             $qb->orderBy($order_column_name, $order_direction);
-        }else{
-            // $qb->orderBy("supplier_name", "asc");
         }
 
         //limit
         if(array_key_exists('limit', $input)){
-
-
             $qb->limit($input['limit']);
-
-
         }
 
         //migrated
         if(array_key_exists('migrated', $input)){
-
             $mig = (int) $input['migrated'];
 
             if($mig==0){
@@ -448,17 +436,12 @@ class SupplierApi extends Controller
             }else if($mig==1){
                 $qb->whereNotNull('migration_id');
             }
-
-
         }
-
-
 
         if(array_key_exists('datatables', $input)){
 
             //searching
-            $qb->where(function ($query) use ($input) {
-                
+            $qb->where(function ($query) use ($input) {                
                 $query->orWhere('suppliers.id','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('suppliers.supplier_name','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('suppliers.address','like', '\'%' . $input['search']['value']. '%\'');
@@ -469,11 +452,7 @@ class SupplierApi extends Controller
                 $query->orWhere('suppliers.city_id','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('suppliers.contact_name_1','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('suppliers.contact_name_2','like', '\'%' . $input['search']['value']. '%\'');
-
             });
-
-
-
 
             $sql = Supplier::bind_presql($qb->toSql(),$qb->getBindings());
             $sql = str_replace("*"," count(*) AS count ", $sql);
@@ -481,43 +460,28 @@ class SupplierApi extends Controller
 
             $records_filtered = (int) $dt[0]['count'];
 
-
             //ordering
             $order_column_id    = (int) $input['order'][0]['column'];
             $order_column_name  = $input['columns'][$order_column_id]['order_by'];
             $order_direction    = $input['order'][0]['dir'];
 
             if($order_column_name!=''){
-
                 $qb->orderBy($order_column_name, $order_direction);
-
-            }else{
+            }
+            else {
                 $qb->orderBy("supplier_name", "desc");
             }
 
-
-
-
-
-
             //limit $ offset
             if((int)$input['start']!= 0 ){
-
                 $response_dt    =   $qb->limit($input['length'])->offset($input['start']);
-
-            }else{
+            }
+            else {
                 $qb->limit($input['length']);
             }
 
-
-
-
-
             $sql = Supplier::bind_presql($qb->toSql(),$qb->getBindings());
-
-            // $response_dt = DB::select($qb->toSql(),$qb->getBindings());         //pseudo
             $response_dt = DB::select($sql);
-
 
             $response_dt = json_decode(json_encode($response_dt), true);
 
@@ -528,10 +492,8 @@ class SupplierApi extends Controller
                 $total_records,
                 $records_filtered
                 );
-
-
-        }else{
-
+        }
+        else {
 
             $qb->orderBy("supplier_name", "asc");
 
@@ -543,15 +505,9 @@ class SupplierApi extends Controller
                 $response       = $this->append_relationships_objects($response);
                 $response       = $this->append_relationships_nulls($response);
             }
-
         }
 
-
-
-
         return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
-
-
     }
 
 

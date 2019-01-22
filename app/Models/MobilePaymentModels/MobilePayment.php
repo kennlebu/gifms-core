@@ -110,6 +110,10 @@ class MobilePayment extends BaseModel
     public function voucher_number(){
         return $this->belongsTo('App\Models\PaymentModels\VoucherNumber', 'voucher_no');
     }
+    public function program_activity()
+    {
+        return $this->belongsTo('App\Models\ActivityModels\Activity','activity_id');
+    }
 
 
 

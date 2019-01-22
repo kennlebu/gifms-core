@@ -1222,7 +1222,7 @@ class MobilePaymentApi extends Controller
             return response()->json(['msg'=>"Mobile Payment email resent"], 200,array(),JSON_PRETTY_PRINT);
             
         } catch (Exception $e) {
-             return response()->json(['error'=>$e->getMessage(), 'trace'=>$e->getTraceAsString()], 500,array(),JSON_PRETTY_PRINT);
+             return response()->json(['error'=>$e->getMessage()], 500,array(),JSON_PRETTY_PRINT);
             
         }
         

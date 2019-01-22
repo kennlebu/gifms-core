@@ -438,6 +438,11 @@ class LpoStatusApi extends Controller
                 $response[$key]['lpos_count'] = Lpo::where('requested_by_id',$this->current_user()->id)
                                             ->where('status_id', $value['id'] )
                                             ->count();
+
+                $response[$key]['prenegotiated_count'] = Lpo::where('requested_by_id',$this->current_user()->id)
+                                            ->where('status_id', $value['id'] )
+                                            ->where('lpo_type', 'prenegotiated')
+                                            ->count();
             }
 
             //add -1 and -2 statuses
@@ -450,7 +455,8 @@ class LpoStatusApi extends Controller
                         "lpo_status"=> "My Lpos",
                         "order_priority"=> 998,
                         "display_color"=> "#37A9E17A",
-                        "lpos_count"=> Lpo::where('requested_by_id',$this->current_user()->id)->count()
+                        "lpos_count"=> Lpo::where('requested_by_id',$this->current_user()->id)->count(),
+                        "prenegotiated_count"=> Lpo::where('requested_by_id',$this->current_user()->id)->where('lpo_type', 'prenegotiated')->count()
                       );
 
 
@@ -460,7 +466,8 @@ class LpoStatusApi extends Controller
                             "lpo_status"=> "My PM-Assigned Lpos",
                             "order_priority"=> 999,
                             "display_color"=> "#49149c7a",
-                            "lpos_count"=> Lpo::where('project_manager_id',$this->current_user()->id)->count()
+                            "lpos_count"=> Lpo::where('project_manager_id',$this->current_user()->id)->count(),
+                            "prenegotiated_count"=> Lpo::where('project_manager_id',$this->current_user()->id)->where('lpo_type', 'prenegotiated')->count()
                           );
                 }
 
@@ -472,7 +479,8 @@ class LpoStatusApi extends Controller
                             "lpo_status"=> "All Lpos",
                             "order_priority"=> 1000,
                             "display_color"=> "#092D50",
-                            "lpos_count"=> Lpo::count()
+                            "lpos_count"=> Lpo::count(),
+                            "prenegotiated_count"=> Lpo::where('lpo_type', 'prenegotiated')->count()
                           );
                 }
 

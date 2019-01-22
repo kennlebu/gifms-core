@@ -274,4 +274,22 @@ class Controller extends BaseController
         }
         return $temp_array;
     }
+
+
+    /**
+     * Returns true if a date is a Saturday,
+     * otherwise returns false
+     */
+    function isSaturday($date) {
+        return (date('N', strtotime($date)) == 6);
+    }
+
+    /**
+     * Returns true if a date is Sunday,
+     * otherwise returns false
+     */
+    
+    function isSunday($date) {
+        return (date('N', strtotime($date)) == 7);
+    }
 }

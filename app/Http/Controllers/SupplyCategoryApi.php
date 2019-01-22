@@ -297,7 +297,7 @@ class SupplyCategoryApi extends Controller
 
             $qb->orderBy($order_column_name, $order_direction);
         }else{
-            // $qb->orderBy("supply_category_name", "asc");
+            $qb->orderBy("supply_category_name", "asc");
         }
 
         //limit

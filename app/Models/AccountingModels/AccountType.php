@@ -10,4 +10,5 @@ class AccountType extends BaseModel
 {
     //
     use SoftDeletes;
+    protected $hidden = ['created_at', 'updated_at', 'deleted_at'];
 }

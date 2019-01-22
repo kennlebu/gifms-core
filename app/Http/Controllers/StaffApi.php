@@ -401,9 +401,6 @@ class StaffApi extends Controller
      */
     public function staffsGet()
     {
-        
-        // ini_set('memory_limit', '2048M');
-
         $input = Request::all();
         //query builder
         $qb = DB::table('staff');
@@ -485,8 +482,8 @@ class StaffApi extends Controller
                  ->groupBy('staff.id');
         }
 
-        //PMs for a user
-        if(array_key_exists('my_pms', $input)){
+        //PMs for a user OR line managers for leave requests
+        if(array_key_exists('my_pms', $input) || array_key_exists('line_managers', $input)){
 
             //select the projects of the user
             $user = JWTAuth::parseToken()->authenticate();
@@ -495,8 +492,12 @@ class StaffApi extends Controller
             })->where('id', $user->id)->get();
 
             // Get only user PMs if user doesn't have admin or finance role
-            if(count($admin_role)<=0){
-                $program_teams = ProgramStaff::with('program.managers')->where('staff_id', $user->id)->get();
+            if((count($admin_role)<=0) || array_key_exists('for_requester', $input)){
+                $uid = $user->id;
+                if(array_key_exists('for_requester', $input)){
+                    $uid = $input['for_requester'];
+                }
+                $program_teams = ProgramStaff::with('program.managers')->where('staff_id', $uid)->get();
 
                 $program_managers = array();
                 
@@ -507,6 +508,18 @@ class StaffApi extends Controller
                 $qb->select(DB::raw('staff.*'))
                     ->whereIn('staff.id',$program_managers)
                     ->groupBy('staff.id');
+            }
+
+            // Get only directors for PMs and above if it's line managers required
+            else if(array_key_exists('line_managers', $input)){
+                // if($user->hasRole(['program-manager','financial-controller','admin-manager','director'])){
+                    $qb->select(DB::raw('staff.*'))
+                    ->leftJoin('user_roles', 'user_roles.user_id', '=', 'staff.id')
+                    ->leftJoin('roles', 'roles.id', '=', 'user_roles.role_id')
+                    ->where('roles.acronym', '=', "'dir'")
+                    ->orWhere('roles.acronym', '=', "'a-dir'")
+                    ->groupBy('staff.id');
+                // }
             }
 
             // Get all PMs for administrative and finance staff

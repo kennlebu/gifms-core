@@ -83,7 +83,8 @@ class AllocationApi extends Controller
                 'project_id',
                 'purpose',
                 'year',
-                'allocation_step'
+                'allocation_step',
+                'activity_id'
                 );
 
 
@@ -97,6 +98,8 @@ class AllocationApi extends Controller
             $allocation->allocation_purpose     =               $form['purpose'];
             $allocation->allocation_year        =               $form['year'];
             $allocation->allocation_step        =               $form['allocation_step'];
+            if(!empty($form['activity_id']))
+            $allocation->activity_id = $form['activity_id'];
 
             $user = JWTAuth::parseToken()->authenticate();
             $allocation->allocated_by_id            =   (int)   $user->id;
@@ -166,7 +169,8 @@ class AllocationApi extends Controller
                 'percentage',
                 'project_id',
                 'purpose',
-                'year'
+                'year',
+                'activity_id'
                 );
 
 
@@ -182,6 +186,8 @@ class AllocationApi extends Controller
             $allocation->project_id             =               $form['project_id'];
             $allocation->allocation_purpose     =               $form['purpose'];
             $allocation->allocation_year        =               $form['year'];
+            if(!empty($form['activity_id']))
+            $allocation->activity_id = $form['activity_id'];
 
             $user = JWTAuth::parseToken()->authenticate();
             $allocation->allocated_by_id            =   (int)   $user->id;
@@ -199,11 +205,11 @@ class AllocationApi extends Controller
                 return Response()->json(array('success' => 'allocation updated','allocation' => $allocation), 200);
             }
 
-
         }catch (JWTException $e){
-
             return response()->json(['error'=>'You are not Authenticated'], 500);
-
+        }
+        catch (\Exception $e){
+            return response()->json(['error'=>'Something went wrong', 'msg'=>$e->getMessage()], 500);
         }
     }
 

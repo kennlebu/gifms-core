@@ -372,46 +372,7 @@ class ProjectApi extends Controller
 
 
 
-    
-    /**
-     * Operation projectsGet
-     *
-     * projects List.
-     *
-     *
-     * @return Http response
-     */
-    // public function projectsGet1()
-    // {
-    //     $input = Request::all();
 
-    //     $response = Project::orderBy('project_code', 'desc')->get();
-
-
-    //     $current_user = JWTAuth::parseToken()->authenticate();
-
-    //     if(array_key_exists('my_assigned', $input)&& $input['my_assigned'] = "true"){
-
-
-    //         // $current_user = JWTAuth::parseToken()->authenticate();
-
-    //         $response = DB::table('projects')
-    //                  ->select(DB::raw('projects.*'))
-    //                  ->rightJoin('project_teams', 'project_teams.project_id', '=', 'projects.id')
-    //                  ->rightJoin('staff', 'staff.id', '=', 'project_teams.staff_id')
-    //                  ->where('staff.id', '=', $current_user->id)
-    //                  ->groupBy('projects.id')
-    //                  ->orderBy('projects.project_code', 'desc')
-    //                  ->get();
-                     
-    //         if($current_user->hasRole(['accountant','assistant-accountant','financial-controller'])){
-    //             $response = Project::orderBy('project_code', 'desc')->get();
-    //         }
-    //     }
-
-
-    //     return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
-    // }
     public function projectsGet()
     {
         
@@ -422,6 +383,7 @@ class ProjectApi extends Controller
         $qb = DB::table('projects');
 
         $qb->whereNull('projects.deleted_at');
+        $qb->whereNotNull('program_id');    // Not showing PIDs without an attached program id
         $current_user = JWTAuth::parseToken()->authenticate();
 
         $response;
@@ -434,13 +396,23 @@ class ProjectApi extends Controller
         //my_assigned
         if((array_key_exists('my_assigned', $input)&& $input['my_assigned'] = "true")&&($current_user->hasRole(['accountant','assistant-accountant','financial-controller','admin-manager']))){
 
+            if(array_key_exists('staff_responsible', $input)){
+                $user_id = (int) $input['staff_responsible'];
+                $qb->select(DB::raw('projects.*'))
+                 ->rightJoin('project_teams', 'project_teams.project_id', '=', 'projects.id')
+                 ->rightJoin('staff', 'staff.id', '=', 'project_teams.staff_id')
+                 ->where('staff.id', '=', $user_id)
+                 ->whereNotNull('projects.id')
+                 ->whereNotNull('projects.project_code')
+                 ->groupBy('projects.id');
+            }
             $qb->whereNotNull('project_code');
         }elseif (array_key_exists('my_assigned', $input)&& $input['my_assigned'] = "true") {
 
             $qb->select(DB::raw('projects.*'))
                  ->rightJoin('project_teams', 'project_teams.project_id', '=', 'projects.id')
                  ->rightJoin('staff', 'staff.id', '=', 'project_teams.staff_id')
-                 ->where('staff.id', '=', $current_user->id)
+                 ->where('staff.id', '=', $current_user)
                  ->whereNotNull('projects.id')
                  ->whereNotNull('projects.project_code')
                  ->groupBy('projects.id');

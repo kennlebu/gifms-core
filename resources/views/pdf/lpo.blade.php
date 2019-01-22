@@ -28,7 +28,13 @@
           </tr>
           <tr>
             <td style="border: 1px solid #000000; border-bottom: 1px solid #c0c0c0;" colspan="2"  ><strong>Attn:</strong></td>
-            <td style="border-width: 1px; border-style: solid; border-color: #000000 #000000 #c0c0c0; border-image: initial; text-align: right;" colspan="4" >{{$lpo->preffered_quotation->supplier->contact_name_1}}</td>
+            <td style="border-width: 1px; border-style: solid; border-color: #000000 #000000 #c0c0c0; border-image: initial; text-align: right;" colspan="4" >
+                @if(empty($lpo->lpo_type)||$lpo->lpo_type!='prenegotiated')
+                {{$lpo->preffered_quotation->supplier->contact_name_1}}
+                @elseif(!empty($lpo->lpo_type)&&$lpo->lpo_type=='prenegotiated')
+                {{$lpo->supplier->contact_name_1}}
+                @endif
+              </td>
             <td colspan="1" ></td>
             <td colspan="1" ><strong>Date</strong></td>
             <td style="text-align: right;" colspan="2">{{date('d F, Y', strtotime($lpo->created_at)) }}</td>
@@ -41,26 +47,50 @@
           </tr>
           <tr>
             <td style="border: 1px solid #000000; border-bottom: 1px solid #c0c0c0; border-top: 1px solid #c0c0c0;" colspan="2"  ><strong>Company Name</strong></td>
-            <td style="border-width: 1px; border-style: solid; border-color: #c0c0c0 #000000; border-image: initial; text-align: right;" colspan="4" >{{$lpo->preffered_quotation->supplier->supplier_name}}</td>
+            <td style="border-width: 1px; border-style: solid; border-color: #c0c0c0 #000000; border-image: initial; text-align: right;" colspan="4" >
+              @if(empty($lpo->lpo_type)||$lpo->lpo_type!='prenegotiated')
+              {{$lpo->preffered_quotation->supplier->supplier_name}}
+              @elseif(!empty($lpo->lpo_type)&&$lpo->lpo_type=='prenegotiated')
+              {{$lpo->supplier->supplier_name}}
+              @endif
+            </td>
             <td colspan="1" ></td>
             <td colspan="5" ></td>
           </tr>
           <tr>
             <td style="border: 1px solid #000000; border-bottom: 1px solid #c0c0c0; border-top: 1px solid #c0c0c0;" colspan="2"  ><strong>Email</strong></td>
-            <td style="border-width: 1px; border-style: solid; border-color: #c0c0c0 #000000; border-image: initial; text-align: right;" colspan="4" ><a href="mailto:{{$lpo->preffered_quotation->supplier->email}}" target="_blank">{{str_replace("@","@ ",$lpo->preffered_quotation->supplier->email)}}</a></td>
+            <td style="border-width: 1px; border-style: solid; border-color: #c0c0c0 #000000; border-image: initial; text-align: right;" colspan="4" >
+              @if(empty($lpo->lpo_type)||$lpo->lpo_type!='prenegotiated')
+              <a href="mailto:{{$lpo->preffered_quotation->supplier->email}}" target="_blank">{{str_replace("@","@ ",$lpo->preffered_quotation->supplier->email)}}</a>
+              @elseif(!empty($lpo->lpo_type)&&$lpo->lpo_type=='prenegotiated')
+              <a href="mailto:{{$lpo->supplier->email}}" target="_blank">{{str_replace("@","@ ",$lpo->supplier->email)}}</a>
+              @endif
+            </td>
             <td colspan="1" ></td>
             <td style="border: 1px solid #666666;" rowspan="3" ><strong>Ordered By:</strong></td>
             <td style="text-align: right; border: 1px solid #666666; border-bottom: 1px solid #c0c0c0;" colspan="2" >{{$lpo->requested_by->full_name}}</td>
           </tr>
           <tr>
             <td style="border: 1px solid #000000; border-bottom: 1px solid #c0c0c0; border-top: 1px solid #c0c0c0;" colspan="2"  ><strong>Address (City/Town)</strong></td>
-            <td style="border-width: 1px; border-style: solid; border-color: #c0c0c0 #000000; border-image: initial; text-align: right;" colspan="4" >{{$lpo->preffered_quotation->supplier->address}}</td>
+            <td style="border-width: 1px; border-style: solid; border-color: #c0c0c0 #000000; border-image: initial; text-align: right;" colspan="4" >
+              @if(empty($lpo->lpo_type)||$lpo->lpo_type!='prenegotiated')
+              {{$lpo->preffered_quotation->supplier->address}}
+              @elseif(!empty($lpo->lpo_type)&&$lpo->lpo_type=='prenegotiated')
+              {{$lpo->supplier->address}}
+              @endif
+            </td>
             <td colspan="1" ></td>
             <td style="text-align: right; border: 1px solid #666666; border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0;" colspan="2" ><a href="mailto:{{$lpo->requested_by->mobile_no}}">{{$lpo->requested_by->mobile_no}}</a></td>
           </tr>
           <tr>
             <td style="border: 1px solid #000000; border-top: 1px solid #c0c0c0;" colspan="2"  ><strong>Phone</strong></td>
-            <td style="border-width: 1px; border-style: solid; border-color: #c0c0c0 #000000 #000000; border-image: initial; text-align: right;" colspan="4"  ><a href="mailto:{{$lpo->preffered_quotation->supplier->telephone}}">{{$lpo->preffered_quotation->supplier->contact_phone_1}}</a></td>
+            <td style="border-width: 1px; border-style: solid; border-color: #c0c0c0 #000000 #000000; border-image: initial; text-align: right;" colspan="4"  >
+              @if(empty($lpo->lpo_type)||$lpo->lpo_type!='prenegotiated')
+              <a href="mailto:{{$lpo->preffered_quotation->supplier->telephone}}">{{$lpo->preffered_quotation->supplier->contact_phone_1}}</a>
+              @elseif(!empty($lpo->lpo_type)&&$lpo->lpo_type=='prenegotiated')
+              <a href="mailto:{{$lpo->supplier->telephone}}">{{$lpo->supplier->contact_phone_1}}</a>
+              @endif
+            </td>
             <td colspan="1" ></td>
             <td style="text-align: right; border: 1px solid #666666; border-top: 1px solid #c0c0c0;" colspan="2" ><a href="mailto:{{$lpo->requested_by->email}}" target="_blank">{{str_replace("@","@ ",$lpo->requested_by->email)}}</a></td>
           </tr>

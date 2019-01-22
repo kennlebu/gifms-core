@@ -10,4 +10,10 @@ class ReportingObjective extends BaseModel
 {
     //
     use SoftDeletes;
+    protected $hidden = ['created_at', 'updated_at', 'deleted_at'];
+
+    public function program()
+    {
+        return $this->belongsTo('App\Models\ProgramModels\Program','program_id');
+    }
 }
