@@ -383,7 +383,7 @@ class ProjectApi extends Controller
         $qb = DB::table('projects');
 
         $qb->whereNull('projects.deleted_at');
-        $qb->whereNotNull('program_id');    // Not showing PIDs without an attached program id
+        $qb->whereNotNull('projects.program_id');    // Not showing PIDs without an attached program id
         $current_user = JWTAuth::parseToken()->authenticate();
 
         $response;
@@ -412,7 +412,7 @@ class ProjectApi extends Controller
             $qb->select(DB::raw('projects.*'))
                  ->rightJoin('project_teams', 'project_teams.project_id', '=', 'projects.id')
                  ->rightJoin('staff', 'staff.id', '=', 'project_teams.staff_id')
-                 ->where('staff.id', '=', $current_user)
+                 ->where('staff.id', '=', $current_user->id)
                  ->whereNotNull('projects.id')
                  ->whereNotNull('projects.project_code')
                  ->groupBy('projects.id');

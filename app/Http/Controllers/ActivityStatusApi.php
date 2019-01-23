@@ -228,10 +228,11 @@ class ActivityStatusApi extends Controller
                         "order_priority"=> 999,
                         "display_color"=> "#49149c7a",
                         "activities_count"=> count(DB::table('activities')
-                            ->rightJoin('program_teams', 'program_teams.program_id', '=', 'activities.program_id')
+                            ->rightJoin('reporting_objectives', 'reporting_objectives.id', '=', 'activities.objective_id')
+                            ->rightJoin('program_teams', 'program_teams.program_id', '=', 'reporting_objectives.program_id')
                             ->rightJoin('staff', 'staff.id', '=', 'program_teams.staff_id')
                             ->where('staff.id', '=', $this->current_user()->id)
-                            ->where('activities.status_id', 3)
+                            // ->where('activities.status_id', 3)
                             ->whereNotNull('activities.id')
                             ->groupBy('activities.id')
                             ->get())

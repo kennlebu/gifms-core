@@ -110,7 +110,8 @@ class MobilePaymentApi extends Controller
                 'payees_upload_mode_id',
                 'rejection_reason',
                 'file',
-                'rejected_by_id'
+                'rejected_by_id',
+                'program_activity_id'
                 );
 
             $ftp = FTP::connection()->getDirListing();
@@ -132,6 +133,7 @@ class MobilePaymentApi extends Controller
             $mobile_payment->payees_upload_mode_id          =   (int)   $form['payees_upload_mode_id'];
             $mobile_payment->rejection_reason               =           $form['rejection_reason'];
             $mobile_payment->rejected_by_id                 =   (int)   $form['rejected_by_id'];
+            $mobile_payment->program_activity_id            =   (int)   $form['program_activity_id'];
 
             $mobile_payment->status_id                      =   $this->default_status;
             
@@ -201,6 +203,7 @@ class MobilePaymentApi extends Controller
         $mobile_payment->expense_desc                   =           $form['expense_desc'];
         $mobile_payment->expense_purpose                =           $form['expense_purpose'];
         $mobile_payment->project_manager_id             =   (int)   $form['project_manager_id'];
+        $mobile_payment->program_activity_id            =   (int)   $form['program_activity_id'];
 
         if($mobile_payment->save()) {
 
@@ -269,7 +272,8 @@ class MobilePaymentApi extends Controller
                                     'logs',
                                     'vouchers',
                                     'payments',
-                                    'allocations'
+                                    'allocations',
+                                    'program_activity'
                                 )->findOrFail($mobile_payment_id);
 
 
@@ -1747,6 +1751,7 @@ class MobilePaymentApi extends Controller
             $data[$key]['approvals']                   = $mobile_payment->approvals;
             $data[$key]['allocations']                 = $mobile_payment->allocations;
             $data[$key]['totals']                      = $mobile_payment->totals;
+            $data[$key]['program_activity']            = $mobile_payment->program_activity;
 
             foreach ($mobile_payment->allocations as $key1 => $value1) {
                 $project = Project::find((int)$value1['project_id']);
@@ -1837,6 +1842,9 @@ class MobilePaymentApi extends Controller
             }
             if($data[$key]["currency"]==null){
                 $data[$key]["currency"] = array("currency_name"=>"N/A");
+            }
+            if($data[$key]["program_activity"]==null){
+                $data[$key]["program_activity"] = array("title"=>"N/A", "description"=>"N/A");
             }
         }
 

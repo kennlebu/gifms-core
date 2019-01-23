@@ -16,6 +16,7 @@ use App\Models\AllocationModels\Allocation;
 use App\Models\InvoicesModels\Invoice;
 use App\Models\MobilePaymentModels\MobilePayment;
 use App\Models\LPOModels\Lpo;
+use App\Models\ReportModels\ReportingObjective;
 
 use Exception;
 use App;
@@ -28,8 +29,6 @@ class ActivityApi extends Controller
     
     public function __construct()
     {
-        // $status = ActivityStatus::where('default_status','1')->first();
-        // $this->default_status = $status->id;
         $this->default_status = 1; // Logged, pending submission
         $this->approvable_statuses = ActivityStatus::where('approvable','1')->get();
     }
@@ -47,15 +46,16 @@ class ActivityApi extends Controller
         $activity->requested_by_id = $form['requested_by_id'];
         $activity->title = $form['title'];
         $activity->description = $form['description'];
-        $activity->project_id = $form['project_id'];
+        // $activity->project_id = $form['project_id'];
+        $activity->objective_id = $form['objective_id'];
         $activity->start_date = date('Y-m-d', strtotime($form['start_date']));
         if(!empty($form['end_date'])){
             $activity->end_date = date('Y-m-d', strtotime($form['end_date']));
         }
         $activity->status_id = $this->default_status;
 
-        $proj = Project::findOrFail($activity->project_id);
-        $program = Program::find($proj->program_id);                                // Save the PM and Program of the Project
+        $obj = ReportingObjective::findOrFail($activity->objective_id);
+        $program = Program::find($obj->program_id);                                 // Save the PM and Program of the Project
         $activity->program_id = $program->id;                                       // that has been selected. It's redundant
         $activity->program_manager_id = $program->managers->program_manager_id;     // but much easier to deal with and the 
                                                                                     // overhead isn't significant. Laziness 101.
@@ -78,13 +78,14 @@ class ActivityApi extends Controller
         $activity->requested_by_id = $form['requested_by_id'];
         $activity->title = $form['title'];
         $activity->description = $form['description'];
-        $activity->project_id = $form['project_id'];
+        // $activity->project_id = $form['project_id'];
+        $activity->objective_id = $form['objective_id'];
         $activity->start_date = date('Y-m-d', strtotime($form['start_date']));
         if(!empty($form['end_date']))
             $activity->end_date = date('Y-m-d', strtotime($form['end_date']));
             
-        $proj = Project::findOrFail($activity->project_id);
-        $program = Program::find($proj->program_id);
+        $obj = ReportingObjective::findOrFail($activity->objective_id);
+        $program = Program::find($obj->program_id);
         $activity->program_id = $program->id;
         $activity->program_manager_id = $program->managers->program_manager_id;
         
@@ -120,7 +121,7 @@ class ActivityApi extends Controller
     public function getActivityById($activity_id)
     {
         try{
-            $response = Activity::with('requested_by','program.managers.program_manager','project','status','rejected_by','logs.causer')->findOrFail($activity_id);           
+            $response = Activity::with('requested_by','objective.program.managers.program_manager','status','rejected_by','logs.causer', 'approvals')->findOrFail($activity_id);           
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
 
         }catch(Exception $e){
@@ -163,8 +164,9 @@ class ActivityApi extends Controller
                 
             }elseif ($status_==-3) {
                 $program_ids = ProgramStaff::select('program_id')->where('staff_id', $this->current_user()->id)->get();
-                $qb->whereIn('activities.program_id', $program_ids)
-                    ->where('activities.status_id', 3)
+                $objective_ids = ReportingObjective::select('id')->whereIn('program_id', $program_ids)->get();
+                $qb->whereIn('activities.objective_id', $objective_ids)
+                    // ->where('activities.status_id', 3)
                     ->whereNotNull('activities.id')
                     ->groupBy('activities.id');
             }
@@ -174,7 +176,8 @@ class ActivityApi extends Controller
         if (array_key_exists('my_assigned', $input)&& $input['my_assigned'] = "true"||(!$current_user->hasRole(['accountant','assistant-accountant','financial-controller','admin-manager']))) {
 
             $qb->select(DB::raw('activities.*'))
-                 ->rightJoin('program_teams', 'program_teams.program_id', '=', 'activities.program_id')
+                 ->rightJoin('reporting_objectives', 'reporting_objectives.id', '=', 'activities.objective_id')
+                 ->rightJoin('program_teams', 'program_teams.program_id', '=', 'reporting_objectives.program_id')
                  ->rightJoin('staff', 'staff.id', '=', 'program_teams.staff_id')
                  ->where('staff.id', '=', $current_user->id)
                  ->where('activities.status_id', 3)
@@ -203,14 +206,14 @@ class ActivityApi extends Controller
             }
         }
 
-        //program_id
-         if(array_key_exists('program_id', $input)){
+        //objective_id
+         if(array_key_exists('objective_id', $input)){
 
-            $program_id = (int) $input['program_id'];
+            $objective_id = (int) $input['objective_id'];
 
-            if($program_id==0){
-            }else if($program_id==1){
-                $qb->where('program_id',$program_id);
+            if($objective_id==0){
+            }else if($objective_id==1){
+                $qb->where('objective_id',$objective_id);
             }
         }
 
@@ -224,6 +227,7 @@ class ActivityApi extends Controller
             $date = date('Y-m-d', $date);
             $qb->whereRaw('CAST(end_date as datetime) >= '.$date.'');
         }
+
         //project_id
          if(array_key_exists('project_id', $input)){
 
@@ -234,7 +238,6 @@ class ActivityApi extends Controller
                 $qb->where('project_id',$project_id);
             }
         }
-
 
         //searching
         if(array_key_exists('searchval', $input)){
@@ -326,17 +329,17 @@ class ActivityApi extends Controller
     public function append_relationships_objects($data = array()){
 
         foreach ($data as $key => $value) {
-            $activity = Activity::with('program', 'project', 'program.managers', 'logs')->find($data[$key]['id']);
+            $activity = Activity::with('objective.program.managers', 'logs')->find($data[$key]['id']);
             
+            if(!empty($activity->objective_id) && $activity->objective_id!=0){
+                $data[$key]['objective'] = $activity->objective;
+            }
+            else $data[$key]['objective'] = array("ojective"=>"N/A", "program"=>array("managers"=>['program_manager'=>['name'=>'N/A']]));
+
             if(!empty($activity->program_id) && $activity->program_id!=0){
                 $data[$key]['program'] = $activity->program;
             }
-            else $data[$key]['program'] = array("program_name"=>"N/A", array("managers"=>['program_manager'=>['name'=>'N/A']]));
-
-            if(!empty($activity->project_id) && $activity->project_id!=0){
-                $data[$key]['project'] = $activity->project;
-            }
-            else $data[$key]['project'] = array("project_code"=>"N/A", "project_name"=>"N/A");
+            else $data[$key]['program'] = array("program_desc"=>"N/A", "program_name"=>"N/A");
 
             if(!empty($activity->status_id) && $activity->status_id!=0){
                 $data[$key]['status'] = $activity->status;
@@ -348,7 +351,10 @@ class ActivityApi extends Controller
             }
             else $data[$key]['requested_by'] = array("name"=>"N/A");
 
-            // $data[$key]['logs'] = $activity->logs;
+            if(!empty($activity->program_manager_id) && $activity->program_manager_id!=0){
+                $data[$key]['program_manager'] = $activity->program_manager;
+            }
+            else $data[$key]['program_manager'] = array("name"=>"N/A", "full_name"=>"N/A");
         }
 
         return $data;

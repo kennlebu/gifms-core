@@ -447,14 +447,14 @@ class ReportsApi extends Controller
                 }
             }
 
-            //limit $ offset
-            if((int)$input['start']!= 0 ){
-                $response_dt = $objectives->limit($input['length'])->offset($input['start']);
-            }else{
-                $objectives = $objectives->limit($input['length']);
-            }
-
             if(array_key_exists('datatables', $input)){
+                //limit $ offset
+                if((int)$input['start']!= 0 ){
+                    $response_dt = $objectives->limit($input['length'])->offset($input['start']);
+                }else{
+                    $objectives = $objectives->limit($input['length']);
+                }
+
                 $records_filtered = (int) $objectives->count();
                 $response_dt = $objectives->get();
 
@@ -472,6 +472,7 @@ class ReportsApi extends Controller
         }
         catch(\Exception $e){
             $response =  ["error"=>"reporting_objective could not be found", "message"=>$e->getMessage()];
+            // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , PHP_EOL.$e->getTraceAsString() , FILE_APPEND);
             return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
         }
     }

@@ -13,39 +13,8 @@ class Activity extends BaseModel
     
     use SoftDeletes;
 
-    protected $fillable = [
-        'ref',
-        'requested_by_id',
-        'title',
-        'description',
-        'project_id',
-        'program_id',
-        'program_manager_id',
-        'status_id',
-        'start_date',
-        'end_date',
-        'rejection_reason',
-        'rejected_at',
-        'rejected_by_id'
-    ];
-
-    protected static $logAttributes = [
-        'ref',
-        'requested_by_id',
-        'title',
-        'description',
-        'project_id',
-        'program_id',
-        'program_manager_id',
-        'status_id',
-        'start_date',
-        'end_date',
-        'rejection_reason',
-        'rejected_at',
-        'rejected_by_id'
-    ];
-
     protected $appends = ['grant'];
+    protected $hidden = ['deleted_at','updated_at'];
     
     public function requested_by()
     {
@@ -55,9 +24,9 @@ class Activity extends BaseModel
     {
         return $this->belongsTo('App\Models\ProgramModels\Program','program_id');
     }
-    public function project()
+    public function program_manager()
     {
-        return $this->belongsTo('App\Models\ProjectsModels\Project','project_id');
+        return $this->belongsTo('App\Models\StaffModels\Staff','program_manager_id');
     }
     public function status()
     {
@@ -70,6 +39,14 @@ class Activity extends BaseModel
     public function logs()
     {
         return $this->morphMany('App\Models\LogsModels\HistoryLog', 'subject')->orderBy('created_at','asc');
+    }
+    public function objective()
+    {
+        return $this->belongsTo('App\Models\ReportModels\ReportingObjective', 'objective_id');
+    }
+    public function approvals()
+    {
+        return $this->morphMany('App\Models\ApprovalsModels\Approval', 'approvable')->orderBy('approval_level_id', 'asc');
     }
     
     public function getGrantAttribute(){
