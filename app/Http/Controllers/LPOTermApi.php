@@ -80,12 +80,29 @@ class LPOTermApi extends Controller
         try{
 
 
-            $form = Request::only(
-                        'lpo_id',
-                        'terms'
-                    );
+            $form = Request::all();
+            $is_hotel = false;
 
+            $term_exists = LpoTerm::where('lpo_id', $form['lpo_id'])
+                                ->where('terms', 'like', '\'%Day 1 to be charged as per confirmed number%\'')
+                                ->first();
+            if(array_key_exists('for_hotel', $form) && empty($term_exists)){
+                $lpo = LPO::find($form['lpo_id']);
+                if($lpo->lpo_type == 'prenegotiated'){
+                    if($lpo->supplier->supply_category_id == 1 || $lpo->supplier->supply_category_id == 2){    //Conferences (incl Accomodation), Accomodation Only
+                        $is_hotel = true;
+                    }
+                }
+                else{
+                    if($lpo->preffered_quotation->supplier->supply_category_id == 1 || $lpo->preffered_quotation->supplier->supply_category_id == 2){
+                        $is_hotel = true;
+                    }
+                }
+            }
 
+            if(array_key_exists('for_hotel', $form) && !$is_hotel){
+                return Response()->json(array('success' => 'not a hotel'), 200);
+            }
 
             $lpo_term->lpo_id                     =   (int)       $form['lpo_id'];
             $lpo_term->terms                      =               $form['terms'];
