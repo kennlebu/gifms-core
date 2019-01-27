@@ -976,6 +976,8 @@ Route::PATCH('/staff/{staff_id}/roles', 'StaffApi@updateStaffRoles')->middleware
  */
 Route::GET('/staffs', 'StaffApi@staffsGet')->middleware('jwt.auth');
 
+Route::POST('/staff_signature', 'StaffApi@addSignature')->middleware('jwt.auth');
+
 
 
 

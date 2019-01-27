@@ -19,6 +19,7 @@ namespace App\Http\Controllers;
 use JWTAuth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 
 use Exception;
@@ -79,9 +80,10 @@ class StaffApi extends Controller
             'security_group_id',
             'f_name',
             'l_name',
-            'o_name',
+            'o_names',
             'department_id',
             'official_post',
+            'gender',
             'mobile_no',
             'mpesa_no',
             'bank_account',
@@ -111,9 +113,10 @@ class StaffApi extends Controller
         $staff->security_group_id            =  (int)  $form['security_group_id'];
         $staff->f_name                       =         $form['f_name'];
         $staff->l_name                       =         $form['l_name'];
-        $staff->o_names                      =         $form['o_name'];
+        $staff->o_names                      =         $form['o_names'];
         $staff->department_id                =  (int)  $form['department_id'];
-        $staff->official_post                         =         $form['official_post'];
+        $staff->official_post                =         $form['official_post'];
+        $staff->gender                       =         $form['gender'];
         $staff->mobile_no                    =         $form['mobile_no'];
         $staff->mpesa_no                     =         $form['mpesa_no'];
         $staff->bank_account                 =         $form['bank_account'];
@@ -175,9 +178,10 @@ class StaffApi extends Controller
             'security_group_id',
             'f_name',
             'l_name',
-            'o_name',
+            'o_names',
             'department_id',
             'official_post',
+            'gender',
             'mobile_no',
             'mpesa_no',
             'bank_account',
@@ -198,14 +202,13 @@ class StaffApi extends Controller
 
             $staff->username                     =         $form['username'];
             $staff->email                        =         $form['email'];
-            // $staff->password                     =         $form['password'];
-            // $staff->old_password                 =         $form['old_password'];
             $staff->security_group_id            =  (int)  $form['security_group_id'];
             $staff->f_name                       =         $form['f_name'];
             $staff->l_name                       =         $form['l_name'];
-            $staff->o_names                      =         $form['o_name'];
+            $staff->o_names                      =         $form['o_names'];
             $staff->department_id                =  (int)  $form['department_id'];
-            $staff->official_post                         =         $form['official_post'];
+            $staff->official_post                =         $form['official_post'];
+            $staff->gender                       =         $form['gender'];
             $staff->mobile_no                    =         $form['mobile_no'];
             $staff->mpesa_no                     =         $form['mpesa_no'];
             $staff->bank_account                 =         $form['bank_account'];
@@ -749,5 +752,36 @@ class StaffApi extends Controller
             $decrypted_password.=chr((ord(substr($password_str,$i-1,1)) - $offset));
         }
         return $decrypted_password;
+    }
+
+
+    public function addSignature(){
+        try{
+            $input = Request::only('staff_id', 'file');
+            $file = $input['file'];
+
+            $staff = Staff::findOrFail($input['staff_id']);
+
+            if($file!=0){
+                $file_name = 'signature'.$staff->id.'.'.$file->getClientOriginalExtension();
+                // $file_contents  = $file->stream();
+                Storage::put('signatures/'.$file_name, file_get_contents($file));
+                // $path = file($file)->storeAs($file_name, $file);
+                // FTP::connection()->makeDir('/mobile_payments');
+                // FTP::connection()->makeDir('/mobile_payments/'.$mobile_payment->id);
+                // FTP::connection()->makeDir('/mobile_payments/'.$mobile_payment->id.'/signsheet');
+                // FTP::connection()->uploadFile($file->getPathname(), '/mobile_payments/'.$mobile_payment->id.'/signsheet/'.$mobile_payment->id.'.'.$file->getClientOriginalExtension());
+
+                $staff->signature = $file_name;
+                $staff->disableLogging();
+                $staff->save();
+            }
+
+            return Response()->json(array('msg' => 'Success: signature saved'), 200);
+
+        }
+        catch (\Exception $e){
+            return response()->json(['error'=>'something went wrong', 'msg'=>$e->getMessage()], 500);
+        }
     }
 }

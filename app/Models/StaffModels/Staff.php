@@ -34,12 +34,15 @@ class Staff extends BaseModel
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token','old_password'
+        'password', 'remember_token','old_password', 'created_at', 'updated_at', 'deleted_at',
+        'migration_bank_id', 'migration_bank_branch_id', 'migration_department_id', 'migration_id'
     ];
 
 
 
-    protected $appends = ['full_name','name','is_admin','signature_url'];
+    protected $appends = ['full_name','name','is_admin'
+    // ,'signature_url'
+    ];
 
 
 
@@ -71,20 +74,20 @@ class Staff extends BaseModel
 
     }
 
-    public function getSignatureUrlAttribute()
-    {       
+    // public function getSignatureUrlAttribute()
+    // {       
 
-        $path           = '/staff/'.$this->attributes['id'].'/signature/signature.png';
+    //     $path           = '/staff/'.$this->attributes['id'].'/signature/signature.png';
 
-        $file_contents  = FTP::connection()->readFile($path);
+    //     $file_contents  = FTP::connection()->readFile($path);
 
-        Storage::put('staff/signature'.$this->attributes['id'].'.png', $file_contents);
+    //     Storage::put('staff/signature'.$this->attributes['id'].'.png', $file_contents);
 
-        $url            = storage_path("app/staff/signature".$this->attributes['id'].'.png');
+    //     $url            = storage_path("app/staff/signature".$this->attributes['id'].'.png');
 
-        return "app/staff/signature".$this->attributes['id'].'.png';
+    //     return "app/staff/signature".$this->attributes['id'].'.png';
 
-    }
+    // }
 
     public function roles()
     {
