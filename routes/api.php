@@ -176,6 +176,8 @@ Route::PATCH('/lpo/{lpo_id}/cancel', 'LPOApi@cancelLpo')->middleware('jwt.auth')
 
 // New pre-negotiated LPO
 Route::POST('/prenegotiated', 'LPOApi@addPrenegotiatedLpoRate')->middleware('jwt.auth');
+Route::POST('/lpos_not_selected', 'LPOApi@addVendorsNotSelected')->middleware('jwt.auth');
+Route::GET('/lpos_not_selected', 'LPOApi@getVendorsNotSelected')->middleware('jwt.auth');
 
 
 

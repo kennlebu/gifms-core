@@ -462,16 +462,10 @@ class SupplierRateApi extends Controller
             foreach($service_list as $service){
                 array_push($service_ids, $service['id']);
                 array_push($county_ids, $service['county_id']);
-                // array_push($supply_category_ids, $service['supply_category_id']);
             }
             $service_id_count = count($service_ids);
-            // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , PHP_EOL.$service_id_count , FILE_APPEND);
             $qb->where('suppliers.county_id', $county_ids[0]);
-            $qb->whereIn('supplier_rates.service_id', $service_ids);
-            // if(!empty($supply_category_ids)){
-            //     $qb->whereIn('suppliers.supply_category_id', $supply_category_ids);
-            // }
-            
+            $qb->whereIn('supplier_rates.service_id', $service_ids);            
         }
 
         $sql            = SupplierRate::bind_presql($qb->toSql(),$qb->getBindings());

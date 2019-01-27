@@ -22,6 +22,7 @@ use App\Models\LPOModels\Lpo;
 use App\Models\LPOModels\LpoStatus;
 use App\Models\LPOModels\LpoQuotation;
 use App\Models\LPOModels\LpoQuoteExemptReason;
+use App\Models\LPOModels\LpoVendorsNotSelected;
 use Exception;
 use PDF;
 use App;
@@ -1584,6 +1585,39 @@ class LPOApi extends Controller
 
         })->download('xlsx', $headers);
         
+    }
+
+
+
+
+
+    public function addVendorsNotSelected(){
+        try{
+            $input = Request::all();
+
+            foreach($input['services'] as $service){
+
+                $vendor = new LpoVendorsNotSelected;
+                $vendor->lpo_id = $input['lpo_id'];
+                $vendor->supplier_id = $service['supplier']['id'];
+                $vendor->currency_id = $service['currency']['id'];
+                $vendor->total = $service['total'];
+                $vendor->disableLogging();
+                $vendor->save();
+            }
+            return response()->json(['msg'=>'Success: saved'], 200,array(),JSON_PRETTY_PRINT);
+        }
+        catch(\Exception $e){
+            return response()->json(['error'=>"An rerror occured during processing",'msg'=>$e->getMessage()], 500,array(),JSON_PRETTY_PRINT);
+        }
+    }
+
+
+    public function getVendorsNotSelected(){
+        $input = Request::all();
+        $vendors = LpoVendorsNotSelected::with('supplier','currency')->where('lpo_id', $input['lpo_id']);
+        $vendors = $vendors->get();
+        return response()->json($vendors, 200,array(),JSON_PRETTY_PRINT);
     }
 
 
