@@ -242,8 +242,8 @@ class RoomsApi extends Controller
             $to_datetime = $booking->to_date.' '.$booking->to_time;
 
             // Check if room is already booked at that time
-            $booked = DB::select("select * from meeting_room_bookings where (cast(concat(from_date, ' ', from_time) as datetime) between '".$from_datetime."' and '".$to_datetime."'
-            or cast(concat(to_date, ' ', to_time) as datetime) between '".$from_datetime."' and '".$to_datetime."') and room_id = ".$booking->room_id." and deleted_at is null");
+            $booked = DB::select("select * from meeting_room_bookings where (cast(concat(from_date, ' ', from_time) as datetime) between DATE_ADD('".$from_datetime."', INTERVAL 1 MINUTE) and DATE_SUB('".$to_datetime."', INTERVAL 1 MINUTE)
+            or cast(concat(to_date, ' ', to_time) as datetime) between DATE_ADD('".$from_datetime."', INTERVAL 1 MINUTE) and DATE_SUB('".$to_datetime."', INTERVAL 1 MINUTE)) and room_id = ".$booking->room_id." and deleted_at is null");
 
             if(!empty($booked)){
                 return response()->json(array('msg' => 'already booked'), 409);
