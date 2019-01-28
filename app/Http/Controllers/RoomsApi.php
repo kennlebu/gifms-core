@@ -294,7 +294,7 @@ class RoomsApi extends Controller
 
     public function getRoomBookingById($booking_id){
         try{
-            $booking = MeetingRoomBooking::find($booking_id);
+            $booking = MeetingRoomBooking::with('booked_by','room')->find($booking_id);
             return response()->json($booking, 200,array(),JSON_PRETTY_PRINT);
         }
         catch(\Exception $e){
