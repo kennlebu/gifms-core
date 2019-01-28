@@ -133,6 +133,7 @@ class MobilePaymentApi extends Controller
             $mobile_payment->payees_upload_mode_id          =   (int)   $form['payees_upload_mode_id'];
             $mobile_payment->rejection_reason               =           $form['rejection_reason'];
             $mobile_payment->rejected_by_id                 =   (int)   $form['rejected_by_id'];
+            if(!empty($form['program_activity_id']))
             $mobile_payment->program_activity_id            =   (int)   $form['program_activity_id'];
 
             $mobile_payment->status_id                      =   $this->default_status;
@@ -203,6 +204,7 @@ class MobilePaymentApi extends Controller
         $mobile_payment->expense_desc                   =           $form['expense_desc'];
         $mobile_payment->expense_purpose                =           $form['expense_purpose'];
         $mobile_payment->project_manager_id             =   (int)   $form['project_manager_id'];
+        if(!empty($form['program_activity_id']))
         $mobile_payment->program_activity_id            =   (int)   $form['program_activity_id'];
 
         if($mobile_payment->save()) {
