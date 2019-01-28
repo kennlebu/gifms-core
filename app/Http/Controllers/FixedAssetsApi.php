@@ -15,6 +15,7 @@ use App\Models\AssetsModels\FixedAssetLocation;
 use App\Models\AssetsModels\LostAsset;
 use App\Models\AssetsModels\ClaimedAsset;
 use Anchu\Ftp\Facades\Ftp;
+use Excel;
 
 class FixedAssetsApi extends Controller
 {
@@ -466,6 +467,53 @@ class FixedAssetsApi extends Controller
             
         } catch (Exception $e) {
              return response()->json(['error'=>"An rerror occured during processing"], 500,array(),JSON_PRETTY_PRINT);
+        }
+    }
+
+
+    public function uploadAssetList(){
+        try{
+            $form = Request::only("file");
+            $file = $form['file'];
+
+            $data = Excel::load($file->getPathname(), function($reader) {
+            })->get()->toArray();
+
+            $assets_array = array();
+            foreach ($data as $key => $value) {
+                // $allocation = new Allocation();
+
+                try{
+                    $line = trim($value['asset_name']).' | '.trim($value['tag_number']).' | '.trim($value['location_optional']).' | '.trim($value['staff_optional']).' | '.trim($value['status']);
+                    // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , PHP_EOL.$line , FILE_APPEND);
+                //     $project = Project::where('project_code','like', '%'.trim($value['pid']).'%')->firstOrFail();
+                //     $account = Account::where('account_code', 'like', '%'.trim($value['account_code']).'%')->firstOrFail();
+
+                //     $allocation->allocatable_id = $payable_id;
+                //     $allocation->allocatable_type = $payable_type;
+                //     $allocation->amount_allocated = $value['amount_allocation'];
+                //     $allocation->allocation_purpose = $value['specific_journal_rference'];
+                //     $allocation->percentage_allocated = (string) $this->getPercentage($value['amount_allocation'], $total);
+                //     $allocation->allocated_by_id =  (int) $user->id;
+                //     $allocation->account_id =  $account->id;
+                //     $allocation->project_id = $project->id;
+                //     array_push($assets_array, $allocation);
+
+                }
+                catch(\Exception $e){
+                    $response =  ["error"=>'Account or Project not found. Please use form to allocate.',
+                                    "msg"=>$e->getMessage()];
+                    return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+                }
+            }
+
+            // foreach($assets_array as $allocation){
+            //     $allocation->save();
+            // }
+            return response()->json(['msg'=>'finished'], 200,array(),JSON_PRETTY_PRINT);
+        }
+        catch(Exception $e){
+            return response()->json(['error'=>"An rerror occured during processing"], 500,array(),JSON_PRETTY_PRINT);
         }
     }
 

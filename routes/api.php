@@ -5322,6 +5322,7 @@ Route::PUT('/asset', 'FixedAssetsApi@updateAsset')->middleware('jwt.auth');
 Route::POST('/lost-asset', 'FixedAssetsApi@reportLost')->middleware('jwt.auth');
 Route::POST('/claim-asset', 'FixedAssetsApi@claimAsset')->middleware('jwt.auth');
 Route::PATCH('/assets/return', 'FixedAssetsApi@returnAssets')->middleware('jwt.auth');
+Route::POST('/assets/csv_upload', 'FixedAssetsApi@uploadAssetList')->middleware('jwt.auth');
 // Locations
 Route::POST('/asset-location', 'FixedAssetsApi@addAssetLocation')->middleware('jwt.auth');
 Route::GET('/asset-locations', 'FixedAssetsApi@assetLocationsGet')->middleware('jwt.auth');
