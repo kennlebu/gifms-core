@@ -515,7 +515,7 @@ class ActivityApi extends Controller
                 array_push($transactions, $inv);
             }
 
-            $mobile_payments = MobilePayment::where('activity_id', $activity_id)->get();
+            $mobile_payments = MobilePayment::where('program_activity_id', $activity_id)->get();
             foreach($mobile_payments as $mp){
                 $mp['tran_type'] = 'mobile_payment';
                 array_push($transactions, $mp);

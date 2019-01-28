@@ -382,7 +382,7 @@ class FundsRequestApi extends Controller
         try{
             $request = FundsRequest::findOrFail($id);
 
-            if ($request->total < 1 ){
+            if ($request->total_usd < 1 && $request->total_kes < 1){
                 throw new Exception("This request has no items");             
             }           
            

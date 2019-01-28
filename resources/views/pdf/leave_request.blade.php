@@ -151,7 +151,7 @@
                 <div style="display:inline-block;margin-top:25px;">
                     <div style="display:inline-block;margin-right:80px;">
                         <strong>Applicant:</strong><br/>
-                        <img style="height:70px;width:200px;" alt="." src="img/signatures/signature{{$leave_request->requested_by_id}}.png" />
+                        <img style="height:70px;width:200px;" alt="." src="{{asset('storage/signatures/'.$leave_request->requested_by->signature)}}" />
                         <br/> {{trim($leave_request->requested_by->f_name).' '.trim($leave_request->requested_by->l_name)}}
                         <br/>{{date('d F, Y', strtotime($leave_request->created_at)) }}
                     </div>

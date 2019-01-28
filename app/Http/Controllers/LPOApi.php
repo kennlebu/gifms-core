@@ -22,6 +22,7 @@ use App\Models\LPOModels\Lpo;
 use App\Models\LPOModels\LpoStatus;
 use App\Models\LPOModels\LpoQuotation;
 use App\Models\LPOModels\LpoQuoteExemptReason;
+use App\Models\LPOModels\LpoVendorsNotSelected;
 use Exception;
 use PDF;
 use App;
@@ -321,6 +322,14 @@ class LPOApi extends Controller
         }
 
         $lpo->status_id = 11;
+
+        // Logging recall
+        activity()
+        ->performedOn($lpo)
+        ->causedBy($this->current_user())
+        ->log('recalled');
+
+        $lpo->disableLogging(); //! Do not log the update
         
         if($lpo->save()){
             return response()->json(['msg'=>"lpo recalled"], 200,array(),JSON_PRETTY_PRINT);
@@ -355,6 +364,14 @@ class LPOApi extends Controller
 
         $lpo->status_id = 15;        
         $lpo->cancellation_reason = $input['cancellation_reason'];
+
+        // Logging cancelation
+        activity()
+        ->performedOn($lpo)
+        ->causedBy($this->current_user())
+        ->log('canceled');
+
+        $lpo->disableLogging(); //! Do not log the update
         
         if($lpo->save()){
             Mail::queue(new NotifyLpoCancellation($lpo));
@@ -442,6 +459,7 @@ class LPOApi extends Controller
             $approvable_status  = $lpo->status;
             $lpo->status_id = $lpo->status->next_status_id;
 
+            $lpo->disableLogging(); //! Do not log the update
             if($lpo->save()) {
 
                 $lpo   = LPO::with(
@@ -473,6 +491,13 @@ class LPOApi extends Controller
                 $approval->approver_id              =   (int)   $user->id;
 
                 $approval->save();
+
+                // Logging
+                $lpo->enableLogging(); //! Re-enable logging
+                activity()
+                   ->performedOn($approval->approvable)
+                   ->causedBy($user)
+                   ->log('approved');
 
                 if($lpo->status_id!=7){
                     try{
@@ -570,7 +595,15 @@ class LPOApi extends Controller
             $lpo->rejected_at              =   date('Y-m-d H:i:s');
             $lpo->rejection_reason             =   $form['rejection_reason'];
 
+            $lpo->disableLogging(); //! Disable logging for the update
             if($lpo->save()) {
+
+            // Logging
+            $lpo->enableLogging();
+                activity()
+                ->performedOn($lpo)
+                ->causedBy($user)
+                ->log('rejected');
 
                 try{
                 Mail::queue(new NotifyLpo($lpo));
@@ -658,8 +691,24 @@ class LPOApi extends Controller
            
             $lpo->status_id = $lpo->status->next_status_id;
             // Set request time only if it's going to accountant
-            if($lpo->status_id == 2) $lpo->requested_at = date('Y-m-d H:i:s');
+            if($lpo->status_id == 2) {
+                $lpo->requested_at = date('Y-m-d H:i:s');
 
+                // Logging submission
+                activity()
+                   ->performedOn($lpo)
+                   ->causedBy($this->current_user())
+                   ->log('submitted');
+            }
+            else{
+                // Logging resubmission
+                activity()
+                    ->performedOn($lpo)
+                    ->causedBy($this->current_user())
+                    ->log('submitted');
+            }
+
+            $lpo->disableLogging(); //! Do not log the update
             if($lpo->save()) {
 
                 try{
@@ -1536,6 +1585,39 @@ class LPOApi extends Controller
 
         })->download('xlsx', $headers);
         
+    }
+
+
+
+
+
+    public function addVendorsNotSelected(){
+        try{
+            $input = Request::all();
+
+            foreach($input['services'] as $service){
+
+                $vendor = new LpoVendorsNotSelected;
+                $vendor->lpo_id = $input['lpo_id'];
+                $vendor->supplier_id = $service['supplier']['id'];
+                $vendor->currency_id = $service['currency']['id'];
+                $vendor->total = $service['total'];
+                $vendor->disableLogging();
+                $vendor->save();
+            }
+            return response()->json(['msg'=>'Success: saved'], 200,array(),JSON_PRETTY_PRINT);
+        }
+        catch(\Exception $e){
+            return response()->json(['error'=>"An rerror occured during processing",'msg'=>$e->getMessage()], 500,array(),JSON_PRETTY_PRINT);
+        }
+    }
+
+
+    public function getVendorsNotSelected(){
+        $input = Request::all();
+        $vendors = LpoVendorsNotSelected::with('supplier','currency')->where('lpo_id', $input['lpo_id']);
+        $vendors = $vendors->get();
+        return response()->json($vendors, 200,array(),JSON_PRETTY_PRINT);
     }
 
 

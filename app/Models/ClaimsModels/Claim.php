@@ -11,13 +11,15 @@ use App\Models\AccountingModels\Account;
 use App\Models\ClaimsModels\ClaimApproval;
 use App\Models\ClaimsModels\ClaimStatus;
 use App\Models\LookupModels\Currency;
+use App\Models\BankingModels\BankTransaction;
+use App\Models\PaymentModels\Payment;
 
 class Claim extends BaseModel
 {
     
     use SoftDeletes;
     
-    protected $appends = ['amount_allocated'];
+    protected $appends = ['amount_allocated', 'bank_transaction'];
 
     
     public function requested_by()
@@ -86,8 +88,16 @@ class Claim extends BaseModel
         }
 
         return $amount_allocated;
+    }
 
-
-
+    public function getBankTransactionAttribute(){
+        $payment = Payment::where('payable_id', $this->attributes['id'])
+                    ->where('payable_type', 'claims')
+                    ->first();
+                
+        if(!empty($payment->bank_transaction)){
+            return $payment->bank_transaction;
+        }
+        else return null;
     }
 }

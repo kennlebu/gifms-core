@@ -228,6 +228,15 @@ class LeaveManagementApi extends Controller
                 $records_filtered = $leave_types->count();
             }
 
+            // Gender
+            if(array_key_exists('for_gender', $input)){
+                $leave_types = $leave_types->where(function ($query) use ($input) {                    
+                    $query->orWhere('gender', $this->current_user()->gender);
+                    $query->orWhere('gender', 'a');
+                    $query->orWhereNull('gender');
+                });
+            }
+
             //ordering
             if(array_key_exists('order_by', $input)&&$input['order_by']!=''){
                 $order_direction     = "asc";
@@ -296,6 +305,8 @@ class LeaveManagementApi extends Controller
         $leave_type->name = $input['name'];
         $leave_type->days_entitled = $input['days_entitled'];
         if(!empty($input['include_weekends'])) $leave_type->include_weekends = $input['include_weekends'];
+        if(!empty($input['requires_document'])) $leave_type->requires_document = $input['requires_document'];
+        if(!empty($input['gender'])) $leave_type->gender = $input['gender'];
 
         if($leave_type->save()){
             return response()->json($leave_type, 200,array(),JSON_PRETTY_PRINT);
@@ -315,6 +326,8 @@ class LeaveManagementApi extends Controller
             $leave_type->name = $input['name'];
             $leave_type->days_entitled = $input['days_entitled'];
             $leave_type->include_weekends = $input['include_weekends'];
+            if(!empty($input['requires_document'])) $leave_type->requires_document = $input['requires_document'];
+            if(!empty($input['gender'])) $leave_type->gender = $input['gender'];
 
             if($leave_type->save()){
                 return Response()->json(array('msg' => 'Leave type updated','leave_type' => $leave_type), 200);
@@ -697,7 +710,6 @@ class LeaveManagementApi extends Controller
                                 ->findOrFail($request_id);
             $unique_approvals = $this->unique_multidim_array($leave_request->approvals, 'approver_id');
             $leave_request_types = LeaveType::all();
-
             $data = array(
                 'leave_request' => $leave_request,
                 'unique_approvals' => $unique_approvals,

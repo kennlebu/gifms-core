@@ -229,7 +229,7 @@ class InvoiceApi extends Controller
                 $invoice->currency_id                       =   (int)       $form['currency_id'];
                 $invoice->received_at                       =   date('Y-m-d H:i:s');
                 $invoice->raised_at                         =   date('Y-m-d H:i:s');
-                if (($invoice->total - $invoice->amount_allocated) <= 1 ){ //allowance of 1
+                if (($invoice->total - $invoice->amount_allocated) <= 0 && abs($invoice->total - $invoice->amount_allocated == 0)){
                     $invoice->status_id = $invoice->status->next_status_id;  
                 }
 
@@ -711,7 +711,7 @@ class InvoiceApi extends Controller
                         'paid_to_bank_account_no'       =>  $invoice->supplier->bank_account, 
                         'paid_to_bank_id'               =>  $invoice->supplier->bank_id, 
                         'paid_to_bank_branch_id'        =>  $invoice->supplier->bank_branch_id, 
-                        'payment_mode_id'               =>  $invoice->payment_mode->id, 
+                        'payment_mode_id'               =>  $invoice->payment_mode_id, 
                         'amount'                        =>  $invoice->total, 
                         'payment_batch_id'              =>  "", 
                         'bank_charges'                  =>  ""
@@ -933,6 +933,7 @@ class InvoiceApi extends Controller
             $voucher_date = '-';
             $vendor = '-';
             $voucher_no = '-';
+            $bank_ref = '-';
 
             if(empty($invoice->migration_id)) {
                 if(!empty($payment->voucher_no)) {
@@ -958,7 +959,8 @@ class InvoiceApi extends Controller
                     'vendor'=>$vendor,
                     'voucher_no'=>$voucher_no,
                     'payable_type'=>'Invoice',
-                    'unique_approvals' => $unique_approvals
+                    'unique_approvals' => $unique_approvals,
+                    'bank_transaction' => $invoice->bank_transaction
                     );
 
             $pdf            = PDF::loadView('pdf/payment_voucher', $data);
@@ -1632,6 +1634,41 @@ class InvoiceApi extends Controller
 
 
 
+    /**
+     * Operation recallInvoice
+     * 
+     * Recalls an Invoice.
+     * 
+     * @param int $invoice_id Invoice id to recall (required)
+     * 
+     * @return Http response
+     */
+    public function recallInvoice($invoice_id)
+    {
+        $input = Request::all();
+        
+        $invoice = Invoice::find($invoice_id); 
+        $user = $this->current_user();       
+
+        // Ensure Invoice is in the recallable statuses
+        if(!in_array($invoice->status_id, [1,2,3,12])){
+            return response()->json(['msg'=>"you do not have permission to do this"], 403, array(), JSON_PRETTY_PRINT);
+        }
+
+        $invoice->status_id = 13;   // 13 is the recalled status id
+        
+        $invoice->disableLogging(); //! Do not log the update
+        if($invoice->save()){
+            activity()
+                   ->performedOn($invoice)
+                   ->causedBy($user)
+                   ->log('recalled');
+            return response()->json(['msg'=>"invoice recalled"], 200,array(),JSON_PRETTY_PRINT);
+        }else{
+            return response()->json(['error'=>"could not recall invoice"], 404,array(),JSON_PRETTY_PRINT);
+        }
+
+    }
 
 
 

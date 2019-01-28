@@ -133,6 +133,7 @@ class MobilePaymentApi extends Controller
             $mobile_payment->payees_upload_mode_id          =   (int)   $form['payees_upload_mode_id'];
             $mobile_payment->rejection_reason               =           $form['rejection_reason'];
             $mobile_payment->rejected_by_id                 =   (int)   $form['rejected_by_id'];
+            if(!empty($form['program_activity_id']))
             $mobile_payment->program_activity_id            =   (int)   $form['program_activity_id'];
 
             $mobile_payment->status_id                      =   $this->default_status;
@@ -203,6 +204,7 @@ class MobilePaymentApi extends Controller
         $mobile_payment->expense_desc                   =           $form['expense_desc'];
         $mobile_payment->expense_purpose                =           $form['expense_purpose'];
         $mobile_payment->project_manager_id             =   (int)   $form['project_manager_id'];
+        if(!empty($form['program_activity_id']))
         $mobile_payment->program_activity_id            =   (int)   $form['program_activity_id'];
 
         if($mobile_payment->save()) {
@@ -946,7 +948,8 @@ class MobilePaymentApi extends Controller
                 'mobile_payment'   => $mobile_payment,
                 'voucher_no' => $voucher_no,
                 'vendor' => $vendor,
-                'unique_approvals' => $unique_approvals
+                'unique_approvals' => $unique_approvals,
+                'bank_transaction' => $mobile_payment->bank_transaction
                 );
 
             $pdf = PDF::loadView('pdf/mobile_payment_payment_voucher', $data);
@@ -1222,7 +1225,7 @@ class MobilePaymentApi extends Controller
 
             /* Send Email */
             Mail::send(new MobilePaymentInstructBank($mobile_payment, $csv_data, $pdf_data, $voucher_number));
-            return response()->json(['msg'=>"Mobile Payment deleted"], 200,array(),JSON_PRETTY_PRINT);
+            return response()->json(['msg'=>"Mobile Payment email resent"], 200,array(),JSON_PRETTY_PRINT);
             
         } catch (Exception $e) {
              return response()->json(['error'=>$e->getMessage()], 500,array(),JSON_PRETTY_PRINT);
@@ -1251,11 +1254,19 @@ class MobilePaymentApi extends Controller
         $mobile_payment = MobilePayment::find($mobile_payment_id);        
 
         // Ensure Mobile Payment is in the recallable statuses
-        if(!in_array($mobile_payment->status_id, [9,3,3,8])){
+        if(!in_array($mobile_payment->status_id, [9,2,3,8])){
             return response()->json(['msg'=>"you do not have permission to do this"], 403, array(), JSON_PRETTY_PRINT);
         }
 
         $mobile_payment->status_id = 14;
+
+        // Logging recall
+        activity()
+        ->performedOn($mobile_payment)
+        ->causedBy($this->current_user())
+        ->log('recalled');
+
+        $mobile_payment->disableLogging(); //! Do not log the update
         
         if($mobile_payment->save()){
             return response()->json(['msg'=>"mobile payment recalled"], 200,array(),JSON_PRETTY_PRINT);

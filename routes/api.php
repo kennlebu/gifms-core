@@ -176,6 +176,8 @@ Route::PATCH('/lpo/{lpo_id}/cancel', 'LPOApi@cancelLpo')->middleware('jwt.auth')
 
 // New pre-negotiated LPO
 Route::POST('/prenegotiated', 'LPOApi@addPrenegotiatedLpoRate')->middleware('jwt.auth');
+Route::POST('/lpos_not_selected', 'LPOApi@addVendorsNotSelected')->middleware('jwt.auth');
+Route::GET('/lpos_not_selected', 'LPOApi@getVendorsNotSelected')->middleware('jwt.auth');
 
 
 
@@ -973,6 +975,8 @@ Route::PATCH('/staff/{staff_id}/roles', 'StaffApi@updateStaffRoles')->middleware
 
  */
 Route::GET('/staffs', 'StaffApi@staffsGet')->middleware('jwt.auth');
+
+Route::POST('/staff_signature', 'StaffApi@addSignature')->middleware('jwt.auth');
 
 
 
@@ -3081,6 +3085,14 @@ Route::GET('/invoices', 'InvoiceApi@getInvoices')->middleware('jwt.auth');
  * Output-Formats: [application/json, application/xml]
  */
 Route::PATCH('/invoices/approve', 'InvoiceApi@approveSeveralInvoices')->middleware('jwt.auth');
+
+/**
+ * PATCH recallInvoice
+ * Summary: Recall Invoice
+ * Notes: Recall Invoice
+ * Output-Formats: [application/json, application/xml]
+ */
+Route::PATCH('/invoice/{invoice_id}/recall', 'InvoiceApi@recallInvoice')->middleware('jwt.auth');
 
 
 
@@ -5284,7 +5296,7 @@ Route::GET('/activities', 'ActivityApi@getActivities')->middleware('jwt.auth');
 Route::GET('/activity/{id}', 'ActivityApi@getActivityById')->middleware('jwt.auth');
 Route::DELETE('/activity/{id}', 'ActivityApi@deleteActivity')->middleware('jwt.auth');
 Route::PUT('/activity', 'ActivityApi@updateActivity')->middleware('jwt.auth');
-Route::GET('activity_transactions', 'ActivityApi@getActivityTransactions')->middleware('jwt.auth');
+Route::GET('/activity_transactions', 'ActivityApi@getActivityTransactions')->middleware('jwt.auth');
 // Approvals
 Route::PATCH('activity/{activity_id}/approve', 'ActivityApi@approveActivity')->middleware('jwt.auth');
 Route::PATCH('activities/approve', 'ActivityApi@approveSeveralActivities')->middleware('jwt.auth');

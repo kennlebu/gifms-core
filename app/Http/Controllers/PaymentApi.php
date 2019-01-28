@@ -553,7 +553,7 @@ class PaymentApi extends Controller
 
         foreach ($data as $key => $value) {
 
-            $payment = Payment::with('payable.project_manager')->find($data[$key]['id']);
+            $payment = Payment::with('payable.project_manager','voucher_number')->find($data[$key]['id']);
 
             !empty($payment->payable) && ($data[$key]['payable'] = $payment->payable);
             !empty($payment->simple_date) && ($data[$key]['simple_date'] = $payment->simple_date);
@@ -566,6 +566,7 @@ class PaymentApi extends Controller
             !empty($payment->payment_batch) && ($data[$key]['payment_batch'] = $payment->payment_batch);
             !empty($payment->status) && ($data[$key]['status'] = $payment->status);
             !empty($payment->payable->project_manager) && ($data[$key]['project_manager'] = $payment->payable->project_manager);
+            !empty($payment->voucher_number) && ($data[$key]['voucher_number'] = $payment->voucher_number);
 
         }
 
@@ -624,6 +625,10 @@ class PaymentApi extends Controller
             }
             if(!empty($value["payment_batch"]) && $value["payment_batch"]==null){
                 $data[$key]['payment_batch'] = array("ref"=>"N/A");
+                
+            }
+            if(!empty($value["voucher_number"]) && $value["voucher_number"]==null){
+                $data[$key]['voucher_number'] = array("voucher_number"=>"N/A");
                 
             }
 

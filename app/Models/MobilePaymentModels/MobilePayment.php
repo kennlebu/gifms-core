@@ -16,13 +16,14 @@ use App\Models\LookupModels\Region;
 use App\Models\LookupModels\County;
 use App\Models\MobilePaymentModels\MobilePaymentPayee;
 use App\Models\MobilePaymentModels\MobilePaymentApproval;
+use App\Models\PaymentModels\VoucherNumber;
 
 class MobilePayment extends BaseModel
 {
     //
     use SoftDeletes;
 
-    protected $appends = ['amounts','total_withdrawal_charges','totals','amount_allocated'];
+    protected $appends = ['amounts','total_withdrawal_charges','totals','amount_allocated', 'bank_transaction'];
 
  
 
@@ -131,9 +132,7 @@ class MobilePayment extends BaseModel
         foreach ($payees as $key => $value) {
             $amounts    +=  (float) $value->amount;
         }
-
         return $amounts;
-
     }
 
     public function getTotalWithdrawalChargesAttribute(){
@@ -144,9 +143,7 @@ class MobilePayment extends BaseModel
         foreach ($payees as $key => $value) {
             $total_withdrawal_charges    +=  (float) $value->withdrawal_charges;
         }
-
         return $total_withdrawal_charges;
-
     }
 
     public function getTotalsAttribute(){
@@ -157,9 +154,7 @@ class MobilePayment extends BaseModel
         foreach ($payees as $key => $value) {
             $totals    +=  (float) $value->total;
         }
-
         return $totals;
-
     }
 
     public function getAmountAllocatedAttribute(){
@@ -170,11 +165,19 @@ class MobilePayment extends BaseModel
         foreach ($allocations as $key => $value) {
             $amount_allocated   +=   (float)   $value->amount_allocated;
         }
-
         return $amount_allocated;
+    }
 
+    public function getBankTransactionAttribute(){
+        if(!empty($this->attributes['voucher_no'])){
+            $voucher = VoucherNumber::find($this->attributes['voucher_no']);
 
-
+            if(!empty($voucher->bank_transaction)){
+                return $voucher->bank_transaction;
+            }
+            else return null;
+        }
+        else return null;
     }
 
 
