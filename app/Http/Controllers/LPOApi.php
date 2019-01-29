@@ -558,7 +558,7 @@ class LPOApi extends Controller
     {
 
         $form = Request::only(
-            'cancellation_reason'
+            'rejection_reason'
             );
 
         $user = JWTAuth::parseToken()->authenticate();
@@ -618,7 +618,7 @@ class LPOApi extends Controller
             return response()->json($response, 403,array(),JSON_PRETTY_PRINT);
         }catch(Exception $e){
 
-            $response =  ["error"=>"lpo could not be found"];
+            $response =  ["error"=>"lpo could not be found", "msg"=>$e->getMessage()];
             return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
         }
     }
