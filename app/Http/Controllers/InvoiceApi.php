@@ -370,7 +370,7 @@ class InvoiceApi extends Controller
             if(!empty($form['program_activity_id']))
                 $invoice->program_activity_id = $form['program_activity_id'];
 
-            if(Invoice::where('external_ref', $invoice->external_ref)->where('id', '!=', $form['id'])->exists()){
+            if(Invoice::where('external_ref', $invoice->external_ref)->where('supplier_id', $form['supplier_id'])->where('id', '!=', $form['id'])->exists()){
                 return response()->json(["error"=>"Invoice with the same invoice number already exists"], 409,array(),JSON_PRETTY_PRINT);
             }
 
