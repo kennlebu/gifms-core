@@ -270,7 +270,7 @@ class ProjectApi extends Controller
 
                 $project = Project::find($project_id);
                 $response["budget_expenditure_by_accounts_data"]    =   $project->getBudgetExpenditureByAccountsDataAttribute();
-                $response["grant_amount_allocated"]                 =   $project->getGrantAmountAllocatedAttribute();
+                $response["grant_amount_allocated"]                 =  empty($project->budget->totals) ? 0 : $project->budget->totals;
                 $response["total_expenditure"]                      =   $project->getTotalExpenditureAttribute();
                 $response["total_expenditure_perc"]                 =   $project->getTotalExpenditurePercAttribute();
 
@@ -281,7 +281,7 @@ class ProjectApi extends Controller
 
         }catch(Exception $e){
 
-            $response =  ["error"=>"project could not be found"];
+            $response =  ["error"=>"project could not be found", "msg"=>$e->getMessage(), 'trace'=>$e->getTraceAsString()];
             return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
         }
     }
@@ -383,7 +383,6 @@ class ProjectApi extends Controller
         $qb = DB::table('projects');
 
         $qb->whereNull('projects.deleted_at');
-        $qb->whereNotNull('projects.program_id');    // Not showing PIDs without an attached program id
         $current_user = JWTAuth::parseToken()->authenticate();
 
         $response;
@@ -392,7 +391,6 @@ class ProjectApi extends Controller
         $total_records          = $qb->count();
         $records_filtered       = 0;
 
-        
         //my_assigned
         if((array_key_exists('my_assigned', $input)&& $input['my_assigned'] = "true")&&($current_user->hasRole(['accountant','assistant-accountant','financial-controller','admin-manager']))){
 
@@ -408,14 +406,24 @@ class ProjectApi extends Controller
             }
             $qb->whereNotNull('project_code');
         }elseif (array_key_exists('my_assigned', $input)&& $input['my_assigned'] = "true") {
-
-            $qb->select(DB::raw('projects.*'))
-                 ->rightJoin('project_teams', 'project_teams.project_id', '=', 'projects.id')
-                 ->rightJoin('staff', 'staff.id', '=', 'project_teams.staff_id')
+            if($current_user->hasRole(['program-manager'])){
+                $qb->select(DB::raw('projects.*'))
+                 ->rightJoin('programs', 'programs.id', '=', 'projects.program_id')
+                 ->rightJoin('program_managers', 'program_managers.program_id', '=', 'programs.id')
+                 ->rightJoin('staff', 'staff.id', '=', 'program_managers.program_manager_id')
                  ->where('staff.id', '=', $current_user->id)
                  ->whereNotNull('projects.id')
-                 ->whereNotNull('projects.project_code')
                  ->groupBy('projects.id');
+            }
+            else {
+                $qb->select(DB::raw('projects.*'))
+                    ->rightJoin('project_teams', 'project_teams.project_id', '=', 'projects.id')
+                    ->rightJoin('staff', 'staff.id', '=', 'project_teams.staff_id')
+                    ->where('staff.id', '=', $current_user->id)
+                    ->whereNotNull('projects.id')
+                    ->whereNotNull('projects.project_code')
+                    ->groupBy('projects.id');
+            }
         }
 
         //my_pm_assigned
@@ -628,11 +636,11 @@ class ProjectApi extends Controller
 
             $grant_amount_allocated     =   $data[$key]['grant_amount_allocated']   = (double) $projects->grant_amount_allocated;
             $total_expenditure          =   $data[$key]['total_expenditure']        = (double) $projects->total_expenditure;
-            if($projects->grant_amount_allocated!=0){
-                $data[$key]['expenditure_perc']         = ($total_expenditure/$grant_amount_allocated)*100;
-            }else{
-                $data[$key]['expenditure_perc']         = 0;
-            }
+            // if($projects->grant_amount_allocated!=0){
+                $data[$key]['expenditure_perc']         = $projects->total_expenditure_perc;
+            // }else{
+            //     $data[$key]['expenditure_perc']         = 0;
+            // }
             $data[$key]['program']                  = $projects->program;
             $data[$key]['status']                   = $projects->status;
             $data[$key]['country']                  = $projects->country;
