@@ -233,9 +233,9 @@ class InvoiceApi extends Controller
                     $invoice->status_id = $invoice->status->next_status_id;  
                 }
 
-                if(Invoice::where('external_ref', $invoice->external_ref)->where('supplier_id', $form['supplier_id'])->exists()){
-                    return response()->json(["error"=>"Invoice with the same invoice number already exists"], 409,array(),JSON_PRETTY_PRINT);
-                }
+                // if(Invoice::where('external_ref', $invoice->external_ref)->where('supplier_id', $form['supplier_id'])->exists()){
+                //     return response()->json(["error"=>"Invoice with the same invoice number already exists"], 409,array(),JSON_PRETTY_PRINT);
+                // }
                 
             }else if($form['submission_type']=='finish_allocations'){
 
