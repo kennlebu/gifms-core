@@ -81,7 +81,12 @@ class Project extends BaseModel
         $totals    =   0;
 
         foreach ($allocations as $key => $value) {
-            $totals    +=  (float) $value->amount_allocated;
+            if($value->allocatable->currency_id == 2){  
+                $totals    +=  (float) $value->amount_allocated;
+            }
+            else if($value->allocatable->currency_id == 1){
+                $totals += (float) ($value->amount_allocated/100);
+            }
         }
 
         return $totals;

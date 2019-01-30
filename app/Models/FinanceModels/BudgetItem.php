@@ -11,5 +11,13 @@ class BudgetItem extends BaseModel
     //
     use SoftDeletes;
 
+    public function project()
+    {
+        return $this->belongsTo('App\Models\ProjectsModels\Project','project_id');
+    }
+    public function account()
+    {
+        return $this->belongsTo('App\Models\AccountingModels\Account','account_id');
+    }
     
 }

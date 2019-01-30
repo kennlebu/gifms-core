@@ -95,12 +95,7 @@ class BudgetApi extends Controller
      */
     public function addBudget()
     {
-        $form = Request::only(
-            'budget_desc',
-            'currency_id',
-            'start_date',
-            'end_date'
-            );
+        $form = Request::all();
 
         $budget = new Budget;
 
@@ -265,7 +260,8 @@ class BudgetApi extends Controller
             $response   = Budget::with(
                                 'currency',
                                 'created_by',
-                                'status'
+                                'status',
+                                'items.project'
                             )->findOrFail($budget_id);
 
             foreach ($response->items as $key => $value) {
