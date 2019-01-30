@@ -383,7 +383,6 @@ class ProjectApi extends Controller
         $qb = DB::table('projects');
 
         $qb->whereNull('projects.deleted_at');
-        $qb->whereNotNull('projects.program_id');    // Not showing PIDs without an attached program id
         $current_user = JWTAuth::parseToken()->authenticate();
 
         $response;
@@ -392,6 +391,11 @@ class ProjectApi extends Controller
         $total_records          = $qb->count();
         $records_filtered       = 0;
 
+        
+        // Show even ones without Program IDs
+        if(!array_key_exists('no_programs', $input)){
+            $qb->whereNotNull('projects.program_id');    // Sshowing even PIDs without an attached program id
+        }
         
         //my_assigned
         if((array_key_exists('my_assigned', $input)&& $input['my_assigned'] = "true")&&($current_user->hasRole(['accountant','assistant-accountant','financial-controller','admin-manager']))){
