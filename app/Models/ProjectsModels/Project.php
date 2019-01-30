@@ -6,6 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\BaseModels\BaseModel;
 use Illuminate\Support\Facades\DB;
+use App\Models\ClaimsModels\Claim;
+use App\Models\InvoicesModels\Invoice;
+use App\Models\MobilePaymentModels\MobilePayment;
+use App\Models\AdvancesModels\Advance;
 
 class Project extends BaseModel
 {
@@ -63,29 +67,42 @@ class Project extends BaseModel
     //     return $totals;
 
     // }
-    public function getGrantAmountAllocatedAttribute(){
+    // public function getGrantAmountAllocatedAttribute(){
 
-        $grant_allocations     =   $this->grant_allocations;
-        $totals    =   0;
+    //     $grant_allocations     =   $this->grant_allocations;
+    //     $totals    =   0;
 
-        foreach ($grant_allocations as $key => $value) {
-            $totals    +=  (float) $value->amount_allocated;
-        }
+    //     foreach ($grant_allocations as $key => $value) {
+    //         $totals    +=  (float) $value->amount_allocated;
+    //     }
 
-        return $totals;
+    //     return $totals;
 
-    }
+    // }
     public function getTotalExpenditureAttribute(){
 
         $allocations     =   $this->allocations;
         $totals    =   0;
 
         foreach ($allocations as $key => $value) {
-            if($value->allocatable->currency_id == 2){  
-                $totals    +=  (float) $value->amount_allocated;
+            $allocatable = null;
+            if($value->allocatable_type=='invoices' && !empty($value->allocatable_id)){
+                $allocatable = Invoice::find($value->allocatable_id);
+            }else if($value->allocatable_type=='mobile_payments' && !empty($value->allocatable_id)){
+                $allocatable = MobilePayment::find($value->allocatable_id);
+            }else if($value->allocatable_type=='claims' && !empty($value->allocatable_id)){
+                $allocatable = Claim::find($value->allocatable_id);
+            }else if($value->allocatable_type=='advances' && !empty($value->allocatable_id)){
+                $allocatable = Advance::find($value->allocatable_id);
             }
-            else if($value->allocatable->currency_id == 1){
-                $totals += (float) ($value->amount_allocated/100);
+
+            if($allocatable && $allocatable->currency_id){
+                if($allocatable->currency_id == 2){  
+                    $totals    +=  (float) $value->amount_allocated;
+                }
+                else if($value->allocatable->currency_id == 1){
+                    $totals += (float) ($value->amount_allocated/100);
+                }
             }
         }
 
@@ -93,11 +110,12 @@ class Project extends BaseModel
 
     }
     public function getTotalExpenditurePercAttribute(){
-        $grant_amount_allocated     = (int)  $this->getGrantAmountAllocatedAttribute();
+        // $grant_amount_allocated     = (int)  $this->getGrantAmountAllocatedAttribute();
+        $budget_amount = (int) $this->budget->totals;
         $total_expenditure          = (int)  $this->getTotalExpenditureAttribute();
 
-        if($grant_amount_allocated!=0){
-            return ($total_expenditure/$grant_amount_allocated)*100;
+        if($budget_amount!=0){
+            return ($total_expenditure/$budget_amount)*100;
         }else{
             return 0;
         }
