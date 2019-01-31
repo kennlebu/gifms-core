@@ -94,6 +94,8 @@ class ProjectApi extends Controller
             $project->country_id                       =  (int)  $form['country_id'];
             $project->grant_id                         = (int) $form['grant_id'];
             $project->status_id                        = (int) $form['status_id'] || 1;
+            if(!empty($form['budget_id']))
+            $project->budget_id                        = (int) $form['budget_id'];
 
         if($project->save()) {
 
@@ -153,6 +155,8 @@ class ProjectApi extends Controller
             $project->status_id                        =  (int)  $form['status_id'];
             $project->country_id                       =  (int)  $form['country_id'];
             $project->grant_id                         = (int) $form['grant_id'];
+            if(!empty($form['budget_id']))
+            $project->budget_id                        = (int) $form['budget_id'];
 
         if($project->save()) {
 

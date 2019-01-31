@@ -198,6 +198,7 @@ class Project extends BaseModel
             $result['account_code'] = empty($account->code) ? '' : $account->account_code;
             $result['account_id'] = empty($account->id) ? '' : $account->id;
             $result['account_name'] = empty($account->id) ? '' : $account->account_name;
+            $result['account_code'] = empty($account->id) ? '' : $account->account_code;
 
             $budget_items = empty($this->budget->items) ? [] : $this->pluck($this->budget->items, 'account_id', $aid);
             $acc_expenditures = $this->pluck($this->allocations, 'account_id', $aid);

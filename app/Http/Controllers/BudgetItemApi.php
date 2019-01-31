@@ -99,7 +99,7 @@ class BudgetItemApi extends Controller
 
         $budget_item->budget_item_purpose           =            $form['budget_item_purpose'];
         $budget_item->budget_id                     =      (int) $form['budget_id'];
-        $budget_item->project_id                    =      (int) $form['project_id'];
+        // $budget_item->project_id                    =      (int) $form['project_id'];
         $budget_item->account_id                    =      (int) $form['account_id'];
         $budget_item->amount                        =   (double) $form['amount'];
         $budget_item->created_by_id                 =      (int) $this->current_user()->id;
@@ -148,7 +148,7 @@ class BudgetItemApi extends Controller
 
         $budget_item->budget_item_purpose           =            $form['budget_item_purpose'];
         $budget_item->budget_id                     =      (int) $form['budget_id'];
-        $budget_item->project_id                    =      (int) $form['project_id'];
+        // $budget_item->project_id                    =      (int) $form['project_id'];
         $budget_item->account_id                    =      (int) $form['account_id'];
         $budget_item->amount                        =   (double) $form['amount'];
 

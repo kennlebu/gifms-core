@@ -326,9 +326,6 @@ class BudgetApi extends Controller
         $total_records          = $qb->count();
         $records_filtered       = 0;
 
-
-
-
         //searching
         if(array_key_exists('searchval', $input)){
             $qb->where(function ($query) use ($input) {
@@ -338,16 +335,11 @@ class BudgetApi extends Controller
 
             });
 
-            // $records_filtered       =  $qb->count(); //doesn't work
-
             $sql = Budget::bind_presql($qb->toSql(),$qb->getBindings());
             $sql = str_replace("*"," count(*) AS count ", $sql);
             $dt = json_decode(json_encode(DB::select($sql)), true);
 
             $records_filtered = (int) $dt[0]['count'];
-            // $records_filtered = 30;
-
-
         }
 
 
@@ -358,24 +350,16 @@ class BudgetApi extends Controller
             if(array_key_exists('order_dir', $input)&&$input['order_dir']!=''){                
                 $order_direction = $input['order_dir'];
             }
-
             $qb->orderBy($order_column_name, $order_direction);
-        }else{
-            //$qb->orderBy("project_code", "asc");
         }
 
         //limit
         if(array_key_exists('limit', $input)){
-
-
             $qb->limit($input['limit']);
-
-
         }
 
         //migrated
         if(array_key_exists('migrated', $input)){
-
             $mig = (int) $input['migrated'];
 
             if($mig==0){
@@ -383,8 +367,6 @@ class BudgetApi extends Controller
             }else if($mig==1){
                 $qb->whereNotNull('migration_id');
             }
-
-
         }
 
 
@@ -392,15 +374,10 @@ class BudgetApi extends Controller
         if(array_key_exists('datatables', $input)){
 
             //searching
-            $qb->where(function ($query) use ($input) {
-                
+            $qb->where(function ($query) use ($input) {                
                 $query->orWhere('budgets.id','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('budgets.budget_desc','like', '\'%' . $input['search']['value']. '%\'');
-
             });
-
-
-
 
             $sql = Budget::bind_presql($qb->toSql(),$qb->getBindings());
             $sql = str_replace("*"," count(*) AS count ", $sql);
@@ -408,42 +385,26 @@ class BudgetApi extends Controller
 
             $records_filtered = (int) $dt[0]['count'];
 
-
             //ordering
             $order_column_id    = (int) $input['order'][0]['column'];
             $order_column_name  = $input['columns'][$order_column_id]['order_by'];
             $order_direction    = $input['order'][0]['dir'];
 
             if($order_column_name!=''){
-
                 $qb->orderBy($order_column_name, $order_direction);
-
             }
-
-
-
-
-
 
             //limit $ offset
             if((int)$input['start']!= 0 ){
-
                 $response_dt    =   $qb->limit($input['length'])->offset($input['start']);
-
-            }else{
+            }
+            else{
                 $qb->limit($input['length']);
             }
 
-
-
-
-
             $sql = Budget::bind_presql($qb->toSql(),$qb->getBindings());
-
-            // $response_dt = DB::select($qb->toSql(),$qb->getBindings());         //pseudo
+            
             $response_dt = DB::select($sql);
-
-
             $response_dt = json_decode(json_encode($response_dt), true);
 
             $response_dt    = $this->append_relationships_objects($response_dt);
@@ -453,10 +414,8 @@ class BudgetApi extends Controller
                 $total_records,
                 $records_filtered
                 );
-
-
-        }else{
-
+        }
+        else{
             $sql            = Budget::bind_presql($qb->toSql(),$qb->getBindings());
             $response       = json_decode(json_encode(DB::select($sql)), true);
             if(!array_key_exists('lean', $input)){
@@ -465,12 +424,7 @@ class BudgetApi extends Controller
             }
         }
 
-
-
-
         return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
-
-
     }
 
 
@@ -507,10 +461,8 @@ class BudgetApi extends Controller
 
         }
 
-
+        // $data = $this->remove0Totals($data);
         return $data;
-
-
     }
 
 
@@ -543,12 +495,19 @@ class BudgetApi extends Controller
             if($data[$key]["status"]==null){
                 $data[$key]["status"] = array("budget_status"=>"N/A");
             }
-
-
         }
 
         return $data;
+    }
 
 
+    public function remove0Totals($arr){
+        $data = [];
+        foreach($arr as $resp){
+            if($resp['totals'] > 0){
+                $data[] = $resp;
+            }
+        }
+        return $data;
     }
 }
