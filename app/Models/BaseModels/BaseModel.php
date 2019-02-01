@@ -144,7 +144,54 @@ class BaseModel extends Model
     }
 		
 
-	// }
+	/**
+	 * Returns an array item matched by value
+	 */
+	public function getArrItem(array $arr, $key, $value){
+		foreach($arr as $item){
+			if($item->$key == $value){
+				return $item;
+			}
+		}
+	}
 
+
+	/**
+	 * Returns an array with matching values given a key
+	 */
+	public function pluck($ARR, $key, $value) {
+		$RESULTS = [];
+		foreach ($ARR as $item){
+			if ($item[$key] == $value) {
+				$RESULTS[] = $item;
+			}
+		}
+		return $RESULTS;
+	}
+
+
+	/**
+	 * Returns sum of array values by key
+	 */
+	public function sumArrayColumn($ARR, $key){
+		$sum = 0;
+		foreach ($ARR as $item){
+			$sum += (float) $item[$key];
+		}
+		return $sum;
+	}
+
+
+	/**
+	 * Returns unique values from an array or iterable object, 
+	 * given the key
+	 */
+	public function uniqueArrayValues($ARR, $key){
+		$uniques = array();
+        foreach ($ARR as $item) {
+            $uniques[] = $item[$key];
+        }
+        return array_unique($uniques);
+	}
 
 }

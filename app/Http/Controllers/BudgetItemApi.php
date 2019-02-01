@@ -93,27 +93,19 @@ class BudgetItemApi extends Controller
      */
     public function addBudgetItem()
     {
-        $form = Request::only(
-            'budget_item_purpose',
-            'budget_id',
-            'project_id',
-            'account_id',
-            'amount'
-            );
+        $form = Request::all();
 
         $budget_item = new BudgetItem;
 
-            
-            $budget_item->budget_item_purpose           =            $form['budget_item_purpose'];
-            $budget_item->budget_id                     =      (int) $form['budget_id'];
-            $budget_item->project_id                    =      (int) $form['project_id'];
-            $budget_item->account_id                    =      (int) $form['account_id'];
-            $budget_item->amount                        =   (double) $form['amount'];
-            $budget_item->created_by_id                 =      (int) $this->current_user()->id;
-            $budget_item->create_action_by_id           =      (int) $this->current_user()->id;
+        $budget_item->budget_item_purpose           =            $form['budget_item_purpose'];
+        $budget_item->budget_id                     =      (int) $form['budget_id'];
+        // $budget_item->project_id                    =      (int) $form['project_id'];
+        $budget_item->account_id                    =      (int) $form['account_id'];
+        $budget_item->amount                        =   (double) $form['amount'];
+        $budget_item->created_by_id                 =      (int) $this->current_user()->id;
+        $budget_item->create_action_by_id           =      (int) $this->current_user()->id;
 
         if($budget_item->save()) {
-
             return Response()->json(array('msg' => 'Success: budget_item added','budget_item' => $budget_item), 200);
         }
     }
@@ -150,25 +142,17 @@ class BudgetItemApi extends Controller
      */
     public function updateBudgetItem()
     {
-        $form = Request::only(
-            'id',
-            'budget_item_purpose',
-            'budget_id',
-            'project_id',
-            'account_id',
-            'amount'
-            );
+        $form = Request::all();
 
         $budget_item = BudgetItem::find($form['id']);
 
-            $budget_item->budget_item_purpose           =            $form['budget_item_purpose'];
-            $budget_item->budget_id                     =      (int) $form['budget_id'];
-            $budget_item->project_id                    =      (int) $form['project_id'];
-            $budget_item->account_id                    =      (int) $form['account_id'];
-            $budget_item->amount                        =   (double) $form['amount'];
+        $budget_item->budget_item_purpose           =            $form['budget_item_purpose'];
+        $budget_item->budget_id                     =      (int) $form['budget_id'];
+        // $budget_item->project_id                    =      (int) $form['project_id'];
+        $budget_item->account_id                    =      (int) $form['account_id'];
+        $budget_item->amount                        =   (double) $form['amount'];
 
         if($budget_item->save()) {
-
             return Response()->json(array('msg' => 'Success: budget_item updated','budget_item' => $budget_item), 200);
         }
     }
