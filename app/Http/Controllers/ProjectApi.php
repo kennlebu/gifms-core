@@ -400,6 +400,13 @@ class ProjectApi extends Controller
         if(!array_key_exists('no_programs', $input)){
             $qb->whereNotNull('projects.program_id');    // Sshowing even PIDs without an attached program id
         }
+
+        // For reports
+        // Only show the ones with a budget here
+        if(array_key_exists('for_reports', $input)){
+            $qb->rightJoin('budgets', 'projects.budget_id', 'budgets.id')
+                ->whereNull('budgets.deleted_at');
+        }
         
         //my_assigned
         if((array_key_exists('my_assigned', $input)&& $input['my_assigned'] = "true")&&($current_user->hasRole(['accountant','assistant-accountant','financial-controller','admin-manager']))){
@@ -458,7 +465,7 @@ class ProjectApi extends Controller
 
             if($program_id==0){
             }else if($program_id==1){
-                $qb->where('program_id',$program_id);
+                $qb->where('projects.program_id',$program_id);
             }
         }
 
@@ -607,7 +614,7 @@ class ProjectApi extends Controller
 
         }else{
 
-            $qb->where('status_id', 1);
+            $qb->where('projects.status_id', 1);
 
             $sql            = Project::bind_presql($qb->toSql(),$qb->getBindings());
             $response       = json_decode(json_encode(DB::select($sql)), true);
