@@ -6,12 +6,41 @@
     footer { position: fixed; bottom: -110px; left: 0px; right: 0px; background-color: #E4E8F3; height: 100px; }
     p { page-break-after: always; }
     p:last-child { page-break-after: never; }
+    div.stamp.stamped-cancelled:after
+    {
+        content:"CANCELLED";
+        position:absolute;
+        top:-10px;
+        left:10px;
+        z-index:1;
+        font-family:Arial,sans-serif;
+        -webkit-transform: rotate(-15deg); /* Safari */
+        -moz-transform: rotate(-15deg); /* Firefox */
+        -ms-transform: rotate(-15deg); /* IE */
+        -o-transform: rotate(-15deg); /* Opera */
+        transform: rotate(-15deg);
+        font-size:40px;
+        color:#c00;
+        background:#fff;
+        border:solid 4px #c00;
+        padding:5px;
+        border-radius:5px;
+        zoom:1;
+        filter:alpha(opacity=20);
+        opacity:0.2;
+        -webkit-text-shadow: 0 0 2px #c00;
+        text-shadow: 0 0 2px #c00;
+        box-shadow: 0 0 2px #c00;
+    }
     footer:after {
       content: "[Page : " counter(page) "]";
     }
   </style>
 </head>
 <body  style="font-family: arial;">
+  @if($lpo->status_id==15)
+  <div class="stamp stamped-cancelled"></div>
+  @endif
   <header><div><img style="width: 100%;height:120px;" src="img/letter_head_top_1200x240.png"></div></header>
   <footer><div><img style="width: 100%;height:80px;" src="img/letter_head_bottom_1200x125.png"></div></footer>
   <main>
