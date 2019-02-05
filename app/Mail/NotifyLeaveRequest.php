@@ -73,21 +73,21 @@ class NotifyLeaveRequest extends Mailable
             return $this->to($this->leave_request->requested_by)
                     ->with([
                             'leave_request' => $this->leave_request,
-                            'addressed_to' => $this->claim->project_manager,
+                            'addressed_to' => $this->leave_request->requested_by,
                             'js_url' => Config::get('app.js_url'),
                         ])
-                    ->subject("Leave Approval Request ".$this->leave_request->ref);
+                    ->subject("Leave Request Approved".$this->leave_request->ref);
         }
-        else if($this->claim->status_id == 4){
+        else if($this->leave_request->status_id == 4){
             $ccs[0] = $this->leave_request->requested_by;
 
             return $this->to($this->leave_request->requested_by)
                     ->with([
                             'leave_request' => $this->leave_request,
-                            'addressed_to' => $this->financial_controller,
+                            'addressed_to' => $this->leave_request->requested_by,
                             'js_url' => Config::get('app.js_url'),
                         ])
-                    ->subject("Leave Request Rejected ".$this->claim->ref);
+                    ->subject("Leave Request Rejected ".$this->leave_request->ref);
         }
 
     }

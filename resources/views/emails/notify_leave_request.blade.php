@@ -9,8 +9,8 @@
       <br/>
       @if ($leave_request->status_id==2)
         The below Leave Request has been posted and awaits your approval.
-      {{-- @elseif ($lpo->status_id==11)
-        The below detailed LPO has been Cancelled by {{$lpo->cancelled_by->name}} --}}
+      @elseif ($leave_request->status_id==3)
+        The below Leave Reqeust has been Approved by {{$leave_request->line_manager->name}}
       @elseif ($leave_request->status_id==4)
         The below Leave Request has been Rejected by {{$leave_request->rejected_by->name}}
       @endif
@@ -92,7 +92,23 @@
             </strong>
           </td>
         </tr>
-        @if ($leave_request->status_id==4) 
+        @if ($leave_request->status_id==3) 
+        <tr>
+          <td style="text-align: left; border-bottom: 1px dotted #ccbcbc;" colspan="1"  bgcolor="#ffffff" height="20">
+            <strong>
+              <span style="color: #7c7c7c;">Approved By:</span>
+            </strong>
+          </td>
+          <td style="text-align: left; border-bottom: 1px dotted #ccbcbc;" bgcolor="#ffffff" colspan="2" >
+            <strong>
+              <span style="color: #092d50;">{{$leave_request->line_manager->name}}</span><br/>
+              {{-- <span style="color: #092d50;">{{$leave_request->approved_at}}</span><br/><br/> --}}
+              {{-- <span style="color: #092d50;">Reason: {{$leave_request->rejection_reason}}</span> --}}
+            </strong>
+          </td>
+        </tr>   
+        {{-- @endif  --}}
+        @elseif ($leave_request->status_id==4) 
         <tr>
           <td style="text-align: left; border-bottom: 1px dotted #ccbcbc;" colspan="1"  bgcolor="#ffffff" height="20">
             <strong>

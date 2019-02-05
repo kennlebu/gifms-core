@@ -813,7 +813,7 @@ class LeaveManagementApi extends Controller
 
                 $approval->save();
                 
-                //TODO: Mail::queue(new NotifyLeaveApproval($leave_request));
+                Mail::queue(new NotifyLeaveRequest($leave_request));
 
                 if($several!=true)
                 return Response()->json(array('msg' => 'Success: Leave Request approved','leave_request' => $leave_request), 200);
