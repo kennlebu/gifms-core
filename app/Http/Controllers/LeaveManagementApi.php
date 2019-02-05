@@ -577,7 +577,7 @@ class LeaveManagementApi extends Controller
 
         $last_request = LeaveRequest::whereYear('start_date', '=', date('Y'))
                                         ->where('status_id', 3)
-                                        ->where('leave_type_id', $leave_request->leave_type_id)
+                                        ->where('leave_type_id', $input['leave_type_id'])
                                         ->where('requested_by_id', $this->current_user()->id)
                                         ->orderBy('id', 'desc')
                                         ->first();
