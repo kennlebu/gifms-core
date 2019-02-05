@@ -746,12 +746,31 @@ class LeaveManagementApi extends Controller
                         ->get();
             $response['requests'] = $requests;
 
-            // Get and add the total days taken and days left to the response
-            $days_taken = LeaveRequest::where('requested_by_id', $this->current_user()->id)
-                        ->whereYear('start_date','=',date('Y'))
-                        ->where('status_id', 3) // Count only approved
-                        ->sum('no_of_days');
-            $response['days_taken'] = $days_taken;
+            $leave_types = LeaveType::all();
+            foreach($leave_types as $type){
+                $types_response = [];
+                if(empty($type->gender) || $type->gender == $this->current_user()->gender){
+                    // Get and add the total days taken and days left to the response
+                    $leave = LeaveRequest::where('requested_by_id', $this->current_user()->id)
+                                                ->whereYear('start_date','=',date('Y'))
+                                                ->where('status_id', 3) // Count only approved
+                                                ->where('leave_type_id', $type->id);
+                    $days_taken = $leave->sum('no_of_days');
+                    $leave = $leave->first();
+
+                    $days_left = (int) $type->days_entitled - (int) $days_taken;
+                    if(!empty($leave)){
+                        $days_left = (int) $leave->leave_type->days_entitled - (int) $days_taken;
+                    }
+                    $types_response['days_taken'] = $days_taken;
+                    $types_response['days_left'] = $days_left;
+                    $types_response['leave_type'] = $type->name;
+                    
+                    $response['leave_types'][] = $types_response;
+                }
+            }
+
+            
 
 
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
