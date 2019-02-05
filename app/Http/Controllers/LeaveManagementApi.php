@@ -793,7 +793,7 @@ class LeaveManagementApi extends Controller
             $leave_request->status_id = $leave_request->status->next_status_id;
 
             // Update the days left
-            $days_left = (int) $leave_request->no_of_days - (int) $leave_request->leave_type->days_entitled;
+            $days_left = (int) $leave_request->leave_type->days_entitled - (int) $leave_request->no_of_days;
             $leave_request->days_left = $days_left;
 
             $leave_request->disableLogging();
