@@ -411,7 +411,8 @@ class ProjectApi extends Controller
         //my_assigned
         if((array_key_exists('my_assigned', $input)&& $input['my_assigned'] = "true")&&($current_user->hasRole(['accountant','assistant-accountant','financial-controller','admin-manager']))){
             $qb->whereNotNull('project_code');
-        }elseif (array_key_exists('my_assigned', $input)&& $input['my_assigned'] = "true") {
+        }
+        elseif ((array_key_exists('my_assigned', $input)&& $input['my_assigned'] = "true") && array_key_exists('staff_responsible', $input)) {
             
             if(array_key_exists('staff_responsible', $input)){
                 $user_id = (int) $input['staff_responsible'];
@@ -423,8 +424,8 @@ class ProjectApi extends Controller
                  ->whereNotNull('projects.project_code')
                  ->groupBy('projects.id');
             }
-            $qb->whereNotNull('project_code');
-        }elseif (array_key_exists('my_assigned', $input)&& $input['my_assigned'] = "true") {
+        }
+        elseif (array_key_exists('my_assigned', $input)&& $input['my_assigned'] = "true") {
             if($current_user->hasRole(['program-manager'])){
                 $qb->select(DB::raw('projects.*'))
                  ->rightJoin('programs', 'programs.id', '=', 'projects.program_id')
