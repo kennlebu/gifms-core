@@ -24,6 +24,7 @@ use App\Models\ApprovalsModels\Approval;
 use PDF;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\DB;
 use App\Mail\NotifyLeaveRequest;
 
 class LeaveManagementApi extends Controller
@@ -765,6 +766,7 @@ class LeaveManagementApi extends Controller
                     $types_response['days_taken'] = $days_taken;
                     $types_response['days_left'] = $days_left;
                     $types_response['leave_type'] = $type->name;
+                    $types_response['days_entitled'] = $type->days_entitled;
                     
                     $response['leave_types'][] = $types_response;
                 }
@@ -772,6 +774,35 @@ class LeaveManagementApi extends Controller
 
             
 
+
+            return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+        }catch (Exception $e ){            
+            return response()->json(['error'=>'something went wrong', 'msg'=>$e->getMessage()], 500); 
+        }
+    }
+
+    /**
+     * Operation getWhosOut
+     * Get list of whois on leave.
+     * @return Http response
+     */
+    public function getWhosOut()
+    {
+        try{
+            // $response = DB::select("SELECT * FROM leave_requests WHERE CAST(start_date AS DATE) <= DATE(NOW()) AND CAST(end_date AS DATE) >= DATE(NOW())");
+            $response = LeaveRequest::with('requested_by','leave_type')
+                                    ->whereRaw('CAST(start_date AS DATE) <= DATE(NOW())')
+                                    ->whereRaw('CAST(end_date AS DATE) >= DATE(NOW())')
+                                    ->where('status_id',3);
+
+            if($this->current_user()->hasRole('admin-manager')){
+                // Just pass
+            }
+            elseif($this->current_user()->hasRole('program-manager')){
+                $response = $response->where('line_manager_id',$this->current_user()->id);
+            }
+
+            $response = $response->get();
 
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
         }catch (Exception $e ){            
