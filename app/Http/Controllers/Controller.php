@@ -292,4 +292,14 @@ class Controller extends BaseController
     function isSunday($date) {
         return (date('N', strtotime($date)) == 7);
     }
+
+
+    /**
+     * Checks if a string begins with another string
+     */
+    function startsWith($haystack, $needle) {
+        // search backwards starting from haystack length characters from the end
+        return $needle === ''
+          || strrpos($haystack, $needle, -strlen($haystack)) !== false;
+    }
 }

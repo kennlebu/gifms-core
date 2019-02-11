@@ -21,12 +21,19 @@ use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\DB;
 
 use App\Models\SuppliesModels\Supplier;
+use App\Models\BankingModels\Bank;
+use App\Models\BankingModels\BankBranch;
+use App\Models\LookupModels\Currency;
+use App\Models\PaymentModels\PaymentMode;
+use App\Models\SuppliesModels\SupplyCategory;
+use App\Models\LookupModels\County;
 
 
 use Exception;
 use App;
 use Illuminate\Support\Facades\Response;
 use App\Models\StaffModels\Staff;
+use Excel;
 
 class SupplierApi extends Controller
 {
@@ -618,5 +625,129 @@ class SupplierApi extends Controller
 
         $results = $suppliers->get();
         return response()->json($results, 200,array(),JSON_PRETTY_PRINT);
+    }
+
+
+
+
+
+    public function uploadExcel(){
+        try{
+            $form = Request::only("file");
+            $file = $form['file'];
+
+            $data = Excel::load($file->getPathname(), function($reader) {
+            })->get()->toArray();
+
+            $suppliers_array = array();
+            foreach ($data as $key => $value) {
+
+                try{
+                    // $line = trim($value['asset_name']).' | '.trim($value['tag_number']).' | '.trim($value['location_optional']).' | '.trim($value['staff_optional']).' | '.trim($value['status']);
+                    
+                    $supplier = new Supplier;
+                    $supplier->supplier_name = trim($value['supplier_name']);
+                    $supplier->email = trim($value['email']);
+
+                    $telephone = trim($value['phone']);
+                    if($this->startsWith($telephone, '254')) $telephone = '(+254)'.substr($telephone, 3);
+                    elseif ($this->startsWith($telephone, '07')) $telephone = '(+254)'.substr($telephone, 1);
+                    $supplier->telephone = $telephone;
+
+                    if(!empty(trim($value['address'])))
+                        $supplier->address = trim($value['address']);
+                    if(!empty(trim($value['alternative_email'])))
+                        $supplier->alternative_email = trim($value['alternative_email']);
+                    if(!empty(trim($value['website'])))
+                        $supplier->website = trim($value['website']);
+                    if(!empty(trim($value['mobile_payment_number']))){
+                        $alt_num = trim($value['mobile_payment_number']);
+                        if($this->startsWith($alt_num, '254')) $alt_num = '(+254)'.substr($alt_num, 3);
+                        elseif ($this->startsWith($alt_num, '07')) $alt_num = '(+254)'.substr($alt_num, 1);
+                        $supplier->mobile_payment_number = $alt_num;
+                    }
+                    if(!empty(trim($value['mobile_payment_name'])))
+                        $supplier->mobile_payment_name = trim($value['mobile_payment_name']);
+                    if(!empty(trim($value['bank_account_no'])))
+                        $supplier->bank_account = trim($value['bank_account_no']);
+                    if(!empty(trim($value['bank']))){
+                        $bank = Bank::where('bank_name', 'like', '\'%' .trim($value['bank']). '%\'')->first();
+                        if(!empty($bank))
+                            $supplier->bank_id = $bank->id;
+                    }
+                    if(!empty(trim($value['branch']))){
+                        $branch = BankBranch::where('branch_name', 'like', '\'%' .trim($value['branch']). '%\'')->first();
+                        if(!empty($branch))
+                            $supplier->bank_branch_id = $branch->id;
+                    }
+                    if(!empty(trim($value['cheque_address'])))
+                        $supplier->chaque_address = trim($value['cheque_address']);
+                    if(!empty(trim($value['bank_code'])))
+                        $supplier->bank_code = trim($value['bank_code']);
+                    if(!empty(trim($value['usd_account'])))
+                        $supplier->usd_account = trim($value['usd_account']);
+                    if(!empty(trim($value['tax_pin'])))
+                        $supplier->tax_pin = trim($value['tax_pin']);
+                    if(!empty(trim($value['currency']))){
+                        $currency = Currency::where('currency_name', 'like', '\'%' .trim($value['currency']). '%\'')->first();
+                        if(!empty($currency))
+                            $supplier->currency_id = $currency->id;
+                    }
+                    if(!empty(trim($value['payment_mode']))){
+                        $payment_mode = PaymentMode::where('abrv', 'like', '\'%' .trim($value['payment_mode']). '%\'')->first();
+                        if(!empty($payment_mode))
+                            $supplier->payment_mode_id = $payment_mode->id;
+                    }
+                    $supplier->contact_name_1 = trim($value['contact_person_1_name']);
+                    $supplier->contact_email_1 = trim($value['contact_person_1_email']);
+
+                    $phone1 = trim($value['contact_person_1_phone']);
+                    if($this->startsWith($phone1, '254')) $phone1 = '(+254)'.substr($phone1, 3);
+                    elseif ($this->startsWith($phone1, '07')) $phone1 = '(+254)'.substr($phone1, 1);
+                    $supplier->contact_phone_1 = $phone1;
+
+                    if(!empty(trim($value['contact_person_2_name'])))
+                        $supplier->contact_name_2 = trim($value['contact_person_2_name']);
+                    if(!empty(trim($value['contact_person_2_email'])))
+                        $supplier->contact_email_2 = trim($value['contact_person_2_email']);
+                    if(!empty(trim($value['contact_person_2_phone']))){
+                        $phone2 = trim($value['contact_person_2_phone']);
+                        if($this->startsWith($phone2, '254')) $phone2 = '(+254)'.substr($phone2, 3);
+                        elseif ($this->startsWith($phone2, '07')) $phone2 = '(+254)'.substr($phone2, 1);
+                        $supplier->contact_phone_2 = $phone2;
+                    }
+                    if(!empty(trim($value['supplier_category']))){
+                        $supply_category = SupplyCategory::where('supply_category_name', 'like', '\'%' .trim($value['supplier_category']). '%\'')->first();
+                        if(!empty($supply_category))
+                            $supplier->supply_category_id = $supply_category->id;
+                    }
+                    if(!empty(trim($value['location_county']))){
+                        $county = County::where('county_name', 'like', '\'%' .trim($value['location_county']). '%\'')->first();
+                        if(!empty($county))
+                            $supplier->county_id = $county->id;
+                    }
+                    if(trim($value['requires_lpo']) == 'Yes' || trim($value['requires_lpo']) == 'yes'){
+                        $supplier->requires_lpo = 'Yes';
+                    }
+                    else {
+                        $supplier->requires_lpo = 'No';
+                    }
+                    
+
+                    $supplier->save();
+
+                }
+                catch(\Exception $e){
+                    $response =  ["error"=>'An error occurred during processing.',
+                                    "msg"=>$e->getMessage()];
+                    return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+                }
+            }
+
+            return response()->json(['msg'=>'finished'], 200,array(),JSON_PRETTY_PRINT);
+        }
+        catch(Exception $e){
+            return response()->json(['error'=>"An rerror occured during processing"], 500,array(),JSON_PRETTY_PRINT);
+        }
     }
 }

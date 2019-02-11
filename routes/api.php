@@ -1489,6 +1489,8 @@ Route::GET('/suppliers', 'SupplierApi@suppliersGet')->middleware('jwt.auth');
  */
 Route::GET('/suppliers/search', 'SupplierApi@suppliersSearch')->middleware('jwt.auth');
 
+Route::POST('/suppliers/excel_upload', 'SupplierApi@uploadExcel')->middleware('jwt.auth');
+
 
 
 
