@@ -643,11 +643,11 @@ class SupplierApi extends Controller
             foreach ($data as $key => $value) {
 
                 try{
-                    // $line = trim($value['asset_name']).' | '.trim($value['tag_number']).' | '.trim($value['location_optional']).' | '.trim($value['staff_optional']).' | '.trim($value['status']);
                     
                     $supplier = new Supplier;
                     $supplier->supplier_name = trim($value['supplier_name']);
                     $supplier->email = trim($value['email']);
+                    $supplier->status_id = 0;
 
                     $telephone = trim($value['phone']);
                     if($this->startsWith($telephone, '254')) $telephone = '(+254)'.substr($telephone, 3);
@@ -671,12 +671,12 @@ class SupplierApi extends Controller
                     if(!empty(trim($value['bank_account_no'])))
                         $supplier->bank_account = trim($value['bank_account_no']);
                     if(!empty(trim($value['bank']))){
-                        $bank = Bank::where('bank_name', 'like', '\'%' .trim($value['bank']). '%\'')->first();
+                        $bank = Bank::where('bank_name', 'like', '%' .trim($value['bank']). '%')->first();
                         if(!empty($bank))
                             $supplier->bank_id = $bank->id;
                     }
                     if(!empty(trim($value['branch']))){
-                        $branch = BankBranch::where('branch_name', 'like', '\'%' .trim($value['branch']). '%\'')->first();
+                        $branch = BankBranch::where('branch_name', 'like', '%' .trim($value['branch']). '%')->first();
                         if(!empty($branch))
                             $supplier->bank_branch_id = $branch->id;
                     }
@@ -689,12 +689,12 @@ class SupplierApi extends Controller
                     if(!empty(trim($value['tax_pin'])))
                         $supplier->tax_pin = trim($value['tax_pin']);
                     if(!empty(trim($value['currency']))){
-                        $currency = Currency::where('currency_name', 'like', '\'%' .trim($value['currency']). '%\'')->first();
+                        $currency = Currency::where('currency_name', 'like', '%' .trim($value['currency']). '%')->first();
                         if(!empty($currency))
                             $supplier->currency_id = $currency->id;
                     }
                     if(!empty(trim($value['payment_mode']))){
-                        $payment_mode = PaymentMode::where('abrv', 'like', '\'%' .trim($value['payment_mode']). '%\'')->first();
+                        $payment_mode = PaymentMode::where('abrv', 'like', '%' .trim($value['payment_mode']). '%')->first();
                         if(!empty($payment_mode))
                             $supplier->payment_mode_id = $payment_mode->id;
                     }
@@ -717,12 +717,12 @@ class SupplierApi extends Controller
                         $supplier->contact_phone_2 = $phone2;
                     }
                     if(!empty(trim($value['supplier_category']))){
-                        $supply_category = SupplyCategory::where('supply_category_name', 'like', '\'%' .trim($value['supplier_category']). '%\'')->first();
+                        $supply_category = SupplyCategory::where('supply_category_name', 'like', '%' .trim($value['supplier_category']). '%')->first();
                         if(!empty($supply_category))
                             $supplier->supply_category_id = $supply_category->id;
                     }
                     if(!empty(trim($value['location_county']))){
-                        $county = County::where('county_name', 'like', '\'%' .trim($value['location_county']). '%\'')->first();
+                        $county = County::where('county_name', 'like', '%' .trim($value['location_county']). '%')->first();
                         if(!empty($county))
                             $supplier->county_id = $county->id;
                     }
