@@ -1088,6 +1088,17 @@ class LPOApi extends Controller
 
          // if for invoice
          if(array_key_exists('for_invoice',$input)&&$input['for_invoice']==true){
+            if(!$this->current_user()->hasRole([
+                'super-admin',
+                'admin',
+                'director',
+                'associate-director',
+                'financial-controller',
+                'accountant', 
+                'assistant-accountant']
+            )){
+                $qb->where('lpos.requested_by_id', $this->current_user()->id);
+            }
             $qb->where(function ($query){
                 $query->whereNull('lpos.invoice_paid');
                 $query->orWhere('lpos.invoice_paid', 'not like', '\'%full%\'');
