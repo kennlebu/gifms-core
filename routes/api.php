@@ -3096,6 +3096,8 @@ Route::PATCH('/invoices/approve', 'InvoiceApi@approveSeveralInvoices')->middlewa
  */
 Route::PATCH('/invoice/{invoice_id}/recall', 'InvoiceApi@recallInvoice')->middleware('jwt.auth');
 
+Route::PATCH('/invoice/{invoice_id}/copy', 'InvoiceApi@copyInvoice')->middleware('jwt.auth');
+
 
 
 

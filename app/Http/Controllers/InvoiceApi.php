@@ -879,19 +879,19 @@ class InvoiceApi extends Controller
 
             $path           = '/invoices/'.$invoice->id.'/'.$invoice->invoice_document;
 
-            $path_info      = pathinfo($path);
+            // $path_info      = pathinfo($path);
 
-            $basename       = $path_info['basename'];
+            // $basename       = $path_info['basename'];
 
             $file_contents  = FTP::connection()->readFile($path);
 
-            Storage::put('invoices/'.$invoice->id.'.temp', $file_contents);
+            // Storage::put('invoices/'.$invoice->id.'.temp', $file_contents);
 
-            $url            = storage_path("app/invoices/".$invoice->id.'.temp');
+            // $url            = storage_path("app/invoices/".$invoice->id.'.temp');
 
-            $file           = File::get($url);
+            // $file           = File::get($url);
 
-            $response       = Response::make($file, 200);
+            $response       = Response::make($file_contents, 200);
 
             $response->header('Content-Type', 'application/pdf');
 
@@ -1673,6 +1673,74 @@ class InvoiceApi extends Controller
 
 
 
+    public function copyInvoice($invoice_id){
+        try{
+            $invoice = Invoice::find($invoice_id);
+            $new_invoice = new Invoice;
+            // $new_invoice = $invoice;
+            $new_invoice->status_id = 10;   // Logged, pending upload
+            $new_invoice->external_ref = $invoice->external_ref.'_copy';
+            $new_invoice->invoice_date = date('Y-m-d H:i:s');
+            $new_invoice->received_at  = date('Y-m-d H:i:s');
+            $new_invoice->raised_at = date('Y-m-d H:i:s');
+            $new_invoice->supplier_id = $invoice->supplier_id;
+            $new_invoice->payment_mode_id = $invoice->payment_mode_id;
+            // $new_invoice->lpo_id = $invoice->lpo_id;
+            $new_invoice->program_activity_id = $invoice->program_activity_id;
+            $new_invoice->raised_by_id = $invoice->raised_by_id;
+            $new_invoice->currency_id = $invoice->currency_id;
+            $new_invoice->total = $invoice->total;
+            $new_invoice->expense_desc = $invoice->expense_desc;
+            $new_invoice->expense_purpose = $invoice->expense_purpose;
+            $new_invoice->project_manager_id = $invoice->project_manager_id;
+            $new_invoice->received_by_id = $this->current_user()->id;
+            $new_invoice->raised_by_id = $this->current_user()->id;
+            // $new_invoice->invoice_document = $invoice->invoice_document;
+            $new_invoice->created_at = date('Y-m-d H:i:s');
+            
+            if($new_invoice->save()){
+                $new_invoice->ref = "CHAI/INV/#$new_invoice->id/".date_format($new_invoice->created_at,"Y/m/d");
+                // $path           = '/invoices/'.$invoice->id.'/'.$invoice->invoice_document;
+                // $file_contents  = FTP::connection()->readFile($path);
+                // FTP::connection()->makeDir('/invoices');
+                // FTP::connection()->makeDir('/invoices/'.$new_invoice->id);
+                // FTP::connection()->uploadFile($path, '/invoices/'.$new_invoice->id.'/'.$new_invoice->id.'.'.$file_contents->getClientOriginalExtension());
+
+                // $invoice->invoice_document           =   $invoice->id.'.'.$file_contents->getClientOriginalExtension();
+
+                $new_invoice->disableLogging(); //! Do not log the update
+                $new_invoice->save();
+
+                foreach($invoice->allocations as $alloc){
+                    $allocation = new Allocation;
+
+                    $allocation->account_id             =               $alloc->account_id;
+                    $allocation->allocatable_id         =               $new_invoice->id;
+                    $allocation->allocatable_type       =               $alloc->allocatable_type;
+                    $allocation->amount_allocated       =               $alloc->amount_allocated;
+                    $allocation->allocation_month       =               $alloc->allocation_month;
+                    $allocation->percentage_allocated   =               $alloc->percentage_allocated;
+                    $allocation->project_id             =               $alloc->project_id;
+                    $allocation->allocation_purpose     =               $alloc->allocation_purpose;
+                    $allocation->allocation_year        =               $alloc->allocation_year;
+                    $allocation->allocation_step        =               $alloc->allocation_step;
+                    $allocation->activity_id            =               $alloc->activity_id;
+                    $allocation->allocated_by_id        =       (int)   $this->current_user()->id;
+
+                    if($allocation->save()) {
+                        activity()
+                        ->performedOn($allocation->allocatable)
+                        ->causedBy($this->current_user())
+                        ->log('allocated');
+                    }
+                }
+            }
+            return Response()->json(array('success' => 'Invoice Copied','invoice' => $new_invoice), 200);
+        }
+        catch (Exception $e){
+            return response()->json(['error'=>'Something went wrong during processing', 'msg'=>$e->getMessage()], 500);
+        }
+    }
 
 
 
