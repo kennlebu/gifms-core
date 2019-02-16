@@ -1678,7 +1678,7 @@ class InvoiceApi extends Controller
             $invoice = Invoice::find($invoice_id);
             $new_invoice = new Invoice;
             // $new_invoice = $invoice;
-            $new_invoice->status_id = 10;   // Logged, pending upload
+            $new_invoice->status_id = 11;   // Logged, pending upload
             $new_invoice->external_ref = $invoice->external_ref.'_copy';
             $new_invoice->invoice_date = date('Y-m-d H:i:s');
             $new_invoice->received_at  = date('Y-m-d H:i:s');
@@ -1700,13 +1700,6 @@ class InvoiceApi extends Controller
             
             if($new_invoice->save()){
                 $new_invoice->ref = "CHAI/INV/#$new_invoice->id/".date_format($new_invoice->created_at,"Y/m/d");
-                // $path           = '/invoices/'.$invoice->id.'/'.$invoice->invoice_document;
-                // $file_contents  = FTP::connection()->readFile($path);
-                // FTP::connection()->makeDir('/invoices');
-                // FTP::connection()->makeDir('/invoices/'.$new_invoice->id);
-                // FTP::connection()->uploadFile($path, '/invoices/'.$new_invoice->id.'/'.$new_invoice->id.'.'.$file_contents->getClientOriginalExtension());
-
-                // $invoice->invoice_document           =   $invoice->id.'.'.$file_contents->getClientOriginalExtension();
 
                 $new_invoice->disableLogging(); //! Do not log the update
                 $new_invoice->save();
