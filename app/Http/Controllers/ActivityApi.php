@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 
 use App\Models\ActivityModels\Activity;
 use App\Models\ActivityModels\ActivityStatus;
+use App\Models\ActivityModels\ActivityObjective;
 use App\Models\ProgramModels\ProgramManager;
 use App\Models\ApprovalsModels\Approval;
 use App\Models\ProgramModels\ProgramStaff;
@@ -29,8 +30,8 @@ class ActivityApi extends Controller
     
     public function __construct()
     {
-        $this->default_status = 1; // Logged, pending submission
-        $this->approvable_statuses = ActivityStatus::where('approvable','1')->get();
+        // $this->default_status = 1; // Logged, pending submission
+        // $this->approvable_statuses = ActivityStatus::where('approvable','1')->get();
     }
 
 
@@ -46,21 +47,31 @@ class ActivityApi extends Controller
         $activity->requested_by_id = $form['requested_by_id'];
         $activity->title = $form['title'];
         $activity->description = $form['description'];
-        // $activity->project_id = $form['project_id'];
-        $activity->objective_id = $form['objective_id'];
+        // $activity->objective_id = $form['objective_id'];
         $activity->start_date = date('Y-m-d', strtotime($form['start_date']));
         if(!empty($form['end_date'])){
             $activity->end_date = date('Y-m-d', strtotime($form['end_date']));
         }
-        $activity->status_id = $this->default_status;
-
-        $obj = ReportingObjective::findOrFail($activity->objective_id);
-        $program = Program::find($obj->program_id);                                 // Save the PM and Program of the Project
-        $activity->program_id = $program->id;                                       // that has been selected. It's redundant
-        $activity->program_manager_id = $program->managers->program_manager_id;     // but much easier to deal with and the 
-                                                                                    // overhead isn't significant. Laziness 101.
+        // $activity->status_id = $this->default_status;
+        $activity->status_id = 1;
 
         if($activity->save()) {
+            foreach($form['objectives'] as $objective){
+                $obj = new ActivityObjective;
+                $obj->activity_id = $activity->id;
+                $obj->objective_id = $objective['id'];
+                $obj->disableLogging();
+                $obj->save();
+
+                $r_obj = ReportingObjective::findOrFail($obj->objective_id);
+                $program = Program::find($r_obj->program_id);                               // Save the PM and Program of the Project
+                $activity->program_id = $program->id;                                       // that has been selected. It's redundant
+                $activity->program_manager_id = $program->managers->program_manager_id;     // but much easier to deal with and the 
+                $activity->disableLogging();                                                // overhead isn't significant. Laziness 101.
+                $activity->save();
+            }
+    
+            // Mail::queue(new NotifyActivity($activity));  //Notify program staff and PM
             return Response()->json(array('msg' => 'Success: activity added','activity' => $activity), 200);
         }
     }
@@ -78,19 +89,32 @@ class ActivityApi extends Controller
         $activity->requested_by_id = $form['requested_by_id'];
         $activity->title = $form['title'];
         $activity->description = $form['description'];
-        // $activity->project_id = $form['project_id'];
         $activity->objective_id = $form['objective_id'];
         $activity->start_date = date('Y-m-d', strtotime($form['start_date']));
         if(!empty($form['end_date']))
             $activity->end_date = date('Y-m-d', strtotime($form['end_date']));
-            
-        $obj = ReportingObjective::findOrFail($activity->objective_id);
-        $program = Program::find($obj->program_id);
-        $activity->program_id = $program->id;
-        $activity->program_manager_id = $program->managers->program_manager_id;
-        
-        if($activity->status_id==3) {               // If activity was already approved, send
-            $activity->status_id = 2;               // it back for approval on editing.
+
+        $db_objectives =  ActivityObjective::where('activity_id', $form['id'])->pluck('objective_id')->toArray();
+        $form_obj_ids = [];
+        foreach($form['objectives'] as $obj){
+            array_push($form_obj_ids, $obj['id']);
+            if(!in_array($obj['id'], $db_objectives)){
+                $n_obj = new ActivityObjective;
+                $n_obj->activity_id = $activity->id;
+                $n_obj->objective_id = $obj['id'];
+                $n_obj->disableLogging();
+                $n_obj->save();
+            }
+        }
+        foreach($db_objectives as $obj_id){
+            if(!in_array($obj_id, $form_obj_ids)){
+                $delete = ActivityObjective::where('objective_id', $obj_id)->where('activity_id', $form['id'])->delete();
+            }   
+
+            $r_obj = ReportingObjective::findOrFail($obj_id);
+            $program = Program::find($r_obj->program_id);
+            $activity->program_id = $program->id;
+            $activity->program_manager_id = $program->managers->program_manager_id;
         }
 
         if($activity->save()) {
@@ -121,7 +145,7 @@ class ActivityApi extends Controller
     public function getActivityById($activity_id)
     {
         try{
-            $response = Activity::with('requested_by','objective.program.managers.program_manager','status','rejected_by','logs.causer', 'approvals')->findOrFail($activity_id);           
+            $response = Activity::with('requested_by','objectives.objective','objective.program.managers.program_manager','logs.causer', 'program_manager')->findOrFail($activity_id);           
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
 
         }catch(Exception $e){
@@ -180,7 +204,7 @@ class ActivityApi extends Controller
                  ->rightJoin('program_teams', 'program_teams.program_id', '=', 'reporting_objectives.program_id')
                  ->rightJoin('staff', 'staff.id', '=', 'program_teams.staff_id')
                  ->where('staff.id', '=', $current_user->id)
-                 ->where('activities.status_id', 3)
+                //  ->where('activities.status_id', 3)
                  ->whereNotNull('activities.id')
                  ->groupBy('activities.id');
 
@@ -329,7 +353,7 @@ class ActivityApi extends Controller
     public function append_relationships_objects($data = array()){
 
         foreach ($data as $key => $value) {
-            $activity = Activity::with('objective.program.managers', 'logs')->find($data[$key]['id']);
+            $activity = Activity::with('objective.program.managers', 'logs','objectives.objective')->find($data[$key]['id']);
             
             if(!empty($activity->objective_id) && $activity->objective_id!=0){
                 $data[$key]['objective'] = $activity->objective;
@@ -353,6 +377,11 @@ class ActivityApi extends Controller
 
             if(!empty($activity->program_manager_id) && $activity->program_manager_id!=0){
                 $data[$key]['program_manager'] = $activity->program_manager;
+            }
+            else $data[$key]['program_manager'] = array("name"=>"N/A", "full_name"=>"N/A");
+
+            if(!empty($activity->objectives)){
+                $data[$key]['objectives'] = $activity->objectives;
             }
             else $data[$key]['program_manager'] = array("name"=>"N/A", "full_name"=>"N/A");
         }

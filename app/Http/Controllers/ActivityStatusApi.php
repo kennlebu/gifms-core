@@ -111,7 +111,7 @@ class ActivityStatusApi extends Controller
         $records_filtered       = 0;
         $user = JWTAuth::parseToken()->authenticate();
         if(array_key_exists('displayable_only',$input)){
-            $qb->whereIn('id', [1,4]);
+            $qb->whereNotIn('id', [1,2,3,4]);
         }
 
         //searching

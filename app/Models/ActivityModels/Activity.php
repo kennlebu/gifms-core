@@ -44,6 +44,10 @@ class Activity extends BaseModel
     {
         return $this->belongsTo('App\Models\ReportModels\ReportingObjective', 'objective_id');
     }
+    public function objectives()
+    {
+        return $this->hasMany('App\Models\ActivityModels\ActivityObjective', 'activity_id');
+    }
     public function approvals()
     {
         return $this->morphMany('App\Models\ApprovalsModels\Approval', 'approvable')->orderBy('approval_level_id', 'asc');
