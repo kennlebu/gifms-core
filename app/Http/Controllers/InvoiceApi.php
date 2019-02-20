@@ -123,7 +123,7 @@ class InvoiceApi extends Controller
                 'program_activity_id'
                 );
 
-            $ftp = FTP::connection()->getDirListing();
+            // $ftp = FTP::connection()->getDirListing();
 
             $file = $form['file'];
 
@@ -232,6 +232,8 @@ class InvoiceApi extends Controller
                 if (($invoice->total - $invoice->amount_allocated) <= 0 && abs($invoice->total - $invoice->amount_allocated == 0)){
                     $invoice->status_id = $invoice->status->next_status_id;  
                 }
+                if(!empty($form['lpo_variation_reason']))
+                $invoice->lpo_variation_reason = $form['lpo_variation_reason'];
 
                 // if(Invoice::where('external_ref', $invoice->external_ref)->where('supplier_id', $form['supplier_id'])->exists()){
                 //     return response()->json(["error"=>"Invoice with the same invoice number already exists"], 409,array(),JSON_PRETTY_PRINT);
