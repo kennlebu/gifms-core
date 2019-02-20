@@ -199,17 +199,20 @@ class ActivityApi extends Controller
         //my program activities
         if (array_key_exists('my_assigned', $input)&& $input['my_assigned'] = "true"||(!$current_user->hasRole(['accountant','assistant-accountant','financial-controller','admin-manager']))) {
 
-            $qb->select(DB::raw('activities.*'))
-                 ->rightJoin('reporting_objectives', 'reporting_objectives.id', '=', 'activities.objective_id')
-                 ->rightJoin('program_teams', 'program_teams.program_id', '=', 'reporting_objectives.program_id')
-                 ->rightJoin('staff', 'staff.id', '=', 'program_teams.staff_id')
-                 ->where('staff.id', '=', $current_user->id)
-                //  ->where('activities.status_id', 3)
-                 ->whereNotNull('activities.id')
-                 ->groupBy('activities.id');
-
             if($current_user->hasRole('program-manager')){
                 $qb->where('program_manager_id', $current_user->id);
+            }
+            else{
+                $staff_programs = ProgramStaff::where('staff_id', $this->current_user()->id)->pluck('program_id')->toArray();
+                $qb->whereIn('program_id', $staff_programs);
+                // $qb->select(DB::raw('activities.*'))
+                //      ->rightJoin('reporting_objectives', 'reporting_objectives.id', '=', 'activities.objective_id')
+                //      ->rightJoin('program_teams', 'program_teams.program_id', '=', 'reporting_objectives.program_id')
+                //      ->rightJoin('staff', 'staff.id', '=', 'program_teams.staff_id')
+                //      ->where('staff.id', '=', $current_user->id)
+                //     //  ->where('activities.status_id', 3)
+                //      ->whereNotNull('activities.id')
+                //      ->groupBy('activities.id');
             }
         }
 
