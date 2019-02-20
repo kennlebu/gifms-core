@@ -38,6 +38,7 @@ use App\Models\AccountingModels\Account;
 use App\Models\PaymentModels\VoucherNumber;
 use App\Models\ReportModels\ReportingCategories;
 use App\Models\ReportModels\ReportingObjective;
+use App\Models\ActivityModels\ActivityObjective;
 
 class ReportsApi extends Controller
 {
@@ -444,6 +445,13 @@ class ReportsApi extends Controller
                     $program_ids = array_unique($program_ids);
 
                     $objectives = $objectives->whereIn('program_id', $program_ids);
+                }
+            }
+
+            if(array_key_exists('activity', $input) && !empty($input['activity'])){
+                $activity_objectives = ActivityObjective::where('activity_id', $input['activity'])->pluck('objective_id')->toArray();
+                if(!empty($activity_objectives)){
+                    $objectives = $objectives->whereIn('id', $activity_objectives);
                 }
             }
 
