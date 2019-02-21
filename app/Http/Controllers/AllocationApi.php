@@ -64,46 +64,31 @@ class AllocationApi extends Controller
     public function addAllocation()
     {
 
-        $input = Request::all();
-
-
         $allocation = new Allocation;
 
-
         try{
-
-
-            $form = Request::only(
-                'account_id',
-                'allocatable_id',
-                'allocatable_type',
-                'amount',
-                'month',
-                'percentage',
-                'project_id',
-                'purpose',
-                'year',
-                'allocation_step',
-                'activity_id'
-                );
-
+            $form = Request::all();
 
             $allocation->account_id             =               $form['account_id'];
             $allocation->allocatable_id         =               $form['allocatable_id'];
             $allocation->allocatable_type       =               $form['allocatable_type'];
             $allocation->amount_allocated       =               $form['amount'];
+            if(!empty($form['month']))
             $allocation->allocation_month       =               $form['month'];
             $allocation->percentage_allocated   =               $form['percentage'];
             $allocation->project_id             =               $form['project_id'];
             $allocation->allocation_purpose     =               $form['purpose'];
+            if(!empty($form['year']))
             $allocation->allocation_year        =               $form['year'];
+            if(!empty($form['allocation_step']))
             $allocation->allocation_step        =               $form['allocation_step'];
             if(!empty($form['activity_id']))
             $allocation->activity_id = $form['activity_id'];
+            if(!empty($form['objective_id']))
+            $allocation->objective_id = $form['objective_id'];
 
             $user = JWTAuth::parseToken()->authenticate();
             $allocation->allocated_by_id            =   (int)   $user->id;
-
 
             if($allocation->save()) {
                 activity()
@@ -113,13 +98,9 @@ class AllocationApi extends Controller
                 return Response()->json(array('success' => 'allocation added','allocation' => $allocation), 200);
             }
 
-
         }catch (JWTException $e){
-
             return response()->json(['error'=>'You are not Authenticated'], 500);
-
         }
-
     }
 
 
@@ -150,44 +131,25 @@ class AllocationApi extends Controller
      */
     public function updateAllocation()
     {
-
-        $input = Request::all();
-
-
-
-
         try{
-
-
-            $form = Request::only(
-                'id',
-                'account_id',
-                'allocatable_id',
-                'allocatable_type',
-                'amount',
-                'month',
-                'percentage',
-                'project_id',
-                'purpose',
-                'year',
-                'activity_id'
-                );
-
+            $form = Request::all();
 
             $allocation = Allocation::findOrFail($form['id']);
-
-
             $allocation->account_id             =               $form['account_id'];
             $allocation->allocatable_id         =               $form['allocatable_id'];
             $allocation->allocatable_type       =               $form['allocatable_type'];
             $allocation->amount_allocated       =               $form['amount'];
+            if(!empty($form['month']))
             $allocation->allocation_month       =               $form['month'];
             $allocation->percentage_allocated   =               $form['percentage'];
             $allocation->project_id             =               $form['project_id'];
             $allocation->allocation_purpose     =               $form['purpose'];
+            if(!empty($form['year']))
             $allocation->allocation_year        =               $form['year'];
             if(!empty($form['activity_id']))
             $allocation->activity_id = $form['activity_id'];
+            if(!empty($form['objective_id']))
+            $allocation->objective_id = $form['objective_id'];
 
             $user = JWTAuth::parseToken()->authenticate();
             $allocation->allocated_by_id            =   (int)   $user->id;
@@ -302,7 +264,8 @@ class AllocationApi extends Controller
                                         'allocatable',
                                         'allocated_by',
                                         'project',
-                                        'account'
+                                        'account',
+                                        'objective'
                                     )->findOrFail($allocation_id);
 
 
@@ -344,9 +307,6 @@ class AllocationApi extends Controller
     public function getAllocations()
     {
         $input = Request::all();
-
-        //path params validation
-
 
         //not path params validation
         $allocation_id = $input['allocation_id'];

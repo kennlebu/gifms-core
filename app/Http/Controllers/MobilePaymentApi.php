@@ -48,6 +48,7 @@ use App\Models\BankingModels\BankBranch;
 use App\Exceptions\NotFullyAllocatedException;
 use App\Exceptions\ApprovalException;
 use App\Models\PaymentModels\VoucherNumber;
+use App\Models\ReportModels\ReportingObjective;
 
 class MobilePaymentApi extends Controller
 {
@@ -282,8 +283,11 @@ class MobilePaymentApi extends Controller
             foreach ($response->allocations as $key => $value) {
                 $project = Project::find((int)$value['project_id']);
                 $account = Account::find((int)$value['account_id']);
+                $objective = ReportingObjective::find((int)$value['objective_id']);
+
                 $response['allocations'][$key]['project']  =   $project;
                 $response['allocations'][$key]['account']  =   $account;
+                $response['allocations'][$key]['objective']=   $objective;
             }
 
             foreach ($response->logs as $key => $value) {

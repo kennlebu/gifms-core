@@ -44,6 +44,7 @@ use App\Exceptions\NotFullyAllocatedException;
 use App\Exceptions\ApprovalException;
 use App\Models\PaymentModels\VoucherNumber;
 use Excel;
+use App\Models\ReportModels\ReportingObjective;
 
 class InvoiceApi extends Controller
 {
@@ -318,11 +319,6 @@ class InvoiceApi extends Controller
      */
     public function updateInvoice()
     {
-
-        // $input = Request::all();
-
-
-
         try{
 
 
@@ -439,8 +435,6 @@ class InvoiceApi extends Controller
     {
         $input = Request::all();
         try {
-            
-            // $allocation = Invoice::findOrFail($invoice_id);
                    
             $deleted_allocation = Invoice::destroy($invoice_id);
 
@@ -522,9 +516,11 @@ class InvoiceApi extends Controller
             foreach ($response->allocations as $key => $value) {
                 $project = Project::find((int)$value['project_id']);
                 $account = Account::find((int)$value['account_id']);
+                $objective = ReportingObjective::find((int)$value['objective_id']);
                 
                 $response['allocations'][$key]['project']  =   $project;
                 $response['allocations'][$key]['account']  =   $account;
+                $response['allocations'][$key]['objective']=   $objective;
             }
 
             foreach ($response->logs as $key => $value) {
@@ -597,11 +593,6 @@ class InvoiceApi extends Controller
     public function allocateInvoice($invoice_id)
     {
         $input = Request::all();
-
-        //path params validation
-
-
-        //not path params validation
 
         return response('How about implementing allocateInvoice as a PATCH method ?');
     }
@@ -873,25 +864,12 @@ class InvoiceApi extends Controller
      */
     public function getDocumentById($invoice_id)
     {
-
         try{
-
-
             $invoice        = Invoice::findOrFail($invoice_id);
 
             $path           = '/invoices/'.$invoice->id.'/'.$invoice->invoice_document;
 
-            // $path_info      = pathinfo($path);
-
-            // $basename       = $path_info['basename'];
-
             $file_contents  = FTP::connection()->readFile($path);
-
-            // Storage::put('invoices/'.$invoice->id.'.temp', $file_contents);
-
-            // $url            = storage_path("app/invoices/".$invoice->id.'.temp');
-
-            // $file           = File::get($url);
 
             $response       = Response::make($file_contents, 200);
 
@@ -1437,7 +1415,7 @@ class InvoiceApi extends Controller
             $data[$key]['rejected_by']                  = $invoice->rejected_by;
             $data[$key]['approvals']                    = $invoice->approvals;
             $data[$key]['allocations']                  = $invoice->allocations;
-            $data[$key]['logs']                  = $invoice->logs;
+            $data[$key]['logs']                         = $invoice->logs;
             $data[$key]['vouchers']                     = $invoice->vouchers;
             $data[$key]['comments']                     = $invoice->comments;
             $data[$key]['program_activity']             = $invoice->program_activity;
@@ -1445,10 +1423,11 @@ class InvoiceApi extends Controller
             foreach ($invoice->allocations as $key1 => $value1) {
                 $project = Project::find((int)$value1['project_id']);
                 $account = Account::find((int)$value1['account_id']);
+                $objective = ReportingObjective::find((int)$value1['objective_id']);
                 $data[$key]['allocations'][$key1]['project']  =   $project;
                 $data[$key]['allocations'][$key1]['account']  =   $account;
+                $data[$key]['allocations'][$key1]['objective']=   $objective;
             }
-
         }
 
         return $data;

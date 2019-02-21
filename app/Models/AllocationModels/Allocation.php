@@ -30,5 +30,9 @@ class Allocation extends BaseModel
     public function program_activity()
     {
         return $this->belongsTo('App\Models\ActivityModels\Activity','activity_id');
+    } 
+    public function objective()
+    {
+        return $this->belongsTo('App\Models\ReportModels\ReportingObjective','objective_id');
     }
 }
