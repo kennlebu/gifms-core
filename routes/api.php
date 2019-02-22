@@ -5049,7 +5049,7 @@ Route::POST('/budget', 'BudgetApi@addBudget')->middleware('jwt.auth');
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::PUT('/budget', 'BudgetApi@updateBudget')->middleware('jwt.auth');
+Route::POST('/budget/update', 'BudgetApi@updateBudget')->middleware('jwt.auth');
 /**
  * DELETE deleteBudget
  * Summary: Deletes an budget

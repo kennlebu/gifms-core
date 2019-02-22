@@ -99,23 +99,31 @@ class BudgetApi extends Controller
 
         $budget = new Budget;
 
+        $DT = new \DateTime();
+        $dt_start_date  = $DT->createFromFormat('D M d Y H:i:s T +',$form['start_date']);
+        $dt_end_date    = $DT->createFromFormat('D M d Y H:i:s T +',$form['end_date']);
+        $start_date     = $dt_start_date->format('Y-m-d');
+        $end_date       = $dt_end_date->format('Y-m-d');
 
-            $DT = new \DateTime();
-
-            $dt_start_date  = $DT->createFromFormat('D M d Y H:i:s T +',$form['start_date']);
-            $dt_end_date    = $DT->createFromFormat('D M d Y H:i:s T +',$form['end_date']);
-            $start_date     = $dt_start_date->format('Y-m-d');
-            $end_date       = $dt_end_date->format('Y-m-d');
-
-            $budget->budget_desc                  =         $form['budget_desc'];
-            $budget->currency_id                  = (int)   $form['currency_id'];
-            $budget->start_date                   =         $start_date;
-            $budget->end_date                     =         $end_date;
-            $budget->created_by_id                = (int)   $this->current_user()->id;
-            $budget->create_action_by_id          = (int)   $this->current_user()->id;
-            $budget->status_id                    =         1;
+        $budget->budget_desc                  =         $form['budget_desc'];
+        $budget->currency_id                  = (int)   $form['currency_id'];
+        $budget->start_date                   =         $start_date;
+        $budget->end_date                     =         $end_date;
+        $budget->created_by_id                = (int)   $this->current_user()->id;
+        $budget->create_action_by_id          = (int)   $this->current_user()->id;
+        $budget->status_id                    =         1;
 
         if($budget->save()) {
+            if(!empty($form['project_id'])){
+                $exists = Project::whereHas('budget', function($query) use ($start_date, $end_date){
+                    $query->whereRaw('"'.date("Y-m-d").'" between `start_date` and `end_date`');  
+                })->where($form['project_id'])->exists();
+                file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , PHP_EOL.$exists , FILE_APPEND);
+                // $project = Project::find($form['project_id']);
+                // $project->disableLogging();
+                // $project->budget_id = $budget->id;
+                // $project->save();
+            }
 
             return Response()->json(array('msg' => 'Success: budget added','budget' => $budget), 200);
         }
@@ -153,23 +161,32 @@ class BudgetApi extends Controller
      */
     public function updateBudget()
     {
-        $form = Request::only(
-            'id',
-            'budget_desc',
-            'currency_id',
-            'donor_id',
-            'start_date',
-            'end_date'
-            );
+        $form = Request::all();
+
+        // $DT = new \DateTime();
+        // $dt_start_date  = $DT->createFromFormat('D M d Y H:i:s T +',$form['start_date']);
+        // $dt_end_date    = $DT->createFromFormat('D M d Y H:i:s T +',$form['end_date']);
+        $start_date     = $form['start_date'];
+        $end_date       = date($form['end_date']);
 
         $budget = Budget::find($form['id']);
 
-            $budget->budget_desc                  =         $form['budget_desc'];
-            $budget->currency_id                  = (int)   $form['currency_id'];
-            // $budget->start_date                   =         $form['start_date'];
-            // $budget->end_date                     =         $form['end_date'];
+        $budget->budget_desc                  =         $form['budget_desc'];
+        $budget->currency_id                  = (int)   $form['currency_id'];
+        $budget->start_date                   =         $start_date;
+        $budget->end_date                     =         $end_date;
 
         if($budget->save()) {
+            if(!empty($form['project_id'])){
+                $exists = Project::whereHas('budget', function($query) use ($start_date, $end_date){
+                    $query->whereRaw('"'.date("Y-m-d").'" between `start_date` and `end_date`');  
+                })->where('id', $form['project_id'])->exists();
+                file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , PHP_EOL.'It '.$exists , FILE_APPEND);
+                // $project = Project::find($form['project_id']);
+                // $project->disableLogging();
+                // $project->budget_id = $budget->id;
+                // $project->save();
+            }
 
             return Response()->json(array('msg' => 'Success: budget updated','budget' => $budget), 200);
         }
@@ -261,7 +278,7 @@ class BudgetApi extends Controller
                                 'currency',
                                 'created_by',
                                 'status',
-                                'items.project'
+                                'items.objective'
                             )->findOrFail($budget_id);
 
             foreach ($response->items as $key => $value) {
@@ -276,7 +293,7 @@ class BudgetApi extends Controller
 
         }catch(Exception $e){
 
-            $response =  ["error"=>"budget could not be found"];
+            $response =  ["error"=>"budget could not be found", 'msg'=>$e->getMessage()];
             return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
         }
     }
@@ -340,6 +357,12 @@ class BudgetApi extends Controller
             $dt = json_decode(json_encode(DB::select($sql)), true);
 
             $records_filtered = (int) $dt[0]['count'];
+        }
+
+        if(array_key_exists('my_assigned', $input)){
+            if($this->current_user()->hasRole(['program-manager'])){
+                $qb->where('created_by_id', $this->current_user()->id);
+            }
         }
 
 
@@ -451,7 +474,7 @@ class BudgetApi extends Controller
 
         foreach ($data as $key => $value) {
 
-            $budgets = Budget::find($data[$key]['id']);
+            $budgets = Budget::with('items.objective')->find($data[$key]['id']);
 
             $data[$key]['items']                    = $budgets->items;
             $data[$key]['currency']                 = $budgets->currency;
@@ -461,7 +484,6 @@ class BudgetApi extends Controller
 
         }
 
-        // $data = $this->remove0Totals($data);
         return $data;
     }
 

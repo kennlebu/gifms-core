@@ -15,9 +15,9 @@ class BudgetItem extends BaseModel
     {
         return $this->belongsTo('App\Models\ProjectsModels\Project','project_id');
     }
-    public function account()
+    public function objective()
     {
-        return $this->belongsTo('App\Models\AccountingModels\Account','account_id');
+        return $this->belongsTo('App\Models\ReportModels\ReportingObjective', 'objective_id');
     }
     
 }

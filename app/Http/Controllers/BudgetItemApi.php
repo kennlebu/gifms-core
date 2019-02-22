@@ -97,13 +97,11 @@ class BudgetItemApi extends Controller
 
         $budget_item = new BudgetItem;
 
-        $budget_item->budget_item_purpose           =            $form['budget_item_purpose'];
-        $budget_item->budget_id                     =      (int) $form['budget_id'];
-        // $budget_item->project_id                    =      (int) $form['project_id'];
-        $budget_item->account_id                    =      (int) $form['account_id'];
-        $budget_item->amount                        =   (double) $form['amount'];
-        $budget_item->created_by_id                 =      (int) $this->current_user()->id;
-        $budget_item->create_action_by_id           =      (int) $this->current_user()->id;
+        $budget_item->budget_id = (int) $form['budget_id'];
+        $budget_item->objective_id = (int) $form['objective_id'];
+        $budget_item->amount = (double) $form['amount'];
+        $budget_item->created_by_id = (int) $this->current_user()->id;
+        $budget_item->create_action_by_id = (int) $this->current_user()->id;
 
         if($budget_item->save()) {
             return Response()->json(array('msg' => 'Success: budget_item added','budget_item' => $budget_item), 200);
@@ -146,11 +144,9 @@ class BudgetItemApi extends Controller
 
         $budget_item = BudgetItem::find($form['id']);
 
-        $budget_item->budget_item_purpose           =            $form['budget_item_purpose'];
-        $budget_item->budget_id                     =      (int) $form['budget_id'];
-        // $budget_item->project_id                    =      (int) $form['project_id'];
-        $budget_item->account_id                    =      (int) $form['account_id'];
-        $budget_item->amount                        =   (double) $form['amount'];
+        $budget_item->budget_id = (int) $form['budget_id'];
+        $budget_item->objective_id = (int) $form['objective_id'];
+        $budget_item->amount = (double) $form['amount'];
 
         if($budget_item->save()) {
             return Response()->json(array('msg' => 'Success: budget_item updated','budget_item' => $budget_item), 200);
@@ -239,7 +235,7 @@ class BudgetItemApi extends Controller
 
         try{
 
-            $response   = BudgetItem::findOrFail($budget_item_id);
+            $response   = BudgetItem::with('objective')->findOrFail($budget_item_id);
            
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
 
@@ -464,12 +460,12 @@ class BudgetItemApi extends Controller
     public function append_relationships_objects($data = array()){
 
 
-        foreach ($data as $key => $value) {
+        // foreach ($data as $key => $value) {
 
-            $budget_items = BudgetItem::find($data[$key]['id']);
+        //     $budget_items = BudgetItem::find($data[$key]['id']);
 
 
-        }
+        // }
 
 
         return $data;
@@ -493,12 +489,12 @@ class BudgetItemApi extends Controller
     public function append_relationships_nulls($data = array()){
 
 
-        foreach ($data as $key => $value) {
+        // foreach ($data as $key => $value) {
 
 
 
 
-        }
+        // }
 
         return $data;
 
