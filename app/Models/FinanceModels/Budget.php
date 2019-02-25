@@ -5,13 +5,14 @@ namespace App\Models\FinanceModels;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\BaseModels\BaseModel;
+use App\Models\ProjectsModels\Project;
 
 class Budget extends BaseModel
 {
     //
     use SoftDeletes;
 
-    protected $appends = ['totals'];
+    protected $appends = ['totals','project'];
 
 
     public function items()
@@ -42,5 +43,14 @@ class Budget extends BaseModel
 
         return $totals;
 
+    }
+
+    public function getProjectAttribute(){
+        $project = Project::where('budget_id', $this->id)->first();
+        if(!empty($project)){
+            return $project;
+        }
+        else return null;
+        
     }
 }

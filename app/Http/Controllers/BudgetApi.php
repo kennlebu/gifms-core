@@ -115,14 +115,14 @@ class BudgetApi extends Controller
 
         if($budget->save()) {
             if(!empty($form['project_id'])){
-                $exists = Project::whereHas('budget', function($query) use ($start_date, $end_date){
-                    $query->whereRaw('"'.date("Y-m-d").'" between `start_date` and `end_date`');  
-                })->where($form['project_id'])->exists();
-                file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , PHP_EOL.$exists , FILE_APPEND);
-                // $project = Project::find($form['project_id']);
-                // $project->disableLogging();
-                // $project->budget_id = $budget->id;
-                // $project->save();
+                // $exists = Project::whereHas('budget', function($query) use ($start_date, $end_date){
+                //     $query->whereRaw('"'.date("Y-m-d").'" between `start_date` and `end_date`');  
+                // })->where($form['project_id'])->exists();
+                // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , PHP_EOL.$exists , FILE_APPEND);
+                $project = Project::find($form['project_id']);
+                $project->disableLogging();
+                $project->budget_id = $budget->id;
+                $project->save();
             }
 
             return Response()->json(array('msg' => 'Success: budget added','budget' => $budget), 200);
@@ -163,13 +163,21 @@ class BudgetApi extends Controller
     {
         $form = Request::all();
 
-        // $DT = new \DateTime();
-        // $dt_start_date  = $DT->createFromFormat('D M d Y H:i:s T +',$form['start_date']);
-        // $dt_end_date    = $DT->createFromFormat('D M d Y H:i:s T +',$form['end_date']);
-        $start_date     = $form['start_date'];
-        $end_date       = date($form['end_date']);
-
         $budget = Budget::find($form['id']);
+
+        if($budget->end_date != $form['end_date']){   
+            $DT = new \DateTime();
+            $dt_end_date    = $DT->createFromFormat('D M d Y H:i:s T +',$form['end_date']);
+            $end_date       = $dt_end_date->format('Y-m-d');
+        }
+        else $end_date = $form['end_date'];
+
+        if($budget->start_date != $form['start_date']){   
+            $DT = new \DateTime();
+            $dt_start_date  = $DT->createFromFormat('D M d Y H:i:s T +',$form['start_date']);
+            $start_date     = $dt_start_date->format('Y-m-d');
+        }
+        else $start_date = $form['start_date'];
 
         $budget->budget_desc                  =         $form['budget_desc'];
         $budget->currency_id                  = (int)   $form['currency_id'];
@@ -178,14 +186,27 @@ class BudgetApi extends Controller
 
         if($budget->save()) {
             if(!empty($form['project_id'])){
-                $exists = Project::whereHas('budget', function($query) use ($start_date, $end_date){
-                    $query->whereRaw('"'.date("Y-m-d").'" between `start_date` and `end_date`');  
-                })->where('id', $form['project_id'])->exists();
-                file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , PHP_EOL.'It '.$exists , FILE_APPEND);
-                // $project = Project::find($form['project_id']);
-                // $project->disableLogging();
-                // $project->budget_id = $budget->id;
-                // $project->save();
+                // Check if there is a running budget for that PID at the time
+                // $running = DB::select("select * from budgets
+                // right join projects on projects.budget_id = projects.id
+                // where ((DATE_ADD('".$start_date."', INTERVAL 1 DAY) between 
+                // cast(budgets.start_date as date) and cast(budgets.end_date as date)
+                // or DATE_SUB('".$end_date."', INTERVAL 1 DAY) between
+                // cast(budgets.start_date as date) and cast(budgets.end_date as datetime))
+                // or (budgets.start_date as date) 
+                // between DATE_ADD('".$start_date."', INTERVAL 1 DAY) and DATE_SUB('".$end_date."', INTERVAL 1 DAY)
+                // or cast(budgets.end_date as date) 
+                // between DATE_ADD('".$start_date."', INTERVAL 1 DAY) and DATE_SUB('".$end_date."', INTERVAL 1 DAY)))
+                // and projects.id is not null and projects.id = ".$form['project_id']." and budgets.deleted_at is null");
+
+                // $exists = Project::whereHas('budget', function($query) use ($start_date, $end_date){
+                //     $query->whereRaw('"'.date("Y-m-d").'" between `start_date` and `end_date`');  
+                // })->where('id', $form['project_id'])->first();
+                // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , PHP_EOL.json_encode($running) , FILE_APPEND);
+                $project = Project::find($form['project_id']);
+                $project->disableLogging();
+                $project->budget_id = $budget->id;
+                $project->save();
             }
 
             return Response()->json(array('msg' => 'Success: budget updated','budget' => $budget), 200);

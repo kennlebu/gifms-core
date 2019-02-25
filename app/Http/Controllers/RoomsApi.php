@@ -253,8 +253,6 @@ class RoomsApi extends Controller
             between DATE_ADD('".$from_datetime."', INTERVAL 1 MINUTE) and DATE_SUB('".$to_datetime."', INTERVAL 1 MINUTE)))
             and room_id = ".$booking->room_id." and deleted_at is null");
 
-            // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , PHP_EOL.json_encode($booked) , FILE_APPEND);
-
             if(!empty($booked)){
                 return response()->json(array('msg' => 'already booked'), 409);
             }
