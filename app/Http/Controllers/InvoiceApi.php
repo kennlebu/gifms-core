@@ -1720,7 +1720,6 @@ class InvoiceApi extends Controller
 
     public function withholdTax(){
         try{
-            file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , PHP_EOL.'Enters here' , FILE_APPEND);
             $input = Request::all();
 
             if(empty($input['withholding_tax']) && empty($input['withholding_vat'])){
