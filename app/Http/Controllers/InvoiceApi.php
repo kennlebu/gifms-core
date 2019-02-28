@@ -1718,6 +1718,48 @@ class InvoiceApi extends Controller
 
 
 
+    public function withholdTax(){
+        try{
+            file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , PHP_EOL.'Enters here' , FILE_APPEND);
+            $input = Request::all();
+
+            if(empty($input['withholding_tax']) && empty($input['withholding_vat'])){
+                return response()->json(['error'=>'Withhold at least one tax'], 422);
+            }
+
+            $invoice = Invoice::findOrFail($input['invoice_id']);
+            $invoice->disableLogging();
+            $log_text = '';
+            if(!empty($input['withholding_tax'])){
+                $invoice->withholding_tax = $input['withholding_tax'];
+            }
+            if(!empty($input['withholding_vat'])){
+                $invoice->withholding_vat = $input['withholding_vat'];
+            }
+
+            if(empty($input['withholding_vat']) && !empty($input['withholding_tax'])){
+                $log_text = 'Withheld Income Tax';
+            }
+            else if(!empty($input['withholding_vat']) && empty($input['withholding_tax'])){
+                $log_text = 'Withheld VAT';
+            }
+            else{
+                $log_text = 'Withheld VAT and Income Tax';
+            }
+
+            if($invoice->save()){
+                activity()
+                   ->performedOn($invoice)
+                   ->causedBy($this->current_user())
+                   ->log($log_text);
+                
+                return Response()->json(array('success' => 'Taxes withheld'), 200);
+            }
+        }
+        catch(Exception $e){
+            return response()->json(['error'=>'Something went wrong during processing', 'msg'=>$e->getMessage()], 500);
+        }
+    }
 
 
 }

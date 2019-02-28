@@ -3098,6 +3098,8 @@ Route::PATCH('/invoice/{invoice_id}/recall', 'InvoiceApi@recallInvoice')->middle
 
 Route::PATCH('/invoice/{invoice_id}/copy', 'InvoiceApi@copyInvoice')->middleware('jwt.auth');
 
+Route::POST('/invoice/withhold_tax', 'InvoiceApi@withholdTax')->middleware('jwt.auth');
+
 
 
 
