@@ -582,45 +582,6 @@ class InvoiceApi extends Controller
 
 
     /**
-     * Operation allocateInvoice
-     *
-     * Allocate invoice by ID.
-     *
-     * @param int $invoice_id ID of invoice to return object (required)
-     *
-     * @return Http response
-     */
-    public function allocateInvoice($invoice_id)
-    {
-        $input = Request::all();
-
-        return response('How about implementing allocateInvoice as a PATCH method ?');
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    /**
      * Operation approveInvoice
      *
      * Approve invoice by ID.
@@ -707,7 +668,9 @@ class InvoiceApi extends Controller
                         'payment_mode_id'               =>  $invoice->payment_mode_id, 
                         'amount'                        =>  $invoice->total, 
                         'payment_batch_id'              =>  "", 
-                        'bank_charges'                  =>  ""
+                        'bank_charges'                  =>  "",
+                        "withholding_tax"               =>  $invoice->withholding_tax,
+                        "withholding_vat"               =>  $invoice->withholding_vat
                     );
                     
                     // Pick USD account if currency is USD
@@ -761,25 +724,16 @@ class InvoiceApi extends Controller
 
     /**
      * Operation rejectInvoice
-     *
      * Reject invoice by ID.
-     *
      * @param int $invoice_id ID of invoice to return object (required)
-     *
      * @return Http response
      */
     public function rejectInvoice($invoice_id)
     {
-
-        $form = Request::only(
-            'rejection_reason'
-            );
+        $form = Request::only('rejection_reason');
         $user = JWTAuth::parseToken()->authenticate();
-        
-        $invoice = [];
-
         try{
-            $invoice   = Invoice::with( 
+            $invoice = Invoice::with( 
                                         'raised_by',
                                         'received_by',
                                         'raise_action_by',
@@ -795,7 +749,6 @@ class InvoiceApi extends Controller
                                         'vouchers',
                                         'comments'
                                     )->findOrFail($invoice_id);
-
            
             if (!$user->can("APPROVE_INVOICE_".$invoice->status_id)){
                 throw new ApprovalException("No approval permission");             
@@ -803,15 +756,13 @@ class InvoiceApi extends Controller
 
             $invoice->status_id = 9;
             $invoice->rejected_by_id            =   (int)   $user->id;
-            $invoice->rejected_at                 =   date('Y-m-d H:i:s');
-            $invoice->rejection_reason             =   $form['rejection_reason'];
+            $invoice->rejected_at               =   date('Y-m-d H:i:s');
+            $invoice->rejection_reason          =   $form['rejection_reason'];
 
             $invoice->disableLogging(); //! Do not log the update
             if($invoice->save()) {
 
-                try{
                 Mail::queue(new NotifyInvoice($invoice));
-                }catch(Exception $e){}
 
                 activity()
                    ->performedOn($invoice)
@@ -834,79 +785,39 @@ class InvoiceApi extends Controller
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     /**
      * Operation getDocumentById
-     *
      * get invoice document by ID.
-     *
      * @param int $invoice_id ID of invoice to return object (required)
-     *
      * @return Http response
      */
     public function getDocumentById($invoice_id)
     {
         try{
             $invoice        = Invoice::findOrFail($invoice_id);
-
             $path           = '/invoices/'.$invoice->id.'/'.$invoice->invoice_document;
-
             $file_contents  = FTP::connection()->readFile($path);
-
             $response       = Response::make($file_contents, 200);
-
             $response->header('Content-Type', 'application/pdf');
-
             return $response;  
-        }catch (Exception $e ){            
-
-            $response       = Response::make("", 500);
-
+        }
+        catch (Exception $e){
+            $response = Response::make("", 500);
             $response->header('Content-Type', 'application/pdf');
-
-            return $response;  
-
+            return $response;
         }
     }
 
 
 
-
-
-
-
-
-
     /**
      * Operation getPaymentVoucherById
-     *
      * get payment Voucher by ID.
-     *
      * @param int $invoice_id ID of invoice to return object (required)
-     *
      * @return Http response
      */
     public function getPaymentVoucherById($invoice_id)
     {
-
         try{
             $invoice = Invoice::findOrFail($invoice_id);
             $payment = Payment::with('voucher_number')->where('payable_id', $invoice->id)->where('payable_type', 'invoices')->first();

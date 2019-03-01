@@ -13,7 +13,7 @@ class Payment extends BaseModel
     //
     use SoftDeletes;
 
-    protected $appends = ['simple_date', 'bank_transaction'];
+    protected $appends = ['simple_date', 'bank_transaction', 'net_amount'];
     
     public function payable()
     {
@@ -48,8 +48,6 @@ class Payment extends BaseModel
         return $this->belongsTo('App\Models\PaymentModels\PaymentStatus');
     }
     public function getSimpleDateAttribute(){
-        // $myDateTime = DateTime::createFromFormat('Y-m-d H:i:s', $this->attributes['created_at']);
-        // return $myDateTime->format('Ymd');
         $timestamp = strtotime($this->attributes['created_at']); 
         return $new_date = date('Ymd', $timestamp);
     }
@@ -63,5 +61,21 @@ class Payment extends BaseModel
             return BankTransaction::where('chai_ref', $voucher->voucher_number)->first();
         else
             return null;
+    }
+
+    public function getNetAmountAttribute(){
+        $net_amount = $this->amount;
+        if(!empty($this->amount)){
+            if(!empty($this->income_tax_amount_withheld)){
+                $net_amount -= $this->income_tax_amount_withheld;
+            }
+            
+            if(!empty($this->vat_amount_withheld)){
+                $vat_withhold_amount = (6/100)*$this->vat_amount_withheld;
+                $net_amount -= $this->vat_amount_withheld;
+            }
+            return $net_amount;
+        }
+        else return 0;
     }
 }

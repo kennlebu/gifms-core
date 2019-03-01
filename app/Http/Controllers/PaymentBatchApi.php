@@ -36,37 +36,14 @@ class PaymentBatchApi extends Controller
 {
 
     private $default_payment_status = '';
-    // private $approvable_statuses = [];
     /**
      * Constructor
      */
     public function __construct()
     {        
         $status = PaymentStatus::where('default_status','1')->first();
-        // $this->approvable_statuses = PaymentBatch::where('approvable','1')->get();
         $this->default_payment_status = $status->id;
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     
 
@@ -153,23 +130,6 @@ class PaymentBatchApi extends Controller
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     /**
      * Operation completePaymentBatchUpload
      *
@@ -239,12 +199,9 @@ class PaymentBatchApi extends Controller
 
 
 
-
     /**
-     * request Bank Signitorie
-     * 
+     * request Bank Signitories
      * Send mail request bank signitories to approve payments
-     * 
      * @return Http response
      */
     public function requestBankSignitories($payment_batch_id){
@@ -259,31 +216,9 @@ class PaymentBatchApi extends Controller
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     /**
      * Operation getCSVData
-     *
      * get data for generating CSV.
-     *
-     *
      * @return Http response
      */
     public function getCSVData(){
@@ -305,7 +240,7 @@ class PaymentBatchApi extends Controller
 
                     $eft_data = array('date'=>'', 'bank_code'=>'', 'branch'=>'','account'=>'','amount'=>'','chaipv'=>'','acct_name'=>'');
 
-                    $eft_data['amount'] = $payment->amount;
+                    $eft_data['amount'] = $payment->net_amount;
                     $eft_data['date'] = date('Ymd', strtotime($payment->created_at));
 
                     $voucher_no = '';
@@ -351,7 +286,7 @@ class PaymentBatchApi extends Controller
                 foreach ($payments as $payment) {
 
                     $rtgs_data = array('date'=>'', 'bank_code'=>'','account'=>'','acct_name'=>'','amount'=>'','chaipv'=>'','channel'=>'BANK');
-                    $rtgs_data['amount'] = $payment->amount;
+                    $rtgs_data['amount'] = $payment->net_amount;
                     $rtgs_data['date'] = date('Ymd', strtotime($payment->created_at));
 
                     $voucher_no = '';
@@ -400,7 +335,7 @@ class PaymentBatchApi extends Controller
 
                     $mmts_data = array('date'=>'', 'bank_code'=>'99001','phone'=>'','mobile_name'=>'','bank_name'=>'NIC','amount'=>'','chaipv'=>'');
 
-                    $mmts_data['amount'] = $payment->amount;
+                    $mmts_data['amount'] = $payment->net_amount;
                     $mmts_data['date'] = date('Ymd', strtotime($payment->created_at));
 
                     $voucher_no = '';
@@ -476,10 +411,7 @@ class PaymentBatchApi extends Controller
 
 /**
      * Operation uploadBankFile
-     *
      * upload the bank file
-     *
-     *
      * @return Http response
      */
     public function uploadBankFile(){
@@ -610,7 +542,7 @@ class PaymentBatchApi extends Controller
 
                             // Send email
                             if($row['notify_vendor'])
-                            Mail::queue(new NotifyPayment($invoice, $payment->payable_type));
+                            Mail::queue(new NotifyPayment($invoice, $payment));
                         }
                         // Change advance status
                         if($payment->payable_type=='advances'){
@@ -620,7 +552,7 @@ class PaymentBatchApi extends Controller
 
                             // Send email
                             if($row['notify_vendor'])
-                            Mail::queue(new NotifyPayment($advance, $payment->payable_type));
+                            Mail::queue(new NotifyPayment($advance, $payment));
                         }
                         // Change claim status
                         if($payment->payable_type=='claims'){
@@ -630,7 +562,7 @@ class PaymentBatchApi extends Controller
 
                             // Send email
                             if($row['notify_vendor'])
-                            Mail::queue(new NotifyPayment($claim, $payment->payable_type));
+                            Mail::queue(new NotifyPayment($claim, $payment));
                         }
                     }
 
@@ -644,7 +576,7 @@ class PaymentBatchApi extends Controller
 
                         // Send email
                         if($row['notify_vendor'])
-                        Mail::queue(new NotifyPayment($mobile_payment, $row['payable_type']));
+                        Mail::queue(new NotifyPayment($mobile_payment, $row['payable_type'], 'text'));
                     }
                 }
 

@@ -20,8 +20,12 @@
                 @elseif ($payable_type=='invoices') 
                     Your Invoice Ref.: {{$payable->external_ref}} for {{$payable->expense_desc}} of amount {{$payable->currency->currency_name}} {{number_format($payable->total, 2)}}
                     has been paid successfully. 
+                    @if(!empty($payable->withholding_tax) && !empty($payable->withholding_vat))
+                    Net amount paid is {{$payment->net_amount}} and tax of 
+                        @if(!empty($payable->withholding_tax)) {{$payable->withholding_tax}} (Income tax), @endif 
+                        @if(!empty($payable->withholding_tax)) {{$payable->withholding_vat}} (VAT)@endif  has been withheld. 
+                    @endif
                 @endif
-
             </p>
             <p>Should you have any questions, or queries on the above, please do not hesitate to get in touch with us via:<br/><br/> 3rd flr, Timau Plaza, Arwings Kodhek Road,<br/> P O Box 2011-00100 Nairobi, Kenya<br/> (t) : 254 20 514 3100/5<br/> (e) :
                 <a href="mailto:jayuma@clintonhealthaccess.org">jayuma@clintonhealthaccess.org<a/><br/>

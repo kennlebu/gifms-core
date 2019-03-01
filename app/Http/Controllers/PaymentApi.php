@@ -34,250 +34,6 @@ class PaymentApi extends Controller
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-
-    /**
-     * Operation addPayment
-     *
-     * Add a new payment.
-     *
-     *
-     * @return Http response
-     */
-    public function addPayment()
-    {
-        $input = Request::all();
-
-        //path params validation
-
-
-        //not path params validation
-        if (!isset($input['body'])) {
-            throw new \InvalidArgumentException('Missing the required parameter $body when calling addPayment');
-        }
-        $body = $input['body'];
-
-
-        return response('How about implementing addPayment as a POST method ?');
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    /**
-     * Operation updatePayment
-     *
-     * Update an existing payment.
-     *
-     *
-     * @return Http response
-     */
-    public function updatePayment()
-    {
-        $input = Request::all();
-
-        //path params validation
-
-
-        //not path params validation
-        if (!isset($input['body'])) {
-            throw new \InvalidArgumentException('Missing the required parameter $body when calling updatePayment');
-        }
-        $body = $input['body'];
-
-
-        return response('How about implementing updatePayment as a PUT method ?');
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    /**
-     * Operation getPaymentById
-     *
-     * Find payment by ID.
-     *
-     * @param int $payment_id ID of payment to return object (required)
-     *
-     * @return Http response
-     */
-    public function getPaymentById($payment_id)
-    {
-        $input = Request::all();
-
-        //path params validation
-
-
-        //not path params validation
-
-        return response('How about implementing getPaymentById as a GET method ?');
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    /**
-     * Operation deletePayment
-     *
-     * Deletes an payment.
-     *
-     * @param int $payment_id payment id to delete (required)
-     *
-     * @return Http response
-     */
-    public function deletePayment($payment_id)
-    {
-        $input = Request::all();
-
-        //path params validation
-
-
-        //not path params validation
-
-        return response('How about implementing deletePayment as a DELETE method ?');
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    /**
-     * Operation getDocumentById
-     *
-     * get payment document by ID.
-     *
-     * @param int $payment_id ID of payment to return object (required)
-     *
-     * @return Http response
-     */
-    public function getDocumentById($payment_id)
-    {
-        $input = Request::all();
-
-        //path params validation
-
-
-        //not path params validation
-
-        return response('How about implementing getDocumentById as a GET method ?');
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     
     /**
      * Operation getPayments
@@ -289,8 +45,6 @@ class PaymentApi extends Controller
      */
     public function getPayments()
     {
-
-
         $input = Request::all();
         //query builder
         $qb = DB::table('payments');
@@ -303,58 +57,32 @@ class PaymentApi extends Controller
         $total_records          = $qb->count();
         $records_filtered       = 0;
 
-
-
-
-
         //if batch is set
-
         if(array_key_exists('batch', $input)){
-
             $batch_ = (int) $input['batch'];
 
             if($batch_ >0){
                 $qb->where('payment_batch_id', $input['batch']);
             }
-
-
-
-
-            // $total_records          = $qb->count();     //may need this
         }
-
-
-
-
-        // $qb->where('requested_by_id',$this->current_user()->id);
-
-
 
         //searching
         if(array_key_exists('searchval', $input)){
-            $qb->where(function ($query) use ($input) {
-                
+            $qb->where(function ($query) use ($input) {                
                 $query->orWhere('id','like', '\'%' . $input['searchval']. '%\'');
                 $query->orWhere('ref','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('payable_type','like', '\'%' . $input['searchval']. '%\'');
                 $query->orWhere('paid_to_bank_account_no','like', '\'%' . $input['searchval']. '%\'');
                 $query->orWhere('paid_to_name','like', '\'%' . $input['searchval']. '%\'');
                 $query->orWhere('payment_desc','like', '\'%' . $input['searchval']. '%\'');
-
             });
-
-            // $records_filtered       =  $qb->count(); //doesn't work
 
             $sql = Payment::bind_presql($qb->toSql(),$qb->getBindings());
             $sql = str_replace("*"," count(*) AS count ", $sql);
             $dt = json_decode(json_encode(DB::select($sql)), true);
 
             $records_filtered = (int) $dt[0]['count'];
-            // $records_filtered = 30;
-
-
         }
-
 
         //ordering
         if(array_key_exists('order_by', $input)&&$input['order_by']!=''){
@@ -363,89 +91,56 @@ class PaymentApi extends Controller
             if(array_key_exists('order_dir', $input)&&$input['order_dir']!=''){                
                 $order_direction = $input['order_dir'];
             }
-
             $qb->orderBy($order_column_name, $order_direction);
-        }else{
-            //$qb->orderBy("project_code", "asc");
         }
 
         //limit
         if(array_key_exists('limit', $input)){
-
-
             $qb->limit($input['limit']);
-
-
         }
 
-
-
-
-            //if currency is set
-
+        //if currency is set
         if(array_key_exists('currency', $input)){
-
             $currency = (int) $input['currency'];
-
             if($currency >0){
                 $qb->where('currency_id', $input['currency']);
             }
-
         }
-            //if mode is set
 
         if(array_key_exists('mode', $input)){
-
             $mode = (int) $input['mode'];
-
             if($mode >0){
                 $qb->where('payment_mode_id', $input['mode']);
             }
-
         }
 
         //migrated
         if(array_key_exists('migrated', $input)){
-
             $mig = (int) $input['migrated'];
-
             if($mig==0){
                 $qb->whereNull('migration_id');
             }else if($mig==1){
                 $qb->whereNotNull('migration_id');
             }
-
-
         }
+
         //unbatched
         if(array_key_exists('unbatched', $input)){
-
             $mig = (int) $input['unbatched'];
-
-            // $qb->whereNull('payment_batch_id');
-            // $qb->whereNotNull('payable_type');
             $qb->where('status_id',1);
         }
-
-
-
 
         if(array_key_exists('datatables', $input)){
 
             //searching
-            $qb->where(function ($query) use ($input) {
-                
+            $qb->where(function ($query) use ($input) {                
                 $query->orWhere('id','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('ref','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('payable_type','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('paid_to_bank_account_no','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('paid_to_name','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('payment_desc','like', '\'%' . $input['search']['value']. '%\'');
-
             });
-
-
-
 
             $sql = Payment::bind_presql($qb->toSql(),$qb->getBindings());
             $sql = str_replace("*"," count(*) AS count ", $sql);
@@ -453,51 +148,24 @@ class PaymentApi extends Controller
 
             $records_filtered = (int) $dt[0]['count'];
 
-
             //ordering
             $order_column_id    = (int) $input['order'][0]['column'];
             $order_column_name  = $input['columns'][$order_column_id]['order_by'];
             $order_direction    = $input['order'][0]['dir'];
 
-
-
-            // if ($order_column_id == 0){
-            //     $order_column_name = "created_at";
-            // }
-            // if ($order_column_id == 1){
-            //     $order_column_name = "id";
-            // }
-
             if($order_column_name!=''){
-
                 $qb->orderBy($order_column_name, $order_direction);
-
             }
-
-
-
-
-
 
             //limit $ offset
             if((int)$input['start']!= 0 ){
-
-                $response_dt    =   $qb->limit($input['length'])->offset($input['start']);
-
+                $response_dt = $qb->limit($input['length'])->offset($input['start']);
             }else{
                 $qb->limit($input['length']);
             }
 
-
-
-
-
             $sql = Payment::bind_presql($qb->toSql(),$qb->getBindings());
-
-            // $response_dt = DB::select($qb->toSql(),$qb->getBindings());         //pseudo
             $response_dt = DB::select($sql);
-
-
             $response_dt = json_decode(json_encode($response_dt), true);
 
             $response_dt    = $this->append_relationships_objects($response_dt);
@@ -507,10 +175,8 @@ class PaymentApi extends Controller
                 $total_records,
                 $records_filtered
                 );
-
-
-        }else{
-
+        }
+        else {
             $sql            = Payment::bind_presql($qb->toSql(),$qb->getBindings());
             $response       = json_decode(json_encode(DB::select($sql)), true);
             if(!array_key_exists('lean', $input)){
@@ -518,41 +184,14 @@ class PaymentApi extends Controller
                 $response       = $this->append_relationships_nulls($response);
             }
         }
-
-
-
-
+        
         return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     public function append_relationships_objects($data = array()){
 
-        // print_r($data);
-
         foreach ($data as $key => $value) {
-
             $payment = Payment::with('payable.project_manager','voucher_number')->find($data[$key]['id']);
 
             !empty($payment->payable) && ($data[$key]['payable'] = $payment->payable);
@@ -569,75 +208,39 @@ class PaymentApi extends Controller
             !empty($payment->voucher_number) && ($data[$key]['voucher_number'] = $payment->voucher_number);
 
         }
-
         return $data;
-
-
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
     public function append_relationships_nulls($data = array()){
-
-
         foreach ($data as $key => $value) {
-
             if(!empty($value["payable"]) && $value["payable"]==null){
-                $data[$key]['payable'] = array("expense_desc"=>"N/A");
-                
+                $data[$key]['payable'] = array("expense_desc"=>"N/A");                
             }
             if(!empty($value["debit_bank_account"]) && $value["debit_bank_account"]==null){
-                $data[$key]['debit_bank_account'] = array("title"=>"N/A","account_number"=>"N/A");
-                
+                $data[$key]['debit_bank_account'] = array("title"=>"N/A","account_number"=>"N/A");                
             }
             if(!empty($value["currency"]) && $value["currency"]==null){
-                $data[$key]['currency'] = array("currency_name"=>"N/A");
-                
+                $data[$key]['currency'] = array("currency_name"=>"N/A");                
             }
             if(!empty($value["paid_to_bank"]) && $value["paid_to_bank"]==null){
-                $data[$key]['paid_to_bank'] = array("bank_name"=>"N/A");
-                
+                $data[$key]['paid_to_bank'] = array("bank_name"=>"N/A");                
             }
             if(!empty($value["paid_to_bank_branch"]) && $value["paid_to_bank_branch"]==null){
-                $data[$key]['paid_to_bank_branch'] = array("branch_name"=>"N/A");
-                
+                $data[$key]['paid_to_bank_branch'] = array("branch_name"=>"N/A");                
             }
             if(!empty($value["payment_mode"]) && $value["payment_mode"]==null){
-                $data[$key]['payment_mode'] = array("payment_mode_description"=>"N/A");
-                
+                $data[$key]['payment_mode'] = array("payment_mode_description"=>"N/A");                
             }
             if(!empty($value["payment_batch"]) && $value["payment_batch"]==null){
-                $data[$key]['payment_batch'] = array("ref"=>"N/A");
-                
+                $data[$key]['payment_batch'] = array("ref"=>"N/A");                
             }
             if(!empty($value["voucher_number"]) && $value["voucher_number"]==null){
-                $data[$key]['voucher_number'] = array("voucher_number"=>"N/A");
-                
+                $data[$key]['voucher_number'] = array("voucher_number"=>"N/A");                
             }
-
-
         }
 
         return $data;
-
-
     }
 
 
@@ -677,8 +280,7 @@ class PaymentApi extends Controller
         } catch(\Exception $e){                    
             $res['payable_type'] = 'missing';
             // array_push($result, $res);
-        }
-        
+        }        
     }
 
 

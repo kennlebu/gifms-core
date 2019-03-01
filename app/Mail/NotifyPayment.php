@@ -20,18 +20,23 @@ class NotifyPayment extends Mailable
     protected $payable;
     protected $accountant;
     protected $payable_type;
-    // protected $director;
+    protected $payment;
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($payable, $payable_type)
+    public function __construct($payable, $payment, $type=null)
     {
-        $this->payable_type = $payable_type;
-        $this->payable = $payable;
-        
-        $this->accountant           = Staff::findOrFail(    (int)   Config::get('app.accountant_id'));
+        if(empty($type)){
+            $this->payable_type = $payment->payable_type;
+        }
+        else {
+            $this->payable_type = $payment;
+        }
+        $this->payable = $payable;    
+        $this->payment = $payment;    
+        $this->accountant = Staff::findOrFail((int) Config::get('app.accountant_id'));
     }
 
     /**
@@ -41,15 +46,13 @@ class NotifyPayment extends Mailable
      */
     public function build()
     {
-
         $ccs = [] ;
         $ccs[0] = $this->accountant->email;
 
         $this->view('emails/notify_payment')         
             ->replyTo([
                     'email' => Config::get('mail.reply_to')['address'],
-
-                ]);  
+                ]);
 
         if($this->payable_type == 'advances'){
 
@@ -92,6 +95,7 @@ class NotifyPayment extends Mailable
 
             return $this->to($this->payable->supplier->email)
                     ->with([
+                        'payment' => $this->payment,
                         'payable_type' => $this->payable_type,
                         'payable' => $this->payable,
                         'addressed_to' => $this->payable->supplier->supplier_name,

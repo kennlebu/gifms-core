@@ -179,13 +179,14 @@ class Controller extends BaseController
         $payment->payment_batch_id          =   $payable['payment_batch_id'];
         $payment->bank_charges              =   $payable['bank_charges'];
         $payment->status_id                 =   $default_status;
+        if(!empty($payable['withholding_vat']))
+        $payment->vat_amount_withheld       =   $payable['withholding_vat'];
+        if(!empty($payable['withholding_tax']))
+        $payment->income_tax_amount_withheld=   $payable['withholding_tax'];
 
         if($payment->save()) {
-
-            $payment->ref                        = "CHAI/PYMT/#$payment->id/".date_format($payment->created_at,"Y/m/d");
+            $payment->ref                   = "CHAI/PYMT/#$payment->id/".date_format($payment->created_at,"Y/m/d");
             $payment->save();
-            
-            // return Response()->json(array('success' => 'Payable Added','payment' => $payment), 200);
         }
     }
 
