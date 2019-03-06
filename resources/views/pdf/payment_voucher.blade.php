@@ -133,7 +133,9 @@
                             <span>
                                 <strong>{{$vendor}} </strong>
                                 @if($payable_type=='Invoice')
-                                - {{$payable->currency->currency_name}} {{number_format($payment->net_amount,2)}} @endif
+                                - {{$payable->currency->currency_name}} 
+                                @if($payment) {{number_format($payment->net_amount,2)}} @else {{number_format($payable->total,2)}} @endif 
+                                @endif
                             </span> 
                             @if($payable_type=='Invoice')
                                 <br/><strong>KRA:</strong> 
@@ -193,7 +195,7 @@
                             {{$payable->expense_desc}}
                         </td>
                         <td style="border: 1px solid #000000; border-top: 0px solid #c0c0c0;" colspan="2">
-                            @if($payable_type=='Invoice')
+                            @if($payable_type=='Invoice' && $payment)
                             <strong>{{number_format($payment->net_amount,2)}}</strong>
                             @else
                             <strong>{{number_format($payable->total,2)}}</strong>
