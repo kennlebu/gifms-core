@@ -15,8 +15,6 @@ class Invoice extends BaseModel
     //
     use SoftDeletes;
 
-    // use LogsActivity;
-
     protected $fillable = [
         'ref',
         'expense_desc',
@@ -62,7 +60,7 @@ class Invoice extends BaseModel
         'lpo_id'
     ];
 
-    protected $appends = ['amount_allocated', 'bank_transaction'];
+    protected $appends = ['amount_allocated', 'bank_transaction', 'bank_transactions'];
 
     
     public function raised_by()
@@ -158,5 +156,19 @@ class Invoice extends BaseModel
             return $payment->bank_transaction;
         }
         else return null;
+    }
+
+    public function getBankTransactionsAttribute(){
+        $payment = Payment::where('payable_id', $this->attributes['id'])
+                    ->where('payable_type', 'invoices')
+                    ->get();
+                
+        $bank_trans = [];
+        foreach($payment as $p){
+            if(!empty($p->bank_transaction)){
+                $bank_trans[] = $p->bank_transaction;
+            }
+        }
+        return $bank_trans;
     }
 }

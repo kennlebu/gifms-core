@@ -101,17 +101,32 @@ class PaymentBatchApi extends Controller
                     if($payment->payable_type == 'invoices'){
                         $invoice                = Invoice::find($payment->payable_id);
                         $invoice->status_id     = $invoice->status->next_status_id;
+                        $invoice->disableLogging();
                         $invoice->save();
+                        activity()
+                            ->performedOn($invoice)
+                            ->causedBy($user)
+                            ->log('confirmed & processed payment');
                     }
                     elseif($payment->payable_type == 'advances'){
                         $advance                = Advance::find($payment->payable_id);
                         $advance->status_id     = $advance->status->next_status_id;
+                        $advance->disableLogging();
                         $advance->save();
+                        activity()
+                            ->performedOn($advance)
+                            ->causedBy($user)
+                            ->log('confirmed & processed payment');
                     }
                     elseif($payment->payable_type == 'claims'){
                         $claim                = Claim::find($payment->payable_id);
                         $claim->status_id     = $claim->status->next_status_id;
+                        $claim->disableLogging();
                         $claim->save();
+                        activity()
+                            ->performedOn($claim)
+                            ->causedBy($user)
+                            ->log('confirmed & processed payment');
                     }
 
 
@@ -142,6 +157,7 @@ class PaymentBatchApi extends Controller
     {
 
         $input = Request::all();
+        $user = $this->current_user();
 
         try{
 
@@ -169,19 +185,35 @@ class PaymentBatchApi extends Controller
                     $invoice                = Invoice::find($payment->payable_id);
                     // $invoice->status_id     = $invoice->status->next_status_id;
                     $invoice->status_id     = 7;
+                    $invoice->disableLogging();
                     $invoice->save();
+                    activity()
+                            ->performedOn($invoice)
+                            ->causedBy($user)
+                            ->log('uploaded payment to bank');
+
                 }
                 elseif($payment->payable_type == 'advances'){
                     $advance                = Advance::find($payment->payable_id);
                     // $advance->status_id     = $advance->status->next_status_id;
                     $advance->status_id     = 7;
+                    $advance->disableLogging();
                     $advance->save();
+                    activity()
+                            ->performedOn($advance)
+                            ->causedBy($user)
+                            ->log('uploaded payment to bank');
                 }
                 elseif($payment->payable_type == 'claims'){
                     $claim                = Claim::find($payment->payable_id);
                     // $claim->status_id     = $claim->status->next_status_id;
                     $claim->status_id     = 7;
+                    $claim->disableLogging();
                     $claim->save();
+                    activity()
+                            ->performedOn($claim)
+                            ->causedBy($user)
+                            ->log('uploaded payment to bank');
                 }
             }
 

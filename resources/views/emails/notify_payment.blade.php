@@ -24,6 +24,7 @@
                     Net amount paid is {{$payment->net_amount}} and tax of 
                         @if(!empty($payable->withholding_tax)) {{$payable->withholding_tax}} (Income tax), @endif 
                         @if(!empty($payable->withholding_tax)) {{$payable->withholding_vat}} (VAT)@endif  has been withheld. 
+                        The withheld taxes shall be remitted to KRA by the 20th of the next month.
                     @endif
                 @endif
             </p>
