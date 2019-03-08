@@ -3348,6 +3348,8 @@ Route::POST('/payment/get_by_voucher', 'PaymentApi@getPaymentByPV')->middleware(
  */
 Route::POST('/payments/search', 'PaymentApi@searchTransactions')->middleware('jwt.auth');
 
+Route::GET('/payments/download-tax-file', 'PaymentApi@downloadTaxFile')->middleware('jwt.auth');
+
 
 
 

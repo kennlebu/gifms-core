@@ -656,140 +656,6 @@ class PaymentBatchApi extends Controller
 
 
 
-
-    
-    /**
-     * Operation updatePaymentBatch
-     *
-     * Update an existing payment_batch.
-     *
-     *
-     * @return Http response
-     */
-    public function updatePaymentBatch()
-    {
-        $input = Request::all();
-
-        //path params validation
-
-
-        //not path params validation
-        if (!isset($input['body'])) {
-            throw new \InvalidArgumentException('Missing the required parameter $body when calling updatePaymentBatch');
-        }
-        $body = $input['body'];
-
-
-        return response('How about implementing updatePaymentBatch as a PUT method ?');
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    /**
-     * Operation deletePaymentBatch
-     *
-     * Deletes an payment_batch.
-     *
-     * @param int $payment_batch_id payment_batch id to delete (required)
-     *
-     * @return Http response
-     */
-    public function deletePaymentBatch($payment_batch_id)
-    {
-        $input = Request::all();
-
-        //path params validation
-
-
-        //not path params validation
-
-        return response('How about implementing deletePaymentBatch as a DELETE method ?');
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    /**
-     * Operation getPaymentBatchById
-     *
-     * Find payment_batch by ID.
-     *
-     * @param int $payment_batch_id ID of payment_batch to return object (required)
-     *
-     * @return Http response
-     */
-    public function getPaymentBatchById($payment_batch_id)
-    {
-        $input = Request::all();
-
-        //path params validation
-
-
-        //not path params validation
-
-        return response('How about implementing getPaymentBatchById as a GET method ?');
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     
     /**
      * Operation getPaymentBatches
@@ -967,33 +833,12 @@ class PaymentBatchApi extends Controller
         // print_r($data);
 
         foreach ($data as $key => $value) {
-
-            $mobile_payment = PaymentBatch::find($data[$key]['id']);
-            
-
+            $mobile_payment = PaymentBatch::find($data[$key]['id']);         
             $data[$key]['payment_modes']                      = $mobile_payment->payment_modes;
-            // $data[$key]['payable']                      = $mobile_payment->payable;
-            // $data[$key]['debit_bank_account']           = $mobile_payment->debit_bank_account;
-            // $data[$key]['currency']                     = $mobile_payment->currency;
-            // $data[$key]['paid_to_bank']                 = $mobile_payment->paid_to_bank;
-            // $data[$key]['paid_to_bank_branch']          = $mobile_payment->paid_to_bank_branch;
-            // $data[$key]['payment_mode']                 = $mobile_payment->payment_mode;
-            // $data[$key]['payment_batch']                = $mobile_payment->payment_batch;
-
         }
 
         return $data;
-
-
     }
-
-
-
-
-
-
-
-
 
 
     public function pad_zeros($desired_length, $data){
@@ -1016,32 +861,9 @@ class PaymentBatchApi extends Controller
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
     public function append_relationships_nulls($data = array()){
-
-
-        foreach ($data as $key => $value) {
-        }
-
+        // foreach ($data as $key => $value) {
+        // }
         return $data;
-
-
     }
 }

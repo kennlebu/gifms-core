@@ -574,6 +574,41 @@ class PaymentApi extends Controller
     }
 
 
+    public function downloadTaxFile(){
+        try{
+            $input = Request::all();
+            $month = $input['month'];
+            $currency= $input['currency'];
+            $payments = Payment::whereHas('payment_batch', function($query) use ($month){
+                $query->whereMonth('created_at', $month);  
+            })->where('currency_id', $currency)
+            // ->whereRaw('vat_amount_withheld is not null or income_tax_amount_withheld is not null')
+            ->where(function ($query) {
+                $query->orWhereNotNull('vat_amount_withheld');
+                $query->orWhereNotNull('income_tax_amount_withheld');
+            })
+            ->get();
+
+            $response_array = [];
+            foreach($payments as $payment) {
+                $line = array(
+                        'vendor'=>$payment->paid_to_name, 
+                        'tax_pin'=>$payment->payable->supplier->tax_pin, 
+                        'invoice_no'=>$payment->payable->external_ref, 
+                        'invoice_date'=>$payment->payable->invoice_date, 
+                        'taxable_amount'=>$payment->payable->total
+                    );
+
+                $response_array[] = $line;
+            }
+            return response()->json($response_array, 200);
+        }
+        catch(Exception $e){
+            return response()->json(['msg'=>"Something went wrong", 'error'=>$e->getMessage()], 500,array(),JSON_PRETTY_PRINT);
+        }
+    }
+
+
 
 
 
