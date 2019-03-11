@@ -42,6 +42,7 @@ use App\Exceptions\NotFullyAllocatedException;
 use App\Exceptions\ApprovalException;
 use PDF;
 use App\Models\ReportModels\ReportingObjective;
+use App\Models\ActivityModels\Activity;
 
 class ClaimApi extends Controller
 {
@@ -268,10 +269,12 @@ class ClaimApi extends Controller
                 $project = Project::find((int)$value['project_id']);
                 $account = Account::find((int)$value['account_id']);
                 $objective = ReportingObjective::find((int)$value['objective_id']);
+                $program_activity = Activity::find((int)$value['activity_id']);
 
                 $response['allocations'][$key]['project']  =   $project;
                 $response['allocations'][$key]['account']  =   $account;
                 $response['allocations'][$key]['objective']=   $objective;
+                $response['allocations'][$key]['program_activity'] = $program_activity;
             }
 
             foreach ($response->logs as $key => $value) {
