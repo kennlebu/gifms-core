@@ -77,7 +77,7 @@
 </head>
 
 <body style="font-family:arial;">
-    @if($bank_transactions)
+    @if(isset($bank_transactions) && !empty($bank_transactions))
     <div class="stamp stamped-paid"></div>
     @endif
     <header>
@@ -183,7 +183,7 @@
 
                     <tr>
                         <td style="border: 1px solid #000000; border-top: 0px solid #c0c0c0;" colspan="3">
-                            <strong style="float: left;">
+                            <strong>
                                     @if($payable_type=='Invoice')
                                     <span>{{$payable->external_ref}}</span>
                                     @else
@@ -205,17 +205,39 @@
                         </td>
                     </tr>
 
+                    @isset($bank_transactions)
                     @if($bank_transactions)
-                    <td style="border: 1px solid #000000; border-right: 0px solid #c0c0c0;" colspan="9">
-                        <small><span class="muted">Bank Ref(s):</span></small><br/>
-                        {{implode(", ", array_map(function ($value) {
-                                return  $value['bank_ref'].' - '.number_format($value['amount']);
-                            }, $bank_transactions))}}
-                    </td>
+                    <tr>
+                        <td style="border: 1px solid #000000; border-right: 0px solid #c0c0c0;" colspan="2">
+                            @if($payment->payment_mode_id==2)
+                            <small><span class="muted">Mobile payment name:</span></small><br/>
+                            {{$payment->paid_to_name}}
+                            @else
+                            <small><span class="muted">Bank:</span></small><br/>
+                            {{$payment->paid_to_bank->bank_name}}, <wbr/>{{$payment->paid_to_bank_branch->branch_name.' Branch'}}
+                            @endif
+                        </td>
+                        <td style="border: 1px solid #000000; border-right: 0px solid #c0c0c0;" colspan="2">
+                            @if($payment->payment_mode_id==2)
+                            <small><span class="muted">Mobile number:</span></small><br/>
+                            {{$payment->paid_to_mobile_phone_no}}
+                            @else
+                            <small><span class="muted">Account:</span></small><br/>
+                            {{$payment->paid_to_bank_account_no}}
+                            @endif
+                        </td>
+                        <td style="border: 1px solid #000000; border-right: 1px solid #000000;" colspan="5">
+                            <small><span class="muted">Bank Ref(s):</span></small><br/>
+                            {{implode(", ", array_map(function ($value) {
+                                    return  $value['bank_ref'].' - '.number_format($value['amount']);
+                                }, $bank_transactions))}}
+                        </td>
+                    </tr>
                     <tr>
                         <td colspan="9">&nbsp;</td>
                     </tr>
                     @endif
+                    @endisset
 
 
                     <tr>

@@ -19,7 +19,7 @@ class Claim extends BaseModel
     
     use SoftDeletes;
     
-    protected $appends = ['amount_allocated', 'bank_transaction'];
+    protected $appends = ['amount_allocated', 'bank_transaction', 'bank_transactions'];
 
     
     public function requested_by()
@@ -99,5 +99,19 @@ class Claim extends BaseModel
             return $payment->bank_transaction;
         }
         else return null;
+    }
+
+    public function getBankTransactionsAttribute(){
+        $payment = Payment::with('paid_to_bank', 'paid_to_bank_branch')->where('payable_id', $this->attributes['id'])
+                    ->where('payable_type', 'claims')
+                    ->get();
+                
+        $bank_trans = [];
+        foreach($payment as $p){
+            if(!empty($p->bank_transaction)){
+                $bank_trans[] = $p->bank_transaction;
+            }
+        }
+        return $bank_trans;
     }
 }

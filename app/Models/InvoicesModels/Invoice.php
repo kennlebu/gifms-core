@@ -159,7 +159,7 @@ class Invoice extends BaseModel
     }
 
     public function getBankTransactionsAttribute(){
-        $payment = Payment::where('payable_id', $this->attributes['id'])
+        $payment = Payment::with('paid_to_bank', 'paid_to_bank_branch')->where('payable_id', $this->attributes['id'])
                     ->where('payable_type', 'invoices')
                     ->get();
                 
