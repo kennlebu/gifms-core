@@ -578,25 +578,43 @@ class PaymentApi extends Controller
         try{
             $input = Request::all();
             $month = $input['month'];
-            $currency= $input['currency'];
+            $operation = $input['operation'];
+            $type = $input['type'];
+
+            if($type == 'vat') $column = 'vat_amount_withheld';
+            elseif($type == 'income') $column = 'income_tax_amount_withheld';
+            else $column = $type;
+
             $payments = Payment::whereHas('payment_batch', function($query) use ($month){
                 $query->whereMonth('created_at', $month);  
-            })->where('currency_id', $currency)
+            })->whereNotNull($column)
             // ->whereRaw('vat_amount_withheld is not null or income_tax_amount_withheld is not null')
-            ->where(function ($query) {
-                $query->orWhereNotNull('vat_amount_withheld');
-                $query->orWhereNotNull('income_tax_amount_withheld');
-            })
             ->get();
 
             $response_array = [];
             foreach($payments as $payment) {
+                $taxable_amount = $payment->payable->total;
+                $amount = 0;
+                if($type == 'vat') $amount = $payment->vat_amount_withheld * 6/16;
+                elseif($type == 'income') $amount = $payment->income_tax_amount_withheld;
+
+                if($payment->currency_id == 2){ // USD payment
+                    if($operation == 'preview'){
+                        $taxable_amount = !empty($payment->usd_rate) ? ($taxable_amount * $payment->usd_rate).' ('.$taxable_amount.' USD)' : $taxable_amount.' (USD)';
+                        $amount = !empty($payment->usd_rate) ? $amount * $payment->usd_rate : $amount.' (USD)';
+                    }
+                    else{
+                        $taxable_amount = !empty($payment->usd_rate) ? ($taxable_amount * $payment->usd_rate) : $taxable_amount;
+                        $amount = !empty($payment->usd_rate) ? $amount * $payment->usd_rate : $amount;
+                    }
+                }
                 $line = array(
                         'vendor'=>$payment->paid_to_name, 
                         'tax_pin'=>$payment->payable->supplier->tax_pin, 
                         'invoice_no'=>$payment->payable->external_ref, 
-                        'invoice_date'=>$payment->payable->invoice_date, 
-                        'taxable_amount'=>$payment->payable->total
+                        'invoice_date'=>date("Y-m-d", strtotime($payment->payable->invoice_date)),
+                        'taxable_amount'=>$taxable_amount,
+                        'amount'=>$amount
                     );
 
                 $response_array[] = $line;

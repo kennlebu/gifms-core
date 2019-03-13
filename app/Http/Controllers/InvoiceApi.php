@@ -670,7 +670,8 @@ class InvoiceApi extends Controller
                         'payment_batch_id'              =>  "", 
                         'bank_charges'                  =>  "",
                         "withholding_tax"               =>  $invoice->withholding_tax,
-                        "withholding_vat"               =>  $invoice->withholding_vat
+                        "withholding_vat"               =>  $invoice->withholding_vat,
+                        "usd_rate"                      =>  $invoice->usd_rate
                     );
                     
                     // Pick USD account if currency is USD
@@ -1646,6 +1647,9 @@ class InvoiceApi extends Controller
             }
             if(!empty($input['withholding_vat'])){
                 $invoice->withholding_vat = $input['withholding_vat'];
+            }
+            if(!empty($input['usd_rate'])){
+                $invoice->usd_rate = $input['usd_rate'];
             }
 
             if(empty($input['withholding_vat']) && !empty($input['withholding_tax'])){

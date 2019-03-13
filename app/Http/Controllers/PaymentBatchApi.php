@@ -562,14 +562,24 @@ class PaymentBatchApi extends Controller
                         if($payment->payable_type=='invoices'){
                             $invoice = Invoice::with('raised_by','supplier')->find($payment->payable_id);
                             $invoice->status_id = 8; //Paid
+                            $invoice->disableLogging();
                             $invoice->save();
+                            activity()
+                                ->performedOn($invoice)
+                                ->causedBy($this->current_user())
+                                ->log('Paid');
 
                             // Change LPO to paid if it exists
                             if(!empty($invoice->lpo_id)){
                                 $lpo = Lpo::findOrFail($invoice->lpo_id);
                                 $lpo->invoice_paid = 'True';
                                 $lpo->status_id = 14; // Paid and completed
+                                $lpo->disableLogging();
                                 $lpo->save();
+                                activity()
+                                    ->performedOn($lpo)
+                                    ->causedBy($this->current_user())
+                                    ->log('Paid and completed');
                             }
 
                             // Send email
@@ -580,7 +590,12 @@ class PaymentBatchApi extends Controller
                         if($payment->payable_type=='advances'){
                             $advance = Advance::with('requested_by')->find($payment->payable_id);
                             $advance->status_id = 6; // Issued and Paid
+                            $advance->disableLogging();
                             $advance->save();
+                            activity()
+                                ->performedOn($advance)
+                                ->causedBy($this->current_user())
+                                ->log('Issued and paid');
 
                             // Send email
                             if($row['notify_vendor'])
@@ -590,7 +605,12 @@ class PaymentBatchApi extends Controller
                         if($payment->payable_type=='claims'){
                             $claim = Claim::with('requested_by')->find($payment->payable_id);
                             $claim->status_id = 8; // Paid
+                            $claim->disableLogging();
                             $claim->save();
+                            activity()
+                                ->performedOn($claim)
+                                ->causedBy($this->current_user())
+                                ->log('Paid');
 
                             // Send email
                             if($row['notify_vendor'])
@@ -604,7 +624,12 @@ class PaymentBatchApi extends Controller
                     if($mobile_payment->status_id==5) $already_paid = true;
                     else {
                         $mobile_payment->status_id = 5; //Paid
+                        $mobile_payment->disableLogging();
                         $mobile_payment->save();
+                        activity()
+                                ->performedOn($mobile_payment)
+                                ->causedBy($this->current_user())
+                                ->log('Paid');
 
                         // Send email
                         if($row['notify_vendor'])

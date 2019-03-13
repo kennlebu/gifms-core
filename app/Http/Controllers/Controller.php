@@ -183,6 +183,8 @@ class Controller extends BaseController
         $payment->vat_amount_withheld       =   $payable['withholding_vat'];
         if(!empty($payable['withholding_tax']))
         $payment->income_tax_amount_withheld=   $payable['withholding_tax'];
+        if(!empty($payable['usd_rate']))
+        $payment->usd_rate                  =   $payable['usd_rate'];
 
         if($payment->save()) {
             $payment->ref                   = "CHAI/PYMT/#$payment->id/".date_format($payment->created_at,"Y/m/d");
