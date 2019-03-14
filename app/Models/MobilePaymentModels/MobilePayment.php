@@ -17,13 +17,14 @@ use App\Models\LookupModels\County;
 use App\Models\MobilePaymentModels\MobilePaymentPayee;
 use App\Models\MobilePaymentModels\MobilePaymentApproval;
 use App\Models\PaymentModels\VoucherNumber;
+use App\Models\PaymentModels\Payment;
 
 class MobilePayment extends BaseModel
 {
     //
     use SoftDeletes;
 
-    protected $appends = ['amounts','total_withdrawal_charges','totals','amount_allocated', 'bank_transaction'];
+    protected $appends = ['amounts','total_withdrawal_charges','totals','amount_allocated', 'bank_transaction', 'bank_transactions'];
 
  
 
@@ -178,6 +179,20 @@ class MobilePayment extends BaseModel
             else return null;
         }
         else return null;
+    }
+
+    public function getBankTransactionsAttribute(){
+        $payment = Payment::with('paid_to_bank', 'paid_to_bank_branch')->where('payable_id', $this->attributes['id'])
+                    ->where('payable_type', 'invoices')
+                    ->get();
+                
+        $bank_trans = [];
+        foreach($payment as $p){
+            if(!empty($p->bank_transaction)){
+                $bank_trans[] = $p->bank_transaction;
+            }
+        }
+        return $bank_trans;
     }
 
 

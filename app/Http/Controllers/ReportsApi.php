@@ -39,6 +39,7 @@ use App\Models\PaymentModels\VoucherNumber;
 use App\Models\ReportModels\ReportingCategories;
 use App\Models\ReportModels\ReportingObjective;
 use App\Models\ActivityModels\ActivityObjective;
+use App\Models\BankingModels\BankTransaction;
 
 class ReportsApi extends Controller
 {
@@ -175,8 +176,9 @@ class ReportsApi extends Controller
                 else {
                     $voucher_no = 'CHAI'.$this->pad_zeros(5, $row['payable']['migration_id']);
                 }
-                
             }
+
+            $bank_transactions = BankTransaction::where('chai_ref', $voucher_no)->get();
                 
                 foreach($row['payable']['allocations'] as $allocation){
 
@@ -203,6 +205,14 @@ class ReportsApi extends Controller
                     $my_result['allocation_amount'] = $allocation['amount_allocated'];
                     $my_result['currecny'] = $currency;
                     $my_result['payable_id'] = $row['payable']['id'];
+
+                    $sum = 0;
+                    foreach($row['payable']['bank_transactions'] as $b){
+                        $sum += $b['amount'];
+                    }
+                    if($sum > 0){
+                        $my_result['amount_paid'] = $sum;
+                    }
     
                     if($row['payable_type'] == 'mobile_payments'){
                         $mpesa_payee = Staff::find($row['payable']['requested_by_id'])->full_name;
@@ -225,7 +235,6 @@ class ReportsApi extends Controller
                     }
     
                     $my_result['voucher_number'] = $voucher_no;
-    
     
                     array_push($report_data, $my_result);
         
@@ -256,6 +265,7 @@ class ReportsApi extends Controller
                 $row['payable_id'] != $payment_id ? $excel_row['total'] = $row['total_amount'] : $excel_row['total'] = '';
                 $excel_row['transaction_type'] = $row['transaction_type'];
                 $excel_row['voucher_number'] = $row['voucher_number'];
+                $excel_row['amount_paid'] = isset($row['amount_paid']) ? $row['amount_paid'] : '';
 
                 
                 $payment_id = $row['payable_id'];
@@ -282,7 +292,7 @@ class ReportsApi extends Controller
     
                 $excel->setDescription('A report of the transactions from '.$fromDateOnly.' to '.$toDateOnly);
     
-                $headings = array('Vendor Name', 'Post Date', 'Project ID', 'Grant ID', 'Account Number', 'Account Description', 'Invoice Title(Main Memo - General JR)', 'Allocation Memo - Specific JR', 'Allocation Amount', 'Total Amount', 'Transaction Type (Payment Mode)', 'Voucher number');
+                $headings = array('Vendor Name', 'Post Date', 'Project ID', 'Grant ID', 'Account Number', 'Account Description', 'Invoice Title(Main Memo - General JR)', 'Allocation Memo - Specific JR', 'Allocation Amount', 'Total Amount', 'Transaction Type (Payment Mode)', 'Voucher number', 'Amount paid');
     
                 $excel->sheet($account_name, function ($sheet) use ($excel_data, $headings, $account_name) {
                     $sheet->setStyle([
@@ -348,7 +358,8 @@ class ReportsApi extends Controller
                         'I' => 20,
                         'J' => 15,
                         'K' => 20,
-                        'L' => 20
+                        'L' => 20,
+                        'M' => 20
                     ));
                     $sheet->getStyle('K1')->getAlignment()->setWrapText(true);
 
