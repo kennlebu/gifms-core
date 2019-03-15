@@ -387,6 +387,8 @@ class ActivityApi extends Controller
                 $data[$key]['objectives'] = $activity->objectives;
             }
             else $data[$key]['program_manager'] = array("name"=>"N/A", "full_name"=>"N/A");
+
+            $data[$key]['has_transactions'] = $activity->has_transactions;
         }
 
         return $data;

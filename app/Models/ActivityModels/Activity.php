@@ -7,13 +7,18 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\BaseModels\BaseModel;
 use Spatie\Activitylog\Traits\LogsActivity;
 use App\Models\ProjectsModels\Project;
+use App\Models\AllocationModels\Allocation;
+use App\Models\ClaimsModels\Claim;
+use App\Models\InvoicesModels\Invoice;
+use App\Models\MobilePaymentModels\MobilePayment;
+use App\Models\LPOModels\Lpo;
 
 class Activity extends BaseModel
 {
     
     use SoftDeletes;
 
-    protected $appends = ['grant'];
+    protected $appends = ['grant','has_transactions'];
     protected $hidden = ['deleted_at','updated_at'];
     
     public function requested_by()
@@ -61,5 +66,24 @@ class Activity extends BaseModel
         else{
             return 'N/A';
         }
+    }
+
+    public function getHasTransactionsAttribute(){
+        $has_transactions = false;
+        $invoice = Invoice::where('program_activity_id', $this->id)->first();
+        if(!empty($invoice)) return true;
+
+        $mobile_payment = MobilePayment::where('program_activity_id', $this->id)->first();
+        if(!empty($mobile_payment)) return true;
+
+        $lpo = Lpo::where('program_activity_id', $this->id)->first();
+        if(!empty($lpo)) return true;
+
+        $claim = Allocation::where('activity_id', $this->id)
+                            ->where('allocatable_type', 'claims')
+                            ->first();
+        if(!empty($claim)) return true;
+
+        return $has_transactions;
     }
 }
