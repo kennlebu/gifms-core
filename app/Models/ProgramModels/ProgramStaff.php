@@ -14,4 +14,9 @@ class ProgramStaff extends Model
         return $this->belongsTo('App\Models\ProgramModels\Program', 'program_id');
     }
 
+    public function staff()
+    {
+        return $this->belongsTo('App\Models\StaffModels\Staff', 'staff_id');
+    }
+
 }

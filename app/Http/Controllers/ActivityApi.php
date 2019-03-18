@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use JWTAuth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 use App\Models\ActivityModels\Activity;
 use App\Models\ActivityModels\ActivityStatus;
@@ -18,6 +19,7 @@ use App\Models\InvoicesModels\Invoice;
 use App\Models\MobilePaymentModels\MobilePayment;
 use App\Models\LPOModels\Lpo;
 use App\Models\ReportModels\ReportingObjective;
+use App\Mail\NotifyActivityCreation;
 
 use Exception;
 use App;
@@ -71,7 +73,8 @@ class ActivityApi extends Controller
                 $activity->save();
             }
     
-            // Mail::queue(new NotifyActivity($activity));  //Notify program staff and PM
+            $act = Activity::with('program','program_manager')->find($activity->id);
+            Mail::queue(new NotifyActivityCreation($act));                                  //Notify program staff and PM
             return Response()->json(array('msg' => 'Success: activity added','activity' => $activity), 200);
         }
     }
