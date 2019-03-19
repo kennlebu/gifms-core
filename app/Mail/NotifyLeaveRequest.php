@@ -69,6 +69,7 @@ class NotifyLeaveRequest extends Mailable
         }
         else if($this->leave_request->status_id == 3){
             $ccs[0] = $this->leave_request->line_manager;
+            $ccs[1] = array('name'=>'CHAI Safety Kenya', 'email'=>'chaisafetykenya@clintonhealthaccess.org');
 
             return $this->to($this->leave_request->requested_by)
                     ->with([
@@ -76,6 +77,7 @@ class NotifyLeaveRequest extends Mailable
                             'addressed_to' => $this->leave_request->requested_by,
                             'js_url' => Config::get('app.js_url'),
                         ])
+                    ->cc($ccs)
                     ->subject("Leave Request Approved".$this->leave_request->ref);
         }
         else if($this->leave_request->status_id == 4){
@@ -86,7 +88,8 @@ class NotifyLeaveRequest extends Mailable
                             'leave_request' => $this->leave_request,
                             'addressed_to' => $this->leave_request->requested_by,
                             'js_url' => Config::get('app.js_url'),
-                        ])
+                        ])                        
+                    ->cc($ccs)
                     ->subject("Leave Request Rejected ".$this->leave_request->ref);
         }
 
