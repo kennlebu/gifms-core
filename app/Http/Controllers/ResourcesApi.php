@@ -56,18 +56,25 @@ class ResourcesApi extends Controller
         $input = Request::all();
         try{
             $category = $input['category'];
-            $file = $input['file'];
+            $file = '';
+            if(!empty($input['file']))
+                $file = $input['file'];
             $name = $input['resource_name'];
-            $user = JWTAuth::parseToken()->authenticate();
+            if(!empty($input['link']))
+                $link = $input['link'];
 
-            FTP::connection()->makeDir('/gifms_resources');
-            FTP::connection()->uploadFile($file->getPathname(), '/gifms_resources/'.$name.'.'.$file->getClientOriginalExtension());
+            if(!empty($file) && $file!=0){
+                FTP::connection()->makeDir('/gifms_resources');
+                FTP::connection()->uploadFile($file->getPathname(), '/gifms_resources/'.$name.'.'.$file->getClientOriginalExtension());
+            }
 
             $resource = new Resource;
             $resource->name = $name;
             $resource->category = $category;
-            $resource->doc_type = $file->getClientOriginalExtension();
-            $resource->staff_id = $user->id;
+            if($file!=0)  $resource->doc_type = $file->getClientOriginalExtension();
+            $resource->staff_id = $this->current_user()->id;
+            if(!empty($input['link']))
+                $resource->link = $link;
             $resource->save();
 
             return response()->json(array('msg' => 'File added'), 200);
@@ -144,12 +151,16 @@ class ResourcesApi extends Controller
         try{
             $input = Request::all();         
             $category = $input['category'];
-            $file = $input['file'];
+            $file = '';
+            if(!empty($input['file']))
+                $file = $input['file'];
             $name = $input['resource_name'];
+            if(!empty($input['link']))
+                $link = $input['link'];
 
             $resource = Resource::findOrFail($input['resource_id']);
 
-            if($file!=0){
+            if(!empty($file) && $file!=0){
                 FTP::connection()->makeDir('/gifms_resources');
                 FTP::connection()->uploadFile($file->getPathname(), '/gifms_resources/'.$name.'.'.$file->getClientOriginalExtension());
                 $resource->doc_type = $file->getClientOriginalExtension();
@@ -157,6 +168,8 @@ class ResourcesApi extends Controller
 
             $resource->name = $name;
             $resource->category = $category;
+            if(!empty($input['link']))
+                $resource->link = $link;
 
             if($resource->save()){
                 return Response()->json(array('msg' => 'Resource updated','resource' => $resource), 200);
