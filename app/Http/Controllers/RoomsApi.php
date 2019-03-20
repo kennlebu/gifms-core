@@ -237,6 +237,8 @@ class RoomsApi extends Controller
             $booking->to_date = date('Y-m-d', strtotime($input['to_date']));
             $booking->from_time = $input['from_time'];
             $booking->to_time = $input['to_time'];
+            if(!empty($input['recurring'])) $booking->recurring = $input['recurring'];
+            if(!empty($input['recur_until'])) $booking->recur_until = date('Y-m-d', strtotime($input['recur_until']));
 
             $from_datetime = $booking->from_date.' '.$booking->from_time;
             $to_datetime = $booking->to_date.' '.$booking->to_time;
@@ -334,6 +336,8 @@ class RoomsApi extends Controller
             $booking->to_date = date('Y-m-d', strtotime($input['to_date']));
             $booking->from_time = $input['from_time'];
             $booking->to_time = $input['to_time'];
+            if(!empty($input['recurring'])) $booking->recurring = $input['recurring'];
+            if(!empty($input['recur_until'])) $booking->recur_until = date('Y-m-d', strtotime($input['recur_until']));
 
             if($booking->save()){
                 return Response()->json(array('msg' => 'Booking updated','resource' => $booking), 200);
