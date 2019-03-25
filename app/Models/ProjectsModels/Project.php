@@ -11,6 +11,7 @@ use App\Models\InvoicesModels\Invoice;
 use App\Models\MobilePaymentModels\MobilePayment;
 use App\Models\AdvancesModels\Advance;
 use App\Models\AccountingModels\Account;
+use App\Models\FinanceModels\ExchangeRate;
 
 class Project extends BaseModel
 {
@@ -102,7 +103,16 @@ class Project extends BaseModel
                     $totals    +=  (float) $value->amount_allocated;
                 }
                 else if($value->allocatable->currency_id == 1){
-                    $totals += (float) ($value->amount_allocated/100);
+                    $rate = ExchangeRate::whereMonth('active_date', date('m'))->orderBy('active_date', 'DESC')->first();
+                    // $rate = DB::select("select * from exchange_rates
+                    //     where ((DATE_ADD('".date('Y-m-d')."', INTERVAL 1 DAY) between 
+                    //     cast(active_date as date) and cast(end_date as date)
+                    //     or DATE_SUB('".date('Y-m-d')."', INTERVAL 1 DAY) between
+                    //     cast(active_date as date) and cast(end_date as date))");
+                    if(!empty($rate)) $rate = $rate->exchange_rate;
+                    else $rate = 102.10;
+
+                    $totals += (float) ($value->amount_allocated/$rate);
                 }
             }
         }
@@ -110,8 +120,8 @@ class Project extends BaseModel
         return $totals;
 
     }
+    
     public function getTotalExpenditurePercAttribute(){
-        // $grant_amount_allocated     = (int)  $this->getGrantAmountAllocatedAttribute();
         if(!empty($this->budget)) $budget_amount = (int) $this->budget->totals;
         else $budget_amount = 0;
         $total_expenditure          = (int)  $this->getTotalExpenditureAttribute();
