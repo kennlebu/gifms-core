@@ -917,7 +917,8 @@ class InvoiceApi extends Controller
 
             if(empty($invoice->migration_id)) {
                 if(!empty($payment->voucher_no)) {
-                    $voucher = VoucherNumber::find($payment->voucher_no);
+                    // $voucher = VoucherNumber::find($payment->voucher_no);
+                    $voucher = VoucherNumber::where('payable_id', $payment->id)->first();
                     $voucher_no = $voucher->voucher_number;
                 }
             }
