@@ -155,7 +155,7 @@
                         <td style="border: 1px solid #000000; border-top: 0px solid #c0c0c0;" colspan="2">
                             <strong>{{number_format($payable->total,2)}}</strong>
                         </td>
-                        <td style="border: 1px solid #000000; border-top: 0px solid #c0c0c0;" colspan="1" ><strong>{{$payable->payment_mode->abrv}}</strong>
+                        <td style="border: 1px solid #000000; border-top: 0px solid #c0c0c0;" colspan="1" ><strong>{{!empty($payable->payment_mode) ? $payable->payment_mode->abrv : '-'}}</strong>
                         </td>
                     </tr>
 
