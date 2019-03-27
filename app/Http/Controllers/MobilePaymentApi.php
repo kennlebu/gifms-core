@@ -939,8 +939,11 @@ class MobilePaymentApi extends Controller
             if(empty($mobile_payment->migration_id)){
                 if(empty($mobile_payment->voucher_no)) $voucher_no = '-';
                 else{
-                    $voucher_no = VoucherNumber::find($mobile_payment->voucher_no);
-                    $voucher_no = $voucher_no->voucher_number;
+                    // $voucher_no = VoucherNumber::find($mobile_payment->voucher_no);
+                    // $voucher_no = $voucher_no->voucher_number;
+                    
+                    $voucher = VoucherNumber::where('payable_id', $mobile_payment->id)->first();
+                    $voucher_no = $voucher->voucher_number;
                 }
             }
             else{
@@ -1050,8 +1053,6 @@ class MobilePaymentApi extends Controller
      */
     public function submitForApproval($mobile_payment_id)
     {
-
-
         $response = [];
         $user = JWTAuth::parseToken()->authenticate();
 
@@ -1312,43 +1313,24 @@ class MobilePaymentApi extends Controller
      */
     public function getTemplate()
     {
-
-
-
         try{
-
-
-
             $path           = '/templates/MPESA_TEMPLATE.xlsx';
-
             $path_info      = pathinfo($path);
-
             $ext            = $path_info['extension'];
-
-
             $basename       = $path_info['basename'];
 
             $file_contents  = FTP::connection()->readFile($path);
-
-            // Storage::put($path , $file_contents);
-
             $url            = storage_path("app".$path);
-
             $file           = File::get($url);
 
             $response       = Response::make($file, 200);
-
             $response->header('Content-Type', $this->get_mime_type($basename));
-
             return $response;  
-        }catch (Exception $e ){            
-
+        }
+        catch (Exception $e ){
             $response       = Response::make("", 500);
-
             $response->header('Content-Type', 'application/vnd.ms-excel');
-
             return $response;  
-
         }
     }
 
@@ -1376,20 +1358,15 @@ class MobilePaymentApi extends Controller
      */
     public function mobilePaymentsGet()
     {
-
-
         $input = Request::all();
         //query builder
         $qb = DB::table('mobile_payments');
-
         $qb->whereNull('deleted_at');
 
         $response;
         $response_dt;
-
         $total_records          = $qb->count();
         $records_filtered       = 0;
-
 
         // Sent to bank, awaiting reconciliation
         if(array_key_exists('bank_approvable', $input) && $input['bank_approvable']==true){
@@ -1402,11 +1379,8 @@ class MobilePaymentApi extends Controller
             $qb->where('status_id', '12');
         }
 
-
         //if status is set
-
         if(array_key_exists('status', $input)){
-
             $status_ = (int) $input['status'];
 
             if($status_ >-1){
@@ -1419,33 +1393,20 @@ class MobilePaymentApi extends Controller
             }elseif ($status_==-3) {
                 $qb->where('project_manager_id',$this->current_user()->id);
             }
-
-
-
-
-            // $total_records          = $qb->count();     //may need this
         }
-
-
 
         $app_stat = $this->approvable_statuses ;
         //if approvable is set
 
         if(array_key_exists('approvable', $input)){
-
-            $qb->where(function ($query) use ($app_stat) {
-                    
+            $qb->where(function ($query) use ($app_stat) {                    
                 foreach ($app_stat as $key => $value) {
                     $query->orWhere('status_id',$value['id']);
                 }
-
             });
         }
 
-
         if(array_key_exists('my_approvables', $input)){
-
-
             $current_user =  JWTAuth::parseToken()->authenticate();
             if($current_user->hasRole([
                 'super-admin',
@@ -1470,39 +1431,28 @@ class MobilePaymentApi extends Controller
                             $query->orWhere('status_id',$value['id']); 
                         }
                     }
-
                 });
-
-
-            }else{
+            }
+            else{
                 $qb->where('id',0);
             }
-            // echo $qb->toSql();die;
         }
 
         //searching
         if(array_key_exists('searchval', $input)){
-            $qb->where(function ($query) use ($input) {
-                
+            $qb->where(function ($query) use ($input) {                
                 $query->orWhere('id','like', '\'%' . $input['searchval']. '%\'');
                 $query->orWhere('ref','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('expense_desc','like', '\'%' . $input['searchval']. '%\'');
                 $query->orWhere('expense_purpose','like', '\'%' . $input['searchval']. '%\'');
-
             });
-
-            // $records_filtered       =  $qb->count(); //doesn't work
 
             $sql = MobilePayment::bind_presql($qb->toSql(),$qb->getBindings());
             $sql = str_replace("*"," count(*) AS count ", $sql);
             $dt = json_decode(json_encode(DB::select($sql)), true);
 
             $records_filtered = (int) $dt[0]['count'];
-            // $records_filtered = 30;
-
-
         }
-
 
         //ordering
         if(array_key_exists('order_by', $input)&&$input['order_by']!=''){
@@ -1511,52 +1461,32 @@ class MobilePaymentApi extends Controller
             if(array_key_exists('order_dir', $input)&&$input['order_dir']!=''){                
                 $order_direction = $input['order_dir'];
             }
-
             $qb->orderBy($order_column_name, $order_direction);
-        }else{
-            //$qb->orderBy("project_code", "asc");
         }
 
         //limit
         if(array_key_exists('limit', $input)){
-
-
             $qb->limit($input['limit']);
-
-
         }
 
         //migrated
         if(array_key_exists('migrated', $input)){
-
             $mig = (int) $input['migrated'];
-
             if($mig==0){
                 $qb->whereNull('migration_id');
             }else if($mig==1){
                 $qb->whereNotNull('migration_id');
             }
-
-
         }
 
-
-
-
         if(array_key_exists('datatables', $input)){
-
             //searching
-            $qb->where(function ($query) use ($input) {
-                
+            $qb->where(function ($query) use ($input) {                
                 $query->orWhere('id','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('ref','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('expense_desc','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('expense_purpose','like', '\'%' . $input['search']['value']. '%\'');
-
             });
-
-
-
 
             $sql = MobilePayment::bind_presql($qb->toSql(),$qb->getBindings());
             $sql = str_replace("*"," count(*) AS count ", $sql);
@@ -1564,51 +1494,27 @@ class MobilePaymentApi extends Controller
 
             $records_filtered = (int) $dt[0]['count'];
 
-
             //ordering
             $order_column_id    = (int) $input['order'][0]['column'];
             $order_column_name  = $input['columns'][$order_column_id]['order_by'];
             $order_direction    = $input['order'][0]['dir'];
 
-            // if ($order_column_id == 0){
-            //     $order_column_name = "created_at";
-            // }
-            // if ($order_column_id == 1){
-            //     $order_column_name = "id";
-            // }
-
             if($order_column_name!=''){
-
                 $qb->orderBy($order_column_name, $order_direction);
-
             }
-
-
-
-
-
-
+            
             //limit $ offset
             if((int)$input['start']!= 0 ){
-
                 $response_dt    =   $qb->limit($input['length'])->offset($input['start']);
-
-            }else{
+            }
+            else{
                 $qb->limit($input['length']);
             }
 
-
-
-
-
             $sql = MobilePayment::bind_presql($qb->toSql(),$qb->getBindings());
 
-            // $response_dt = DB::select($qb->toSql(),$qb->getBindings());         //pseudo
             $response_dt = DB::select($sql);
-
-
             $response_dt = json_decode(json_encode($response_dt), true);
-
             $response_dt    = $this->append_relationships_objects($response_dt);
             $response_dt    = $this->append_relationships_nulls($response_dt);
             $response_dt = $this->fill_projects_column($response_dt);
@@ -1617,10 +1523,8 @@ class MobilePaymentApi extends Controller
                 $total_records,
                 $records_filtered
                 );
-                
-
-        }else{
-
+        }
+        else{
             $sql            = MobilePayment::bind_presql($qb->toSql(),$qb->getBindings());
             $response       = json_decode(json_encode(DB::select($sql)), true);
             if(!array_key_exists('lean', $input)){
@@ -1629,12 +1533,7 @@ class MobilePaymentApi extends Controller
             }
         }
 
-
-
-
         return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
-
-
     }
 
 

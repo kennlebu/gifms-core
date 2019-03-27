@@ -41,6 +41,7 @@ use App\Models\BankingModels\BankBranch;
 use App\Exceptions\NotFullyAllocatedException;
 use App\Exceptions\ApprovalException;
 use PDF;
+use App\Models\PaymentModels\VoucherNumber;
 
 class AdvanceApi extends Controller
 {
@@ -607,7 +608,10 @@ class AdvanceApi extends Controller
             $vendor = '-';
             $voucher_no = '-';
 
-            if(!empty($payment->voucher_number)) $voucher_no = $payment->voucher_number->voucher_number;
+            if(!empty($payment->voucher_number)){
+                $voucher = VoucherNumber::where('payable_id', $payment->id)->first();
+                $voucher_no = $voucher->voucher_number;
+            } /*$voucher_no = $payment->voucher_number->voucher_number;*/
             else {
                 if(empty($advance->migration_id)) $voucher_no = '-';
                 else $voucher_no = 'CHAI'.$this->pad_with_zeros(5, $advance->migration_id);

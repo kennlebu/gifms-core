@@ -42,6 +42,8 @@ use App\Exceptions\NotFullyAllocatedException;
 use App\Exceptions\ApprovalException;
 use PDF;
 use App\Models\ReportModels\ReportingObjective;
+use App\Models\ActivityModels\Activity;
+use App\Models\PaymentModels\VoucherNumber;
 
 class ClaimApi extends Controller
 {
@@ -268,10 +270,12 @@ class ClaimApi extends Controller
                 $project = Project::find((int)$value['project_id']);
                 $account = Account::find((int)$value['account_id']);
                 $objective = ReportingObjective::find((int)$value['objective_id']);
+                $program_activity = Activity::find((int)$value['activity_id']);
 
                 $response['allocations'][$key]['project']  =   $project;
                 $response['allocations'][$key]['account']  =   $account;
                 $response['allocations'][$key]['objective']=   $objective;
+                $response['allocations'][$key]['program_activity'] = $program_activity;
             }
 
             foreach ($response->logs as $key => $value) {
@@ -658,7 +662,10 @@ class ClaimApi extends Controller
             $vendor = '-';
             $voucher_no = '-';
 
-            if(!empty($payment->voucher_number)) $voucher_no = $payment->voucher_number->voucher_number;
+            if(!empty($payment->voucher_number)){
+                $voucher = VoucherNumber::where('payable_id', $payment->id)->first();
+                $voucher_no = $voucher->voucher_number;
+            } /*$voucher_no = $payment->voucher_number->voucher_number;*/
             else {
                 if(empty($claim->migration_id)) $voucher_no = '-';
                 else $voucher_no = 'CHAI'.$this->pad_zeros(5, $claim->migration_id);

@@ -160,13 +160,17 @@ class ReportsApi extends Controller
         foreach($payables as $row){if(isset($row['payable']['allocations'])){
             $voucher_no = '';
             if(($row['payable_type']=='mobile_payments' && empty($row['payable']['migration_invoice_id']))){
-                $voucher_no = VoucherNumber::find($row['payable']['voucher_no']);
-                if(!empty($voucher_no->voucher_number)) $voucher_no = $voucher_no->voucher_number;
+                // $voucher_no = VoucherNumber::find($row['payable']['voucher_no']);
+                $voucher = VoucherNumber::where('payable_id', $row['payable']['id'])->first();
+                $voucher_no = $voucher->voucher_number;
+                if(!empty($voucher->voucher_number)) $voucher_no = $voucher->voucher_number;
                 else $voucher_no = '-';
             }
             elseif(($row['payable_type']!='mobile_payments' && empty($row['payable']['migration_id']))){
-                $voucher_no = VoucherNumber::find($row['payment']['voucher_no']);
-                if(!empty($voucher_no->voucher_number)) $voucher_no = $voucher_no->voucher_number;
+                // $voucher_no = VoucherNumber::find($row['payment']['voucher_no']);
+                $voucher = VoucherNumber::where('payable_id', $row['payment']['id'])->first();
+                $voucher_no = $voucher->voucher_number;
+                if(!empty($voucher->voucher_number)) $voucher_no = $voucher->voucher_number;
                 else $voucher_no = '-';
             }
             else{
