@@ -853,7 +853,8 @@ class InvoiceApi extends Controller
                     'payable_type'=>'Invoice',
                     'unique_approvals' => $unique_approvals,
                     'bank_transactions' => $invoice->bank_transactions,
-                    'payment' => $payment
+                    'payment' => $payment,
+                    'bank_transaction' => $invoice->bank_transaction
                     );
 
             $pdf            = PDF::loadView('pdf/payment_voucher', $data);
