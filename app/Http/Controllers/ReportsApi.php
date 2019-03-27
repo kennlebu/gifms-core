@@ -161,7 +161,7 @@ class ReportsApi extends Controller
             if(($row['payable_type']=='mobile_payments' && empty($row['payable']['migration_invoice_id']))){
                 // $voucher_no = VoucherNumber::find($row['payable']['voucher_no']);
                 $voucher_no = VoucherNumber::where('payable_id', $row['payable']['id'])->first();
-                $voucher_no = $voucher->voucher_number;
+                $voucher_no = $voucher_no->voucher_number;
                 if(!empty($voucher_no->voucher_number)) $voucher_no = $voucher_no->voucher_number;
                 else $voucher_no = '-';
             }
