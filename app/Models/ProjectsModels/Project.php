@@ -53,6 +53,10 @@ class Project extends BaseModel
     {
         return $this->hasMany('App\Models\AllocationModels\Allocation','project_id');
     }
+    public function year_allocations()
+    {
+        return $this->hasMany('App\Models\AllocationModels\Allocation','project_id')->whereYear('created_at', date('Y'));
+    }
     public function grant()
     {
         return $this->belongsTo('App\Models\GrantModels\Grant', 'grant_id');
@@ -83,7 +87,7 @@ class Project extends BaseModel
     // }
     public function getTotalExpenditureAttribute(){
 
-        $allocations     =   $this->allocations;
+        $allocations     =   $this->year_allocations;
         $totals    =   0;
 
         foreach ($allocations as $key => $value) {
@@ -155,7 +159,7 @@ class Project extends BaseModel
         $project_id = $this->id;
 
         $qb = DB::table('allocations');
-
+        $qb->whereYear('created_at', date('Y'));
         $qb->select(DB::raw('accounts.account_name AS name, SUM(allocations.amount_allocated) AS `value`'))
                  ->leftJoin('projects', 'projects.id', '=', 'allocations.project_id')
                  ->leftJoin('accounts', 'accounts.id', '=', 'allocations.account_id')
