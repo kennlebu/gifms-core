@@ -574,7 +574,7 @@ class PaymentApi extends Controller
             return Response()->json($result, 200);
         }
         catch(\Exception $e){
-            return response()->json(['error'=>'There was an error finding the transactions', 'msg'=>$e->getMessage(), 'trace'=>getTraceAsString()], 500);
+            return response()->json(['error'=>'There was an error finding the transactions', 'msg'=>$e->getMessage(), 'trace'=>$e->getTraceAsString()], 500);
         }
         
     }
