@@ -301,7 +301,7 @@ class PaymentApi extends Controller
             if(!empty($voucher_no)){
                 $pv_nos = VoucherNumber::where('voucher_number', 'like', '%' . $voucher_no. '%')->orderBy('id', 'asc')->get();
                 $others = VoucherNumber::where('payable_id', $pv_nos[0]->payable_id)->orderBy('id', 'asc')->get();
-                if(count($others) > 1 && $others[0]->id != $pv_nos[0]->id){
+                if(count($others) > 1 && count($pv_nos) > 1 && $others[0]->id != $pv_nos[0]->id){
                     // Don't get these results. They are duplicate
                 }
                 else{
