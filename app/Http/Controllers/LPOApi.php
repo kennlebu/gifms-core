@@ -1083,6 +1083,7 @@ class LPOApi extends Controller
                 $query->whereNull('lpos.delivery_made');
                 $query->orWhere('lpos.delivery_made', 'not like', '\'%full%\'');
             });
+            $qb->whereIn('lpos.status_id', [6,7,8,9,10,14]);
         }
 
 
@@ -1103,6 +1104,7 @@ class LPOApi extends Controller
                 $query->whereNull('lpos.invoice_paid');
                 $query->orWhere('lpos.invoice_paid', 'not like', '\'%full%\'');
             });
+            $qb->whereIn('lpos.status_id', [6,7,8,9,10,14]);
         }
 
         // prenogotiated
