@@ -545,7 +545,28 @@ class ReportsApi extends Controller
         }
 
         $mobile_payments = MobilePayment::with('allocations.objective')->whereBetween('management_approval_at', [$fromDate, $toDate])->where('currency_id', $currency)
-                            ->where('project_manager_id', $user_id)->get();
+                            ->where('project_manager_id', $user_id);
+            
+                            if(!empty($programs)){
+                                $pids = Project::whereIn('program_id', $programs)->pluck('id')->toArray();
+                                $mobile_payments = $mobile_payments->whereHas('allocations', function($query) use ($pids){
+                                    $query->whereIn('project_id', $pids);  
+                                });
+                            }
+            
+                            if(!empty($projects)){
+                                $mobile_payments = $mobile_payments->whereHas('allocations', function($query) use ($projects){
+                                    $query->whereIn('project_id', $projects);  
+                                });
+                            }
+            
+                            if(!empty($objectives)){
+                                $mobile_payments = $mobile_payments->whereHas('allocations', function($query) use ($objectives){
+                                    $query->whereIn('objective_id', $objectives);  
+                                });
+                            }  
+                            
+                            $mobile_payments = $mobile_payments->get();
 
         foreach($mobile_payments as $mobile_payment){
             $res = array();
