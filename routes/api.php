@@ -5157,6 +5157,7 @@ Route::GET('/budget_items', 'BudgetItemApi@budgetItemsGet')->middleware('jwt.aut
  * Output-Formats: [application/json, application/xml]
  */
 Route::GET('/reports/2016', 'ReportsApi@get2016Report')->middleware('jwt.auth');
+Route::POST('/reports/pm-journal', 'ReportsApi@PmJournal')->middleware('jwt.auth');
 
 /**
  * GET getReportingCategories
