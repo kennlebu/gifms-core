@@ -364,6 +364,8 @@ class LPOApi extends Controller
 
         $lpo->status_id = 15;        
         $lpo->cancellation_reason = $input['cancellation_reason'];
+        $lpo->cancelled_by_id = $this->current_user()->id;
+        $lpo->cancelled_at = date('Y-m-d H:i:s');
 
         // Logging cancelation
         activity()
