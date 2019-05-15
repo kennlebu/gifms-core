@@ -1062,10 +1062,8 @@ class InvoiceApi extends Controller
         $total_records          = $qb->count();
         $records_filtered       = 0;
         
-
         //if status is set
         if(array_key_exists('status', $input)){
-
             $status_ = (int) $input['status'];
 
             if($status_ >-1){
@@ -1080,25 +1078,18 @@ class InvoiceApi extends Controller
             }
         }
 
-
-
         $app_stat = $this->approvable_statuses ;
         //if approvable is set
 
         if(array_key_exists('approvable', $input)){
-
-            $qb->where(function ($query) use ($app_stat) {
-                    
+            $qb->where(function ($query) use ($app_stat) {                    
                 foreach ($app_stat as $key => $value) {
                     $query->orWhere('invoices.status_id',$value['id']);
                 }
-
             });
         }
 
         if(array_key_exists('my_approvables', $input)){
-
-
             $current_user =  JWTAuth::parseToken()->authenticate();
             if($current_user->hasRole([
                 'super-admin',
@@ -1123,22 +1114,20 @@ class InvoiceApi extends Controller
                             $query->orWhere('invoices.status_id',$value['id']); 
                         }
                     }
-
                 });
-
-
-            }else{
+            }
+            else{
                 $qb->where('invoices.id',0);
             }
         }
 
-
-
+        if(array_key_exists('for_supplier', $input)){
+            $qb->where('invoices.supplier_id', $input['supplier_id']);
+        }
 
         //searching
         if(array_key_exists('searchval', $input)){
-            $qb->where(function ($query) use ($input) {
-                
+            $qb->where(function ($query) use ($input) {                
                 $query->orWhere('invoices.id','like', '\'%' . $input['searchval']. '%\'');
                 $query->orWhere('invoices.ref','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('invoices.external_ref','like', '\'%' . $input['search']['value']. '%\'');
@@ -1146,7 +1135,6 @@ class InvoiceApi extends Controller
                 $query->orWhere('invoices.expense_desc','like', '\'%' . $input['searchval']. '%\'');
                 $query->orWhere('invoices.expense_purpose','like', '\'%' . $input['searchval']. '%\'');
                 $query->orWhere('suppliers.supplier_name','like', '\'%' . $input['search']['value']. '%\'');
-
             });
 
             $sql = Invoice::bind_presql($qb->toSql(),$qb->getBindings());
@@ -1154,10 +1142,7 @@ class InvoiceApi extends Controller
             $dt = json_decode(json_encode(DB::select($sql)), true);
 
             $records_filtered = (int) $dt[0]['count'];
-
-
         }
-
 
         //ordering
         if(array_key_exists('order_by', $input)&&$input['order_by']!=''){
@@ -1168,22 +1153,15 @@ class InvoiceApi extends Controller
             }
 
             $qb->orderBy('invoices.'.$order_column_name, $order_direction);
-        }else{
-            //$qb->orderBy("project_code", "asc");
         }
 
         //limit
         if(array_key_exists('limit', $input)){
-
-
             $qb->limit($input['limit']);
-
-
         }
 
         //migrated
         if(array_key_exists('migrated', $input)){
-
             $mig = (int) $input['migrated'];
 
             if($mig==0){
@@ -1191,18 +1169,11 @@ class InvoiceApi extends Controller
             }else if($mig==1){
                 $qb->whereNotNull('invoices.migration_id');
             }
-
-
         }
 
-
-
-
         if(array_key_exists('datatables', $input)){
-
             //searching
-            $qb->where(function ($query) use ($input) {
-                
+            $qb->where(function ($query) use ($input) {                
                 $query->orWhere('invoices.id','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('invoices.ref','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('invoices.external_ref','like', '\'%' . $input['search']['value']. '%\'');
@@ -1210,11 +1181,7 @@ class InvoiceApi extends Controller
                 $query->orWhere('invoices.expense_desc','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('invoices.expense_purpose','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('suppliers.supplier_name','like', '\'%' . $input['search']['value']. '%\'');
-
             });
-
-
-
 
             $sql = Invoice::bind_presql($qb->toSql(),$qb->getBindings());
             $sql = str_replace("`invoices`.*"," count(*) AS count ", $sql);
@@ -1222,42 +1189,27 @@ class InvoiceApi extends Controller
 
             $records_filtered = (int) $dt[0]['count'];
 
-
             //ordering
             $order_column_id    = (int) $input['order'][0]['column'];
             $order_column_name  = $input['columns'][$order_column_id]['order_by'];
             $order_direction    = $input['order'][0]['dir'];
 
             if($order_column_name!=''){
-
                 $qb->orderBy('invoices.'.$order_column_name, $order_direction);
-
             }
-
-
-
-
-
 
             //limit $ offset
             if((int)$input['start']!= 0 ){
-
                 $response_dt    =   $qb->limit($input['length'])->offset($input['start']);
-
-            }else{
+            }
+            else{
                 $qb->limit($input['length']);
             }
-
-
-
 
             $qb->addSelect('suppliers.supplier_name');
             $sql = Invoice::bind_presql($qb->toSql(),$qb->getBindings());
 
-            // $response_dt = DB::select($qb->toSql(),$qb->getBindings());         //pseudo
             $response_dt = DB::select($sql);
-
-
             $response_dt = json_decode(json_encode($response_dt), true);
 
             $response_dt    = $this->append_relationships_objects($response_dt);
@@ -1267,10 +1219,8 @@ class InvoiceApi extends Controller
                 $total_records,
                 $records_filtered
                 );
-
-
-        }else{
-
+        }
+        else{
             $sql            = Invoice::bind_presql($qb->toSql(),$qb->getBindings());
             $response       = json_decode(json_encode(DB::select($sql)), true);
             if(!array_key_exists('lean', $input)){
@@ -1278,9 +1228,6 @@ class InvoiceApi extends Controller
                 $response       = $this->append_relationships_nulls($response);
             }
         }
-
-
-
 
         return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
     }
@@ -1316,7 +1263,7 @@ class InvoiceApi extends Controller
 
         foreach ($data as $key => $value) {
 
-            $invoice = Invoice::find($data[$key]['id']);
+            $invoice = Invoice::with('payments.payment_mode','payments.currency','payments.payment_batch')->find($data[$key]['id']);
 
             $data[$key]['raised_by']                    = $invoice->raised_by;
             $data[$key]['received_by']                  = $invoice->received_by;
@@ -1334,6 +1281,7 @@ class InvoiceApi extends Controller
             $data[$key]['vouchers']                     = $invoice->vouchers;
             $data[$key]['comments']                     = $invoice->comments;
             $data[$key]['program_activity']             = $invoice->program_activity;
+            $data[$key]['payments']                     = $invoice->payments;
 
             foreach ($invoice->allocations as $key1 => $value1) {
                 $project = Project::find((int)$value1['project_id']);
