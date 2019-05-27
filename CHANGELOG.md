@@ -6,6 +6,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.beta.2] - 2019-05-09
+
+### Changed
+- Only approved LPOs can be tagged to invoices
+- Fixed user that cancels an LPO not being saved
+
+### Removed
+- Remove unique db requirement for emails. It was messing with validation
+  on soft deleted rows.
+
+### Added
+- Supplier transactions when viewing a supplier.
+
 ## [1.2.beta.1] - 2019-04-23
 
 ### Added
