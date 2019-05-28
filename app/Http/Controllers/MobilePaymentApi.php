@@ -380,12 +380,12 @@ class MobilePaymentApi extends Controller
                                     'allocations'
                                 )->findOrFail($mobile_payment_id);
 
-            if (!$user->can("APPROVE_MOBILE_PAYMENT_".$mobile_payment->status_id)){
-                throw new ApprovalException("No approval permission");             
-            }
+            // if (!$user->can("APPROVE_MOBILE_PAYMENT_".$mobile_payment->status_id)){
+            //     throw new ApprovalException("No approval permission");             
+            // }
            
             $approvable_status  = $mobile_payment->status;
-            $mobile_payment->status_id = $mobile_payment->status->next_status_id;
+            $mobile_payment->status_id = $mobile_payment->status->new_next_status_id;
 
 
             $mobile_payment->disableLogging(); //! Do not log the update
@@ -412,82 +412,77 @@ class MobilePaymentApi extends Controller
 
                 $approval = new Approval;
 
-
                 $approval->approvable_id            =   (int)   $mobile_payment->id;
                 $approval->approvable_type          =   "mobile_payments";
                 $approval->approval_level_id        =   $approvable_status->approval_level_id;
                 $approval->approver_id              =   (int)   $user->id;
 
-                if($mobile_payment->status_id!=4 && $mobile_payment->status_id!=8 && $mobile_payment->status_id!=13){
-                
-                    $approval->save();
-                    try{                     
+                if($mobile_payment->status_id!=17){
+                    $approval->save();               
                     Mail::queue(new NotifyMobilePayment($mobile_payment));
-                    }catch(Exception $e){
-                    }
                 }
                 // Management approval or accountant approval after corrections
-                elseif($mobile_payment->status_id==4||$mobile_payment->status_id==13){
+                elseif($mobile_payment->status_id==17){
                     $mgt_approval_time = new \DateTime();
                     $voucher_number = '';
 
                     // Only create a payment voucher if it's management approval
-                    if($mobile_payment->status_id==4){
+                    // if($mobile_payment->status_id==4){
                         $v = DB::select('call generate_voucher_no(?,?)',array($mobile_payment->id,"mobile_payments"));
                         $v_result = $v[0];
                         $voucher_number = $v_result['voucher_number'];
-                    }
+                    // }
                     // Get original voucher number if it's being resent to bank
-                    else if($mobile_payment->status_id==13){
-                        if(empty($mobile_payment->migration_id)){
-                            $v = VoucherNumber::where('payable_type', 'mobile_payments')
-                                            ->where('payable_id', $mobile_payment->id)
-                                            ->first();
-                            $voucher_number = $v->voucher_number;
-                        }
-                        else{
-                            $voucher_number = 'CHAI'.$this->pad_zeros(5, $mobile_payment->migration_invoice_id);
-                        }
-                    }
+                    // else if($mobile_payment->status_id==13){
+                        // if(empty($mobile_payment->migration_id)){
+                            // $v = VoucherNumber::where('payable_type', 'mobile_payments')
+                            //                 ->where('payable_id', $mobile_payment->id)
+                            //                 ->first();
+                            // $voucher_number = $v->voucher_number;
+                        // }
+                        // else{
+                        //     $voucher_number = 'CHAI'.$this->pad_zeros(5, $mobile_payment->migration_invoice_id);
+                        // }
+                    // }
                     
                     /* Get CSV data */
-                    date_default_timezone_set('Africa/Nairobi'); // Set timezone to Nairobi
-                    $date = date('Ymd');
+                    // date_default_timezone_set('Africa/Nairobi'); // Set timezone to Nairobi
+                    // $date = date('Ymd');
 
-                    $csv_data = [];
+                    // $csv_data = [];
                     
-                    foreach($mobile_payment->payees as $payee){
-                        $name = '';
-                        if(empty($payee->registered_name)) $name = $payee->full_name;
-                        else $name = $payee->registered_name;
-                        $data = array(
-                            $date, // date
-                            '99001', // bank_code
-                            '', // blank space
-                            preg_replace("/[^0-9]/", "", $payee->mobile_number), // phone
-                            $name, // mobile_name
-                            'NIC', // bank_name
-                            '', // blank space
-                            'KES', // currency
-                            $payee->total, // amount
-                            $voucher_number // chaipv
-                        );
+                    // foreach($mobile_payment->payees as $payee){
+                    //     $name = '';
+                    //     if(empty($payee->registered_name)) $name = $payee->full_name;
+                    //     else $name = $payee->registered_name;
+                    //     $data = array(
+                    //         $date, // date
+                    //         '99001', // bank_code
+                    //         '', // blank space
+                    //         preg_replace("/[^0-9]/", "", $payee->mobile_number), // phone
+                    //         $name, // mobile_name
+                    //         'NIC', // bank_name
+                    //         '', // blank space
+                    //         'KES', // currency
+                    //         $payee->total, // amount
+                    //         $voucher_number // chaipv
+                    //     );
                         
-                        // Add the data to the csv_data array
-                        array_push($csv_data, $data);}
+                    //     // Add the data to the csv_data array
+                    //     array_push($csv_data, $data);}
 
                     /* Get PDF data */                    
-                    $deputy_director = Staff::findOrFail((int) Config::get('app.director_id'));
-                    $director = Staff::findOrFail(37); //TODO: Pick this from config
-                    $pdf_data = array('mobile_payment' => $mobile_payment,
-                        'addressee'=>'Maureen Adega',
-                        'deputy_director'=>$deputy_director,
-                        'director'=>$director,
-                        'our_ref'=>$voucher_number
-                    );
+                    // $deputy_director = Staff::findOrFail((int) Config::get('app.director_id'));
+                    // $director = Staff::findOrFail(37); //TODO: Pick this from config
+                    // $pdf_data = array('mobile_payment' => $mobile_payment,
+                    //     'addressee'=>'Maureen Adega',
+                    //     'deputy_director'=>$deputy_director,
+                    //     'director'=>$director,
+                    //     'our_ref'=>$voucher_number
+                    // );
 
                     /* Send Email */
-                    Mail::queue(new MobilePaymentInstructBank($mobile_payment, $csv_data, $pdf_data, $voucher_number));
+                    Mail::queue(new NotifyMobilePayment($mobile_payment));
                     
                     // Save the approval if the bank has been notified successfully
                     if($mobile_payment->status_id==4){
@@ -498,19 +493,18 @@ class MobilePaymentApi extends Controller
                     }
                     $approval->save();
                 }
-                elseif($mobile_payment->status_id==8){
-                    $approval->save();
-                }
+                // elseif($mobile_payment->status_id==8){
+                //     $approval->save();
+                // }
 
                 // Logging
-                $mobile_payment->enableLogging(); //! Re-enable logging
                 activity()
                    ->performedOn($approval->approvable)
                    ->causedBy($user)
-                   ->log('approved');
+                   ->log('Approved');
 
                 if($several!=true)
-                return Response()->json(array('result' => 'Success: mobile_payment approved','mobile_payment' => $mobile_payment), 200);
+                return Response()->json(array('result' => 'Success: mobile payment approved','mobile_payment' => $mobile_payment), 200);
             }
 
         }catch(ApprovalException $ae){
@@ -518,11 +512,88 @@ class MobilePaymentApi extends Controller
             $response =  ["error"=>"You do not have the permissions to perform this action at this point"];
             return response()->json($response, 403,array(),JSON_PRETTY_PRINT);
         }catch(Exception $e){
-            $response =  ["error"=>$e->getMessage()];
+            $response =  ["error"=>$e->getMessage(),"stack"=>$e->getTraceAsString()];
             return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
         }
     }
 
+
+
+
+
+
+
+
+    public function sendToBank($mobile_payment_id){
+        $response = [];
+        try{
+            $mobile_payment   = MobilePayment::findOrFail($mobile_payment_id);
+            $mobile_payment->disableLogging(); //! Do not log the update
+
+            /* Get CSV data */
+            date_default_timezone_set('Africa/Nairobi'); // Set timezone to Nairobi
+            $date = date('Ymd');
+
+            $csv_data = [];
+            
+            foreach($mobile_payment->payees as $payee){
+                $name = '';
+                if(empty($payee->registered_name)) $name = $payee->full_name;
+                else $name = $payee->registered_name;
+                $data = array(
+                    $date, // date
+                    '99001', // bank_code
+                    '', // blank space
+                    preg_replace("/[^0-9]/", "", $payee->mobile_number), // phone
+                    $name, // mobile_name
+                    'NIC', // bank_name
+                    '', // blank space
+                    'KES', // currency
+                    $payee->total, // amount
+                    // $voucher_number // chaipv
+                );
+                
+                // Add the data to the csv_data array
+                array_push($csv_data, $data);}
+
+            /* Get PDF data */                    
+            $deputy_director = Staff::findOrFail((int) Config::get('app.director_id'));
+            $director = Staff::findOrFail(37); //TODO: Pick this from config
+            $pdf_data = array('mobile_payment' => $mobile_payment,
+                'addressee'=>'Maureen Adega',
+                'deputy_director'=>$deputy_director,
+                'director'=>$director
+                // 'our_ref'=>$voucher_number
+            );
+
+            /* Send Email */
+            Mail::queue(new MobilePaymentInstructBank($mobile_payment, $csv_data, $pdf_data));
+
+            // If it was sent before, move to resent status
+            if($mobile_payment->status_id == 1){
+                $mobile_payment->status_id = $mobile_payment->status->new_next_status_id;
+                // Logging
+                activity()
+                    ->performedOn($mobile_payment)
+                    ->causedBy($this->current_user())
+                    ->log('Sent to bank');
+            }
+            elseif($mobile_payment->status_id == 15){
+                $mobile_payment->status_id = 16;
+                // Logging
+                activity()
+                    ->performedOn($mobile_payment)
+                    ->causedBy($this->current_user())
+                    ->log('Resent to bank');
+            }
+            $mobile_payment->save();
+            return Response()->json(array('result' => 'Success: mobile payment sent to bank','mobile_payment' => $mobile_payment), 200);
+        }
+        catch(Exception $e){
+            $response =  ["error"=>$e->getMessage()];
+            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+        }
+    }
 
 
 
@@ -581,9 +652,9 @@ class MobilePaymentApi extends Controller
                                     'allocations'
                                 )->findOrFail($mobile_payment_id);
 
-            if (!$user->can("APPROVE_MOBILE_PAYMENT_".$mobile_payment->status_id)){
-                throw new ApprovalException("No approval permission");             
-            }
+            // if (!$user->can("APPROVE_MOBILE_PAYMENT_".$mobile_payment->status_id)){
+            //     throw new ApprovalException("No approval permission");             
+            // }
            // Set as rejected by bank if it was already approved by management
            // otherwise, set it as a normal rejection 
            if($mobile_payment->status_id==4||$mobile_payment->status_id==12||$mobile_payment->status_id==13) {
@@ -738,65 +809,6 @@ class MobilePaymentApi extends Controller
         }
 
 
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    /**
-     * Operation allocateMobilePayment
-     *
-     * Allocate mobile_payment by ID.
-     *
-     * @param int $mobile_payment_id ID of mobile_payment to return object (required)
-     *
-     * @return Http response
-     */
-    public function allocateMobilePayment($mobile_payment_id)
-    {
-        $input = Request::all();
-
-        //path params validation
-
-
-        //not path params validation
-
-        return response('How about implementing allocateMobilePayment as a PATCH method ?');
     }
 
 
@@ -1008,8 +1020,6 @@ class MobilePaymentApi extends Controller
      */
     public function deleteMobilePayment($mobile_payment_id)
     {
-        $input = Request::all();
-
         $deleted = MobilePayment::destroy($mobile_payment_id);
 
         if($deleted){
@@ -1057,7 +1067,7 @@ class MobilePaymentApi extends Controller
         $user = JWTAuth::parseToken()->authenticate();
 
         try{
-            $mobile_payment   = MobilePayment::with(
+            $mobile_payment = MobilePayment::with(
                                     'requested_by',
                                     'requested_action_by',
                                     'project',
@@ -1074,15 +1084,12 @@ class MobilePaymentApi extends Controller
                                     'payees',
                                     'approvals',
                                     'allocations'
-                                )->findOrFail($mobile_payment_id);
-
-           
+                                )->findOrFail($mobile_payment_id);           
 
            if (($mobile_payment->total - $mobile_payment->amount_allocated) > 1 ){ //allowance of 1
-             throw new NotFullyAllocatedException("This mobile payment has not been fully allocated");
-             
+             throw new NotFullyAllocatedException("This mobile payment has not been fully allocated");             
            }
-            if($mobile_payment->status_id == 1){ // Only set request time if its not after corrections
+            if($mobile_payment->status_id == 15 || $mobile_payment->status_id == 16){
                 $mobile_payment->requested_at = date('Y-m-d H:i:s');
 
                 // Logging submission
@@ -1091,17 +1098,17 @@ class MobilePaymentApi extends Controller
                    ->causedBy($user)
                    ->log('submitted');
             }
-            else{
-                // Logging resubmission
-                activity()
-                   ->performedOn($mobile_payment)
-                   ->causedBy($user)
-                   ->log('re-submitted');
-            }
+            // else{
+            //     // Logging resubmission
+            //     activity()
+            //        ->performedOn($mobile_payment)
+            //        ->causedBy($user)
+            //        ->log('re-submitted');
+            // }
 
             $mobile_payment->disableLogging(); //! Do not log the update
             
-            $mobile_payment->status_id = $mobile_payment->status->next_status_id;
+            $mobile_payment->status_id = $mobile_payment->status->new_next_status_id;
             if($mobile_payment->save()) {
                 
                 Mail::queue(new NotifyMobilePayment($mobile_payment));
@@ -1115,7 +1122,7 @@ class MobilePaymentApi extends Controller
             return response()->json($response, 403,array(),JSON_PRETTY_PRINT);
         }catch(Exception $e){
 
-            $response =  ["error"=>"Mobile Payment could not be found"];
+            $response =  ["error"=>"Mobile Payment could not be found", "msg"=>$e->getMessage()];
             return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
         }
     }
@@ -1377,6 +1384,11 @@ class MobilePaymentApi extends Controller
         // Corrected, awaiting accountant approval
         if(array_key_exists('corrected_approvable', $input) && $input['corrected_approvable']==true){
             $qb->where('status_id', '12');
+        }
+
+        // Approved, awaiting payment
+        if(array_key_exists('awaiting_payment', $input) && $input['awaiting_payment']==true){
+            $qb->where('status_id', '17');
         }
 
         //if status is set
@@ -1823,6 +1835,107 @@ class MobilePaymentApi extends Controller
         return $data;
 
 
+    }
+
+
+    public function downloadCSV($mobile_payment_id){
+        $response = [];
+        try{
+            $mobile_payment = MobilePayment::findOrFail($mobile_payment_id);
+            $mobile_payment->disableLogging(); //! Do not log the update
+
+            /* Get CSV data */
+            date_default_timezone_set('Africa/Nairobi'); // Set timezone to Nairobi
+            $date = date('Ymd');
+
+            $csv_data = [];
+
+            $v = VoucherNumber::where('payable_type', 'mobile_payments')
+                                ->where('payable_id', $mobile_payment->id)
+                                ->first();
+            $voucher_number = $v->voucher_number;
+            
+            foreach($mobile_payment->payees as $payee){
+                $name = '';
+                if(empty($payee->registered_name)) $name = $payee->full_name;
+                else $name = $payee->registered_name;
+                $data = array(
+                    $date, // date
+                    '99001', // bank_code
+                    '', // blank space
+                    preg_replace("/[^0-9]/", "", $payee->mobile_number), // phone
+                    $name, // mobile_name
+                    'NIC', // bank_name
+                    '', // blank space
+                    'KES', // currency
+                    $payee->total, // amount
+                    $voucher_number // chaipv
+                );
+                
+                // Add the data to the csv_data array
+                array_push($csv_data, $data);
+            }
+
+            // $headers = array(
+            //     "Content-type" => "text/csv",
+            //     "Content-Disposition" => "attachment; filename=allowances_".$voucher_number.".csv",
+            //     "Pragma" => "no-cache",
+            //     "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
+            //     "Expires" => "0"
+            // );
+        
+            // $reviews = Reviews::getReviewExport($this->hw->healthwatchID)->get();
+            // $columns = array('ReviewID', 'Provider', 'Title', 'Review', 'Location', 'Created', 'Anonymous', 'Escalate', 'Rating', 'Name');
+        
+            // $callback = function() use ($csv_data)
+            // {
+            //     $file = fopen('php://output', 'w');
+            //     fputcsv($file, $csv_data);
+        
+            //     // foreach($reviews as $review) {
+            //     //     fputcsv($file, array($review->reviewID, $review->provider, $review->title, $review->review, $review->location, $review->review_created, $review->anon, $review->escalate, $review->rating, $review->name));
+            //     // }
+            //     fclose($file);
+            // };
+            // return Response::stream($callback, 200, $headers);
+
+            /* Get PDF data */                    
+            // $deputy_director = Staff::findOrFail((int) Config::get('app.director_id'));
+            // $director = Staff::findOrFail(37); //TODO: Pick this from config
+            // $pdf_data = array('mobile_payment' => $mobile_payment,
+            //     'addressee'=>'Maureen Adega',
+            //     'deputy_director'=>$deputy_director,
+            //     'director'=>$director
+            //     'our_ref'=>$voucher_number
+            // );
+
+            /* Send Email */
+            // Mail::queue(new MobilePaymentInstructBank($mobile_payment, $csv_data, $pdf_data));
+
+            // If it was sent before, move to resent status
+            // if($mobile_payment->status_id == 1){
+            //     $mobile_payment->status_id = $mobile_payment->status->new_next_status_id;
+            //     // Logging
+            //     activity()
+            //         ->performedOn($mobile_payment)
+            //         ->causedBy($this->current_user())
+            //         ->log('Sent to bank');
+            // }
+            // elseif($mobile_payment->status_id == 15){
+            //     $mobile_payment->status_id = 16;
+            //     // Logging
+            //     activity()
+            //         ->performedOn($mobile_payment)
+            //         ->causedBy($this->current_user())
+            //         ->log('Resent to bank');
+            // }
+            // $mobile_payment->save();
+            return Response()->json(array('csv_data' => $csv_data,'voucher_number' => $voucher_number), 200);
+        }
+        catch(Exception $e){
+            $response =  ["error"=>$e->getMessage()];
+            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+        }
     }
 
 

@@ -48,7 +48,7 @@
     <main>
         <div>
             {{date('l F d, Y') }}<br/><br/>
-            <span style="font-size: x-large;">Our Ref.: {{$our_ref}}</span><br/><br/>
+            <span style="font-size: x-large;">Our Ref.: ####</span><br/><br/>
             NIC Bank LTD<br/> NIC House<br/> Nairobi<br/><br/>
             <span style="text-decoration: underline;">Attn: {{$addressee}}</span><br/><br/>
             <span style="text-decoration: underline;">RE: MPESA Bulk Payment KES {{number_format($mobile_payment->totals,2)}} ({{(new NumberFormatter("en", NumberFormatter::SPELLOUT))->format($mobile_payment->totals)}} only)</span><br/><br/>

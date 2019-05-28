@@ -32,13 +32,13 @@ class MobilePaymentInstructBank extends Mailable
      *
      * @return void
      */
-    public function __construct(MobilePayment $mobile_payment, $csv_data, $pdf_data, $voucher_number)
+    public function __construct(MobilePayment $mobile_payment, $csv_data, $pdf_data)
     {
         $this->mobile_payment = $mobile_payment;
         $this->csv_data = $csv_data;
         $this->pdf_data = $pdf_data;
         $this->director2_id = 37;
-        $this->voucher_number = $voucher_number;
+        // $this->voucher_number = $voucher_number;
 
         $this->accountant           = Staff::findOrFail(    (int)   Config::get('app.accountant_id'));
         $this->financial_controller = Staff::findOrFail(    (int)   Config::get('app.financial_controller_id'));
@@ -62,7 +62,7 @@ class MobilePaymentInstructBank extends Mailable
             array('first_name'=>$this->requester->f_name, 'last_name'=>$this->requester->l_name, 'email'=>$this->requester->email),
             array('first_name'=>$this->PM->f_name, 'last_name'=>$this->PM->l_name, 'email'=>$this->PM->email),
             
-            array('first_name'=>'Rosemary', 'last_name'=>'Kihoto', 'email'=>'rkihoto@clintonhealthaccess.org')
+            // array('first_name'=>'Rosemary', 'last_name'=>'Kihoto', 'email'=>'rkihoto@clintonhealthaccess.org')
         );
     }
 
@@ -82,8 +82,8 @@ class MobilePaymentInstructBank extends Mailable
         $csv_file = stream_get_contents($fp);
 
         /* Generate PDF */
-        $pdf = PDF::loadView('pdf/mobile_payment_bank_instruction', $this->pdf_data);
-        $pdf_file = $pdf->stream();
+        // $pdf = PDF::loadView('pdf/mobile_payment_bank_instruction', $this->pdf_data);
+        // $pdf_file = $pdf->stream();
 
         $ccs = [];
         foreach($this->bank_cc as $bank_cc){
@@ -103,8 +103,8 @@ class MobilePaymentInstructBank extends Mailable
 
                 ])           
             ->cc($ccs)
-            ->attachData($pdf_file, 'ALLOWANCES_'.$this->pdf_data['our_ref'].'.pdf')
-            ->attachData($csv_file, 'ALLOWANCES_'.$this->pdf_data['our_ref'].'.csv');      
+            // ->attachData($pdf_file, 'ALLOWANCES_'.$this->pdf_data['our_ref'].'.pdf')
+            ->attachData($csv_file, 'ALLOWANCES_.csv');      
 
         return $this->to($this->bank_to['email'])
         // return $this->to('dkarambi@clintonhealthaccess.org') // for test
@@ -114,7 +114,7 @@ class MobilePaymentInstructBank extends Mailable
                     'bank_to' => $this->bank_to,
                     'js_url' => Config::get('app.js_url'),
                 ])
-            ->subject("Bulk MPESA Payment - ".$this->pdf_data['our_ref']);
+            ->subject("Bulk MPESA Payment");
     }
 
     /**

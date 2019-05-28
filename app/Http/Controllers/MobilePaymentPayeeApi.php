@@ -75,6 +75,7 @@ class MobilePaymentPayeeApi extends Controller
 
 
         $mobile_payment_payee = new MobilePaymentPayee;
+        $mobile_payment_payee->disableLogging();
 
 
         try{
@@ -174,6 +175,7 @@ class MobilePaymentPayeeApi extends Controller
                 'amount'
                 );
             $mobile_payment_payee = MobilePaymentPayee::findOrFail((int)$form['id']);
+            $mobile_payment_payee->disableLogging();
 
 
             // print_r($mobile_payment_payee);die;

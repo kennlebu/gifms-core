@@ -69,19 +69,11 @@ class MobilePaymentStatusApi extends Controller
      */
     public function addMobilePaymentStatus()
     {
-        $form = Request::only(
-            'mobile_payment_status',
-            'next_status_id',
-            'status_security_level',
-            'order_priority',
-            'display_color',
-            'default_status',
-            'approval_level_id'
-            );
+        $form = Request::all();
 
         $mobile_payment_status = new MobilePaymentStatus;
 
-            $mobile_payment_status->mobile_payment_status                 =         $form['mobile_payment_status'];
+            $mobile_payment_status->mobile_payment_status          =         $form['mobile_payment_status'];
             $mobile_payment_status->next_status_id                 =  (int)  $form['next_status_id'];
             $mobile_payment_status->status_security_level          =         $form['status_security_level'];
             $mobile_payment_status->order_priority                 =         $form['order_priority'];
@@ -125,16 +117,7 @@ class MobilePaymentStatusApi extends Controller
      */
     public function updateMobilePaymentStatus()
     {
-        $form = Request::only(
-            'id',
-            'mobile_payment_status',
-            'next_status_id',
-            'status_security_level',
-            'order_priority',
-            'display_color',
-            'default_status',
-            'approval_level_id'
-            );
+        $form = Request::all();
 
         $mobile_payment_status = MobilePaymentStatus::find($form['id']);
 
@@ -290,7 +273,7 @@ class MobilePaymentStatusApi extends Controller
         $user = JWTAuth::parseToken()->authenticate();
 
         if(array_key_exists('displayable_only',$input)){
-            $qb->whereIn('id', [1,7,11,14]);
+            $qb->whereIn('id', [1,7,11,14,15,16])->orderBy('new_order_priority','asc');
         }
 
 
