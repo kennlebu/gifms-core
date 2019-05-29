@@ -379,22 +379,17 @@ class ProjectApi extends Controller
 
     public function projectsGet()
     {
-        
-
-
         $input = Request::all();
         //query builder
         $qb = DB::table('projects');
-
+        $qb->select('projects.*');
         $qb->whereNull('projects.deleted_at');
         $current_user = JWTAuth::parseToken()->authenticate();
 
         $response;
         $response_dt;
-
         $total_records          = $qb->count();
         $records_filtered       = 0;
-
         
         // Show even ones without Program IDs
         if(!array_key_exists('no_programs', $input)){
@@ -410,7 +405,8 @@ class ProjectApi extends Controller
         
         //my_assigned
         if((array_key_exists('my_assigned', $input)&& $input['my_assigned'] = "true")&&($current_user->hasRole(['accountant','assistant-accountant','financial-controller','admin-manager']))){
-            $qb->whereNotNull('project_code');
+            $qb->select(DB::raw('projects.*'))
+            ->whereNotNull('project_code');
         }
         elseif ((array_key_exists('my_assigned', $input)&& $input['my_assigned'] = "true") && array_key_exists('staff_responsible', $input)) {
             
@@ -448,8 +444,6 @@ class ProjectApi extends Controller
 
         //my_pm_assigned
         if(array_key_exists('my_pm_assigned', $input)&& $input['my_pm_assigned'] = "true"){
-
-
             $qb->select(DB::raw('projects.*'))
                  ->rightJoin('programs', 'programs.id', '=', 'projects.program_id')
                  ->rightJoin('program_managers', 'program_managers.program_id', '=', 'programs.id')
@@ -461,9 +455,7 @@ class ProjectApi extends Controller
 
         //program_id
          if(array_key_exists('program_id', $input)){
-
             $program_id = (int) $input['program_id'];
-
             if($program_id==0){
             }else if($program_id==1){
                 $qb->where('projects.program_id',$program_id);
@@ -486,25 +478,18 @@ class ProjectApi extends Controller
 
         //searching
         if(array_key_exists('searchval', $input)){
-            $qb->where(function ($query) use ($input) {
-                
+            $qb->where(function ($query) use ($input) {                
                 $query->orWhere('projects.id','like', '\'%' . $input['searchval']. '%\'');
                 $query->orWhere('projects.project_name','like', '\'%' . $input['searchval']. '%\'');
                 $query->orWhere('projects.project_desc','like', '\'%' . $input['searchval']. '%\'');
                 $query->orWhere('projects.project_code','like', '\'%' . $input['searchval']. '%\'');
-
             });
 
-            // $records_filtered       =  $qb->count(); //doesn't work
-
             $sql = Project::bind_presql($qb->toSql(),$qb->getBindings());
-            $sql = str_replace("*"," count(*) AS count ", $sql);
+            $sql = str_replace("projects.*"," count(*) AS count ", $sql);
             $dt = json_decode(json_encode(DB::select($sql)), true);
 
             $records_filtered = (int) $dt[0]['count'];
-            // $records_filtered = 30;
-
-
         }
 
         //ordering
@@ -516,56 +501,37 @@ class ProjectApi extends Controller
             }
 
             $qb->orderBy($order_column_name, $order_direction);
-        }else{
-            // $qb->orderBy("project_code", "asc");
         }
 
         //limit
         if(array_key_exists('limit', $input)){
-
-
             $qb->limit($input['limit']);
-
-
         }
 
         //migrated
         if(array_key_exists('migrated', $input)){
-
             $mig = (int) $input['migrated'];
-
             if($mig==0){
                 $qb->whereNull('migration_id');
             }else if($mig==1){
                 $qb->whereNotNull('migration_id');
             }
-
-
         }
 
-
-
         if(array_key_exists('datatables', $input)){
-
             //searching
             $qb->where(function ($query) use ($input) {
-                
                 $query->orWhere('projects.id','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('projects.project_name','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('projects.project_desc','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('projects.project_code','like', '\'%' . $input['search']['value']. '%\'');
-
             });
 
-
-
-
             $sql = Project::bind_presql($qb->toSql(),$qb->getBindings());
-            $sql = str_replace("*"," count(*) AS count ", $sql);
+            $sql = str_replace("projects.*"," count(*) AS count ", $sql);
             $dt = json_decode(json_encode(DB::select($sql)), true);
 
             $records_filtered = (int) $dt[0]['count'];
-
 
             //ordering
             $order_column_id    = (int) $input['order'][0]['column'];
@@ -573,21 +539,12 @@ class ProjectApi extends Controller
             $order_direction    = $input['order'][0]['dir'];
 
             if($order_column_name!=''){
-
                 $qb->orderBy($order_column_name, $order_direction);
-
             }
-
-
-
-
-
 
             //limit $ offset
             if((int)$input['start']!= 0 ){
-
                 $response_dt    =   $qb->limit($input['length'])->offset($input['start']);
-
             }else{
                 $qb->limit($input['length']);
             }
@@ -597,13 +554,8 @@ class ProjectApi extends Controller
 
 
             $sql = Project::bind_presql($qb->toSql(),$qb->getBindings());
-
-            // $response_dt = DB::select($qb->toSql(),$qb->getBindings());         //pseudo
             $response_dt = DB::select($sql);
-
-
             $response_dt = json_decode(json_encode($response_dt), true);
-
             $response_dt    = $this->append_relationships_objects($response_dt);
             $response_dt    = $this->append_relationships_nulls($response_dt);
             $response       = Project::arr_to_dt_response( 
@@ -611,12 +563,9 @@ class ProjectApi extends Controller
                 $total_records,
                 $records_filtered
                 );
-
-
-        }else{
-
+        }
+        else{
             $qb->where('projects.status_id', 1);
-
             $sql            = Project::bind_presql($qb->toSql(),$qb->getBindings());
             $response       = json_decode(json_encode(DB::select($sql)), true);
             if(!array_key_exists('lean', $input)){

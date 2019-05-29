@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   names is done before submission for approval.
 - Leave request can be edited after approval. It's resesnt back to the
   line manager for approval.
+- PMs can only see their projects in admin section for projects.
 
 ## [1.2.beta.2] - 2019-05-09
 ### Changed
