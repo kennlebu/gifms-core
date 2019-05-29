@@ -654,6 +654,16 @@ class LeaveManagementApi extends Controller
             if(!empty($input['approver_comments']))
             $leave_request->approver_comments = $input['approver_comments'];
 
+            if($leave_request->status_id == 3){         // If the leave was already approved
+                $leave_request->status_id = 2;          // previously, send it back for manager
+                                                        // approval.
+                $leave_request->disableLogging();
+                activity()
+                   ->performedOn($leave_request)        // Log the edit and resubmission.
+                   ->causedBy($this->current_user())
+                   ->log('edited and resubmitted');        
+            }
+
             if($leave_request->save()){
                 return Response()->json(array('msg' => 'Leave request updated','leave_request' => $leave_request), 200);
             }

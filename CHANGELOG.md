@@ -6,8 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.2.beta.2] - 2019-05-09
+## [1.2.beta.3] - 2019-05-29
+### Changed
+- Mobile money process flow has been changed. Bank confirmation of the
+  names is done before submission for approval.
+- Leave request can be edited after approval. It's resesnt back to the
+  line manager for approval.
 
+## [1.2.beta.2] - 2019-05-09
 ### Changed
 - Only approved LPOs can be tagged to invoices
 - Fixed user that cancels an LPO not being saved
@@ -20,7 +26,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Supplier transactions when viewing a supplier.
 
 ## [1.2.beta.1] - 2019-04-23
-
 ### Added
 - PM Journal and filters to get reports by programs, objectives or projects.
 
