@@ -182,14 +182,17 @@ class MobilePayment extends BaseModel
     }
 
     public function getBankTransactionsAttribute(){
-        $payment = Payment::with('paid_to_bank', 'paid_to_bank_branch')->where('payable_id', $this->attributes['id'])
-                    ->where('payable_type', 'invoices')
-                    ->get();
-                
-        $bank_trans = [];
-        foreach($payment as $p){
-            if(!empty($p->bank_transaction)){
-                $bank_trans[] = $p->bank_transaction;
+        // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , PHP_EOL.'hhhhh' , FILE_APPEND);
+        if(!empty($this->attributes['voucher_no'])){
+            $vouchers = VoucherNumber::where('payable_id', $this->attributes['id'])
+                        ->where('payable_type', 'mobile_payments')
+                        ->get();
+            
+            $bank_trans = [];
+            foreach($vouchers as $p){
+                if(!empty($p->bank_transaction)){
+                    $bank_trans[] = $p->bank_transaction;
+                }
             }
         }
         return $bank_trans;
