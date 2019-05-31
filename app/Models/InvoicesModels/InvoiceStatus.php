@@ -10,13 +10,8 @@ use App\Models\BaseModels\BaseModel;
 
 class InvoiceStatus extends BaseModel
 {
-    //
     use SoftDeletes;
-
-
-
     protected $appends = ['invoices_count'];
-
 
     public function getInvoicesCountAttribute()
     {
@@ -32,5 +27,17 @@ class InvoiceStatus extends BaseModel
     public function approval_level()
     {
         return $this->belongsTo('App\Models\ApprovalsModels\ApprovalLevel','approval_level_id');
+    }
+
+    public function getUsdTotalAttribute(){
+        $total = 0;
+        $invoices = Invoice::where('status_id',$this->attributes['id'])->where('currency_id',2)->pluck('total')->toArray();
+        return array_sum($invoices);
+    }
+
+    public function getKesTotalAttribute(){
+        $total = 0;
+        $invoices = Invoice::where('status_id',$this->attributes['id'])->where('currency_id',1)->pluck('total')->toArray();
+        return array_sum($invoices);
     }
 }

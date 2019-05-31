@@ -3272,6 +3272,8 @@ Route::GET('/invoice_status/{invoice_status_id}', 'InvoiceStatusApi@getInvoiceSt
 
  */
 Route::GET('/invoice_statuses', 'InvoiceStatusApi@getInvoiceStatuses')->middleware('jwt.auth');
+Route::GET('/invoice-status-totals', 'InvoiceStatusApi@getTotals')->middleware('jwt.auth');
+
 
 
 

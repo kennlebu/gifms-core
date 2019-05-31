@@ -273,18 +273,13 @@ class InvoiceStatusApi extends Controller
      */
     public function getInvoiceStatuses()
     {
-        
-
-
         $input = Request::all();
         //query builder
         $qb = DB::table('invoice_statuses');
-
         $qb->whereNull('invoice_statuses.deleted_at');
 
         $response;
         $response_dt;
-
         $total_records          = $qb->count();
         $records_filtered       = 0;
         $user = JWTAuth::parseToken()->authenticate();
@@ -292,31 +287,19 @@ class InvoiceStatusApi extends Controller
             $qb->whereIn('invoice_statuses.id', [11,10,9,13]);
         }
 
-
-
-
         //searching
         if(array_key_exists('searchval', $input)){
-            $qb->where(function ($query) use ($input) {
-                
+            $qb->where(function ($query) use ($input) {                
                 $query->orWhere('invoice_statuses.id','like', '\'%' . $input['searchval']. '%\'');
                 $query->orWhere('invoice_statuses.invoice_status','like', '\'%' . $input['searchval']. '%\'');
                 $query->orWhere('invoice_statuses.display_color','like', '\'%' . $input['searchval']. '%\'');
-
             });
-
-            // $records_filtered       =  $qb->count(); //doesn't work
 
             $sql = InvoiceStatus::bind_presql($qb->toSql(),$qb->getBindings());
             $sql = str_replace("*"," count(*) AS count ", $sql);
             $dt = json_decode(json_encode(DB::select($sql)), true);
-
             $records_filtered = (int) $dt[0]['count'];
-            // $records_filtered = 30;
-
-
         }
-
 
         //ordering
         if(array_key_exists('order_by', $input)&&$input['order_by']!=''){
@@ -325,24 +308,16 @@ class InvoiceStatusApi extends Controller
             if(array_key_exists('order_dir', $input)&&$input['order_dir']!=''){                
                 $order_direction = $input['order_dir'];
             }
-
             $qb->orderBy($order_column_name, $order_direction);
-        }else{
-            //$qb->orderBy("project_code", "asc");
         }
 
         //limit
         if(array_key_exists('limit', $input)){
-
-
             $qb->limit($input['limit']);
-
-
         }
 
         //migrated
         if(array_key_exists('migrated', $input)){
-
             $mig = (int) $input['migrated'];
 
             if($mig==0){
@@ -350,25 +325,15 @@ class InvoiceStatusApi extends Controller
             }else if($mig==1){
                 $qb->whereNotNull('migration_id');
             }
-
-
         }
 
-
-
         if(array_key_exists('datatables', $input)){
-
             //searching
-            $qb->where(function ($query) use ($input) {
-                
+            $qb->where(function ($query) use ($input) {                
                 $query->orWhere('invoice_statuses.id','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('invoice_statuses.invoice_status','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('invoice_statuses.display_color','like', '\'%' . $input['search']['value']. '%\'');
-
             });
-
-
-
 
             $sql = InvoiceStatus::bind_presql($qb->toSql(),$qb->getBindings());
             $sql = str_replace("*"," count(*) AS count ", $sql);
@@ -376,44 +341,27 @@ class InvoiceStatusApi extends Controller
 
             $records_filtered = (int) $dt[0]['count'];
 
-
             //ordering
             $order_column_id    = (int) $input['order'][0]['column'];
             $order_column_name  = $input['columns'][$order_column_id]['order_by'];
             $order_direction    = $input['order'][0]['dir'];
 
             if($order_column_name!=''){
-
                 $qb->orderBy($order_column_name, $order_direction);
-
             }
-
-
-
-
-
 
             //limit $ offset
             if((int)$input['start']!= 0 ){
-
                 $response_dt    =   $qb->limit($input['length'])->offset($input['start']);
-
-            }else{
+            }
+            else{
                 $qb->limit($input['length']);
             }
 
-
-
-
-
             $sql = InvoiceStatus::bind_presql($qb->toSql(),$qb->getBindings());
 
-            // $response_dt = DB::select($qb->toSql(),$qb->getBindings());         //pseudo
             $response_dt = DB::select($sql);
-
-
             $response_dt = json_decode(json_encode($response_dt), true);
-
             $response_dt    = $this->append_relationships_objects($response_dt);
             $response_dt    = $this->append_relationships_nulls($response_dt);
             $response       = InvoiceStatus::arr_to_dt_response( 
@@ -421,10 +369,8 @@ class InvoiceStatusApi extends Controller
                 $total_records,
                 $records_filtered
                 );
-
-
-        }else{
-            
+        }
+        else{            
             $qb->orderBy("order_priority", "asc");
 
             $sql            = InvoiceStatus::bind_presql($qb->toSql(),$qb->getBindings());
@@ -441,7 +387,6 @@ class InvoiceStatusApi extends Controller
             }
 
             //add -1 and -2 statuses
-
             if(array_key_exists('allowed_only', $input)){
 
                 //-1
@@ -452,9 +397,6 @@ class InvoiceStatusApi extends Controller
                         "display_color"=> "#37A9E17A",
                         "invoices_count"=> Invoice::where('raised_by_id',$this->current_user()->id)->count()
                       );
-
-
-
 
                 if ($user->hasRole('program-manager')){
                     $response[]=array(
@@ -476,19 +418,10 @@ class InvoiceStatusApi extends Controller
                             "invoices_count"=> Invoice::count()
                           );
                 }
-
-
-
             }
-
         }
 
-
-
-
         return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
-
-
     }
 
 
@@ -511,55 +444,32 @@ class InvoiceStatusApi extends Controller
 
 
     public function append_relationships_objects($data = array()){
-
-
         foreach ($data as $key => $value) {
-
             $invoice_statuses = InvoiceStatus::find($data[$key]['id']);
-
-            $data[$key]['next_status']                = $invoice_statuses->next_status;
-            $data[$key]['approval_level']             = $invoice_statuses->approval_level;
-
+            $data[$key]['next_status'] = $invoice_statuses->next_status;
+            $data[$key]['approval_level'] = $invoice_statuses->approval_level;
         }
 
-
         return $data;
-
-
     }
 
 
-
-
-
-
-
-
-
-
-    
-
-
-
     public function append_relationships_nulls($data = array()){
-
-
         foreach ($data as $key => $value) {
-
-
-
             if($data[$key]["next_status"]==null){
                 $data[$key]["next_status"] = array("invoice_status"=>"N/A");
             }
             if($data[$key]["approval_level"]==null){
                 $data[$key]["approval_level"] = array("approval_level"=>"N/A");
             }
-
-
         }
 
         return $data;
+    }
 
 
+    public function getTotals(){
+        $statuses = InvoiceStatus::whereNotIn('id',[6,7,8,13])->orderBy('order_priority')->get()->map->append('kes_total','usd_total');
+        return response()->json($statuses, 200,array(),JSON_PRETTY_PRINT);
     }
 }
