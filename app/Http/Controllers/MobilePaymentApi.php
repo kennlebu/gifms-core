@@ -541,16 +541,8 @@ class MobilePaymentApi extends Controller
                 if(empty($payee->registered_name)) $name = $payee->full_name;
                 else $name = $payee->registered_name;
                 $data = array(
-                    $date, // date
-                    '99001', // bank_code
-                    '', // blank space
                     preg_replace("/[^0-9]/", "", $payee->mobile_number), // phone
-                    $name, // mobile_name
-                    'NIC', // bank_name
-                    '', // blank space
-                    'KES', // currency
-                    $payee->total, // amount
-                    // $voucher_number // chaipv
+                    $name // mobile_name
                 );
                 
                 // Add the data to the csv_data array
@@ -1876,60 +1868,6 @@ class MobilePaymentApi extends Controller
                 array_push($csv_data, $data);
             }
 
-            // $headers = array(
-            //     "Content-type" => "text/csv",
-            //     "Content-Disposition" => "attachment; filename=allowances_".$voucher_number.".csv",
-            //     "Pragma" => "no-cache",
-            //     "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
-            //     "Expires" => "0"
-            // );
-        
-            // $reviews = Reviews::getReviewExport($this->hw->healthwatchID)->get();
-            // $columns = array('ReviewID', 'Provider', 'Title', 'Review', 'Location', 'Created', 'Anonymous', 'Escalate', 'Rating', 'Name');
-        
-            // $callback = function() use ($csv_data)
-            // {
-            //     $file = fopen('php://output', 'w');
-            //     fputcsv($file, $csv_data);
-        
-            //     // foreach($reviews as $review) {
-            //     //     fputcsv($file, array($review->reviewID, $review->provider, $review->title, $review->review, $review->location, $review->review_created, $review->anon, $review->escalate, $review->rating, $review->name));
-            //     // }
-            //     fclose($file);
-            // };
-            // return Response::stream($callback, 200, $headers);
-
-            /* Get PDF data */                    
-            // $deputy_director = Staff::findOrFail((int) Config::get('app.director_id'));
-            // $director = Staff::findOrFail(37); //TODO: Pick this from config
-            // $pdf_data = array('mobile_payment' => $mobile_payment,
-            //     'addressee'=>'Maureen Adega',
-            //     'deputy_director'=>$deputy_director,
-            //     'director'=>$director
-            //     'our_ref'=>$voucher_number
-            // );
-
-            /* Send Email */
-            // Mail::queue(new MobilePaymentInstructBank($mobile_payment, $csv_data, $pdf_data));
-
-            // If it was sent before, move to resent status
-            // if($mobile_payment->status_id == 1){
-            //     $mobile_payment->status_id = $mobile_payment->status->new_next_status_id;
-            //     // Logging
-            //     activity()
-            //         ->performedOn($mobile_payment)
-            //         ->causedBy($this->current_user())
-            //         ->log('Sent to bank');
-            // }
-            // elseif($mobile_payment->status_id == 15){
-            //     $mobile_payment->status_id = 16;
-            //     // Logging
-            //     activity()
-            //         ->performedOn($mobile_payment)
-            //         ->causedBy($this->current_user())
-            //         ->log('Resent to bank');
-            // }
-            // $mobile_payment->save();
             return Response()->json(array('csv_data' => $csv_data,'voucher_number' => $voucher_number), 200);
         }
         catch(Exception $e){
