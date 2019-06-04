@@ -1828,6 +1828,8 @@ Route::GET('/mobile_payment/{mobile_payment_id}', 'MobilePaymentApi@getMobilePay
 Route::PATCH('/mobile_payment/{mobile_payment_id}/approve', 'MobilePaymentApi@approve')->middleware('jwt.auth');
 Route::PATCH('/mobile_payment/{mobile_payment_id}/send-to-bank', 'MobilePaymentApi@sendToBank')->middleware('jwt.auth');
 Route::GET('/mobile-payment-csv/{mobile_payment_id}', 'MobilePaymentApi@downloadCSV')->middleware('jwt.auth');
+Route::PATCH('/mobile-payment/{mobile_payment_id}/mark-as-uploaded', 'MobilePaymentApi@markAsUploaded')->middleware('jwt.auth');
+Route::POST('/mobile-payment/request_signitories/{mobile_payment_id}', 'MobilePaymentApi@requestSignatories')->middleware('jwt.auth');
 /**
  * POST postPayees
  * Summary: post mobile_payment payees in acsv by ID

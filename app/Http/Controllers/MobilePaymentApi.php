@@ -49,6 +49,7 @@ use App\Exceptions\NotFullyAllocatedException;
 use App\Exceptions\ApprovalException;
 use App\Models\PaymentModels\VoucherNumber;
 use App\Models\ReportModels\ReportingObjective;
+use App\Mail\RequestMPBankSigning;
 
 class MobilePaymentApi extends Controller
 {
@@ -583,6 +584,47 @@ class MobilePaymentApi extends Controller
         }
         catch(Exception $e){
             $response =  ["error"=>$e->getMessage()];
+            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+        }
+    }
+
+
+    public function markAsUploaded($mobile_payment_id){
+        $response = [];
+        try{
+            $mobile_payment   = MobilePayment::findOrFail($mobile_payment_id);
+            $mobile_payment->disableLogging(); //! Do not log the update
+            $mobile_payment->status_id = 4;  // Uploaded to bank, awaiting reconciliation
+            
+            // Logging
+            activity()
+                ->performedOn($mobile_payment)
+                ->causedBy($this->current_user())
+                ->log('Uploaded to bank');
+            
+            $mobile_payment->save();
+            return Response()->json(array('result' => 'Success: mobile payment marked as uploaded to bank'), 200);
+        }
+        catch(Exception $e){
+            $response =  ["error"=>$e->getMessage()];
+            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+        }
+    }
+
+
+    public function requestSignatories($mobile_payment_id){
+        try{
+            $mobile_payment = MobilePayment::findOrFail($mobile_payment_id);
+            Mail::queue(new RequestMPBankSigning($mobile_payment_id));
+            activity()
+                ->performedOn($mobile_payment)
+                ->causedBy($this->current_user())
+                ->log('Requested bank signatories');
+
+            return Response()->json(array('result' => 'Success: request sent'), 200);
+        }
+        catch(Exception $e){
+            $response =  ["error"=>"There was an error uploading the mobile payment", "msg"=>$e->getMessage(), "stack"=>$e->getTraceAsString()];
             return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
         }
     }
