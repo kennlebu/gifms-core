@@ -1,0 +1,1232 @@
+*** - Means it's already in the migration. No need to do it again
++ - Means it has already been executed on Live
+~ - Has been executed on test
+
++=====> Change invoice next status to paid after reconciliation
+UPDATE `invoice_statuses` SET `next_status_id` = '8' WHERE `id` = '7';
+
+***=====> Add allocation step column in allocations table
+ALTER TABLE allocations ADD COLUMN allocation_step varchar(20) AFTER account_2016_id;
+
++=====> Add approval permission for accountant to retire an advance
+INSERT INTO `permissions` (`name`, `display_name`, `description`, `entity`, `operation_type`, `at_status_id`, `approval_level_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('APPROVE_ADVANCE_9', 'Advance Accountant Approval (Retiring)', NULL, 'Advance', 'Approval', '9', '1', now(), now(), NULL);
+
+INSERT INTO role_permissions (permission_id, role_id) VALUES (254, 8);
+
++=====> Create stored procedure for migrating banking keys on suppliers table
+DELIMITER $$
+DROP PROCEDURE IF EXISTS migrate_bank_foreign_keys $$
+CREATE PROCEDURE `migrate_bank_foreign_keys` ()
+BEGIN
+  DECLARE c_supplier_id INT;
+  DECLARE c_bank_code varchar(10);
+  DECLARE c_branch_code varchar(10);
+  DECLARE supplier_id INT;
+  DECLARE bank_id varchar(10) DEFAULT NULL; 
+  DECLARE branch_id varchar(10) DEFAULT NULL;
+  DECLARE finished INTEGER DEFAULT 0;
+
+  DECLARE suppliers_cursor CURSOR FOR
+    SELECT id, migration_bank_id, migration_bank_branch_code FROM suppliers;
+
+  DECLARE CONTINUE HANDLER FOR NOT FOUND SET finished = 1;
+
+  DROP TEMPORARY TABLE IF EXISTS supplier_bank;
+
+  CREATE TEMPORARY TABLE supplier_bank (
+    id INT NOT NULL,
+    bank_id VARCHAR(10),
+    branch_id VARCHAR(10)
+  );
+
+  CREATE TEMPORARY TABLE branches (
+    bank_id INT NOT NULL,
+    branch_id INT NOT NULL,
+    bank_code VARCHAR(10),
+    branch_code VARCHAR(10)
+  );
+  INSERT INTO branches (
+    SELECT banks.id as bank_id, bank_branches.id as branch_id, banks.bank_code, bank_branches.branch_code
+    FROM banks 
+    INNER JOIN bank_branches on banks.id = bank_branches.bank_id
+  );
+
+  OPEN suppliers_cursor;
+
+  get_supplier: LOOP
+    FETCH suppliers_cursor INTO c_supplier_id, c_bank_code, c_branch_code;
+    IF finished = 1 THEN
+      LEAVE get_supplier;
+    END IF;
+    SET bank_id = (
+       SELECT banks.id FROM suppliers 
+       INNER JOIN banks on banks.bank_code = suppliers.migration_bank_id
+       WHERE suppliers.id = c_supplier_id
+       LIMIT 1
+    );
+    SET branch_id = (
+       SELECT branches.branch_id FROM suppliers
+       INNER JOIN branches ON branches.branch_code = suppliers.migration_bank_branch_code
+       AND branches.bank_code = suppliers.migration_bank_id
+       WHERE suppliers.id = c_supplier_id
+       LIMIT 1
+    );
+    INSERT INTO supplier_bank (id, bank_id, branch_id) VALUES (c_supplier_id, bank_id, branch_id);
+
+  END LOOP get_supplier;
+  CLOSE suppliers_cursor;
+
+  UPDATE suppliers 
+  INNER JOIN supplier_bank on suppliers.id = supplier_bank.id
+  SET suppliers.bank_id = supplier_bank.bank_id,
+  suppliers.bank_branch_id = supplier_bank.branch_id;
+  
+END; $$
+
+DELIMITER;
+
+
+
++=====> Add new CHAI countries
+INSERT INTO `countries` (`country_name`, `abbrv`, `migration_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES 
+('Botswana', 'BW', NULL, now(), now(), NULL),
+('Cambodia', 'KH', NULL, now(), now(), NULL), 
+('Cameroon', 'CM', NULL, now(), now(), NULL), 
+('Costa Rica', 'CR', NULL, now(), now(), NULL), 
+('Dominican Republic', 'DO', NULL, now(), now(), NULL), 
+('DR Congo', 'CD', NULL, now(), now(), NULL), 
+('Ethiopia', 'ET', NULL, now(), now(), NULL), 
+('Guatemala', 'GT', NULL, now(), now(), NULL), 
+('Haiti', 'HT', NULL, now(), now(), NULL), 
+('Honduras', 'HN', NULL, now(), now(), NULL), 
+('India', 'IN', NULL, now(), now(), NULL), 
+('Indonesia', 'ID', NULL, now(), now(), NULL), 
+('Jamaica', 'JM', NULL, now(), now(), NULL), 
+('Lao PDR', 'LA', NULL, now(), now(), NULL), 
+('Lesotho', 'LS', NULL, now(), now(), NULL), 
+('Liberia', 'LR', NULL, now(), now(), NULL), 
+('Mozambique', 'MZ', NULL, now(), now(), NULL), 
+('Myanmar', 'MM', NULL, now(), now(), NULL), 
+('Namibia', 'NA', NULL, now(), now(), NULL), 
+('Nigeria', 'NG', NULL, now(), now(), NULL), 
+('Panama', 'PA', NULL, now(), now(), NULL), 
+('Papua New Guinea', 'PG', NULL, now(), now(), NULL), 
+('Rwanda', 'RW', NULL, now(), now(), NULL), 
+('Sierra Leone', 'SL', NULL, now(), now(), NULL), 
+('South Africa', 'ZA', NULL, now(), now(), NULL), 
+('Swaziland', 'SZ', NULL, now(), now(), NULL), 
+('Ukraine', 'UA', NULL, now(), now(), NULL), 
+('United States', 'US', NULL, now(), now(), NULL), 
+('Vietnam', 'VN', NULL, now(), now(), NULL), 
+('Zambia', 'ZM', NULL, now(), now(), NULL), 
+('Zimbabwe', 'ZW', NULL, now(), now(), NULL), 
+('Mexico', 'MX', NULL, now(), now(), NULL);
+
+
+
++========> Add permission for accountant to approve mobile payment
+	  after bank reconciliation
+INSERT INTO `permissions` (`name`, `display_name`, `description`, `entity`, `operation_type`, `at_status_id`, `approval_level_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('APPROVE_MOBILE_PAYMENT_4', 'Mobile Payment Accountant Approval - Bank Reconciliation', NULL, 'Mobile Payment Accountant Approval', 'Approval', '4', '1', now(), now(), NULL);
+
+INSERT INTO `role_permissions` (`permission_id`, `role_id`)
+VALUES ('255', '8');
+
++=====> Add permission for accountant to reject mobile payment
+	after corrections
+INSERT INTO `permissions` (`name`, `display_name`, `description`, `entity`, `operation_type`, `at_status_id`, `approval_level_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('APPROVE_MOBILE_PAYMENT_12', 'Mobile Payment Accountant Approval - Correction', NULL, 'MobilePayment', 'Approval', '12', '1', now(), now(), NULL);
+
+INSERT INTO `role_permissions` (`permission_id`, `role_id`)
+VALUES ('256', '8');
+
++=====> Add permission for accountant to approve mobile payment
+	after corrections
+INSERT INTO `permissions` (`name`, `display_name`, `description`, `entity`, `operation_type`, `at_status_id`, `approval_level_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('APPROVE_MOBILE_PAYMENT_13', 'Mobile Payment Accountant Approval - Corrected', NULL, 'MobilePayment', 'Approval', '13', '1', now(), now(), NULL);
+
+INSERT INTO `role_permissions` (`permission_id`, `role_id`)
+VALUES ('257', '8');
+
+***=====> Add column for delivery made in LPOs table
+ALTER TABLE `lpos`
+ADD `delivery_made` varchar(10) NULL AFTER `supply_category`;
+
+***=====> Add column for delivery made in deliveries table
+ALTER TABLE `deliveries`
+ADD `delivery_made` text COLLATE 'utf8_unicode_ci' NULL AFTER `comment`;
+
+***=====> Add column for "received on behalf of" in deliveries table
+ALTER TABLE `deliveries`
+ADD `received_for_id` int(11) NULL AFTER `received_by_id`;
+
+***=====> Add column for invoice paid in lpos table
+ALTER TABLE `lpos`
+ADD `invoice_paid` varchar(10) NULL AFTER `supply_category`;
+
++=====> Add exemption reasons
+INSERT INTO `lpo_quote_exempt_reasons` (`exempt_reason`, `deleted_at`, `created_at`, `updated_at`)
+VALUES ('Staff Security Concerns', NULL, now(), NULL),
+('Preferred vendor by CHAI Program', NULL, now(), NULL),
+('Preferred Vendor by MOH', NULL, now(), NULL),
+('Inability to get other vendors/ Quotes', NULL, now(), NULL),
+('Convenience/ Access of venue to govt facilities', NULL, now(), NULL),
+('Pre-negotiated Rates for CHAI Staff', NULL, now(), NULL);
+
+***=====> Add supplier category column
+ALTER TABLE `suppliers`
+ADD `supply_category_id` INT NULL AFTER `requires_lpo`;
+
++=====> Add supplier categories
+INSERT INTO `supplier_category` (`category`, `deleted_at`, `created_at`, `updated_at`)
+VALUES ('Government Organization', NULL, now(), NULL),
+('Conference, Accommodation & Catering', NULL, now(), NULL),
+('Office Supplies/ Expenses, Equipment & Maintenance', NULL, now(), NULL),
+('Printing', NULL, now(), NULL),
+('Computers, Accessories & IT Support', NULL, now(), NULL),
+('Air Ticketing', NULL, now(), NULL),
+('Car Transport/ Hires & Courier', NULL, now(), NULL),
+('Imports Handling & Logistics', NULL, now(), NULL),
+('Events Mngnt & Advertisement', NULL, now(), NULL),
+('Insurance & Security', NULL, now(), NULL),
+('Consultancy', NULL, now(), NULL),
+('LAB Consumables Suppliers', NULL, now(), NULL),
+('Banking & Money Transfer providers', NULL, now(), NULL);
+
+***=====> Add management approval time column mobile payments
+ALTER TABLE `mobile_payments`
+ADD `management_approval_at` timestamp NULL AFTER `rejected_at`;
+
+***=====> Add column for quote exempt details
+ALTER TABLE `lpos`
+ADD `quote_exempt_details` text COLLATE 'utf8_unicode_ci' NULL AFTER `quote_exempt_explanation`;
+
+***=====> Add column for choosing more expensive quotation
+ALTER TABLE `lpos`
+ADD `expensive_quotation_reason` text COLLATE 'utf8_unicode_ci' NULL AFTER `quote_exempt_details`;
+
+***=====> Add voucher number column to payments table
+ALTER TABLE `payments`
+ADD `voucher_no` text NULL AFTER `advance_id`;
+
+***=====> Add deleted migration column to mobile payments
+ALTER TABLE `mobile_payments` ADD `migration_deleted` INT(1) NULL AFTER `migration_id`;
+
+***=====> Delete records with migration_deleted = 1
+update mobile_payments set deleted_at = now() where migration_deleted = 1;
+
+***=====> Add column for voucher_no in mobile payments
+ALTER TABLE `mobile_payments` ADD `voucher_no` INT NULL AFTER `management_approval_at`;
+
+***=====> Add column for supplier county in suppliers table
+ALTER TABLE `suppliers` ADD `county_id` INT NULL AFTER `supply_category_id`;
+
+--***=====>reject rejected invoices
+update `invoices`
+set status_id = 9
+WHERE `rejection_reason` IS NOT NULL AND `management_approval_date` IS NULL;
+
+***=====> Add voucher_no column in Advances and Claims
+ALTER TABLE `advances`
+ADD `voucher_no` int(11) NULL AFTER `project_manager_id`;
+
+ALTER TABLE `claims`
+ADD `voucher_no` int(11) NULL AFTER `project_manager_id`;
+
++=====> Change Director to Management in claims statuses
+UPDATE `claim_statuses` SET `claim_status` = 'Pending Management Approval' WHERE `id` = '4';
+
++=====> Adjust Advance approval levels
+UPDATE `advance_statuses` SET `approval_level_id` = 'NULL' WHERE `id` = '1';
+UPDATE `advance_statuses` SET `approval_level_id` = '2' WHERE `id` = '2';
+UPDATE `advance_statuses` SET `approval_level_id` = '3' WHERE `id` = '3';
+UPDATE `advance_statuses` SET `approval_level_id` = '4' WHERE `id` = '4';
+
++=====> Change "Cancelled" status to "Recalled" in LPOs
+UPDATE `lpo_statuses` SET `lpo_status` = 'Recalled' WHERE `id` = '11';
++=====> Change next status for rejected LPO
+UPDATE `lpo_statuses` SET `next_status_id` = '13' WHERE `id` = '12';
+
++=====> Update overlappind voucher numbers
+UPDATE `voucher_numbers` SET `voucher_number` = 'KE180063' WHERE `id` = '65';
+UPDATE `voucher_numbers` SET `voucher_number` = 'KE180062' WHERE `id` = '64';
+
++=====>remove rosemary from directors and admins
+DELETE FROM `user_roles`
+WHERE ((`user_id` = '42' AND `role_id` = '3'));
+DELETE FROM `user_roles`
+WHERE ((`user_id` = '42' AND `role_id` = '2'));
+
++=====> Procedure to generate voucher numbers
+DELIMITER $$
+DROP PROCEDURE IF EXISTS generate_voucher_no $$
+CREATE PROCEDURE `generate_voucher_no` (payment_id INT, payable_type varchar(20))
+BEGIN
+  DECLARE last_voucher_no varchar(10);
+  DECLARE this_year VARCHAR(10);
+  DECLARE voucher_year VARCHAR(2);
+  DECLARE last_voucher_year VARCHAR(2);
+  DECLARE voucher_digits VARCHAR(5);
+  DECLARE voucher_int INT;
+  DECLARE next_voucher_int INT;
+  DECLARE padded_int VARCHAR(4);
+  DECLARE next_voucher_year VARCHAR(2);
+  DECLARE next_voucher VARCHAR(10);
+  DECLARE last_id INT;
+
+  SET last_voucher_no = (SELECT voucher_number from voucher_numbers order by id desc limit 1);
+  SET this_year = (SELECT DATE_FORMAT(CURDATE(), '%y'));
+  SET last_voucher_year = (SELECT SUBSTRING(last_voucher_no, 3, 2));
+  SET next_voucher_int = (SELECT SUBSTRING(last_voucher_no, 5, 4) + 1);
+  SET padded_int = (SELECT LPAD(next_voucher_int, 4, '0'));
+
+  IF this_year != last_voucher_year THEN
+    SET padded_int = '0001';
+  END IF;
+
+  SET next_voucher = (SELECT CONCAT('KE', this_year, padded_int));
+
+  INSERT INTO voucher_numbers (voucher_number, payable_type, payable_id, created_at, updated_at) 
+    VALUES (next_voucher, payable_type, payment_id, now(), now());
+  SET last_id = LAST_INSERT_ID();
+  IF payable_type = 'mobile_payments' THEN
+    UPDATE mobile_payments set voucher_no = last_id WHERE id = payment_id;
+  ELSE
+    UPDATE payments SET voucher_no = last_id WHERE id = payment_id;
+  END IF;
+
+  SELECT next_voucher as voucher_number, last_id as id;
+  
+END; $$
+
+DELIMITER ;
+
++=====> Delete suppliers
+update suppliers set deleted_at = now() where id in (742,852,157,381,461,462,463,584,702);
+
++=====> Change next status after recalled to acountant approval
+UPDATE `lpo_statuses` SET `next_status_id` = '13' WHERE `id` = '11';
+
++=====> Add project for Keter Frankline
+INSERT INTO `project_teams` (`project_id`, `staff_id`, `migration_project_id`, `migration_staff_id`, `migration_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('140', '24', NULL, NULL, NULL, now(), now(), NULL);
+
++=====> Correct Jackson Kimani's email
+UPDATE `staff` SET `email` = 'jkimani@clintonhealthaccess.org' WHERE `id` = '22';
+
++=====> Created table for delivery items
+CREATE TABLE `delivery_items` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `delivery_id` int NOT NULL,
+  `item` text NOT NULL,
+  `item_description` text NULL,
+  `qty` int NOT NULL,
+  `qty_description` text NULL,
+  `deleted_at` timestamp NULL,
+  `created_at` timestamp NULL,
+  `updated_at` timestamp NULL
+);
+
++=====> Add supplier_id column to deliveries
+ALTER TABLE `deliveries`
+ADD `supplier_id` int NULL AFTER `lpo_id`;
+
++=====> Add status column to accounts table
+ALTER TABLE `accounts`
+ADD `status` varchar(8) NULL AFTER `migration_id`;
+
++=====> Set status on accounts table
+update accounts set status = 'active' WHERE `deleted_at` IS NULL;
+
++*=====> Create reporting categories table
+CREATE TABLE `reporting_categories` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `category` text NOT NULL,
+  `description` text NULL,
+  `created_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL
+);
+
++*=====> Create reporting objectives table
+CREATE TABLE `reporting_objectives` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `objective` text NOT NULL,
+  `description` text NULL,
+  `created_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL
+);
+
++=====> Add columns for reporting category and objective in claims, advances,invoices, mobile payments tables
+ALTER TABLE `claims`
+ADD `reporting_categories_id` int(11) NULL AFTER `voucher_no`,
+ADD `reporting_objective_id` int(11) NULL AFTER `reporting_categories_id`;
+
+ALTER TABLE `advances`
+ADD `reporting_categories_id` int(11) NULL AFTER `voucher_no`,
+ADD `reporting_objective_id` int(11) NULL AFTER `reporting_categories_id`;
+
+ALTER TABLE `invoices`
+ADD `reporting_categories_id` int(11) NULL AFTER `voucher_no`,
+ADD `reporting_objective_id` int(11) NULL AFTER `reporting_categories_id`;
+
+ALTER TABLE `mobile_payments`
+ADD `reporting_categories_id` int(11) NULL AFTER `voucher_no`,
+ADD `reporting_objective_id` int(11) NULL AFTER `reporting_categories_id`;
+
++=====> Create table for rights transfers
+CREATE TABLE `rights_transfers` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `from_staff_id` int NOT NULL,
+  `to_staff_id` int NOT NULL,
+  `right_type` varchar(20) NULL,
+  `rights` text NULL,
+  `transfered_on` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
+  `returned_on` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
+  `created_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP
+);
+
++=====> Create tax_rates table
+CREATE TABLE `tax_rates` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `charge` varchar(20) NOT NULL,
+  `rate` varchar(20) NOT NULL,
+  `type` varchar(20) NOT NULL,
+  `min_limit` int(15) NULL,
+  `max_limit` int(15) NULL,
+  `created_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP
+);
+ALTER TABLE `tax_rates`
+CHANGE `created_at` `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP AFTER `max_limit`,
+CHANGE `updated_at` `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP AFTER `created_at`,
+CHANGE `deleted_at` `deleted_at` timestamp NULL AFTER `updated_at`;
+
++=====> Add recalled status to mobile payments
+INSERT INTO `mobile_payment_statuses` (`mobile_payment_status`, `next_status_id`, `status_security_level`, `order_priority`, `display_color`, `default_status`, `approval_level_id`, `approvable`, `migration_status_security_level`, `migration_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Recalled', '9', NULL, '14', '#ff5555c2', NULL, NULL, NULL, NULL, NULL, now(), now(), NULL);
+
++=====> Add short status name to mobile payments, advances, claims, invoices, lpos
+ALTER TABLE `mobile_payment_statuses`
+ADD `short_name` varchar(25) NULL AFTER `next_status_id`;
+
+UPDATE `mobile_payment_statuses` SET `short_name` = 'Requested' WHERE `id` = '1';
+UPDATE `mobile_payment_statuses` SET `short_name` = 'PM' WHERE `id` = '2';
+UPDATE `mobile_payment_statuses` SET `short_name` = 'Finance' WHERE `id` = '3';
+UPDATE `mobile_payment_statuses` SET `short_name` = 'Sent to Bank' WHERE `id` = '4';
+UPDATE `mobile_payment_statuses` SET `short_name` = 'Paid' WHERE `id` = '5';
+UPDATE `mobile_payment_statuses` SET `short_name` = 'Verified' WHERE `id` = '6';
+UPDATE `mobile_payment_statuses` SET `short_name` = 'Rejected' WHERE `id` = '7';
+UPDATE `mobile_payment_statuses` SET `short_name` = 'Management' WHERE `id` = '8';
+UPDATE `mobile_payment_statuses` SET `short_name` = 'Accountant' WHERE `id` = '9';
+UPDATE `mobile_payment_statuses` SET `short_name` = 'Rejected by Bank' WHERE `id` = '10';
+UPDATE `mobile_payment_statuses` SET `short_name` = 'Awaiting Corrections' WHERE `id` = '11';
+UPDATE `mobile_payment_statuses` SET `short_name` = 'Corrected' WHERE `id` = '12';
+UPDATE `mobile_payment_statuses` SET `short_name` = 'Resent to Bank' WHERE `id` = '13';
+UPDATE `mobile_payment_statuses` SET `short_name` = 'Recalled' WHERE `id` = '14';
+
+ALTER TABLE `advance_statuses`
+ADD `short_name` varchar(25) NULL AFTER `next_status_id`;
+
+UPDATE `advance_statuses` SET `short_name` = 'Compiled' WHERE `id` = '1';
+UPDATE `advance_statuses` SET `short_name` = 'PM' WHERE `id` = '2';
+UPDATE `advance_statuses` SET `short_name` = 'Finance' WHERE `id` = '3';
+UPDATE `advance_statuses` SET `short_name` = 'Management' WHERE `id` = '4';
+UPDATE `advance_statuses` SET `short_name` = 'CSV Generated' WHERE `id` = '5';
+UPDATE `advance_statuses` SET `short_name` = 'Uploader Allocations' WHERE `id` = '6';
+UPDATE `advance_statuses` SET `short_name` = 'Sent to Bank' WHERE `id` = '7';
+UPDATE `advance_statuses` SET `short_name` = 'CSV Creation' WHERE `id` = '8';
+UPDATE `advance_statuses` SET `short_name` = 'Accountant' WHERE `id` = '9';
+UPDATE `advance_statuses` SET `short_name` = 'Paid' WHERE `id` = '10';
+UPDATE `advance_statuses` SET `short_name` = 'Rejected' WHERE `id` = '11';
+UPDATE `advance_statuses` SET `short_name` = 'Management' WHERE `id` = '12';
+UPDATE `advance_statuses` SET `short_name` = 'Accountant' WHERE `id` = '13';
+
+ALTER TABLE `claim_statuses`
+ADD `short_name` varchar(25) NULL AFTER `next_status_id`;
+
+UPDATE `claim_statuses` SET `short_name` = 'Compiled' WHERE `id` = '1';
+UPDATE `claim_statuses` SET `short_name` = 'PM' WHERE `id` = '2';
+UPDATE `claim_statuses` SET `short_name` = 'Finance' WHERE `id` = '3';
+UPDATE `claim_statuses` SET `short_name` = 'Management' WHERE `id` = '4';
+UPDATE `claim_statuses` SET `short_name` = 'CSV Creation' WHERE `id` = '5';
+UPDATE `claim_statuses` SET `short_name` = 'CSV Generated' WHERE `id` = '6';
+UPDATE `claim_statuses` SET `short_name` = 'Sent to Bank' WHERE `id` = '7';
+UPDATE `claim_statuses` SET `short_name` = 'Paid' WHERE `id` = '8';
+UPDATE `claim_statuses` SET `short_name` = 'Rejected' WHERE `id` = '9';
+UPDATE `claim_statuses` SET `short_name` = 'Accountant' WHERE `id` = '10';
+
+ALTER TABLE `invoice_statuses`
+ADD `short_name` varchar(25) NULL AFTER `next_status_id`;
+
+UPDATE `invoice_statuses` SET `short_name` = 'PM' WHERE `id` = '1';
+UPDATE `invoice_statuses` SET `short_name` = 'Finance' WHERE `id` = '2';
+UPDATE `invoice_statuses` SET `short_name` = 'Management' WHERE `id` = '3';
+UPDATE `invoice_statuses` SET `short_name` = 'CSV Creation' WHERE `id` = '4';
+UPDATE `invoice_statuses` SET `short_name` = 'CSV Generated' WHERE `id` = '5';
+UPDATE `invoice_statuses` SET `short_name` = 'CSV at Accounts' WHERE `id` = '6';
+UPDATE `invoice_statuses` SET `short_name` = 'Sent to Bank' WHERE `id` = '7';
+UPDATE `invoice_statuses` SET `short_name` = 'Paid' WHERE `id` = '8';
+UPDATE `invoice_statuses` SET `short_name` = 'Rejected' WHERE `id` = '9';
+UPDATE `invoice_statuses` SET `short_name` = 'Pending Submission' WHERE `id` = '10';
+UPDATE `invoice_statuses` SET `short_name` = 'Logged' WHERE `id` = '11';
+UPDATE `invoice_statuses` SET `short_name` = 'Accountant' WHERE `id` = '12';
+
+ALTER TABLE `lpo_statuses`
+ADD `short_name` varchar(25) NULL AFTER `next_status_id`;
+
+UPDATE `lpo_statuses` SET `short_name` = 'Pending Quotations' WHERE `id` = '1';
+UPDATE `lpo_statuses` SET `short_name` = 'Requested' WHERE `id` = '2';
+UPDATE `lpo_statuses` SET `short_name` = 'PM' WHERE `id` = '3';
+UPDATE `lpo_statuses` SET `short_name` = 'Finance' WHERE `id` = '4';
+UPDATE `lpo_statuses` SET `short_name` = 'Management' WHERE `id` = '5';
+UPDATE `lpo_statuses` SET `short_name` = 'Approved' WHERE `id` = '6';
+UPDATE `lpo_statuses` SET `short_name` = 'Pending Delivery' WHERE `id` = '7';
+UPDATE `lpo_statuses` SET `short_name` = 'Delivered' WHERE `id` = '8';
+UPDATE `lpo_statuses` SET `short_name` = 'Invoice Accepted' WHERE `id` = '9';
+UPDATE `lpo_statuses` SET `short_name` = 'Payment' WHERE `id` = '10';
+UPDATE `lpo_statuses` SET `short_name` = 'Recalled' WHERE `id` = '11';
+UPDATE `lpo_statuses` SET `short_name` = 'Rejected' WHERE `id` = '12';
+UPDATE `lpo_statuses` SET `short_name` = 'Accountant' WHERE `id` = '13';
+UPDATE `lpo_statuses` SET `short_name` = 'Paid' WHERE `id` = '14';
+
++===== Create resources table
+create table resources (`id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY, `name` varchar(50), `category` varchar(20) NULL, `doc_type` varchar(20) NULL, `staff_id` INT, `created_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP, `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP, `deleted_at` timestamp NULL);
+
++===== Create program teams table
+CREATE TABLE `program_teams` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `program_id` int(11) NOT NULL,
+  `staff_id` int(11) NOT NULL,
+  `created_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL,
+  `deleted_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP
+);
+
++===== Add cancelled status to LPO
+INSERT INTO `lpo_statuses` (`lpo_status`, `next_status_id`, `short_name`, `status_security_level`, `order_priority`, `display_color`, `default_status`, `approval_level_id`, `approvable`, `migration_status_security_level`, `migration_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Cancelled', '13', 'Cancelled', NULL, '11', '#ff5555c2', NULL, NULL, NULL, NULL, NULL, now(), now(), NULL);
+
++===== Change Grant statuses
+UPDATE `grant_statuses` SET `grant_status` = 'Active' WHERE `id` = '1';
+UPDATE `grant_statuses` SET `grant_status` = 'Inactive' WHERE `id` = '2';
+
++===== Insert project statuses
+INSERT INTO `project_statuses` (`project_status`, `next_status_id`, `order_priority`, `display_color`, `default_status`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Active', NULL, NULL, '#075b23a1', NULL, now(), now(), NULL);
+
+INSERT INTO `project_statuses` (`project_status`, `next_status_id`, `order_priority`, `display_color`, `default_status`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Inactive', NULL, NULL, '#55ff55c2', NULL, now(), now(), NULL);
+
+~+===== Create meeting rooms tables
+CREATE TABLE `meeting_rooms` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `name` varchar(20) NOT NULL,
+  `location` varchar(15) NULL,
+  `capacity` int NOT NULL,
+  `created_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL,
+  `deleted_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE `meeting_room_bookings` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `room_id` int(11) NOT NULL,
+  `booked_by_id` int(11) NOT NULL,
+  `reason` text NOT NULL,
+  `reason_desc` text NULL,
+  `from` varchar(25) NOT NULL,
+  `to` varchar(25) NOT NULL,
+  `created_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL,
+  `deleted_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP
+);
+
+~+===== Alter supplier rates table
+ALTER TABLE `supplier_rates`
+CHANGE `category_item_id` `service_id` int(11) NOT NULL AFTER `id`,
+CHANGE `year` `supplier_id` int(11) NOT NULL AFTER `service_id`,
+CHANGE `rate` `rate` double(26,5) NOT NULL AFTER `supplier_id`,
+DROP `migration_category_item_id`,
+DROP `migration_id`;
+
+ALTER TABLE `supplier_rates`
+ADD `currency_id` int(11) NOT NULL AFTER `rate`;
+
+ALTER TABLE `supplier_rates`
+ADD `vat` int(1) NOT NULL AFTER `currency_id`;
+
+ALTER TABLE `supplier_rates`
+ADD `service_charge` int(13) NULL AFTER `vat`,
+ADD `other_charges` int(13) NULL AFTER `service_charge`;
+
+~+===== Create supplier_services table
+CREATE TABLE `supplier_services` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `service_name` text NOT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP
+);
+
+ALTER TABLE `supplier_services`
+CHANGE `created_at` `created_at` timestamp NULL AFTER `service_name`,
+CHANGE `updated_at` `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP AFTER `created_at`,
+CHANGE `deleted_at` `deleted_at` timestamp NULL AFTER `updated_at`;
+
+~+===== Alter LPOs table
+ALTER TABLE `lpos`
+ADD `lpo_type` varchar(30) COLLATE 'utf8_unicode_ci' NULL AFTER `expensive_quotation_reason`;
+ALTER TABLE `lpos`
+ADD `supplier_rate_id` int(11) NULL AFTER `lpo_type`;
+
+~+===== Alter LPO items table
+ALTER TABLE `lpo_items`
+ADD `supplier_rate_id` int(11) NULL AFTER `lpo_migration_id`;
+
+~+===== Create supplier rate terms table
+CREATE TABLE `supplier_rate_terms` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `supplier_rate_id` int NOT NULL,
+  `terms` text NULL,
+  `created_at` timestamp NULL,
+  `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL
+);
+
+~+===== Create funds requests table
+CREATE TABLE `funds_requests` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `requested_by` text NULL,
+  `status_id` int NULL,
+  `created_at` timestamp NULL,
+  `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL
+);
+
+ALTER TABLE `funds_requests`
+CHANGE `requested_by` `requested_by_id` int NOT NULL AFTER `id`;
+
+~+===== Create funds requests items table
+CREATE TABLE `funds_requests_items` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `funds_requests_id` int NOT NULL,
+  `activity_desc` text NULL,
+  `expense_item` text NULL,
+  `project_id` int NOT NULL,
+  `amount` double(9,2) NOT NULL,
+  `created_at` timestamp NULL,
+  `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL
+);
+
+ALTER TABLE `funds_requests_items`
+ADD `currency_id` int NULL AFTER `amount`;
+
+~+===== Create funds requests statuses table
+CREATE TABLE `funds_requests_statuses` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `status` text NOT NULL,
+  `next_status_id` int NULL,
+  `short_name` varchar(20) NULL,
+  `display_color` varchar(10) NULL,
+  `approvable` int NULL,
+  `created_at` timestamp NULL,
+  `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL
+);
+
+~+===== Insert into funds requests statuses
+INSERT INTO `funds_requests_statuses` (`status`, `next_status_id`, `short_name`, `display_color`, `approvable`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Compiled Pending Submission', '2', 'Compiled', '#64547a6e', '1', now(), now(), NULL);
+
+INSERT INTO `funds_requests_statuses` (`status`, `next_status_id`, `short_name`, `display_color`, `approvable`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Pending Finance Approval', '3', 'Finance', NULL, '1', now(), now(), NULL);
+
+INSERT INTO `funds_requests_statuses` (`status`, `next_status_id`, `short_name`, `display_color`, `approvable`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Funds Consolidated', '3', 'Consolidated', '#075b23a1', '0', now(), now(), NULL);
+
+INSERT INTO `funds_requests_statuses` (`status`, `next_status_id`, `short_name`, `display_color`, `approvable`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Rejected', '1', 'Rejected', '#ff5555c2', '0', now(), now(), NULL);
+
+~+===== Add lpo variation reason column to invoices table
+ALTER TABLE `invoices`
+ADD `lpo_variation_reason` text COLLATE 'utf8_unicode_ci' NULL AFTER `other_amounts`;
+
+~+===== Add supply category id to supplier services table
+ALTER TABLE `supplier_services`
+ADD `supply_category_id` int NULL AFTER `service_name`;
+
+~+===== Add view_mode to accounts table
+ALTER TABLE `accounts`
+ADD `view_mode` varchar(20) COLLATE 'utf8_unicode_ci' NULL AFTER `account_format`;
+
+~+===== Add no of days to items table
+ALTER TABLE `lpo_items`
+CHANGE `supplier_rate_id` `no_of_days` int NULL AFTER `lpo_migration_id`;
+
+~+===== Add daily charge and unit columns
+ALTER TABLE `supplier_rates`
+ADD `daily_charge` int(1) NULL AFTER `other_charges`;
+
+ALTER TABLE `supplier_rates`
+ADD `unit` varchar(30) NULL AFTER `daily_charge`;
+
+~+===== Create activities table
+CREATE TABLE `activities` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `requested_by_id` int NOT NULL,
+  `title` varchar(255) COLLATE 'utf8_unicode_ci' NULL,
+  `description` text COLLATE 'utf8_unicode_ci' NOT NULL,
+  `program_id` int NOT NULL,
+  `program_manager_id` int NULL,
+  `status_id` int NULL,
+  `created_at` timestamp NULL,
+  `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL
+);
+
+ALTER TABLE `activities`
+ADD `start_date` varchar(15) COLLATE 'utf8_unicode_ci' NULL AFTER `status_id`,
+ADD `end_date` varchar(15) COLLATE 'utf8_unicode_ci' NULL AFTER `start_date`;
+
+~+===== Create activities statuses table
+CREATE TABLE `activities_statuses` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `status` text NOT NULL,
+  `next_status_id` int NULL,
+  `short_name` varchar(255) NULL,
+  `display_color` varchar(20) NULL,
+  `approvable` int NULL,
+  `created_at` timestamp NULL,
+  `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL
+);
+
+ALTER TABLE `activities`
+ADD `ref` varchar(30) COLLATE 'utf8_unicode_ci' NULL AFTER `id`;
+
+ALTER TABLE `activities`
+ADD `rejection_reason` text COLLATE 'utf8_unicode_ci' NULL AFTER `end_date`;
+
+ALTER TABLE `activities`
+ADD `rejected_at` varchar(40) COLLATE 'utf8_unicode_ci' NULL AFTER `rejection_reason`,
+ADD `rejected_by_id` int NULL AFTER `rejected_at`;
+
+ALTER TABLE `activities`
+ADD `project_id` int NOT NULL AFTER `description`,
+CHANGE `program_id` `program_id` int(11) NULL AFTER `project_id`;
+
+~+===== Inserting into activities statuses table
+INSERT INTO `activities_statuses` (`status`, `next_status_id`, `short_name`, `display_color`, `approvable`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Created Pending Submission', '2', 'Created', '#64547a6e', '1', now(), now(), NULL);
+
+INSERT INTO `activities_statuses` (`status`, `next_status_id`, `short_name`, `display_color`, `approvable`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Pending PM Approval', '3', 'PM', NULL, '1', now(), now(), NULL);
+
+INSERT INTO `activities_statuses` (`status`, `next_status_id`, `short_name`, `display_color`, `approvable`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Approved', '1', 'Approved', '#075b23a1', '0', now(), now(), NULL);
+
+INSERT INTO `activities_statuses` (`status`, `next_status_id`, `short_name`, `display_color`, `approvable`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Rejected', '1', 'Rejected', '#ff5555c2', '0', now(), now(), NULL);
+
+ALTER TABLE `activities_statuses`
+ADD `order_priority` int(11) NULL AFTER `approvable`;
+
+UPDATE `activities_statuses` SET `order_priority` = '1' WHERE `id` = '1';
+UPDATE `activities_statuses` SET `order_priority` = '2' WHERE `id` = '2';
+UPDATE `activities_statuses` SET `order_priority` = '3' WHERE `id` = '3';
+UPDATE `activities_statuses` SET `order_priority` = '4' WHERE `id` = '4';
+
+ALTER TABLE `activities_statuses`
+ADD `approval_level_id` int NULL AFTER `order_priority`;
+
+UPDATE `activities_statuses` SET `approval_level_id` = '1' WHERE `id` = '2';
+
+~+===== Add activity id column in invoices, allocations (for claims, advances), mobile_payments
+ALTER TABLE `invoices`
+ADD `activity_id` int NULL AFTER `lpo_variation_reason`;
+
+ALTER TABLE `allocations`
+ADD `activity_id` int NULL AFTER `allocation_step`;
+
+ALTER TABLE `mobile_payments`
+ADD `activity_id` int(11) NULL AFTER `reporting_objective_id`;
+
+~+===== Add program_activity_id column on LPOs, Invoices
+ALTER TABLE `lpos`
+ADD `program_activity_id` int(11) NULL AFTER `supplier_rate_id`;
+
+ALTER TABLE `invoices`
+CHANGE `activity_id` `program_activity_id` int(11) NULL AFTER `lpo_variation_reason`;
+
++~===== Alter counties data
+DELETE FROM `counties`
+WHERE ((`id` = '42'));
+
+INSERT INTO `counties` (`county_name`, `migration_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Wajir', NULL, now(), now(), NULL);
+
+INSERT INTO `counties` (`county_name`, `migration_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Mandera', NULL, now(), now(), NULL);
+
+INSERT INTO `counties` (`county_name`, `migration_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Marsabit', NULL, now(), now(), NULL);
+
+INSERT INTO `counties` (`county_name`, `migration_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('National', NULL, now(), now(), NULL);
+
+
+/**** ASSETS ****/
+~***+===== Create assets table
+CREATE TABLE `fixed_assets` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `asset_name` varchar(255) COLLATE 'utf8_unicode_ci' NOT NULL,
+  `purchase_date` varchar(30) COLLATE 'utf8_unicode_ci' NULL,
+  `cost` double NULL,
+  `donated_value` double NULL,
+  `date_donated` varchar(30) COLLATE 'utf8_unicode_ci' NULL,
+  `obsolete_value` int NULL,
+  `obsolescence_date` varchar(30) COLLATE 'utf8_unicode_ci' NULL,
+  `scrapped_value` double NULL,
+  `date_scrapped` varchar(30) COLLATE 'utf8_unicode_ci' NULL,
+  `insured_value` double NULL,
+  `status_id` int NOT NULL,
+  `asset_location_id` int NULL,
+  `asset_category_id` int NULL,
+  `assigned_to_id` int NULL,
+  `added_by_id` int NULL,
+  `created_at` timestamp NULL,
+  `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL
+);
+
+ALTER TABLE `fixed_assets`
+ADD `serial_number` varchar(255) COLLATE 'utf8_unicode_ci' NULL AFTER `asset_name`;
+
+ALTER TABLE `fixed_assets`
+ADD `tag_number` varchar(255) COLLATE 'utf8_unicode_ci' NULL AFTER `added_by_id`;
+
+~***+===== Create asset locations table
+CREATE TABLE `fixed_asset_locations` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `location` varchar(255) NOT NULL,
+  `location_description` text NULL,
+  `created_at` timestamp NULL,
+  `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL
+);
+
+~***+===== Create asset categories table
+CREATE TABLE `fixed_asset_categories` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `category` varchar(255) NOT NULL,
+  `category_description` text NULL,
+  `created_at` timestamp NULL,
+  `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL
+);
+
+~***+===== Create asset statuses table
+CREATE TABLE `fixed_asset_statuses` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `status` varchar(255) NOT NULL,
+  `next_status_id` int NULL,
+  `order_priority` int NULL,
+  `display_color` varchar(10) NULL,
+  `default_status` int NULL,
+  `created_at` timestamp NULL,
+  `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL
+);
+
+~+===== Insert asset location data
+INSERT INTO `fixed_asset_locations` (`location`, `location_description`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Reception', 'Open Area with Counter in third Floor', now(), now(), NULL);
+
+~+===== Insert asset category data
+INSERT INTO `fixed_asset_categories` (`category`, `category_description`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Computer Equipment', 'Desktops, Laptops, Printers, Photocopiers, Scanners, Projectors, TV Screens', now(), now(), NULL);
+
+~+===== Insert asset status data
+INSERT INTO `fixed_asset_statuses` (`status`, `next_status_id`, `order_priority`, `display_color`, `default_status`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('In Use', NULL, NULL, '#075b23a1', '1', now(), now(), NULL);
+
+INSERT INTO `fixed_asset_statuses` (`status`, `next_status_id`, `order_priority`, `display_color`, `default_status`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Obsolete', NULL, NULL, '#ff5555c2', NULL, now(), now(), NULL);
+
+INSERT INTO `fixed_asset_statuses` (`status`, `next_status_id`, `order_priority`, `display_color`, `default_status`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Scrapped', NULL, NULL, '#ff5555c2', NULL, now(), now(), NULL);
+
+INSERT INTO `fixed_asset_statuses` (`status`, `next_status_id`, `order_priority`, `display_color`, `default_status`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Donated', NULL, NULL, '#64547a6e', NULL, now(), now(), NULL);
+
+~+===== Alter meeting room bookings table
+ALTER TABLE `meeting_room_bookings`
+CHANGE `from` `from_date` varchar(25) COLLATE 'latin1_swedish_ci' NOT NULL AFTER `reason_desc`,
+ADD `from_time` varchar(25) COLLATE 'latin1_swedish_ci' NOT NULL AFTER `from_date`,
+CHANGE `to` `to_date` varchar(25) COLLATE 'latin1_swedish_ci' NOT NULL AFTER `from_time`,
+ADD `to_time` varchar(25) COLLATE 'latin1_swedish_ci' NOT NULL AFTER `to_date`;
+
+ALTER TABLE `meeting_room_bookings`
+CHANGE `deleted_at` `deleted_at` timestamp NULL AFTER `updated_at`;
+
+ALTER TABLE `meeting_room_bookings`
+CHANGE `created_at` `created_at` timestamp NULL AFTER `to_time`,
+CHANGE `updated_at` `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP AFTER `created_at`;
+
+
+~+===== Alter meeting rooms table
+ALTER TABLE `meeting_rooms`
+CHANGE `created_at` `created_at` timestamp NULL AFTER `capacity`,
+CHANGE `updated_at` `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP AFTER `created_at`,
+CHANGE `deleted_at` `deleted_at` timestamp NULL AFTER `updated_at`;
+
+===== Alter funds request items table
+
+~+===== Alter funds requests table
+ALTER TABLE `funds_requests`
+ADD `rejected_by_id` int(11) NULL AFTER `status_id`,
+ADD `rejection_reason` text NULL AFTER `rejected_by_id`;
+
++~===== Add recalled status to invoice_statuses
+INSERT INTO `invoice_statuses` (`invoice_status`, `next_status_id`, `short_name`, `status_security_level`, `order_priority`, `display_color`, `default_status`, `default_log_status`, `approval_level_id`, `approvable`, `migration_status_security_level`, `migration_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Recalled', '12', 'Recalled', NULL, '13', '#ff5555c2', NULL, NULL, NULL, NULL, NULL, NULL, now(), now(), NULL);
+
+~+===== Create leave types table
+CREATE TABLE `leave_types` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `name` varchar(100) NOT NULL,
+  `days_entitled` int NULL,
+  `include_weekends` int NULL,
+  `created_at` timestamp NULL,
+  `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL
+);
+
+~+===== Create holidays table
+CREATE TABLE `holidays` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `name` varchar(255) NOT NULL,
+  `date` varchar(20) NOT NULL,
+  `created_at` timestamp NULL,
+  `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL
+);
+
+~+===== Create leave requests table
+CREATE TABLE `leave_requests` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `requested_by_id` int NOT NULL,
+  `leave_type_id` int NOT NULL,
+  `status_id` int NULL,
+  `line_manager_id` int NULL,
+  `start_date` varchar(15) NULL,
+  `end_date` varchar(15) NULL,
+  `no_of_days` int NULL,
+  `alternate_phone_1` varchar(20) NULL,
+  `alternate_phone_2` varchar(20) NULL,
+  `alternate_email_1` varchar(30) NULL,
+  `alternate_email_2` varchar(30) NULL,
+  `rejected_by_id` int NULL,
+  `rejection_reason` int NULL,
+  `requester_comments` text NULL,
+  `approver_comments` text NULL,
+  `created_at` timestamp NULL DEFAULT now(),
+  `updated_at` timestamp NULL DEFAULT now() ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL
+);
+
+ALTER TABLE `leave_requests`
+ADD `rejected_at` timestamp NULL AFTER `rejection_reason`;
+
+ALTER TABLE `leave_requests`
+CHANGE `rejection_reason` `rejection_reason` text NULL AFTER `rejected_by_id`;
+
+~+===== Create leave statuses table
+CREATE TABLE `leave_statuses` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `status` varchar(255) NOT NULL,
+  `next_status_id` int NULL,
+  `short_name` varchar(30) NULL,
+  `order_priority` int NULL,
+  `display_color` varchar(10) NULL,
+  `default_status` int NULL,
+  `approval_level_id` int NULL,
+  `created_at` timestamp NULL DEFAULT now(),
+  `updated_at` timestamp NULL DEFAULT now() ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL
+);
+
+INSERT INTO `leave_statuses` (`status`, `next_status_id`, `short_name`, `order_priority`, `display_color`, `default_status`, `approval_level_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Pending submission', '2', 'Created', '1', '#64547a6e', '1', NULL, now(), now(), NULL);
+
+INSERT INTO `leave_statuses` (`status`, `next_status_id`, `short_name`, `order_priority`, `display_color`, `default_status`, `approval_level_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Pending manager approval', '3', 'Manager', '2', NULL, NULL, 2, now(), now(), NULL);
+
+INSERT INTO `leave_statuses` (`status`, `next_status_id`, `short_name`, `order_priority`, `display_color`, `default_status`, `approval_level_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Approved', '1', 'Approved', '3', '#075b23a1', NULL, NULL, now(), now(), NULL);
+
+INSERT INTO `leave_statuses` (`status`, `next_status_id`, `short_name`, `order_priority`, `display_color`, `default_status`, `approval_level_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Rejected', '2', 'Rejected', '4', '#ff5555c2', NULL, NULL, now(), now(), NULL);
+
+~+===== Add days left column to leave requests
+
+ALTER TABLE `leave_requests`
+ADD `days_left` int(11) NULL AFTER `no_of_days`;
+
+~+===== Add lost/stolen, returned asset status
+INSERT INTO `fixed_asset_statuses` (`status`, `next_status_id`, `order_priority`, `display_color`, `default_status`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Lost/Stolen', NULL, NULL, '#ff5555c2', NULL, now(), now(), NULL);
+
+INSERT INTO `fixed_asset_statuses` (`status`, `next_status_id`, `order_priority`, `display_color`, `default_status`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Returned', NULL, NULL, '#ff5555c2', NULL, now(), now(), NULL);
+
+~+===== Add lost assets table
+CREATE TABLE `lost_assets` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `fixed_asset_id` int NOT NULL,
+  `date_lost` varchar(20) NULL,
+  `explanation` text NULL,
+  `created_at` timestamp NULL DEFAULT now(),
+  `updated_at` timestamp NULL DEFAULT now() ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL
+);
+
+ALTER TABLE `lost_assets`
+ADD `police_abstract` varchar(255) COLLATE 'latin1_swedish_ci' NULL AFTER `explanation`;
+
+~+===== Add consolidated and approved statuses in funds requests
+UPDATE `funds_requests_statuses` SET `status` = 'Approved' WHERE `id` = '3';
+UPDATE `funds_requests_statuses` SET `next_status_id` = '5' WHERE `id` = '3';
+UPDATE `funds_requests_statuses` SET `short_name` = 'Approved' WHERE `id` = '3';
+
+INSERT INTO `funds_requests_statuses` (`status`, `next_status_id`, `short_name`, `display_color`, `approvable`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Funds Consolidated', NULL, 'Consolidated', '#55ff55c2', NULL, now(), now(), NULL);	
+
+~+===== Create consolidated funds table
+CREATE TABLE `consolidated_funds` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `consolidation_date` date NULL,
+  `consolidated_by_id` int NULL,
+  `created_at` timestamp NULL,
+  `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL
+);
+
+ALTER TABLE `funds_requests`
+ADD `consolidated_funds_id` int NULL AFTER `rejection_reason`;
+
+~+===== Add lost & claimed status
+INSERT INTO `fixed_asset_statuses` (`status`, `next_status_id`, `order_priority`, `display_color`, `default_status`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Lost and Claimed', NULL, NULL, '#ff5555c2', NULL, now(), now(), NULL);
+
+~+===== Add daily rate column on supplier services table
+ALTER TABLE `supplier_services`
+ADD `daily_charge` int NULL AFTER `supply_category_id`;
+
+~+===== Change 'Rejected' statuses to 'Returned'
+UPDATE `activities_statuses` SET `status` = 'Returned', `short_name` = 'Returned' WHERE `id` = '4';
+UPDATE `advance_statuses` SET `advance_status` = 'Returned', `short_name` = 'Returned' WHERE `id` = '11';
+UPDATE `claim_statuses` SET `claim_status` = 'Returned', `short_name` = 'Returned' WHERE `id` = '9';
+UPDATE `invoice_statuses` SET `invoice_status` = 'Returned', `short_name` = 'Returned' WHERE `id` = '9';
+UPDATE `leave_statuses` SET `status` = 'Returned', `short_name` = 'Returned' WHERE `id` = '4';
+UPDATE `lpo_statuses` SET `lpo_status` = 'Returned', `short_name` = 'Returned' WHERE `id` = '12';
+UPDATE `mobile_payment_statuses` SET `mobile_payment_status` = 'Returned', `short_name` = 'Returned' WHERE `id` = '7';
+
+===== Add LPO default term
+INSERT INTO `lpo_default_terms` (`terms`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Day 1 to be charged as per confirmed numbers by CHAI contact person. Subsequent days to be charged on actual numbers.', now(), now(), NULL);
+
+~+===== Add activity id column on funds requests
+ALTER TABLE `funds_requests_items`
+CHANGE `activity_desc` `program_activity_id` int NULL AFTER `funds_request_id`;
+
+~+===== Create claimed assets table
+CREATE TABLE `claimed_assets` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `fixed_asset_id` int NOT NULL,
+  `claim_document` varchar(15) NULL,
+  `insurer_id` int NULL,
+  `created_at` timestamp NULL,
+  `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL
+);
+
+~+===== Add Returned pending approval status for fixed assets
+INSERT INTO `fixed_asset_statuses` (`status`, `next_status_id`, `order_priority`, `display_color`, `default_status`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Returned Pending Approval', '6', NULL, '#ff5555c2', NULL, now(), now(), NULL);
+
+~+===== Add display color to rooms
+ALTER TABLE `meeting_rooms`
+ADD `display_color` varchar(7) NULL AFTER `capacity`;
+
+~!!!===== Adding test supplier rates
+UPDATE `suppliers` SET `county_id` = '1' WHERE `id` IN (15,147,176,384);
+UPDATE `suppliers` SET `supply_category_id` = '1' WHERE `id` IN (15,147,176,384);
+UPDATE `supplier_services` SET `daily_charge` = '1' WHERE `id` = '4';
+
+UPDATE `supplier_services` SET `supply_category_id` = '1' WHERE `id` = '1';
+UPDATE `supplier_services` SET `supply_category_id` = '1' WHERE `id` = '2';
+UPDATE `supplier_services` SET `supply_category_id` = '1' WHERE `id` = '3';
+UPDATE `supplier_services` SET `supply_category_id` = '1' WHERE `id` = '4';
+UPDATE `supplier_services` SET `supply_category_id` = '1' WHERE `id` = '5';
+
+INSERT INTO `supplier_rates` (`service_id`, `supplier_id`, `rate`, `currency_id`, `vat`, `service_charge`, `other_charges`, `daily_charge`, `unit`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('1', '15', '5000', '1', '1', NULL, NULL, '1', 'pax', now(), now(), NULL);
+INSERT INTO `supplier_rates` (`service_id`, `supplier_id`, `rate`, `currency_id`, `vat`, `service_charge`, `other_charges`, `daily_charge`, `unit`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('4', '15', '1800', '1', '1', NULL, NULL, '1', 'pax', now(), now(), NULL);
+
+INSERT INTO `supplier_rates` (`service_id`, `supplier_id`, `rate`, `currency_id`, `vat`, `service_charge`, `other_charges`, `daily_charge`, `unit`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('1', '147', '4800', '1', '1', NULL, NULL, '1', 'pax', now(), now(), NULL);
+INSERT INTO `supplier_rates` (`service_id`, `supplier_id`, `rate`, `currency_id`, `vat`, `service_charge`, `other_charges`, `daily_charge`, `unit`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('4', '147', '2000', '1', '1', NULL, NULL, '1', 'pax', now(), now(), NULL);
+
+INSERT INTO `supplier_rates` (`service_id`, `supplier_id`, `rate`, `currency_id`, `vat`, `service_charge`, `other_charges`, `daily_charge`, `unit`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('1', '176', '5500', '1', '1', NULL, NULL, '1', 'pax', now(), now(), NULL);
+INSERT INTO `supplier_rates` (`service_id`, `supplier_id`, `rate`, `currency_id`, `vat`, `service_charge`, `other_charges`, `daily_charge`, `unit`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('4', '176', '1700', '1', '1', NULL, NULL, '1', 'pax', now(), now(), NULL);
+
+INSERT INTO `supplier_rates` (`service_id`, `supplier_id`, `rate`, `currency_id`, `vat`, `service_charge`, `other_charges`, `daily_charge`, `unit`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('1', '384', '4500', '1', '1', NULL, NULL, '1', 'pax', now(), now(), NULL);
+
+~+===== Add program id field to program_objectives table
+ALTER TABLE `reporting_objectives`
+ADD `program_id` int NULL AFTER `description`;
+
+~+===== Add objective id field to activities
+ALTER TABLE `activities`
+ADD `objective_id` int(11) NULL AFTER `rejected_by_id`;
+
+~+===== Change name of activity id field in mobile payments
+ALTER TABLE `mobile_payments`
+CHANGE `activity_id` `program_activity_id` int(11) NULL AFTER `reporting_objective_id`;
+
+~+===== Create lpo vendors not selected table
+CREATE TABLE `lpo_vendors_not_selected` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `lpo_id` int NULL,
+  `supplier_rate_id` int NULL,
+  `created_at` timestamp NULL DEFAULT now(),
+  `updated_at` timestamp NULL DEFAULT now() ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL
+);
+
+ALTER TABLE `lpo_vendors_not_selected`
+CHANGE `supplier_rate_id` `supplier_id` int NULL AFTER `lpo_id`,
+ADD `currency_id` int NULL AFTER `supplier_id`,
+ADD `total` double NULL AFTER `currency_id`;
+
+~+===== Add gender column to staff table
+ALTER TABLE `staff`
+ADD `gender` varchar(1) NULL AFTER `receive_global_email_bcc`;
+
+~+===== Add requires document and gender columns to leave types
+ALTER TABLE `leave_types`
+ADD `requires_document` int(11) NULL AFTER `include_weekends`,
+ADD `gender` varchar(1) NULL AFTER `requires_document`;
+
+~+===== Delete budgets that have no amounts
+update budgets set deleted_at=now() where id in (1,2,3,4,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,56,57,70,71,72,73,77,78,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,160,161,162,163,164,165,166,167,168,169,170,171,172,173,174,175,176,177,178,179,180,181,182,183,184)
+
+~+===== Add objective_id field to allocations
+ALTER TABLE `allocations`
+ADD `objective_id` int(11) NULL AFTER `activity_id`;
+
+~+===== Create activity_objectives table
+CREATE TABLE `activity_objectives` (
+  `activity_id` int NOT NULL,
+  `objective_id` int NOT NULL,
+  `created_at` timestamp NULL,
+  `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL
+);
+
+~+===== Add objective_id field to budget items
+ALTER TABLE `budget_items`
+ADD `objective_id` int(11) NULL AFTER `account_id`;
+
+~+===== Change funds requests rejected status to returned
+UPDATE `funds_requests_statuses` SET `status` = 'Returned', `short_name` = 'Returned' WHERE `id` = '4';
+
+~+===== Add tax withheld columns to payments table
+ALTER TABLE `payments`
+ADD `vat_amount_withheld` double(26,2) NULL AFTER `bank_charges`,
+ADD `income_tax_amount_withheld` double(26,2) NULL AFTER `vat_amount_withheld`;
+
+~+===== Add withholding income tax amount to invoices table
+ALTER TABLE `invoices`
+MODIFY `withholding_tax` double NULL AFTER `rejected_at`,
+ADD `withholding_vat` double NULL AFTER `withholding_tax`;
+
+~+===== Delete invoice dates that are invalid
+update invoices set invoice_date=null where id in (1,2,3,4,5,6,7,8,9,10,11,12,13,141,5,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30);
+update invoices set invoice_date=null where id in (32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,62,63,64,65,66,67,68,69,70,73,74,75,76,77,78,81,82,84,85,86,87,95,96);
+update invoices set invoice_date=null where id in (101,102,103,104,105,106,107,108,109,110,111,116,118,119,121,124,126,127,133,134,137,139,142,145,151,152,153,158,159,160,166,174,175,176,179,182,184,185,186,187,188,189,190,191,192,193,199,200);
+update invoices set invoice_date=null where id in (14,15,201,202,203,204,205,207,208,209,211,212,213,214,222,223,224,227,231,233,234,235,236,237,246,250,252,255,260,263,266,267,269,271,272,274,275,277,278,279,280,284,285,287,291,292,293,294,295,298,299);
+update invoices set invoice_date=null where id in (302,303,312,314,315,316,317,318,325,326,483,493,497,504,512,544,558,559,560,561,562,563570,574,575,582,583,584,591,599,609,610,611,612,615,622,623,626,627,628,629,636,641,643,644,645,647,648,649,651,653,654,656,658,659,660,663,664,665,667,668,669,670,671,673,674,675,676,677,678,679,680,681,682,684,685,686,687,688,689,691,692,693,694,695,696,697);
+update invoices set invoice_date=null where id in (700,701,702,704,706,708,710,715,716,718,719,723,725,726,727,728,729,730,731,1766,1778,2242,3220,4155,4165,4779,5306,5755);
+update invoices set invoice_date=null where id in (563,570);
+
+~+===== Add usd_rates column to invoices and payments
+ALTER TABLE `invoices`
+ADD `usd_rate` double NULL AFTER `withholding_vat`;
+
+ALTER TABLE `payments`
+ADD `usd_rate` double NULL AFTER `income_tax_amount_withheld`;
+
+~+===== Add recurring, recur until columns to meeting room bookings
+ALTER TABLE `meeting_room_bookings`
+ADD `recurring` varchar(25) COLLATE 'latin1_swedish_ci' NULL AFTER `to_time`;
+
+ALTER TABLE `meeting_room_bookings`
+ADD `recur_until` varchar(25) COLLATE 'latin1_swedish_ci' NULL AFTER `recurring`;
+
+~+===== Add link column to resources table, change name column to take text
+ALTER TABLE `resources`
+ADD `link` text NULL AFTER `staff_id`;
+
+ALTER TABLE `resources`
+CHANGE `name` `name` text COLLATE 'latin1_swedish_ci' NULL AFTER `id`;
+
++===== Remove unique index from staff.email
+ALTER TABLE staff
+DROP INDEX staff_email_unique;
+
+~===== Add new next status id column to mobile payment statuses
+ALTER TABLE `mobile_payment_statuses`
+ADD `new_next_status_id` int(11) NULL AFTER `next_status_id`;
+
+ALTER TABLE `mobile_payment_statuses`
+ADD `new_order_priority` int(11) NULL AFTER `order_priority`;
+
+INSERT INTO `mobile_payment_statuses` (`mobile_payment_status`, `next_status_id`, `new_next_status_id`, `short_name`, `status_security_level`, `order_priority`, `new_order_priority`, `display_color`, `default_status`, `approval_level_id`, `approvable`, `migration_status_security_level`, `migration_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Sent to Bank Awaiting Verification', NULL, NULL, 'Sent to Bank', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, now(), now(), NULL);
+
+INSERT INTO `mobile_payment_statuses` (`mobile_payment_status`, `next_status_id`, `new_next_status_id`, `short_name`, `status_security_level`, `order_priority`, `new_order_priority`, `display_color`, `default_status`, `approval_level_id`, `approvable`, `migration_status_security_level`, `migration_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Resent to Bank Awaiting Verification', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, now(), now(), NULL);
+
+INSERT INTO `mobile_payment_statuses` (`mobile_payment_status`, `next_status_id`, `new_next_status_id`, `short_name`, `status_security_level`, `order_priority`, `new_order_priority`, `display_color`, `default_status`, `approval_level_id`, `approvable`, `migration_status_security_level`, `migration_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Approved by Management Pending Payment', NULL, NULL, 'Pending Payment', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, now(), now(), NULL);
+
+UPDATE `mobile_payment_statuses` SET `new_next_status_id` = '15', `new_order_priority` = '1' WHERE `id` = '1';
+UPDATE `mobile_payment_statuses` SET `new_next_status_id` = '3', `new_order_priority` = '6' WHERE `id` = '2';
+UPDATE `mobile_payment_statuses` SET `new_next_status_id` = '8', `new_order_priority` = '7' WHERE `id` = '3';
+UPDATE `mobile_payment_statuses` SET `new_order_priority` = '10' WHERE `id` = '5';
+UPDATE `mobile_payment_statuses` SET `new_next_status_id` = '1', `new_order_priority` = '11' WHERE `id` = '7';
+UPDATE `mobile_payment_statuses` SET `new_next_status_id` = '17', `new_order_priority` = '8' WHERE `id` = '8';
+UPDATE `mobile_payment_statuses` SET `new_next_status_id` = '2', `new_order_priority` = '5' WHERE `id` = '9';
+UPDATE `mobile_payment_statuses` SET `new_next_status_id` = '16', `new_order_priority` = '3' WHERE `id` = '11';
+UPDATE `mobile_payment_statuses` SET `new_next_status_id` = '1', `new_order_priority` = '12' WHERE `id` = '14';
+UPDATE `mobile_payment_statuses` SET `mobile_payment_status` = 'Sent to Bank Awaiting verification', `new_next_status_id` = '11', `new_order_priority` = '2' WHERE `id` = '15';
+UPDATE `mobile_payment_statuses` SET `new_next_status_id` = '9', `new_order_priority` = '4' WHERE `id` = '16';
+UPDATE `mobile_payment_statuses` SET `new_next_status_id` = '5', `new_order_priority` = '9', `display_color` = '#07575ba1' WHERE `id` = '17';
+UPDATE `mobile_payment_statuses` SET `approval_level_id` = '4' WHERE `id` = '17';
+UPDATE `mobile_payment_statuses` SET `new_next_status_id` = '9' WHERE `id` = '15';
+UPDATE `mobile_payment_statuses` SET `short_name` = 'Resent to Bank' WHERE `id` = '16';

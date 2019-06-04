@@ -71,49 +71,29 @@ class MobilePaymentPayeeApi extends Controller
      */
     public function addMobilePaymentPayee()
     {
-        $input = Request::all();
-
-
         $mobile_payment_payee = new MobilePaymentPayee;
-
+        $mobile_payment_payee->disableLogging();
 
         try{
-
-
-            $form = Request::only(
-                'mobile_payment_id',
-                'full_name',
-                'registered_name',
-                'id_number',
-                'mobile_number',
-                'amount'
-                );
-
+            $form = Request::all();
 
             $mobile_payment_payee->mobile_payment_id          =               $form['mobile_payment_id'];
-            $mobile_payment_payee->full_name                  =               $form['full_name'];
+            $mobile_payment_payee->full_name                  =               $form['registered_name'];
             $mobile_payment_payee->registered_name            =               $form['registered_name'];
+            $mobile_payment_payee->tax_pin                    =               $form['tax_pin'];
             $mobile_payment_payee->id_number                  =               $form['id_number'];
             $mobile_payment_payee->mobile_number              =               $form['mobile_number'];
             $mobile_payment_payee->amount                     =   (double)    $form['amount'];
             $mobile_payment_payee->withdrawal_charges         =               $mobile_payment_payee->calculated_withdrawal_charges;
             $mobile_payment_payee->total                      =               $mobile_payment_payee->calculated_total;
 
-
             if($mobile_payment_payee->save()) {
-
-
                 $mobile_payment_payee->save();
                 return Response()->json(array('success' => 'mobile payment payee added','mobile_payment_payee' => $mobile_payment_payee), 200);
             }
-
-
         }catch (JWTException $e){
-
             return response()->json(['error'=>'You are not Authenticated'], 500);
-
         }
-
     }
 
 
@@ -156,39 +136,22 @@ class MobilePaymentPayeeApi extends Controller
      */
     public function updateMobilePaymentPayee()
     {
-        $input = Request::all();
-
-
-
-
         try{
-
-
-            $form = Request::only(
-                'id',
-                'mobile_payment_id',
-                'full_name',
-                'registered_name',
-                'id_number',
-                'mobile_number',
-                'amount'
-                );
+            $form = Request::all();
             $mobile_payment_payee = MobilePaymentPayee::findOrFail((int)$form['id']);
+            $mobile_payment_payee->disableLogging();
 
-
-            // print_r($mobile_payment_payee);die;
             $mobile_payment_payee->mobile_payment_id          =               $form['mobile_payment_id'];
-            $mobile_payment_payee->full_name                  =               $form['full_name'];
+            $mobile_payment_payee->full_name                  =               $form['registered_name'];
             $mobile_payment_payee->registered_name            =               $form['registered_name'];
+            $mobile_payment_payee->tax_pin                    =               $form['tax_pin'];
             $mobile_payment_payee->id_number                  =               $form['id_number'];
             $mobile_payment_payee->mobile_number              =               $form['mobile_number'];
             $mobile_payment_payee->amount                     =   (double)    $form['amount'];
             $mobile_payment_payee->withdrawal_charges         =               $mobile_payment_payee->calculated_withdrawal_charges;
             $mobile_payment_payee->total                      =               $mobile_payment_payee->calculated_total;
 
-
             if($mobile_payment_payee->save()) {
-
                 // Logging update
                 $user = JWTAuth::parseToken()->authenticate();
                 $mobile_payment = MobilePayment::findOrFail($mobile_payment_payee->mobile_payment_id);
@@ -199,14 +162,9 @@ class MobilePaymentPayeeApi extends Controller
 
                 return Response()->json(array('success' => 'mobile payment payee updated','mobile_payment_payee' => $mobile_payment_payee), 200);
             }
-
-
         }catch (JWTException $e){
-
             return response()->json(['error'=>'Mobile Payment Payee not found'], 404);
-
         }
-
     }
 
 
@@ -250,11 +208,7 @@ class MobilePaymentPayeeApi extends Controller
      */
     public function deleteMobilePaymentPayee($mobile_payment_payee_id)
     {
-        $input = Request::all();
-
-
         $deleted_mobile_payment_payee = MobilePaymentPayee::destroy($mobile_payment_payee_id);
-
 
         if($deleted_mobile_payment_payee){
             return response()->json(['msg'=>"Mobile payment payee deleted"], 200,array(),JSON_PRETTY_PRINT);
@@ -305,13 +259,11 @@ class MobilePaymentPayeeApi extends Controller
     public function getMobilePaymentPayeeById($mobile_payment_payee_id)
     {
         $response = [];
-
         try{
             $response   = MobilePaymentPayee::findOrFail($mobile_payment_payee_id);
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
-
-        }catch(Exception $e){
-
+        }
+        catch(Exception $e){
             $response =  ["error"=>"Payee could not be found"];
             return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
         }
@@ -391,8 +343,6 @@ class MobilePaymentPayeeApi extends Controller
     private function get_withdrawal_charges($amount){
 
         $withdrawal_charges = 0 ;
-
-
         $tariff_res = DB::table('mobile_payment_tariffs')
         ->select(DB::raw('tariff'))
         ->where('min_limit', '<=', $amount)
@@ -400,13 +350,10 @@ class MobilePaymentPayeeApi extends Controller
         ->get();
 
         foreach ($tariff_res as $key => $value) {
-
-            $withdrawal_charges = (double)  $value->tariff ;
-
+            $withdrawal_charges = (double)  $value->tariff;
         }
 
-        return $withdrawal_charges;
-        
+        return $withdrawal_charges;        
     }
 
 
@@ -437,8 +384,6 @@ class MobilePaymentPayeeApi extends Controller
 
 
     private function get_total($amount){
-
         return  $amount + $this->get_withdrawal_charges($amount);
     }
-
 }
