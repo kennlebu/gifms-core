@@ -637,13 +637,13 @@ class ReportsApi extends Controller
                     $my_result['payable_id'] = $row['payable']['id'];
                     $my_result['objective'] = $allocation['objective'];
 
-                    $sum = 0;
-                    foreach($row['payable']['bank_transactions'] as $b){
-                        $sum += $b['amount'];
-                    }
-                    if($sum > 0){
-                        $my_result['amount_paid'] = $sum;
-                    }
+                    // $sum = 0;
+                    // foreach($row['payable']['bank_transactions'] as $b){
+                    //     $sum += $b['amount'];
+                    // }
+                    // if($sum > 0){
+                    //     $my_result['amount_paid'] = $sum;
+                    // }
     
                     if($row['payable_type'] == 'mobile_payments'){
                         $mpesa_payee = Staff::find($row['payable']['requested_by_id'])->full_name;
