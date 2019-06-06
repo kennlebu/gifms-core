@@ -564,7 +564,7 @@ class MobilePaymentApi extends Controller
 
             // If it was sent before, move to resent status
             if($mobile_payment->status_id == 1){
-                $mobile_payment->status_id = $mobile_payment->status->new_next_status_id;
+                $mobile_payment->status_id = 15;  // Sent to Bank Awaiting verification
                 // Logging
                 activity()
                     ->performedOn($mobile_payment)
@@ -572,7 +572,7 @@ class MobilePaymentApi extends Controller
                     ->log('Sent to bank');
             }
             elseif($mobile_payment->status_id == 15){
-                $mobile_payment->status_id = 16;
+                $mobile_payment->status_id = 16;  // Resent to Bank Awaiting Verification
                 // Logging
                 activity()
                     ->performedOn($mobile_payment)
