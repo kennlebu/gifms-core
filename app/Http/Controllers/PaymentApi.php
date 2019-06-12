@@ -605,7 +605,10 @@ class PaymentApi extends Controller
             foreach($payments as $payment) {
                 $taxable_amount = $payment->payable->total;
                 $amount = 0;
-                if($type == 'vat') $amount = $payment->vat_amount_withheld * 6/16;
+                if($type == 'vat') {
+                    $amount = $payment->vat_amount_withheld * 6/16;
+                    $taxable_amount = $amount * 100/16;
+                }
                 elseif($type == 'income') $amount = $payment->income_tax_amount_withheld;
 
                 if($payment->currency_id == 2){ // USD payment
@@ -619,12 +622,12 @@ class PaymentApi extends Controller
                     }
                 }
                 $line = array(
-                        'vendor'=>$payment->paid_to_name, 
-                        'tax_pin'=>$payment->payable->supplier->tax_pin, 
-                        'invoice_no'=>$payment->payable->external_ref, 
+                        'vendor'=>$payment->paid_to_name,
+                        'tax_pin'=>$payment->payable->supplier->tax_pin,
+                        'invoice_no'=>$payment->payable->external_ref,
                         'invoice_date'=>date("Y-m-d", strtotime($payment->payable->invoice_date)),
                         'taxable_amount'=>$taxable_amount,
-                        'amount'=>$amount
+                        'amount'=>ceil($amount)
                     );
 
                 $response_array[] = $line;
