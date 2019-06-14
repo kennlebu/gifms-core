@@ -607,7 +607,7 @@ class PaymentApi extends Controller
                 $amount = 0;
                 if($type == 'vat') {
                     $amount = $payment->vat_amount_withheld * 6/16;
-                    // $taxable_amount = $amount * 100/16;
+                    $taxable_amount = $payment->vat_amount_withheld * 100/16;
                 }
                 elseif($type == 'income') $amount = $payment->income_tax_amount_withheld;
 
