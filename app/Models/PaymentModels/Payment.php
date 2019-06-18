@@ -67,12 +67,12 @@ class Payment extends BaseModel
         $net_amount = $this->amount;
         if(!empty($this->amount)){
             if(!empty($this->income_tax_amount_withheld)){
-                $net_amount -= $this->income_tax_amount_withheld;
+                $net_amount -= ceil($this->income_tax_amount_withheld);
             }
             
             if(!empty($this->vat_amount_withheld)){
                 $vat_withhold_amount = (6/16)*$this->vat_amount_withheld;
-                $net_amount -= $vat_withhold_amount;
+                $net_amount -= ceil($vat_withhold_amount);
             }
         }
         return $net_amount;
