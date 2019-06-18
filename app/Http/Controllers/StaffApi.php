@@ -416,41 +416,28 @@ class StaffApi extends Controller
         $total_records          = $qb->count();
         $records_filtered       = 0;
 
-
-
-
         //searching
         if(array_key_exists('searchval', $input)){
-            $qb->where(function ($query) use ($input) {
-                
+            $qb->where(function ($query) use ($input) {                
                 $query->orWhere('staff.id','like', '\'%' . $input['searchval']. '%\'');
                 $query->orWhere('staff.f_name','like', '\'%' . $input['searchval']. '%\'');
                 $query->orWhere('staff.l_name','like', '\'%' . $input['searchval']. '%\'');
                 $query->orWhere('staff.o_names','like', '\'%' . $input['searchval']. '%\'');
                 $query->orWhere('staff.email','like', '\'%' . $input['searchval']. '%\'');
-
             });
-
-            // $records_filtered       =  $qb->count(); //doesn't work
 
             $sql = Staff::bind_presql($qb->toSql(),$qb->getBindings());
             $sql = str_replace("*"," count(*) AS count ", $sql);
             $dt = json_decode(json_encode(DB::select($sql)), true);
 
             $records_filtered = (int) $dt[0]['count'];
-            // $records_filtered = 30;
-
-
         }
 
         //getting by id
         if(array_key_exists('staff_id', $input)){
-            $qb->where(function ($query) use ($input) {
-                
+            $qb->where(function ($query) use ($input) {                
                 $query->where('staff.id','=', $input['staff_id']);
-
             });
-
         }
 
 
@@ -461,23 +448,15 @@ class StaffApi extends Controller
             if(array_key_exists('order_dir', $input)&&$input['order_dir']!=''){                
                 $order_direction = $input['order_dir'];
             }
-
             $qb->orderBy($order_column_name, $order_direction);
-        }else{
-            // $qb->orderBy("f_name", "asc");
         }
 
         //limit
         if(array_key_exists('limit', $input)){
-
-
             $qb->limit($input['limit']);
-
-
         }
         //roles
         if(array_key_exists('role_abr', $input)){
-
             $qb->select(DB::raw('staff.*'))
                  ->leftJoin('user_roles', 'user_roles.user_id', '=', 'staff.id')
                  ->leftJoin('roles', 'roles.id', '=', 'user_roles.role_id')
@@ -487,14 +466,15 @@ class StaffApi extends Controller
 
         //PMs for a user OR line managers for leave requests
         if(array_key_exists('my_pms', $input) || array_key_exists('line_managers', $input)){
-
             //select the projects of the user
             $user = JWTAuth::parseToken()->authenticate();
-            $admin_role = Staff::whereHas('roles', function($query){
-                $query->whereIn('role_id', [1,2,3,4,5,6,8,9,10,11]);  
+            $admin_role = Staff::whereHas('roles', function($query) use ($input){
+                $query->whereIn('role_id', [1,2,3,4,5,6,10,11]);
+                if(array_key_exists('line_managers', $input))
+                    $query->whereIn('role_id', [8,9]);
             })->where('id', $user->id)->get();
 
-            // Get only user PMs if user doesn't have admin or finance role
+            // Get only user PMs if user doesn't have admin role
             if((count($admin_role)<=0) || array_key_exists('for_requester', $input)){
                 $uid = $user->id;
                 if(array_key_exists('for_requester', $input)){
@@ -525,7 +505,7 @@ class StaffApi extends Controller
                 // }
             }
 
-            // Get all PMs for administrative and finance staff
+            // Get all PMs for administrative staff
             else{
                 $qb->select(DB::raw('staff.*'))
                  ->leftJoin('user_roles', 'user_roles.user_id', '=', 'staff.id')
@@ -537,25 +517,17 @@ class StaffApi extends Controller
 
         //migrated
         if(array_key_exists('migrated', $input)){
-
             $mig = (int) $input['migrated'];
-
             if($mig==0){
                 $qb->whereNull('migration_id');
             }else if($mig==1){
                 $qb->whereNotNull('migration_id');
             }
-
-
         }
 
-
-
         if(array_key_exists('datatables', $input)){
-
             //searching
-            $qb->where(function ($query) use ($input) {
-                
+            $qb->where(function ($query) use ($input) {                
                 $query->orWhere('staff.id','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('staff.username','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('staff.email','like', '\'%' . $input['search']['value']. '%\'');
@@ -565,12 +537,7 @@ class StaffApi extends Controller
                 $query->orWhere('staff.official_post','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('staff.mobile_no','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('staff.mpesa_no','like', '\'%' . $input['search']['value']. '%\'');
-
-
             });
-
-
-
 
             $sql = Staff::bind_presql($qb->toSql(),$qb->getBindings());
             $sql = str_replace("*"," count(*) AS count ", $sql);
@@ -578,44 +545,26 @@ class StaffApi extends Controller
 
             $records_filtered = (int) $dt[0]['count'];
 
-
             //ordering
             $order_column_id    = (int) $input['order'][0]['column'];
             $order_column_name  = $input['columns'][$order_column_id]['order_by'];
             $order_direction    = $input['order'][0]['dir'];
 
             if($order_column_name!=''){
-
                 $qb->orderBy($order_column_name, $order_direction);
-
             }
-
-
-
-
-
 
             //limit $ offset
             if((int)$input['start']!= 0 ){
-
                 $response_dt    =   $qb->limit($input['length'])->offset($input['start']);
-
-            }else{
+            }
+            else{
                 $qb->limit($input['length']);
             }
 
-
-
-
-
             $sql = Staff::bind_presql($qb->toSql(),$qb->getBindings());
-            // echo $sql;die;
-            // $response_dt = DB::select($qb->toSql(),$qb->getBindings());         //pseudo
             $response_dt = DB::select($sql);
-
-
             $response_dt = json_decode(json_encode($response_dt), true);
-
             $response_dt    = $this->append_relationships_objects($response_dt);
             $response_dt    = $this->append_relationships_nulls($response_dt);
             $response       = Staff::arr_to_dt_response( 
@@ -623,10 +572,8 @@ class StaffApi extends Controller
                 $total_records,
                 $records_filtered
                 );
-
-
-        }else{
-
+        }
+        else {
             $sql            = Staff::bind_presql($qb->toSql(),$qb->getBindings());
             $response       = json_decode(json_encode(DB::select($sql)), true);
             if(!array_key_exists('lean', $input)){
@@ -635,12 +582,7 @@ class StaffApi extends Controller
             }
         }
 
-
-
-
         return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
-
-
     }
 
 
