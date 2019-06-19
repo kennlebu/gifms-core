@@ -468,9 +468,11 @@ class StaffApi extends Controller
             //select the projects of the user
             $user = JWTAuth::parseToken()->authenticate();
             $admin_role = Staff::whereHas('roles', function($query) use ($input){
-                $query->whereIn('role_id', [1,2,3,4,5,6,9,8,10,11]);
-                // if(array_key_exists('line_managers', $input))
-                //     $query->whereIn('role_id', [8]);
+                $arr = [1,2,3,4,5,6,8,9,10,11];
+                if(array_key_exists('line_managers', $input)){
+                    $arr = [1,2,3,4,5,6,10,11];
+                }
+                $query->whereIn('role_id', $arr);
             })->where('id', $user->id)->get();
 
             // Get only user PMs if user doesn't have admin role
