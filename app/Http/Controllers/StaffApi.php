@@ -496,14 +496,25 @@ class StaffApi extends Controller
 
             // Get only directors for PMs and above if it's line managers required
             else if(array_key_exists('line_managers', $input)){
-                // if($user->hasRole(['program-manager','financial-controller','admin-manager','director'])){
+                if($user->hasRole(['program-manager','financial-controller','admin-manager','director'])){
                     $qb->select(DB::raw('staff.*'))
                     ->leftJoin('user_roles', 'user_roles.user_id', '=', 'staff.id')
                     ->leftJoin('roles', 'roles.id', '=', 'user_roles.role_id')
                     ->where('roles.acronym', '=', "'dir'")
                     ->orWhere('roles.acronym', '=', "'a-dir'")
                     ->groupBy('staff.id');
-                // }
+                }
+                else{
+                    $program_teams = ProgramStaff::with('program.managers')->where('staff_id', $user->id)->get();
+                    $program_managers = array();                    
+                    foreach($program_teams as $team){
+                        array_push($program_managers, $team->program->managers->program_manager_id);
+                    }
+
+                    $qb->select(DB::raw('staff.*'))
+                        ->whereIn('staff.id',$program_managers)
+                        ->groupBy('staff.id');
+                }
             }
 
             // Get all PMs for administrative staff
