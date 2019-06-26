@@ -21,7 +21,8 @@ class MobilePaymentPayee extends BaseModel
 
     protected $appends = ['calculated_withdrawal_charges','calculated_total'];
 
-
+    protected $hidden = ['county','deleted_at','designation','email','migration_id','migration_mobile_payment_id','paid','payment_reference',
+                        'region','sub_county'];
 
 
     public function getCalculatedWithdrawalChargesAttribute(){

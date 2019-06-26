@@ -19,7 +19,7 @@ class Project extends BaseModel
     use SoftDeletes;
 
 
-    protected $appends = [];
+    protected $hidden = ['client','closed_on','cluster','deleted_at','migration_id','migration_project_manager_id','qb','start_date'];
 
     public function program()
     {

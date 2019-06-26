@@ -35,8 +35,8 @@ class Staff extends BaseModel
      */
     protected $hidden = [
         'password', 'remember_token','old_password', 'created_at', 'updated_at', 'deleted_at',
-        'migration_bank_id', 'migration_bank_branch_id', 'migration_department_id', 'migration_id'
-    ];
+        'migration_bank_id', 'migration_bank_branch_id', 'migration_department_id', 'migration_id',
+        'is_admin','receive_global_email_bcc','receives_global_bccs','security_group_id','station',];
 
 
 

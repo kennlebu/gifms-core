@@ -10,4 +10,5 @@ class ApprovalLevel extends BaseModel
 {
     //
     use SoftDeletes;
+    protected $hidden = ['deleted_at','migration_id'];
 }

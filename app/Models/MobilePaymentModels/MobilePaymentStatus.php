@@ -13,7 +13,8 @@ class MobilePaymentStatus extends BaseModel
     use SoftDeletes;
 
 
-
+    protected $hidden = ['created_at','deleted_at','updated_at','approvable','deleted_at','migration_id','migration_status_security_level',
+                        'status_security_level'];
     protected $appends = ['mobile_payments_count'];
 
 

@@ -10,6 +10,7 @@ class Approval extends BaseModel
 {
     //
     use SoftDeletes;
+    protected $hidden = ['migration_approver_id','ref','deleted_at'];
 
     public function approvable()
     {
