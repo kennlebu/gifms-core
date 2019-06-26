@@ -562,8 +562,7 @@ class MobilePaymentApi extends Controller
             /* Send Email */
             Mail::queue(new MobilePaymentInstructBank($mobile_payment, $csv_data, $pdf_data));
 
-            // If it was sent before, move to resent status
-            if($mobile_payment->status_id == 1){
+            if($mobile_payment->status_id == 1 || $mobile_payment->status_id == 14 || $mobile_payment->status_id == 7){
                 $mobile_payment->status_id = 15;  // Sent to Bank Awaiting verification
                 // Logging
                 activity()
@@ -571,6 +570,7 @@ class MobilePaymentApi extends Controller
                     ->causedBy($this->current_user())
                     ->log('Sent to bank');
             }
+            // If it was sent before, move to resent status
             elseif($mobile_payment->status_id == 15){
                 $mobile_payment->status_id = 16;  // Resent to Bank Awaiting Verification
                 // Logging
@@ -1918,6 +1918,56 @@ class MobilePaymentApi extends Controller
         }
     }
 
+
+    public function markAsPaid(){
+        try{
+            $input = Request::all();
+
+            if(empty($input['bank_ref']) && empty($input['amount'])){
+                return response()->json(['error'=>'All fields are required'], 422);
+            }
+
+            $mobile_payment = MobilePayment::findOrFail($input['mobile_payment_id']);
+            $voucher_no = $mobile_payment->voucher_number->voucher_number ?? '';
+
+            $bank_trans = $mobile_payment->bank_transactions;
+            $already_saved = false;
+            foreach($bank_trans as $tran){
+                if(trim($input['bank_ref']) == $tran->bank_ref) $already_saved = true;
+            }
+            if(!$already_saved){
+                // Save transaction details
+                $bank_transaction = array();
+                $bank_transaction['bank_ref'] = trim($input['bank_ref']);
+                $bank_transaction['chai_ref'] = $voucher_no;
+                $bank_transaction['inputter'] = $this->current_user()->name;
+                $bank_transaction['approver'] = 'N/A';
+                $bank_transaction['amount'] = trim($input['amount']);
+                $bank_transaction['txn_date'] =  date('Y-m-d');
+                $bank_transaction['txn_time'] = date('H:m').'Hrs';
+                // $bank_transaction['processing_date'] = $row['processing_date'];
+                $bank_transaction['narrative'] = substr($mobile_payment->expense_desc, 0, 300).'...';
+                DB::table('bank_transactions')->insert($bank_transaction);
+            }
+
+            if($mobile_payment->status_id != 5){   // It was already marked as paid
+                $mobile_payment->disableLogging();
+                $mobile_payment->status_id = 5; //Paid
+                $mobile_payment->save();
+                activity()
+                    ->performedOn($mobile_payment)
+                    ->causedBy($this->current_user())
+                    ->log('Paid');
+                    
+                return Response()->json(array('success' => 'Mobile Payment already marked as paid'), 200);
+            }
+            
+            return Response()->json(array('success' => 'Mobile Payment marked as paid'), 200);
+        }
+        catch(Exception $e){
+            return response()->json(['error'=>'Something went wrong during processing', 'msg'=>$e->getMessage()], 500);
+        }
+    }
 
 
 

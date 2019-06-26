@@ -25,7 +25,10 @@ class MobilePayment extends BaseModel
     use SoftDeletes;
 
     protected $appends = ['amounts','total_withdrawal_charges','totals','amount_allocated', 'bank_transaction', 'bank_transactions'];
-
+    protected $hidden = ['brevity','county','county_id','deleted_at','invoice','invoice_id','meeting','migration_account_id',
+                        'migration_deleted','migration_id','migration_invoice_id','migration_project_id','migration_project_manager_id',
+                        'migration_requested_by_id','payment_document','project','project_id','region','region_id','reporting_categories_id',
+                        'reporting_objective_id'];
  
 
     public function requested_by()

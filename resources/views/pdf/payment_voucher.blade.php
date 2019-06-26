@@ -220,7 +220,7 @@
                             {{$payment->paid_to_name}}
                             @else
                             <small><span class="muted">Bank:</span></small><br/>
-                            {{$payment->paid_to_bank->bank_name}}, <wbr/>{{$payment->paid_to_bank_branch->branch_name.' Branch'}}
+                            {{$payment->paid_to_bank->bank_name ?? ''}}, <wbr/>{{($payment->paid_to_bank_branch->branch_name ?? '-').' Branch'}}
                             @endif
                         </td>
                         <td style="border: 1px solid #000000; border-right: 0px solid #c0c0c0;" colspan="2">

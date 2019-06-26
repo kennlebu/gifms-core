@@ -551,6 +551,7 @@ class PaymentBatchApi extends Controller
             $input = Request::all();
             foreach($input as $row){
                 $already_paid = false;
+                $already_saved = false;
                 if($row['payable_type'] != 'mobile_payments'){
                     $payment = Payment::find($row['payment']['id']);
                     if($payment->status_id==4) $already_paid = true;
@@ -568,6 +569,10 @@ class PaymentBatchApi extends Controller
                                 ->performedOn($invoice)
                                 ->causedBy($this->current_user())
                                 ->log('Paid');
+                            $bank_trans = $invoice->bank_transactions;
+                            foreach($bank_trans as $tran){
+                                if(trim($input['bank_ref']) == $tran->bank_ref) $already_saved = true;
+                            }
 
                             // Change LPO to paid if it exists
                             if(!empty($invoice->lpo_id)){
@@ -597,6 +602,11 @@ class PaymentBatchApi extends Controller
                                 ->causedBy($this->current_user())
                                 ->log('Issued and paid');
 
+                            $bank_trans = $advance->bank_transactions;
+                            foreach($bank_trans as $tran){
+                                if(trim($input['bank_ref']) == $tran->bank_ref) $already_saved = true;
+                            }
+
                             // Send email
                             if($row['notify_vendor'])
                             Mail::queue(new NotifyPayment($advance, $payment));
@@ -611,6 +621,11 @@ class PaymentBatchApi extends Controller
                                 ->performedOn($claim)
                                 ->causedBy($this->current_user())
                                 ->log('Paid');
+
+                            $bank_trans = $claim->bank_transactions;
+                            foreach($bank_trans as $tran){
+                                if(trim($input['bank_ref']) == $tran->bank_ref) $already_saved = true;
+                            }
 
                             // Send email
                             if($row['notify_vendor'])
@@ -630,6 +645,11 @@ class PaymentBatchApi extends Controller
                                 ->performedOn($mobile_payment)
                                 ->causedBy($this->current_user())
                                 ->log('Paid');
+                                
+                        $bank_trans = $mobile_payment->bank_transactions;
+                        foreach($bank_trans as $tran){
+                            if(trim($input['bank_ref']) == $tran->bank_ref) $already_saved = true;
+                        }
 
                         // Send email
                         if($row['notify_vendor'])
@@ -637,7 +657,7 @@ class PaymentBatchApi extends Controller
                     }
                 }
 
-                if(!$already_paid){
+                if(!$already_saved){
                     // Save transaction details
                     $bank_transaction = array();
                     $bank_transaction['bank_ref'] = $row['bank_ref'];

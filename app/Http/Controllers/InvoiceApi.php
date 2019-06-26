@@ -1627,4 +1627,60 @@ class InvoiceApi extends Controller
     }
 
 
+
+    public function markAsPaid(){
+        try{
+            $input = Request::all();
+
+            if(empty($input['bank_ref']) && empty($input['amount'])){
+                return response()->json(['error'=>'All fields are required'], 422);
+            }
+
+            $invoice = Invoice::findOrFail($input['invoice_id']);
+            $payment = Payment::where('payable_type', 'invoices')->where('payable_id',$invoice->id)->firstOrFail();
+            $payment->disableLogging();
+            $payment->status_id = 4;
+            $payment->save();
+            $voucher_no = $payment->voucher_number->voucher_number ?? '';
+
+            $bank_trans = $invoice->bank_transactions;
+            $already_saved = false;
+            foreach($bank_trans as $tran){
+                if(trim($input['bank_ref']) == $tran->bank_ref) $already_saved = true;
+            }
+            if(!$already_saved){
+                // Save transaction details
+                $bank_transaction = array();
+                $bank_transaction['bank_ref'] = trim($input['bank_ref']);
+                $bank_transaction['chai_ref'] = $voucher_no;
+                $bank_transaction['inputter'] = $this->current_user()->name;
+                $bank_transaction['approver'] = 'N/A';
+                $bank_transaction['amount'] = trim($input['amount']);
+                $bank_transaction['txn_date'] =  date('Y-m-d');
+                $bank_transaction['txn_time'] = date('H:m').'Hrs';
+                // $bank_transaction['processing_date'] = $row['processing_date'];
+                $bank_transaction['narrative'] = substr($invoice->expense_desc, 0, 300).'...';
+                DB::table('bank_transactions')->insert($bank_transaction);
+            }
+
+            if($invoice->status_id != 8){   // It was already marked as paid
+                $invoice->disableLogging();
+                $invoice->status_id = 8; //Paid
+                $invoice->save();
+                activity()
+                    ->performedOn($invoice)
+                    ->causedBy($this->current_user())
+                    ->log('Paid');
+                    
+                return Response()->json(array('success' => 'Invoice already marked as paid'), 200);
+            }
+            
+            return Response()->json(array('success' => 'Invoice marked as paid'), 200);
+        }
+        catch(Exception $e){
+            return response()->json(['error'=>'Something went wrong during processing', 'msg'=>$e->getMessage()], 500);
+        }
+    }
+
+
 }

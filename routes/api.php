@@ -1830,6 +1830,7 @@ Route::PATCH('/mobile_payment/{mobile_payment_id}/send-to-bank', 'MobilePaymentA
 Route::GET('/mobile-payment-csv/{mobile_payment_id}', 'MobilePaymentApi@downloadCSV')->middleware('jwt.auth');
 Route::PATCH('/mobile-payment/{mobile_payment_id}/mark-as-uploaded', 'MobilePaymentApi@markAsUploaded')->middleware('jwt.auth');
 Route::POST('/mobile-payment/request_signitories/{mobile_payment_id}', 'MobilePaymentApi@requestSignatories')->middleware('jwt.auth');
+Route::POST('/mobile-payment/mark_as_paid', 'MobilePaymentApi@markAsPaid')->middleware('jwt.auth');
 /**
  * POST postPayees
  * Summary: post mobile_payment payees in acsv by ID
@@ -2553,6 +2554,8 @@ Route::GET('/claims', 'ClaimApi@getClaims')->middleware('jwt.auth');
  */
 Route::PATCH('/claims/approve', 'ClaimApi@approveSeveralClaims')->middleware('jwt.auth');
 
+Route::POST('/claim/mark_as_paid', 'ClaimApi@markAsPaid')->middleware('jwt.auth');
+
 
 
 
@@ -3103,6 +3106,7 @@ Route::PATCH('/invoice/{invoice_id}/recall', 'InvoiceApi@recallInvoice')->middle
 Route::PATCH('/invoice/{invoice_id}/copy', 'InvoiceApi@copyInvoice')->middleware('jwt.auth');
 
 Route::POST('/invoice/withhold_tax', 'InvoiceApi@withholdTax')->middleware('jwt.auth');
+Route::POST('/invoice/mark_as_paid', 'InvoiceApi@markAsPaid')->middleware('jwt.auth');
 
 
 
