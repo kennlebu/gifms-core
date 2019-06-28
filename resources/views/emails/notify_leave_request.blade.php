@@ -13,6 +13,8 @@
         The below Leave Reqeust has been Approved by {{$leave_request->line_manager->name}}
       @elseif ($leave_request->status_id==4)
         The below Leave Request has been Rejected by {{$leave_request->rejected_by->name}}
+        @elseif ($leave_request->status_id==6)
+          Cancellation of the below Leave Request has been approved by {{$leave_request->rejected_by->name}}
       @endif
       <br/>
 

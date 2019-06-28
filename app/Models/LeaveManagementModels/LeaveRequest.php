@@ -54,6 +54,8 @@ class LeaveRequest extends BaseModel
         'requester_comments',
         'approver_comments'
     ];
+
+    protected $hidden = ['deleted_at'];
     
     public function requested_by()
     {

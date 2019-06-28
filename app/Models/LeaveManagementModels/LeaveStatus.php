@@ -12,7 +12,7 @@ class LeaveStatus extends BaseModel
     use SoftDeletes;
 
     protected $appends = ['count'];
-
+    protected $hidden = ['created_at','updated_at','deleted_at'];
 
     public function getCountAttribute()
     {
@@ -21,7 +21,6 @@ class LeaveStatus extends BaseModel
                 ->where('status_id', $this->attributes['id'])
                 ->where('requested_by_id', $user->id)
 		        ->count();
-
     }
     public function next_status()
     {

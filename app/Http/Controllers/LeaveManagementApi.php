@@ -435,7 +435,7 @@ class LeaveManagementApi extends Controller
             if(array_key_exists('my_approvables', $input)){
                 $current_user = $this->current_user();
                 if($current_user->hasRole(['director','program-manager'])){
-                    $leave_requests = $leave_requests->where('status_id',2)
+                    $leave_requests = $leave_requests->whereIn('status_id',[2,5])
                                         ->where('line_manager_id',$current_user->id);
                 }else{
                     $leave_requests = $leave_requests->where('id',0);
@@ -444,7 +444,7 @@ class LeaveManagementApi extends Controller
 
             // Approved only
             if(array_key_exists('approved', $input)){
-                $leave_requests = $leave_requests->where('status_id', 3);   // Approved
+                $leave_requests = $leave_requests->whereIn('status_id', [3,5]);   // Approved and cancellation requested
             }
 
             //searching
@@ -764,7 +764,7 @@ class LeaveManagementApi extends Controller
                     // Get and add the total days taken and days left to the response
                     $leave = LeaveRequest::where('requested_by_id', $this->current_user()->id)
                                                 ->whereYear('start_date','=',date('Y'))
-                                                ->where('status_id', 3) // Count only approved
+                                                ->whereIn('status_id', [3,5]) // Count only approved and cancellation requested
                                                 ->where('leave_type_id', $type->id);
                     $days_taken = $leave->sum('no_of_days');
                     $leave = $leave->first();
@@ -932,10 +932,15 @@ class LeaveManagementApi extends Controller
         try{
             $leave_request   = LeaveRequest::findOrFail($request_id);
            
-            $leave_request->status_id = 4;    // Rejected status
-            $leave_request->rejected_by_id = (int) $this->current_user()->id;
-            $leave_request->rejected_at = date('Y-m-d H:i:s');
-            $leave_request->rejection_reason = $form['rejection_reason'];
+            if($leave_request->status_id == 2){     // If not a request for cancellation
+                $leave_request->status_id = 4;    // Rejected status
+                $leave_request->rejected_by_id = (int) $this->current_user()->id;
+                $leave_request->rejected_at = date('Y-m-d H:i:s');
+                $leave_request->rejection_reason = $form['rejection_reason'];
+            }
+            else{                                       // If a request for cancellation is
+                $leave_request->status_id = 3;          // rejected, return it to the approved
+            }                                           // status.
 
             $leave_request->disableLogging();
             if($leave_request->save()) {
@@ -970,7 +975,7 @@ class LeaveManagementApi extends Controller
         try{
             $leave_request = LeaveRequest::findOrFail($request_id);
             $last_request = LeaveRequest::whereYear('start_date', '=', date('Y'))
-                                        ->where('status_id', 3)
+                                        ->whereIn('status_id', [3,5])
                                         ->where('leave_type_id', $leave_request->leave_type_id)
                                         ->where('requested_by_id', $this->current_user()->id)
                                         ->orderBy('id', 'desc')
@@ -1001,6 +1006,85 @@ class LeaveManagementApi extends Controller
             return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
         }
     }
+
+
+    /**
+     * Operation recallLeaveRequest
+     * Recall a leave request.
+     * @param int $request_id leave request id to recall (required)
+     * @return Http response
+     */
+    public function recallLeaveRequest($request_id)
+    {
+        try{
+            $leave_request = LeaveRequest::findOrFail($request_id);
+            
+            // Ensure Leave Request is in the recallable statuses
+            if(!in_array($leave_request->status_id, [2])){
+                return response()->json(['msg'=>"You do not have permission to do this"], 403, array(), JSON_PRETTY_PRINT);
+            }
+           
+            $leave_request->status_id = 7;    // Recalled status
+
+            // Logging recall
+            activity()
+                ->performedOn($leave_request)
+                ->causedBy($this->current_user())
+                ->log('recalled');
+
+            $leave_request->disableLogging(); //! Do not log the update
+
+            if($leave_request->save()){
+                return response()->json(['msg'=>"leave request recalled"], 200,array(),JSON_PRETTY_PRINT);
+            }else{
+                return response()->json(['error'=>"could not recall leave request"], 404,array(),JSON_PRETTY_PRINT);
+            }
+
+        }
+        catch(Exception $e){
+            $response =  ["error"=>"There was an error processing the request"];
+            return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
+        }
+    }
+
+
+    /**
+     * Operation cancelLeaveRequest
+     * Cancel a leave request.
+     * @param int $request_id leave request id to cancel (required)
+     * @return Http response
+     */
+    public function cancelLeaveRequest($request_id)
+    {
+        try{
+            $leave_request = LeaveRequest::findOrFail($request_id);
+            
+            // Ensure Leave Request is in the cancellable statuses
+            if(!in_array($leave_request->status_id, [3])){
+                return response()->json(['msg'=>"You do not have permission to do this"], 403, array(), JSON_PRETTY_PRINT);
+            }
+           
+            $leave_request->status_id = 5;    // Request cancellation status
+
+            // Logging cancellation request
+            activity()
+                ->performedOn($leave_request)
+                ->causedBy($this->current_user())
+                ->log('requested cancellation');
+
+            $leave_request->disableLogging(); //! Do not log the update
+
+            if($leave_request->save()){
+                return response()->json(['msg'=>"cancellation requested for leave rrequest"], 200,array(),JSON_PRETTY_PRINT);
+            }else{
+                return response()->json(['error'=>"could not request cancellation for leave request"], 404,array(),JSON_PRETTY_PRINT);
+            }
+        }
+        catch(Exception $e){
+            $response =  ["error"=>"There was an error processing the request"];
+            return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
+        }
+    }
    
 
     // ------------------------------------------------------------------------------------ //
@@ -1023,7 +1107,7 @@ class LeaveManagementApi extends Controller
             $records_filtered       = 0;
 
             if(array_key_exists('displayable_only',$input)){
-                $leave_statuses = $leave_statuses->whereIn('id', [1,4]);
+                $leave_statuses = $leave_statuses->whereIn('id', [1,4,7]);
             }
 
             //searching

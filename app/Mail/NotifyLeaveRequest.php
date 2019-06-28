@@ -52,7 +52,6 @@ class NotifyLeaveRequest extends Mailable
         $this->view('emails/notify_leave_request')         
             ->replyTo([
                     'email' => Config::get('mail.reply_to')['address'],
-
                 ]);
 
         if($this->leave_request->status_id == 2){
@@ -80,7 +79,7 @@ class NotifyLeaveRequest extends Mailable
                     ->cc($ccs)
                     ->subject("Leave Request Approved".$this->leave_request->ref);
         }
-        else if($this->leave_request->status_id == 4){
+        else if($this->leave_request->status_id == 4 || $this->leave_request->status_id == 6){
             $ccs[0] = $this->leave_request->requested_by;
 
             return $this->to($this->leave_request->requested_by)

@@ -13,27 +13,15 @@ class MobilePaymentApproval extends BaseModel
 {
     //
     use SoftDeletes;
-    protected $appends = [
-                            'approver',
-                            'approval_level'
-                        ];
-
-
+    protected $appends = [ 'approver', 'approval_level' ];
 
     public function getApproverAttribute()
     {
-        
-
-	        return Staff::find($this->attributes['approver_id']);
-	    
-
+	    return Staff::find($this->attributes['approver_id']);
     }
+
     public function getApprovalLevelAttribute()
     {
-        
-
-	        return ApprovalLevel::find($this->attributes['approval_level_id']);
-	    
-
+	    return ApprovalLevel::find($this->attributes['approval_level_id']);
     }
 }
