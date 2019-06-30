@@ -150,12 +150,18 @@ class ReportsApi extends Controller
         }
 
         if($is_pm == 'true'){
-            $mobile_payments = MobilePayment::whereBetween('management_approval_at', [$fromDate, $toDate])->where('currency_id', $currency)
-                                ->where('project_manager_id', $user_id)->get();
+            $mobile_payments = MobilePayment::whereHas('voucher_number', function($query) use ($fromDate, $toDate){
+                $query->whereBetween('created_at', [$fromDate, $toDate]);  
+            })->where('currency_id', $currency)->where('project_manager_id', $user_id)->get();  
+            // $mobile_payments = MobilePayment::whereBetween('management_approval_at', [$fromDate, $toDate])->where('currency_id', $currency)
+            //                     ->where('project_manager_id', $user_id)->get();
         }
         else{
-            $mobile_payments = MobilePayment::whereBetween('management_approval_at', [$fromDate, $toDate])
-                                ->where('currency_id', $currency)->get();
+            $mobile_payments = MobilePayment::whereHas('voucher_number', function($query) use ($fromDate, $toDate){
+                $query->whereBetween('created_at', [$fromDate, $toDate]);  
+            })->where('currency_id', $currency)->get();  
+            // $mobile_payments = MobilePayment::whereBetween('management_approval_at', [$fromDate, $toDate])
+            //                     ->where('currency_id', $currency)->get();
         }
 
         foreach($mobile_payments as $mobile_payment){

@@ -485,13 +485,13 @@ class MobilePaymentApi extends Controller
                     /* Send Email */
                     Mail::queue(new NotifyMobilePayment($mobile_payment));
                     
-                    // Save the approval if the bank has been notified successfully
-                    if($mobile_payment->status_id==4){
+                    // Save the approval if the bdirector has approved
+                    // if($mobile_payment->status_id==17){
                         $approval->approval_level_id = 4;
                         $mobile_payment->management_approval_at = $mgt_approval_time;
                         // $mobile_payment->voucher_no = $voucher_id;
                         $mobile_payment->save();
-                    }
+                    // }
                     $approval->save();
                 }
                 // elseif($mobile_payment->status_id==8){
