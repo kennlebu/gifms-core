@@ -166,7 +166,7 @@ class ReportsApi extends Controller
 
         foreach($mobile_payments as $mobile_payment){
             $res = array();
-            $res = ['payable_type'=>'mobile_payments', 'payment'=>null, 'payable'=>$mobile_payment, 'payment_date'=>$mobile_payment->management_approval_at];
+            $res = ['payable_type'=>'mobile_payments', 'payment'=>null, 'payable'=>$mobile_payment, 'payment_date'=>$mobile_payment->management_approval_at ?? $mobile_payment->voucher_number->created_at ?? ''];
             array_push($payables, $res);
         }
 
@@ -211,7 +211,7 @@ class ReportsApi extends Controller
                     }
                     $account = Account::find($allocation['account_id']);
     
-                    $my_result['date_posted'] = (string)$row['payment_date'];
+                    $my_result['date_posted'] = (string)$row['payment_date'] ?? '';
                     $my_result['project'] = $project;
                     $my_result['program_id'] = isset($project->program_id)?$project->program_id: '';
                     $my_result['program_desc'] = isset($project->project_name)?$project->project_name: '';
@@ -350,6 +350,7 @@ class ReportsApi extends Controller
                     $sheet->setFontSize(10);
                     $sheet->setHeight(1, 25);
                     $sheet->row(1, function($row){
+                        // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , PHP_EOL.json_encode($row) , FILE_APPEND);
                         $row->setFontSize(11);
                         $row->setFontWeight('bold');
                         $row->setAlignment('center');
