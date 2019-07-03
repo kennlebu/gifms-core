@@ -6,6 +6,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.beta.1] - 2019-06-30
+### Added
+- Marking payments as paid.
+- Recalling and canceling leave requests.
+- Requesting bank signatories for MPESA.
+- Unpaid invoices summary API.
+
+### Changed
+- Unused fields in API responses have been removed in some models to
+  reduce the amount of data transmitted.
+- Fixed the wrong payment amount paid to vendor being shown on the PV.
+- Tax amounts are now whole numbers.
+- Finance staff no longer see directors as line managers for their leave.
+- Fixed Mobile Payment going to the wrong status on submission for
+  accountant approval.
+- Fixed mobile payments and their totals not showing in reports.
+
 ## [1.2.beta.3] - 2019-05-29
 ### Changed
 - Mobile money process flow has been changed. Bank confirmation of the
