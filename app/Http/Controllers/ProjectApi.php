@@ -393,7 +393,7 @@ class ProjectApi extends Controller
         
         // Show even ones without Program IDs
         if(!array_key_exists('no_programs', $input)){
-            $qb->whereNotNull('projects.program_id');    // Sshowing even PIDs without an attached program id
+            $qb->whereNotNull('projects.program_id');    // Showing even PIDs without an attached program id
         }
 
         // For reports

@@ -439,6 +439,14 @@ class ReportsApi extends Controller
             $projects[] = $project['id'];
         }
 
+        $pm_pids =  DB::table('projects')->select(DB::raw('projects.*'))
+                    ->rightJoin('programs', 'programs.id', '=', 'projects.program_id')
+                    ->rightJoin('program_managers', 'program_managers.program_id', '=', 'programs.id')
+                    ->rightJoin('staff', 'staff.id', '=', 'program_managers.program_manager_id')
+                    ->where('staff.id', '=', $this->current_user()->id)
+                    ->whereNotNull('projects.id')
+                    ->groupBy('projects.id')->pluck('projects.id')->toArray();
+
         $report_data = [];
         
         $result = [
@@ -477,7 +485,8 @@ class ReportsApi extends Controller
                 if(!empty($programs)){
                     $pids = Project::whereIn('program_id', $programs)->pluck('id')->toArray();
                     $advance = $advance->whereHas('allocations', function($query) use ($pids){
-                        $query->whereIn('project_id', $pids);  
+                        $query->whereIn('project_id', $pids);
+                        $query->whereIn('project_id', $pm_pids);
                     });
                 }
 
@@ -503,6 +512,7 @@ class ReportsApi extends Controller
                     $pids = Project::whereIn('program_id', $programs)->pluck('id')->toArray();
                     $claim = $claim->whereHas('allocations', function($query) use ($pids){
                         $query->whereIn('project_id', $pids);  
+                        $query->whereIn('project_id', $pm_pids);
                     });
                 }
 
@@ -529,7 +539,8 @@ class ReportsApi extends Controller
                 if(!empty($programs)){
                     $pids = Project::whereIn('program_id', $programs)->pluck('id')->toArray();
                     $invoice = $invoice->whereHas('allocations', function($query) use ($pids){
-                        $query->whereIn('project_id', $pids);  
+                        $query->whereIn('project_id', $pids);
+                        $query->whereIn('project_id', $pm_pids);
                     });
                 }
 
@@ -557,7 +568,8 @@ class ReportsApi extends Controller
                             if(!empty($programs)){
                                 $pids = Project::whereIn('program_id', $programs)->pluck('id')->toArray();
                                 $mobile_payments = $mobile_payments->whereHas('allocations', function($query) use ($pids){
-                                    $query->whereIn('project_id', $pids);  
+                                    $query->whereIn('project_id', $pids);
+                                    $query->whereIn('project_id', $pm_pids); 
                                 });
                             }
             
