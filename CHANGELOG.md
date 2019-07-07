@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.beta.2] - 2019-07-07
+### Added
+- Searching supplier by tax pin in admin.
+
 ## [1.3.beta.1] - 2019-06-30
 ### Added
 - Marking payments as paid.

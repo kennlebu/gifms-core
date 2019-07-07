@@ -459,6 +459,7 @@ class SupplierApi extends Controller
                 $query->orWhere('suppliers.city_id','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('suppliers.contact_name_1','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('suppliers.contact_name_2','like', '\'%' . $input['search']['value']. '%\'');
+                $query->orWhere('suppliers.tax_pin','like', '\'%' . $input['search']['value']. '%\'');
             });
 
             $sql = Supplier::bind_presql($qb->toSql(),$qb->getBindings());
