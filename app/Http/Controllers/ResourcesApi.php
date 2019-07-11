@@ -87,7 +87,7 @@ class ResourcesApi extends Controller
 
     public function getResources(){
         try{
-            $files = FTP::connection()->getDirListing('gifms_resources');
+            // $files = FTP::connection()->getDirListing('gifms_resources');
             $resources = Resource::with('added_by')->get();
             return response()->json($resources, 200);
         }

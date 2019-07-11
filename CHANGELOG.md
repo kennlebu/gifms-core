@@ -6,12 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.3.beta.2] - 2019-07-07
+## [1.3.beta.2] - 2019-07-11
 ### Added
 - Searching supplier by tax pin in admin.
 
 ### Changed
 - PM Journal only shows allocations belonging to the PM's PIDs.
+- Mobile payments now log submission.
+- Fixed repeated VAT/Income tax text on PV
 
 ## [1.3.beta.1] - 2019-06-30
 ### Added
