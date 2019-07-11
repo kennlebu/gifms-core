@@ -1125,12 +1125,6 @@ class MobilePaymentApi extends Controller
            }
             if($mobile_payment->status_id == 15 || $mobile_payment->status_id == 16){
                 $mobile_payment->requested_at = date('Y-m-d H:i:s');
-
-                // Logging submission
-                activity()
-                   ->performedOn($mobile_payment)
-                   ->causedBy($user)
-                   ->log('submitted');
             }
             // else{
             //     // Logging resubmission
@@ -1144,7 +1138,12 @@ class MobilePaymentApi extends Controller
             
             $mobile_payment->status_id = $mobile_payment->status->new_next_status_id;
             if($mobile_payment->save()) {
-                
+                // Logging submission
+                activity()
+                   ->performedOn($mobile_payment)
+                   ->causedBy($user)
+                   ->log('submitted for approval');
+                   
                 Mail::queue(new NotifyMobilePayment($mobile_payment));
 
                 return Response()->json(array('msg' => 'Success: mobile_payment submitted','mobile_payment' => $mobile_payment), 200);
