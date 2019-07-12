@@ -206,11 +206,11 @@
                             {{$payable->expense_desc}}
                         </td>
                         <td style="border: 1px solid #000000; border-top: 0px solid #c0c0c0;" colspan="2">
-                            @if($payable_type=='Invoice' && $payment)
+                            {{-- @if($payable_type=='Invoice' && $payment)
                             <strong>{{number_format($payment->net_amount,2)}}</strong>
-                            @else
+                            @else --}}
                             <strong>{{number_format($payable->total,2)}}</strong>
-                            @endif
+                            {{-- @endif --}}
                         </td>
                         <td style="border: 1px solid #000000; border-top: 0px solid #c0c0c0;" colspan="1"><strong>{{$payable->payment_mode->abrv}}</strong>
                         </td>
