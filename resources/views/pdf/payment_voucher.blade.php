@@ -135,8 +135,13 @@
                                 @if($payable_type=='Invoice')
                                     - {{$payable->currency->currency_name}} 
                                     @if(!empty($payable->withholding_tax) || !empty($payable->withholding_vat))
-                                        @if(!empty($payable->withholding_vat)) {{number_format(($payable->total-ceil((6/16)*$payable->withholding_vat)),2)}} <br/> @endif
-                                        @if(!empty($payable->withholding_tax)) {{number_format($payable->total-ceil($payable->withholding_tax))}} @endif
+                                        @if(!empty($payable->withholding_vat) && !empty($payable->withholding_tax))
+                                            {{number_format(($payable->total-ceil((6/16)*$payable->withholding_vat)-ceil($payable->withholding_tax)),2)}}
+                                        @elseif(!empty($payable->withholding_vat))
+                                            {{number_format(($payable->total-ceil((6/16)*$payable->withholding_vat)),2)}}
+                                        @elseif(!empty($payable->withholding_tax)) 
+                                            {{number_format($payable->total-ceil($payable->withholding_tax))}}
+                                        @endif
                                     @else
                                         {{number_format($payable->total,2)}}
                                     @endif
