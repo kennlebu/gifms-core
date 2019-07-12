@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.3.beta.2] - 2019-07-11
+## [1.3.beta.2] - 2019-07-12
 ### Added
 - Searching supplier by tax pin in admin.
 
@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - PM Journal only shows allocations belonging to the PM's PIDs.
 - Mobile payments now log submission.
 - Fixed repeated VAT/Income tax text on PV
+- Withdrawal charges are now added onto the total of invoices and mobile payments
+  where Mobile Money is the selected payment mode.
 
 ## [1.3.beta.1] - 2019-06-30
 ### Added
