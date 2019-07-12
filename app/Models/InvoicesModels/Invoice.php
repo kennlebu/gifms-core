@@ -2,12 +2,9 @@
 
 namespace App\Models\InvoicesModels;
 
-
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\BaseModels\BaseModel;
-use Spatie\Activitylog\Traits\LogsActivity;
-use App\Models\BankingModels\BankTransaction;
+use DB;
 use App\Models\PaymentModels\Payment;
 
 class Invoice extends BaseModel
@@ -60,8 +57,12 @@ class Invoice extends BaseModel
         'lpo_id'
     ];
 
-    protected $appends = ['amount_allocated', 'bank_transaction', 'bank_transactions'];
-
+    protected $appends = ['amount_allocated', 'bank_transaction', 'bank_transactions','calculated_withdrawal_charges','calculated_total'];
+    protected $hidden = ['staff_advance','reconcilliation_date','comments','country_id','reporting_categories_id','reporting_objective_id',
+                        'approver_id','claim_id','advance_id','mpesa_id','bank_ref_no','shared_cost','recurring_period','recurr_end_date',
+                        'excise_duty','catering_levy','zero_rated','exempt_supplies','other_levies','other_amounts','migration_supplier_id',
+                        'migration_project_manager_id','migration_management_approval_id','migration_raised_by_id','migration_approver_id',
+                        'migration_claim_id',' migration_lpo_id','migration_advance_id','migration_mpesa_id','migration_id','deleted_at'];
     
     public function raised_by()
     {
@@ -170,5 +171,30 @@ class Invoice extends BaseModel
             }
         }
         return $bank_trans;
+    }
+
+    public function getCalculatedWithdrawalChargesAttribute(){
+
+    	$amount = (double) $this->attributes['total'];
+        $withdrawal_charges = 0 ;
+
+        if(!empty($this->payment_mode_id) && $this->payment_mode_id == 2){
+            $tariff_res = DB::table('mobile_payment_tariffs')
+                        ->select(DB::raw('tariff'))
+                        ->where('min_limit', '<=', $amount)
+                        ->where('max_limit', '>=', $amount)
+                        ->get();
+
+            foreach ($tariff_res as $key => $value) {            
+                $withdrawal_charges = (double) $value['tariff'] ;
+            }
+        }
+
+        return $withdrawal_charges;        
+    }
+
+    public function getCalculatedTotalAttribute(){
+    	$amount = (double) $this->attributes['total'];
+        return  $amount + (double)	$this->calculated_withdrawal_charges;
     }
 }

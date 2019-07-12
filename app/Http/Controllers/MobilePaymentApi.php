@@ -115,8 +115,7 @@ class MobilePaymentApi extends Controller
                 'rejected_by_id',
                 'program_activity_id'
                 );
-
-            $ftp = FTP::connection()->getDirListing();
+                
             $file = $form['file'];
 
             $mobile_payment = new MobilePayment;

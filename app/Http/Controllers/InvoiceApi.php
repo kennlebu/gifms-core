@@ -48,8 +48,6 @@ use App\Models\ReportModels\ReportingObjective;
 
 class InvoiceApi extends Controller
 {
-
-
     private $default_status = '';
     private $default_log_status = '';
     private $approvable_statuses = [];
@@ -67,28 +65,6 @@ class InvoiceApi extends Controller
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     /**
      * Operation addInvoice
      *
@@ -99,11 +75,8 @@ class InvoiceApi extends Controller
      */
     public function addInvoice()
     {
-
         $invoice = new Invoice;
-
         try{
-
             $form = Request::only(
                 'id',
                 'raised_by_id',
@@ -123,8 +96,6 @@ class InvoiceApi extends Controller
                 'lpo_variation_reason',
                 'program_activity_id'
                 );
-
-            // $ftp = FTP::connection()->getDirListing();
 
             $file = $form['file'];
 
@@ -178,6 +149,7 @@ class InvoiceApi extends Controller
                 $invoice->supplier_id                       =   (int)       $form['supplier_id'];
                 $invoice->payment_mode_id                  =   (int)       $form['payment_mode_id'];
                 $invoice->total                             =   (double)    $form['total'];
+                $invoice->total                             =   (double)    $invoice->calculated_total;
                 $invoice->currency_id                       =   (int)       $form['currency_id'];
                 $invoice->received_at                       =   date('Y-m-d H:i:s');
                 if(!empty($form['lpo_variation_reason']))

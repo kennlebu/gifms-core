@@ -2,25 +2,19 @@
 
 namespace App\Models\ClaimsModels;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\BaseModels\BaseModel;
-use App\Models\StaffModels\Staff;
-use App\Models\ProjectsModels\Project;
-use App\Models\AccountingModels\Account;
-use App\Models\ClaimsModels\ClaimApproval;
-use App\Models\ClaimsModels\ClaimStatus;
-use App\Models\LookupModels\Currency;
-use App\Models\BankingModels\BankTransaction;
 use App\Models\PaymentModels\Payment;
+use DB;
 
 class Claim extends BaseModel
 {
     
     use SoftDeletes;
     
-    protected $appends = ['amount_allocated', 'bank_transaction', 'bank_transactions'];
-
+    protected $appends = ['amount_allocated', 'bank_transaction', 'bank_transactions','calculated_withdrawal_charges','calculated_total'];
+    protected $hidden = ['reporting_categories_id','reporting_objective_id','migration_requested_by_id','migration_project_id',
+                        'migration_project_manager_id','migration_id','deleted_at '];
     
     public function requested_by()
     {
@@ -113,5 +107,30 @@ class Claim extends BaseModel
             }
         }
         return $bank_trans;
+    }
+
+    public function getCalculatedWithdrawalChargesAttribute(){
+
+    	$amount = (double) $this->attributes['total'];
+        $withdrawal_charges = 0 ;
+
+        if(!empty($this->payment_mode_id) && $this->payment_mode_id == 2){
+            $tariff_res = DB::table('mobile_payment_tariffs')
+                        ->select(DB::raw('tariff'))
+                        ->where('min_limit', '<=', $amount)
+                        ->where('max_limit', '>=', $amount)
+                        ->get();
+
+            foreach ($tariff_res as $key => $value) {            
+                $withdrawal_charges = (double) $value['tariff'] ;
+            }
+        }
+
+        return $withdrawal_charges;        
+    }
+
+    public function getCalculatedTotalAttribute(){
+    	$amount = (double) $this->attributes['total'];
+        return  $amount + (double)	$this->calculated_withdrawal_charges;
     }
 }

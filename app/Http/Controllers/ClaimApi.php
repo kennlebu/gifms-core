@@ -28,14 +28,12 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\NotifyClaim;
-use App\Models\AllocationModels\Allocation;
 use App\Models\ApprovalsModels\Approval;
 use App\Models\ApprovalsModels\ApprovalLevel;
 use App\Models\StaffModels\Staff;
 use App\Models\PaymentModels\Payment;
 use App\Models\PaymentModels\PaymentMode;
 use App\Models\PaymentModels\PaymentBatch;
-use App\Models\PaymentModels\PaymentType;
 use App\Models\LookupModels\Currency;
 use App\Models\BankingModels\BankBranch;
 use App\Exceptions\NotFullyAllocatedException;
@@ -71,16 +69,8 @@ class ClaimApi extends Controller
      */
     public function addClaim()
     {
-
-
-        // $input = Request::all();
-
         $claim = new Claim;
-
-
         try{
-
-
             $form = Request::only(
                 'requested_by_id',
                 'expense_desc',
@@ -92,9 +82,7 @@ class ClaimApi extends Controller
                 'file'
                 );
 
-            $ftp = FTP::connection()->getDirListing();
             $file = $form['file'];
-
 
             $claim->requested_by_id                   =   (int)       $form['requested_by_id'];
             $claim->expense_desc                      =               $form['expense_desc'];
@@ -102,10 +90,10 @@ class ClaimApi extends Controller
             $claim->project_manager_id                =   (int)       $form['project_manager_id'];
             $claim->payment_mode_id                   =   (int)       $form['payment_mode_id'];
             $claim->total                             =   (double)    $form['total'];
+            $claim->total                             =   (double)    $claim->calculated_total;
             $claim->currency_id                       =   (int)       $form['currency_id'];           
 
             $claim->status_id                         =   $this->default_status;
-
 
             if($claim->save()) {
                 $claim->disableLogging();
@@ -120,14 +108,10 @@ class ClaimApi extends Controller
                 
                 return Response()->json(array('success' => 'Claim Added','claim' => $claim), 200);
             }
-
-
-        }catch (JWTException $e){
-
-            return response()->json(['error'=>'You are not Authenticated'], 500);
-
         }
-
+        catch (JWTException $e){
+            return response()->json(['error'=>'You are not Authenticated'], 500);
+        }
     }
 
 
