@@ -1992,5 +1992,141 @@ class MobilePaymentApi extends Controller
 
 
 
+    public function downloadDump(){
+        $input = Request::all();
+        $start_date = date('Y-m-d', strtotime($input['start_date'])) ?? '';
+        $end_date = date('Y-m-d', strtotime($input['end_date'])) ?? '';
+
+        $mps = MobilePayment::query();
+        if(!empty($start_date) && !empty($end_date)){
+            $mps = $mps->where('created_at', '>=', $start_date)->where('created_at', '<=', $start_date);
+        }
+
+        $mps = $mps->get();
+
+        $excel_data = array();
+
+        $headings = array('id','ref','submitted_at','requested_by','description','expense_purpose','payees_upload_mode','status','
+        currency','project_manager','registered_name','mobile_number','amount','withdrawal_charges','total',
+            'rejected_by','rejection_reason','rejected_at','management_approval_at','voucher_number','total_amount');
+
+        
+        foreach($mps as $mp){
+            $row = array();
+            $row['id'] = $mp->id;
+            $row['ref'] = $mp->ref;
+            $row['submitted_at'] = $mp->requested_at ?? "";
+            $row['requested_by'] = $mp->requested_by->name ?? '-';
+            $row['description'] = $mp->expense_desc ?? '';
+            $row['expense_purpose'] = $mp->expense_purpose;
+            $row['payees_upload_mode'] = $mp->payees_upload_mode->desc ?? '';
+            $row['status'] = $mp->status->mobile_payment_status ?? "";
+            $row['currency'] = $mp->currency->currency_name ?? '';
+            $row['project_manager'] = $mp->project_manager->name ?? '';
+            $row['rejected_by'] = $mp->rejected_by->name ?? "";
+            $row['rejection_reason'] = $mp->rejection_reason ?? '';
+            $row['rejected_at'] = $mp->rejected_at ?? '';
+            $row['management_approval_at'] = $mp->management_approval_at ?? '';
+            $row['voucher_number'] = $mp->voucher_number->voucher_number ?? '';
+            $row['total_amount'] = number_format((float)$mp->totals, 2, '.', '') ?? '';
+            $row['registered_name'] = '';
+            $row['mobile_number'] = '';
+            $row['amount'] = '';
+            $row['qty_description'] = '';
+            $row['withdrawal_charges'] = '';
+            $row['total'] = '';
+
+            $excel_data[] = $row;
+
+            foreach($mp->payees as $payee){
+                $row = array();
+                $row['id'] = '';
+                $row['ref'] = '';
+                $row['submitted_at'] = "";
+                $row['requested_by'] = '';
+                $row['description'] = '';
+                $row['expense_purpose'] = '';
+                $row['payees_upload_mode'] = '';
+                $row['status'] = "";
+                $row['currency'] = '';
+                $row['project_manager'] = '';
+                $row['rejected_by'] = "";
+                $row['rejection_reason'] = '';
+                $row['rejected_at'] = '';
+                $row['management_approval_at'] = '';
+                $row['voucher_number'] = '';
+                $row['total_amount'] = '';
+                $row['registered_name'] = $payee->item;
+                $row['mobile_number'] = $payee->mobile_number;
+                $row['amount'] = $payee->amount;
+                $row['qty_description'] = $payee->qty_description;
+                $row['withdrawal_charges'] = $payee->withdrawal_charges;
+                $row['total'] = number_format((float)$payee->total, 2, '.', '');
+
+                $excel_data[] = $row;
+            }
+        }
+
+        $headers = [
+            'Access-Control-Allow-Origin'      => '*',
+            'Allow'                            => 'GET, POST, OPTIONS',
+            'Access-Control-Allow-Headers'     => 'Origin, Content-Type, Accept, Authorization, X-Requested-With',
+            'Access-Control-Allow-Credentials' => 'true'
+        ];
+        // Build excel
+        $file = Excel::create('Mobile Payments', function($excel) use ($excel_data) {
+
+            // Set the title
+            $excel->setTitle('Mobile Payments');
+
+            // Chain the setters
+            $excel->setCreator('GIFMS')->setCompany('Clinton Health Access Initiative - Kenya');
+
+            $excel->setDescription('A list of Mobile Payments and their payees');
+
+            $headings = array('id','ref','submitted_at','requested_by','description','expense_purpose','payees_upload_mode','status','currency','project_manager',
+            'registered_name','mobile_number','amount','withdrawal_charges','total',
+            'rejected_by','rejection_reason','rejected_at','management_approval_at','voucher_number','total_amount');
+
+            $excel->sheet('Mobile Payments', function ($sheet) use ($excel_data, $headings) {
+                foreach($excel_data as $data_row){
+
+                    $sheet->appendRow($data_row);
+                }
+                
+                $sheet->prependRow(1, $headings);
+                $sheet->mergeCells('AK:O1');
+                $sheet->getCell('K1')->setValue('attendance sheet');
+                $sheet->setFontSize(10);
+                $sheet->setHeight(1, 25);
+                $sheet->row(1, function($row){
+                    $row->setFontSize(11);
+                    $row->setFontWeight('bold');
+                    $row->setAlignment('center');
+                    $row->setValignment('center');
+                    $row->setBorder('none', 'thin', 'none', 'thin');
+                    $row->setBackground('#004080');                        
+                    $row->setFontColor('#ffffff');
+                });
+                $sheet->setWidth(array(
+                    'B' => 15,
+                    'C' => 20,
+                    'D' => 20,
+                    'E' => 15,
+                    'F' => 35,
+                    'J' => 15,
+                    'K' => 20,
+                    'L' => 20
+                ));
+            });
+
+        })->download('xlsx', $headers);
+        
+    }
+
+
+
+
+
 
 }
