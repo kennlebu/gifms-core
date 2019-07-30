@@ -5,9 +5,8 @@ namespace App\Mail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use App\Models\LPOModels\Lpo;
-use App\Models\StaffModels\Staff;
+use App\Models\StaffModels\User;
 use Config;
 
 class LpoInstructSupplier extends Mailable
@@ -15,9 +14,6 @@ class LpoInstructSupplier extends Mailable
     use Queueable, SerializesModels;
 
     protected $lpo;
-    protected $accountant;
-    protected $financial_controller;
-    protected $director;
     /**
      * Create a new message instance.
      *
@@ -25,7 +21,7 @@ class LpoInstructSupplier extends Mailable
      */
     public function __construct(Lpo $lpo)
     {
-        //
+        $this->lpo = $lpo;
     }
 
     /**
@@ -37,43 +33,43 @@ class LpoInstructSupplier extends Mailable
     {
 
         $ccs = [] ;
-        $ccs[0] = $this->accountant;
-        $ccs[1] = $this->financial_controller;
-        $ccs[2] = $this->director;
-        $ccs[3] = $this->lpo->requested_by;
+        $ccs[] = $this->lpo->requested_by;
+
+        // Add financial controllers to cc
+        $fm = User::withRole('financial-controller')->get();
+        foreach($fm as $f){
+            $ccs[] = array('first_name'=>$f->f_name, 'last_name'=>$f->l_name, 'email'=>$f->email);
+        }
+
+        // Add Accountants to cc
+        $accountant = User::withRole('accountant')->get();
+        foreach($accountant as $am){
+            $ccs[] = array('first_name'=>$am->f_name, 'last_name'=>$am->l_name, 'email'=>$am->email);
+        }
+        // Add directors to cc
+        $director = User::withRole('director')->get();
+        foreach($director as $am){
+            $ccs[] = array('first_name'=>$am->f_name, 'last_name'=>$am->l_name, 'email'=>$am->email);
+        }
 
 
         $this->view('emails/lpo_instruct_supplier')         
             ->replyTo([
-                    'email' => Config::get('mail.reply_to')['address'],
-
+                    'email' => Config::get('mail.reply_to')['address']
                 ])               
             ->cc($ccs);
 
-
-
-
-
-
-
-
-
-
-
         if($this->lpo->status_id == 13){
 
-
-
-            return $this->to($this->accountant)
+            $accountant = User::withRole('accountant')->get();
+            return $this->to($accountant)
                     ->with([
                             'lpo' => $this->lpo,
-                            'addressed_to' => $this->accountant,
+                            // 'addressed_to' => $this->accountant,
                             'js_url' => Config::get('app.js_url'),
                         ])
                     ->subject("LPO Approval Request ".$this->lpo->ref);
         }else if($this->lpo->status_id == 3){
-
-
 
             return $this->to($this->lpo->project_manager)
                     ->with([
@@ -84,37 +80,27 @@ class LpoInstructSupplier extends Mailable
                     ->subject("LPO Approval Request ".$this->lpo->ref);
         }else if($this->lpo->status_id == 4){
 
-
-
-            return $this->to($this->financial_controller)
+            $fm = User::withRole('financial-controller')->get();
+            return $this->to($fm)
                     ->with([
                             'lpo' => $this->lpo,
-                            'addressed_to' => $this->financial_controller,
+                            // 'addressed_to' => $this->financial_controller,
                             'js_url' => Config::get('app.js_url'),
                         ])
                     ->subject("LPO Approval Request ".$this->lpo->ref);
         }else if($this->lpo->status_id == 5){
 
-
-
-            return $this->to($this->director)
+            $director = User::withRole('director')->get();
+            return $this->to($director)
                     ->with([
                             'lpo' => $this->lpo,
-                            'addressed_to' => $this->director,
+                            // 'addressed_to' => $this->director,
                             'js_url' => Config::get('app.js_url'),
                         ])
                     ->subject("LPO Approval Request ".$this->lpo->ref);
         }
 
-
-
-
-
-
-
         else if($this->lpo->status_id == 11){
-
-
 
             return $this->to($this->lpo->requested_by)
                     ->with([
@@ -125,8 +111,6 @@ class LpoInstructSupplier extends Mailable
                     ->subject("LPO Cancelled ".$this->lpo->ref);
         }else if($this->lpo->status_id == 12){
 
-
-
             return $this->to($this->lpo->requested_by)
                     ->with([
                             'lpo' => $this->lpo,
@@ -135,6 +119,5 @@ class LpoInstructSupplier extends Mailable
                         ])
                     ->subject("LPO Rejected ".$this->lpo->ref);
         }
-
     }
 }

@@ -6,7 +6,7 @@
 <body style="font-family: monospace;">
     <main>
         <div>
-            Attn. {{$delivery->received_for->f_name}},
+            Attn. {{$delivery->received_for->f_name ?? ''}}
             <br/>
             <br/> The below delivery has been made by {{$lpo->supplier->supplier_name}} and received by {{$delivery->received_by->f_name}}
             <br/>

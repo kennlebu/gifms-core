@@ -5,9 +5,9 @@ namespace App\Mail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use App\Models\AdvancesModels\Advance;
 use App\Models\StaffModels\Staff;
+use App\Models\StaffModels\User;
 use Config;
 
 class NotifyAdvance extends Mailable
@@ -15,9 +15,6 @@ class NotifyAdvance extends Mailable
     use Queueable, SerializesModels;
 
     protected $advance;
-    protected $accountant;
-    protected $financial_controller;
-    protected $director;
     /**
      * Create a new message instance.
      *
@@ -40,11 +37,6 @@ class NotifyAdvance extends Mailable
         foreach ($this->advance->approvals as $key => $value) {
             $this->advance->approvals[$key]['approver'] = Staff::find($this->advance->approvals[$key]['approver_id']);
         }
-
-
-        $this->accountant           = Staff::findOrFail(    (int)   Config::get('app.accountant_id'));
-        $this->financial_controller = Staff::findOrFail(    (int)   Config::get('app.financial_controller_id'));
-        $this->director             = Staff::findOrFail(    (int)   Config::get('app.director_id'));
     }
 
     /**
@@ -54,7 +46,6 @@ class NotifyAdvance extends Mailable
      */
     public function build()
     {
-
         $ccs = [] ;
 
         $this->view('emails/notify_advance')         
@@ -64,12 +55,13 @@ class NotifyAdvance extends Mailable
                 ]);  
 
         if($this->advance->status_id == 13){
-            $ccs[0] = $this->advance->requested_by;
+            $ccs[] = $this->advance->requested_by;
 
-            return $this->to($this->accountant)
+            $to = User::withRole('accountant')->get();
+            return $this->to($to)
                     ->with([
                             'advance' => $this->advance,
-                            'addressed_to' => $this->accountant,
+                            // 'addressed_to' => $this->accountant,
                             'js_url' => Config::get('app.js_url'),
                         ])
                     ->cc($ccs)
@@ -85,28 +77,31 @@ class NotifyAdvance extends Mailable
                     ->subject("Advance Approval Request ".$this->advance->ref);
         }else if($this->advance->status_id == 3){
 
-            return $this->to($this->financial_controller)
+            $to = User::withRole('financial-controller')->get();
+            return $this->to($to)
                     ->with([
                             'advance' => $this->advance,
-                            'addressed_to' => $this->financial_controller,
+                            // 'addressed_to' => $this->financial_controller,
                             'js_url' => Config::get('app.js_url'),
                         ])
                     ->subject("Advance Approval Request ".$this->advance->ref);
         }else if($this->advance->status_id == 4){
 
-            return $this->to($this->director)
+            $to = User::withRole('director')->get();
+            return $this->to($to)
                     ->with([
                             'advance' => $this->advance,
-                            'addressed_to' => $this->director,
+                            // 'addressed_to' => $this->director,
                             'js_url' => Config::get('app.js_url'),
                         ])
                     ->subject("Advance Approval Request ".$this->advance->ref);
         }else if($this->advance->status_id == 8){
 
-            return $this->to($this->financial_controller)
+            $to = User::withRole('financial-controller')->get();
+            return $this->to($to)
                     ->with([
                             'advance' => $this->advance,
-                            'addressed_to' => $this->financial_controller,
+                            // 'addressed_to' => $this->financial_controller,
                             'js_url' => Config::get('app.js_url'),
                         ])
                     ->subject("Advance Approval Request ".$this->advance->ref);

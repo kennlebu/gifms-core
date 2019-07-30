@@ -6,8 +6,6 @@ use JWTAuth;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use App\Models\AdvancesModels\Advance;
 use App\Models\StaffModels\Staff;
 use Config;
 

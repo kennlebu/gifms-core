@@ -4,7 +4,7 @@
 <body  style="font-family: monospace;">
   <main>
     <div>
-      Attn. {{$addressed_to->f_name}},
+      Attn. {{$addressed_to->f_name ?? ''}}
       <br/>
       <br/>
       @if ($invoice->status_id==12||$invoice->status_id==1||$invoice->status_id==2||$invoice->status_id==3)

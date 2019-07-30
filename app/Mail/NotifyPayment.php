@@ -5,12 +5,8 @@ namespace App\Mail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use App\Models\AdvancesModels\Advance;
-use App\Models\ClaimsModels\Claim;
-use App\Models\InvoicesModels\Invoice;
-use App\Models\MobilePaymentModels\MobilePayment;
 use App\Models\StaffModels\Staff;
+use App\Models\StaffModels\User;
 use Config;
 
 class NotifyPayment extends Mailable
@@ -47,7 +43,9 @@ class NotifyPayment extends Mailable
     public function build()
     {
         $ccs = [] ;
-        $ccs[0] = $this->accountant->email;
+
+        // Add accountants to cc
+        $ccs = User::withRole('accountant')->get();
 
         $this->view('emails/notify_payment')         
             ->replyTo([

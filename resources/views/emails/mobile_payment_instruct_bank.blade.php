@@ -4,7 +4,7 @@
 <body  style="font-family: monospace;">
   <main>
     <div>
-      Hi {{$bank_to['first_name']}},
+      Hi {{$bank_to['first_name'] ?? ''}}
       <br/>
       <br/>
       <p>Kindly find the attached bulk MPESA payee detail verification inquiry.</p>

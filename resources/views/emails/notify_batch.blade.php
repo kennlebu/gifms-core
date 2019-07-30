@@ -6,7 +6,7 @@
 <body style="font-family: monospace;">
     <main>
         <div>
-            Attn. {{$addressed_to->f_name}},
+            Attn. {{$addressed_to->f_name ?? ''}}
             <br/>
             <br/> The below detailed payments have been confirmed and processed as batch {{$batch->ref}}.
             <br/>

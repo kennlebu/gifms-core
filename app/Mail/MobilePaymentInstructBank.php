@@ -5,22 +5,16 @@ namespace App\Mail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use App\Models\MobilePaymentModels\MobilePayment;
 use App\Models\StaffModels\Staff;
+use App\Models\StaffModels\User;
 use Config;
-use PDF;
-use Excel;
-use Illuminate\Support\Facades\File;
 
 class MobilePaymentInstructBank extends Mailable
 {
     use Queueable, SerializesModels;
 
     protected $mobile_payment;
-    protected $accountant;
-    protected $financial_controller;
-    protected $director;
     protected $csv_data;
     protected $pdf_data;
     protected $bank_cc;
@@ -37,13 +31,7 @@ class MobilePaymentInstructBank extends Mailable
         $this->mobile_payment = $mobile_payment;
         $this->csv_data = $csv_data;
         $this->pdf_data = $pdf_data;
-        $this->director2_id = 37;
-        // $this->voucher_number = $voucher_number;
-
-        $this->accountant           = Staff::findOrFail(    (int)   Config::get('app.accountant_id'));
-        $this->financial_controller = Staff::findOrFail(    (int)   Config::get('app.financial_controller_id'));
-        $this->director             = Staff::findOrFail(    (int)   Config::get('app.director_id'));
-        $this->director2 = Staff::findOrFail($this->director2_id);
+        
         $this->requester = Staff::findOrFail($mobile_payment->requested_by_id);
         $this->PM = Staff::findOrFail($mobile_payment->project_manager_id);
 
@@ -55,15 +43,25 @@ class MobilePaymentInstructBank extends Mailable
             array('first_name'=>'Leonard', 'last_name'=>'Kerika', 'email'=>'Leonard.Kerika@nic-bank.com')
         );
         $this->chai_cc = array(
-            array('first_name'=>$this->financial_controller->f_name, 'last_name'=>$this->financial_controller->l_name, 'email'=>$this->financial_controller->email),
-            array('first_name'=>$this->accountant->f_name, 'last_name'=>$this->accountant->l_name, 'email'=>$this->accountant->email),
-            array('first_name'=>$this->director->f_name, 'last_name'=>$this->director->l_name, 'email'=>$this->director->email),
-            array('first_name'=>$this->director2->f_name, 'last_name'=>$this->director2->l_name, 'email'=>$this->director2->email),
             array('first_name'=>$this->requester->f_name, 'last_name'=>$this->requester->l_name, 'email'=>$this->requester->email),
-            array('first_name'=>$this->PM->f_name, 'last_name'=>$this->PM->l_name, 'email'=>$this->PM->email),
-            
-            // array('first_name'=>'Rosemary', 'last_name'=>'Kihoto', 'email'=>'rkihoto@clintonhealthaccess.org')
+            array('first_name'=>$this->PM->f_name, 'last_name'=>$this->PM->l_name, 'email'=>$this->PM->email)
         );
+
+        // Add financial controllers to cc
+        $fm = User::withRole('financial-controller')->get();
+        foreach($fm as $f){
+            $chai_cc[] = array('first_name'=>$f->f_name, 'last_name'=>$f->l_name, 'email'=>$f->email);
+        }
+        // Add Accountants to cc
+        $accountant = User::withRole('accountant')->get();
+        foreach($accountant as $am){
+            $chai_cc[] = array('first_name'=>$am->f_name, 'last_name'=>$am->l_name, 'email'=>$am->email);
+        }
+        // Add directors to cc
+        $director = User::withRole('director')->get();
+        foreach($director as $am){
+            $chai_cc[] = array('first_name'=>$am->f_name, 'last_name'=>$am->l_name, 'email'=>$am->email);
+        }
     }
 
     /**
@@ -96,11 +94,9 @@ class MobilePaymentInstructBank extends Mailable
 
         $subject = "Bulk MPESA Payment - ".$this->pad_zeros(5,$this->mobile_payment->id);
 
-
         $this->view('emails/mobile_payment_instruct_bank')         
             ->replyTo([
-                    'email' => Config::get('mail.reply_to')['address'],
-
+                    'email' => Config::get('mail.reply_to')['address']
                 ])           
             ->cc($ccs)
             // ->attachData($pdf_file, 'ALLOWANCES_'.$this->pdf_data['our_ref'].'.pdf')

@@ -15,7 +15,7 @@ class Staff extends BaseModel
 {
     
     use SoftDeletes;    
-  	use Notifiable;
+    use Notifiable;
 
     protected $table = 'staff';
 

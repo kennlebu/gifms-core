@@ -5,9 +5,9 @@ namespace App\Mail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use App\Models\LPOModels\Lpo;
 use App\Models\StaffModels\Staff;
+use App\Models\StaffModels\User;
 use Config;
 
 class NotifyLpo extends Mailable
@@ -15,9 +15,6 @@ class NotifyLpo extends Mailable
     use Queueable, SerializesModels;
 
     protected $lpo;
-    protected $accountant;
-    protected $financial_controller;
-    protected $director;
     /**
      * Create a new message instance.
      *
@@ -49,11 +46,6 @@ class NotifyLpo extends Mailable
         foreach ($this->lpo->approvals as $key => $value) {
             $this->lpo->approvals[$key]['approver'] = Staff::find($this->lpo->approvals[$key]['approver_id']);
         }
-
-        $this->accountant           = Staff::findOrFail(    (int)   Config::get('app.accountant_id'));
-        $this->financial_controller = Staff::findOrFail(    (int)   Config::get('app.financial_controller_id'));
-        $this->director             = Staff::findOrFail(    (int)   Config::get('app.director_id'));
-
     }
 
     /**
@@ -68,17 +60,17 @@ class NotifyLpo extends Mailable
 
         $this->view('emails/notify_lpo')         
             ->replyTo([
-                    'email' => Config::get('mail.reply_to')['address'],
-
+                    'email' => Config::get('mail.reply_to')['address']
                 ]);
 
         if($this->lpo->status_id == 13){
-            $ccs[0] = $this->lpo->requested_by;
+            $ccs[] = $this->lpo->requested_by;
+            $to = User::withRole('accountant')->get();
 
-            return $this->to($this->accountant)
+            return $this->to($to)
                     ->with([
                             'lpo' => $this->lpo,
-                            'addressed_to' => $this->accountant,
+                            // 'addressed_to' => $this->accountant,
                             'js_url' => Config::get('app.js_url'),
                         ])
                     ->cc($ccs)
@@ -94,19 +86,21 @@ class NotifyLpo extends Mailable
                     ->subject("LPO Approval Request ".$this->lpo->ref);
         }else if($this->lpo->status_id == 4){
 
-            return $this->to($this->financial_controller)
+            $to = User::withRole('financial-controller')->get();
+            return $this->to($to)
                     ->with([
                             'lpo' => $this->lpo,
-                            'addressed_to' => $this->financial_controller,
+                            // 'addressed_to' => $this->financial_controller,
                             'js_url' => Config::get('app.js_url'),
                         ])
                     ->subject("LPO Approval Request ".$this->lpo->ref);
         }else if($this->lpo->status_id == 5){
 
-            return $this->to($this->director)
+            $to = User::withRole('director')->get();
+            return $this->to($to)
                     ->with([
                             'lpo' => $this->lpo,
-                            'addressed_to' => $this->director,
+                            // 'addressed_to' => $this->director,
                             'js_url' => Config::get('app.js_url'),
                         ])
                     ->subject("LPO Approval Request ".$this->lpo->ref);

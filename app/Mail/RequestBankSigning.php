@@ -5,10 +5,10 @@ namespace App\Mail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use App\Models\PaymentModels\PaymentBatch;
 use App\Models\PaymentModels\Payment;
 use App\Models\StaffModels\Staff;
+use App\Models\StaffModels\User;
 use Config;
 
 class RequestBankSigning extends Mailable
@@ -34,26 +34,20 @@ class RequestBankSigning extends Mailable
     {      
         // Recepients
         $accountant           = Staff::findOrFail(    (int)   Config::get('app.accountant_id'));
-        $financial_controller = Staff::findOrFail(    (int)   Config::get('app.financial_controller_id'));
-        $director             = Staff::findOrFail(    (int)   Config::get('app.director_id'));
-        $directors = Staff::whereHas('roles', function ($query){
-            $query->where('name', 'director');
-        })->get();
+        $directors = User::withRole('director')->get();
         $rosemary = Staff::find(42); //TODO: Make this dynamic
         $to = [];
         $ccs = [];
         foreach($directors as $dir){
-            array_push($to, $dir->email);
+            $to[] = $dir->email;
         }
-        array_push($to, $rosemary->email);
+        $to[] = $rosemary->email;
 
-        $finance = Staff::whereHas('roles', function ($query){
-            $query->where('name', 'financial-controller');
-        })->get();
+        $finance = Staff::withRole('financial-controller')->get();
         foreach($finance as $fin){
-            array_push($ccs, $fin->email);
+            $ccs[] = $fin->email;
         }
-        array_push($ccs, $accountant);
+        $ccs[] = $accountant;
 
         $payments = Payment::with('currency')->where('payment_batch_id', $this->batch_id)->get();
         $batch = PaymentBatch::find($this->batch_id);

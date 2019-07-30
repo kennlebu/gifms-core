@@ -5,10 +5,9 @@ namespace App\Mail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use App\Models\PaymentModels\PaymentBatch;
 use App\Models\PaymentModels\Payment;
-use App\Models\StaffModels\Staff;
+use App\Models\StaffModels\User;
 use Config;
 
 class NotifyBatch extends Mailable
@@ -24,8 +23,6 @@ class NotifyBatch extends Mailable
      */
     public function __construct($payment_batch_id)
     {
-
-        $this->accountant = Staff::findOrFail((int) Config::get('app.accountant_id'));
         $this->batch_id = $payment_batch_id;
     }
 
@@ -36,8 +33,6 @@ class NotifyBatch extends Mailable
      */
     public function build()
     {
-
-        $ccs = [] ;
         $payment_batch = PaymentBatch::findOrFail($this->batch_id);
         $payments = Payment::where('payment_batch_id', $this->batch_id)->get();
 
@@ -46,10 +41,12 @@ class NotifyBatch extends Mailable
                     'email' => Config::get('mail.reply_to')['address'],
 
                 ]);
-        return $this->to($this->accountant->email)
+
+        $to = User::withRole('accountant')->get();
+        return $this->to($to)
                 ->with([
                         'payments' => $payments,
-                        'addressed_to' => $this->accountant,
+                        // 'addressed_to' => $this->accountant,
                         'batch' => $payment_batch,
                         'js_url' => Config::get('app.js_url'),
                     ])

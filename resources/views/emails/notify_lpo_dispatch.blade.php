@@ -5,9 +5,9 @@
   <main>
     <div>
       @if(empty($lpo->lpo_type)||$lpo->lpo_type!='prenegotiated')
-      Dear {{$lpo->preffered_quotation->supplier->contact_name_1}},
+      Dear {{$lpo->preffered_quotation->supplier->contact_name_1 ?? ''}}
       @elseif(!empty($lpo->lpo_type)&&$lpo->lpo_type=='prenegotiated')
-      Dear {{$lpo->supplier->contact_name_1}},
+      Dear {{$lpo->supplier->contact_name_1 ?? ''}}
       @endif
       <br/>
       <br/>

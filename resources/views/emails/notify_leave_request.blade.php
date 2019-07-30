@@ -4,7 +4,7 @@
 <body  style="font-family: monospace;">
   <main>
     <div>
-      Attn. {{$addressed_to->f_name}},
+      Attn. {{$addressed_to->f_name ?? ''}}
       <br/>
       <br/>
       @if ($leave_request->status_id==2)

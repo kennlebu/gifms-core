@@ -4,7 +4,7 @@
 <body  style="font-family: monospace;">
   <main>
     <div>
-      Dear {{$lpo->preffered_quotation->supplier->contact_name_1}},
+      Dear {{$lpo->preffered_quotation->supplier->contact_name_1 ?? ''}}
       <br/>
       <br/>
       <p>

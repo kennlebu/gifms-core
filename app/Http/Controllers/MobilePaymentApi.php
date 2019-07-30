@@ -29,7 +29,6 @@ use App;
 use JWTAuth;
 use Config;
 use Anchu\Ftp\Facades\Ftp;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Mail;
@@ -42,7 +41,6 @@ use App\Models\StaffModels\Staff;
 use App\Models\PaymentModels\Payment;
 use App\Models\PaymentModels\PaymentMode;
 use App\Models\PaymentModels\PaymentBatch;
-use App\Models\PaymentModels\PaymentType;
 use App\Models\LookupModels\Currency;
 use App\Models\BankingModels\BankBranch;
 use App\Exceptions\NotFullyAllocatedException;
@@ -1153,7 +1151,6 @@ class MobilePaymentApi extends Controller
             $response =  ["error"=>"Mobile Payment not fully allocated"];
             return response()->json($response, 403,array(),JSON_PRETTY_PRINT);
         }catch(Exception $e){
-
             $response =  ["error"=>"Mobile Payment could not be found", "msg"=>$e->getMessage()];
             return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
         }

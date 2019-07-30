@@ -7,7 +7,7 @@
     <main>
         <div>
             To Whom It May Concern <br/>
-            {{$addressed_to}}
+            {{$addressed_to ?? ''}}
             <br/>
             <br/>
             <p>

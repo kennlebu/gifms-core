@@ -6,7 +6,7 @@
 <body style="font-family: monospace;">
     <main>
         <div>
-            Attn. {{$activity->program->program_name}} staff,
+            Attn. {{$activity->program->program_name ?? ''}} staff,
             <br/>
             <br/> The below detailed Activity has been created for this program.
             <br/>

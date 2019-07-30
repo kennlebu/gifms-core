@@ -7,6 +7,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use App\Models\LPOModels\Lpo;
 use App\Models\StaffModels\Staff;
+use App\Models\StaffModels\User;
 use Config;
 use PDF;
 
@@ -15,9 +16,6 @@ class NotifyLpoDispatch extends Mailable
     use Queueable, SerializesModels;
 
     protected $lpo;
-    protected $accountant;
-    protected $financial_controller;
-    protected $director;
     protected $lpo_PM;
     protected $requester;
     /**
@@ -28,10 +26,6 @@ class NotifyLpoDispatch extends Mailable
     public function __construct(Lpo $lpo)
     {
         $this->lpo = $lpo;
-
-        // $this->accountant           = Staff::findOrFail(    (int)   Config::get('app.accountant_id'));
-        // $this->financial_controller = Staff::findOrFail(    (int)   Config::get('app.financial_controller_id'));
-        // $this->director             = Staff::findOrFail(    (int)   Config::get('app.director_id'));
         $this->requester = Staff::findOrFail($lpo->requested_by_id);
         $this->lpo_PM = Staff::findOrFail($lpo->project_manager_id);
     }
@@ -74,50 +68,39 @@ class NotifyLpoDispatch extends Mailable
 
         // CHAI cc
         $chai_cc = array(
-            // array('first_name'=>$this->financial_controller->f_name, 'last_name'=>$this->financial_controller->l_name, 'email'=>$this->financial_controller->email),
-            // array('first_name'=>$this->accountant->f_name, 'last_name'=>$this->accountant->l_name, 'email'=>$this->accountant->email),
-            // array('first_name'=>$this->director->f_name, 'last_name'=>$this->director->l_name, 'email'=>$this->director->email),
             array('first_name'=>$this->requester->f_name, 'last_name'=>$this->requester->l_name, 'email'=>$this->requester->email),
             array('first_name'=>$this->lpo_PM->f_name, 'last_name'=>$this->lpo_PM->l_name, 'email'=>$this->lpo_PM->email)
         );
 
         // Add financial controllers to cc
-        $fm = Staff::whereHas('roles', function($query){
-            $query->where('role_id', 5);  
-        })->get();
+        $fm = User::withRole('financial-controller')->get();
         foreach($fm as $f){
-            array_push($chai_cc, array('first_name'=>$f->f_name, 'last_name'=>$f->l_name, 'email'=>$f->email));
+            $chai_cc[] = array('first_name'=>$f->f_name, 'last_name'=>$f->l_name, 'email'=>$f->email);
         }
 
         // Add Accountants to cc
-        $accountant = Staff::whereHas('roles', function($query){
-            $query->where('role_id', 8);  
-        })->get();
+        $accountant = User::withRole('accountant')->get();
         foreach($accountant as $am){
-            array_push($chai_cc, array('first_name'=>$am->f_name, 'last_name'=>$am->l_name, 'email'=>$am->email));
+            $chai_cc[] = array('first_name'=>$am->f_name, 'last_name'=>$am->l_name, 'email'=>$am->email);
         }
         // Add directors to cc
-        $director = Staff::whereHas('roles', function($query){
-            $query->whereIn('role_id', [3,4]);  
-        })->get();
+        $director = User::withRole('director')->get();
         foreach($director as $am){
-            array_push($chai_cc, array('first_name'=>$am->f_name, 'last_name'=>$am->l_name, 'email'=>$am->email));
+            $chai_cc[] = array('first_name'=>$am->f_name, 'last_name'=>$am->l_name, 'email'=>$am->email);
         }
 
         // Add Admin Manager to cc
-        $admin_manager = Staff::whereHas('roles', function($query){
-            $query->where('role_id', 10);  
-        })->get();
+        $admin_manager = User::withRole('admin-manager')->get();
         foreach($admin_manager as $am){
-            array_push($chai_cc, array('first_name'=>$am->f_name, 'last_name'=>$am->l_name, 'email'=>$am->email));
+            $chai_cc[] = array('first_name'=>$am->f_name, 'last_name'=>$am->l_name, 'email'=>$am->email);
         }
 
         $ccs = [];
         if(!empty($supplier_cc)){
-            array_push($ccs, $supplier_cc['email']);
+            $ccs[] = $supplier_cc['email'];
         }
         foreach($chai_cc as $chai_cc){
-            array_push($ccs, $chai_cc['email']);
+            $ccs[] = $chai_cc['email'];
         }
 
         $lpo_no = $this->pad_zeros(5,$this->lpo->id);

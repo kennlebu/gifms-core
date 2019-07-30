@@ -5,7 +5,6 @@ namespace App\Mail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use App\Models\MobilePaymentModels\MobilePayment;
 use App\Models\StaffModels\Staff;
 use Config;
@@ -33,27 +32,24 @@ class RequestMPBankSigning extends Mailable
     public function build()
     {      
         // Recepients
-        $accountant           = Staff::findOrFail(    (int)   Config::get('app.accountant_id'));
-        $financial_controller = Staff::findOrFail(    (int)   Config::get('app.financial_controller_id'));
-        $director             = Staff::findOrFail(    (int)   Config::get('app.director_id'));
-        $directors = Staff::whereHas('roles', function ($query){
-            $query->where('name', 'director');
-        })->get();
+        $directors = Staff::withRole('director')->get();
         $rosemary = Staff::find(42); //TODO: Make this dynamic
         $to = [];
         $ccs = [];
         foreach($directors as $dir){
-            array_push($to, $dir->email);
+            $to[] = $dir->email;
         }
-        array_push($to, $rosemary->email);
+        $to[] = $rosemary->email;
 
-        $finance = Staff::whereHas('roles', function ($query){
-            $query->where('name', 'financial-controller');
-        })->get();
-        foreach($finance as $fin){
-            array_push($ccs, $fin->email);
+        $accountant = Staff::withRole('accountant')->get();
+        foreach($accountant as $acc){
+            $ccs[] = $acc->email;
         }
-        array_push($ccs, $accountant);
+
+        $finance = Staff::withRole('financial-controller')->get();
+        foreach($finance as $fin){
+            $ccs[] = $fin->email;
+        }
 
         $this->mobile_payment = MobilePayment::with('approvals','project_manager','currency','requested_by')->find($this->mobile_payment_id);
 
