@@ -5,13 +5,10 @@ namespace App\Mail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use App\Models\LPOModels\Lpo;
 use App\Models\StaffModels\Staff;
-use App\Models\SuppliesModels\Supplier;
 use Config;
 use PDF;
-use Illuminate\Support\Facades\File;
 
 class NotifyLpoDispatch extends Mailable
 {
@@ -32,9 +29,9 @@ class NotifyLpoDispatch extends Mailable
     {
         $this->lpo = $lpo;
 
-        $this->accountant           = Staff::findOrFail(    (int)   Config::get('app.accountant_id'));
-        $this->financial_controller = Staff::findOrFail(    (int)   Config::get('app.financial_controller_id'));
-        $this->director             = Staff::findOrFail(    (int)   Config::get('app.director_id'));
+        // $this->accountant           = Staff::findOrFail(    (int)   Config::get('app.accountant_id'));
+        // $this->financial_controller = Staff::findOrFail(    (int)   Config::get('app.financial_controller_id'));
+        // $this->director             = Staff::findOrFail(    (int)   Config::get('app.director_id'));
         $this->requester = Staff::findOrFail($lpo->requested_by_id);
         $this->lpo_PM = Staff::findOrFail($lpo->project_manager_id);
     }
@@ -77,12 +74,35 @@ class NotifyLpoDispatch extends Mailable
 
         // CHAI cc
         $chai_cc = array(
-            array('first_name'=>$this->financial_controller->f_name, 'last_name'=>$this->financial_controller->l_name, 'email'=>$this->financial_controller->email),
-            array('first_name'=>$this->accountant->f_name, 'last_name'=>$this->accountant->l_name, 'email'=>$this->accountant->email),
-            array('first_name'=>$this->director->f_name, 'last_name'=>$this->director->l_name, 'email'=>$this->director->email),
+            // array('first_name'=>$this->financial_controller->f_name, 'last_name'=>$this->financial_controller->l_name, 'email'=>$this->financial_controller->email),
+            // array('first_name'=>$this->accountant->f_name, 'last_name'=>$this->accountant->l_name, 'email'=>$this->accountant->email),
+            // array('first_name'=>$this->director->f_name, 'last_name'=>$this->director->l_name, 'email'=>$this->director->email),
             array('first_name'=>$this->requester->f_name, 'last_name'=>$this->requester->l_name, 'email'=>$this->requester->email),
             array('first_name'=>$this->lpo_PM->f_name, 'last_name'=>$this->lpo_PM->l_name, 'email'=>$this->lpo_PM->email)
         );
+
+        // Add financial controllers to cc
+        $fm = Staff::whereHas('roles', function($query){
+            $query->where('role_id', 5);  
+        })->get();
+        foreach($fm as $f){
+            array_push($chai_cc, array('first_name'=>$f->f_name, 'last_name'=>$f->l_name, 'email'=>$f->email));
+        }
+
+        // Add Accountants to cc
+        $accountant = Staff::whereHas('roles', function($query){
+            $query->where('role_id', 8);  
+        })->get();
+        foreach($accountant as $am){
+            array_push($chai_cc, array('first_name'=>$am->f_name, 'last_name'=>$am->l_name, 'email'=>$am->email));
+        }
+        // Add directors to cc
+        $director = Staff::whereHas('roles', function($query){
+            $query->whereIn('role_id', [3,4]);  
+        })->get();
+        foreach($director as $am){
+            array_push($chai_cc, array('first_name'=>$am->f_name, 'last_name'=>$am->l_name, 'email'=>$am->email));
+        }
 
         // Add Admin Manager to cc
         $admin_manager = Staff::whereHas('roles', function($query){
