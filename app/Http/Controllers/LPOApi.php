@@ -509,10 +509,8 @@ class LPOApi extends Controller
                     }
                 }
                 elseif($lpo->status_id==7){
-                    try{ 
-                        Mail::queue(new NotifyLpoDispatch($lpo));
-                    }catch(Exception $e){
-                    }
+                    file_put_contents ( "C://xampp//htdocs//test.php" , (new NotifyLpoDispatch($lpo))->render() , FILE_APPEND);
+                    Mail::queue(new NotifyLpoDispatch($lpo));
                 }
 
                 if($several!=true)
@@ -524,9 +522,9 @@ class LPOApi extends Controller
             $response =  ["error"=>"You do not have the permissions to perform this action at this point"];
             return response()->json($response, 403,array(),JSON_PRETTY_PRINT);
         }catch(Exception $e){
-
-            $response =  ["error"=>"lpo could not be found"];
-            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+            file_put_contents ( "C://Users//Analytics//Documents//debug.txt" , PHP_EOL.$e->getTraceAsString() , FILE_APPEND);
+            $response =  ["error"=>"Something went wrong", 'msg'=>$e->getMessage()];
+            return response()->json($response, 500, array(), JSON_PRETTY_PRINT);
         }
     }
 
