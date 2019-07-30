@@ -37,7 +37,6 @@ use App\Models\StaffModels\Staff;
 use App\Models\PaymentModels\Payment;
 use App\Models\PaymentModels\PaymentMode;
 use App\Models\PaymentModels\PaymentBatch;
-use App\Models\PaymentModels\PaymentType;
 use App\Models\LookupModels\Currency;
 use App\Models\BankingModels\BankBranch;
 use App\Exceptions\NotFullyAllocatedException;
@@ -207,14 +206,9 @@ class InvoiceApi extends Controller
                 }
                 if(!empty($form['lpo_variation_reason']))
                 $invoice->lpo_variation_reason = $form['lpo_variation_reason'];
-
-                // if(Invoice::where('external_ref', $invoice->external_ref)->where('supplier_id', $form['supplier_id'])->exists()){
-                //     return response()->json(["error"=>"Invoice with the same invoice number already exists"], 409,array(),JSON_PRETTY_PRINT);
-                // }
                 
-            }else if($form['submission_type']=='finish_allocations'){
-
-
+            }
+            else if($form['submission_type']=='finish_allocations'){
                 $invoice = Invoice::find((int) $form['id']);
                 $invoice->total = (double)    $form['total'];
 
@@ -240,22 +234,15 @@ class InvoiceApi extends Controller
                 }else if($form['submission_type']=='log'){
                     $invoice->ref                        = "CHAI/INV/#$invoice->id/".date_format($invoice->created_at,"Y/m/d");
                     $invoice->save();
-                    try{
                     Mail::queue(new NotifyInvoice($invoice));
-                    }catch(Exception $e){}
-
                 }
                 
                 return Response()->json(array('success' => 'Invoice Added','invoice' => $invoice), 200);
             }
-        
-
-        }catch (JWTException $e){
-
-            return response()->json(['error'=>'Something went wrong'], 500);
-
         }
-
+        catch (JWTException $e){
+            return response()->json(['error'=>'Something went wrong'], 500);
+        }
     }
 
 
@@ -292,8 +279,6 @@ class InvoiceApi extends Controller
     public function updateInvoice()
     {
         try{
-
-
             $form = Request::only(
                 'id',
                 'raised_by_id',
@@ -313,8 +298,6 @@ class InvoiceApi extends Controller
                 'lpo_variation_reason',
                 'program_activity_id'
                 );
-
-            $ftp = FTP::connection()->getDirListing();
             
             $file = $form['file'];
 
@@ -356,19 +339,14 @@ class InvoiceApi extends Controller
                     $invoice->invoice_document           =   $invoice->id.'.'.$file->getClientOriginalExtension();
                     $invoice->ref                        = "CHAI/INV/#$invoice->id/".date_format($invoice->created_at,"Y/m/d");
                     $invoice->save();
-
                 }
                 
                 return Response()->json(array('success' => 'Invoice updated','invoice' => $invoice), 200);
             }
-
-
-        }catch (JWTException $e){
-
-            return response()->json(['error'=>'You are not Authenticated'], 500);
-
         }
-
+        catch (JWTException $e){
+            return response()->json(['error'=>'You are not Authenticated'], 500);
+        }
     }
 
 
@@ -405,26 +383,17 @@ class InvoiceApi extends Controller
      */
     public function deleteInvoice($invoice_id)
     {
-        $input = Request::all();
-        try {
-                   
+        try {                   
             $deleted_allocation = Invoice::destroy($invoice_id);
-
             if($deleted_allocation){
-
                 return response()->json(['msg'=>"Invoice deleted"], 200,array(),JSON_PRETTY_PRINT);
             }else{
                 return response()->json(['error'=>"Invoice not found"], 404,array(),JSON_PRETTY_PRINT);
-            }
-    
-        } catch (Exception $e) {
-                return response()->json(['error'=>"Invoice not found"], 404,array(),JSON_PRETTY_PRINT);
-            
+            }    
         }
-
-
-
-
+        catch (Exception $e) {
+                return response()->json(['error'=>"Invoice not found"], 404,array(),JSON_PRETTY_PRINT);            
+        }
     }
 
 
@@ -474,57 +443,19 @@ class InvoiceApi extends Controller
                                         'currency',
                                         'lpo',
                                         'rejected_by',
-                                        'approvals',
-                                        'payments',
+                                        'approvals.approver', 'approvals.approval_level',
+                                        'payments.payment_mode','payments.currency','payments.payment_batch','payments.paid_to_bank_branch',
                                         'payment_mode',
-                                        'allocations',
-                                        'logs',
+                                        'allocations.project','allocations.account','allocations.objective',
+                                        'logs.causer',
                                         'vouchers',
                                         'comments',
                                         'program_activity'
                                     )->findOrFail($invoice_id);
 
-
-            foreach ($response->allocations as $key => $value) {
-                $project = Project::find((int)$value['project_id']);
-                $account = Account::find((int)$value['account_id']);
-                $objective = ReportingObjective::find((int)$value['objective_id']);
-                
-                $response['allocations'][$key]['project']  =   $project;
-                $response['allocations'][$key]['account']  =   $account;
-                $response['allocations'][$key]['objective']=   $objective;
-            }
-
-            foreach ($response->logs as $key => $value) {
-                
-                $response['logs'][$key]['causer']   =   $value->causer;
-                $response['logs'][$key]['subject']  =   $value->subject;
-            }
-
-            foreach ($response->approvals as $key => $value) {
-                $approver = Staff::find((int)$value['approver_id']);
-                $appoval_level = ApprovalLevel::find((int)$value['approval_level_id']);
-
-                $response['approvals'][$key]['approver']  =   $approver;
-                $response['approvals'][$key]['approval_level']  =   $appoval_level;
-            }
-
-            foreach ($response->payments as $key => $value) {
-                $payment_mode           = PaymentMode::find((int)$value['payment_mode_id']);
-                $currency               = Currency::find((int)$value['currency_id']);
-                $payment_batch          = PaymentBatch::find((int)$value['payment_batch_id']);
-                $paid_to_bank_branch    = BankBranch::with('bank')->find((int)$value['paid_to_bank_branch_id']);
-
-                $response['payments'][$key]['payment_mode']   =   $payment_mode;
-                $response['payments'][$key]['currency']       =   $currency;
-                $response['payments'][$key]['payment_batch']  =   $payment_batch;
-                $response['payments'][$key]['paid_to_bank_branch']   =   $paid_to_bank_branch;
-            }
-
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
-
-        }catch(Exception $e){
-
+        }
+        catch(Exception $e){
             $response =  ["error"=>"Invoice could not be found"];
             return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
         }
@@ -565,9 +496,7 @@ class InvoiceApi extends Controller
     public function approveInvoice($invoice_id, $several=null)
     {
         $invoice = [];
-
         $user = JWTAuth::parseToken()->authenticate();
-
         try{
             $invoice   = Invoice::with( 
                                         'raised_by',
@@ -615,14 +544,12 @@ class InvoiceApi extends Controller
                                     )->findOrFail($invoice_id);
 
                 $approval = new Approval;
-
                 $approval->approvable_id            =   (int)   $invoice->id;
                 $approval->approvable_type          =   "invoices";
                 $approval->approval_level_id        =   $approvable_status->approval_level_id;
                 $approval->approver_id              =   (int)   $user->id;
-
+                $approval->disableLogging();
                 $approval->save();
-
 
                 if($approval->approval_level_id==4){
 
@@ -652,7 +579,6 @@ class InvoiceApi extends Controller
                     }
                     
                     $this->generate_payable_payment($payable);
-
                 }
 
                 activity()
@@ -665,13 +591,12 @@ class InvoiceApi extends Controller
                 if($several!=true)
                 return Response()->json(array('msg' => 'Success: invoice approved','invoice' => $invoice), 200);
             }
-
-        }catch(ApprovalException $ae){
-
+        }
+        catch(ApprovalException $ae){
             $response =  ["error"=>"You do not have the permissions to perform this action at this point"];
             return response()->json($response, 403,array(),JSON_PRETTY_PRINT);
-        }catch(Exception $e){
-
+        }
+        catch(Exception $e){
             $response =  ["error"=>"Invoice could not be found"];
             return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
         }
@@ -734,7 +659,6 @@ class InvoiceApi extends Controller
 
             $invoice->disableLogging(); //! Do not log the update
             if($invoice->save()) {
-
                 Mail::queue(new NotifyInvoice($invoice));
 
                 activity()
@@ -797,7 +721,6 @@ class InvoiceApi extends Controller
             $voucher_date = '-';
             $vendor = '-';
             $voucher_no = '-';
-            $bank_ref = '-';
 
             if(empty($invoice->migration_id)) {
                 if(!empty($payment->voucher_no)) {
@@ -831,28 +754,15 @@ class InvoiceApi extends Controller
                     );
 
             $pdf            = PDF::loadView('pdf/payment_voucher', $data);
-
             $file_contents  = $pdf->stream();
-
-            Storage::put('invoices/'.$invoice_id.'.voucher.temp', $file_contents);
-
-            $url            = storage_path("app/invoices/".$invoice_id.'.voucher.temp');
-
-            $file           = File::get($url);
-
-            $response       = Response::make($file, 200);
-
+            $response       = Response::make($file_contents, 200);
             $response->header('Content-Type', 'application/pdf');
-
             return $response;
-        }catch (Exception $e ){            
-
+        }
+        catch (Exception $e ){
             $response       = Response::make("", 200);
-
             $response->header('Content-Type', 'application/pdf');
-
             return $response;  
-
         }
     }
 
@@ -901,8 +811,7 @@ class InvoiceApi extends Controller
                                     )->findOrFail($invoice_id);
 
            if (($invoice->total - $invoice->amount_allocated) > 1 ){ //allowance of 1
-             throw new NotFullyAllocatedException("This invoice has not been fully allocated");
-             
+             throw new NotFullyAllocatedException("This invoice has not been fully allocated");             
            }
 
             $invoice->status_id = $invoice->status->next_status_id;
@@ -1018,8 +927,6 @@ class InvoiceApi extends Controller
      */
     public function getInvoices()
     {
-
-
         $input = Request::all();
         //query builder
         $qb = DB::table('invoices');
@@ -1231,8 +1138,6 @@ class InvoiceApi extends Controller
 
     public function append_relationships_objects($data = array()){
 
-        // print_r($data);
-
         foreach ($data as $key => $value) {
 
             $invoice = Invoice::with('payments.payment_mode','payments.currency','payments.payment_batch')->find($data[$key]['id']);
@@ -1266,8 +1171,6 @@ class InvoiceApi extends Controller
         }
 
         return $data;
-
-
     }
 
 
@@ -1291,10 +1194,7 @@ class InvoiceApi extends Controller
 
     public function append_relationships_nulls($data = array()){
 
-
         foreach ($data as $key => $value) {
-
-
             if($value["raised_by"]==null){
                 $data[$key]['raised_by'] = array("full_name"=>"N/A");                
             }
@@ -1366,8 +1266,6 @@ class InvoiceApi extends Controller
             $row['comments'] = $invoice->comments;
             $row['currency'] = empty($invoice->currency->currency_name)?'':$invoice->currency->currency_name;
             $row['rejection_reason'] = $invoice->rejection_reason;
-            // $row['project'] = empty($invoice->project->project_code)?"":$invoice->project->project_code;
-            // $row['account'] = empty($invoice->account->account_name)?"":$invoice->account->account_name;
             $row['rejected_by'] = empty($invoice->rejected_by->full_name)?"":$invoice->rejected_by->full_name;
             $row['rejected_at'] = $invoice->rejected_at;
             if(!empty($invoice->migration_id)) {
@@ -1493,7 +1391,6 @@ class InvoiceApi extends Controller
         try{
             $invoice = Invoice::find($invoice_id);
             $new_invoice = new Invoice;
-            // $new_invoice = $invoice;
             $new_invoice->status_id = 11;   // Logged, pending upload
             $new_invoice->external_ref = $invoice->external_ref.'_copy';
             $new_invoice->invoice_date = date('Y-m-d H:i:s');
@@ -1501,7 +1398,6 @@ class InvoiceApi extends Controller
             $new_invoice->raised_at = date('Y-m-d H:i:s');
             $new_invoice->supplier_id = $invoice->supplier_id;
             $new_invoice->payment_mode_id = $invoice->payment_mode_id;
-            // $new_invoice->lpo_id = $invoice->lpo_id;
             $new_invoice->program_activity_id = $invoice->program_activity_id;
             $new_invoice->raised_by_id = $invoice->raised_by_id;
             $new_invoice->currency_id = $invoice->currency_id;
@@ -1511,7 +1407,6 @@ class InvoiceApi extends Controller
             $new_invoice->project_manager_id = $invoice->project_manager_id;
             $new_invoice->received_by_id = $this->current_user()->id;
             $new_invoice->raised_by_id = $this->current_user()->id;
-            // $new_invoice->invoice_document = $invoice->invoice_document;
             $new_invoice->created_at = date('Y-m-d H:i:s');
             
             if($new_invoice->save()){
@@ -1630,7 +1525,6 @@ class InvoiceApi extends Controller
                 $bank_transaction['amount'] = trim($input['amount']);
                 $bank_transaction['txn_date'] =  date('Y-m-d');
                 $bank_transaction['txn_time'] = date('H:m').'Hrs';
-                // $bank_transaction['processing_date'] = $row['processing_date'];
                 $bank_transaction['narrative'] = substr($invoice->expense_desc, 0, 300).'...';
                 DB::table('bank_transactions')->insert($bank_transaction);
             }

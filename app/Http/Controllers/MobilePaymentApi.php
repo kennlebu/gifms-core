@@ -25,20 +25,16 @@ use App\Models\AccountingModels\Account;
 use Exception;
 use PDF;
 use Excel;
-use App;
 use JWTAuth;
 use Config;
 use Anchu\Ftp\Facades\Ftp;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\NotifyMobilePayment;
 use App\Mail\MobilePaymentInstructBank;
-use App\Models\AllocationModels\Allocation;
 use App\Models\ApprovalsModels\Approval;
 use App\Models\ApprovalsModels\ApprovalLevel;
 use App\Models\StaffModels\Staff;
-use App\Models\PaymentModels\Payment;
 use App\Models\PaymentModels\PaymentMode;
 use App\Models\PaymentModels\PaymentBatch;
 use App\Models\LookupModels\Currency;
@@ -701,12 +697,12 @@ class MobilePaymentApi extends Controller
             $mobile_payment->disableLogging(); //! Disable logging for the update
             if($mobile_payment->save()) {
                 
-            // Logging
-            $mobile_payment->enableLogging();
-            activity()
-            ->performedOn($mobile_payment)
-            ->causedBy($user)
-            ->log('rejected');
+                // Logging
+                $mobile_payment->enableLogging();
+                activity()
+                    ->performedOn($mobile_payment)
+                    ->causedBy($user)
+                    ->log('Returned');
 
                 Mail::queue(new NotifyMobilePayment($mobile_payment));
 
@@ -768,21 +764,12 @@ class MobilePaymentApi extends Controller
      */
     public function postPayees($mobile_payment_id)
     {
-        // $input = Request::all();
-
-        //path params validation
-
-
-        //not path params validation
-
         try{
             
             $user = JWTAuth::parseToken()->authenticate();
             $form = Request::only('file');
 
             $file = $form['file'];
-
-            $ftp = FTP::connection()->getDirListing();
 
             $mobile_payment = MobilePayment::find($mobile_payment_id);
 
@@ -793,7 +780,6 @@ class MobilePaymentApi extends Controller
             foreach ($data as $key => $value) {
                 $payee = new MobilePaymentPayee();
 
-                // if((substr($value['phone'],0,6) == "(+254)") && ((int) strlen($value['phone'])== 15)) {
                 if(strlen($value['phone'])==9 && substr($value['phone'],0,1)=='7'){
                     
                 }else{
@@ -817,25 +803,21 @@ class MobilePaymentApi extends Controller
                 $payee->mobile_number       = "(+254)".$value['phone'];
                 $payee->withdrawal_charges  = $payee->calculated_withdrawal_charges;
                 $payee->total               = $payee->calculated_total;
-
+                $payee->disableLogging();
                 $payee->save();
             }
 
             activity()
-            ->performedOn($mobile_payment)
-            ->causedBy($user)
-            ->log('uploaded payees');
-
-
+                ->performedOn($mobile_payment)
+                ->causedBy($user)
+                ->log('Uploaded payees');
 
             return Response()->json(array('msg' => 'Success: mobile_payment payees uploaded','mobile_payment' => $mobile_payment), 200);
-        
-
-        }catch (JWTException $e){
-
+        }
+        catch (JWTException $e){
             return response()->json(['error'=>'You are not Authenticated'], 500);
-
-        }catch(Exception $ex){
+        }
+        catch(Exception $ex){
             return response()->json(['error'=>$ex->getMessage()], 500);
         }
 
@@ -893,14 +875,11 @@ class MobilePaymentApi extends Controller
             $response->header('Content-Type', 'application/pdf');
 
             return $response;
-        }catch (Exception $e ){            
-
+        }
+        catch (Exception $e ){
             $response       = Response::make("", 500);
-
             $response->header('Content-Type', 'application/pdf');
-
             return $response;  
-
         }
     }
 
@@ -933,33 +912,18 @@ class MobilePaymentApi extends Controller
      */
     public function getAttendanceSheetById($mobile_payment_id)
     {
-
         try{
-
-
             $mobile_payment      = MobilePayment::findOrFail($mobile_payment_id);
-
             $path           = '/mobile_payments/'.$mobile_payment->id.'/signsheet/'.$mobile_payment->attendance_sheet;
-
-            $path_info      = pathinfo($path);
-
-            $basename       = $path_info['basename'];
-
             $file_contents  = FTP::connection()->readFile($path);
-
             $response       = Response::make($file_contents, 200);
 
             $response->header('Content-Type', 'application/pdf');
 
             return $response;  
-        }catch (Exception $e ){            
-
-            $response       = Response::make(array('error'=>$e->getMessage()), 500);
-
-            // $response->header('Content-Type', 'application/pdf');
-
-            return $response;   
-
+        }
+        catch (Exception $e ){
+            return Response::make(array('error'=>$e->getMessage()), 500);
         }
     }
 
@@ -975,16 +939,12 @@ class MobilePaymentApi extends Controller
      */
     public function getPaymentVoucherById($mobile_payment_id)
     {
-
         try{
             $mobile_payment   = MobilePayment::findOrFail($mobile_payment_id);
             $voucher_no = '';
             if(empty($mobile_payment->migration_id)){
                 if(empty($mobile_payment->voucher_no)) $voucher_no = '-';
-                else{
-                    // $voucher_no = VoucherNumber::find($mobile_payment->voucher_no);
-                    // $voucher_no = $voucher_no->voucher_number;
-                    
+                else{                    
                     $voucher = VoucherNumber::where('payable_id', $mobile_payment->id)->first();
                     $voucher_no = $voucher->voucher_number;
                 }
@@ -1003,21 +963,15 @@ class MobilePaymentApi extends Controller
                 );
 
             $pdf = PDF::loadView('pdf/mobile_payment_payment_voucher', $data);
-
             $file_contents  = $pdf->stream();
-
             $response = Response::make($file_contents, 200);
-
             $response->header('Content-Type', 'application/pdf');
-
             return $response;
-        }catch (Exception $e ){  
-            $response       = Response::make("", 500);
-
+        }
+        catch (Exception $e ){  
+            $response = Response::make("", 500);
             $response->header('Content-Type', 'application/pdf');
-
             return $response;  
-
         }
     }
 
@@ -1123,13 +1077,6 @@ class MobilePaymentApi extends Controller
             if($mobile_payment->status_id == 15 || $mobile_payment->status_id == 16){
                 $mobile_payment->requested_at = date('Y-m-d H:i:s');
             }
-            // else{
-            //     // Logging resubmission
-            //     activity()
-            //        ->performedOn($mobile_payment)
-            //        ->causedBy($user)
-            //        ->log('re-submitted');
-            // }
 
             $mobile_payment->disableLogging(); //! Do not log the update
             
@@ -1139,7 +1086,7 @@ class MobilePaymentApi extends Controller
                 activity()
                    ->performedOn($mobile_payment)
                    ->causedBy($user)
-                   ->log('submitted for approval');
+                   ->log('Submitted for approval');
                    
                 Mail::queue(new NotifyMobilePayment($mobile_payment));
 
@@ -1290,8 +1237,6 @@ class MobilePaymentApi extends Controller
      */
     public function recallMobilePayment($mobile_payment_id)
     {
-        $input = Request::all();
-        
         $mobile_payment = MobilePayment::find($mobile_payment_id);        
 
         // Ensure Mobile Payment is in the recallable statuses
@@ -1305,7 +1250,7 @@ class MobilePaymentApi extends Controller
         activity()
         ->performedOn($mobile_payment)
         ->causedBy($this->current_user())
-        ->log('recalled');
+        ->log('Recalled');
 
         $mobile_payment->disableLogging(); //! Do not log the update
         
@@ -1352,14 +1297,10 @@ class MobilePaymentApi extends Controller
         try{
             $path           = '/templates/MPESA_TEMPLATE.xlsx';
             $path_info      = pathinfo($path);
-            $ext            = $path_info['extension'];
             $basename       = $path_info['basename'];
-
             $file_contents  = FTP::connection()->readFile($path);
-            $url            = storage_path("app".$path);
-            $file           = File::get($url);
 
-            $response       = Response::make($file, 200);
+            $response       = Response::make($file_contents, 200);
             $response->header('Content-Type', $this->get_mime_type($basename));
             return $response;  
         }
@@ -1603,9 +1544,7 @@ class MobilePaymentApi extends Controller
      */
     public function uploadBankFile()
     {
-        $input = Request::all();
         try{
-            $payees_ids = [];
             $payment_refs = [];
             $mobile_payment_ids = [];
             $form = Request::only('file');
@@ -1622,27 +1561,23 @@ class MobilePaymentApi extends Controller
                 }
             }
             // Get only unique values
-            $mobile_payment_ids = array_unique($mobile_payment_ids);
-
-            
+            $mobile_payment_ids = array_unique($mobile_payment_ids);            
 
             // Change status of the mobile payment(s) to paid
             foreach($mobile_payment_ids as $id){
                 $mobile_payment = MobilePayment::findOrFail($id);
                 $mobile_payment->status_id = 5;
+                $mobile_payment->disableLogging();
                 $mobile_payment->save();
-                array_push($payment_refs, $mobile_payment->ref);
-
-                // // Mark payees as paid
-                // foreach($mobile_payment->payees as $pid){
-                //     $payee = MobilePaymentPayee::findOrFail($pid);
-                //     $payee->paid = 1;
-                //     $payee->save();
-                // }
+                $payment_refs[] = $mobile_payment->ref;
+                
+                activity()                              // Logging payment
+                   ->performedOn($mobile_payment)
+                   ->causedBy($this->current_user())
+                   ->log('Paid');
             }
 
             return Response()->json(array('msg' => 'Success: Mobile Payment(s) reconciled','payments' => $payment_refs), 200);
-
         }
         catch (Exception $e){
             return response()->json(['error'=>$e->getMessage()], 500);
@@ -1673,8 +1608,6 @@ class MobilePaymentApi extends Controller
 
 
     public function append_relationships_objects($data = array()){
-
-        // print_r($data);
 
         foreach ($data as $key => $value) {
 
