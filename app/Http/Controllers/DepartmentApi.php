@@ -15,55 +15,16 @@
 
 namespace App\Http\Controllers;
 
-
-use JWTAuth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\DB;
-
 use App\Models\StaffModels\Department;
-
-
 use Exception;
-use App;
-use Illuminate\Support\Facades\Response;
-use App\Models\StaffModels\Staff;
 
 class DepartmentApi extends Controller
 {
     /**
-     * Constructor
-     */
-    public function __construct()
-    {
-    }
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    /**
      * Operation addDepartment
-     *
      * Add a new department.
-     *
-     *
      * @return Http response
      */
     public function addDepartment()
@@ -75,13 +36,11 @@ class DepartmentApi extends Controller
             );
 
         $department = new Department;
-
-            $department->department_name                    =         $form['department_name'];
-            $department->desc                               =         $form['desc'];
-            $department->acronym                            =         $form['acronym'];
+        $department->department_name                    =         $form['department_name'];
+        $department->desc                               =         $form['desc'];
+        $department->acronym                            =         $form['acronym'];
 
         if($department->save()) {
-
             return Response()->json(array('msg' => 'Success: department added','department' => $department), 200);
         }
     }
@@ -124,13 +83,11 @@ class DepartmentApi extends Controller
             );
 
         $department = Department::find($form['id']);
-
-            $department->department_name                    =         $form['department_name'];
-            $department->desc                               =         $form['desc'];
-            $department->acronym                            =         $form['acronym'];
+        $department->department_name                    =         $form['department_name'];
+        $department->desc                               =         $form['desc'];
+        $department->acronym                            =         $form['acronym'];
 
         if($department->save()) {
-
             return Response()->json(array('msg' => 'Success: department updated','department' => $department), 200);
         }
     }
@@ -166,9 +123,6 @@ class DepartmentApi extends Controller
      */
     public function deleteDepartment($department_id)
     {
-        $input = Request::all();
-
-
         $deleted = Department::destroy($department_id);
 
         if($deleted){
@@ -210,16 +164,10 @@ class DepartmentApi extends Controller
      */
     public function getDepartmentById($department_id)
     {
-        $input = Request::all();
-
         try{
-
-            $response   = Department::findOrFail($department_id);
-           
+            $response   = Department::findOrFail($department_id);           
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
-
         }catch(Exception $e){
-
             $response =  ["error"=>"department could not be found"];
             return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
         }
@@ -255,9 +203,6 @@ class DepartmentApi extends Controller
      */
     public function departmentsGet()
     {
-        
-
-
         $input = Request::all();
         //query builder
         $qb = DB::table('departments');
@@ -270,32 +215,21 @@ class DepartmentApi extends Controller
         $total_records          = $qb->count();
         $records_filtered       = 0;
 
-
-
-
         //searching
         if(array_key_exists('searchval', $input)){
-            $qb->where(function ($query) use ($input) {
-                
+            $qb->where(function ($query) use ($input) {                
                 $query->orWhere('departments.id','like', '\'%' . $input['searchval']. '%\'');
                 $query->orWhere('departments.department_name','like', '\'%' . $input['searchval']. '%\'');
                 $query->orWhere('departments.desc','like', '\'%' . $input['searchval']. '%\'');
                 $query->orWhere('departments.acronym','like', '\'%' . $input['searchval']. '%\'');
-
             });
-
-            // $records_filtered       =  $qb->count(); //doesn't work
 
             $sql = Department::bind_presql($qb->toSql(),$qb->getBindings());
             $sql = str_replace("*"," count(*) AS count ", $sql);
             $dt = json_decode(json_encode(DB::select($sql)), true);
 
             $records_filtered = (int) $dt[0]['count'];
-            // $records_filtered = 30;
-
-
         }
-
 
         //ordering
         if(array_key_exists('order_by', $input)&&$input['order_by']!=''){
@@ -306,56 +240,26 @@ class DepartmentApi extends Controller
             }
 
             $qb->orderBy($order_column_name, $order_direction);
-        }else{
-            //$qb->orderBy("project_code", "asc");
         }
 
         //limit
         if(array_key_exists('limit', $input)){
-
-
             $qb->limit($input['limit']);
-
-
         }
-
-        //migrated
-        if(array_key_exists('migrated', $input)){
-
-            $mig = (int) $input['migrated'];
-
-            if($mig==0){
-                $qb->whereNull('migration_id');
-            }else if($mig==1){
-                $qb->whereNotNull('migration_id');
-            }
-
-
-        }
-
-
 
         if(array_key_exists('datatables', $input)){
-
             //searching
-            $qb->where(function ($query) use ($input) {
-                
+            $qb->where(function ($query) use ($input) {                
                 $query->orWhere('departments.id','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('departments.department_name','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('departments.desc','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('departments.acronym','like', '\'%' . $input['search']['value']. '%\'');
-
             });
-
-
-
 
             $sql = Department::bind_presql($qb->toSql(),$qb->getBindings());
             $sql = str_replace("*"," count(*) AS count ", $sql);
             $dt = json_decode(json_encode(DB::select($sql)), true);
-
             $records_filtered = (int) $dt[0]['count'];
-
 
             //ordering
             $order_column_id    = (int) $input['order'][0]['column'];
@@ -363,48 +267,26 @@ class DepartmentApi extends Controller
             $order_direction    = $input['order'][0]['dir'];
 
             if($order_column_name!=''){
-
                 $qb->orderBy($order_column_name, $order_direction);
-
             }
-
-
-
-
-
 
             //limit $ offset
             if((int)$input['start']!= 0 ){
-
                 $response_dt    =   $qb->limit($input['length'])->offset($input['start']);
-
             }else{
                 $qb->limit($input['length']);
             }
 
-
-
-
-
             $sql = Department::bind_presql($qb->toSql(),$qb->getBindings());
 
-            // $response_dt = DB::select($qb->toSql(),$qb->getBindings());         //pseudo
             $response_dt = DB::select($sql);
-
-
             $response_dt = json_decode(json_encode($response_dt), true);
-
-            $response_dt    = $this->append_relationships_objects($response_dt);
-            $response_dt    = $this->append_relationships_nulls($response_dt);
             $response       = Department::arr_to_dt_response( 
                 $response_dt, $input['draw'],
                 $total_records,
                 $records_filtered
                 );
-
-
         }else{
-
             $sql            = Department::bind_presql($qb->toSql(),$qb->getBindings());
             $response       = json_decode(json_encode(DB::select($sql)), true);
             if(!array_key_exists('lean', $input)){
@@ -413,75 +295,6 @@ class DepartmentApi extends Controller
             }
         }
 
-
-
-
         return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
-
-
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    public function append_relationships_objects($data = array()){
-
-
-        foreach ($data as $key => $value) {
-
-            $departments = Department::find($data[$key]['id']);
-
-        }
-
-        return $data;
-
-
-    }
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-    public function append_relationships_nulls($data = array()){
-
-
-        foreach ($data as $key => $value) {
-
-
-            // if($data[$key]["account"]==null){
-            //     $data[$key]["account"] = array("account_name"=>"N/A");
-            // }
-
-
-        }
-
-        return $data;
-
-
     }
 }

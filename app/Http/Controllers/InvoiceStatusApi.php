@@ -15,50 +15,16 @@
 
 namespace App\Http\Controllers;
 
-
 use JWTAuth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\DB;
 
 use App\Models\InvoicesModels\InvoiceStatus;
 use App\Models\InvoicesModels\Invoice;
-
-
 use Exception;
-use App;
-use Illuminate\Support\Facades\Response;
-use App\Models\StaffModels\Staff;
 
 class InvoiceStatusApi extends Controller
 {
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-    }
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     /**
      * Operation addInvoiceStatus
      *
@@ -80,17 +46,15 @@ class InvoiceStatusApi extends Controller
             );
 
         $invoice_status = new InvoiceStatus;
-
-            $invoice_status->invoice_status                 =         $form['invoice_status'];
-            $invoice_status->next_status_id                 =  (int)  $form['next_status_id'];
-            $invoice_status->status_security_level          =         $form['status_security_level'];
-            $invoice_status->order_priority                 =         $form['order_priority'];
-            $invoice_status->display_color                  =         $form['display_color'];
-            $invoice_status->default_status                 =         $form['default_status'];
-            $invoice_status->approval_level_id              =  (int)  $form['approval_level_id'];
+        $invoice_status->invoice_status                 =         $form['invoice_status'];
+        $invoice_status->next_status_id                 =  (int)  $form['next_status_id'];
+        $invoice_status->status_security_level          =         $form['status_security_level'];
+        $invoice_status->order_priority                 =         $form['order_priority'];
+        $invoice_status->display_color                  =         $form['display_color'];
+        $invoice_status->default_status                 =         $form['default_status'];
+        $invoice_status->approval_level_id              =  (int)  $form['approval_level_id'];
 
         if($invoice_status->save()) {
-
             return Response()->json(array('msg' => 'Success: invoice_status added','invoice_status' => $invoice_status), 200);
         }
     }
@@ -137,18 +101,15 @@ class InvoiceStatusApi extends Controller
             );
 
         $invoice_status = InvoiceStatus::find($form['id']);
-
-
-            $invoice_status->invoice_status                 =         $form['invoice_status'];
-            $invoice_status->next_status_id                 =  (int)  $form['next_status_id'];
-            $invoice_status->status_security_level          =         $form['status_security_level'];
-            $invoice_status->order_priority                 =         $form['order_priority'];
-            $invoice_status->display_color                  =         $form['display_color'];
-            $invoice_status->default_status                 =         $form['default_status'];
-            $invoice_status->approval_level_id              =  (int)  $form['approval_level_id'];
+        $invoice_status->invoice_status                 =         $form['invoice_status'];
+        $invoice_status->next_status_id                 =  (int)  $form['next_status_id'];
+        $invoice_status->status_security_level          =         $form['status_security_level'];
+        $invoice_status->order_priority                 =         $form['order_priority'];
+        $invoice_status->display_color                  =         $form['display_color'];
+        $invoice_status->default_status                 =         $form['default_status'];
+        $invoice_status->approval_level_id              =  (int)  $form['approval_level_id'];
 
         if($invoice_status->save()) {
-
             return Response()->json(array('msg' => 'Success: invoice_status updated','invoice_status' => $invoice_status), 200);
         }
     }
@@ -184,11 +145,7 @@ class InvoiceStatusApi extends Controller
      */
     public function deleteInvoiceStatus($invoice_status_id)
     {
-        $input = Request::all();
-
-
         $deleted = InvoiceStatus::destroy($invoice_status_id);
-
         if($deleted){
             return response()->json(['msg'=>"invoice_status deleted"], 200,array(),JSON_PRETTY_PRINT);
         }else{
@@ -228,18 +185,13 @@ class InvoiceStatusApi extends Controller
      */
     public function getInvoiceStatusById($invoice_status_id)
     {
-        $input = Request::all();
-
         try{
-
-            $response   = InvoiceStatus::findOrFail($invoice_status_id);
-           
+            $response   = InvoiceStatus::findOrFail($invoice_status_id);           
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
 
         }catch(Exception $e){
-
-            $response =  ["error"=>"invoice_status could not be found"];
-            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+            $response =  ["error"=>"Something went wrong"];
+            return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
         }
     }
     

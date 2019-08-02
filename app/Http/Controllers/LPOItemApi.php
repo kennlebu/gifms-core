@@ -15,48 +15,12 @@
 
 namespace App\Http\Controllers;
 
-use JWTAuth;
 use Illuminate\Support\Facades\Request;
 use App\Models\LPOModels\LpoItem;
 use App\Models\LPOModels\Lpo;
 
 class LPOItemApi extends Controller
 {
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-
     /**
      * Operation addLpoItem
      *
@@ -67,11 +31,8 @@ class LPOItemApi extends Controller
      */
     public function addLpoItem()
     {
-
         $lpo_item = new LpoItem;
-
         try{
-
             $form = Request::all();
 
             $lpo_item->lpo_id                       =               $form['lpo_id'];
@@ -148,21 +109,10 @@ class LPOItemApi extends Controller
      */
     public function updateLpoItem()
     {
-
-        $input = Request::all();
-
-
-
-
         try{
-
-
             $form = Request::all();
 
-
             $item = LpoItem::findOrFail($form['id']);
-
-
             $item->lpo_id                   =               $form['lpo_id'];
             $item->item                     =               $form['item'];
             $item->item_description         =               $form['item_description'];
@@ -178,19 +128,14 @@ class LPOItemApi extends Controller
                 $lpo->save();
             }
             if(!empty($form['no_of_days'])){
-                $lpo_item->no_of_days = $form['no_of_days'];
+                $item->no_of_days = $form['no_of_days'];
             }
-
 
             if($item->save()) {
                 return Response()->json(array('success' => 'Item updated','lpo_item' => $item), 200);
             }
-
-
         }catch (JWTException $e){
-
-            return response()->json(['error'=>'You are not Authenticated'], 500);
-
+            return response()->json(['error'=>'You are not Authenticated'], 401);
         }
     }
 
@@ -232,15 +177,11 @@ class LPOItemApi extends Controller
      */
     public function deleteLpoItem($lpo_item_id)
     {
-        $input = Request::all();
-
         $deleted_lpo_item = LpoItem::destroy($lpo_item_id);
-
-
         if($deleted_lpo_item){
             return response()->json(['msg'=>"lpo item deleted"], 200,array(),JSON_PRETTY_PRINT);
         }else{
-            return response()->json(['error'=>"lpo item not found"], 404,array(),JSON_PRETTY_PRINT);
+            return response()->json(['error'=>"Something went wrong"], 500,array(),JSON_PRETTY_PRINT);
         }
     }
 
@@ -282,18 +223,13 @@ class LPOItemApi extends Controller
      */
     public function getLpoItemById($lpo_item_id)
     {
-       $input = Request::all();
-
        try{
-
             $response = LpoItem::findOrFail($lpo_item_id);
-
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
 
         }catch(Exception $e){
-
-            $response =  ["error"=>"lpo could not be found"];
-            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+            $response =  ["error"=>"Something went wrong"];
+            return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
         }
     }
 
@@ -337,55 +273,14 @@ class LPOItemApi extends Controller
         $input = Request::all();
         $response;
 
-        //path params validation
-
-
-        //not path params validation
-        // $lpo_id = $input['lpo_id'];
-
-
-        // return response('How about implementing lpoTermsGet as a GET method ?');
         if(array_key_exists('lpo_id', $input)){
-
             $response = LpoItem::where("deleted_at",null)
                 ->where('lpo_id', $input['lpo_id'])
                 ->get();
-
         }else{
-
             $response = LpoItem::all();
-
         }
 
-
         return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
+    }    
 }

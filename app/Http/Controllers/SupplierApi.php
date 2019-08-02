@@ -15,8 +15,6 @@
 
 namespace App\Http\Controllers;
 
-
-use JWTAuth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -27,44 +25,11 @@ use App\Models\LookupModels\Currency;
 use App\Models\PaymentModels\PaymentMode;
 use App\Models\SuppliesModels\SupplyCategory;
 use App\Models\LookupModels\County;
-
-
 use Exception;
-use App;
-use Illuminate\Support\Facades\Response;
-use App\Models\StaffModels\Staff;
 use Excel;
 
 class SupplierApi extends Controller
 {
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-    }
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     /**
      * Operation addSupplier
      *
@@ -297,15 +262,11 @@ class SupplierApi extends Controller
      */
     public function deleteSupplier($supplier_id)
     {
-        $input = Request::all();
-
-
         $deleted = Supplier::destroy($supplier_id);
-
         if($deleted){
             return response()->json(['msg'=>"supplier deleted"], 200,array(),JSON_PRETTY_PRINT);
         }else{
-            return response()->json(['error'=>"supplier not found"], 404,array(),JSON_PRETTY_PRINT);
+            return response()->json(['error'=>"Something went wrong"], 500,array(),JSON_PRETTY_PRINT);
         }
     }
     
@@ -341,18 +302,12 @@ class SupplierApi extends Controller
      */
     public function getSupplierById($supplier_id)
     {
-        $input = Request::all();
-
         try{
-
-            $response   = Supplier::findOrFail($supplier_id);
-           
+            $response   = Supplier::findOrFail($supplier_id);           
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
-
         }catch(Exception $e){
-
-            $response =  ["error"=>"supplier could not be found"];
-            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+            $response =  ["error"=>"Something went wrong"];
+            return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
         }
     }
     
@@ -446,7 +401,6 @@ class SupplierApi extends Controller
         }
 
         if(array_key_exists('datatables', $input)){
-
             //searching
             $qb->where(function ($query) use ($input) {                
                 $query->orWhere('suppliers.id','like', '\'%' . $input['search']['value']. '%\'');
@@ -504,7 +458,6 @@ class SupplierApi extends Controller
         else {
 
             $qb->orderBy("supplier_name", "asc");
-
             $sql            = Supplier::bind_presql($qb->toSql(),$qb->getBindings());
             $response       = json_decode(json_encode(DB::select($sql)), true);
 
@@ -538,25 +491,17 @@ class SupplierApi extends Controller
 
 
     public function append_relationships_objects($data = array()){
-
-
         foreach ($data as $key => $value) {
-
             $suppliers = Supplier::find($data[$key]['id']);
-
             $data[$key]['bank']                = $suppliers->bank;
             $data[$key]['bank_branch']         = $suppliers->bank_branch;
             $data[$key]['payment_mode']        = $suppliers->payment_mode;
             $data[$key]['currency']            = $suppliers->currency;
             $data[$key]['city']                = $suppliers->city;
             $data[$key]['staff']               = $suppliers->staff;
-
         }
 
-
         return $data;
-
-
     }
 
 
@@ -573,11 +518,7 @@ class SupplierApi extends Controller
 
 
     public function append_relationships_nulls($data = array()){
-
-
         foreach ($data as $key => $value) {
-
-
             if($data[$key]["bank"]==null){
                 $data[$key]["bank"] = array("bank_name"=>"N/A");
             }
@@ -596,13 +537,9 @@ class SupplierApi extends Controller
             if($data[$key]["staff"]==null){
                 $data[$key]["staff"] = array("full_name"=>"N/A");
             }
-
-
         }
 
         return $data;
-
-
     }
 
 
@@ -640,11 +577,8 @@ class SupplierApi extends Controller
             $data = Excel::load($file->getPathname(), function($reader) {
             })->get()->toArray();
 
-            $suppliers_array = array();
             foreach ($data as $key => $value) {
-
-                try{
-                    
+                try{                    
                     $supplier = new Supplier;
                     $supplier->supplier_name = trim($value['supplier_name']);
                     $supplier->email = trim($value['email']);
@@ -732,11 +666,9 @@ class SupplierApi extends Controller
                     }
                     else {
                         $supplier->requires_lpo = 'No';
-                    }
-                    
+                    }                   
 
                     $supplier->save();
-
                 }
                 catch(\Exception $e){
                     $response =  ["error"=>'An error occurred during processing.',

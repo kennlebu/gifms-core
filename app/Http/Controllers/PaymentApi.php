@@ -25,16 +25,7 @@ use App\Models\ClaimsModels\Claim;
 use App\Models\InvoicesModels\Invoice;
 
 class PaymentApi extends Controller
-{
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-    }
-
-
-    
+{    
     /**
      * Operation getPayments
      *
@@ -60,7 +51,6 @@ class PaymentApi extends Controller
         //if batch is set
         if(array_key_exists('batch', $input)){
             $batch_ = (int) $input['batch'];
-
             if($batch_ >0){
                 $qb->where('payment_batch_id', $input['batch']);
             }
@@ -114,24 +104,12 @@ class PaymentApi extends Controller
             }
         }
 
-        //migrated
-        if(array_key_exists('migrated', $input)){
-            $mig = (int) $input['migrated'];
-            if($mig==0){
-                $qb->whereNull('migration_id');
-            }else if($mig==1){
-                $qb->whereNotNull('migration_id');
-            }
-        }
-
         //unbatched
         if(array_key_exists('unbatched', $input)){
-            $mig = (int) $input['unbatched'];
             $qb->where('status_id',1);
         }
 
         if(array_key_exists('datatables', $input)){
-
             //searching
             $qb->where(function ($query) use ($input) {                
                 $query->orWhere('id','like', '\'%' . $input['search']['value']. '%\'');
@@ -167,7 +145,6 @@ class PaymentApi extends Controller
             $sql = Payment::bind_presql($qb->toSql(),$qb->getBindings());
             $response_dt = DB::select($sql);
             $response_dt = json_decode(json_encode($response_dt), true);
-
             $response_dt    = $this->append_relationships_objects($response_dt);
             $response_dt    = $this->append_relationships_nulls($response_dt);
             $response       = Payment::arr_to_dt_response( 
@@ -246,6 +223,7 @@ class PaymentApi extends Controller
 
     public function getPaymentByPV(){
         $input = Request::all();
+        $voucher_no = $input['voucher_no'];
         try{
             $payment = "";
 
@@ -279,7 +257,6 @@ class PaymentApi extends Controller
                 throw new \Exception("Invalid voucher number");
         } catch(\Exception $e){                    
             $res['payable_type'] = 'missing';
-            // array_push($result, $res);
         }        
     }
 
@@ -598,7 +575,6 @@ class PaymentApi extends Controller
             $payments = Payment::whereHas('payment_batch', function($query) use ($month){
                 $query->whereMonth('created_at', $month);  
             })->whereNotNull($column)
-            // ->whereRaw('vat_amount_withheld is not null or income_tax_amount_withheld is not null')
             ->get();
 
             $response_array = [];
@@ -638,10 +614,4 @@ class PaymentApi extends Controller
             return response()->json(['msg'=>"Something went wrong", 'error'=>$e->getMessage()], 500,array(),JSON_PRETTY_PRINT);
         }
     }
-
-
-
-
-
-
 }

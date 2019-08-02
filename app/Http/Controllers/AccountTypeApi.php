@@ -15,49 +15,14 @@
 
 namespace App\Http\Controllers;
 
-
-use JWTAuth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\DB;
 
 use App\Models\AccountingModels\AccountType;
-
-
 use Exception;
-use App;
-use Illuminate\Support\Facades\Response;
-use App\Models\StaffModels\Staff;
 
 class AccountTypeApi extends Controller
 {
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-    }
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     /**
      * Operation addAccountType
      *
@@ -74,12 +39,10 @@ class AccountTypeApi extends Controller
             );
 
         $account_type = new AccountType;
-
-            $account_type->account_type_name                   =         $form['account_type_name'];
-            $account_type->account_classification_id           = (int)   $form['account_classification_id'];
+        $account_type->account_type_name                   =         $form['account_type_name'];
+        $account_type->account_classification_id           = (int)   $form['account_classification_id'];
 
         if($account_type->save()) {
-
             return Response()->json(array('msg' => 'Success: account_type added','account_type' => $account_type), 200);
         }
     }
@@ -121,12 +84,10 @@ class AccountTypeApi extends Controller
             );
 
         $account_type = AccountType::find($form['id']);
-
-            $account_type->account_type_name                   =         $form['account_type_name'];
-            $account_type->account_classification_id           = (int)   $form['account_classification_id'];
+        $account_type->account_type_name                   =         $form['account_type_name'];
+        $account_type->account_classification_id           = (int)   $form['account_classification_id'];
 
         if($account_type->save()) {
-
             return Response()->json(array('msg' => 'Success: account_type updated','account_type' => $account_type), 200);
         }
     }
@@ -162,11 +123,7 @@ class AccountTypeApi extends Controller
      */
     public function deleteAccountType($account_type_id)
     {
-        $input = Request::all();
-
-
         $deleted = AccountType::destroy($account_type_id);
-
         if($deleted){
             return response()->json(['msg'=>"account_type deleted"], 200,array(),JSON_PRETTY_PRINT);
         }else{
@@ -206,18 +163,12 @@ class AccountTypeApi extends Controller
      */
     public function getAccountTypeById($account_type_id)
     {
-        $input = Request::all();
-
         try{
-
-            $response   = AccountType::findOrFail($account_type_id);
-           
+            $response   = AccountType::findOrFail($account_type_id);           
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
-
         }catch(Exception $e){
-
-            $response =  ["error"=>"account_type could not be found"];
-            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+            $response =  ["error"=>"Something went wrong"];
+            return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
         }
     }
     
@@ -251,9 +202,6 @@ class AccountTypeApi extends Controller
      */
     public function accountTypesGet()
     {
-        
-
-
         $input = Request::all();
         //query builder
         $qb = DB::table('account_types');
@@ -266,30 +214,19 @@ class AccountTypeApi extends Controller
         $total_records          = $qb->count();
         $records_filtered       = 0;
 
-
-
-
         //searching
         if(array_key_exists('searchval', $input)){
-            $qb->where(function ($query) use ($input) {
-                
+            $qb->where(function ($query) use ($input) {                
                 $query->orWhere('account_types.id','like', '\'%' . $input['searchval']. '%\'');
                 $query->orWhere('account_types.account_type_name','like', '\'%' . $input['searchval']. '%\'');
-
             });
-
-            // $records_filtered       =  $qb->count(); //doesn't work
 
             $sql = AccountType::bind_presql($qb->toSql(),$qb->getBindings());
             $sql = str_replace("*"," count(*) AS count ", $sql);
             $dt = json_decode(json_encode(DB::select($sql)), true);
 
             $records_filtered = (int) $dt[0]['count'];
-            // $records_filtered = 30;
-
-
         }
-
 
         //ordering
         if(array_key_exists('order_by', $input)&&$input['order_by']!=''){
@@ -298,49 +235,20 @@ class AccountTypeApi extends Controller
             if(array_key_exists('order_dir', $input)&&$input['order_dir']!=''){                
                 $order_direction = $input['order_dir'];
             }
-
             $qb->orderBy($order_column_name, $order_direction);
-        }else{
-            // $qb->orderBy("account_type_name", "asc");
         }
 
         //limit
         if(array_key_exists('limit', $input)){
-
-
             $qb->limit($input['limit']);
-
-
         }
-
-        //migrated
-        if(array_key_exists('migrated', $input)){
-
-            $mig = (int) $input['migrated'];
-
-            if($mig==0){
-                $qb->whereNull('migration_id');
-            }else if($mig==1){
-                $qb->whereNotNull('migration_id');
-            }
-
-
-        }
-
-
 
         if(array_key_exists('datatables', $input)){
-
             //searching
-            $qb->where(function ($query) use ($input) {
-                
+            $qb->where(function ($query) use ($input) {                
                 $query->orWhere('account_types.id','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('account_types.account_type_name','like', '\'%' . $input['search']['value']. '%\'');
-
             });
-
-
-
 
             $sql = AccountType::bind_presql($qb->toSql(),$qb->getBindings());
             $sql = str_replace("*"," count(*) AS count ", $sql);
@@ -348,44 +256,26 @@ class AccountTypeApi extends Controller
 
             $records_filtered = (int) $dt[0]['count'];
 
-
             //ordering
             $order_column_id    = (int) $input['order'][0]['column'];
             $order_column_name  = $input['columns'][$order_column_id]['order_by'];
             $order_direction    = $input['order'][0]['dir'];
 
             if($order_column_name!=''){
-
                 $qb->orderBy($order_column_name, $order_direction);
-
             }
-
-
-
-
-
 
             //limit $ offset
             if((int)$input['start']!= 0 ){
-
                 $response_dt    =   $qb->limit($input['length'])->offset($input['start']);
-
             }else{
                 $qb->limit($input['length']);
             }
 
-
-
-
-
             $sql = AccountType::bind_presql($qb->toSql(),$qb->getBindings());
 
-            // $response_dt = DB::select($qb->toSql(),$qb->getBindings());         //pseudo
             $response_dt = DB::select($sql);
-
-
             $response_dt = json_decode(json_encode($response_dt), true);
-
             $response_dt    = $this->append_relationships_objects($response_dt);
             $response_dt    = $this->append_relationships_nulls($response_dt);
             $response       = AccountType::arr_to_dt_response( 
@@ -393,10 +283,7 @@ class AccountTypeApi extends Controller
                 $total_records,
                 $records_filtered
                 );
-
-
         }else{
-
             $sql            = AccountType::bind_presql($qb->toSql(),$qb->getBindings());
             $response       = json_decode(json_encode(DB::select($sql)), true);
             if(!array_key_exists('lean', $input)){
@@ -405,12 +292,7 @@ class AccountTypeApi extends Controller
             }
         }
 
-
-
-
         return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
-
-
     }
 
 
@@ -434,19 +316,12 @@ class AccountTypeApi extends Controller
 
     public function append_relationships_objects($data = array()){
 
-
         foreach ($data as $key => $value) {
-
             $account_types = AccountType::find($data[$key]['id']);
-
-            $data[$key]['account_classification']                  = $account_types->account_classification;
-
+            $data[$key]['account_classification'] = $account_types->account_classification;
         }
 
-
         return $data;
-
-
     }
 
 
@@ -464,19 +339,12 @@ class AccountTypeApi extends Controller
 
     public function append_relationships_nulls($data = array()){
 
-
         foreach ($data as $key => $value) {
-
-
             if($data[$key]["account_classification"]==null){
                 $data[$key]["account_classification"] = array("account_classification_name"=>"N/A");
             }
-
-
         }
 
         return $data;
-
-
     }
 }

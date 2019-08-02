@@ -5,8 +5,6 @@ namespace App\Http\Controllers;
 
 use JWTAuth;
 use Exception;
-use App;
-use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Request;
 use App\Models\AssetsModels\FixedAsset;
 use App\Models\AssetsModels\FixedAssetStatus;
@@ -19,15 +17,6 @@ use Excel;
 
 class FixedAssetsApi extends Controller
 {
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-    }
-
-
-
     /**
      * Fixed Asset Statuses
      */
@@ -355,8 +344,6 @@ class FixedAssetsApi extends Controller
     
     public function getAssetById($id)
     {
-        $input = Request::all();
-
         try{
             $response = FixedAsset::with('status','category','location','assigned_to','added_by','logs.causer')->findOrFail($id);           
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
@@ -383,8 +370,6 @@ class FixedAssetsApi extends Controller
             $lost_asset->explanation = $input['explanation'];
             $file = $input['file'];
 
-            // $lost_status = FixedAssetStatus::where('status','like', '\'%stolen%\'')
-            //                 ->orWhere('status','like', '\'%lost%\'')->first();
             $lost_status = FixedAssetStatus::find(5);   // Lost/Stolen status id
 
             $asset = FixedAsset::findOrFail($input['fixed_asset_id']);
@@ -493,7 +478,7 @@ class FixedAssetsApi extends Controller
                 //     $allocation->allocatable_type = $payable_type;
                 //     $allocation->amount_allocated = $value['amount_allocation'];
                 //     $allocation->allocation_purpose = $value['specific_journal_rference'];
-                //     $allocation->percentage_allocated = (string) $this->getPercentage($value['amount_allocation'], $total);
+                //     $allocation->percentage_allocated  (string) $this->getPercentage($value['amount_allocation'], $total);
                 //     $allocation->allocated_by_id =  (int) $user->id;
                 //     $allocation->account_id =  $account->id;
                 //     $allocation->project_id = $project->id;
@@ -507,9 +492,6 @@ class FixedAssetsApi extends Controller
                 }
             }
 
-            // foreach($assets_array as $allocation){
-            //     $allocation->save();
-            // }
             return response()->json(['msg'=>'finished'], 200,array(),JSON_PRETTY_PRINT);
         }
         catch(Exception $e){
@@ -647,8 +629,6 @@ class FixedAssetsApi extends Controller
     
     public function getAssetLocationById($id)
     {
-        $input = Request::all();
-
         try{
             $response = FixedAssetLocation::findOrFail($id);           
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
@@ -779,7 +759,6 @@ class FixedAssetsApi extends Controller
     public function deleteAssetCategory($id)
     {
         $deleted = FixedAssetCategory::destroy($id);
-
         if($deleted){
             return response()->json(['msg'=>"category deleted"], 200,array(),JSON_PRETTY_PRINT);
         }else{
@@ -796,8 +775,8 @@ class FixedAssetsApi extends Controller
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
         }
         catch(Exception $e){
-            $response =  ["error"=>"category could not be found"];
-            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+            $response =  ["error"=>"Something went wrong"];
+            return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
         }
     }
 }

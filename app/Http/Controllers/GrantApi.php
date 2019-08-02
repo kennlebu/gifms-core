@@ -15,74 +15,14 @@
 
 namespace App\Http\Controllers;
 
-
-use JWTAuth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\DB;
 
 use App\Models\GrantModels\Grant;
-
-
 use Exception;
-use App;
-use Illuminate\Support\Facades\Response;
-use App\Models\StaffModels\Staff;
 
 class GrantApi extends Controller
 {
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-    }
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     /**
      * Operation addGrant
      *
@@ -96,16 +36,14 @@ class GrantApi extends Controller
         $form = Request::all();
 
         $grant = new Grant;
-
-            $grant->grant_name                   =         $form['grant_name'];
-            $grant->grant_code                   =         $form['grant_code'];
-            $grant->grant_amount                 =         $form['grant_amount'];
-            $grant->currency_id                  =         $form['currency_id'];
-            $grant->donor_id                     =         $form['donor_id'];
-            $grant->status_id                    =         (int)$form['status_id'];
+        $grant->grant_name                   =         $form['grant_name'];
+        $grant->grant_code                   =         $form['grant_code'];
+        $grant->grant_amount                 =         $form['grant_amount'];
+        $grant->currency_id                  =         $form['currency_id'];
+        $grant->donor_id                     =         $form['donor_id'];
+        $grant->status_id                    =         (int)$form['status_id'];
 
         if($grant->save()) {
-
             return Response()->json(array('msg' => 'Success: grant added','grant' => $grant), 200);
         }
     }
@@ -145,16 +83,14 @@ class GrantApi extends Controller
         $form = Request::all();
 
         $grant = Grant::find($form['id']);
-
-            $grant->grant_name                   =         $form['grant_name'];
-            $grant->grant_code                   =         $form['grant_code'];
-            $grant->grant_amount                 =         $form['grant_amount'];
-            $grant->currency_id                  =         $form['currency_id'];
-            $grant->donor_id                     =         $form['donor_id'];
-            $grant->status_id                    =         (int)$form['status_id'];
+        $grant->grant_name                   =         $form['grant_name'];
+        $grant->grant_code                   =         $form['grant_code'];
+        $grant->grant_amount                 =         $form['grant_amount'];
+        $grant->currency_id                  =         $form['currency_id'];
+        $grant->donor_id                     =         $form['donor_id'];
+        $grant->status_id                    =         (int)$form['status_id'];
 
         if($grant->save()) {
-
             return Response()->json(array('msg' => 'Success: grant updated','grant' => $grant), 200);
         }
     }
@@ -192,15 +128,11 @@ class GrantApi extends Controller
      */
     public function deleteGrant($grant_id)
     {
-        $input = Request::all();
-
-
         $deleted = Grant::destroy($grant_id);
-
         if($deleted){
             return response()->json(['msg'=>"grant deleted"], 200,array(),JSON_PRETTY_PRINT);
         }else{
-            return response()->json(['error'=>"grant not found"], 404,array(),JSON_PRETTY_PRINT);
+            return response()->json(['error'=>"Something went wrong"], 500,array(),JSON_PRETTY_PRINT);
         }
     }
     
@@ -237,18 +169,13 @@ class GrantApi extends Controller
      */
     public function getGrantById($grant_id)
     {
-        $input = Request::all();
-
         try{
-
-            $response   = Grant::with("account_restrictions")->findOrFail($grant_id);
-           
+            $response   = Grant::with("account_restrictions")->findOrFail($grant_id);           
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
 
         }catch(Exception $e){
-
-            $response =  ["error"=>"grant could not be found"];
-            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+            $response =  ["error"=>"Something went wrong"];
+            return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
         }
     }
 
@@ -295,9 +222,8 @@ class GrantApi extends Controller
             return response()->json(['msg'=>"Restrictions Updated", 'account_restrictions'=>$response], 200,array(),JSON_PRETTY_PRINT);
 
         }catch(Exception $e){
-
-            $response =  ["error"=>"grant could not be found"];
-            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+            $response =  ["error"=>"Something went wrong"];
+            return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
         }
     }
     
@@ -332,8 +258,7 @@ class GrantApi extends Controller
      * @return Http response
      */
     public function grantsGet()
-    {
-       
+    {       
         $input = Request::all();
         //query builder
         $qb = DB::table('grants');
@@ -346,31 +271,20 @@ class GrantApi extends Controller
         $total_records          = $qb->count();
         $records_filtered       = 0;
 
-
-
-
         //searching
         if(array_key_exists('searchval', $input)){
-            $qb->where(function ($query) use ($input) {
-                
+            $qb->where(function ($query) use ($input) {                
                 $query->orWhere('grants.id','like', '\'%' . $input['searchval']. '%\'');
                 $query->orWhere('grants.grant_name','like', '\'%' . $input['searchval']. '%\'');
                 $query->orWhere('grants.grant_code','like', '\'%' . $input['searchval']. '%\'');
-
             });
-
-            // $records_filtered       =  $qb->count(); //doesn't work
 
             $sql = Grant::bind_presql($qb->toSql(),$qb->getBindings());
             $sql = str_replace("*"," count(*) AS count ", $sql);
             $dt = json_decode(json_encode(DB::select($sql)), true);
 
             $records_filtered = (int) $dt[0]['count'];
-            // $records_filtered = 30;
-
-
         }
-
 
         //ordering
         if(array_key_exists('order_by', $input)&&$input['order_by']!=''){
@@ -379,50 +293,21 @@ class GrantApi extends Controller
             if(array_key_exists('order_dir', $input)&&$input['order_dir']!=''){                
                 $order_direction = $input['order_dir'];
             }
-
             $qb->orderBy($order_column_name, $order_direction);
-        }else{
-            //$qb->orderBy("project_code", "asc");
         }
 
         //limit
         if(array_key_exists('limit', $input)){
-
-
             $qb->limit($input['limit']);
-
-
         }
-
-        //migrated
-        if(array_key_exists('migrated', $input)){
-
-            $mig = (int) $input['migrated'];
-
-            if($mig==0){
-                $qb->whereNull('migration_id');
-            }else if($mig==1){
-                $qb->whereNotNull('migration_id');
-            }
-
-
-        }
-
-
 
         if(array_key_exists('datatables', $input)){
-
             //searching
-            $qb->where(function ($query) use ($input) {
-                
+            $qb->where(function ($query) use ($input) {                
                 $query->orWhere('grants.id','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('grants.grant_name','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('grants.grant_code','like', '\'%' . $input['search']['value']. '%\'');
-
             });
-
-
-
 
             $sql = Grant::bind_presql($qb->toSql(),$qb->getBindings());
             $sql = str_replace("*"," count(*) AS count ", $sql);
@@ -430,44 +315,26 @@ class GrantApi extends Controller
 
             $records_filtered = (int) $dt[0]['count'];
 
-
             //ordering
             $order_column_id    = (int) $input['order'][0]['column'];
             $order_column_name  = $input['columns'][$order_column_id]['order_by'];
             $order_direction    = $input['order'][0]['dir'];
 
             if($order_column_name!=''){
-
                 $qb->orderBy($order_column_name, $order_direction);
-
             }
-
-
-
-
-
 
             //limit $ offset
             if((int)$input['start']!= 0 ){
-
                 $response_dt    =   $qb->limit($input['length'])->offset($input['start']);
-
             }else{
                 $qb->limit($input['length']);
             }
 
-
-
-
-
             $sql = Grant::bind_presql($qb->toSql(),$qb->getBindings());
 
-            // $response_dt = DB::select($qb->toSql(),$qb->getBindings());         //pseudo
             $response_dt = DB::select($sql);
-
-
             $response_dt = json_decode(json_encode($response_dt), true);
-
             $response_dt    = $this->append_relationships_objects($response_dt);
             $response_dt    = $this->append_relationships_nulls($response_dt);
             $response       = Grant::arr_to_dt_response( 
@@ -475,9 +342,8 @@ class GrantApi extends Controller
                 $total_records,
                 $records_filtered
                 );
-
-
-        }else{
+        }
+        else{
             $qb->where('status_id', 1);
 
             $sql            = Grant::bind_presql($qb->toSql(),$qb->getBindings());
@@ -488,12 +354,7 @@ class GrantApi extends Controller
             }
         }
 
-
-
-
         return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
-
-
     }
 
 
@@ -517,25 +378,17 @@ class GrantApi extends Controller
 
     public function append_relationships_objects($data = array()){
 
-
         foreach ($data as $key => $value) {
-
             $grants = Grant::find($data[$key]['id']);
-
             $data[$key]['amount_allocated']      = $grants->amount_allocated;
             $data[$key]['status']                = $grants->status;
             $data[$key]['currency']              = $grants->currency;
             $data[$key]['donor']                 = $grants->donor;
             $data[$key]['grant_allocations']     = $grants->grant_allocations;
             $data[$key]['account_restrictions']  = $grants->account_restrictions;
-
-
         }
 
-
         return $data;
-
-
     }
 
 
@@ -552,11 +405,7 @@ class GrantApi extends Controller
 
 
     public function append_relationships_nulls($data = array()){
-
-
         foreach ($data as $key => $value) {
-
-
             if($data[$key]["status"]==null){
                 $data[$key]["status"] = array("grant_status"=>"N/A");
             }
@@ -566,12 +415,8 @@ class GrantApi extends Controller
             if($data[$key]["donor"]==null){
                 $data[$key]["donor"] = array("donor_name"=>"N/A");
             }
-
-
         }
 
         return $data;
-
-
     }
 }

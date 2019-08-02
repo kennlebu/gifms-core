@@ -23,19 +23,12 @@ use App\Models\AdvancesModels\AdvanceStatus;
 use App\Models\ProjectsModels\Project;
 use App\Models\AccountingModels\Account;
 use Anchu\Ftp\Facades\Ftp;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\NotifyAdvance;
 use App\Models\ApprovalsModels\Approval;
-use App\Models\ApprovalsModels\ApprovalLevel;
-use App\Models\StaffModels\Staff;
 use App\Models\PaymentModels\Payment;
-use App\Models\PaymentModels\PaymentMode;
 use App\Models\PaymentModels\PaymentBatch;
-use App\Models\LookupModels\Currency;
-use App\Models\BankingModels\BankBranch;
 use App\Exceptions\ApprovalException;
 use PDF;
 use App\Models\PaymentModels\VoucherNumber;
@@ -792,16 +785,6 @@ class AdvanceApi extends Controller
         //limit
         if(array_key_exists('limit', $input)){
             $qb->limit($input['limit']);
-        }
-
-        //migrated
-        if(array_key_exists('migrated', $input)){
-            $mig = (int) $input['migrated'];
-            if($mig==0){
-                $qb->whereNull('migration_id');
-            }else if($mig==1){
-                $qb->whereNotNull('migration_id');
-            }
         }
 
         if(array_key_exists('datatables', $input)){

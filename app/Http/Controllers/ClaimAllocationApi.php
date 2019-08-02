@@ -15,87 +15,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Request;
-use App\Models\ClaimsModels\Claim;
 use App\Models\AllocationModels\Allocation;
 
 class ClaimAllocationApi extends Controller
 {
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-    }
-
-    /**
-     * Operation addClaimAllocation
-     *
-     * Add a new claim_allocation.
-     *
-     *
-     * @return Http response
-     */
-    public function addClaimAllocation()
-    {
-        $input = Request::all();
-
-        //path params validation
-
-
-        //not path params validation
-        if (!isset($input['body'])) {
-            throw new \InvalidArgumentException('Missing the required parameter $body when calling addClaimAllocation');
-        }
-        $body = $input['body'];
-
-
-        return response('How about implementing addClaimAllocation as a POST method ?');
-    }
-    /**
-     * Operation updateClaimAllocation
-     *
-     * Update an existing claim_allocation.
-     *
-     *
-     * @return Http response
-     */
-    public function updateClaimAllocation()
-    {
-        $input = Request::all();
-
-        //path params validation
-
-
-        //not path params validation
-        if (!isset($input['body'])) {
-            throw new \InvalidArgumentException('Missing the required parameter $body when calling updateClaimAllocation');
-        }
-        $body = $input['body'];
-
-
-        return response('How about implementing updateClaimAllocation as a PUT method ?');
-    }
-    /**
-     * Operation deleteClaimAllocation
-     *
-     * Deletes an claim_allocation.
-     *
-     * @param int $claim_allocation_id claim_allocation id to delete (required)
-     *
-     * @return Http response
-     */
-    public function deleteClaimAllocation($claim_allocation_id)
-    {
-        $input = Request::all();
-
-        //path params validation
-
-
-        //not path params validation
-
-        return response('How about implementing deleteClaimAllocation as a DELETE method ?');
-    }
     /**
      * Operation getClaimAllocationById
      *
@@ -118,35 +41,12 @@ class ClaimAllocationApi extends Controller
                                     )->findOrFail($claim_allocation_id);
 
 
-                $response['claim']  =   $response['allocatable'];
-
+            $response['claim']  =   $response['allocatable'];
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
 
         }catch(Exception $e){
-
             $response =  ["error"=>"Claim Allocation could not be found"];
             return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
         }
-    }
-    /**
-     * Operation claimAllocationsGet
-     *
-     * claim_allocations List.
-     *
-     *
-     * @return Http response
-     */
-    public function claimAllocationsGet()
-    {
-        $input = Request::all();
-
-        //path params validation
-
-
-        //not path params validation
-        $claim_allocation_id = $input['claim_allocation_id'];
-
-
-        return response('How about implementing claimAllocationsGet as a GET method ?');
     }
 }

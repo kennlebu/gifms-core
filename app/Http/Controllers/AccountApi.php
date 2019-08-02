@@ -20,56 +20,10 @@ use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\DB;
 
 use App\Models\AccountingModels\Account;
-use App\Models\AccountingModels\AccountClassification;
-use App\Models\AccountingModels\AccountType;
-
 use Exception;
-use App;
-use Illuminate\Support\Facades\Response;
-use App\Models\StaffModels\Staff;
 
 class AccountApi extends Controller
 {
-
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-
     /**
      * Operation addAccount
      *
@@ -146,21 +100,19 @@ class AccountApi extends Controller
         $form = Request::all();
 
         $account = Account::find($form['id']);
-
-            $account->account_code                     =         $form['account_code'];
-            $account->account_name                     =         $form['account_name'];
-            $account->account_desc                     =         $form['account_desc'];
-            $account->account_format                   =         $form['account_format'];
-            $account->status                           =         $form['status'];
-            $account->account_type_id                  =  (int)  $form['account_type_id'];
-            if(!empty($form['view_mode'])&&((int)$form['view_mode'])==1) 
-            $account->view_mode = 'public';
-            else {
-                $account->view_mode = '';
-            }
+        $account->account_code                     =         $form['account_code'];
+        $account->account_name                     =         $form['account_name'];
+        $account->account_desc                     =         $form['account_desc'];
+        $account->account_format                   =         $form['account_format'];
+        $account->status                           =         $form['status'];
+        $account->account_type_id                  =  (int)  $form['account_type_id'];
+        if(!empty($form['view_mode'])&&((int)$form['view_mode'])==1) 
+        $account->view_mode = 'public';
+        else {
+            $account->view_mode = '';
+        }
 
         if($account->save()) {
-
             return Response()->json(array('msg' => 'Success: account updated','account' => $account), 200);
         }
     }
@@ -207,9 +159,6 @@ class AccountApi extends Controller
      */
     public function deleteAccount($account_id)
     {
-        $input = Request::all();
-
-
         $deleted = Account::destroy($account_id);
 
         if($deleted){
@@ -261,16 +210,10 @@ class AccountApi extends Controller
      */
     public function getAccountById($account_id)
     {
-        $input = Request::all();
-
         try{
-
-            $response   = Account::findOrFail($account_id);
-           
+            $response   = Account::findOrFail($account_id);           
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
-
         }catch(Exception $e){
-
             $response =  ["error"=>"account could not be found"];
             return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
         }
@@ -317,9 +260,6 @@ class AccountApi extends Controller
      */
     public function accountsGet()
     {
-        
-
-
         $input = Request::all();
         //query builder
         $qb = DB::table('accounts');
@@ -332,21 +272,17 @@ class AccountApi extends Controller
 
         $total_records          = $qb->count();
         $records_filtered       = 0;
-
         
         //my_assigned
         if((array_key_exists('my_assigned', $input)&& $input['my_assigned'] = "true")&&($current_user->hasRole(['accountant','assistant-accountant','financial-controller']))){
-
             $qb->whereNotNull('account_code');
         }elseif (array_key_exists('my_assigned', $input)&& $input['my_assigned'] = "true") {
-
             $qb->select(DB::raw('accounts.*'))
                  ->rightJoin('account_teams', 'account_teams.account_id', '=', 'accounts.id')
                  ->rightJoin('staff', 'staff.id', '=', 'account_teams.staff_id')
                  ->where('staff.id', '=', $current_user->id)
                  ->groupBy('accounts.id');
         }
-
 
         //query builder
         $qb = DB::table('accounts');
@@ -382,26 +318,18 @@ class AccountApi extends Controller
         //searching
         if(array_key_exists('searchval', $input)){
             $qb->where(function ($query) use ($input) {
-                
                 $query->orWhere('accounts.id','like', '\'%' . $input['searchval']. '%\'');
                 $query->orWhere('accounts.account_name','like', '\'%' . $input['searchval']. '%\'');
                 $query->orWhere('accounts.account_desc','like', '\'%' . $input['searchval']. '%\'');
                 $query->orWhere('accounts.account_code','like', '\'%' . $input['searchval']. '%\'');
-
             });
-
-            // $records_filtered       =  $qb->count(); //doesn't work
 
             $sql = Account::bind_presql($qb->toSql(),$qb->getBindings());
             $sql = str_replace("*"," count(*) AS count ", $sql);
             $dt = json_decode(json_encode(DB::select($sql)), true);
 
             $records_filtered = (int) $dt[0]['count'];
-            // $records_filtered = 30;
-
-
         }
-
 
         //ordering
         if(array_key_exists('order_by', $input)&&$input['order_by']!=''){
@@ -412,49 +340,21 @@ class AccountApi extends Controller
             }
 
             $qb->orderBy($order_column_name, $order_direction);
-        }else{
-            // $qb->orderBy("account_name", "asc");
         }
 
         //limit
         if(array_key_exists('limit', $input)){
-
-
             $qb->limit($input['limit']);
-
-
         }
-
-        //migrated
-        if(array_key_exists('migrated', $input)){
-
-            $mig = (int) $input['migrated'];
-
-            if($mig==0){
-                $qb->whereNull('migration_id');
-            }else if($mig==1){
-                $qb->whereNotNull('migration_id');
-            }
-
-
-        }
-
-
 
         if(array_key_exists('datatables', $input)){
-
             //searching
-            $qb->where(function ($query) use ($input) {
-                
+            $qb->where(function ($query) use ($input) {                
                 $query->orWhere('accounts.id','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('accounts.account_name','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('accounts.account_desc','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('accounts.account_code','like', '\'%' . $input['search']['value']. '%\'');
-
             });
-
-
-
 
             $sql = Account::bind_presql($qb->toSql(),$qb->getBindings());
             $sql = str_replace("*"," count(*) AS count ", $sql);
@@ -462,44 +362,26 @@ class AccountApi extends Controller
 
             $records_filtered = (int) $dt[0]['count'];
 
-
             //ordering
             $order_column_id    = (int) $input['order'][0]['column'];
             $order_column_name  = $input['columns'][$order_column_id]['order_by'];
             $order_direction    = $input['order'][0]['dir'];
 
             if($order_column_name!=''){
-
                 $qb->orderBy($order_column_name, $order_direction);
-
             }
-
-
-
-
-
 
             //limit $ offset
             if((int)$input['start']!= 0 ){
-
                 $response_dt    =   $qb->limit($input['length'])->offset($input['start']);
-
             }else{
                 $qb->limit($input['length']);
             }
 
-
-
-
-
             $sql = Account::bind_presql($qb->toSql(),$qb->getBindings());
 
-            // $response_dt = DB::select($qb->toSql(),$qb->getBindings());         //pseudo
             $response_dt = DB::select($sql);
-
-
             $response_dt = json_decode(json_encode($response_dt), true);
-
             $response_dt    = $this->append_relationships_objects($response_dt);
             $response_dt    = $this->append_relationships_nulls($response_dt);
             $response       = Account::arr_to_dt_response( 
@@ -507,8 +389,6 @@ class AccountApi extends Controller
                 $total_records,
                 $records_filtered
                 );
-
-
         }else{
 
             $sql            = Account::bind_presql($qb->toSql(),$qb->getBindings());
@@ -519,12 +399,7 @@ class AccountApi extends Controller
             }
         }
 
-
-
-
         return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
-
-
     }
 
 
@@ -547,22 +422,16 @@ class AccountApi extends Controller
 
 
     public function append_relationships_objects($data = array()){
-
-
         foreach ($data as $key => $value) {
 
-            $accounts = Account::with('account_type')->find($data[$key]['id']);
-            
+            $accounts = Account::with('account_type')->find($data[$key]['id']);            
             if(!empty($accounts->account_type_id) && $accounts->account_type_id!=0)
                 $data[$key]['account_type'] = $accounts->account_type;
             else $data[$key]['account_type'] = array("account_type_name"=>"N/A");
 
         }
 
-
         return $data;
-
-
     }
 
 
@@ -580,19 +449,12 @@ class AccountApi extends Controller
 
     public function append_relationships_nulls($data = array()){
 
-
         foreach ($data as $key => $value) {
-
-
             if(empty($data[$key]["account_type"])){
                 $data[$key]["account_type"] = array("account_type_name"=>"N/A");
             }
-
-
         }
 
         return $data;
-
-
     }
 }

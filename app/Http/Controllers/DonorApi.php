@@ -15,74 +15,14 @@
 
 namespace App\Http\Controllers;
 
-
-use JWTAuth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\DB;
 
 use App\Models\GrantModels\Donor;
-
-
 use Exception;
-use App;
-use Illuminate\Support\Facades\Response;
-use App\Models\StaffModels\Staff;
 
 class DonorApi extends Controller
 {
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-    }
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     /**
      * Operation addDonor
      *
@@ -99,44 +39,17 @@ class DonorApi extends Controller
             );
 
         $donor = new Donor;
-
-            $donor->donor_name                   =         $form['donor_name'];
-            $donor->donor_code                   =         $form['donor_code'];
+        $donor->donor_name                   =         $form['donor_name'];
+        $donor->donor_code                   =         $form['donor_code'];
 
         if($donor->save()) {
-
             return Response()->json(array('msg' => 'Success: donor added','donor' => $donor), 200);
         }
     }
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     /**
      * Operation updateDonor
-     *
      * Update an existing donor.
-     *
-     *
      * @return Http response
      */
     public function updateDonor()
@@ -148,12 +61,10 @@ class DonorApi extends Controller
             );
 
         $donor = Donor::find($form['id']);
-
-            $donor->donor_name                   =         $form['donor_name'];
-            $donor->donor_code                   =         $form['donor_code'];
+        $donor->donor_name                   =         $form['donor_name'];
+        $donor->donor_code                   =         $form['donor_code'];
 
         if($donor->save()) {
-
             return Response()->json(array('msg' => 'Success: donor updated','donor' => $donor), 200);
         }
     }
@@ -191,9 +102,6 @@ class DonorApi extends Controller
      */
     public function deleteDonor($donor_id)
     {
-        $input = Request::all();
-
-
         $deleted = Donor::destroy($donor_id);
 
         if($deleted){
@@ -236,16 +144,10 @@ class DonorApi extends Controller
      */
     public function getDonorById($donor_id)
     {
-        $input = Request::all();
-
         try{
-
-            $response   = Donor::findOrFail($donor_id);
-           
+            $response   = Donor::findOrFail($donor_id);           
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
-
         }catch(Exception $e){
-
             $response =  ["error"=>"donor could not be found"];
             return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
         }
@@ -275,15 +177,11 @@ class DonorApi extends Controller
 
     /**
      * Operation donorsGet
-     *
      * Donors List.
-     *
-     *
      * @return Http response
      */
     public function donorsGet()
-    {
-       
+    {       
         $input = Request::all();
         //query builder
         $qb = DB::table('donors');
@@ -296,31 +194,20 @@ class DonorApi extends Controller
         $total_records          = $qb->count();
         $records_filtered       = 0;
 
-
-
-
         //searching
         if(array_key_exists('searchval', $input)){
-            $qb->where(function ($query) use ($input) {
-                
+            $qb->where(function ($query) use ($input) {                
                 $query->orWhere('donors.id','like', '\'%' . $input['searchval']. '%\'');
                 $query->orWhere('donors.donor_name','like', '\'%' . $input['searchval']. '%\'');
                 $query->orWhere('donors.donor_code','like', '\'%' . $input['searchval']. '%\'');
-
             });
-
-            // $records_filtered       =  $qb->count(); //doesn't work
 
             $sql = Donor::bind_presql($qb->toSql(),$qb->getBindings());
             $sql = str_replace("*"," count(*) AS count ", $sql);
             $dt = json_decode(json_encode(DB::select($sql)), true);
 
             $records_filtered = (int) $dt[0]['count'];
-            // $records_filtered = 30;
-
-
         }
-
 
         //ordering
         if(array_key_exists('order_by', $input)&&$input['order_by']!=''){
@@ -329,50 +216,21 @@ class DonorApi extends Controller
             if(array_key_exists('order_dir', $input)&&$input['order_dir']!=''){                
                 $order_direction = $input['order_dir'];
             }
-
             $qb->orderBy($order_column_name, $order_direction);
-        }else{
-            //$qb->orderBy("project_code", "asc");
         }
 
         //limit
         if(array_key_exists('limit', $input)){
-
-
             $qb->limit($input['limit']);
-
-
         }
-
-        //migrated
-        if(array_key_exists('migrated', $input)){
-
-            $mig = (int) $input['migrated'];
-
-            if($mig==0){
-                $qb->whereNull('migration_id');
-            }else if($mig==1){
-                $qb->whereNotNull('migration_id');
-            }
-
-
-        }
-
-
 
         if(array_key_exists('datatables', $input)){
-
             //searching
-            $qb->where(function ($query) use ($input) {
-                
+            $qb->where(function ($query) use ($input) {                
                 $query->orWhere('donors.id','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('donors.donor_name','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('donors.donor_code','like', '\'%' . $input['search']['value']. '%\'');
-
             });
-
-
-
 
             $sql = Donor::bind_presql($qb->toSql(),$qb->getBindings());
             $sql = str_replace("*"," count(*) AS count ", $sql);
@@ -380,44 +238,26 @@ class DonorApi extends Controller
 
             $records_filtered = (int) $dt[0]['count'];
 
-
             //ordering
             $order_column_id    = (int) $input['order'][0]['column'];
             $order_column_name  = $input['columns'][$order_column_id]['order_by'];
             $order_direction    = $input['order'][0]['dir'];
 
             if($order_column_name!=''){
-
                 $qb->orderBy($order_column_name, $order_direction);
-
             }
-
-
-
-
-
 
             //limit $ offset
             if((int)$input['start']!= 0 ){
-
                 $response_dt    =   $qb->limit($input['length'])->offset($input['start']);
-
             }else{
                 $qb->limit($input['length']);
             }
-
-
-
-
-
+            
             $sql = Donor::bind_presql($qb->toSql(),$qb->getBindings());
 
-            // $response_dt = DB::select($qb->toSql(),$qb->getBindings());         //pseudo
             $response_dt = DB::select($sql);
-
-
             $response_dt = json_decode(json_encode($response_dt), true);
-
             $response_dt    = $this->append_relationships_objects($response_dt);
             $response_dt    = $this->append_relationships_nulls($response_dt);
             $response       = Donor::arr_to_dt_response( 
@@ -425,10 +265,7 @@ class DonorApi extends Controller
                 $total_records,
                 $records_filtered
                 );
-
-
         }else{
-
             $sql            = Donor::bind_presql($qb->toSql(),$qb->getBindings());
             $response       = json_decode(json_encode(DB::select($sql)), true);
             if(!array_key_exists('lean', $input)){
@@ -437,12 +274,7 @@ class DonorApi extends Controller
             }
         }
 
-
-
-
         return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
-
-
     }
 
 
@@ -465,50 +297,11 @@ class DonorApi extends Controller
 
 
     public function append_relationships_objects($data = array()){
-
-
         foreach ($data as $key => $value) {
-
             $donors = Donor::find($data[$key]['id']);
-
-            $data[$key]['grants']                = $donors->grants;
-
-        }
-
-
-        return $data;
-
-
-    }
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-    public function append_relationships_nulls($data = array()){
-
-
-        foreach ($data as $key => $value) {
-
-
-            // if($data[$key]["grant"]==null){
-            //     $data[$key]["grant"] = array("grant_name"=>"N/A");
-            // }
-
-
+            $data[$key]['grants'] = $donors->grants;
         }
 
         return $data;
-
-
     }
 }

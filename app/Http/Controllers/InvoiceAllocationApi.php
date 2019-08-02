@@ -16,86 +16,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Request;
-use App\Models\InvoicesModels\Invoice;
 use App\Models\AllocationModels\Allocation;
 
 class InvoiceAllocationApi extends Controller
 {
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-    }
-
-    /**
-     * Operation addInvoiceAllocation
-     *
-     * Add a new invoice_allocation.
-     *
-     *
-     * @return Http response
-     */
-    public function addInvoiceAllocation()
-    {
-        $input = Request::all();
-
-        //path params validation
-
-
-        //not path params validation
-        if (!isset($input['body'])) {
-            throw new \InvalidArgumentException('Missing the required parameter $body when calling addInvoiceAllocation');
-        }
-        $body = $input['body'];
-
-
-        return response('How about implementing addInvoiceAllocation as a POST method ?');
-    }
-    /**
-     * Operation updateInvoiceAllocation
-     *
-     * Update an existing invoice_allocation.
-     *
-     *
-     * @return Http response
-     */
-    public function updateInvoiceAllocation()
-    {
-        $input = Request::all();
-
-        //path params validation
-
-
-        //not path params validation
-        if (!isset($input['body'])) {
-            throw new \InvalidArgumentException('Missing the required parameter $body when calling updateInvoiceAllocation');
-        }
-        $body = $input['body'];
-
-
-        return response('How about implementing updateInvoiceAllocation as a PUT method ?');
-    }
-    /**
-     * Operation deleteInvoiceAllocation
-     *
-     * Deletes an invoice_allocation.
-     *
-     * @param int $invoice_allocation_id invoice_allocation id to delete (required)
-     *
-     * @return Http response
-     */
-    public function deleteInvoiceAllocation($invoice_allocation_id)
-    {
-        $input = Request::all();
-
-        //path params validation
-
-
-        //not path params validation
-
-        return response('How about implementing deleteInvoiceAllocation as a DELETE method ?');
-    }
     /**
      * Operation getInvoiceAllocationById
      *
@@ -118,12 +42,10 @@ class InvoiceAllocationApi extends Controller
                                     )->findOrFail($invoice_allocation_id);
 
 
-                $response['invoice']  =   $response['allocatable'];
-
+            $response['invoice']  =   $response['allocatable'];
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
 
         }catch(Exception $e){
-
             $response =  ["error"=>"Invoice Allocation could not be found"];
             return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
         }

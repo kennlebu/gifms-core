@@ -15,49 +15,14 @@
 
 namespace App\Http\Controllers;
 
-
-use JWTAuth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\DB;
 
 use App\Models\PaymentModels\PaymentMode;
-
-
 use Exception;
-use App;
-use Illuminate\Support\Facades\Response;
-use App\Models\StaffModels\Staff;
 
 class PaymentModeApi extends Controller
 {
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-    }
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     /**
      * Operation addPaymentMode
      *
@@ -74,12 +39,10 @@ class PaymentModeApi extends Controller
             );
 
         $payment_mode = new PaymentMode;
-
-            $payment_mode->payment_mode_description                   =         $form['payment_mode_description'];
-            $payment_mode->abrv                          =         $form['abrv'];
+        $payment_mode->payment_mode_description                   =         $form['payment_mode_description'];
+        $payment_mode->abrv                          =         $form['abrv'];
 
         if($payment_mode->save()) {
-
             return Response()->json(array('msg' => 'Success: payment_mode added','payment_mode' => $payment_mode), 200);
         }
     }
@@ -121,12 +84,10 @@ class PaymentModeApi extends Controller
             );
 
         $payment_mode = PaymentMode::find($form['id']);
-
-            $payment_mode->payment_mode_description            =         $form['payment_mode_description'];
-            $payment_mode->abrv                   =         $form['abrv'];
+        $payment_mode->payment_mode_description = $form['payment_mode_description'];
+        $payment_mode->abrv = $form['abrv'];
 
         if($payment_mode->save()) {
-
             return Response()->json(array('msg' => 'Success: payment_mode updated','payment_mode' => $payment_mode), 200);
         }
     }
@@ -162,15 +123,11 @@ class PaymentModeApi extends Controller
      */
     public function deletePaymentMode($payment_mode_id)
     {
-        $input = Request::all();
-
-
         $deleted = PaymentMode::destroy($payment_mode_id);
-
         if($deleted){
             return response()->json(['msg'=>"payment_mode deleted"], 200,array(),JSON_PRETTY_PRINT);
         }else{
-            return response()->json(['error'=>"payment_mode not found"], 404,array(),JSON_PRETTY_PRINT);
+            return response()->json(['error'=>"Something went wrong"], 500,array(),JSON_PRETTY_PRINT);
         }
     }
     
@@ -206,18 +163,13 @@ class PaymentModeApi extends Controller
      */
     public function getPaymentModeById($payment_mode_id)
     {
-        $input = Request::all();
-
         try{
-
-            $response   = PaymentMode::findOrFail($payment_mode_id);
-           
+            $response   = PaymentMode::findOrFail($payment_mode_id);           
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
 
         }catch(Exception $e){
-
-            $response =  ["error"=>"payment_mode could not be found"];
-            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+            $response =  ["error"=>"Something went wrong"];
+            return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
         }
     }
     
@@ -251,9 +203,6 @@ class PaymentModeApi extends Controller
      */
     public function getPaymentModes()
     {
-        
-
-
         $input = Request::all();
         //query builder
         $qb = DB::table('payment_modes');
@@ -266,31 +215,20 @@ class PaymentModeApi extends Controller
         $total_records          = $qb->count();
         $records_filtered       = 0;
 
-
-
-
         //searching
         if(array_key_exists('searchval', $input)){
-            $qb->where(function ($query) use ($input) {
-                
+            $qb->where(function ($query) use ($input) {                
                 $query->orWhere('payment_modes.id','like', '\'%' . $input['searchval']. '%\'');
                 $query->orWhere('payment_modes.payment_mode_description','like', '\'%' . $input['searchval']. '%\'');
                 $query->orWhere('payment_modes.abrv','like', '\'%' . $input['searchval']. '%\'');
-
             });
-
-            // $records_filtered       =  $qb->count(); //doesn't work
 
             $sql = PaymentMode::bind_presql($qb->toSql(),$qb->getBindings());
             $sql = str_replace("*"," count(*) AS count ", $sql);
             $dt = json_decode(json_encode(DB::select($sql)), true);
 
             $records_filtered = (int) $dt[0]['count'];
-            // $records_filtered = 30;
-
-
         }
-
 
         //ordering
         if(array_key_exists('order_by', $input)&&$input['order_by']!=''){
@@ -299,50 +237,21 @@ class PaymentModeApi extends Controller
             if(array_key_exists('order_dir', $input)&&$input['order_dir']!=''){                
                 $order_direction = $input['order_dir'];
             }
-
             $qb->orderBy($order_column_name, $order_direction);
-        }else{
-            //$qb->orderBy("project_code", "asc");
         }
 
         //limit
         if(array_key_exists('limit', $input)){
-
-
             $qb->limit($input['limit']);
-
-
         }
-
-        //migrated
-        if(array_key_exists('migrated', $input)){
-
-            $mig = (int) $input['migrated'];
-
-            if($mig==0){
-                $qb->whereNull('migration_id');
-            }else if($mig==1){
-                $qb->whereNotNull('migration_id');
-            }
-
-
-        }
-
-
 
         if(array_key_exists('datatables', $input)){
-
             //searching
-            $qb->where(function ($query) use ($input) {
-                
+            $qb->where(function ($query) use ($input) {                
                 $query->orWhere('payment_modes.id','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('payment_modes.payment_mode_description','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('payment_modes.abrv','like', '\'%' . $input['search']['value']. '%\'');
-
             });
-
-
-
 
             $sql = PaymentMode::bind_presql($qb->toSql(),$qb->getBindings());
             $sql = str_replace("*"," count(*) AS count ", $sql);
@@ -350,134 +259,37 @@ class PaymentModeApi extends Controller
 
             $records_filtered = (int) $dt[0]['count'];
 
-
             //ordering
             $order_column_id    = (int) $input['order'][0]['column'];
             $order_column_name  = $input['columns'][$order_column_id]['order_by'];
             $order_direction    = $input['order'][0]['dir'];
 
             if($order_column_name!=''){
-
                 $qb->orderBy($order_column_name, $order_direction);
-
             }
-
-
-
-
-
 
             //limit $ offset
             if((int)$input['start']!= 0 ){
-
                 $response_dt    =   $qb->limit($input['length'])->offset($input['start']);
-
             }else{
                 $qb->limit($input['length']);
             }
 
-
-
-
-
             $sql = PaymentMode::bind_presql($qb->toSql(),$qb->getBindings());
 
-            // $response_dt = DB::select($qb->toSql(),$qb->getBindings());         //pseudo
             $response_dt = DB::select($sql);
-
-
             $response_dt = json_decode(json_encode($response_dt), true);
-
-            $response_dt    = $this->append_relationships_objects($response_dt);
-            $response_dt    = $this->append_relationships_nulls($response_dt);
             $response       = PaymentMode::arr_to_dt_response( 
                 $response_dt, $input['draw'],
                 $total_records,
                 $records_filtered
                 );
-
-
-        }else{
-
+        }
+        else{
             $sql            = PaymentMode::bind_presql($qb->toSql(),$qb->getBindings());
             $response       = json_decode(json_encode(DB::select($sql)), true);
-            if(!array_key_exists('lean', $input)){
-                $response       = $this->append_relationships_objects($response);
-                $response       = $this->append_relationships_nulls($response);
-            }
         }
-
-
-
 
         return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
-
-
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    public function append_relationships_objects($data = array()){
-
-
-        foreach ($data as $key => $value) {
-
-            $payment_modes = PaymentMode::find($data[$key]['id']);
-
-
-        }
-
-
-        return $data;
-
-
-    }
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-    public function append_relationships_nulls($data = array()){
-
-
-        foreach ($data as $key => $value) {
-
-
-            // if($data[$key]["account"]==null){
-            //     $data[$key]["account"] = array("account_name"=>"N/A");
-            // }
-
-
-        }
-
-        return $data;
-
-
     }
 }

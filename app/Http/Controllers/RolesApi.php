@@ -15,49 +15,16 @@
 
 namespace App\Http\Controllers;
 
-
 use JWTAuth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\DB;
 
 use App\Models\StaffModels\Role;
-
-
 use Exception;
-use App;
-use Illuminate\Support\Facades\Response;
 use App\Models\StaffModels\Staff;
 
 class RolesApi extends Controller
 {
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-    }
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     /**
      * Operation addRole
      *
@@ -74,12 +41,10 @@ class RolesApi extends Controller
             );
 
         $role = new Role;
-
-            $role->name                   =         $form['name'];
-            $role->acronym                   =         $form['acronym'];
+        $role->name                   =         $form['name'];
+        $role->acronym                   =         $form['acronym'];
 
         if($role->save()) {
-
             return Response()->json(array('msg' => 'Success: role added','role' => $role), 200);
         }
     }
@@ -121,12 +86,10 @@ class RolesApi extends Controller
             );
 
         $role = Role::find($form['id']);
-
-            $role->name                   =         $form['name'];
-            $role->acronym                   =         $form['acronym'];
+        $role->name                   =         $form['name'];
+        $role->acronym                   =         $form['acronym'];
 
         if($role->save()) {
-
             return Response()->json(array('msg' => 'Success: role updated','role' => $role), 200);
         }
     }
@@ -162,15 +125,11 @@ class RolesApi extends Controller
      */
     public function deleteRole($role_id)
     {
-        $input = Request::all();
-
-
         $deleted = Role::destroy($role_id);
-
         if($deleted){
             return response()->json(['msg'=>"role deleted"], 200,array(),JSON_PRETTY_PRINT);
         }else{
-            return response()->json(['error'=>"role not found"], 404,array(),JSON_PRETTY_PRINT);
+            return response()->json(['error'=>"Something went wrong"], 500,array(),JSON_PRETTY_PRINT);
         }
     }
     
@@ -206,18 +165,12 @@ class RolesApi extends Controller
      */
     public function getRoleById($role_id)
     {
-        $input = Request::all();
-
         try{
-
-            $response   = Role::with("permissions")->findOrFail($role_id);
-           
+            $response   = Role::with("permissions")->findOrFail($role_id);           
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
-
         }catch(Exception $e){
-
-            $response =  ["error"=>"role could not be found"];
-            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+            $response =  ["error"=>"Something went wrong"];
+            return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
         }
     }
 
@@ -254,7 +207,6 @@ class RolesApi extends Controller
             );
 
         try{
-
             $role  =   Role::findOrFail($role_id);
             $role->permissions()->sync($form->permissions);
             $response   = Role::with("permissions")->findOrFail($role_id);
@@ -262,9 +214,8 @@ class RolesApi extends Controller
             return response()->json(['msg'=>"Permissions Updated", 'role'=>$response], 200,array(),JSON_PRETTY_PRINT);
 
         }catch(Exception $e){
-
-            $response =  ["error"=>"role could not be found"];
-            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+            $response =  ["error"=>"Something went wrong"];
+            return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
         }
     }
 
@@ -307,11 +258,9 @@ public function getRightsTransfers()
         return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
 
     }catch(Exception $e){
-
-        $response =  ["error"=>"rights could not be found", "msg"=>$e->getMessage()];
-        return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+        $response =  ["error"=>"Something went wrong", "msg"=>$e->getMessage()];
+        return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
     }
-
 }
     
 
@@ -344,9 +293,6 @@ public function getRightsTransfers()
      */
     public function rolesGet()
     {
-        
-
-
         $input = Request::all();
         //query builder
         $qb = DB::table('roles');
@@ -359,31 +305,20 @@ public function getRightsTransfers()
         $total_records          = $qb->count();
         $records_filtered       = 0;
 
-
-
-
         //searching
         if(array_key_exists('searchval', $input)){
-            $qb->where(function ($query) use ($input) {
-                
+            $qb->where(function ($query) use ($input) {                
                 $query->orWhere('roles.id','like', '\'%' . $input['searchval']. '%\'');
                 $query->orWhere('roles.name','like', '\'%' . $input['searchval']. '%\'');
                 $query->orWhere('roles.acronym','like', '\'%' . $input['searchval']. '%\'');
-
             });
-
-            // $records_filtered       =  $qb->count(); //doesn't work
 
             $sql = Staff::bind_presql($qb->toSql(),$qb->getBindings());
             $sql = str_replace("*"," count(*) AS count ", $sql);
             $dt = json_decode(json_encode(DB::select($sql)), true);
 
             $records_filtered = (int) $dt[0]['count'];
-            // $records_filtered = 30;
-
-
         }
-
 
         //ordering
         if(array_key_exists('order_by', $input)&&$input['order_by']!=''){
@@ -392,17 +327,12 @@ public function getRightsTransfers()
             if(array_key_exists('order_dir', $input)&&$input['order_dir']!=''){                
                 $order_direction = $input['order_dir'];
             }
-
             $qb->orderBy($order_column_name, $order_direction);
         }
 
         //limit
         if(array_key_exists('limit', $input)){
-
-
             $qb->limit($input['limit']);
-
-
         }
 
         //for a staff member
@@ -414,35 +344,13 @@ public function getRightsTransfers()
                 ->groupBy('roles.id');
         }
 
-        //migrated
-        if(array_key_exists('migrated', $input)){
-
-            $mig = (int) $input['migrated'];
-
-            if($mig==0){
-                $qb->whereNull('migration_id');
-            }else if($mig==1){
-                $qb->whereNotNull('migration_id');
-            }
-
-
-        }
-
-
-
         if(array_key_exists('datatables', $input)){
-
             //searching
-            $qb->where(function ($query) use ($input) {
-                
+            $qb->where(function ($query) use ($input) {                
                 $query->orWhere('roles.id','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('roles.name','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('roles.acronym','like', '\'%' . $input['search']['value']. '%\'');
-
             });
-
-
-
 
             $sql = Staff::bind_presql($qb->toSql(),$qb->getBindings());
             $sql = str_replace("*"," count(*) AS count ", $sql);
@@ -450,23 +358,17 @@ public function getRightsTransfers()
 
             $records_filtered = (int) $dt[0]['count'];
 
-
             //ordering
             $order_column_id    = (int) $input['order'][0]['column'];
             $order_column_name  = $input['columns'][$order_column_id]['order_by'];
             $order_direction    = $input['order'][0]['dir'];
 
             if($order_column_name!=''){
-
                 $qb->orderBy($order_column_name, $order_direction);
-
             }
-
 
             //staff_id
             if(array_key_exists('staff_id', $input)){
-
-
                 $qb->select(DB::raw('roles.*'))
                      ->rightJoin('user_roles', 'user_roles.role_id', '=', 'roles.id')
                      ->rightJoin('staff', 'staff.id', '=', 'user_roles.staff_id')
@@ -474,57 +376,33 @@ public function getRightsTransfers()
                      ->groupBy('roles.id');
             }
 
-
-
-
-
-
             //limit $ offset
             if((int)$input['start']!= 0 ){
-
                 $response_dt    =   $qb->limit($input['length'])->offset($input['start']);
-
             }else{
                 $qb->limit($input['length']);
             }
 
-
-
-
-
             $sql = Staff::bind_presql($qb->toSql(),$qb->getBindings());
 
-            // $response_dt = DB::select($qb->toSql(),$qb->getBindings());         //pseudo
             $response_dt = DB::select($sql);
-
-
             $response_dt = json_decode(json_encode($response_dt), true);
-
             $response_dt    = $this->append_relationships_objects($response_dt);
-            $response_dt    = $this->append_relationships_nulls($response_dt);
             $response       = Staff::arr_to_dt_response( 
                 $response_dt, $input['draw'],
                 $total_records,
                 $records_filtered
                 );
-
-
-        }else{
-
+        }
+        else{
             $sql            = Staff::bind_presql($qb->toSql(),$qb->getBindings());
             $response       = json_decode(json_encode(DB::select($sql)), true);
             if(!array_key_exists('lean', $input)){
                 $response       = $this->append_relationships_objects($response);
-                $response       = $this->append_relationships_nulls($response);
             }
         }
 
-
-
-
         return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
-
-
     }
 
 
@@ -547,53 +425,12 @@ public function getRightsTransfers()
 
 
     public function append_relationships_objects($data = array()){
-
-
         foreach ($data as $key => $value) {
-
             $roles = Role::find($data[$key]['id']);
-
-
             $data[$key]['permissions']                   = $roles->permissions;
-
-
-        }
-
-
-        return $data;
-
-
-    }
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-    public function append_relationships_nulls($data = array()){
-
-
-        foreach ($data as $key => $value) {
-
-
-            // if($data[$key]["account"]==null){
-            //     $data[$key]["account"] = array("account_name"=>"N/A");
-            // }
-
-
         }
 
         return $data;
-
-
     }
 
     public function assignUserRoles(){
@@ -661,20 +498,6 @@ public function getRightsTransfers()
             foreach($receiver_roles as $role){
                 array_push($receiver_role_ids, $role['role_id']);
             }
-            
-            $role_ids_to_transfer = array();
-            $transfered_roles_in_db = array(); // The 'rights' column data
-
-            // Get the role ids not in the receiver's roles
-            // foreach($outgoing_role_ids as $role_id){
-            //     if(!in_array($role_id, $receiver_role_ids)){
-            //         array_push($role_ids_to_transfer, $role_id);
-                    // array_push($transfered_roles_in_db, array('id'=>$role_id, 'existed'=>false));
-            //     }
-            //     else {
-                    // array_push($transfered_roles_in_db, array('id'=>$role_id, 'existed'=>true));
-            //     }
-            // }
 
             $roles_inserts = array();
             $transfers_inserts = array();

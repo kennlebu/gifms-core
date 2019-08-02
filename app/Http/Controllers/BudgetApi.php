@@ -15,76 +15,17 @@
 
 namespace App\Http\Controllers;
 
-
-use JWTAuth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\DB;
 
 use App\Models\FinanceModels\Budget;
-use App\Models\FinanceModels\BudgetItem;
 use App\Models\AccountingModels\Account;
 use App\Models\ProjectsModels\Project;
-
 use Exception;
-use App;
-use Illuminate\Support\Facades\Response;
 use App\Models\StaffModels\Staff;
 
 class BudgetApi extends Controller
 {
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-    }
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     /**
      * Operation addBudget
      *
@@ -115,10 +56,6 @@ class BudgetApi extends Controller
 
         if($budget->save()) {
             if(!empty($form['project_id'])){
-                // $exists = Project::whereHas('budget', function($query) use ($start_date, $end_date){
-                //     $query->whereRaw('"'.date("Y-m-d").'" between `start_date` and `end_date`');  
-                // })->where($form['project_id'])->exists();
-                // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , PHP_EOL.$exists , FILE_APPEND);
                 $project = Project::find($form['project_id']);
                 $project->disableLogging();
                 $project->budget_id = $budget->id;
@@ -186,23 +123,6 @@ class BudgetApi extends Controller
 
         if($budget->save()) {
             if(!empty($form['project_id'])){
-                // Check if there is a running budget for that PID at the time
-                // $running = DB::select("select * from budgets
-                // right join projects on projects.budget_id = projects.id
-                // where ((DATE_ADD('".$start_date."', INTERVAL 1 DAY) between 
-                // cast(budgets.start_date as date) and cast(budgets.end_date as date)
-                // or DATE_SUB('".$end_date."', INTERVAL 1 DAY) between
-                // cast(budgets.start_date as date) and cast(budgets.end_date as datetime))
-                // or (budgets.start_date as date) 
-                // between DATE_ADD('".$start_date."', INTERVAL 1 DAY) and DATE_SUB('".$end_date."', INTERVAL 1 DAY)
-                // or cast(budgets.end_date as date) 
-                // between DATE_ADD('".$start_date."', INTERVAL 1 DAY) and DATE_SUB('".$end_date."', INTERVAL 1 DAY)))
-                // and projects.id is not null and projects.id = ".$form['project_id']." and budgets.deleted_at is null");
-
-                // $exists = Project::whereHas('budget', function($query) use ($start_date, $end_date){
-                //     $query->whereRaw('"'.date("Y-m-d").'" between `start_date` and `end_date`');  
-                // })->where('id', $form['project_id'])->first();
-                // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , PHP_EOL.json_encode($running) , FILE_APPEND);
                 $project = Project::find($form['project_id']);
                 $project->disableLogging();
                 $project->budget_id = $budget->id;
@@ -246,11 +166,7 @@ class BudgetApi extends Controller
      */
     public function deleteBudget($budget_id)
     {
-        $input = Request::all();
-
-
         $deleted = Budget::destroy($budget_id);
-
         if($deleted){
             return response()->json(['msg'=>"budget deleted"], 200,array(),JSON_PRETTY_PRINT);
         }else{
@@ -291,10 +207,7 @@ class BudgetApi extends Controller
      */
     public function getBudgetById($budget_id)
     {
-        $input = Request::all();
-
         try{
-
             $response   = Budget::with(
                                 'currency',
                                 'created_by',
@@ -351,7 +264,6 @@ class BudgetApi extends Controller
      */
     public function budgetsGet()
     {
-       
         $input = Request::all();
         //query builder
         $qb = DB::table('budgets');
@@ -386,7 +298,6 @@ class BudgetApi extends Controller
             }
         }
 
-
         //ordering
         if(array_key_exists('order_by', $input)&&$input['order_by']!=''){
             $order_direction     = "asc";
@@ -402,21 +313,7 @@ class BudgetApi extends Controller
             $qb->limit($input['limit']);
         }
 
-        //migrated
-        if(array_key_exists('migrated', $input)){
-            $mig = (int) $input['migrated'];
-
-            if($mig==0){
-                $qb->whereNull('migration_id');
-            }else if($mig==1){
-                $qb->whereNotNull('migration_id');
-            }
-        }
-
-
-
         if(array_key_exists('datatables', $input)){
-
             //searching
             $qb->where(function ($query) use ($input) {                
                 $query->orWhere('budgets.id','like', '\'%' . $input['search']['value']. '%\'');
@@ -491,10 +388,7 @@ class BudgetApi extends Controller
 
 
     public function append_relationships_objects($data = array()){
-
-
         foreach ($data as $key => $value) {
-
             $budgets = Budget::with('items.objective')->find($data[$key]['id']);
 
             $data[$key]['items']                    = $budgets->items;
@@ -502,7 +396,6 @@ class BudgetApi extends Controller
             $data[$key]['created_by']               = $budgets->created_by;
             $data[$key]['status']                   = $budgets->status;
             $data[$key]['totals']                   = $budgets->totals;
-
         }
 
         return $data;
@@ -523,10 +416,7 @@ class BudgetApi extends Controller
 
     public function append_relationships_nulls($data = array()){
 
-
         foreach ($data as $key => $value) {
-
-
             if($data[$key]["currency"]==null){
                 $data[$key]["currency"] = array("currency_name"=>"N/A");
             }

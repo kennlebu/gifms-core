@@ -5,8 +5,6 @@ namespace App\Http\Controllers;
 
 use JWTAuth;
 use Exception;
-use App;
-use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Request;
 use App\Models\FundsRequestModels\FundsRequest;
 use App\Models\FundsRequestModels\FundsRequestStatus;
@@ -17,15 +15,6 @@ use Excel;
 
 class FundsRequestApi extends Controller
 {
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-    }
-
-
-
     /**
      * Funds Request Statuses
      */
@@ -154,7 +143,6 @@ class FundsRequestApi extends Controller
     public function deleteFundsRequestStatus($id)
     {
         $deleted = FundsRequestStatus::destroy($id);
-
         if($deleted){
             return response()->json(['msg'=>"status deleted"], 200,array(),JSON_PRETTY_PRINT);
         }else{
@@ -217,8 +205,6 @@ class FundsRequestApi extends Controller
                 $funds_request = $funds_request->where('requested_by_id',$user->id);
             }elseif ($status_==-1) {
                 $funds_request = $funds_request->where('requested_by_id',$user->id);
-            }elseif ($status_==-2) {
-
             }
         }   
 
@@ -362,8 +348,6 @@ class FundsRequestApi extends Controller
     
     public function getFundsRequestById($id)
     {
-        $input = Request::all();
-
         try{
             $response = FundsRequest::with('status','requested_by','funds_request_items.program_activity','funds_request_items.currency','funds_request_items.project', 'logs.causer', 'approvals')->findOrFail($id);           
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
@@ -376,9 +360,6 @@ class FundsRequestApi extends Controller
 
     public function submitFundsRequestForApproval($id)
     {
-        
-        $input = Request::all();
-
         try{
             $request = FundsRequest::findOrFail($id);
 
@@ -659,12 +640,7 @@ class FundsRequestApi extends Controller
                         $row->setBorder('none', 'thin', 'none', 'thin');
                         $row->setBackground('#004080');                        
                         $row->setFontColor('#ffffff');
-                    }); 
-                    // $sheet->row(2, function($row){
-                    //     $row->setFontSize(12);
-                    //     $row->setFontWeight('bold');
-                    //     $row->setBorder('none', 'thin', 'none', 'thin');
-                    // }); 
+                    });
                     $sheet->setWidth(array(
                         'A' => 25,
                         'B' => 15,
@@ -794,8 +770,6 @@ class FundsRequestApi extends Controller
 
     public function getFundsRequestItemById($id)
     {
-        $input = Request::all();
-
         try{
             $response = FundsRequestItem::with('program_activity','project','currency')->findOrFail($id);           
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
@@ -809,11 +783,10 @@ class FundsRequestApi extends Controller
     public function deleteFundsRequestItem($id)
     {
         $deleted = FundsRequestItem::destroy($id);
-
         if($deleted){
             return response()->json(['msg'=>"item deleted"], 200,array(),JSON_PRETTY_PRINT);
         }else{
-            return response()->json(['error'=>"item not found"], 404,array(),JSON_PRETTY_PRINT);
+            return response()->json(['error'=>"Something went wrong"], 500,array(),JSON_PRETTY_PRINT);
         }
     }
 }

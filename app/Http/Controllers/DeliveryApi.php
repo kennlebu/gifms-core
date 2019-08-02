@@ -19,11 +19,7 @@ use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\DeliveriesModels\Delivery;
 use Anchu\Ftp\Facades\Ftp;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
-use App\Models\ApprovalsModels\Approval;
-use App\Models\ApprovalsModels\ApprovalLevel;
-use App\Models\StaffModels\Staff;
 use Illuminate\Support\Facades\Response;
 use App\Models\LPOModels\Lpo;
 use Illuminate\Support\Facades\Mail;
@@ -32,36 +28,6 @@ use PDF;
 
 class DeliveryApi extends Controller
 {
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     /**
      * Operation addDelivery
      *
@@ -72,7 +38,6 @@ class DeliveryApi extends Controller
      */
     public function addDelivery()
     {
-
         $delivery = new Delivery;
 
         try{
@@ -88,9 +53,7 @@ class DeliveryApi extends Controller
                 'file'
             );
 
-            $ftp = FTP::connection()->getDirListing();
             $file = $form['file'];
-
             $delivery->received_by_id                    =   (int)   $form['received_by_id'];
             $delivery->comment                           =           $form['comment'];
             $delivery->external_ref                      =           $form['external_ref'];
@@ -110,11 +73,7 @@ class DeliveryApi extends Controller
                     $lpo->save();
 
                 // Email delivery owner
-                    try{
-                        Mail::queue(new NotifyDelivery($delivery, $lpo));
-                    }catch(Exception $e){
-
-                    }
+                    Mail::queue(new NotifyDelivery($delivery, $lpo));
                 }
 
                 FTP::connection()->makeDir('/deliveries');
@@ -129,9 +88,7 @@ class DeliveryApi extends Controller
             }
 
         }catch (JWTException $e){
-
             return response()->json(['error'=>'something went wrong'], 500);
-
         }
     }
 
@@ -180,19 +137,13 @@ class DeliveryApi extends Controller
             );
 
         $delivery = Delivery::find($form['id']);
-        $ftp = FTP::connection()->getDirListing();
         $file = $form['file'];
-        file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , '\nSQL:: '.$file , FILE_APPEND);
-
-
-
-
-            $delivery->received_by_id                   =   (int)       $form['received_by_id'];
-            $delivery->received_for_id  = (int) $form['received_for_id'];
-            $delivery->comment                      =               $form['comment'];
-            $delivery->external_ref                   =               $form['external_ref'];
-            $delivery->lpo_id                =   (int)       $form['lpo_id']; 
-            $delivery->supplier_id = (int) $form['supplier_id'];
+        $delivery->received_by_id = (int)$form['received_by_id'];
+        $delivery->received_for_id = (int) $form['received_for_id'];
+        $delivery->comment = $form['comment'];
+        $delivery->external_ref = $form['external_ref'];
+        $delivery->lpo_id = (int) $form['lpo_id']; 
+        $delivery->supplier_id = (int) $form['supplier_id'];
 
         if($delivery->save()) {
             if($file!=0){
@@ -239,14 +190,11 @@ class DeliveryApi extends Controller
      */
     public function deleteDelivery($delivery_id)
     {
-        $input = Request::all();
-
         $deleted = Delivery::destroy($delivery_id);
-
         if($deleted){
             return response()->json(['msg'=>"delivery deleted"], 200,array(),JSON_PRETTY_PRINT);
         }else{
-            return response()->json(['error'=>"delivery not found"], 404,array(),JSON_PRETTY_PRINT);
+            return response()->json(['error'=>"Something went wrong"], 500,array(),JSON_PRETTY_PRINT);
         }
     }
 
@@ -296,8 +244,7 @@ class DeliveryApi extends Controller
                                         'logs'
                                     )->findOrFail($delivery_id);
 
-            foreach ($response->logs as $key => $value) {
-                
+            foreach ($response->logs as $key => $value) {                
                 $response['logs'][$key]['causer']   =   $value->causer;
                 $response['logs'][$key]['subject']  =   $value->subject;
             }
@@ -305,7 +252,6 @@ class DeliveryApi extends Controller
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
 
         }catch(Exception $e){
-
             $response =  ["error"=>$e->getMessage()];
             return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
         }
@@ -346,39 +292,19 @@ class DeliveryApi extends Controller
     public function getDocumentById($delivery_id)
     {
         try{
-
-
             $delivery          = Delivery::findOrFail($delivery_id);
-
             $path           = '/deliveries/'.$delivery->id.'/'.$delivery->delivery_document;
-
             $path_info      = pathinfo($path);
-
-            // $ext            = $path_info['extension'];
-
             $basename       = $path_info['basename'];
-
             $file_contents  = FTP::connection()->readFile($path);
-
-            Storage::put('deliveries/'.$delivery->id.'.temp', $file_contents);
-
-            $url            = storage_path("app/deliveries/".$delivery->id.'.temp');
-
-            $file           = File::get($url);
-
+            $file           = File::get($file_contents);
             $response       = Response::make($file, 200);
-
             $response->header('Content-Type', $this->get_mime_type($basename));
-
             return $response;  
-        }catch (Exception $e ){            
-
+        }catch (Exception $e ){
             $response       = Response::make("", 200);
-
             $response->header('Content-Type', 'application/pdf');
-
             return $response;  
-
         }
     }
 
@@ -428,50 +354,6 @@ class DeliveryApi extends Controller
 
 
 
-    /**
-     * Operation submitDeliveryForApproval
-     *
-     * Submit delivery by ID.
-     *
-     * @param int $delivery_id ID of delivery to return object (required)
-     *
-     * @return Http response
-     */
-    public function submitDeliveryForApproval($delivery_id)
-    {
-        $input = Request::all();
-
-        //path params validation
-
-
-        //not path params validation
-
-        return response('How about implementing submitDeliveryForApproval as a PATCH method ?');
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     /**
@@ -484,8 +366,6 @@ class DeliveryApi extends Controller
      */
     public function getDeliveries()
     {
-
-
         $input = Request::all();
         //query builder
         $qb = DB::table('deliveries');
@@ -498,11 +378,7 @@ class DeliveryApi extends Controller
         $total_records          = $qb->count();
         $records_filtered       = 0;
 
-
-        //if type is set
-
         if(array_key_exists('type', $input)){
-
             $type_ = (int) $input['type'];
 
             if($type_==1){
@@ -512,36 +388,19 @@ class DeliveryApi extends Controller
             }
         }
 
-
-
-
-
-        // $qb->where('requested_by_id',$this->current_user()->id);
-
-
-
         //searching
         if(array_key_exists('searchval', $input)){
-            $qb->where(function ($query) use ($input) {
-                
+            $qb->where(function ($query) use ($input) {                
                 $query->orWhere('id','like', '\'%' . $input['searchval']. '%\'');
                 $query->orWhere('ref','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('external_ref','like', '\'%' . $input['search']['value']. '%\'');
-
             });
-
-            // $records_filtered       =  $qb->count(); //doesn't work
 
             $sql = Delivery::bind_presql($qb->toSql(),$qb->getBindings());
             $sql = str_replace("*"," count(*) AS count ", $sql);
             $dt = json_decode(json_encode(DB::select($sql)), true);
-
             $records_filtered = (int) $dt[0]['count'];
-            // $records_filtered = 30;
-
-
         }
-
 
         //ordering
         if(array_key_exists('order_by', $input)&&$input['order_by']!=''){
@@ -552,49 +411,20 @@ class DeliveryApi extends Controller
             }
 
             $qb->orderBy($order_column_name, $order_direction);
-        }else{
-            //$qb->orderBy("project_code", "asc");
         }
 
         //limit
         if(array_key_exists('limit', $input)){
-
-
             $qb->limit($input['limit']);
-
-
         }
-
-        //migrated
-        if(array_key_exists('migrated', $input)){
-
-            $mig = (int) $input['migrated'];
-
-            if($mig==0){
-                $qb->whereNull('migration_id');
-            }else if($mig==1){
-                $qb->whereNotNull('migration_id');
-            }
-
-
-        }
-
-
-
 
         if(array_key_exists('datatables', $input)){
-
             //searching
-            $qb->where(function ($query) use ($input) {
-                
+            $qb->where(function ($query) use ($input) {                
                 $query->orWhere('id','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('ref','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('external_ref','like', '\'%' . $input['search']['value']. '%\'');
-
             });
-
-
-
 
             $sql = Delivery::bind_presql($qb->toSql(),$qb->getBindings());
             $sql = str_replace("*"," count(*) AS count ", $sql);
@@ -602,53 +432,27 @@ class DeliveryApi extends Controller
 
             $records_filtered = (int) $dt[0]['count'];
 
-
             //ordering
             $order_column_id    = (int) $input['order'][0]['column'];
             $order_column_name  = $input['columns'][$order_column_id]['order_by'];
             $order_direction    = $input['order'][0]['dir'];
 
-
-
-            // if ($order_column_id == 0){
-            //     $order_column_name = "created_at";
-            // }
-            // if ($order_column_id == 1){
-            //     $order_column_name = "id";
-            // }
-
             if($order_column_name!=''){
-
                 $qb->orderBy($order_column_name, $order_direction);
-
             }
-
-
-
-
-
 
             //limit $ offset
             if((int)$input['start']!= 0 ){
-
                 $response_dt    =   $qb->limit($input['length'])->offset($input['start']);
-
-            }else{
+            }
+            else{
                 $qb->limit($input['length']);
             }
 
-
-
-
-
             $sql = Delivery::bind_presql($qb->toSql(),$qb->getBindings());
 
-            // $response_dt = DB::select($qb->toSql(),$qb->getBindings());         //pseudo
             $response_dt = DB::select($sql);
-
-
             $response_dt = json_decode(json_encode($response_dt), true);
-
             $response_dt    = $this->append_relationships_objects($response_dt);
             $response_dt    = $this->append_relationships_nulls($response_dt);
             $response       = Delivery::arr_to_dt_response( 
@@ -656,10 +460,8 @@ class DeliveryApi extends Controller
                 $total_records,
                 $records_filtered
                 );
-
-
-        }else{
-
+        }
+        else{
             $sql            = Delivery::bind_presql($qb->toSql(),$qb->getBindings());
             $response       = json_decode(json_encode(DB::select($sql)), true);
             if(!array_key_exists('lean', $input)){
@@ -667,9 +469,6 @@ class DeliveryApi extends Controller
                 $response       = $this->append_relationships_nulls($response);
             }
         }
-
-
-
 
         return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
     }
@@ -717,22 +516,16 @@ class DeliveryApi extends Controller
 
     public function append_relationships_objects($data = array()){
 
-        // print_r($data);
-
         foreach ($data as $key => $value) {
-
             $delivery = Delivery::with('supplier')->find($data[$key]['id']);
 
             $data[$key]['lpo']                      = $delivery->lpo;
             $data[$key]['received_by']              = $delivery->received_by;
             $data[$key]['received_for']             = $delivery->received_for;
             $data[$key]['supplier']                 = $delivery->supplier;
-
         }
 
         return $data;
-
-
     }
 
 
@@ -773,24 +566,15 @@ class DeliveryApi extends Controller
 
 
     public function append_relationships_nulls($data = array()){
-
-
         foreach ($data as $key => $value) {
-
             if($value["lpo"]==null){
-                $data[$key]['lpo'] = array("expense_desc"=>"N/A");
-                
+                $data[$key]['lpo'] = array("expense_desc"=>"N/A");                
             }
             if($value["received_by"]==null){
-                $data[$key]['received_by'] = array("full_name"=>"N/A");
-                
+                $data[$key]['received_by'] = array("full_name"=>"N/A");                
             }
-
-
         }
 
         return $data;
-
-
     }
 }

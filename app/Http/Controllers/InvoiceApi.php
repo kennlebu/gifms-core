@@ -25,20 +25,13 @@ use App\Models\AccountingModels\Account;
 use App\Models\LPOModels\Lpo;
 use Anchu\Ftp\Facades\Ftp;
 use PDF;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\NotifyInvoice;
 use App\Models\AllocationModels\Allocation;
 use App\Models\ApprovalsModels\Approval;
-use App\Models\ApprovalsModels\ApprovalLevel;
-use App\Models\StaffModels\Staff;
 use App\Models\PaymentModels\Payment;
-use App\Models\PaymentModels\PaymentMode;
 use App\Models\PaymentModels\PaymentBatch;
-use App\Models\LookupModels\Currency;
-use App\Models\BankingModels\BankBranch;
 use App\Exceptions\NotFullyAllocatedException;
 use App\Exceptions\ApprovalException;
 use App\Models\PaymentModels\VoucherNumber;
@@ -392,7 +385,7 @@ class InvoiceApi extends Controller
             }    
         }
         catch (Exception $e) {
-                return response()->json(['error'=>"Invoice not found"], 404,array(),JSON_PRETTY_PRINT);            
+                return response()->json(['error'=>"Something went wrong"], 500,array(),JSON_PRETTY_PRINT);            
         }
     }
 
@@ -456,8 +449,8 @@ class InvoiceApi extends Controller
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
         }
         catch(Exception $e){
-            $response =  ["error"=>"Invoice could not be found"];
-            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+            $response =  ["error"=>"Something went wrong"];
+            return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
         }
     }
 
@@ -597,8 +590,8 @@ class InvoiceApi extends Controller
             return response()->json($response, 403,array(),JSON_PRETTY_PRINT);
         }
         catch(Exception $e){
-            $response =  ["error"=>"Invoice could not be found"];
-            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+            $response =  ["error"=>"Something went wrong"];
+            return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
         }
     }
 
@@ -675,8 +668,8 @@ class InvoiceApi extends Controller
             return response()->json($response, 403,array(),JSON_PRETTY_PRINT);
         }catch(Exception $e){
 
-            $response =  ["error"=>"Invoice could not be found"];
-            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+            $response =  ["error"=>"Something went wrong"];
+            return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
         }
     }
 
@@ -724,7 +717,6 @@ class InvoiceApi extends Controller
 
             if(empty($invoice->migration_id)) {
                 if(!empty($payment->voucher_no)) {
-                    // $voucher = VoucherNumber::find($payment->voucher_no);
                     $voucher = VoucherNumber::where('payable_id', $payment->id)->first();
                     $voucher_no = $voucher->voucher_number;
                 }
@@ -839,8 +831,8 @@ class InvoiceApi extends Controller
             return response()->json($response, 403,array(),JSON_PRETTY_PRINT);
         }catch(Exception $e){
 
-            $response =  ["error"=>"Invoice could not be found"];
-            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+            $response =  ["error"=>"Something went wrong"];
+            return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
         }
     }
 
@@ -1039,17 +1031,6 @@ class InvoiceApi extends Controller
             $qb->limit($input['limit']);
         }
 
-        //migrated
-        if(array_key_exists('migrated', $input)){
-            $mig = (int) $input['migrated'];
-
-            if($mig==0){
-                $qb->whereNull('invoices.migration_id');
-            }else if($mig==1){
-                $qb->whereNotNull('invoices.migration_id');
-            }
-        }
-
         if(array_key_exists('datatables', $input)){
             //searching
             $qb->where(function ($query) use ($input) {                
@@ -1227,7 +1208,7 @@ class InvoiceApi extends Controller
         return $data;
     }
 
-        /**
+    /**
      * Adds zeros at the beginning of string until the desired
      * length is reached.
      */
@@ -1359,8 +1340,6 @@ class InvoiceApi extends Controller
      */
     public function recallInvoice($invoice_id)
     {
-        $input = Request::all();
-        
         $invoice = Invoice::find($invoice_id); 
         $user = $this->current_user();       
 

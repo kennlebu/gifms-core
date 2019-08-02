@@ -15,49 +15,14 @@
 
 namespace App\Http\Controllers;
 
-
-use JWTAuth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\DB;
 
 use App\Models\GrantModels\GrantAllocation;
-
-
 use Exception;
-use App;
-use Illuminate\Support\Facades\Response;
-use App\Models\StaffModels\Staff;
 
 class GrantAllocationApi extends Controller
 {
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-    }
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     /**
      * Operation addGrantAllocation
      *
@@ -77,17 +42,15 @@ class GrantAllocationApi extends Controller
             );
 
         $grant_allocation = new GrantAllocation;
-
-            $grant_allocation->grant_id                  =  (int)   $form['grant_id'];
-            $grant_allocation->project_id                =  (int)   $form['project_id'];
-            $grant_allocation->amount_allocated          = (double) $form['amount_allocated'];
-            $grant_allocation->percentage_allocated      = (double) $form['percentage_allocated'];
-            $grant_allocation->allocation_type           =          $form['allocation_type'];
-            $grant_allocation->allocated_by_id           =  (int)   $this->current_user()->id;
-            $grant_allocation->allocate_action_by_id     =  (int)   $this->current_user()->id;
+        $grant_allocation->grant_id                  =  (int)   $form['grant_id'];
+        $grant_allocation->project_id                =  (int)   $form['project_id'];
+        $grant_allocation->amount_allocated          = (double) $form['amount_allocated'];
+        $grant_allocation->percentage_allocated      = (double) $form['percentage_allocated'];
+        $grant_allocation->allocation_type           =          $form['allocation_type'];
+        $grant_allocation->allocated_by_id           =  (int)   $this->current_user()->id;
+        $grant_allocation->allocate_action_by_id     =  (int)   $this->current_user()->id;
 
         if($grant_allocation->save()) {
-
             return Response()->json(array('msg' => 'Success: grant_allocation added','grant_allocation' => $grant_allocation), 200);
         }
     }
@@ -131,15 +94,13 @@ class GrantAllocationApi extends Controller
             );
 
         $grant_allocation = GrantAllocation::find($form['id']);
-
-            $grant_allocation->grant_id                  =  (int)   $form['grant_id'];
-            $grant_allocation->project_id                =  (int)   $form['project_id'];
-            $grant_allocation->amount_allocated          = (double) $form['amount_allocated'];
-            $grant_allocation->percentage_allocated      = (double) $form['percentage_allocated'];
-            $grant_allocation->allocation_type           =          $form['allocation_type'];
+        $grant_allocation->grant_id                  =  (int)   $form['grant_id'];
+        $grant_allocation->project_id                =  (int)   $form['project_id'];
+        $grant_allocation->amount_allocated          = (double) $form['amount_allocated'];
+        $grant_allocation->percentage_allocated      = (double) $form['percentage_allocated'];
+        $grant_allocation->allocation_type           =          $form['allocation_type'];
 
         if($grant_allocation->save()) {
-
             return Response()->json(array('msg' => 'Success: grant_allocation updated','grant_allocation' => $grant_allocation), 200);
         }
     }
@@ -175,15 +136,11 @@ class GrantAllocationApi extends Controller
      */
     public function deleteGrantAllocation($grant_allocation_id)
     {
-        $input = Request::all();
-
-
         $deleted = GrantAllocation::destroy($grant_allocation_id);
-
         if($deleted){
             return response()->json(['msg'=>"grant_allocation deleted"], 200,array(),JSON_PRETTY_PRINT);
         }else{
-            return response()->json(['error'=>"grant_allocation not found"], 404,array(),JSON_PRETTY_PRINT);
+            return response()->json(['error'=>"Something went wrong"], 500,array(),JSON_PRETTY_PRINT);
         }
     }
     
@@ -219,18 +176,13 @@ class GrantAllocationApi extends Controller
      */
     public function getGrantAllocationById($grant_allocation_id)
     {
-        $input = Request::all();
-
         try{
-
-            $response   = GrantAllocation::findOrFail($grant_allocation_id);
-           
+            $response   = GrantAllocation::findOrFail($grant_allocation_id);           
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
 
         }catch(Exception $e){
-
-            $response =  ["error"=>"grant_allocation could not be found"];
-            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+            $response =  ["error"=>"Something went wrong"];
+            return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
         }
     }
     
@@ -264,9 +216,6 @@ class GrantAllocationApi extends Controller
      */
     public function grantAllocationsGet()
     {
-        
-
-
         $input = Request::all();
         //query builder
         $qb = DB::table('grant_allocations');
@@ -279,27 +228,17 @@ class GrantAllocationApi extends Controller
         $total_records          = $qb->count();
         $records_filtered       = 0;
 
-
-
-
         //searching
         if(array_key_exists('searchval', $input)){
-            $qb->where(function ($query) use ($input) {
-                
+            $qb->where(function ($query) use ($input) {                
                 $query->orWhere('grant_allocations.id','like', '\'%' . $input['searchval']. '%\'');
-
             });
-
-            // $records_filtered       =  $qb->count(); //doesn't work
 
             $sql = GrantAllocation::bind_presql($qb->toSql(),$qb->getBindings());
             $sql = str_replace("*"," count(*) AS count ", $sql);
             $dt = json_decode(json_encode(DB::select($sql)), true);
 
             $records_filtered = (int) $dt[0]['count'];
-            // $records_filtered = 30;
-
-
         }
 
 
@@ -310,48 +249,19 @@ class GrantAllocationApi extends Controller
             if(array_key_exists('order_dir', $input)&&$input['order_dir']!=''){                
                 $order_direction = $input['order_dir'];
             }
-
             $qb->orderBy($order_column_name, $order_direction);
-        }else{
-            //$qb->orderBy("project_code", "asc");
         }
 
         //limit
         if(array_key_exists('limit', $input)){
-
-
             $qb->limit($input['limit']);
-
-
         }
-
-        //migrated
-        if(array_key_exists('migrated', $input)){
-
-            $mig = (int) $input['migrated'];
-
-            if($mig==0){
-                $qb->whereNull('migration_id');
-            }else if($mig==1){
-                $qb->whereNotNull('migration_id');
-            }
-
-
-        }
-
-
 
         if(array_key_exists('datatables', $input)){
-
             //searching
-            $qb->where(function ($query) use ($input) {
-                
+            $qb->where(function ($query) use ($input) {                
                 $query->orWhere('grant_allocations.id','like', '\'%' . $input['search']['value']. '%\'');
-
             });
-
-
-
 
             $sql = GrantAllocation::bind_presql($qb->toSql(),$qb->getBindings());
             $sql = str_replace("*"," count(*) AS count ", $sql);
@@ -359,133 +269,37 @@ class GrantAllocationApi extends Controller
 
             $records_filtered = (int) $dt[0]['count'];
 
-
             //ordering
             $order_column_id    = (int) $input['order'][0]['column'];
             $order_column_name  = $input['columns'][$order_column_id]['order_by'];
             $order_direction    = $input['order'][0]['dir'];
 
             if($order_column_name!=''){
-
                 $qb->orderBy($order_column_name, $order_direction);
-
             }
-
-
-
-
-
 
             //limit $ offset
             if((int)$input['start']!= 0 ){
-
                 $response_dt    =   $qb->limit($input['length'])->offset($input['start']);
-
             }else{
                 $qb->limit($input['length']);
             }
 
-
-
-
-
             $sql = GrantAllocation::bind_presql($qb->toSql(),$qb->getBindings());
 
-            // $response_dt = DB::select($qb->toSql(),$qb->getBindings());         //pseudo
             $response_dt = DB::select($sql);
-
-
             $response_dt = json_decode(json_encode($response_dt), true);
-
-            $response_dt    = $this->append_relationships_objects($response_dt);
-            $response_dt    = $this->append_relationships_nulls($response_dt);
             $response       = GrantAllocation::arr_to_dt_response( 
                 $response_dt, $input['draw'],
                 $total_records,
                 $records_filtered
                 );
-
-
-        }else{
-
+        }
+        else{
             $sql            = GrantAllocation::bind_presql($qb->toSql(),$qb->getBindings());
             $response       = json_decode(json_encode(DB::select($sql)), true);
-            if(!array_key_exists('lean', $input)){
-                $response       = $this->append_relationships_objects($response);
-                $response       = $this->append_relationships_nulls($response);
-            }
         }
-
-
-
 
         return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
-
-
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    public function append_relationships_objects($data = array()){
-
-
-        foreach ($data as $key => $value) {
-
-            $grant_allocations = GrantAllocation::find($data[$key]['id']);
-
-        }
-
-
-        return $data;
-
-
-    }
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-    public function append_relationships_nulls($data = array()){
-
-
-        foreach ($data as $key => $value) {
-
-
-            // if($data[$key]["account"]==null){
-            //     $data[$key]["account"] = array("account_name"=>"N/A");
-            // }
-
-
-        }
-
-        return $data;
-
-
     }
 }

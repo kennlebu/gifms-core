@@ -15,49 +15,14 @@
 
 namespace App\Http\Controllers;
 
-
-use JWTAuth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\DB;
 
 use App\Models\SuppliesModels\SupplyCategory;
-
-
 use Exception;
-use App;
-use Illuminate\Support\Facades\Response;
-use App\Models\StaffModels\Staff;
 
 class SupplyCategoryApi extends Controller
 {
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-    }
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     /**
      * Operation addSupplyCategory
      *
@@ -73,11 +38,9 @@ class SupplyCategoryApi extends Controller
             );
 
         $supply_category = new SupplyCategory;
-
-            $supply_category->supply_category_name                   =         $form['supply_category_name'];
+        $supply_category->supply_category_name                   =         $form['supply_category_name'];
 
         if($supply_category->save()) {
-
             return Response()->json(array('msg' => 'Success: supply_category added','supply_category' => $supply_category), 200);
         }
     }
@@ -118,11 +81,9 @@ class SupplyCategoryApi extends Controller
             );
 
         $supply_category = SupplyCategory::find($form['id']);
-
-            $supply_category->supply_category_name                   =         $form['supply_category_name'];
+        $supply_category->supply_category_name                   =         $form['supply_category_name'];
 
         if($supply_category->save()) {
-
             return Response()->json(array('msg' => 'Success: supply_category updated','supply_category' => $supply_category), 200);
         }
     }
@@ -158,15 +119,11 @@ class SupplyCategoryApi extends Controller
      */
     public function deleteSupplyCategory($supply_category_id)
     {
-        $input = Request::all();
-
-
         $deleted = SupplyCategory::destroy($supply_category_id);
-
         if($deleted){
             return response()->json(['msg'=>"supply_category deleted"], 200,array(),JSON_PRETTY_PRINT);
         }else{
-            return response()->json(['error'=>"supply_category not found"], 404,array(),JSON_PRETTY_PRINT);
+            return response()->json(['error'=>"Something went wrong"], 500,array(),JSON_PRETTY_PRINT);
         }
     }
     
@@ -202,18 +159,13 @@ class SupplyCategoryApi extends Controller
      */
     public function getSupplyCategoryById($supply_category_id)
     {
-        $input = Request::all();
-
         try{
-
-            $response   = SupplyCategory::findOrFail($supply_category_id);
-           
+            $response   = SupplyCategory::findOrFail($supply_category_id);           
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
 
         }catch(Exception $e){
-
-            $response =  ["error"=>"supply_category could not be found"];
-            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+            $response =  ["error"=>"Something went wrong"];
+            return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
         }
     }
     
@@ -247,9 +199,6 @@ class SupplyCategoryApi extends Controller
      */
     public function supplyCategoriesGet()
     {
-        
-
-
         $input = Request::all();
         //query builder
         $qb = DB::table('supply_categories');
@@ -262,30 +211,19 @@ class SupplyCategoryApi extends Controller
         $total_records          = $qb->count();
         $records_filtered       = 0;
 
-
-
-
         //searching
         if(array_key_exists('searchval', $input)){
-            $qb->where(function ($query) use ($input) {
-                
+            $qb->where(function ($query) use ($input) {                
                 $query->orWhere('supply_categories.id','like', '\'%' . $input['searchval']. '%\'');
                 $query->orWhere('supply_categories.supply_category_name','like', '\'%' . $input['searchval']. '%\'');
-
             });
-
-            // $records_filtered       =  $qb->count(); //doesn't work
 
             $sql = SupplyCategory::bind_presql($qb->toSql(),$qb->getBindings());
             $sql = str_replace("*"," count(*) AS count ", $sql);
             $dt = json_decode(json_encode(DB::select($sql)), true);
 
             $records_filtered = (int) $dt[0]['count'];
-            // $records_filtered = 30;
-
-
         }
-
 
         //ordering
         if(array_key_exists('order_by', $input)&&$input['order_by']!=''){
@@ -302,41 +240,15 @@ class SupplyCategoryApi extends Controller
 
         //limit
         if(array_key_exists('limit', $input)){
-
-
             $qb->limit($input['limit']);
-
-
         }
-
-        //migrated
-        if(array_key_exists('migrated', $input)){
-
-            $mig = (int) $input['migrated'];
-
-            if($mig==0){
-                $qb->whereNull('migration_id');
-            }else if($mig==1){
-                $qb->whereNotNull('migration_id');
-            }
-
-
-        }
-
-
 
         if(array_key_exists('datatables', $input)){
-
             //searching
-            $qb->where(function ($query) use ($input) {
-                
+            $qb->where(function ($query) use ($input) {                
                 $query->orWhere('supply_categories.id','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('supply_categories.supply_category_name','like', '\'%' . $input['search']['value']. '%\'');
-
             });
-
-
-
 
             $sql = SupplyCategory::bind_presql($qb->toSql(),$qb->getBindings());
             $sql = str_replace("*"," count(*) AS count ", $sql);
@@ -344,133 +256,37 @@ class SupplyCategoryApi extends Controller
 
             $records_filtered = (int) $dt[0]['count'];
 
-
             //ordering
             $order_column_id    = (int) $input['order'][0]['column'];
             $order_column_name  = $input['columns'][$order_column_id]['order_by'];
             $order_direction    = $input['order'][0]['dir'];
 
             if($order_column_name!=''){
-
                 $qb->orderBy($order_column_name, $order_direction);
-
             }
-
-
-
-
-
 
             //limit $ offset
             if((int)$input['start']!= 0 ){
-
                 $response_dt    =   $qb->limit($input['length'])->offset($input['start']);
-
             }else{
                 $qb->limit($input['length']);
             }
 
-
-
-
-
             $sql = SupplyCategory::bind_presql($qb->toSql(),$qb->getBindings());
 
-            // $response_dt = DB::select($qb->toSql(),$qb->getBindings());         //pseudo
             $response_dt = DB::select($sql);
-
-
             $response_dt = json_decode(json_encode($response_dt), true);
-
-            $response_dt    = $this->append_relationships_objects($response_dt);
-            $response_dt    = $this->append_relationships_nulls($response_dt);
             $response       = SupplyCategory::arr_to_dt_response( 
                 $response_dt, $input['draw'],
                 $total_records,
                 $records_filtered
                 );
-
-
-        }else{
-
+        }
+        else{
             $sql            = SupplyCategory::bind_presql($qb->toSql(),$qb->getBindings());
             $response       = json_decode(json_encode(DB::select($sql)), true);
-            if(!array_key_exists('lean', $input)){
-                $response       = $this->append_relationships_objects($response);
-                $response       = $this->append_relationships_nulls($response);
-            }
         }
-
-
-
 
         return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
-
-
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    public function append_relationships_objects($data = array()){
-
-
-        foreach ($data as $key => $value) {
-
-            $supply_categories = SupplyCategory::find($data[$key]['id']);
-
-        }
-
-
-        return $data;
-
-
-    }
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-    public function append_relationships_nulls($data = array()){
-
-
-        foreach ($data as $key => $value) {
-
-
-            // if($data[$key]["account"]==null){
-            //     $data[$key]["account"] = array("account_name"=>"N/A");
-            // }
-
-
-        }
-
-        return $data;
-
-
     }
 }

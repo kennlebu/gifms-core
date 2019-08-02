@@ -2,24 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use JWTAuth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\LookupModels\County;
 use Exception;
-use App;
-use Illuminate\Support\Facades\Response;
 
 class countyApi extends Controller
 {
-
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-    }
-
     /**
      * Operation addCounty
      *
@@ -76,14 +65,11 @@ class countyApi extends Controller
      */
     public function deleteCounty($county_id)
     {
-        $input = Request::all();
-
         $deleted = County::destroy($county_id);
-
         if($deleted){
             return response()->json(['msg'=>"county deleted"], 200,array(),JSON_PRETTY_PRINT);
         }else{
-            return response()->json(['error'=>"county not found"], 404,array(),JSON_PRETTY_PRINT);
+            return response()->json(['error'=>"Something went wrong"], 500,array(),JSON_PRETTY_PRINT);
         }
     }
 
@@ -98,13 +84,12 @@ class countyApi extends Controller
      */
     public function getCountyById($county_id)
     {
-        $input = Request::all();
         try{
             $response = County::findOrFail($county_id);           
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
         }catch(Exception $e){
-            $response =  ["error"=>"county could not be found"];
-            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+            $response =  ["error"=>"Something went wrong"];
+            return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
         }
     }
 
@@ -118,7 +103,6 @@ class countyApi extends Controller
      */
     public function countiesGet()
     {
-       
         $input = Request::all();
         //query builder
         $qb = DB::table('counties');
@@ -143,7 +127,6 @@ class countyApi extends Controller
             $records_filtered = (int) $dt[0]['count'];
         }
 
-
         //ordering
         if(array_key_exists('order_by', $input)&&$input['order_by']!=''){
             $order_direction     = "asc";
@@ -151,23 +134,12 @@ class countyApi extends Controller
             if(array_key_exists('order_dir', $input)&&$input['order_dir']!=''){                
                 $order_direction = $input['order_dir'];
             }
-
             $qb->orderBy($order_column_name, $order_direction);
         }
 
         //limit
         if(array_key_exists('limit', $input)){
             $qb->limit($input['limit']);
-        }
-
-        //migrated
-        if(array_key_exists('migrated', $input)){
-            $mig = (int) $input['migrated'];
-            if($mig==0){
-                $qb->whereNull('migration_id');
-            }else if($mig==1){
-                $qb->whereNotNull('migration_id');
-            }
         }
 
         if(array_key_exists('datatables', $input)){
@@ -203,9 +175,6 @@ class countyApi extends Controller
 
             $response_dt = DB::select($sql);
             $response_dt = json_decode(json_encode($response_dt), true);
-
-            $response_dt    = $this->append_relationships_objects($response_dt);
-            $response_dt    = $this->append_relationships_nulls($response_dt);
             $response       = County::arr_to_dt_response( 
                 $response_dt, $input['draw'],
                 $total_records,
@@ -214,26 +183,8 @@ class countyApi extends Controller
         }else{
             $sql            = County::bind_presql($qb->toSql(),$qb->getBindings());
             $response       = json_decode(json_encode(DB::select($sql)), true);
-            if(!array_key_exists('lean', $input)){
-                $response       = $this->append_relationships_objects($response);
-                $response       = $this->append_relationships_nulls($response);
-            }
         }
 
         return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
-    }
-
-    public function append_relationships_objects($data = array()){
-
-        foreach ($data as $key => $value) {
-            $counties = County::find($data[$key]['id']);
-        }
-        return $data;
-    }
-
-    public function append_relationships_nulls($data = array()){
-        foreach ($data as $key => $value) {
-        }
-        return $data;
     }
 }

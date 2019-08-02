@@ -57,44 +57,30 @@ class PaymentBatchApi extends Controller
      */
     public function addPaymentBatch()
     {
-       
-
         $form = Request::only(
             'payments'
             );
 
         try{
-
             $payment_batch = new PaymentBatch;
-
-
             $user = JWTAuth::parseToken()->authenticate();
             $payment_batch->processed_by_id              =   (int)   $user->id;
             $payment_batch->status_id             =   (int)  1;
 
-            // die;
-
             if($payment_batch->save()) {
-
+                $payment_batch->disableLogging();
                 $payment_batch->ref = "CHAI/PYTBT/#$payment_batch->id/".date_format($payment_batch->created_at,"Y/m/d");
                 $payment_batch->save();
 
-
-                foreach ($form['payments'] as $key => $value) {                   
-
-                    $payment                    = Payment::find($value);
-                    
+                foreach ($form['payments'] as $key => $value) {
+                    $payment                    = Payment::find($value);                    
                     $payment->status_id         = $payment->status->next_status_id;
                     $payment->payment_batch_id  = $payment_batch->id;
-
+                    $payment->disableLogging();
                     $payment->save();
 
                     $payment->ref = "CHAI/PYMT/#$payment->id/".date_format($payment->created_at,"Y/m/d");
-                    // $voucher = $this->generate_voucher_no($payment->id, $payment->payable_type, $payment_batch->created_at);
-                    // $payment->voucher_no = (int) $voucher['id'];
                     $v = DB::select('call generate_voucher_no(?,?)',array($payment->id, $payment->payable_type));
-                    $v_result = $v[0];
-                    $voucher_number = $v_result['voucher_number'];
                     $payment->save();
 
                     // Now update the invoices, claims and advances
@@ -138,9 +124,7 @@ class PaymentBatchApi extends Controller
             }
 
         }catch (JWTException $e){
-
             return response()->json(['error'=>'something went wrong'], 500);
-
         }
     }
 
@@ -155,16 +139,13 @@ class PaymentBatchApi extends Controller
      */
     public function completePaymentBatchUpload($payment_batch_id)
     {
-
-        $input = Request::all();
         $user = $this->current_user();
 
         try{
-
-            $payment_batch   = PaymentBatch::find($payment_batch_id);
-           
+            $payment_batch   = PaymentBatch::find($payment_batch_id);           
             $payment_batch->status_id = (int) 2;
             $payment_batch->upload_date = date('Y-m-d H:i:s');
+            $payment_batch->disableLogging();
             $payment_batch->save();
 
             // Get the payments and move them to the next status            
@@ -174,16 +155,15 @@ class PaymentBatchApi extends Controller
                ->select('id')
                ->get();
 
-            foreach ($qb as $record) {                   
-
+            foreach ($qb as $record) {
                 $payment                    = Payment::find($record['id']);
                 $payment->status_id         = (int) 3;
+                $payment->disableLogging();
                 $payment->save();
 
                 // Now update the invoices, claims and advances
                 if($payment->payable_type == 'invoices'){
                     $invoice                = Invoice::find($payment->payable_id);
-                    // $invoice->status_id     = $invoice->status->next_status_id;
                     $invoice->status_id     = 7;
                     $invoice->disableLogging();
                     $invoice->save();
@@ -195,7 +175,6 @@ class PaymentBatchApi extends Controller
                 }
                 elseif($payment->payable_type == 'advances'){
                     $advance                = Advance::find($payment->payable_id);
-                    // $advance->status_id     = $advance->status->next_status_id;
                     $advance->status_id     = 7;
                     $advance->disableLogging();
                     $advance->save();
@@ -206,7 +185,6 @@ class PaymentBatchApi extends Controller
                 }
                 elseif($payment->payable_type == 'claims'){
                     $claim                = Claim::find($payment->payable_id);
-                    // $claim->status_id     = $claim->status->next_status_id;
                     $claim->status_id     = 7;
                     $claim->disableLogging();
                     $claim->save();
@@ -220,10 +198,7 @@ class PaymentBatchApi extends Controller
             if($payment_batch->save()) {
                 return Response()->json(array('msg' => 'Success: batch uploaded','payment_batch' => $payment_batch), 200);
             }
-
-
         }catch(Exception $e){
-
             $response =  ["error"=>"There was an error uploading the batch"];
             return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
         }
@@ -237,14 +212,7 @@ class PaymentBatchApi extends Controller
      * @return Http response
      */
     public function requestBankSignitories($payment_batch_id){
-        try{
-            Mail::queue(new RequestBankSigning($payment_batch_id));
-
-        }catch(Exception $e){
-
-            $response =  ["error"=>"There was an error uploading the batch"];
-            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
-        }
+        Mail::queue(new RequestBankSigning($payment_batch_id));
     }
 
 
@@ -297,14 +265,11 @@ class PaymentBatchApi extends Controller
                     $eft_data['chaipv'] = $voucher_no;
                     empty($payment->paid_to_name) ? $eft_data['acct_name'] = 0 : $eft_data['acct_name'] = $payment->paid_to_name;
 
-                    array_push($eft_result, $eft_data);
+                    $eft_result[] = $eft_data;
                 }
                 
             return Response()->json(array('msg' => 'Success: csv generated','csv_data' => $eft_result), 200);
             }
-
-
-
 
             // RTGS
             elseif($payment_mode=='4'){
@@ -344,12 +309,11 @@ class PaymentBatchApi extends Controller
                     if(empty($payment->paid_to_bank_branch->branch_code)) $branch_code = 0;
                     else $branch_code = $payment->paid_to_bank_branch->branch_code;
                     $rtgs_data['bank_code'] = $this->pad_zeros(2,(string)$bank_code).$this->pad_zeros(3,(string)$branch_code);
-                    // $rtgs_data['branch'] = $this->pad_zeros(3,$payment->paid_to_bank_branch->brach_code);
                     $rtgs_data['account'] = $payment->paid_to_bank_account_no;
                     $rtgs_data['chaipv'] = $voucher_no;
                     $rtgs_data['acct_name'] = $payment->paid_to_name;
 
-                    array_push($rtgs_result, $rtgs_data);
+                    $rtgs_result[] = $rtgs_data;
                 }
                 
             return Response()->json(array('msg' => 'Success: csv generated','csv_data' => $rtgs_result), 200);
@@ -384,9 +348,7 @@ class PaymentBatchApi extends Controller
                             $voucher_no = 'CHAI'.$this->pad_zeros(5, $payment->payable_id);
                         }
                         
-                    } 
-                    // $mmts_data['phone'] = $payment->payable->mobile_payment_number;
-                    // $mmts_data['mobile_name'] = $payment->payable->mobile_payment_name;
+                    }
                     $mmts_data['chaipv'] = $voucher_no;
 
                     if($payment->payable_type == 'invoices'){      
@@ -406,16 +368,15 @@ class PaymentBatchApi extends Controller
                         $mmts_data['phone'] = $this->format_phone($claim->requested_by->mpesa_no);
                         $mmts_data['mobile_name'] = $claim->requested_by->cheque_addressee;                        
                     }
-                    array_push($mmts_result, $mmts_data);
+                    $mmts_result[] = $mmts_data;
                 }
               
             return Response()->json(array('msg' => 'Success: csv generated','csv_data' => $mmts_result), 200);
             }
-
         }
         catch(Exception $e){
-            $response =  ["error"=>"There was an error getting the CSV"];
-            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+            $response =  ["error"=>"Something went wrong"];
+            return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
         }
     }
 
@@ -450,10 +411,7 @@ class PaymentBatchApi extends Controller
         
         try{
             $result = [];
-            $voucher_nos = [];
-            $payments = [];
             $csv_data = [];
-            $missing_payments = [];
             $form = Request::only('file');
             $file = $form['file'];
 
@@ -463,9 +421,6 @@ class PaymentBatchApi extends Controller
                 if ($header) {
                     $header = false;
                 } else {
-                    // $chai_ref = explode(" ", $csvLine[1])[0];
-                    // array_push($voucher_nos, (int)preg_replace("/[^0-9,.]/", "", $chai_ref)); 
-
                     $csv_row = array();
                     $csv_row['bank_ref'] = $csvLine[0];
                     $csv_row['chai_ref'] = $csvLine[1];
@@ -476,7 +431,7 @@ class PaymentBatchApi extends Controller
                     $csv_row['time'] = $csvLine[8];
                     $csv_row['narrative'] = $csvLine[10];
 
-                    array_push($csv_data, $csv_row);
+                    $csv_data[] = $csv_row;
                 }
             }
 
@@ -532,9 +487,8 @@ class PaymentBatchApi extends Controller
                         throw new \Exception("Invalid voucher number");
                 } catch(\Exception $e){                    
                     $res['payable_type'] = 'missing';
-                    // array_push($result, $res);
                 }
-                array_push($result, $res);
+                $result[] = $res;
             }
 
             return Response()->json($result, 200);
@@ -550,7 +504,6 @@ class PaymentBatchApi extends Controller
         try{
             $input = Request::all();
             foreach($input as $row){
-                $already_paid = false;
                 $already_saved = false;
                 if($row['payable_type'] != 'mobile_payments'){
                     $payment = Payment::find($row['payment']['id']);
@@ -667,7 +620,6 @@ class PaymentBatchApi extends Controller
                     $bank_transaction['amount'] = preg_replace("/[^0-9.]/", "", $row['amount']);
                     $bank_transaction['txn_date'] =  date('Y-m-d', strtotime(str_replace('/', '-', $row['bank_date'])));
                     $bank_transaction['txn_time'] = $row['time'];
-                    // $bank_transaction['processing_date'] = $row['processing_date'];
                     $bank_transaction['narrative'] = $row['narrative'];
                     DB::table('bank_transactions')->insert($bank_transaction);
                 }
@@ -712,8 +664,6 @@ class PaymentBatchApi extends Controller
      */
     public function getPaymentBatches()
     {
-
-
         $input = Request::all();
         //query builder
         $qb = DB::table('payment_batches');
@@ -726,127 +676,64 @@ class PaymentBatchApi extends Controller
         $total_records          = $qb->count();
         $records_filtered       = 0;
 
-
-
-        // $qb->where('requested_by_id',$this->current_user()->id);
-
-
-
         //searching
         if(array_key_exists('searchval', $input)){
-            $qb->where(function ($query) use ($input) {
-                
+            $qb->where(function ($query) use ($input) {                
                 $query->orWhere('id','like', '\'%' . $input['searchval']. '%\'');
                 $query->orWhere('ref','like', '\'%' . $input['search']['value']. '%\'');
-                // $query->orWhere('payable_type','like', '\'%' . $input['searchval']. '%\'');
-                // $query->orWhere('paid_to_bank_account_no','like', '\'%' . $input['searchval']. '%\'');
-                // $query->orWhere('paid_to_name','like', '\'%' . $input['searchval']. '%\'');
-                // $query->orWhere('payment_desc','like', '\'%' . $input['searchval']. '%\'');
-
             });
-
-            // $records_filtered       =  $qb->count(); //doesn't work
 
             $sql = PaymentBatch::bind_presql($qb->toSql(),$qb->getBindings());
             $sql = str_replace("*"," count(*) AS count ", $sql);
             $dt = json_decode(json_encode(DB::select($sql)), true);
 
             $records_filtered = (int) $dt[0]['count'];
-            // $records_filtered = 30;
-
-
         }
 
-
-
-
         if(array_key_exists('datatables', $input)){
-
             //searching
-            $qb->where(function ($query) use ($input) {
-                
+            $qb->where(function ($query) use ($input) {                
                 $query->orWhere('id','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('ref','like', '\'%' . $input['search']['value']. '%\'');
-                // $query->orWhere('payable_type','like', '\'%' . $input['search']['value']. '%\'');
-                // $query->orWhere('paid_to_bank_account_no','like', '\'%' . $input['search']['value']. '%\'');
-                // $query->orWhere('paid_to_name','like', '\'%' . $input['search']['value']. '%\'');
-                // $query->orWhere('payment_desc','like', '\'%' . $input['search']['value']. '%\'');
-
             });
-
-
-
 
             $sql = PaymentBatch::bind_presql($qb->toSql(),$qb->getBindings());
             $sql = str_replace("*"," count(*) AS count ", $sql);
             $dt = json_decode(json_encode(DB::select($sql)), true);
 
             $records_filtered = (int) $dt[0]['count'];
-
 
             //ordering
             $order_column_id    = (int) $input['order'][0]['column'];
             $order_column_name  = $input['columns'][$order_column_id]['order_by'];
             $order_direction    = $input['order'][0]['dir'];
 
-
-
-            // if ($order_column_id == 0){
-            //     $order_column_name = "created_at";
-            // }
-            // if ($order_column_id == 1){
-            //     $order_column_name = "id";
-            // }
-
             if($order_column_name!=''){
-
                 $qb->orderBy($order_column_name, $order_direction);
-
             }
-
-
-
-
-
 
             //limit $ offset
             if((int)$input['start']!= 0 ){
-
                 $response_dt    =   $qb->limit($input['length'])->offset($input['start']);
-
             }else{
                 $qb->limit($input['length']);
             }
 
-
-
-
-
             $sql = PaymentBatch::bind_presql($qb->toSql(),$qb->getBindings());
 
-            // $response_dt = DB::select($qb->toSql(),$qb->getBindings());         //pseudo
             $response_dt = DB::select($sql);
-
-
             $response_dt = json_decode(json_encode($response_dt), true);
-
             $response_dt    = $this->append_relationships_objects($response_dt);
-            $response_dt    = $this->append_relationships_nulls($response_dt);
             $response       = PaymentBatch::arr_to_dt_response( 
                 $response_dt, $input['draw'],
                 $total_records,
                 $records_filtered
                 );
-
-
-        }else{
-
+        }
+        else{
             $sql            = PaymentBatch::bind_presql($qb->toSql(),$qb->getBindings());
             $response       = json_decode(json_encode(DB::select($sql)), true);
         }
-
-
-
 
         return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
     }
@@ -874,12 +761,9 @@ class PaymentBatchApi extends Controller
 
 
     public function append_relationships_objects($data = array()){
-
-        // print_r($data);
-
         foreach ($data as $key => $value) {
             $mobile_payment = PaymentBatch::find($data[$key]['id']);         
-            $data[$key]['payment_modes']                      = $mobile_payment->payment_modes;
+            $data[$key]['payment_modes'] = $mobile_payment->payment_modes;
         }
 
         return $data;
@@ -903,12 +787,5 @@ class PaymentBatchApi extends Controller
             return '254'.substr($phone, 1);
         }
         return $phone;
-    }
-
-
-    public function append_relationships_nulls($data = array()){
-        // foreach ($data as $key => $value) {
-        // }
-        return $data;
     }
 }

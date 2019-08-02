@@ -21,47 +21,7 @@ use JWTAuth;
 use App\Models\LPOModels\Lpo;
 
 class LPOTermApi extends Controller
-{
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-
+{ 
     /**
      * Operation addLpoTerm
      *
@@ -72,14 +32,8 @@ class LPOTermApi extends Controller
      */
     public function addLpoTerm()
     {
-        $input = Request::all();
-
         $lpo_term = new LpoTerm;
-
-
         try{
-
-
             $form = Request::all();
             $is_hotel = false;
 
@@ -110,7 +64,6 @@ class LPOTermApi extends Controller
 
 
             if($lpo_term->save()) {
-
                 $lpo = LPO::find($lpo_term->lpo_id);
                 $user = JWTAuth::parseToken()->authenticate();
                 activity()
@@ -120,12 +73,8 @@ class LPOTermApi extends Controller
 
                 return Response()->json(array('success' => 'lpo term added','lpo_term' => $lpo_term), 200);
             }
-
-
         }catch (JWTException $e){
-
-                return response()->json(['error'=>'You are not Authenticated'], 500);
-
+                return response()->json(['error'=>'You are not Authenticated'], 401);
         }
 
     }
@@ -172,34 +121,19 @@ class LPOTermApi extends Controller
      */
     public function updateLpoTerm()
     {
-        $input = Request::all();
-
-
-
-
         try{
-
-
             $form = Request::only(
                 'id',
                 'lpo_id',
                 'terms'
                 );
 
-
             $term = LpoTerm::findOrFail($form['id']);
-
-
             $term->lpo_id              =               $form['lpo_id'];
             $term->terms               =               $form['terms'];
 
             $user = JWTAuth::parseToken()->authenticate();
-            // $allocation->allocated_by_id            =   (int)   $user->id;
-
-
             if($term->save()) {
-
-
                 $lpo = LPO::find($term->lpo_id);
                 activity()
                    ->performedOn($lpo)
@@ -208,12 +142,8 @@ class LPOTermApi extends Controller
 
                 return Response()->json(array('success' => 'Terms updated','lpo_term' => $term), 200);
             }
-
-
         }catch (JWTException $e){
-
-            return response()->json(['error'=>'You are not Authenticated'], 500);
-
+            return response()->json(['error'=>'You are not Authenticated'], 401);
         }
     }
 
@@ -260,15 +190,11 @@ class LPOTermApi extends Controller
      */
     public function deleteLpoTerm($lpo_term_id)
     {
-        $input = Request::all();
-
         $deleted_lpo_term = LpoTerm::destroy($lpo_term_id);
-
-
         if($deleted_lpo_term){
             return response()->json(['msg'=>"lpo term deleted"], 200,array(),JSON_PRETTY_PRINT);
         }else{
-            return response()->json(['error'=>"lpo term not found"], 404,array(),JSON_PRETTY_PRINT);
+            return response()->json(['error'=>"Something went wrong"], 500,array(),JSON_PRETTY_PRINT);
         }
     }
 
@@ -315,19 +241,13 @@ class LPOTermApi extends Controller
      */
     public function getLpoTermById($lpo_term_id)
     {
-
-       $input = Request::all();
-
        try{
-
             $response = LpoTerm::findOrFail($lpo_term_id);
-
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
 
         }catch(Exception $e){
-
-            $response =  ["error"=>"lpo could not be found"];
-            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+            $response =  ["error"=>"Something went wrong"];
+            return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
         }
     }
 
@@ -376,27 +296,15 @@ class LPOTermApi extends Controller
         $input = Request::all();
         $response;
 
-        //path params validation
-
-
-        //not path params validation
-        // $lpo_id = $input['lpo_id'];
-
-
-        // return response('How about implementing lpoTermsGet as a GET method ?');
         if(array_key_exists('lpo_id', $input)){
 
             $response = LpoTerm::where("deleted_at",null)
                 ->where('lpo_id', $input['lpo_id'])
                 ->get();
-
         }else{
-
             $response = LpoTerm::all();
-
         }
-
-
+        
         return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
     }
 }

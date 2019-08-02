@@ -20,59 +20,10 @@ use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\DB;
 
 use App\Models\ProjectsModels\Project;
-use App\Models\ProjectsModels\ProjectActivity;
-use App\Models\ProjectsModels\ProjectBudgetAccount;
-use App\Models\ProjectsModels\ProjectCashNeed;
-use App\Models\ProjectsModels\ProjectMasterList;
-use App\Models\ProjectsModels\ProjectObjective;
-use App\Models\ProjectsModels\ProjectTeam;
-
 use Exception;
-use App;
-use Illuminate\Support\Facades\Response;
-use App\Models\StaffModels\Staff;
 
 class ProjectApi extends Controller
 {
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-
     /**
      * Operation addProject
      *
@@ -98,7 +49,6 @@ class ProjectApi extends Controller
             $project->budget_id                        = (int) $form['budget_id'];
 
         if($project->save()) {
-
             return Response()->json(array('msg' => 'Success: project added','project' => $project), 200);
         }
     }
@@ -147,19 +97,17 @@ class ProjectApi extends Controller
         $form = Request::all();
 
         $project = Project::find($form['id']);
-
-            $project->program_id                       =  (int)  $form['program_id'];
-            $project->project_code                     =         $form['project_code'];
-            $project->project_name                     =         $form['project_name'];
-            $project->project_desc                     =         $form['project_desc'];
-            $project->status_id                        =  (int)  $form['status_id'];
-            $project->country_id                       =  (int)  $form['country_id'];
-            $project->grant_id                         = (int) $form['grant_id'];
-            if(!empty($form['budget_id']))
-            $project->budget_id                        = (int) $form['budget_id'];
+        $project->program_id                       =  (int)  $form['program_id'];
+        $project->project_code                     =         $form['project_code'];
+        $project->project_name                     =         $form['project_name'];
+        $project->project_desc                     =         $form['project_desc'];
+        $project->status_id                        =  (int)  $form['status_id'];
+        $project->country_id                       =  (int)  $form['country_id'];
+        $project->grant_id                         = (int) $form['grant_id'];
+        if(!empty($form['budget_id']))
+        $project->budget_id                        = (int) $form['budget_id'];
 
         if($project->save()) {
-
             return Response()->json(array('msg' => 'Success: project updated','project' => $project), 200);
         }
     }
@@ -206,11 +154,7 @@ class ProjectApi extends Controller
      */
     public function deleteProject($project_id)
     {
-        $input = Request::all();
-
-
         $deleted = Project::destroy($project_id);
-
         if($deleted){
             return response()->json(['msg'=>"project deleted"], 200,array(),JSON_PRETTY_PRINT);
         }else{
@@ -263,28 +207,22 @@ class ProjectApi extends Controller
         $input = Request::all();
 
         try{
-
             $response   = Project::with(["budget","project_manager","staffs", "grant"])
                                     ->findOrFail($project_id);
 
 
             //with_chart_data
             if(array_key_exists('with_chart_data', $input)&& $input['with_chart_data'] = "true"){
-
-
                 $project = Project::find($project_id);
                 $response["budget_expenditure_by_accounts_data"]    =   $project->getBudgetExpenditureByAccountsDataAttribute();
                 $response["grant_amount_allocated"]                 =  empty($project->budget->totals) ? 0 : $project->budget->totals;
                 $response["total_expenditure"]                      =   $project->getTotalExpenditureAttribute();
                 $response["total_expenditure_perc"]                 =   $project->getTotalExpenditurePercAttribute();
-
-
             }
            
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
 
         }catch(Exception $e){
-
             $response =  ["error"=>"project could not be found", "msg"=>$e->getMessage(), 'trace'=>$e->getTraceAsString()];
             return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
         }
@@ -332,17 +270,14 @@ class ProjectApi extends Controller
             );
 
         try{
-
             $project  =   Project::findOrFail($project_id);
             $project->staffs()->sync($form->staffs);
             $response   = Project::with(["budget","project_manager","staffs"])->findOrFail($project_id);
            
             return response()->json(['msg'=>"Team Updated", 'staffs'=>$response], 200,array(),JSON_PRETTY_PRINT);
-
         }catch(Exception $e){
-
-            $response =  ["error"=>"project could not be found"];
-            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+            $response =  ["error"=>"Something went wrong"];
+            return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
         }
     }
 
@@ -508,16 +443,6 @@ class ProjectApi extends Controller
             $qb->limit($input['limit']);
         }
 
-        //migrated
-        if(array_key_exists('migrated', $input)){
-            $mig = (int) $input['migrated'];
-            if($mig==0){
-                $qb->whereNull('migration_id');
-            }else if($mig==1){
-                $qb->whereNotNull('migration_id');
-            }
-        }
-
         if(array_key_exists('datatables', $input)){
             //searching
             $qb->where(function ($query) use ($input) {
@@ -548,10 +473,6 @@ class ProjectApi extends Controller
             }else{
                 $qb->limit($input['length']);
             }
-
-
-
-
 
             $sql = Project::bind_presql($qb->toSql(),$qb->getBindings());
             $response_dt = DB::select($sql);
@@ -602,27 +523,16 @@ class ProjectApi extends Controller
         foreach ($data as $key => $value) {
 
             $projects = Project::find($data[$key]['id']);
-
-            $grant_amount_allocated     =   $data[$key]['grant_amount_allocated']   = (double) $projects->grant_amount_allocated;
-            $total_expenditure          =   $data[$key]['total_expenditure']        = (double) $projects->total_expenditure;
-            // if($projects->grant_amount_allocated!=0){
-                $data[$key]['expenditure_perc']         = $projects->total_expenditure_perc;
-            // }else{
-            //     $data[$key]['expenditure_perc']         = 0;
-            // }
+            $data[$key]['expenditure_perc']         = $projects->total_expenditure_perc;
             $data[$key]['program']                  = $projects->program;
             $data[$key]['status']                   = $projects->status;
             $data[$key]['country']                  = $projects->country;
             $data[$key]['staffs']                   = $projects->staffs;
             $data[$key]['budget']                   = $projects->budget;
             $data[$key]['grant']                    = $projects->grant;
-
         }
 
-
         return $data;
-
-
     }
 
 
@@ -639,11 +549,7 @@ class ProjectApi extends Controller
 
 
     public function append_relationships_nulls($data = array()){
-
-
         foreach ($data as $key => $value) {
-
-
             if($data[$key]["program"]==null){
                 $data[$key]["program"] = array("program_name"=>"N/A");
             }
@@ -659,12 +565,8 @@ class ProjectApi extends Controller
             if($data[$key]["grant"]==null){
                 $data[$key]["grant"] = array("grant_name"=>"");
             }
-
-
         }
 
         return $data;
-
-
     }
 }

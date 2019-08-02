@@ -24,7 +24,6 @@ use App\Models\ApprovalsModels\Approval;
 use PDF;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\DB;
 use App\Mail\NotifyLeaveRequest;
 
 class LeaveManagementApi extends Controller
@@ -63,8 +62,6 @@ class LeaveManagementApi extends Controller
                     $query->orWhere('name','like', '\'%' . $input['searchval']. '%\'');
                     $query->orWhere('date','like', '\'%' . $input['searchval']. '%\'');
                 });
-
-                $dt = $holidays->get();
 
                 $records_filtered = $holidays->count();
             }
@@ -173,11 +170,10 @@ class LeaveManagementApi extends Controller
     public function deleteHoliday($holiday_id)
     {
         $deleted = Holiday::destroy($holiday_id);
-
         if($deleted){
             return response()->json(['msg'=>"Holiday removed"], 200,array(),JSON_PRETTY_PRINT);
         }else{
-            return response()->json(['error'=>"Holiday not found"], 404,array(),JSON_PRETTY_PRINT);
+            return response()->json(['error'=>"Something went wrong"], 500,array(),JSON_PRETTY_PRINT);
         }
     }
     
@@ -223,8 +219,6 @@ class LeaveManagementApi extends Controller
                     $query->orWhere('name','like', '\'%' . $input['searchval']. '%\'');
                     $query->orWhere('days_entitled','like', '\'%' . $input['searchval']. '%\'');
                 });
-
-                $dt = $leave_types->get();
 
                 $records_filtered = $leave_types->count();
             }
@@ -348,7 +342,6 @@ class LeaveManagementApi extends Controller
     public function deleteLeaveType($leave_type_id)
     {
         $deleted = LeaveType::destroy($leave_type_id);
-
         if($deleted){
             return response()->json(['msg'=>"Leave type removed"], 200,array(),JSON_PRETTY_PRINT);
         }else{
@@ -414,18 +407,8 @@ class LeaveManagementApi extends Controller
 
             // My Assigned
             if(array_key_exists('my_assigned', $input)){
-                // if(!($this->current_user()->hasRole([
-                //     'admin',
-                //     'director',
-                //     'associate-director']
-                // ))){
-                //     // $leave_requests = $leave_requests->where('status_id', 3);
-                //     $leave_requests = $leave_requests->where('requested_by_id',$this->current_user()->id);
-                //  }
                  if($this->current_user()->hasRole('program-manager')){
-                    $leave_requests = $leave_requests->where('line_manager_id',$this->current_user()->id);
-                    // $leave_requests = $leave_requests->where('status_id',3);
-                 }
+                    $leave_requests = $leave_requests->where('line_manager_id',$this->current_user()->id);                 }
                  else {
                     $leave_requests = $leave_requests->where('requested_by_id',$this->current_user()->id);
                  }
@@ -453,8 +436,6 @@ class LeaveManagementApi extends Controller
                     $query->orWhere('start_date','like', '\'%' . $input['searchval']. '%\'');
                     $query->orWhere('end_date','like', '\'%' . $input['searchval']. '%\'');
                 });
-
-                $dt = $leave_requests->get();
 
                 $records_filtered = $leave_requests->count();
             }
@@ -504,56 +485,12 @@ class LeaveManagementApi extends Controller
                     );
             }
             elseif(array_key_exists('fullcalendar', $input)){
-                $final_requests = [];
                 $holidays = [];
                 $holiday_list = Holiday::all();
                 foreach($holiday_list as $h){
                     array_push($holidays, $h->full_date);
                 }
                 $requests_ = $leave_requests->get();
-                // foreach($requests_ as $req){
-                //     if(!empty($req->leave_type->include_weekends && $req->leave_type->include_weekends==1)){
-                //         array_push($final_requests, $req);
-                //     }
-                //     else{
-                //         $begin = new \DateTime($req->start_date);
-                //         $end   = new \DateTime($req->end_date);
-                //         $temp_start = $begin->format("Y-m-d");
-                //         $temp_end = $begin->format("Y-m-d");
-                //         $current_date = $temp_start;
-
-                //         for($i = $begin; $i <= $end; $i->modify('+1 day')){
-                //             $current_date = $i->format("Y-m-d");
-                //             if(in_array($current_date, $holidays)){
-                //                 $temp_end = ((new \DateTime($current_date))->modify('-1 day'))->format("Y-m-d");
-                //                 $req->start_date = $temp_start;         // If current day is a holiday, create a new
-                //                 $req->end_date = $temp_end;             // event with the temp start and end dates
-                //                 array_push($final_requests, $req);      // then add this 'sub-event' to the list of events
-                //                 $temp_start = ((new \DateTime($current_date))->modify('+1 day'))->format("Y-m-d"); 
-                //                 continue;
-                //             }
-                //             elseif($this->isSaturday($current_date)){
-                //                 $temp_end = ((new \DateTime($current_date))->modify('-1 day'))->format("Y-m-d");
-                //                 $req->start_date = $temp_start;         // If current day is a saturday, create a new
-                //                 $req->end_date = $temp_end;             // event with the temp start and end dates
-                //                 array_push($final_requests, $req);      // then add this 'sub-event' to the list of events
-                //                 continue;
-                //             }
-                //             elseif($this->isSunday($current_date)){
-                //                 $temp_start = ((new \DateTime($current_date))->modify('+1 day'))->format("Y-m-d"); 
-                //                 continue;
-                //             }
-                //             elseif($i == $end){
-                //                 $temp_end = $current_date;
-                //                 $req->start_date = $temp_start;
-                //                 $req->end_date = $temp_end;
-                //                 array_push($final_requests, $req);      // Add this 'sub-event' to the list of events
-                //                 continue;
-                //             }
-                //         }
-                // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , PHP_EOL.json_encode($req->start_date.' to '.$req->end_date) , FILE_APPEND);
-                //     }
-                // }
                 $response = $requests_;
             }
             else{    
@@ -834,8 +771,6 @@ class LeaveManagementApi extends Controller
      */
     public function approveLeaveRequest($request_id, $several=null)
     {
-
-        $input = Request::all();
         try{
             $leave_request   = LeaveRequest::findOrFail($request_id);
             $last_request = LeaveRequest::whereYear('start_date', '=', date('Y'))
@@ -933,7 +868,7 @@ class LeaveManagementApi extends Controller
             $leave_request   = LeaveRequest::findOrFail($request_id);
            
             if($leave_request->status_id == 2){     // If not a request for cancellation
-                $leave_request->status_id = 4;    // Rejected status
+                $leave_request->status_id = 4;      // Rejected status
                 $leave_request->rejected_by_id = (int) $this->current_user()->id;
                 $leave_request->rejected_at = date('Y-m-d H:i:s');
                 $leave_request->rejection_reason = $form['rejection_reason'];
@@ -949,8 +884,6 @@ class LeaveManagementApi extends Controller
                    ->performedOn($leave_request)
                    ->causedBy($this->current_user())
                    ->log('rejected');
-
-                // Mail::queue(new NotifyLeaveRequest($activity));
 
                 return Response()->json(array('msg' => 'Success: leave_request approved','leave_request' => $leave_request), 200);
             }
@@ -1039,7 +972,6 @@ class LeaveManagementApi extends Controller
             }else{
                 return response()->json(['error'=>"could not recall leave request"], 404,array(),JSON_PRETTY_PRINT);
             }
-
         }
         catch(Exception $e){
             $response =  ["error"=>"There was an error processing the request"];
@@ -1206,16 +1138,12 @@ class LeaveManagementApi extends Controller
                             "count"=> LeaveRequest::count()
                           );
                 }
-
-
             }
-
             }
 
             return response()->json($response, 200);
         }
         catch(\Exception $e){
-            // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , PHP_EOL.$e->getTraceAsString() , FILE_APPEND);
             return response()->json(['error'=>'something went wrong', 'msg'=>$e->getMessage()], 500);
         }
     }
@@ -1285,7 +1213,6 @@ class LeaveManagementApi extends Controller
     public function deleteLeaveStatus($request_id)
     {
         $deleted = LeaveStatus::destroy($request_id);
-
         if($deleted){
             return response()->json(['msg'=>"Leave status removed"], 200,array(),JSON_PRETTY_PRINT);
         }else{

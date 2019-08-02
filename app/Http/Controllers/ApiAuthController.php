@@ -1,8 +1,6 @@
 <?php
 namespace App\Http\Controllers;
-use Exception;
 use JWTAuth;
-use Illuminate\Http\Request;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use App\Models\StaffModels\Staff;
 use Illuminate\Support\Facades\Mail;

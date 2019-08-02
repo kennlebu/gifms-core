@@ -7,13 +7,10 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 
 use App\Models\ActivityModels\Activity;
-use App\Models\ActivityModels\ActivityStatus;
 use App\Models\ActivityModels\ActivityObjective;
-use App\Models\ProgramModels\ProgramManager;
 use App\Models\ApprovalsModels\Approval;
 use App\Models\ProgramModels\ProgramStaff;
 use App\Models\ProgramModels\Program;
-use App\Models\ProjectsModels\Project;
 use App\Models\AllocationModels\Allocation;
 use App\Models\InvoicesModels\Invoice;
 use App\Models\MobilePaymentModels\MobilePayment;
@@ -22,21 +19,9 @@ use App\Models\ReportModels\ReportingObjective;
 use App\Mail\NotifyActivityCreation;
 
 use Exception;
-use App;
-use Illuminate\Support\Facades\Response;
 
 class ActivityApi extends Controller
 {
-    private $default_status = '';
-    private $approvable_statuses = [];
-    
-    public function __construct()
-    {
-        // $this->default_status = 1; // Logged, pending submission
-        // $this->approvable_statuses = ActivityStatus::where('approvable','1')->get();
-    }
-
-
     /**
      * Add activity
      */
@@ -49,12 +34,10 @@ class ActivityApi extends Controller
         $activity->requested_by_id = $form['requested_by_id'];
         $activity->title = $form['title'];
         $activity->description = $form['description'];
-        // $activity->objective_id = $form['objective_id'];
         $activity->start_date = date('Y-m-d', strtotime($form['start_date']));
         if(!empty($form['end_date'])){
             $activity->end_date = date('Y-m-d', strtotime($form['end_date']));
         }
-        // $activity->status_id = $this->default_status;
         $activity->status_id = 1;
 
         if($activity->save()) {
@@ -121,7 +104,6 @@ class ActivityApi extends Controller
         }
 
         if($activity->save()) {
-
             return Response()->json(array('msg' => 'Success: activity updated','activity' => $activity), 200);
         }
     }
@@ -193,7 +175,6 @@ class ActivityApi extends Controller
                 $program_ids = ProgramStaff::select('program_id')->where('staff_id', $this->current_user()->id)->get();
                 $objective_ids = ReportingObjective::select('id')->whereIn('program_id', $program_ids)->get();
                 $qb->whereIn('activities.objective_id', $objective_ids)
-                    // ->where('activities.status_id', 3)
                     ->whereNotNull('activities.id')
                     ->groupBy('activities.id');
             }
@@ -208,14 +189,6 @@ class ActivityApi extends Controller
             else{
                 $staff_programs = ProgramStaff::where('staff_id', $this->current_user()->id)->pluck('program_id')->toArray();
                 $qb->whereIn('program_id', $staff_programs);
-                // $qb->select(DB::raw('activities.*'))
-                //      ->rightJoin('reporting_objectives', 'reporting_objectives.id', '=', 'activities.objective_id')
-                //      ->rightJoin('program_teams', 'program_teams.program_id', '=', 'reporting_objectives.program_id')
-                //      ->rightJoin('staff', 'staff.id', '=', 'program_teams.staff_id')
-                //      ->where('staff.id', '=', $current_user->id)
-                //     //  ->where('activities.status_id', 3)
-                //      ->whereNotNull('activities.id')
-                //      ->groupBy('activities.id');
             }
         }
 
@@ -226,7 +199,6 @@ class ActivityApi extends Controller
 
         // my approvables
         if(array_key_exists('my_approvables', $input)){
-
             if($current_user->hasRole('program-manager')){               
                 $qb->where('activities.status_id',2); 
                 $qb->where('activities.program_manager_id', $current_user->id);
@@ -238,7 +210,6 @@ class ActivityApi extends Controller
 
         //objective_id
          if(array_key_exists('objective_id', $input)){
-
             $objective_id = (int) $input['objective_id'];
 
             if($objective_id==0){
@@ -260,7 +231,6 @@ class ActivityApi extends Controller
 
         //project_id
          if(array_key_exists('project_id', $input)){
-
             $project_id = (int) $input['project_id'];
 
             if($project_id==0){
@@ -271,12 +241,10 @@ class ActivityApi extends Controller
 
         //searching
         if(array_key_exists('searchval', $input)){
-            $qb->where(function ($query) use ($input) {
-                
+            $qb->where(function ($query) use ($input) {                
                 $query->orWhere('activities.id','like', '\'%' . $input['searchval']. '%\'');
                 $query->orWhere('activities.title','like', '\'%' . $input['searchval']. '%\'');
                 $query->orWhere('activities.description','like', '\'%' . $input['searchval']. '%\'');
-
             });
 
             $sql = Activity::bind_presql($qb->toSql(),$qb->getBindings());
@@ -403,13 +371,9 @@ class ActivityApi extends Controller
      */
     public function approveActivity($activity_id, $several=null)
     {
-
-        $input = Request::all();
-
         $user = JWTAuth::parseToken()->authenticate();
 
         try{
-
             $activity   = Activity::findOrFail($activity_id);
            
             $approvable_status  = $activity->status;
@@ -418,20 +382,17 @@ class ActivityApi extends Controller
             if($activity->save()) {
 
                 $approval = new Approval;
-
                 $approval->approvable_id            =   (int) $activity->id;
                 $approval->approvable_type          =   "activities";
                 $approval->approval_level_id        =   $approvable_status->approval_level_id;
                 $approval->approver_id              =   (int) $user->id;
+                $approval-disableLogging();
 
                 $approval->save();
-                
-                // Mail::queue(new NotifyActivity($activity));
 
                 if($several!=true)
                 return Response()->json(array('msg' => 'Success: Activity approved','activity' => $activity), 200);
             }
-
 
         }catch(ApprovalException $ae){
 
@@ -488,8 +449,6 @@ class ActivityApi extends Controller
             $activity->rejection_reason = $form['rejection_reason'];
 
             if($activity->save()) {
-                // Mail::queue(new NotifyActivity($activity));
-
                 return Response()->json(array('msg' => 'Success: activity approved','advance' => $activity), 200);
             }
 
@@ -516,8 +475,6 @@ class ActivityApi extends Controller
             $activity->status_id = $activity->status->next_status_id;
 
             if($activity->save()) {
-                // Mail::queue(new NotifyActivity($activity));
-
                 return Response()->json(array('msg' => 'Success: Activity submitted','activity' => $activity), 200);
             }
 

@@ -23,42 +23,6 @@ use Illuminate\Support\Facades\DB;
 class SupplierRateApi extends Controller
 {
     /**
-     * Constructor
-     */
-    public function __construct()
-    {
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-
-    /**
      * Operation addSupplierRate
      *
      * Add a new supplier_rate.
@@ -69,20 +33,20 @@ class SupplierRateApi extends Controller
     public function addSupplierRate()
     {
         try{
-        $input = Request::all();
-        $rate = new SupplierRate;
-        $rate->service_id = (int) $input['service_id'];
-        $rate->supplier_id = (int) $input['supplier_id'];
-        $rate->rate = $input['rate'];
-        $rate->currency_id = (int) $input['currency_id'];
-        $rate->vat = (int) $input['vat'];
-        if(!empty($input['daily_charge']))
-        $rate->daily_charge = (int) $input['daily_charge'];
-        $rate->unit = $input['unit'];
+            $input = Request::all();
+            $rate = new SupplierRate;
+            $rate->service_id = (int) $input['service_id'];
+            $rate->supplier_id = (int) $input['supplier_id'];
+            $rate->rate = $input['rate'];
+            $rate->currency_id = (int) $input['currency_id'];
+            $rate->vat = (int) $input['vat'];
+            if(!empty($input['daily_charge']))
+            $rate->daily_charge = (int) $input['daily_charge'];
+            $rate->unit = $input['unit'];
 
-        if($rate->save()){
-            return response()->json(['msg'=>"rate added"], 200,array(),JSON_PRETTY_PRINT);
-        }
+            if($rate->save()){
+                return response()->json(['msg'=>"rate added"], 200,array(),JSON_PRETTY_PRINT);
+            }
         }
         catch(\Exception $e){
             return response()->json(['error'=>'something went wrong', 'msg'=>$e->getMessage()], 500);
@@ -116,10 +80,10 @@ class SupplierRateApi extends Controller
             if($rate->save()){
                 return response()->json(['msg'=>"rate updated"], 200,array(),JSON_PRETTY_PRINT);
             }
-            }
-            catch(\Exception $e){
-                return response()->json(['error'=>'something went wrong', 'msg'=>$e->getMessage()], 500);
-            }
+        }
+        catch(\Exception $e){
+            return response()->json(['error'=>'something went wrong', 'msg'=>$e->getMessage()], 500);
+        }
     }
 
 
@@ -138,11 +102,10 @@ class SupplierRateApi extends Controller
     public function deleteSupplierRate($supplier_rate_id)
     {
         $deleted = SupplierRate::destroy($supplier_rate_id);
-
         if($deleted){
             return response()->json(['msg'=>"supplier rate deleted"], 200,array(),JSON_PRETTY_PRINT);
         }else{
-            return response()->json(['error'=>"supplier rate not found"], 404,array(),JSON_PRETTY_PRINT);
+            return response()->json(['error'=>"Something went wrong"], 500,array(),JSON_PRETTY_PRINT);
         }
     }
 
@@ -166,9 +129,8 @@ class SupplierRateApi extends Controller
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
 
         }catch(\Exception $e){
-
-            $response =  ["error"=>"supplier rate could not be found"];
-            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+            $response =  ["error"=>"Something went wrong"];
+            return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
         }
     }
 
@@ -199,7 +161,6 @@ class SupplierRateApi extends Controller
         $total_records          = $qb->count();
         $records_filtered       = 0;
 
-
         // For county
         if(array_key_exists('county_id', $input) && !empty($input['county_id'])){
             $qb->where('suppliers.county_id', $input['county_id']);
@@ -214,16 +175,13 @@ class SupplierRateApi extends Controller
         if(array_key_exists('service_id', $input) && !empty($input['service_id'])){
             $qb->where('supplier_rates.service_id', $input['service_id']);
         }
-
         
         //searching
         if(array_key_exists('searchval', $input)){
-            $qb->where(function ($query) use ($input) {
-                
+            $qb->where(function ($query) use ($input) {                
                 $query->orWhere('supplier_rates.id','like', '\'%' . $input['searchval']. '%\'');
                 $query->orWhere('supplier_rates.rate','like', '\'%' . $input['searchval']. '%\'');
                 $query->orWhere('suppliers.supplier_name','like', '\'%' . $input['searchval']. '%\'');
-
             });
 
             $sql = SupplierRate::bind_presql($qb->toSql(),$qb->getBindings());
@@ -231,11 +189,7 @@ class SupplierRateApi extends Controller
             $dt = json_decode(json_encode(DB::select($sql)), true);
 
             $records_filtered = (int) $dt[0]['count'];
-            // $records_filtered = 30;
-
-
         }
-
 
         //ordering
         if(array_key_exists('order_by', $input)&&$input['order_by']!=''){
@@ -244,36 +198,21 @@ class SupplierRateApi extends Controller
             if(array_key_exists('order_dir', $input)&&$input['order_dir']!=''){                
                 $order_direction = $input['order_dir'];
             }
-
             $qb->orderBy($order_column_name, $order_direction);
-        }else{
-            // $qb->orderBy("supply_category_name", "asc");
         }
 
         //limit
         if(array_key_exists('limit', $input)){
-
-
             $qb->limit($input['limit']);
-
-
         }
 
-
-
         if(array_key_exists('datatables', $input)){
-
             //searching
-            $qb->where(function ($query) use ($input) {
-                
+            $qb->where(function ($query) use ($input) {                
                 $query->orWhere('supplier_rates.id','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('supplier_rates.rate','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('suppliers.supplier_name','like', '\'%' . $input['search']['value']. '%\'');
-
             });
-
-
-
 
             $sql = SupplierRate::bind_presql($qb->toSql(),$qb->getBindings());
             $sql = str_replace("`supplier_rates`.*"," count(*) AS count ", $sql);
@@ -281,44 +220,26 @@ class SupplierRateApi extends Controller
 
             $records_filtered = (int) $dt[0]['count'];
 
-
             //ordering
             $order_column_id    = (int) $input['order'][0]['column'];
             $order_column_name  = $input['columns'][$order_column_id]['order_by'];
             $order_direction    = $input['order'][0]['dir'];
 
             if($order_column_name!=''){
-
                 $qb->orderBy($order_column_name, $order_direction);
-
             }
-
-
-
-
-
 
             //limit $ offset
             if((int)$input['start']!= 0 ){
-
                 $response_dt    =   $qb->limit($input['length'])->offset($input['start']);
-
             }else{
                 $qb->limit($input['length']);
             }
 
-
-
-
-
             $sql = SupplierRate::bind_presql($qb->toSql(),$qb->getBindings());
 
-            // $response_dt = DB::select($qb->toSql(),$qb->getBindings());         //pseudo
             $response_dt = DB::select($sql);
-
-
             $response_dt = json_decode(json_encode($response_dt), true);
-
             $response_dt    = $this->append_relationships_objects($response_dt);
             $response_dt    = $this->append_relationships_nulls($response_dt);
             $response       = SupplierRate::arr_to_dt_response( 
@@ -326,10 +247,8 @@ class SupplierRateApi extends Controller
                 $total_records,
                 $records_filtered
                 );
-
-
-        }else{
-
+        }
+        else{
             $sql            = SupplierRate::bind_presql($qb->toSql(),$qb->getBindings());
             $response       = json_decode(json_encode(DB::select($sql)), true);
             if(!array_key_exists('lean', $input)){
@@ -338,30 +257,21 @@ class SupplierRateApi extends Controller
             }
         }
 
-
-
-
         return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
-
-
     }
 
     private function append_relationships_objects($data = array()){
         foreach ($data as $key => $value) {
-
             $supplier_rate = SupplierRate::find($data[$key]['id']);
-
             $data[$key]['service'] = $supplier_rate->service;
             $data[$key]['supplier'] = $supplier_rate->supplier;
             $data[$key]['currency'] = $supplier_rate->currency;            
             $data[$key]['terms'] = $supplier_rate->terms;
-
         }
         return $data;
     }
 
     private function append_relationships_nulls($data = array()){
-
         foreach ($data as $key => $value) {
             if($data[$key]["service"]==null){
                 $data[$key]["service"] = array("service_name"=>"N/A");
@@ -407,13 +317,13 @@ class SupplierRateApi extends Controller
     public function updateSupplierRateTerm()
     {
         try{
-        $input = Request::all();
-        $rate_term = SupplierRateTerms::findOrFail($input['id']);
-        $rate_term->terms = $input['terms'];
+            $input = Request::all();
+            $rate_term = SupplierRateTerms::findOrFail($input['id']);
+            $rate_term->terms = $input['terms'];
 
-        if($rate_term->save()){
-            return response()->json(['msg'=>"term updated"], 200,array(),JSON_PRETTY_PRINT);
-        }
+            if($rate_term->save()){
+                return response()->json(['msg'=>"term updated"], 200,array(),JSON_PRETTY_PRINT);
+            }
         }
         catch(\Exception $e){
             return response()->json(['error'=>'something went wrong', 'msg'=>$e->getMessage()], 500);
@@ -426,11 +336,10 @@ class SupplierRateApi extends Controller
     public function deleteSupplierRateTerm($term_id)
     {
         $deleted = SupplierRateTerms::destroy($term_id);
-
         if($deleted){
             return response()->json(['msg'=>"term deleted"], 200,array(),JSON_PRETTY_PRINT);
         }else{
-            return response()->json(['error'=>"term not found"], 404,array(),JSON_PRETTY_PRINT);
+            return response()->json(['error'=>"Something went wrong"], 500,array(),JSON_PRETTY_PRINT);
         }
     }
 
@@ -449,19 +358,15 @@ class SupplierRateApi extends Controller
         $response;
         $response_dt;
 
-        $total_records          = $qb->count();
-        $records_filtered       = 0;
-
         // Services
         $service_id_count;
         if(array_key_exists('services', $input) && !empty($input['services'])){
             $service_list = $input['services'];
             $service_ids = [];
             $county_ids = [];
-            // $supply_category_ids = [];
             foreach($service_list as $service){
-                array_push($service_ids, $service['id']);
-                array_push($county_ids, $service['county_id']);
+                $service_ids[] = $service['id'];
+                $county_ids[] = $service['county_id'];
             }
             $service_id_count = count($service_ids);
             $qb->where('suppliers.county_id', $county_ids[0]);
@@ -474,7 +379,6 @@ class SupplierRateApi extends Controller
             $response       = $this->append_relationships_objects($response);
             $response       = $this->append_relationships_nulls($response);
         }
-
         
         $final_response = [];
         $service_list = $input['services'];
@@ -552,7 +456,6 @@ class SupplierRateApi extends Controller
                     'total'=>array_sum(array_column($items, 'subtotal'))
                 ); 
             }
-            // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , PHP_EOL.json_encode($items) , FILE_APPEND);
             $prev_supplier_id = $response[$key]['supplier_id'];
         }
 
@@ -564,7 +467,5 @@ class SupplierRateApi extends Controller
         }
         
         return response()->json($real_final_response, 200,array(),JSON_PRETTY_PRINT);
-    }
-
-    
+    }   
 }

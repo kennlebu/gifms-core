@@ -15,8 +15,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Request;
-use App\Models\MobilePaymentModels\MobilePayment;
 use App\Models\AllocationModels\Allocation;
 
 class MobilePaymentAllocationApi extends Controller
@@ -41,14 +39,11 @@ class MobilePaymentAllocationApi extends Controller
                                         'project',
                                         'account'
                                     )->findOrFail($mobile_payment_allocation_id);
-
-
-                $response['mobile_payment']  =   $response['allocatable'];
+            $response['mobile_payment']  =   $response['allocatable'];
 
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
 
         }catch(Exception $e){
-
             $response =  ["error"=>"Mobile Payment Allocation could not be found"];
             return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
         }

@@ -16,243 +16,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Request;
-use Illuminate\Support\Facades\DB;
-use Anchu\Ftp\Facades\Ftp;
 use PDF;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Response;
-use App\Models\PaymentModels\PaymentVoucher;
 use App\Models\InvoicesModels\Invoice;
 use App\Models\PaymentModels\VoucherNumber;
 
 class PaymentVoucherApi extends Controller
-{
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-
-    /**
-     * Operation addPaymentVoucher
-     *
-     * Add a new payment_voucher.
-     *
-     *
-     * @return Http response
-     */
-    public function addPaymentVoucher()
-    {
-        $input = Request::all();
-
-        //path params validation
-
-
-        //not path params validation
-        if (!isset($input['body'])) {
-            throw new \InvalidArgumentException('Missing the required parameter $body when calling addPaymentVoucher');
-        }
-        $body = $input['body'];
-
-
-        return response('How about implementing addPaymentVoucher as a POST method ?');
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    /**
-     * Operation updatePaymentVoucher
-     *
-     * Update an existing payment_voucher.
-     *
-     *
-     * @return Http response
-     */
-    public function updatePaymentVoucher()
-    {
-        $input = Request::all();
-
-        //path params validation
-
-
-        //not path params validation
-        if (!isset($input['body'])) {
-            throw new \InvalidArgumentException('Missing the required parameter $body when calling updatePaymentVoucher');
-        }
-        $body = $input['body'];
-
-
-        return response('How about implementing updatePaymentVoucher as a PUT method ?');
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    /**
-     * Operation getPaymentVoucherById
-     *
-     * Find payment_voucher by ID.
-     *
-     * @param int $payment_voucher_id ID of payment_voucher to return object (required)
-     *
-     * @return Http response
-     */
-    public function getPaymentVoucherById($payment_voucher_id)
-    {
-        $input = Request::all();
-
-        //path params validation
-
-
-        //not path params validation
-
-        return response('How about implementing getPaymentVoucherById as a GET method ?');
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    /**
-     * Operation deletePaymentVoucher
-     *
-     * Deletes an payment_voucher.
-     *
-     * @param int $payment_voucher_id payment_voucher id to delete (required)
-     *
-     * @return Http response
-     */
-    public function deletePaymentVoucher($payment_voucher_id)
-    {
-        $input = Request::all();
-
-        //path params validation
-
-
-        //not path params validation
-
-        return response('How about implementing deletePaymentVoucher as a DELETE method ?');
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
+{ 
     /**
      * Operation getDocumentById
      *
@@ -301,31 +71,16 @@ class PaymentVoucherApi extends Controller
                     'voucher_no'=>$voucher_no,
                     'payable_type'=>'Invoice'
                     );
-            file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , '\nSQL:: '.json_encode($data) , FILE_APPEND);
 
             $pdf            = PDF::loadView('pdf/payment_voucher', $data);
-
             $file_contents  = $pdf->stream();
-
-            Storage::put('invoices/'.$invoice_id.'.voucher.temp', $file_contents);
-
-            $url            = storage_path("app/invoices/".$invoice_id.'.voucher.temp');
-
-            $file           = File::get($url);
-
-            $response       = Response::make($file, 200);
-
+            $response       = Response::make($file_contents, 200);
             $response->header('Content-Type', 'application/pdf');
-
             return $response;
         }catch (Exception $e ){            
-
             $response       = Response::make("", 200);
-
             $response->header('Content-Type', 'application/pdf');
-
             return $response;  
-
         }
     }
 

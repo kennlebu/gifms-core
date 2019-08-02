@@ -11,8 +11,6 @@ use App\Models\ActivityModels\Activity;
 use App\Models\ProgramModels\ProgramStaff;
 
 use Exception;
-use App;
-use Illuminate\Support\Facades\Response;
 
 class ActivityStatusApi extends Controller
 {
@@ -45,7 +43,6 @@ class ActivityStatusApi extends Controller
         $form = Request::all();
 
         $activity_status = ActivityStatus::find($form['id']);
-
         $activity_status->status = $form['status'];
         $activity_status->next_status_id = (int) $form['next_status_id'];
         $activity_status->short_name =  $form['short_name'];
@@ -229,12 +226,6 @@ class ActivityStatusApi extends Controller
                         "display_color"=> "#49149c7a",
                         "activities_count"=> count(DB::table('activities')
                             ->whereIn('program_id', ProgramStaff::where('staff_id', $this->current_user()->id)->pluck('program_id')->toArray())
-                            // ->rightJoin('program_teams', 'program_teams.staff_id', '=', $this->current_user()->id)
-                            // ->rightJoin('staff', 'staff.id', '=', 'program_teams.staff_id')
-                            // ->where('staff.id', '=', $this->current_user()->id)
-                            // // ->where('activities.status_id', 3)
-                            // ->whereNotNull('activities.id')
-                            // ->groupBy('activities.id')
                             ->get())
                         );
 

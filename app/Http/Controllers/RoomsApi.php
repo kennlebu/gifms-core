@@ -1,14 +1,9 @@
 <?php
 namespace App\Http\Controllers;
 
-
 use JWTAuth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\DB;
-
-use Exception;
-use App;
-use Illuminate\Support\Facades\Response;
 use App\Models\RoomsModels\MeetingRoom;
 use App\Models\RoomsModels\MeetingRoomBooking;
 
@@ -19,6 +14,7 @@ class RoomsApi extends Controller
      */
     public function __construct()
     {
+        date_default_timezone_set('Africa/Nairobi');
     }
 
     public function addRoom(){
@@ -33,7 +29,6 @@ class RoomsApi extends Controller
             $room->save();
 
             return response()->json(array('msg' => 'Room added'), 200);
-
         }
         catch(\Exception $e){
             return response()->json(['error'=>'something went wrong', 'msg'=>$e->getMessage()], 500);
@@ -64,8 +59,6 @@ class RoomsApi extends Controller
                     $query->orWhere('capacity','like', '\'%' . $input['searchval']. '%\'');
                 });
 
-                $dt = $rooms->get();
-
                 $records_filtered = $rooms->count();
             }
 
@@ -91,15 +84,7 @@ class RoomsApi extends Controller
                 $to = date('Y-m-d', strtotime($input['to_date'])).' '.$input['to_time'].':00';
             }
 
-            if(array_key_exists('datatables', $input)){
-
-                //searching
-                // $rooms = $rooms->where(function ($query) use ($input) {                
-                //     $query->orWhere('name','like', '\'%' . $input['search']['value']. '%\'');
-                //     $query->orWhere('capacity','like', '\'%' . $input['search']['value']. '%\'');
-                //     $query->orWhere('location','like', '\'%' . $input['search']['value']. '%\'');
-                // });
-    
+            if(array_key_exists('datatables', $input)){    
                 $records_filtered = $rooms->count();
     
                 //ordering
@@ -197,17 +182,8 @@ class RoomsApi extends Controller
                 $available_rooms = MeetingRoom::with('bookings')->whereDoesntHave('bookings', function ($query) use ($input, $from, $to){
                     $query->whereBetween(DB::raw("cast(CONCAT(`from_date`, ' ', `from_time`) as datetime)"), [$from, $to]);
                     $query->orwhereBetween(DB::raw("cast(CONCAT(`to_date`, ' ', `to_time`) as datetime)"), [$from, $to]);
-                    // $query->where('from_date', $input['from_date']);
-                    // $query->where('to_date', $input['to_date']);
-                    // $query->whereNotBetween('from_time', [$input['from_time'], $input['to_time']]);
-                    // $query->whereNotBetween('to_time', [$input['from_time'], $input['to_time']]);
                 })->where('capacity', '>=', $input['capacity'])->get();
-                // $sql = MeetingRoom::where('capacity', '<=', $input['capacity'])->toSql();
-                // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , PHP_EOL.$sql , FILE_APPEND);
-
-                // $available_rooms = MeetingRoom::where('capacity', '>=', $input['capacity'])->get();
-            }
-            
+            }            
 
             return response()->json($available_rooms, 200);
         }
@@ -262,7 +238,6 @@ class RoomsApi extends Controller
             if($booking->save()){
                 return response()->json(array('msg' => 'Room booked'), 200);
             }
-
         }
         catch(\Exception $e){
             return response()->json(['error'=>'something went wrong', 'msg'=>$e->getMessage()], 500);
@@ -321,7 +296,6 @@ class RoomsApi extends Controller
         }else{
             return response()->json(['error'=>"Booking not found"], 404,array(),JSON_PRETTY_PRINT);
         }
-
     }
 
     public function editRoomBooking(){

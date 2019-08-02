@@ -25,15 +25,15 @@ class SupplierServiceApi extends Controller
     public function addSupplierService()
     {
         try{
-        $input = Request::all();
-        $service = new SupplierService;
-        $service->service_name = $input['service_name'];
-        $service->supply_category_id = (int) $input['supply_category_id'];
-        $service->daily_charge = (int) $input['daily_charge'];
+            $input = Request::all();
+            $service = new SupplierService;
+            $service->service_name = $input['service_name'];
+            $service->supply_category_id = (int) $input['supply_category_id'];
+            $service->daily_charge = (int) $input['daily_charge'];
 
-        if($service->save()){
-            return response()->json(['msg'=>"service added"], 200,array(),JSON_PRETTY_PRINT);
-        }
+            if($service->save()){
+                return response()->json(['msg'=>"service added"], 200,array(),JSON_PRETTY_PRINT);
+            }
         }
         catch(\Exception $e){
             return response()->json(['error'=>'something went wrong', 'msg'=>$e->getMessage()], 500);
@@ -52,21 +52,20 @@ class SupplierServiceApi extends Controller
             if($service->save()){
                 return response()->json(['msg'=>"service updated"], 200,array(),JSON_PRETTY_PRINT);
             }
-            }
-            catch(\Exception $e){
-                return response()->json(['error'=>'something went wrong', 'msg'=>$e->getMessage()], 500);
-            }
+        }
+        catch(\Exception $e){
+            return response()->json(['error'=>'something went wrong', 'msg'=>$e->getMessage()], 500);
+        }
     }
 
 
     public function deleteSupplierService($supplier_service_id)
     {
         $deleted = SupplierService::destroy($supplier_service_id);
-
         if($deleted){
             return response()->json(['msg'=>"supplier service deleted"], 200,array(),JSON_PRETTY_PRINT);
         }else{
-            return response()->json(['error'=>"supplier service not found"], 404,array(),JSON_PRETTY_PRINT);
+            return response()->json(['error'=>"Something went wrong"], 500,array(),JSON_PRETTY_PRINT);
         }
     }
 
@@ -78,9 +77,8 @@ class SupplierServiceApi extends Controller
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
 
         }catch(\Exception $e){
-
-            $response =  ["error"=>"supplier service could not be found"];
-            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+            $response =  ["error"=>"Something went wrong"];
+            return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
         }
     }
 
@@ -135,7 +133,6 @@ class SupplierServiceApi extends Controller
         }
 
         if(array_key_exists('datatables', $input)){
-
             //searching
             $qb->where(function ($query) use ($input) {                
                 $query->orWhere('supplier_services.id','like', '\'%' . $input['search']['value']. '%\'');
@@ -147,7 +144,6 @@ class SupplierServiceApi extends Controller
             $dt = json_decode(json_encode(DB::select($sql)), true);
 
             $records_filtered = (int) $dt[0]['count'];
-
 
             //ordering
             $order_column_id    = (int) $input['order'][0]['column'];
@@ -169,9 +165,7 @@ class SupplierServiceApi extends Controller
 
             $response_dt = DB::select($sql);
             $response_dt = json_decode(json_encode($response_dt), true);
-
             $response_dt    = $this->append_relationships_objects($response_dt);
-
             $response       = SupplierService::arr_to_dt_response( 
                 $response_dt, $input['draw'],
                 $total_records,

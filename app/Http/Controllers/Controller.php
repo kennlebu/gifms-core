@@ -16,29 +16,6 @@ class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
-    /**
-    * Constructor
-    */
-    public function __construct()
-    {
-
-
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-    
-
-
     public function current_user(){
     	return JWTAuth::parseToken()->authenticate();
     }

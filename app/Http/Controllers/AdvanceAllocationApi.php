@@ -15,87 +15,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Request;
-use App\Models\AdvancesModels\Advance;
 use App\Models\AllocationModels\Allocation;
 
 class AdvanceAllocationApi extends Controller
 {
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-    }
-
-    /**
-     * Operation addAdvanceAllocation
-     *
-     * Add a new advance_allocation.
-     *
-     *
-     * @return Http response
-     */
-    public function addAdvanceAllocation()
-    {
-        $input = Request::all();
-
-        //path params validation
-
-
-        //not path params validation
-        if (!isset($input['body'])) {
-            throw new \InvalidArgumentException('Missing the required parameter $body when calling addAdvanceAllocation');
-        }
-        $body = $input['body'];
-
-
-        return response('How about implementing addAdvanceAllocation as a POST method ?');
-    }
-    /**
-     * Operation updateAdvanceAllocation
-     *
-     * Update an existing advance_allocation.
-     *
-     *
-     * @return Http response
-     */
-    public function updateAdvanceAllocation()
-    {
-        $input = Request::all();
-
-        //path params validation
-
-
-        //not path params validation
-        if (!isset($input['body'])) {
-            throw new \InvalidArgumentException('Missing the required parameter $body when calling updateAdvanceAllocation');
-        }
-        $body = $input['body'];
-
-
-        return response('How about implementing updateAdvanceAllocation as a PUT method ?');
-    }
-    /**
-     * Operation deleteAdvanceAllocation
-     *
-     * Deletes an advance_allocation.
-     *
-     * @param int $advance_allocation_id advance_allocation id to delete (required)
-     *
-     * @return Http response
-     */
-    public function deleteAdvanceAllocation($advance_allocation_id)
-    {
-        $input = Request::all();
-
-        //path params validation
-
-
-        //not path params validation
-
-        return response('How about implementing deleteAdvanceAllocation as a DELETE method ?');
-    }
     /**
      * Operation getAdvanceAllocationById
      *
@@ -117,36 +40,12 @@ class AdvanceAllocationApi extends Controller
                                         'account'
                                     )->findOrFail($advance_allocation_id);
 
-
-                $response['advance']  =   $response['allocatable'];
-
+            $response['advance']  =   $response['allocatable'];
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
 
         }catch(Exception $e){
-
             $response =  ["error"=>"Advance Allocation could not be found"];
             return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
         }
-    }
-    /**
-     * Operation advanceAllocationsGet
-     *
-     * advance_allocations List.
-     *
-     *
-     * @return Http response
-     */
-    public function advanceAllocationsGet()
-    {
-        $input = Request::all();
-
-        //path params validation
-
-
-        //not path params validation
-        $advance_allocation_id = $input['advance_allocation_id'];
-
-
-        return response('How about implementing advanceAllocationsGet as a GET method ?');
     }
 }

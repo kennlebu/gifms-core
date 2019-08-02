@@ -15,14 +15,6 @@ use App\Models\ResourcesModels\Resource;
 
 class ResourcesApi extends Controller
 {
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-    }
-
-
     public function downloadTemplate($type){
         try{
             $path2 = '';
@@ -31,24 +23,17 @@ class ResourcesApi extends Controller
 
             $path           = '/templates'.$path2;
             $path_info      = pathinfo($path);
-            $ext            = $path_info['extension'];
             $basename       = $path_info['basename'];
             $file_contents  = FTP::connection()->readFile($path);
-
-            $url            = storage_path("app".$path);
-            $file           = File::get($url);
-
-            $response       = Response::make($file, 200);
+            $response       = Response::make($file_contents, 200);
             $response->header('Content-Type', $this->get_mime_type($basename));
 
             return $response;  
 
-        }catch (Exception $e ){            
-
+        }catch (Exception $e ){
             $response       = Response::make("", 500);
             $response->header('Content-Type', 'application/vnd.ms-excel');
-            return $response;  
-
+            return $response;
         }
     }
 
@@ -78,7 +63,6 @@ class ResourcesApi extends Controller
             $resource->save();
 
             return response()->json(array('msg' => 'File added'), 200);
-
         }
         catch(\Exception $e){
             return response()->json(['error'=>'something went wrong', 'msg'=>$e->getMessage()], 500);
@@ -87,7 +71,6 @@ class ResourcesApi extends Controller
 
     public function getResources(){
         try{
-            // $files = FTP::connection()->getDirListing('gifms_resources');
             $resources = Resource::with('added_by')->get();
             return response()->json($resources, 200);
         }
@@ -103,7 +86,6 @@ class ResourcesApi extends Controller
 
             $path           = '/gifms_resources/'.$file_name;
             $path_info      = pathinfo($path);
-            $ext            = $path_info['extension'];
             $basename       = $path_info['basename'];
             $file_contents  = FTP::connection()->readFile($path);
 
@@ -136,11 +118,10 @@ class ResourcesApi extends Controller
     public function deleteResource($resource_id)
     {
         $deleted = Resource::destroy($resource_id);
-
         if($deleted){
             return response()->json(['msg'=>"Resource removed"], 200,array(),JSON_PRETTY_PRINT);
         }else{
-            return response()->json(['error'=>"Resource not found"], 404,array(),JSON_PRETTY_PRINT);
+            return response()->json(['error'=>"Something went wrong"], 500,array(),JSON_PRETTY_PRINT);
         }
 
     }

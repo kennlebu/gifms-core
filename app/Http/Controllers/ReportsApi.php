@@ -15,16 +15,10 @@ namespace App\Http\Controllers;
 use JWTAuth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\File;
-use Exception;
-use App;
 use DateTime;
 use Excel;
-use Illuminate\Support\Facades\Response;
 use App\Models\PaymentModels\PaymentBatch;
 use App\Models\PaymentModels\Payment;
-use App\Models\AllocationModels\Allocation;
 use App\Models\AdvancesModels\Advance;
 use App\Models\ClaimsModels\Claim;
 use App\Models\InvoicesModels\Invoice;
@@ -36,23 +30,12 @@ use App\Models\GrantModels\Grant;
 use App\Models\ProjectsModels\Project;
 use App\Models\AccountingModels\Account;
 use App\Models\PaymentModels\VoucherNumber;
-use App\Models\ReportModels\ReportingCategories;
 use App\Models\ReportModels\ReportingObjective;
 use App\Models\ActivityModels\ActivityObjective;
 use App\Models\BankingModels\BankTransaction;
 
 class ReportsApi extends Controller
 {
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-    }
-
-
-
-
     /**
      * Operation get2016Report
      *
@@ -84,10 +67,6 @@ class ReportsApi extends Controller
         $currency = 0;
         if($form['currency'] == 'kes') $currency = 1;
         elseif($form['currency'] == 'usd') $currency = 2;
-
-        $programs = $form['programs'];
-        $objectives = $form['objectives'];
-        $projects = $form['projects'];
 
         $report_data = [];
         
@@ -146,41 +125,35 @@ class ReportsApi extends Controller
                 else $invoice = Invoice::find($payment->payable_id);
                 $res = ['payable_type'=>$payment->payable_type, 'payment'=>$payment, 'payable'=>$invoice, 'payment_date'=>$batch_date->created_at];
             }
-            array_push($payables, $res);
+            $payables[] = $res;
         }
 
         if($is_pm == 'true'){
             $mobile_payments = MobilePayment::whereHas('voucher_number', function($query) use ($fromDate, $toDate){
                 $query->whereBetween('created_at', [$fromDate, $toDate]);  
-            })->where('currency_id', $currency)->where('project_manager_id', $user_id)->get();  
-            // $mobile_payments = MobilePayment::whereBetween('management_approval_at', [$fromDate, $toDate])->where('currency_id', $currency)
-            //                     ->where('project_manager_id', $user_id)->get();
+            })->where('currency_id', $currency)->where('project_manager_id', $user_id)->get();
         }
         else{
             $mobile_payments = MobilePayment::whereHas('voucher_number', function($query) use ($fromDate, $toDate){
                 $query->whereBetween('created_at', [$fromDate, $toDate]);  
-            })->where('currency_id', $currency)->get();  
-            // $mobile_payments = MobilePayment::whereBetween('management_approval_at', [$fromDate, $toDate])
-            //                     ->where('currency_id', $currency)->get();
+            })->where('currency_id', $currency)->get();
         }
 
         foreach($mobile_payments as $mobile_payment){
             $res = array();
             $res = ['payable_type'=>'mobile_payments', 'payment'=>null, 'payable'=>$mobile_payment, 'payment_date'=>$mobile_payment->management_approval_at ?? $mobile_payment->voucher_number->created_at ?? ''];
-            array_push($payables, $res);
+            $payables[] = $res;
         }
 
         foreach($payables as $row){if(isset($row['payable']['allocations'])){
             $voucher_no = '';
             if(($row['payable_type']=='mobile_payments' && empty($row['payable']['migration_invoice_id']))){
-                // $voucher_no = VoucherNumber::find($row['payable']['voucher_no']);
                 $voucher = VoucherNumber::where('payable_id', $row['payable']['id'])->first();
                 $voucher_no = $voucher->voucher_number;
                 if(!empty($voucher->voucher_number)) $voucher_no = $voucher->voucher_number;
                 else $voucher_no = '-';
             }
             elseif(($row['payable_type']!='mobile_payments' && empty($row['payable']['migration_id']))){
-                // $voucher_no = VoucherNumber::find($row['payment']['voucher_no']);
                 $voucher = VoucherNumber::where('payable_id', $row['payment']['id'])->first();
                 $voucher_no = $voucher->voucher_number;
                 if(!empty($voucher->voucher_number)) $voucher_no = $voucher->voucher_number;
@@ -194,14 +167,11 @@ class ReportsApi extends Controller
                     $voucher_no = 'CHAI'.$this->pad_zeros(5, $row['payable']['migration_id']);
                 }
             }
-
-            $bank_transactions = BankTransaction::where('chai_ref', $voucher_no)->get();
                 
                 foreach($row['payable']['allocations'] as $allocation){
 
                     $my_result = $result;
                     $grant = null;
-                    $program = null;
                     $project = Project::find($allocation['project_id']);
                     if(!empty($project->grant_id)){
                         $grant = Grant::find($project->grant_id);
@@ -253,8 +223,7 @@ class ReportsApi extends Controller
     
                     $my_result['voucher_number'] = $voucher_no;
     
-                    array_push($report_data, $my_result);
-        
+                    $report_data[] = $my_result;        
                 }
             }
         }
@@ -289,7 +258,6 @@ class ReportsApi extends Controller
                 array_push($excel_data, $excel_row);
             }
             $headers = [
-                // 'Content-type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                 'Access-Control-Allow-Origin'      => '*',
                 'Allow'                            => 'GET, POST, OPTIONS',
                 'Access-Control-Allow-Headers'     => 'Origin, Content-Type, Accept, Authorization, X-Requested-With',
@@ -350,7 +318,6 @@ class ReportsApi extends Controller
                     $sheet->setFontSize(10);
                     $sheet->setHeight(1, 25);
                     $sheet->row(1, function($row){
-                        // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , PHP_EOL.json_encode($row) , FILE_APPEND);
                         $row->setFontSize(11);
                         $row->setFontWeight('bold');
                         $row->setAlignment('center');
@@ -387,13 +354,12 @@ class ReportsApi extends Controller
     
             })->download('xlsx', $headers);
         }
-
     }
 
 
 
 
-        /**
+    /**
      * Operation getPmJournal
      *
      * Get PM journal.
@@ -419,7 +385,6 @@ class ReportsApi extends Controller
         $fromDate = $form['start_date']." 00:00:00";
         $toDate = $form['end_date']." 23:59:59";
         $operation = $form['operation'];
-        $is_pm = $form['is_pm'];
         $user_id = $form['user_id'];
         $currency = 0;
         if($form['currency'] == 'kes') $currency = 1;
@@ -559,7 +524,7 @@ class ReportsApi extends Controller
                 $invoice = $invoice->first();
                 $res = ['payable_type'=>$payment->payable_type, 'payment'=>$payment, 'payable'=>$invoice, 'payment_date'=>$batch_date->created_at];
             }
-            array_push($payables, $res);
+            $payables[] = $res;
         }
 
         $mobile_payments = MobilePayment::with('allocations.objective')->whereBetween('management_approval_at', [$fromDate, $toDate])->where('currency_id', $currency)
@@ -596,14 +561,12 @@ class ReportsApi extends Controller
         foreach($payables as $row){if(isset($row['payable']['allocations'])){
             $voucher_no = '';
             if(($row['payable_type']=='mobile_payments' && empty($row['payable']['migration_invoice_id']))){
-                // $voucher_no = VoucherNumber::find($row['payable']['voucher_no']);
                 $voucher = VoucherNumber::where('payable_id', $row['payable']['id'])->first();
                 $voucher_no = $voucher->voucher_number;
                 if(!empty($voucher->voucher_number)) $voucher_no = $voucher->voucher_number;
                 else $voucher_no = '-';
             }
             elseif(($row['payable_type']!='mobile_payments' && empty($row['payable']['migration_id']))){
-                // $voucher_no = VoucherNumber::find($row['payment']['voucher_no']);
                 $voucher = VoucherNumber::where('payable_id', $row['payment']['id'])->first();
                 $voucher_no = $voucher->voucher_number;
                 if(!empty($voucher->voucher_number)) $voucher_no = $voucher->voucher_number;
@@ -617,8 +580,6 @@ class ReportsApi extends Controller
                     $voucher_no = 'CHAI'.$this->pad_zeros(5, $row['payable']['migration_id']);
                 }
             }
-
-            $bank_transactions = BankTransaction::where('chai_ref', $voucher_no)->get();
                 
                 foreach($row['payable']['allocations'] as $allocation){
 
@@ -655,14 +616,6 @@ class ReportsApi extends Controller
                     $my_result['currecny'] = $currency;
                     $my_result['payable_id'] = $row['payable']['id'];
                     $my_result['objective'] = $allocation['objective'];
-
-                    // $sum = 0;
-                    // foreach($row['payable']['bank_transactions'] as $b){
-                    //     $sum += $b['amount'];
-                    // }
-                    // if($sum > 0){
-                    //     $my_result['amount_paid'] = $sum;
-                    // }
     
                     if($row['payable_type'] == 'mobile_payments'){
                         $mpesa_payee = Staff::find($row['payable']['requested_by_id'])->full_name;
@@ -686,12 +639,10 @@ class ReportsApi extends Controller
     
                     $my_result['voucher_number'] = $voucher_no;
     
-                    array_push($report_data, $my_result);
-        
+                    $report_data[] = $my_result;        
                 }
             }
         }
-        
 
         if($operation == 'preview') {
             return response()->json($report_data, 200,array(),JSON_PRETTY_PRINT);
@@ -716,14 +667,11 @@ class ReportsApi extends Controller
                 $row['payable_id'] != $payment_id ? $excel_row['total'] = $row['total_amount'] : $excel_row['total'] = '';
                 $excel_row['transaction_type'] = $row['transaction_type'];
                 $excel_row['voucher_number'] = $row['voucher_number'];
-                // $excel_row['amount_paid'] = isset($row['amount_paid']) ? $row['amount_paid'] : '';
-
                 
                 $payment_id = $row['payable_id'];
-                array_push($excel_data, $excel_row);
+                $excel_data[] = $excel_row;
             }
             $headers = [
-                // 'Content-type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                 'Access-Control-Allow-Origin'      => '*',
                 'Allow'                            => 'GET, POST, OPTIONS',
                 'Access-Control-Allow-Headers'     => 'Origin, Content-Type, Accept, Authorization, X-Requested-With',
@@ -820,7 +768,6 @@ class ReportsApi extends Controller
     
             })->download('xlsx', $headers);
         }
-
     }
 
 
@@ -835,7 +782,6 @@ class ReportsApi extends Controller
         try{
             $qb = DB::table('reporting_categories')->whereNull('deleted_at');
             $response = $qb->get();
-
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
         }
         catch(\Exception $e){
@@ -898,9 +844,7 @@ class ReportsApi extends Controller
                 }
                 else {
                     $program_teams = ProgramStaff::where('staff_id', $this->current_user()->id)->get();
-
-                    $program_ids = array();
-                    
+                    $program_ids = array();                    
                     foreach($program_teams as $team){
                         array_push($program_ids, $team->program_id);
                     }
@@ -942,7 +886,6 @@ class ReportsApi extends Controller
         }
         catch(\Exception $e){
             $response =  ["error"=>"reporting_objective could not be found", "message"=>$e->getMessage()];
-            // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , PHP_EOL.$e->getTraceAsString() , FILE_APPEND);
             return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
         }
     }
@@ -1000,11 +943,10 @@ class ReportsApi extends Controller
     public function deleteReportingObjective($objective_id)
     {
         $deleted = ReportingObjective::destroy($objective_id);
-
         if($deleted){
             return response()->json(['msg'=>"Objective removed"], 200,array(),JSON_PRETTY_PRINT);
         }else{
-            return response()->json(['error'=>"Objective not found"], 404,array(),JSON_PRETTY_PRINT);
+            return response()->json(['error'=>"Something went wrong"], 500,array(),JSON_PRETTY_PRINT);
         }
 
     }
@@ -1042,7 +984,6 @@ class ReportsApi extends Controller
                 'reporting_categories_id',
                 'payable_type'
                 );
-                
 
             if($form['payable_type'] == 'claims'){
                 $claim = Claim::find($form['id']);
@@ -1109,7 +1050,7 @@ class ReportsApi extends Controller
             }
         }
         catch(\Exception $e){
-
+            return response()->json(['error'=>'something went wrong', 'msg'=>$e->getMessage()], 500);
         }
     }
 

@@ -28,32 +28,6 @@ use Excel;
 class AllocationApi extends Controller
 {
     /**
-     * Constructor
-     */
-    public function __construct()
-    {
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-
-    /**
      * Operation addAllocation
      *
      * Add a new allocation.
@@ -63,12 +37,10 @@ class AllocationApi extends Controller
      */
     public function addAllocation()
     {
-
         $allocation = new Allocation;
 
         try{
             $form = Request::all();
-
             $allocation->account_id             =               $form['account_id'];
             $allocation->allocatable_id         =               $form['allocatable_id'];
             $allocation->allocatable_type       =               $form['allocatable_type'];
@@ -154,10 +126,7 @@ class AllocationApi extends Controller
             $user = JWTAuth::parseToken()->authenticate();
             $allocation->allocated_by_id            =   (int)   $user->id;
 
-
             if($allocation->save()) {
-
-
                 $user = JWTAuth::parseToken()->authenticate();
                 activity()
                    ->performedOn($allocation->allocatable)
@@ -168,7 +137,7 @@ class AllocationApi extends Controller
             }
 
         }catch (JWTException $e){
-            return response()->json(['error'=>'You are not Authenticated'], 500);
+            return response()->json(['error'=>'You are not Authenticated'], 401);
         }
         catch (\Exception $e){
             return response()->json(['error'=>'Something went wrong', 'msg'=>$e->getMessage()], 500);
@@ -204,10 +173,6 @@ class AllocationApi extends Controller
      */
     public function deleteAllocation($allocation_id)
     {
-
-        $input = Request::all();
-
-
         $allocation = Allocation::findOrFail($allocation_id);
         $user = JWTAuth::parseToken()->authenticate();
         activity()
@@ -217,14 +182,10 @@ class AllocationApi extends Controller
                
         $deleted_allocation = Allocation::destroy($allocation_id);
 
-
-
-
         if($deleted_allocation){
-
             return response()->json(['msg'=>"Allocation deleted"], 200,array(),JSON_PRETTY_PRINT);
         }else{
-            return response()->json(['error'=>"Allocation not found"], 404,array(),JSON_PRETTY_PRINT);
+            return response()->json(['error'=>"Something went wrong"], 500,array(),JSON_PRETTY_PRINT);
         }
     }
 
@@ -268,51 +229,12 @@ class AllocationApi extends Controller
                                         'objective'
                                     )->findOrFail($allocation_id);
 
-
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
 
         }catch(Exception $e){
-
             $response =  ["error"=>"Allocation could not be found"];
             return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
         }
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    /**
-     * Operation getAllocations
-     *
-     * allocations List.
-     *
-     *
-     * @return Http response
-     */
-    public function getAllocations()
-    {
-        $input = Request::all();
-
-        //not path params validation
-        $allocation_id = $input['allocation_id'];
-
-
-        return response('How about implementing getAllocations as a GET method ?');
     }
 
 

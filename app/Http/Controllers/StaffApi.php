@@ -15,53 +15,18 @@
 
 namespace App\Http\Controllers;
 
-
 use JWTAuth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-
-
 use Exception;
-use App;
-use Illuminate\Support\Facades\Response;
 use App\Models\StaffModels\Staff;
-use App\Models\ProjectsModels\Project;
-use Config;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\NotifyNewStaff;
 use App\Models\ProgramModels\ProgramStaff;
 
 class StaffApi extends Controller
 {
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-    }
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     /**
      * Operation addStaff
      *
@@ -107,9 +72,7 @@ class StaffApi extends Controller
 
         $staff->username                     =         $form['username'];
         $staff->email                        =         $form['email'];
-
         $staff->password                     =         $encr_pwd;
-
         $staff->security_group_id            =  (int)  $form['security_group_id'];
         $staff->f_name                       =         $form['f_name'];
         $staff->l_name                       =         $form['l_name'];
@@ -225,7 +188,6 @@ class StaffApi extends Controller
             $staff->receive_global_email_bcc     =         $form['receive_global_email_bcc'];
 
         if($staff->save()) {
-
             return Response()->json(array('msg' => 'Success: staff updated','staff' => $staff), 200);
         }
     }
@@ -261,15 +223,11 @@ class StaffApi extends Controller
      */
     public function deleteStaff($staff_id)
     {
-        $input = Request::all();
-
-
         $deleted = Staff::destroy($staff_id);
-
         if($deleted){
             return response()->json(['msg'=>"staff deleted"], 200,array(),JSON_PRETTY_PRINT);
         }else{
-            return response()->json(['error'=>"staff not found"], 404,array(),JSON_PRETTY_PRINT);
+            return response()->json(['error'=>"Something went wrong"], 500,array(),JSON_PRETTY_PRINT);
         }
     }
     
@@ -305,18 +263,12 @@ class StaffApi extends Controller
      */
     public function getStaffById($staff_id)
     {
-        $input = Request::all();
-
         try{
-
-            $response   = Staff::with("roles")->findOrFail($staff_id);
-           
+            $response   = Staff::with("roles")->findOrFail($staff_id);           
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
-
         }catch(Exception $e){
-
-            $response =  ["error"=>"staff could not be found"];
-            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+            $response =  ["error"=>"Something went wrong"];
+            return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
         }
     }
 
@@ -367,11 +319,9 @@ class StaffApi extends Controller
             return response()->json(['msg'=>"Roles Updated", 'staff'=>$response], 200,array(),JSON_PRETTY_PRINT);
 
         }catch(Exception $e){
-
-            $response =  ["error"=>"staff could not be found"];
-            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+            $response =  ["error"=>"Something went wrong"];
+            return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
         }
-
     }
     
 
@@ -527,16 +477,6 @@ class StaffApi extends Controller
             }
         }
 
-        //migrated
-        if(array_key_exists('migrated', $input)){
-            $mig = (int) $input['migrated'];
-            if($mig==0){
-                $qb->whereNull('migration_id');
-            }else if($mig==1){
-                $qb->whereNotNull('migration_id');
-            }
-        }
-
         if(array_key_exists('datatables', $input)){
             //searching
             $qb->where(function ($query) use ($input) {                
@@ -619,11 +559,7 @@ class StaffApi extends Controller
     public function append_relationships_objects($data = array()){
 
         $input = Request::all();
-
-
-        foreach ($data as $key => $value) {
-
-            
+        foreach ($data as $key => $value) {            
             $staff = Staff::find($data[$key]['id']);
 
             //with_assigned_projects
@@ -633,19 +569,14 @@ class StaffApi extends Controller
                 $data[$key]['programs']                 =   $staff->programs;
             }
 
-
             $data[$key]['department']               =   $staff->department;
             $data[$key]['payment_mode']             =   $staff->payment_mode;
             $data[$key]['bank']                     =   $staff->bank;
             $data[$key]['bank_branch']              =   $staff->bank_branch;
             $data[$key]['name']                     =   $staff->name;
-
         }
 
-
         return $data;
-
-
     }
 
 
@@ -662,11 +593,7 @@ class StaffApi extends Controller
 
 
     public function append_relationships_nulls($data = array()){
-
-
         foreach ($data as $key => $value) {
-
-
             if($data[$key]["department"]==null){
                 $data[$key]["department"] = array("department_name"=>"N/A");
             }
@@ -679,13 +606,9 @@ class StaffApi extends Controller
             if($data[$key]["bank_branch"]==null){
                 $data[$key]["bank_branch"] = array("branch_name"=>"N/A");
             }
-
-
         }
 
         return $data;
-
-
     }
 
 
@@ -718,21 +641,13 @@ class StaffApi extends Controller
 
             if($file!=0){
                 $file_name = 'signature'.$staff->id.'.'.$file->getClientOriginalExtension();
-                // $file_contents  = $file->stream();
                 Storage::put('signatures/'.$file_name, file_get_contents($file));
-                // $path = file($file)->storeAs($file_name, $file);
-                // FTP::connection()->makeDir('/mobile_payments');
-                // FTP::connection()->makeDir('/mobile_payments/'.$mobile_payment->id);
-                // FTP::connection()->makeDir('/mobile_payments/'.$mobile_payment->id.'/signsheet');
-                // FTP::connection()->uploadFile($file->getPathname(), '/mobile_payments/'.$mobile_payment->id.'/signsheet/'.$mobile_payment->id.'.'.$file->getClientOriginalExtension());
-
                 $staff->signature = $file_name;
                 $staff->disableLogging();
                 $staff->save();
             }
 
             return Response()->json(array('msg' => 'Success: signature saved'), 200);
-
         }
         catch (\Exception $e){
             return response()->json(['error'=>'something went wrong', 'msg'=>$e->getMessage()], 500);

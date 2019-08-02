@@ -24,21 +24,6 @@ use Illuminate\Support\Facades\Response;
 class LPOQuotationApi extends Controller
 {
     /**
-     * Constructor
-     */
-    public function __construct()
-    {
-    }
-
-
-
-
-
-
-
-
-
-    /**
      * Operation addLpoQuotation
      *
      * Add a new lpo quotation.
@@ -48,7 +33,6 @@ class LPOQuotationApi extends Controller
      */
     public function addLpoQuotation()
     {
-
         $lpo_quotation = new LpoQuotation;
         try{
             $form = Request::only(
@@ -93,7 +77,7 @@ class LPOQuotationApi extends Controller
             }
         }
         catch (JWTException $e){
-            return response()->json(['error'=>'You are not Authenticated'], 500);
+            return response()->json(['error'=>'You are not Authenticated'], 401);
         }
     }
 
@@ -163,7 +147,7 @@ class LPOQuotationApi extends Controller
             }
         }
         catch (JWTException $e){
-            return response()->json(['error'=>'You are not Authenticated'], 500);
+            return response()->json(['error'=>'You are not Authenticated'], 401);
         }
     }
 
@@ -201,7 +185,7 @@ class LPOQuotationApi extends Controller
         if($deleted_lpo_quotation){
             return response()->json(['msg'=>"lpo quotation deleted"], 200,array(),JSON_PRETTY_PRINT);
         }else{
-            return response()->json(['error'=>"lpo quotation not found"], 404,array(),JSON_PRETTY_PRINT);
+            return response()->json(['error'=>"Somethnig went wrong"], 500,array(),JSON_PRETTY_PRINT);
         }
     }
 
@@ -240,8 +224,8 @@ class LPOQuotationApi extends Controller
         return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
     }
     catch(Exception $e){
-        $response =  ["error"=>"lpo could not be found"];
-        return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+        $response =  ["error"=>"Something went wrong"];
+        return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
     }
 }
 
@@ -282,8 +266,6 @@ class LPOQuotationApi extends Controller
             $response->header('Content-Type', 'application/pdf');
             return $response;  
         }
-
-
     }
 
 
