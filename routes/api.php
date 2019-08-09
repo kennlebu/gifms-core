@@ -23,7 +23,7 @@ use Illuminate\Http\Request;
 
 
 
-Route::get('/', function (Request $request) {
+Route::get('/', function () {
     return ["version"=>"1.0.0"];
 });
 
@@ -5400,3 +5400,8 @@ Route::PATCH('leave-request/{request_id}/reject', 'LeaveManagementApi@rejectLeav
 Route::PATCH('leave-request/{request_id}/submit_for_approval', 'LeaveManagementApi@submitLeaveRequestForApproval')->middleware('jwt.auth');
 Route::PATCH('leave-request/{request_id}/cancel', 'LeaveManagementApi@cancelLeaveRequest')->middleware('jwt.auth');
 Route::PATCH('leave-request/{request_id}/recall', 'LeaveManagementApi@recallLeaveRequest')->middleware('jwt.auth');
+
+/**
+ * Assets
+ */
+Route::POST('assets', 'AssetsApi@addAsset')->middleware('jwt.auth');

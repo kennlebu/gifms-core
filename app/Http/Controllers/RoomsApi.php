@@ -37,19 +37,13 @@ class RoomsApi extends Controller
 
     public function getRooms(){
         try{
-            $response;
-            $response_dt;
-
-            $total_records          = MeetingRoom::count();
-            $records_filtered       = 0;
-
             $input = Request::all();
             $rooms = MeetingRoom::query();
 
             $response;
             $response_dt;
 
-            $total_records          = $rooms->count();
+            $total_records          = MeetingRoom::count();
             $records_filtered       = 0;
 
             //searching
