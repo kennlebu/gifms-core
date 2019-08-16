@@ -35,13 +35,13 @@ class BaseModel extends Model
 			$data[$key]['DT_RowData'] = array('pkey'=>$value['id']);
 		}
 
-		return array(
+		return [
 					'draw' 				=> 	$draw,
 					'sEcho' 			=> 	$draw,
 					'recordsTotal' 		=> 	$total_records,
 					'recordsFiltered' 	=> 	$records_filtered,
 					'data' 				=> 	$data
-			);
+				];
 
 	}
 

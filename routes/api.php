@@ -2556,6 +2556,7 @@ Route::GET('/claims', 'ClaimApi@getClaims')->middleware('jwt.auth');
 Route::PATCH('/claims/approve', 'ClaimApi@approveSeveralClaims')->middleware('jwt.auth');
 
 Route::POST('/claim/mark_as_paid', 'ClaimApi@markAsPaid')->middleware('jwt.auth');
+Route::POST('/claim/csv_upload', 'ClaimApi@uploadAllocations')->middleware('jwt.auth');
 
 
 
@@ -5334,15 +5335,15 @@ Route::GET('/activity_statuses', 'ActivityStatusApi@getActivityStatuses')->middl
 /**
  * Fixed assets routes
  */
-Route::POST('/asset', 'FixedAssetsApi@addAsset')->middleware('jwt.auth');
-Route::GET('/assets', 'FixedAssetsApi@assetsGet')->middleware('jwt.auth');
-Route::GET('/asset/{id}', 'FixedAssetsApi@getAssetById')->middleware('jwt.auth');
-Route::DELETE('/asset/{id}', 'FixedAssetsApi@deleteAsset')->middleware('jwt.auth');
-Route::PUT('/asset', 'FixedAssetsApi@updateAsset')->middleware('jwt.auth');
-Route::POST('/lost-asset', 'FixedAssetsApi@reportLost')->middleware('jwt.auth');
-Route::POST('/claim-asset', 'FixedAssetsApi@claimAsset')->middleware('jwt.auth');
-Route::PATCH('/assets/return', 'FixedAssetsApi@returnAssets')->middleware('jwt.auth');
-Route::POST('/assets/csv_upload', 'FixedAssetsApi@uploadAssetList')->middleware('jwt.auth');
+// Route::POST('/asset', 'FixedAssetsApi@addAsset')->middleware('jwt.auth');
+// Route::GET('/assets', 'FixedAssetsApi@assetsGet')->middleware('jwt.auth');
+// Route::GET('/asset/{id}', 'FixedAssetsApi@getAssetById')->middleware('jwt.auth');
+// Route::DELETE('/asset/{id}', 'FixedAssetsApi@deleteAsset')->middleware('jwt.auth');
+// Route::PUT('/asset', 'FixedAssetsApi@updateAsset')->middleware('jwt.auth');
+// Route::POST('/lost-asset', 'FixedAssetsApi@reportLost')->middleware('jwt.auth');
+// Route::POST('/claim-asset', 'FixedAssetsApi@claimAsset')->middleware('jwt.auth');
+// Route::PATCH('/assets/return', 'FixedAssetsApi@returnAssets')->middleware('jwt.auth');
+// Route::POST('/assets/csv_upload', 'FixedAssetsApi@uploadAssetList')->middleware('jwt.auth');
 // Locations
 Route::POST('/asset-location', 'FixedAssetsApi@addAssetLocation')->middleware('jwt.auth');
 Route::GET('/asset-locations', 'FixedAssetsApi@assetLocationsGet')->middleware('jwt.auth');
@@ -5404,4 +5405,49 @@ Route::PATCH('leave-request/{request_id}/recall', 'LeaveManagementApi@recallLeav
 /**
  * Assets
  */
-Route::POST('assets', 'AssetsApi@addAsset')->middleware('jwt.auth');
+Route::POST('assets', 'AssetApi@addAsset')->middleware('jwt.auth');
+Route::PUT('/asset', 'AssetApi@updateAsset')->middleware('jwt.auth');
+Route::GET('/assets', 'AssetApi@getAssets')->middleware('jwt.auth');
+Route::GET('/asset/{id}', 'AssetApi@getAsset')->middleware('jwt.auth');
+Route::DELETE('/asset/{id}', 'AssetApi@deleteAsset')->middleware('jwt.auth');
+// Route::POST('/asset', 'FixedAssetsApi@addAsset')->middleware('jwt.auth');
+// Route::POST('/lost-asset', 'FixedAssetsApi@reportLost')->middleware('jwt.auth');
+// Route::POST('/claim-asset', 'FixedAssetsApi@claimAsset')->middleware('jwt.auth');
+// Route::PATCH('/assets/return', 'FixedAssetsApi@returnAssets')->middleware('jwt.auth');
+// Route::POST('/assets/csv_upload', 'FixedAssetsApi@uploadAssetList')->middleware('jwt.auth');
+// Types
+Route::POST('assets/types', 'AssetApi@addAssetType')->middleware('jwt.auth');
+Route::PUT('/assets/type', 'AssetApi@updateAssetType')->middleware('jwt.auth');
+Route::GET('/assets/types', 'AssetApi@getAssetTypes')->middleware('jwt.auth');
+Route::GET('/assets/type/{id}', 'AssetApi@getAssetType')->middleware('jwt.auth');
+Route::DELETE('/assets/type/{id}', 'AssetApi@deleteAssetType')->middleware('jwt.auth');
+// Groups
+Route::POST('assets/groups', 'AssetApi@addAssetGroup')->middleware('jwt.auth');
+Route::PUT('/assets/group', 'AssetApi@updateAssetGroup')->middleware('jwt.auth');
+Route::GET('/assets/groups', 'AssetApi@getAssetGroups')->middleware('jwt.auth');
+Route::GET('/assets/group/{id}', 'AssetApi@getAssetGroup')->middleware('jwt.auth');
+Route::DELETE('/assets/group/{id}', 'AssetApi@deleteAssetGroup')->middleware('jwt.auth');
+// Statuses
+Route::POST('assets/statuses', 'AssetApi@addAssetStatus')->middleware('jwt.auth');
+Route::PUT('/assets/status', 'AssetApi@updateAssetStatus')->middleware('jwt.auth');
+Route::GET('/assets/statuses', 'AssetApi@getAssetStatuses')->middleware('jwt.auth');
+Route::GET('/assets/status/{id}', 'AssetApi@getAssetStatus')->middleware('jwt.auth');
+Route::DELETE('/assets/status/{id}', 'AssetApi@deleteAssetStatus')->middleware('jwt.auth');
+// Insurance Types
+Route::POST('assets/insurance-types', 'AssetApi@addInsuranceType')->middleware('jwt.auth');
+Route::PUT('/assets/insurance-type', 'AssetApi@updateInsuranceType')->middleware('jwt.auth');
+Route::GET('/assets/insurance-types', 'AssetApi@getInsuranceTypes')->middleware('jwt.auth');
+Route::GET('/assets/insurance-type/{id}', 'AssetApi@getInsuranceType')->middleware('jwt.auth');
+Route::DELETE('/assets/insurance-type/{id}', 'AssetApi@deleteInsuranceType')->middleware('jwt.auth');
+// Locations
+Route::POST('assets/locations', 'AssetApi@addAssetLocation')->middleware('jwt.auth');
+Route::PUT('/assets/location', 'AssetApi@updateAssetLocation')->middleware('jwt.auth');
+Route::GET('/assets/locations', 'AssetApi@getAssetLocations')->middleware('jwt.auth');
+Route::GET('/assets/location/{id}', 'AssetApi@getAssetLocation')->middleware('jwt.auth');
+Route::DELETE('/assets/location/{id}', 'AssetApi@deleteAssetLocation')->middleware('jwt.auth');
+// Classes
+Route::POST('assets/classes', 'AssetApi@addAssetClass')->middleware('jwt.auth');
+Route::PUT('/assets/class', 'AssetApi@updateAssetClass')->middleware('jwt.auth');
+Route::GET('/assets/classes', 'AssetApi@getAssetClasses')->middleware('jwt.auth');
+Route::GET('/assets/class/{id}', 'AssetApi@getAssetClass')->middleware('jwt.auth');
+Route::DELETE('/assets/class/{id}', 'AssetApi@deleteAssetClass')->middleware('jwt.auth');
