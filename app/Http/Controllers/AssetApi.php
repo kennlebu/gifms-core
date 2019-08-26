@@ -52,7 +52,6 @@ class AssetApi extends Controller
         $input = Request::all();
         $asset = Asset::findOrFail($input['id']);
         $asset = $asset->update($input);
-        // $asset->refresh();
         return Response()->json(array('msg' => 'Success: asset updated','data' => $asset), 200);
     }
 
@@ -170,6 +169,26 @@ class AssetApi extends Controller
         }else{
             return response()->json(['error'=>"Something went wrong"], 500, array(), JSON_PRETTY_PRINT);
         }
+    }
+
+    public function returnAssets(){
+        $input = Request::all();
+        foreach($input['assets'] as $item){
+            $asset = Asset::find($item);
+            $asset->status_id = 5;  // Returned status
+            $asset->assigned_to_id = null;
+            $asset->assignee_type = null;
+            $asset->disableLogging();
+
+            // Logging
+            activity()
+                ->performedOn($asset)
+                ->causedBy($this->current_user())
+                ->log('Asset returned');
+
+            $asset->save();
+        }
+        return Response()->json(array('msg' => 'Success: assets returned','data' => $asset), 200);
     }
 
 
