@@ -39,7 +39,10 @@ class AssetApi extends Controller
             'last_updated_by'=>$this->current_user()->id,
             'asset_group_id'=>$input['asset_group_id'] ?? null,
             'insurance_value'=>$input['insurance_value'] ?? null,
-            'comments'=>$input['comments'] ?? null
+            'comments'=>$input['comments'] ?? null,
+            'requisition_id'=>$input['requisition_id'] ?? null,
+            'lpo_id'=>$input['lpo_id'] ?? null,
+            'invoice_id'=>$input['invoice_id'] ?? null
         ];
         $asset = Asset::create($asset);
         return Response()->json(array('msg' => 'Success: asset added','data' => $asset), 200);
