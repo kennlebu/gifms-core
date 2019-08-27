@@ -8,6 +8,7 @@ use App\Models\Assets\AssetGroup;
 use App\Models\Assets\AssetInsuranceType;
 use App\Models\Assets\AssetLocation;
 use App\Models\Assets\AssetStatus;
+use App\Models\Assets\AssetTransfer;
 use App\Models\Assets\AssetType;
 use JWTAuth;
 
@@ -173,20 +174,78 @@ class AssetApi extends Controller
 
     public function returnAssets(){
         $input = Request::all();
+        $status = 6;
+        $log_message = 'Asset returned';
+        if($input['op'] == 'request') {
+            $status = 6;
+            $log_message = 'Requested to return';
+        }
+        elseif($input['op'] == 'approve') {
+            $status = 5;
+            $log_message = 'Asset returned';
+        }
         foreach($input['assets'] as $item){
             $asset = Asset::find($item);
-            $asset->status_id = 5;  // Returned status
-            $asset->assigned_to_id = null;
-            $asset->assignee_type = null;
+            $asset->status_id = $status;
+            if($input['op'] == 'approve') {
+                $asset->assigned_to_id = null;
+                $asset->assignee_type = null;
+            }
             $asset->disableLogging();
 
             // Logging
             activity()
                 ->performedOn($asset)
                 ->causedBy($this->current_user())
-                ->log('Asset returned');
+                ->log($log_message);
 
             $asset->save();
+
+            // Log the transfer
+            AssetTransfer::create([
+                'asset_id' => $item,
+                'transfered_by_id' => $this->current_user(),
+                'transfer_type' => 'return'
+            ]);
+        }
+        return Response()->json(array('msg' => 'Success: assets returned','data' => $asset), 200);
+    }
+
+    public function donateAssets(){
+        $input = Request::all();
+        $status = 6;
+        $log_message = 'Asset returned';
+        if($input['op'] == 'request') {
+            $status = 6;
+            $log_message = 'Requested to return';
+        }
+        elseif($input['op'] == 'approve') {
+            $status = 5;
+            $log_message = 'Asset returned';
+        }
+        foreach($input['assets'] as $item){
+            $asset = Asset::find($item);
+            $asset->status_id = $status;
+            if($input['op'] == 'approve') {
+                $asset->assigned_to_id = null;
+                $asset->assignee_type = null;
+            }
+            $asset->disableLogging();
+
+            // Logging
+            activity()
+                ->performedOn($asset)
+                ->causedBy($this->current_user())
+                ->log($log_message);
+
+            $asset->save();
+
+            // Log the transfer
+            AssetTransfer::create([
+                'asset_id' => $item,
+                'transfered_by_id' => $this->current_user(),
+                'transfer_type' => 'return'
+            ]);
         }
         return Response()->json(array('msg' => 'Success: assets returned','data' => $asset), 200);
     }

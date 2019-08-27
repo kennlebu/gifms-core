@@ -1230,3 +1230,111 @@ UPDATE `mobile_payment_statuses` SET `new_next_status_id` = '5', `new_order_prio
 UPDATE `mobile_payment_statuses` SET `approval_level_id` = '4' WHERE `id` = '17';
 UPDATE `mobile_payment_statuses` SET `new_next_status_id` = '9' WHERE `id` = '15';
 UPDATE `mobile_payment_statuses` SET `short_name` = 'Resent to Bank' WHERE `id` = '16';
+
+// Asset tables
+~===== Create assets
+CREATE TABLE `assets` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `title` text NULL,
+  `type_id` int NULL,
+  `tag` varchar(30) NULL,
+  `serial_no` varchar(256) NULL,
+  `cost` varchar(30) NULL,
+  `status_id` int NULL,
+  `supplier_id` int NULL,
+  `class_id` int NULL,
+  `insurance_type_id` int NULL,
+  `location_id` int NULL,
+  `assigned_to_id` int NULL,
+  `assignee_type` varchar(30) NULL,
+  `date_of_issue` varchar(30) NULL,
+  `date_of_purchase` varchar(30) NULL,
+  `added_by_id` int NULL,
+  `last_updated_by` int NULL,
+  `asset_group_id` int NULL,
+  `insurance_value` varchar(30) NULL,
+  `comments` text NULL,
+  `requisition_id` int NULL,
+  `invoice_id` int NULL,
+  `lpo_id` int NULL,
+  `created_at` timestamp NULL,
+  `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL
+);
+
+CREATE TABLE `asset_classes` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `name` text NULL,
+  `created_at` timestamp NULL,
+  `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL
+);
+
+CREATE TABLE `asset_statuses` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `status` text NULL,
+  `default` int NULL,
+  `created_at` timestamp NULL,
+  `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL
+);
+
+CREATE TABLE `asset_types` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `type` text NULL,
+  `created_at` timestamp NULL,
+  `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL
+);
+
+INSERT INTO `asset_statuses` (`status`, `default`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Functional', '1', now(), now(), NULL);
+INSERT INTO `asset_statuses` (`status`, `default`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Non-functional', NULL, now(), now(), NULL);
+INSERT INTO `asset_statuses` (`status`, `default`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Donated', NULL, now(), now(), NULL);
+INSERT INTO `asset_statuses` (`status`, `default`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Scrapped', NULL, now(), now(), NULL);
+INSERT INTO `asset_statuses` (`status`, `default`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Returned, pending acceptance', NULL, now(), now(), NULL);
+
+===== Asset transfers
+CREATE TABLE `asset_transfers` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `asset_id` int NULL,
+  `transfered_by_id` int NULL,
+  `transfered_to_id` int NULL,
+  `recepient_type` varchar(30) NULL,
+  `reason` text NULL,
+  `comments` text NULL,
+  `created_at` timestamp NULL,
+  `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL
+);
+
+ALTER TABLE `asset_transfers`
+ADD `transfer_type` varchar(30) COLLATE 'latin1_swedish_ci' NULL AFTER `recepient_type`,
+CHANGE `updated_at` `updated_at` timestamp NULL AFTER `created_at`;
+
+INSERT INTO `asset_statuses` (`status`, `default`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('In storage', NULL, now(), now(), NULL);
+INSERT INTO `asset_statuses` (`status`, `default`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Donated, pending receipt', NULL, now(), now(), NULL);
+INSERT INTO `asset_statuses` (`status`, `default`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Donated, pending confirmation', NULL, now(), now(), NULL);
+
+===== Asset transfer batches
+CREATE TABLE `asset_transfer_batches` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `created_by_id` int NULL,
+  `created_at` timestamp NULL,
+  `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL
+);
+
+ALTER TABLE `asset_transfers`
+ADD `batch_id` int NULL AFTER `comments`;
+
+ALTER TABLE `assets`
+ADD `ref` varchar(256) NULL AFTER `id`,
+CHANGE `updated_at` `updated_at` timestamp NULL AFTER `created_at`;
