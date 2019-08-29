@@ -23,6 +23,7 @@ class AssetApi extends Controller
         $input = Request::all();
         $asset = [
             'title'=>$input['title'] ?? null,
+            'model'=>$input['model'] ?? null,
             'type_id'=>$input['type_id'] ?? null,
             'tag'=>$input['tag'] ?? null,
             'serial_no'=>$input['serial_no'] ?? null,
@@ -52,13 +53,39 @@ class AssetApi extends Controller
     public function updateAsset(){
         $input = Request::all();
         $asset = Asset::findOrFail($input['id']);
+        if(!empty($input['title'])) $asset->title = $input['title'];
+        if(!empty($input['model'])) $asset->model = $input['model'];
+        if(!empty($input['type_id'])) $asset->type_id=$input['type_id'];
+        if(!empty($input['tag'])) $asset->tag=$input['tag'];
+        if(!empty($input['serial_no'])) $asset->serial_no=$input['serial_no'];
+        if(!empty($input['cost'])) $asset->cost=$input['cost'];
+        if(!empty($input['status_id'])) $asset->status_id=$input['status_id'];
+        if(!empty($input['supplier_id'])) $asset->supplier_id=$input['supplier_id'];
+        if(!empty($input['class_id'])) $asset->class_id=$input['class_id'];
+        if(!empty($input['insurance_type_id'])) $asset->insurance_type_id=$input['insurance_type_id'];
+        if(!empty($input['location_id'])) $asset->location_id=$input['location_id'];
+        if(!empty($input['assigned_to_id'])) $asset->assigned_to_id=$input['assigned_to_id'];
+        if(!empty($input['assignee_type'])) $asset->assignee_type = $input['assignee_type'];
+        if(!empty($input['date_of_issue'])) $asset->date_of_issue=$input['date_of_issue'];
+        if(!empty($input['date_of_purchase'])) $asset->date_of_purchase=$input['date_of_purchase'];
+        $asset->last_updated_by=$this->current_user()->id;
+        if(!empty($input['asset_group_id'])) $asset->asset_group_id=$input['asset_group_id'];
+        if(!empty($input['insurance_value'])) $asset->insurance_value=$input['insurance_value'];
+        if(!empty($input['comments'])) $asset->comments=$input['comments'];
+        if(!empty($input['requisition_id'])) $asset->requisition_id=$input['requisition_id'];
+        if(!empty($input['lpo_id'])) $asset->lpo_id=$input['lpo_id'];
+        if(!empty($input['invoice_id'])) $asset->invoice_id=$input['invoice_id'];
+
         if($input['op'] == 'edit') $asset->disableLogging();
-        $asset = $asset->update($input);
+        $asset = $asset->save();
         return Response()->json(array('msg' => 'Success: asset updated','data' => $asset), 200);
     }
 
     public function getAsset($id){
-        $asset = Asset::findOrFail($id);           
+        $asset = Asset::with(['class','group','assigned_to','insurance_type','location',
+                            'status','supplier','type','logs.causer','lpo'])
+                        ->where('id', $id)
+                        ->firstOrFail();           
         return response()->json($asset, 200, array(), JSON_PRETTY_PRINT);
     }
 

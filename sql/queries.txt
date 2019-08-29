@@ -1338,3 +1338,5 @@ ADD `batch_id` int NULL AFTER `comments`;
 ALTER TABLE `assets`
 ADD `ref` varchar(256) NULL AFTER `id`,
 CHANGE `updated_at` `updated_at` timestamp NULL AFTER `created_at`;
+ALTER TABLE `assets`
+ADD `model` varchar(256) NULL AFTER `lpo_id`;

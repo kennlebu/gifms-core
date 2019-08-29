@@ -60,4 +60,16 @@ class Asset extends BaseModel
     {
         return $this->belongsTo('App\Models\Assets\AssetGroup', 'asset_group_id');
     }
+    public function logs()
+    {
+        return $this->morphMany('App\Models\LogsModels\HistoryLog', 'subject')->orderBy('created_at','asc');
+    }
+    public function lpo()
+    {
+        return $this->belongsTo('App\Models\LPOModels\Lpo', 'lpo_id');
+    }
+    public function invoice()
+    {
+        return $this->belongsTo('App\Models\InvoicesModels\Invoice', 'invoice_id');
+    }
 }
