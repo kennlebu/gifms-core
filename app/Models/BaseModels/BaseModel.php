@@ -8,7 +8,6 @@ use Spatie\Activitylog\Traits\LogsActivity;
 class BaseModel extends Model
 {
     use LogsActivity;
-
     
 
 

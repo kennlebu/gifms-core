@@ -9,6 +9,7 @@ class Asset extends BaseModel
 {
     use SoftDeletes;
     protected $guarded = ['id','created_at','updated_at','deleted_at'];
+	protected static $logOnlyDirty = true;
 
     public function type()
     {

@@ -52,6 +52,7 @@ class AssetApi extends Controller
     public function updateAsset(){
         $input = Request::all();
         $asset = Asset::findOrFail($input['id']);
+        if($input['op'] == 'edit') $asset->disableLogging();
         $asset = $asset->update($input);
         return Response()->json(array('msg' => 'Success: asset updated','data' => $asset), 200);
     }
