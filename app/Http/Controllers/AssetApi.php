@@ -10,7 +10,12 @@ use App\Models\Assets\AssetLocation;
 use App\Models\Assets\AssetStatus;
 use App\Models\Assets\AssetTransfer;
 use App\Models\Assets\AssetType;
+use App\Models\ApprovalsModels\Approval;
+use App\Models\Assets\AssetTransferBatch;
+use Exception;
+use PDF;
 use JWTAuth;
+use Illuminate\Support\Facades\Response;
 
 class AssetApi extends Controller
 {
@@ -141,6 +146,11 @@ class AssetApi extends Controller
             if(array_key_exists('asset_group_id', $input)){         // Asset group
                 $assets = $assets->where('asset_group_id', $input['asset_group_id']);
             }
+            if(array_key_exists('my_approvables', $input)){         // Approvables
+                if($user->hasRole(['admin-manager'])){
+                    $assets = $assets->whereIn('status_id', [6,9]);
+                }
+            }
             if(array_key_exists('datatables', $input)){             // Datatables
                     $total_records = $assets->count();
 
@@ -206,11 +216,11 @@ class AssetApi extends Controller
         $log_message = 'Asset returned';
         if($input['op'] == 'request') {
             $status = 6;
-            $log_message = 'Requested to return';
+            $log_message = 'Returned, pending confirmation';
         }
         elseif($input['op'] == 'approve') {
             $status = 5;
-            $log_message = 'Asset returned';
+            $log_message = 'Asset return confirmed';
         }
         foreach($input['assets'] as $item){
             $asset = Asset::find($item);
@@ -218,6 +228,8 @@ class AssetApi extends Controller
             if($input['op'] == 'approve') {
                 $asset->assigned_to_id = null;
                 $asset->assignee_type = null;
+                $asset->location_id = null;
+                $asset->date_of_issue = null;
             }
             $asset->disableLogging();
 
@@ -225,6 +237,7 @@ class AssetApi extends Controller
             activity()
                 ->performedOn($asset)
                 ->causedBy($this->current_user())
+                ->withProperties(['detail' => 'Asset returned, pending confirmation by admin manager. REASON: '. $input['reason']])
                 ->log($log_message);
 
             $asset->save();
@@ -233,7 +246,8 @@ class AssetApi extends Controller
             AssetTransfer::create([
                 'asset_id' => $item,
                 'transfered_by_id' => $this->current_user(),
-                'transfer_type' => 'return'
+                'transfer_type' => 'return',
+                'reason' => $input['reason']
             ]);
         }
         return Response()->json(array('msg' => 'Success: assets returned','data' => $asset), 200);
@@ -241,41 +255,334 @@ class AssetApi extends Controller
 
     public function donateAssets(){
         $input = Request::all();
-        $status = 6;
-        $log_message = 'Asset returned';
+        $status = 9;
+        $transfered_by_id = '';
+        $log_message = 'Asset donated';
         if($input['op'] == 'request') {
-            $status = 6;
-            $log_message = 'Requested to return';
+            $status = 9;
+            $log_message = 'Requested donation verification';
         }
         elseif($input['op'] == 'approve') {
-            $status = 5;
-            $log_message = 'Asset returned';
+            $status = 8;
+            $log_message = 'Asset donated';
         }
         foreach($input['assets'] as $item){
             $asset = Asset::find($item);
+            if($input['op'] == 'request' && $asset->status_id == 9) {
+                return Response()->json(array('error' => 'Donation pending verification','data' => $asset), 409);
+            }
+            if($input['op'] == 'request') {
+                $asset->donation_to_id = $input['recepient'];
+                $asset->donation_recepient_type = $input['recepient_type'];
+                $property_detail = 'Verification requested for asset donation to '. $asset->donation_to->supplier_name .'. '.
+                                    'DONATION REASON: '. $input['reason'];
+            }
             $asset->status_id = $status;
             if($input['op'] == 'approve') {
-                $asset->assigned_to_id = null;
-                $asset->assignee_type = null;
+                $transfered_by_id = $asset->assigned_to_id;
+                $asset->assigned_to_id = $asset->donation_to_id;
+                $asset->assignee_type = $asset->donation_recepient_type;
+                $property_detail = 'Asset donation verified';
+                $batch = new AssetTransferBatch;
+                $batch->created_by_id = $this->current_user()->id;
+                $batch->save();
+                $asset->donation_batch_id = $batch->id;
             }
             $asset->disableLogging();
+            $asset->save();
 
             // Logging
             activity()
                 ->performedOn($asset)
                 ->causedBy($this->current_user())
+                ->withProperties(['detail' => $property_detail])
                 ->log($log_message);
 
+            // Log the transfer
+            AssetTransfer::create([
+                'asset_id' => $item,
+                'transfered_by_id' => $transfered_by_id,
+                'transfered_to_id' => $input['recepient'],
+                'recepient_type' => $input['recepient_type'],
+                'transfer_type' => 'donation',
+                'reason' => $input['reason'],
+                'batch_id' => $batch->id ?? null,
+                'approved_by_id' => $this->current_user()->id
+            ]);
+        }
+        return Response()->json(array('msg' => 'Success: assets returned','data' => $asset), 200);
+    }
+
+    public function approveAsset($id, $multiple=false){
+        $asset = Asset::findOrFail($id);
+        if($asset->status_id == 6) {    // Return
+            $asset->status_id = 5;
+            $asset->assigned_to_id = null;
+            $asset->assignee_type = null;
+            $asset->location_id = null;
+            $asset->date_of_issue = null;
+            $asset->disableLogging();
+            $asset->save();
+            
+            // Approval
+            $approval = new Approval;
+            $approval->ref                      =   'R-'.$asset->id;
+            $approval->approvable_id            =   (int) $asset->id;
+            $approval->approvable_type          =   "assets";
+            $approval->approval_level_id        =   1;
+            $approval->approver_id              =   (int) $this->current_user()->id;
+            $approval->disableLogging();
+            $approval->save();
+
+            // Logging
+            activity()
+                ->performedOn($asset)
+                ->causedBy($this->current_user())
+                ->withProperties(['detail' => 'Asset return confirmed'])
+                ->log('Asset returned');
+        
+        if(!$multiple)
+        return Response()->json(array('msg' => 'Success: assets returned','data' => $asset), 200);
+        }
+        
+        if($asset->status_id == 9) {    // Donate
+            $asset->status_id = 8;
+            $transfered_by_id = $asset->assigned_to_id;
+            $asset->assigned_to_id = $asset->donation_to_id;
+            $asset->assignee_type = $asset->donation_recepient_type;
+            $asset->location_id = null;
+            $asset->disableLogging();
+            $asset->save();
+            $asset->donation_to_id = null;
+            $asset->donation_recepient_type = null;
+            $batch = new AssetTransferBatch;
+            $batch->created_by_id = $this->current_user()->id;
+            $batch->save();
+            $asset->donation_batch_id = $batch->id;
+            $asset->save();
+            
+            // Approval
+            $approval = new Approval;
+            $approval->ref                      =   'D-'.$asset->id;
+            $approval->approvable_id            =   (int) $asset->id;
+            $approval->approvable_type          =   "assets";
+            $approval->approval_level_id        =   2;
+            $approval->approver_id              =   (int) $this->current_user()->id;
+            $approval->disableLogging();
+            $approval->save();
+
+            // Log the transfer
+            AssetTransfer::create([
+                'asset_id' => $id,
+                'transfered_by_id' => $transfered_by_id,
+                'transfered_to_id' => $asset->assigned_to_id,
+                'recepient_type' => $asset->assignee_type,
+                'transfer_type' => 'donation',
+                // 'reason' => $input['reason'],
+                'batch_id' => $batch->id ?? null,
+                'approved_by_id' => $this->current_user()->id
+            ]);
+
+            // Logging
+            activity()
+                ->performedOn($asset)
+                ->causedBy($this->current_user())
+                ->withProperties(['detail' => 'Asset donation to '. $asset->donation_to->supplier_name .' verified.'])
+                ->log('Asset donated');
+          
+        if(!$multiple)
+        return Response()->json(array('msg' => 'Success: assets donated','data' => $asset), 200);
+        }
+    }
+
+    public function approveAssets(){
+        try {
+            $form = Request::only("assets");
+            $asset_ids = $form['assets'];
+
+            foreach ($asset_ids as $key => $asset_id) {
+                $this->approveAsset($asset_id, true);
+            }
+
+            return response()->json(['assets'=>$form['assets']], 201, array(), JSON_PRETTY_PRINT);
+            
+        } catch (Exception $e) {
+             return response()->json(['error'=>"An rerror occured during processing"], 500,array(),JSON_PRETTY_PRINT);
+        }
+    }
+
+    public function rejectAsset($id){
+        $input = Request::only('rejection_reason');
+        $asset = Asset::findOrFail($id);
+        if($asset->status_id == 6) {    // Return
+            $asset->status_id = 11;
+            $asset->disableLogging();
+            $asset->save();
+            
+            // Logging
+            activity()
+                ->performedOn($asset)
+                ->causedBy($this->current_user())
+                ->withProperties(['detail' => 'Asset return rejected. REASON: '. $input['rejection_reason']])
+                ->log('Return rejected');
+            
+            // Log the transfer
+            AssetTransfer::create([
+                'asset_id' => $id,
+                'transfered_by_id' => $this->current_user(),
+                'transfer_type' => 'return',
+                'rejection_reason' => $input['rejection_reason']
+            ]);
+        
+            return Response()->json(array('msg' => 'Success: assets return rejected','data' => $asset), 200);
+        }
+
+        if($asset->status_id == 9) {    // Donate
+            $asset->status_id = 10;
+            $asset->assigned_to_id = null;
+            $asset->assignee_type = null;
+            $asset->location_id = null;
+            $asset->date_of_issue = null;
+            $asset->disableLogging();
+            $asset->save();
+            
+            // Logging
+            activity()
+                ->performedOn($asset)
+                ->causedBy($this->current_user())
+                ->withProperties(['detail' => 'Asset donation rejected. REASON: '. $input['rejection_reason']])
+                ->log('Donation rejected');
+            
+            // Log the transfer
+            AssetTransfer::create([
+                'asset_id' => $id,
+                'transfered_by_id' => $this->current_user(),
+                'transfer_type' => 'donation',
+                'rejection_reason' => $input['rejection_reason']
+            ]);
+        
+            return Response()->json(array('msg' => 'Success: assets donation rejected','data' => $asset), 200);
+        }
+    }
+
+    public function transferAssets(){
+        $input = Request::all();
+        foreach($input['assets'] as $item){
+            $asset = Asset::findOrFail($item);
+            $asset->assigned_to_id = $input['recepient'];
+            $asset->status_id = $input['status'];
+            $asset->date_of_issue = date('Y-m-d');
+            $asset->assignee_type = 'individual';
+            $asset->added_by_id = $this->current_user()->id;
+            $asset->last_updated_by = $this->current_user()->id;
+            $asset->disableLogging();
             $asset->save();
 
             // Log the transfer
             AssetTransfer::create([
                 'asset_id' => $item,
-                'transfered_by_id' => $this->current_user(),
-                'transfer_type' => 'return'
+                'transfered_by_id' => $this->current_user()->id,
+                'transfered_to_id' => $input['recepient'],
+                'recepient_type' => 'individual',
+                'transfer_type' => 'transfer',
+                'reason' => $input['reason']
             ]);
+
+            // Logging
+            activity()
+                ->performedOn($asset)
+                ->causedBy($this->current_user())
+                ->withProperties(['detail' => 'Asset transfered to '. $asset->assigned_to->name .''])
+                ->log('Transfered');
         }
-        return Response()->json(array('msg' => 'Success: assets returned','data' => $asset), 200);
+            
+        return Response()->json(array('msg' => 'Success: assets returned','data' => $input['assets']), 200);
+    }
+
+    public function getDonationDocument($id){
+        try{
+            $asset = Asset::with('transfers')->where('id', $id)->firstOrFail();
+            // $transfers = AssetTransfer::where('asset_id', $id)->where('transfer_type', 'donation')->get();
+
+            $data = array('asset' => $asset);
+
+            $pdf = PDF::loadView('pdf/asset_donation', $data);
+            $file_contents  = $pdf->stream();
+            $response = Response::make($file_contents, 200);
+            $response->header('Content-Type', 'application/pdf');
+            return $response;
+        }
+        catch (Exception $e ){
+            $response       = Response::make("", 200);
+            $response->header('Content-Type', 'application/pdf');
+            return $response;
+        }
+    }
+
+    public function getDonationTemplate($id){
+        try{
+            $asset = Asset::findOrFail($id);
+            $transfer = AssetTransfer::where('asset_id', $id)->first();
+
+            $data = array('asset' => $asset, 'transfer' => $transfer);
+
+            $pdf = PDF::loadView('pdf/asset_donation_template', $data);
+            $file_contents  = $pdf->stream();
+            $response = Response::make($file_contents, 200);
+            $response->header('Content-Type', 'application/pdf');
+            return $response;
+        }
+        catch (Exception $e ){
+            $response       = Response::make("", 200);
+            $response->header('Content-Type', 'application/pdf');
+            return $response;
+        }
+    }
+
+    public function uploadDonationDoc($id){
+        try{
+            $input = Request::only('file');
+            $file = $input['file'];
+            $asset = Asset::findOrFail($id);
+            $asset->disableLogging();
+            FTP::connection()->makeDir('/fixed_assets');
+            FTP::connection()->makeDir('/fixed_assets/'.$id);
+            FTP::connection()->uploadFile($file->getPathname(), '/fixed_assets/'.$id.'/D'.$id.'.'.$file->getClientOriginalExtension());
+
+            $asset->donation_document = 'D'.$id.'.'.$file->getClientOriginalExtension();
+            $asset->save();
+
+            // Logging
+            activity()
+                ->performedOn($asset)
+                ->causedBy($this->current_user())
+                ->withProperties(['detail' => 'Donation document uploaded. Asset donation confirmed.'])
+                ->log('Docment uploaded, donation confirmed');
+
+            return Response()->json(array('success' => 'Document uploaded','asset' => $asset), 200);
+        }
+        catch(Exception $e){
+            return response()->json(['error'=>'Something went wrong'], 500);
+        }
+    }
+
+    public function getDonationReceipt($id){
+        try{
+            $asset          = Asset::findOrFail($id);
+            $path           = '/fixed_assets/'.$asset->id.'/D'.$asset->donation_document;
+            $path_info      = pathinfo($path);
+            $basename       = $path_info['basename'];
+            $file_contents  = FTP::connection()->readFile($path);
+            $response       = Response::make($file_contents, 200);
+            $response->header('Content-Type', $this->get_mime_type($basename));
+            return $response;  
+        }
+        catch (Exception $e ){
+            $response       = Response::make("", 200);
+            $response->header('Content-Type', 'application/pdf');
+            return $response;  
+
+        }
     }
 
 

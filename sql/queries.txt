@@ -1340,3 +1340,29 @@ ADD `ref` varchar(256) NULL AFTER `id`,
 CHANGE `updated_at` `updated_at` timestamp NULL AFTER `created_at`;
 ALTER TABLE `assets`
 ADD `model` varchar(256) NULL AFTER `lpo_id`;
+
+ALTER TABLE `asset_transfers`
+ADD `rejected_by_id` int(11) NULL AFTER `batch_id`,
+ADD `rejection_reason` text NULL AFTER `rejected_by_id`;
+ALTER TABLE `asset_transfers`
+DROP `rejected_by_id`;
+
+INSERT INTO `asset_statuses` (`status`, `default`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Donation rejected', NULL, now(), now(), NULL);
+INSERT INTO `asset_statuses` (`status`, `default`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Return rejected', NULL, now(), now(), NULL);
+INSERT INTO `asset_statuses` (`status`, `default`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Reported stolen or lost', NULL, now(), now(), NULL);
+INSERT INTO `asset_statuses` (`status`, `default`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Insurance claim filed', NULL, now(), now(), NULL);
+
+ALTER TABLE `assets`
+ADD `donation_to_id` int NULL AFTER `model`,
+ADD `donation_recepient_type` varchar(30) COLLATE 'latin1_swedish_ci' NULL AFTER `donation_to_id`;
+ALTER TABLE `assets`
+ADD `donation_batch_id` int NULL AFTER `donation_recepient_type`;
+ALTER TABLE `assets`
+ADD `donation_document` text NULL AFTER `donation_batch_id`;
+
+ALTER TABLE `asset_transfers`
+ADD `approved_by_id` int NULL AFTER `rejection_reason`;
