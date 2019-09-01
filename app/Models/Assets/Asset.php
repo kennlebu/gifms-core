@@ -96,11 +96,11 @@ class Asset extends BaseModel
 
     public function getAssigneeAttribute(){
         $assignee = null;
-        if($this->attributes['assignee_type'] == 'individual'){
-            $assignee = Staff::find('assigned_to_id');
+        if($this->assignee_type == 'individual'){
+            $assignee = Staff::where($this->assigned_to_id);
         }
-        elseif($this->attributes['assignee_type'] == 'care_partner' || $this->attributes['assignee_type'] == 'government'){
-            $assignee = Supplier::find('assigned_to_id');
+        elseif($this->assignee_type == 'care_partner' || $this->assignee_type == 'government'){
+            $assignee = Supplier::find($this->assigned_to_id);
         }
         return $assignee;
     }

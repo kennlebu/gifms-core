@@ -16,6 +16,8 @@ use Exception;
 use PDF;
 use JWTAuth;
 use Illuminate\Support\Facades\Response;
+use Anchu\Ftp\Facades\Ftp;
+use Excel;
 
 class AssetApi extends Controller
 {
@@ -550,6 +552,7 @@ class AssetApi extends Controller
             FTP::connection()->uploadFile($file->getPathname(), '/fixed_assets/'.$id.'/D'.$id.'.'.$file->getClientOriginalExtension());
 
             $asset->donation_document = 'D'.$id.'.'.$file->getClientOriginalExtension();
+            $asset->status_id = 3;
             $asset->save();
 
             // Logging
@@ -569,7 +572,7 @@ class AssetApi extends Controller
     public function getDonationReceipt($id){
         try{
             $asset          = Asset::findOrFail($id);
-            $path           = '/fixed_assets/'.$asset->id.'/D'.$asset->donation_document;
+            $path           = '/fixed_assets/'.$asset->id.'/'.$asset->donation_document;
             $path_info      = pathinfo($path);
             $basename       = $path_info['basename'];
             $file_contents  = FTP::connection()->readFile($path);
@@ -583,6 +586,204 @@ class AssetApi extends Controller
             return $response;  
 
         }
+    }
+
+    public function downloadAssets(){
+        $input = Request::all();
+        $assets = Asset::query();
+
+        $classes = [];
+        $types = [];
+        $groups = [];
+        $insurance_types = [];
+        $statuses = [];
+        $locations = [];
+        $staff = []; 
+        $donees = [];
+
+        if(!empty($input['classes']))
+        foreach($input['classes'] as $class){
+            $classes[] = $class['id'];
+        }
+        if(!empty($input['types']))
+        foreach($input['types'] as $type){
+            $types[] = $type['id'];
+        }
+        if(!empty($input['groups']))
+        foreach($input['groups'] as $group){
+            $groups[] = $group['id'];
+        }
+        if(!empty($input['insurance_types']))
+        foreach($input['insurance_types'] as $insurance_type){
+            $insurance_types[] = $insurance_type['id'];
+        }
+        if(!empty($input['statuses']))
+        foreach($input['statuses'] as $status){
+            $statuses[] = $status['id'];
+        }
+        if(!empty($input['locations']))
+        foreach($input['locations'] as $location){
+            $locations[] = $location['id'];
+        }
+        if(!empty($input['staff']))
+        foreach($input['staff'] as $s){
+            $staff[] = $s['id'];
+        }
+        if(!empty($input['donees']))
+        foreach($input['donees'] as $donee){
+            $donees[] = $donee['id'];
+        }
+
+        if(!empty($classes)){
+            $assets = $assets->whereIn('class_id', $classes);
+        }
+        if(!empty($types)){
+            $assets = $assets->whereIn('type_id', $types);
+        }
+        if(!empty($groups)){
+            $assets = $assets->whereIn('asset_group_id', $groups);
+        }
+        if(!empty($insurance_types)){
+            $assets = $assets->whereIn('insurance_type_id', $insurance_types);
+        }
+        if(!empty($statuses)){
+            $assets = $assets->whereIn('status_id', $statuses);
+        }
+        if(!empty($staff)){
+            $assets = $assets->whereIn('assigned_to_id', $staff);
+        }
+        if(!empty($locations)){
+            $assets = $assets->whereIn('location_id', $locations);
+        }
+        if(!empty($donees)){
+            $assets = $assets->whereIn('assigned_to_id', $donees);
+        }
+
+        $assets = $assets->get();
+
+        $excel_data = [];
+        foreach($assets as $row){
+            $excel_row = array();
+            $excel_row['title'] = $row->title;
+            $excel_row['type'] = $row->type->type ?? '';
+            $excel_row['model'] = $row->model;
+            $excel_row['tag'] = $row->tag;
+            $excel_row['serial_no'] = $row->serial_no;
+            $excel_row['asset_group'] = $row->group->title ?? '';
+            $excel_row['status'] = $row->status->status ?? '';
+            $excel_row['date_of_issue'] = $row->date_of_issue;
+            $excel_row['cost'] = $row->cost;
+            $excel_row['supplier'] = $row->supplier->supplier_name ?? '';
+            $excel_row['date_of_purchase'] = $row->date_of_purchase;
+            $excel_row['class'] = $row->class->name ?? '';
+            $excel_row['insurance_type'] = $row->insurance_type->type ?? '';
+            $excel_row['location'] = $row->location->location ?? '';
+            $excel_row['assigned_to'] = $row->assignee_type == 'individual' ? ($row->assigned_to->name ?? '') : ($row->assignee->supplier_name ?? '');
+            $excel_row['assignee_type'] = $row->assignee_type;
+            $excel_row['insurance_value'] = $row->insurance_value;
+            $excel_row['comments'] = $row->comments;
+            
+            $excel_data[] = $excel_row;
+        }
+        $headers = [
+            'Access-Control-Allow-Origin'      => '*',
+            'Allow'                            => 'GET, POST, OPTIONS',
+            'Access-Control-Allow-Headers'     => 'Origin, Content-Type, Accept, Authorization, X-Requested-With',
+            'Access-Control-Allow-Credentials' => 'true'
+        ];
+        // Build excel
+        $file = Excel::create('CHAI asset list '.date('Y-m-d'), function($excel) use ($excel_data) {
+
+            // Set the title
+            $excel->setTitle('CHAI Asset list (filtered)');
+
+            // Chain the setters
+            $excel->setCreator('GIFMS')->setCompany('Clinton Health Access Initiative - Kenya');
+
+            $excel->setDescription('A (filtered) list of CHAI assets genetated on '.date('Y-m-d'));
+
+            $headings = array('Asset Name', 'Asset type', 'Model', 'Tag', 'Serial No.', 'Asset group', 'Status', 'Date of issue', 'Asset cost', 'Supplier', 'Date of purchase', 'Asset class', 
+            'Insurance type', 'Asset location', 'Assigned to', 'Assignee type', 'Insurance value', 'Comments');
+
+            $excel->sheet('Assets list', function ($sheet) use ($excel_data, $headings) {
+                $sheet->setStyle([
+                    'borders' => [
+                        'allborders' => [
+                            'color' => [
+                                'rgb' => '000000'
+                            ]
+                        ]
+                    ]
+                ]);
+                $i = 1;
+                $alternate = true;
+                foreach($excel_data as $data_row){
+                    // if(empty($data_row['grant_details'])){
+                    //     $data_row['grant_details'] = " ";
+                    // }
+
+                    $sheet->appendRow($data_row);
+                    $sheet->row($i, function($row) use ($data_row, $alternate){
+                        // if(!empty($data_row['total'])){
+                            $row->setBorder('thin', 'none', 'none', 'none');
+                            $row->setFontSize(10);
+                        // }
+                    });
+                    if($alternate){
+                        $sheet->cells('C'.$i.':K'.$i, function($cells) {
+                            $cells->setBackground('#edf1f3');  
+                            $cells->setFontSize(10);                          
+                        });
+                    }
+                    $i++;
+                    $alternate = !$alternate;
+                }
+                
+                $sheet->prependRow(1, $headings);
+                $sheet->setFontSize(10);
+                $sheet->setHeight(1, 25);
+                $sheet->row(1, function($row){
+                    $row->setFontSize(11);
+                    $row->setFontWeight('bold');
+                    $row->setAlignment('center');
+                    $row->setValignment('center');
+                    $row->setBorder('none', 'thin', 'none', 'thin');
+                    $row->setBackground('#004080');                        
+                    $row->setFontColor('#ffffff');
+                }); 
+                // $sheet->row(2, function($row){
+                //     $row->setFontSize(12);
+                //     $row->setFontWeight('bold');
+                //     $row->setBorder('none', 'thin', 'none', 'thin');
+                // }); 
+                $sheet->setWidth(array(
+                    'A' => 30,
+                    'B' => 15,
+                    'C' => 20,
+                    'D' => 20,
+                    'E' => 30,
+                    'F' => 15,
+                    'G' => 35,
+                    'H' => 15,
+                    'I' => 15,
+                    'J' => 30,
+                    'K' => 15,
+                    'L' => 20,
+                    'M' => 20,
+                    'N' => 25,
+                    'O' => 35,
+                    'P' => 20,
+                    'Q' => 15,
+                    'R' => 50
+                ));
+                $sheet->getStyle('K1')->getAlignment()->setWrapText(true);
+
+                $sheet->setFreeze('C2');
+                $sheet->setAutoFilter('B1:P1');
+            });
+
+        })->download('xlsx', $headers);
+        
     }
 
 

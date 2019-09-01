@@ -1298,7 +1298,7 @@ VALUES ('Scrapped', NULL, now(), now(), NULL);
 INSERT INTO `asset_statuses` (`status`, `default`, `created_at`, `updated_at`, `deleted_at`)
 VALUES ('Returned, pending acceptance', NULL, now(), now(), NULL);
 
-===== Asset transfers
+~===== Asset transfers
 CREATE TABLE `asset_transfers` (
   `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `asset_id` int NULL,
@@ -1323,7 +1323,7 @@ VALUES ('Donated, pending receipt', NULL, now(), now(), NULL);
 INSERT INTO `asset_statuses` (`status`, `default`, `created_at`, `updated_at`, `deleted_at`)
 VALUES ('Donated, pending confirmation', NULL, now(), now(), NULL);
 
-===== Asset transfer batches
+~===== Asset transfer batches
 CREATE TABLE `asset_transfer_batches` (
   `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `created_by_id` int NULL,
@@ -1366,3 +1366,20 @@ ADD `donation_document` text NULL AFTER `donation_batch_id`;
 
 ALTER TABLE `asset_transfers`
 ADD `approved_by_id` int NULL AFTER `rejection_reason`;
+
+~===== Asset losses table
+CREATE TABLE `asset_losses` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `asset_id` int NULL,
+  `date_lost` varchar(30) NULL,
+  `explanation` text NULL,
+  `incident_file` text NULL,
+  `submitted_by_id` int NULL,
+  `created_at` timestamp NULL,
+  `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL
+);
+
+ALTER TABLE `asset_losses`
+ADD `insurer_id` int(11) NULL AFTER `submitted_by_id`,
+CHANGE `updated_at` `updated_at` timestamp NULL AFTER `created_at`;
