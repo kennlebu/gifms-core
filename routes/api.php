@@ -5421,7 +5421,8 @@ Route::GET('/asset/{id}/get_donation_template', 'AssetApi@getDonationTemplate')-
 Route::GET('/asset/{id}/get_donation_receipt', 'AssetApi@getDonationReceipt')->middleware('jwt.auth');
 Route::POST('/asset/{id}/upload-donation-doc', 'AssetApi@uploadDonationDoc')->middleware('jwt.auth');
 Route::POST('/assets/download', 'AssetApi@downloadAssets')->middleware('jwt.auth');
-Route::POST('/assets/claim', 'AssetApi@claimAsset')->middleware('jwt.auth');
+Route::POST('/claim-asset', 'AssetApi@claimAsset')->middleware('jwt.auth');
+Route::POST('/report-lost-asset', 'AssetApi@reportStolen')->middleware('jwt.auth');
 // Types
 Route::POST('assets/types', 'AssetApi@addAssetType')->middleware('jwt.auth');
 Route::PUT('/assets/type', 'AssetApi@updateAssetType')->middleware('jwt.auth');

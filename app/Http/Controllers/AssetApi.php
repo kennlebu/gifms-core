@@ -500,6 +500,36 @@ class AssetApi extends Controller
         
             return Response()->json(array('msg' => 'Success: assets donation rejected','data' => $asset), 200);
         }
+
+        if($asset->status_id == 14) {    // Lost
+            $asset->status_id = 16;
+            $asset->disableLogging();
+            $asset->save();
+            
+            // Logging
+            activity()
+                ->performedOn($asset)
+                ->causedBy($this->current_user())
+                ->withProperties(['detail' => 'Asset loss report rejected. REASON: '. $input['rejection_reason']])
+                ->log('Loss report rejected');
+        
+            return Response()->json(array('msg' => 'Success: assets loss report rejected','data' => $asset), 200);
+        }
+
+        if($asset->status_id == 15) {    // Claim
+            $asset->status_id = 17;
+            $asset->disableLogging();
+            $asset->save();
+            
+            // Logging
+            activity()
+                ->performedOn($asset)
+                ->causedBy($this->current_user())
+                ->withProperties(['detail' => 'Insurance claim rejected. REASON: '. $input['rejection_reason']])
+                ->log('Insurance claim rejected');
+        
+            return Response()->json(array('msg' => 'Success: insurance claim rejected','data' => $asset), 200);
+        }
     }
 
     public function transferAssets(){
