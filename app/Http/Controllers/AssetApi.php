@@ -17,6 +17,7 @@ use PDF;
 use JWTAuth;
 use Illuminate\Support\Facades\Response;
 use Anchu\Ftp\Facades\Ftp;
+use App\Models\Assets\AssetLoss;
 use Excel;
 
 class AssetApi extends Controller
@@ -150,7 +151,7 @@ class AssetApi extends Controller
             }
             if(array_key_exists('my_approvables', $input)){         // Approvables
                 if($user->hasRole(['admin-manager'])){
-                    $assets = $assets->whereIn('status_id', [6,9]);
+                    $assets = $assets->whereIn('status_id', [6,9,14,15]);
                 }
             }
             if(array_key_exists('datatables', $input)){             // Datatables
@@ -343,8 +344,8 @@ class AssetApi extends Controller
                 ->withProperties(['detail' => 'Asset return confirmed'])
                 ->log('Asset returned');
         
-        if(!$multiple)
-        return Response()->json(array('msg' => 'Success: assets returned','data' => $asset), 200);
+            if(!$multiple)
+            return Response()->json(array('msg' => 'Success: assets returned','data' => $asset), 200);
         }
         
         if($asset->status_id == 9) {    // Donate
@@ -392,8 +393,42 @@ class AssetApi extends Controller
                 ->withProperties(['detail' => 'Asset donation to '. $asset->donation_to->supplier_name .' verified.'])
                 ->log('Asset donated');
           
-        if(!$multiple)
-        return Response()->json(array('msg' => 'Success: assets donated','data' => $asset), 200);
+            if(!$multiple)
+            return Response()->json(array('msg' => 'Success: assets donated','data' => $asset), 200);
+        }
+
+        //  Stolen
+        if($asset->status_id == 14){
+            $asset->disableLogging();
+            $asset->status_id = 12;
+            $asset->save();
+
+            // Logging
+            activity()
+                ->performedOn($asset)
+                ->causedBy($this->current_user())
+                ->withProperties(['detail' => 'Asset loss report has been verified'])
+                ->log('Asset loss verified');
+
+            if(!$multiple)
+            return Response()->json(array('msg' => 'Success: assets donated','data' => $asset), 200);
+        }
+
+        //  Claim
+        if($asset->status_id == 15){
+            $asset->disableLogging();
+            $asset->status_id = 13;
+            $asset->save();
+
+            // Logging
+            activity()
+                ->performedOn($asset)
+                ->causedBy($this->current_user())
+                ->withProperties(['detail' => 'insurance claim has been verified'])
+                ->log('Insurance claim verified');
+
+            if(!$multiple)
+            return Response()->json(array('msg' => 'Success: assets donated','data' => $asset), 200);
         }
     }
 
@@ -560,7 +595,7 @@ class AssetApi extends Controller
                 ->performedOn($asset)
                 ->causedBy($this->current_user())
                 ->withProperties(['detail' => 'Donation document uploaded. Asset donation confirmed.'])
-                ->log('Docment uploaded, donation confirmed');
+                ->log('Document uploaded, donation confirmed');
 
             return Response()->json(array('success' => 'Document uploaded','asset' => $asset), 200);
         }
@@ -784,6 +819,84 @@ class AssetApi extends Controller
 
         })->download('xlsx', $headers);
         
+    }
+
+    public function reportStolen(){
+        try {
+            $input = Request::only('file','id','date_lost','explanation');
+            $file = $input['file'];
+            $id = $input['id'];
+            $loss = new AssetLoss;
+            $loss->asset_id = $id;
+            $loss->date_lost = $input['date_lost'];
+            $loss->explanation = $input['explanation'];
+            $loss->submitted_by_id = $this->current_user()->id;
+            // $loss->insurer_id = $input['insurer_id'];
+            $loss->save();
+
+            $asset = Asset::findOrFail($id);
+            $asset->disableLogging();
+            $asset->status_id = 14;     // reported stolen or lost
+            $asset->save();
+
+            FTP::connection()->makeDir('/fixed_assets');
+            FTP::connection()->makeDir('/fixed_assets/'.$id);
+            FTP::connection()->uploadFile($file->getPathname(), '/fixed_assets/'.$id.'/L'.$id.'.'.$file->getClientOriginalExtension());
+
+            $loss->disableLogging();
+            $loss->incident_file = 'L'.$id.'.'.$file->getClientOriginalExtension();
+            $loss->save();
+
+            // Logging
+            activity()
+                ->performedOn($asset)
+                ->causedBy($this->current_user())
+                ->withProperties(['detail' => 'Asset has been reported stolen or lost. Incident file has been uploaded.'])
+                ->log('Reported stolen or lost');
+            
+            return Response()->json(array('success' => 'Asset reported as lost','asset' => $asset), 200);
+            }
+            catch(Exception $e){
+                return response()->json(['error'=>'Something went wrong'], 500);
+            }
+    }
+
+    public function claimAsset(){
+        try {
+            $input = Request::only('file', 'id', 'insurer_id');
+            $id = $input['id'];
+            $file = $input['file'];
+            $loss = AssetLoss::where('asset_id', $id);
+            $loss->disableLogging();
+            $loss->claim_submitted = 1;
+            $loss->insurer_id = $input['insurer_id'];
+            $loss->save();
+
+            $asset = Asset::findOrFail($id);
+            $asset->disableLogging();
+            $asset->status_id = 15;
+            $asset->save();
+
+            FTP::connection()->makeDir('/fixed_assets');
+            FTP::connection()->makeDir('/fixed_assets/'.$id);
+            FTP::connection()->uploadFile($file->getPathname(), '/fixed_assets/'.$id.'/C'.$id.'.'.$file->getClientOriginalExtension());
+
+            $loss->disableLogging();
+            $loss->claim_file = 'C'.$id.'.'.$file->getClientOriginalExtension();
+            $loss->save();
+
+            // Logging
+            activity()
+                ->performedOn($asset)
+                ->causedBy($this->current_user())
+                ->withProperties(['detail' => 'Insurance claim has been submitted'])
+                ->log('Insurance claim submitted');
+            
+            return Response()->json(array('success' => 'Insurance claim has been submitted','asset' => $asset), 200);
+            }
+            catch(Exception $e){
+                return response()->json(['error'=>'Something went wrong'], 500);
+            }
     }
 
 

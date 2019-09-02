@@ -1383,3 +1383,14 @@ CREATE TABLE `asset_losses` (
 ALTER TABLE `asset_losses`
 ADD `insurer_id` int(11) NULL AFTER `submitted_by_id`,
 CHANGE `updated_at` `updated_at` timestamp NULL AFTER `created_at`;
+
+===== Changes to some asset tables
+ALTER TABLE `asset_losses`
+ADD `claim_submitted` int NULL AFTER `insurer_id`;
+ALTER TABLE `asset_losses`
+ADD `claim_file` text NULL AFTER `claim_submitted`;
+
+INSERT INTO `asset_statuses` (`status`, `default`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Reported stolen/lost, awaiting verification', NULL, now(), now(), NULL);
+INSERT INTO `asset_statuses` (`status`, `default`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Insurance claim submitted, awaiting verification', NULL, now(), now(), NULL);
