@@ -1398,3 +1398,7 @@ INSERT INTO `asset_statuses` (`status`, `default`, `created_at`, `updated_at`, `
 VALUES ('Loss report rejected', NULL, now(), now(), NULL);
 INSERT INTO `asset_statuses` (`status`, `default`, `created_at`, `updated_at`, `deleted_at`)
 VALUES ('Insurance claim rejected', NULL, now(), now(), NULL);
+
+ALTER TABLE `supply_categories`
+ADD `service_type` varchar(20) COLLATE 'utf8_unicode_ci' NULL AFTER `supply_category_name`,
+CHANGE `updated_at` `updated_at` timestamp NOT NULL DEFAULT current_timestamp() AFTER `created_at`;
