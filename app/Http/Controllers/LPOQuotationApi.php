@@ -299,7 +299,7 @@ class LPOQuotationApi extends Controller
         $response = LpoQuotation::with('supplier','uploaded_by');
 
         if(array_key_exists('lpo_id', $input)){
-            $response = $response->where('lpo_id', $input['lpo_id'])->get();
+            $response = $response->where('lpo_id', $input['lpo_id']);
         }
         $response = $response->get();
 

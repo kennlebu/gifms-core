@@ -120,11 +120,13 @@ class LPOItemApi extends Controller
             $item->qty_description          =               $form['qty_description'];
             $item->unit_price               =               $form['unit_price'];
             $item->vat_charge               =               $form['vat_charge'];
+            $item->disableLogging();
             
             if(array_key_exists('lpo_type', $form) && $form['lpo_type']=='prenegotiated'){
                 $lpo = Lpo::findOrFail($form['lpo_id']);
                 $lpo->supplier_id = $form['supplier_id'];
                 $lpo->currency_id = $form['currency_id'];
+                $lpo->disableLogging();
                 $lpo->save();
             }
             if(!empty($form['no_of_days'])){
@@ -132,6 +134,15 @@ class LPOItemApi extends Controller
             }
 
             if($item->save()) {
+                $lpo = Lpo::find($form['lpo_id']);
+
+                // Logging submission
+                activity()
+                   ->performedOn($lpo)
+                   ->causedBy($this->current_user())
+                   ->withProperties(['detail'=>'LPO item '.$item->item.' has been edited'])
+                   ->log('Item updated');
+
                 return Response()->json(array('success' => 'Item updated','lpo_item' => $item), 200);
             }
         }catch (JWTException $e){

@@ -599,7 +599,7 @@ class LPOApi extends Controller
                                             'deliveries'
                                 )->findOrFail($lpo_id);
 
-            if ((empty($lpo->lpo_type) || $lpo->lpo_type!='prenegotiated') && $lpo->preffered_quotation->amount != $lpo->totals ){
+            if ((empty($lpo->lpo_type) || $lpo->lpo_type!='prenegotiated') && abs($lpo->preffered_quotation->amount - $lpo->totals) > 1){
                 throw new LpoQuotationAmountMismatchException("Total amount does not match with quotation amount");             
             }
 
@@ -616,14 +616,14 @@ class LPOApi extends Controller
                 activity()
                    ->performedOn($lpo)
                    ->causedBy($this->current_user())
-                   ->log('submitted');
+                   ->log('Submitted for verification');
             }
             else{
                 // Logging resubmission
                 activity()
                     ->performedOn($lpo)
                     ->causedBy($this->current_user())
-                    ->log('submitted');
+                    ->log('Submitted for approval');
             }
 
             $lpo->disableLogging(); //! Do not log the update
