@@ -1402,3 +1402,9 @@ VALUES ('Insurance claim rejected', NULL, now(), now(), NULL);
 ALTER TABLE `supply_categories`
 ADD `service_type` varchar(20) COLLATE 'utf8_unicode_ci' NULL AFTER `supply_category_name`,
 CHANGE `updated_at` `updated_at` timestamp NOT NULL DEFAULT current_timestamp() AFTER `created_at`;
+
+DELETE * FROM assets;
+ALTER TABLE `assets`
+CHANGE `title` `asset_name_id` int NULL AFTER `ref`,
+ADD `description` text COLLATE 'latin1_swedish_ci' NULL AFTER `asset_name_id`,
+ADD `staff_responsible_id` int NULL AFTER `assignee_type`;
