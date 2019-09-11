@@ -49,6 +49,11 @@ class Asset extends BaseModel
         return $this->belongsTo('App\Models\Assets\AssetLocation', 'location_id');
     }
 
+    public function asset_name()
+    {
+        return $this->belongsTo('App\Models\Assets\AssetName', 'asset_name_id');
+    }
+
     public function assigned_to()
     {
         // if(!empty($this->assignee_type) && $this->assignee_type == 'individual')

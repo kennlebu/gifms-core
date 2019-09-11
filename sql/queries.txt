@@ -1408,3 +1408,11 @@ ALTER TABLE `assets`
 CHANGE `title` `asset_name_id` int NULL AFTER `ref`,
 ADD `description` text COLLATE 'latin1_swedish_ci' NULL AFTER `asset_name_id`,
 ADD `staff_responsible_id` int NULL AFTER `assignee_type`;
+
+CREATE TABLE `asset_names` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `name` varchar(256) NULL,
+  `created_at` timestamp NULL,
+  `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL
+);

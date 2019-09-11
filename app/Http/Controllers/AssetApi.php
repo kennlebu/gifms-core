@@ -10,6 +10,7 @@ use App\Models\Assets\AssetLocation;
 use App\Models\Assets\AssetStatus;
 use App\Models\Assets\AssetTransfer;
 use App\Models\Assets\AssetType;
+use App\Models\Assets\AssetName;
 use App\Models\ApprovalsModels\Approval;
 use App\Models\Assets\AssetTransferBatch;
 use Exception;
@@ -30,7 +31,8 @@ class AssetApi extends Controller
     public function addAsset(){
         $input = Request::all();
         $asset = [
-            'title'=>$input['title'] ?? null,
+            'asset_name_id'=>$input['asset_name_id'] ?? null,
+            'description'=>$input['description'] ?? null,
             'model'=>$input['model'] ?? null,
             'type_id'=>$input['type_id'] ?? null,
             'tag'=>$input['tag'] ?? null,
@@ -61,7 +63,8 @@ class AssetApi extends Controller
     public function updateAsset(){
         $input = Request::all();
         $asset = Asset::findOrFail($input['id']);
-        if(!empty($input['title'])) $asset->title = $input['title'];
+        if(!empty($input['asset_name_id'])) $asset->status_id=$input['asset_name_id'];
+        if(!empty($input['description'])) $asset->title = $input['description'];
         if(!empty($input['model'])) $asset->model = $input['model'];
         if(!empty($input['type_id'])) $asset->type_id=$input['type_id'];
         if(!empty($input['tag'])) $asset->tag=$input['tag'];
@@ -90,8 +93,8 @@ class AssetApi extends Controller
     }
 
     public function getAsset($id){
-        $asset = Asset::with(['class','group','assigned_to','insurance_type','location',
-                            'status','supplier','type','logs.causer','lpo'])
+        $asset = Asset::with(['class','assigned_to','insurance_type','location',
+                            'status','supplier','type','logs.causer','lpo', 'asset_name'])
                         ->where('id', $id)
                         ->firstOrFail();           
         return response()->json($asset, 200, array(), JSON_PRETTY_PRINT);
@@ -101,7 +104,7 @@ class AssetApi extends Controller
         try{
             $input = Request::all();
             $user = JWTAuth::parseToken()->authenticate();
-            $assets = Asset::with('status','assigned_to','type','class','location','group');
+            $assets = Asset::with('status','assigned_to','type','class','location','asset_name');
             if(array_key_exists('my_assigned', $input) && !$user->hasRole(['admin-manager','admin'])){            // All assets
                 $assets = $assets->where('assigned_to_id', $user->id);
             }
@@ -148,6 +151,9 @@ class AssetApi extends Controller
             }
             if(array_key_exists('asset_group_id', $input)){         // Asset group
                 $assets = $assets->where('asset_group_id', $input['asset_group_id']);
+            }
+            if(array_key_exists('asset_name_id', $input)){          // Asset name
+                $assets = $assets->where('asset_name_id', $input['asset_name_id']);
             }
             if(array_key_exists('my_approvables', $input)){         // Approvables
                 if($user->hasRole(['admin-manager'])){
@@ -660,6 +666,7 @@ class AssetApi extends Controller
         $classes = [];
         $types = [];
         $groups = [];
+        $names = [];
         $insurance_types = [];
         $statuses = [];
         $locations = [];
@@ -677,6 +684,10 @@ class AssetApi extends Controller
         if(!empty($input['groups']))
         foreach($input['groups'] as $group){
             $groups[] = $group['id'];
+        }
+        if(!empty($input['names']))
+        foreach($input['names'] as $name){
+            $names[] = $name['id'];
         }
         if(!empty($input['insurance_types']))
         foreach($input['insurance_types'] as $insurance_type){
@@ -708,6 +719,9 @@ class AssetApi extends Controller
         if(!empty($groups)){
             $assets = $assets->whereIn('asset_group_id', $groups);
         }
+        if(!empty($names)){
+            $assets = $assets->whereIn('asset_name_id', $names);
+        }
         if(!empty($insurance_types)){
             $assets = $assets->whereIn('insurance_type_id', $insurance_types);
         }
@@ -729,12 +743,12 @@ class AssetApi extends Controller
         $excel_data = [];
         foreach($assets as $row){
             $excel_row = array();
-            $excel_row['title'] = $row->title;
+            $excel_row['asset_name'] = $row->asset_name->name ?? '';
+            $excel_row['description'] = $row->description;
             $excel_row['type'] = $row->type->type ?? '';
             $excel_row['model'] = $row->model;
             $excel_row['tag'] = $row->tag;
             $excel_row['serial_no'] = $row->serial_no;
-            $excel_row['asset_group'] = $row->group->title ?? '';
             $excel_row['status'] = $row->status->status ?? '';
             $excel_row['date_of_issue'] = $row->date_of_issue;
             $excel_row['cost'] = $row->cost;
@@ -767,7 +781,7 @@ class AssetApi extends Controller
 
             $excel->setDescription('A (filtered) list of CHAI assets genetated on '.date('Y-m-d'));
 
-            $headings = array('Asset Name', 'Asset type', 'Model', 'Tag', 'Serial No.', 'Asset group', 'Status', 'Date of issue', 'Asset cost', 'Supplier', 'Date of purchase', 'Asset class', 
+            $headings = array('Asset Name', 'Description', 'Asset type', 'Model', 'Tag', 'Serial No.', 'Status', 'Date of issue', 'Asset cost', 'Supplier', 'Date of purchase', 'Asset class', 
             'Insurance type', 'Asset location', 'Assigned to', 'Assignee type', 'Insurance value', 'Comments');
 
             $excel->sheet('Assets list', function ($sheet) use ($excel_data, $headings) {
@@ -822,8 +836,8 @@ class AssetApi extends Controller
                 //     $row->setBorder('none', 'thin', 'none', 'thin');
                 // }); 
                 $sheet->setWidth(array(
-                    'A' => 30,
-                    'B' => 15,
+                    'A' => 25,
+                    'B' => 30,
                     'C' => 20,
                     'D' => 20,
                     'E' => 30,
@@ -927,6 +941,89 @@ class AssetApi extends Controller
             catch(Exception $e){
                 return response()->json(['error'=>'Something went wrong'], 500);
             }
+    }
+
+
+
+    /**
+     * Asset names
+     */   
+    
+    public function addAssetName(){
+        $input = Request::all();
+        $asset = AssetName::create($input);
+        return Response()->json(array('msg' => 'Success: asset name added','data' => $asset), 200);
+    }
+
+    public function updateAssetName(){
+        $input = Request::all();
+        $asset = AssetName::findOrFail($input['id']);
+        $asset = $asset->update($input);
+        return Response()->json(array('msg' => 'Success: asset type name','data' => $asset), 200);
+    }
+
+    public function getAssetName($id){
+        $asset = AssetName::findOrFail($id);           
+        return response()->json($asset, 200, array(), JSON_PRETTY_PRINT);
+    }
+
+    public function getAssetNames(){
+        try{
+            $input = Request::all();
+            $assets = AssetName::query();
+            if(array_key_exists('datatables', $input)){             // Datatables
+                    $total_records = $assets->count();
+
+                    //searching
+                    $assets = $assets->where(function ($query) use ($input) {                
+                        $query->where('name','like', '\'%' . $input['search']['value']. '%\'');
+                    });
+
+                    $records_filtered = $assets->count();
+        
+                    //ordering
+                    $order_column_id    = (int) $input['order'][0]['column'];
+                    $order_column_name  = $input['columns'][$order_column_id]['order_by'];
+                    $order_direction    = $input['order'][0]['dir'];
+        
+                    if($order_column_name!=''){
+                        $assets = $assets->orderBy($order_column_name, $order_direction);
+                    }
+        
+                    //limit offset
+                    if((int)$input['start']!= 0 ){
+                        $assets = $assets->limit($input['length'])->offset($input['start']);
+                    }
+                    else{
+                        $assets = $assets->limit($input['length']);
+                    }
+        
+                    $assets = $assets->get();
+        
+                    $assets = AssetName::arr_to_dt_response( 
+                        $assets, $input['draw'],
+                        $total_records,
+                        $records_filtered
+                        );
+            }
+            else{
+                $assets = $assets->get();
+            }
+
+            return response()->json($assets, 200); 
+        }
+        catch(\Exception $e){
+            return response()->json(['error'=>'something went wrong', 'msg'=>$e->getMessage()], 500);
+        }       
+    }
+
+    public function deleteAssetName($id){
+        $deleted = AssetName::destroy($id);
+        if($deleted){
+            return response()->json(['msg'=>"Asset name removed"], 200,array(),JSON_PRETTY_PRINT);
+        }else{
+            return response()->json(['error'=>"Something went wrong"], 500, array(), JSON_PRETTY_PRINT);
+        }
     }
 
 
