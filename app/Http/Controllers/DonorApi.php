@@ -259,7 +259,6 @@ class DonorApi extends Controller
             $response_dt = DB::select($sql);
             $response_dt = json_decode(json_encode($response_dt), true);
             $response_dt    = $this->append_relationships_objects($response_dt);
-            $response_dt    = $this->append_relationships_nulls($response_dt);
             $response       = Donor::arr_to_dt_response( 
                 $response_dt, $input['draw'],
                 $total_records,
@@ -270,7 +269,6 @@ class DonorApi extends Controller
             $response       = json_decode(json_encode(DB::select($sql)), true);
             if(!array_key_exists('lean', $input)){
                 $response       = $this->append_relationships_objects($response);
-                $response       = $this->append_relationships_nulls($response);
             }
         }
 
