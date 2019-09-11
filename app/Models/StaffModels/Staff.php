@@ -7,9 +7,6 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\BaseModels\BaseModel;
-use Anchu\Ftp\Facades\Ftp;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\File;
 
 class Staff extends BaseModel
 {
@@ -40,9 +37,7 @@ class Staff extends BaseModel
 
 
 
-    protected $appends = ['full_name','name','is_admin'
-    // ,'signature_url'
-    ];
+    protected $appends = ['full_name','name','is_admin'];
 
 
 
@@ -68,26 +63,9 @@ class Staff extends BaseModel
     {       
         //this is a stub
         $is_admin = 0;
-
-        
         return $is_admin;
 
     }
-
-    // public function getSignatureUrlAttribute()
-    // {       
-
-    //     $path           = '/staff/'.$this->attributes['id'].'/signature/signature.png';
-
-    //     $file_contents  = FTP::connection()->readFile($path);
-
-    //     Storage::put('staff/signature'.$this->attributes['id'].'.png', $file_contents);
-
-    //     $url            = storage_path("app/staff/signature".$this->attributes['id'].'.png');
-
-    //     return "app/staff/signature".$this->attributes['id'].'.png';
-
-    // }
 
     public function roles()
     {
@@ -109,10 +87,6 @@ class Staff extends BaseModel
     {
         return $this->belongsTo('App\Models\StaffModels\Department','department_id');
     }
-    // public function security_group()
-    // {
-    //     return $this->belongsTo('App\Models\StaffModels\SecurityGroup','security_group_id');
-    // }
     public function payment_mode()
     {
         return $this->belongsTo('App\Models\PaymentModels\PaymentMode','payment_mode_id');

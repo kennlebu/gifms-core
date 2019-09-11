@@ -313,7 +313,7 @@
                         </tr>
                         @endif
                         @if($approval->approval_level_id == 4)
-                        <tr style="    height: 55px; ">
+                        <tr style="height: 55px; ">
                             <td colspan="2">
                                 <strong>AUTHORIZATION<br/><small>(CD/DCD)</small></strong>                          
                             </td>

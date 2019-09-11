@@ -79,10 +79,6 @@ class MobilePaymentInstructBank extends Mailable
         rewind($fp); // Place stream pointer at beginning
         $csv_file = stream_get_contents($fp);
 
-        /* Generate PDF */
-        // $pdf = PDF::loadView('pdf/mobile_payment_bank_instruction', $this->pdf_data);
-        // $pdf_file = $pdf->stream();
-
         $ccs = [];
         foreach($this->bank_cc as $bank_cc){
             array_push($ccs, $bank_cc['email']);
@@ -99,14 +95,11 @@ class MobilePaymentInstructBank extends Mailable
                     'email' => Config::get('mail.reply_to')['address']
                 ])           
             ->cc($ccs)
-            // ->attachData($pdf_file, 'ALLOWANCES_'.$this->pdf_data['our_ref'].'.pdf')
             ->attachData($csv_file, 'ALLOWANCES_.csv');      
 
         return $this->to($this->bank_to['email'])
-        // return $this->to('dkarambi@clintonhealthaccess.org') // for test
             ->with([
                     'mobile_payment' => $this->mobile_payment,
-                    'addressed_to' => $this->accountant,
                     'bank_to' => $this->bank_to,
                     'js_url' => Config::get('app.js_url'),
                 ])
