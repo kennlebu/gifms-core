@@ -70,7 +70,9 @@ class NotifyMobilePayment extends Mailable
                 
         if($this->mobile_payment->status_id == 9 || $this->mobile_payment->status_id == 12){
             $ccs[] = $this->mobile_payment->requested_by;
-            $to = User::withRole('accountant')->get();
+            $to = Staff::whereHas('roles', function($query){
+                $query->where('role_id', 8);  
+            })->get();
 
             return $this->to($to)
                     ->with([
@@ -90,7 +92,9 @@ class NotifyMobilePayment extends Mailable
                         ])
                     ->subject("Mobile Payment Approval Request ".$this->mobile_payment->ref);
         }else if($this->mobile_payment->status_id == 3){
-            $to = User::withRole('financial-controller')->get();
+            $to = Staff::whereHas('roles', function($query){
+                $query->where('role_id', 5);  
+            })->get();
 
             return $this->to($to)
                     ->with([
@@ -101,7 +105,9 @@ class NotifyMobilePayment extends Mailable
                     ->subject("Mobile Payment Approval Request ".$this->mobile_payment->ref);
         }else if($this->mobile_payment->status_id == 4){
 
-            $to = User::withRole('director')->get();
+            $to = Staff::whereHas('roles', function($query){
+                $query->whereIn('role_id', [3,4]);  
+            })->get();
             return $this->to($to)
                     ->with([
                             'mobile_payment' => $this->mobile_payment,

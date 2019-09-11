@@ -56,7 +56,9 @@ class NotifyClaim extends Mailable
 
         if($this->claim->status_id == 10){
             $ccs[] = $this->claim->requested_by;
-            $to = User::withRole('accountant')->get();
+            $to = Staff::whereHas('roles', function($query){
+                $query->where('role_id', 8);  
+            })->get();
 
             return $this->to($to)
                     ->with([
@@ -77,7 +79,9 @@ class NotifyClaim extends Mailable
                     ->subject("Claim Approval Request ".$this->claim->ref);
         }else if($this->claim->status_id == 3){
 
-            $to = User::withRole('financial-controller')->get();
+            $to = Staff::whereHas('roles', function($query){
+                $query->where('role_id', 5);  
+            })->get();
             return $this->to($to)
                     ->with([
                             'claim' => $this->claim,
@@ -87,7 +91,9 @@ class NotifyClaim extends Mailable
                     ->subject("Claim Approval Request ".$this->claim->ref);
         }else if($this->claim->status_id == 4){
 
-            $to = User::withRole('director')->get();
+            $to = Staff::whereHas('roles', function($query){
+                $query->whereIn('role_id', [3,4]);  
+            })->get();
             return $this->to($to)
                     ->with([
                             'claim' => $this->claim,
@@ -97,7 +103,9 @@ class NotifyClaim extends Mailable
                     ->subject("Claim Approval Request ".$this->claim->ref);
         }else if($this->claim->status_id == 5){
 
-            $to = User::withRole('financial-controller')->get();
+            $to = Staff::whereHas('roles', function($query){
+                $query->where('role_id', 5);  
+            })->get();
             return $this->to($to)
                     ->with([
                             'claim' => $this->claim,

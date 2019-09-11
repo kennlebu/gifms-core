@@ -42,7 +42,9 @@ class NotifyBatch extends Mailable
 
                 ]);
 
-        $to = User::withRole('accountant')->get();
+        $to = Staff::whereHas('roles', function($query){
+            $query->where('role_id', 8);  
+        })->get();
         return $this->to($to)
                 ->with([
                         'payments' => $payments,

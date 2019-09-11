@@ -73,24 +73,32 @@ class NotifyLpoDispatch extends Mailable
         );
 
         // Add financial controllers to cc
-        $fm = User::withRole('financial-controller')->get();
+        $fm = Staff::whereHas('roles', function($query){
+            $query->where('role_id', 5);  
+        })->get();
         foreach($fm as $f){
             $chai_cc[] = array('first_name'=>$f->f_name, 'last_name'=>$f->l_name, 'email'=>$f->email);
         }
 
         // Add Accountants to cc
-        $accountant = User::withRole('accountant')->get();
+        $accountant = Staff::whereHas('roles', function($query){
+            $query->where('role_id', 8);  
+        })->get();
         foreach($accountant as $am){
             $chai_cc[] = array('first_name'=>$am->f_name, 'last_name'=>$am->l_name, 'email'=>$am->email);
         }
         // Add directors to cc
-        $director = User::withRole('director')->get();
+        $director = Staff::whereHas('roles', function($query){
+            $query->whereIn('role_id', [3,4]);  
+        })->get();
         foreach($director as $am){
             $chai_cc[] = array('first_name'=>$am->f_name, 'last_name'=>$am->l_name, 'email'=>$am->email);
         }
 
         // Add Admin Manager to cc
-        $admin_manager = User::withRole('admin-manager')->get();
+        $admin_manager = Staff::whereHas('roles', function($query){
+            $query->where('role_id', 10);  
+        })->get();
         foreach($admin_manager as $am){
             $chai_cc[] = array('first_name'=>$am->f_name, 'last_name'=>$am->l_name, 'email'=>$am->email);
         }

@@ -65,7 +65,9 @@ class NotifyLpo extends Mailable
 
         if($this->lpo->status_id == 13){
             $ccs[] = $this->lpo->requested_by;
-            $to = User::withRole('accountant')->get();
+            $to = Staff::whereHas('roles', function($query){
+                $query->where('role_id', 8);  
+            })->get();
 
             return $this->to($to)
                     ->with([
@@ -86,7 +88,9 @@ class NotifyLpo extends Mailable
                     ->subject("LPO Approval Request ".$this->lpo->ref);
         }else if($this->lpo->status_id == 4){
 
-            $to = User::withRole('financial-controller')->get();
+            $to = Staff::whereHas('roles', function($query){
+                $query->where('role_id', 5);  
+            })->get();
             return $this->to($to)
                     ->with([
                             'lpo' => $this->lpo,
@@ -96,7 +100,9 @@ class NotifyLpo extends Mailable
                     ->subject("LPO Approval Request ".$this->lpo->ref);
         }else if($this->lpo->status_id == 5){
 
-            $to = User::withRole('director')->get();
+            $to = Staff::whereHas('roles', function($query){
+                $query->whereIn('role_id', [3,4]);  
+            })->get();
             return $this->to($to)
                     ->with([
                             'lpo' => $this->lpo,

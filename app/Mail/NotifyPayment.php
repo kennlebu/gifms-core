@@ -45,7 +45,9 @@ class NotifyPayment extends Mailable
         $ccs = [] ;
 
         // Add accountants to cc
-        $ccs = User::withRole('accountant')->get();
+        $ccs = Staff::whereHas('roles', function($query){
+            $query->where('role_id', 8);  
+        })->get();
 
         $this->view('emails/notify_payment')         
             ->replyTo([
