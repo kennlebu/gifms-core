@@ -432,7 +432,7 @@ class LPOApi extends Controller
                 activity()
                    ->performedOn($approval->approvable)
                    ->causedBy($user)
-                   ->log('approved');
+                   ->log('Approved');
 
                 if($lpo->status_id!=7){
                     Mail::queue(new NotifyLpo($lpo));
