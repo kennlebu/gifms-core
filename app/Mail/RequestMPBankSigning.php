@@ -7,6 +7,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use App\Models\MobilePaymentModels\MobilePayment;
 use App\Models\StaffModels\Staff;
+use App\Models\StaffModels\User;
 use Config;
 
 class RequestMPBankSigning extends Mailable
@@ -32,7 +33,7 @@ class RequestMPBankSigning extends Mailable
     public function build()
     {      
         // Recepients
-        $directors = Staff::withRole('director')->get();
+        $directors = User::withRole('director')->get();
         $rosemary = Staff::find(42); //TODO: Make this dynamic
         $to = [];
         $ccs = [];
@@ -41,12 +42,12 @@ class RequestMPBankSigning extends Mailable
         }
         $to[] = $rosemary->email;
 
-        $accountant = Staff::withRole('accountant')->get();
+        $accountant = User::withRole('accountant')->get();
         foreach($accountant as $acc){
             $ccs[] = $acc->email;
         }
 
-        $finance = Staff::withRole('financial-controller')->get();
+        $finance = User::withRole('financial-controller')->get();
         foreach($finance as $fin){
             $ccs[] = $fin->email;
         }
