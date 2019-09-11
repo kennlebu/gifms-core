@@ -391,7 +391,7 @@ class MobilePaymentApi extends Controller
             $response =  ["error"=>"You do not have the permissions to perform this action at this point"];
             return response()->json($response, 403,array(),JSON_PRETTY_PRINT);
         }catch(Exception $e){
-            $response =  ["error"=>$e->getMessage()];
+            $response =  ["error"=>$e->getMessage(), 'trace'=>$e->getTraceAsString()];
             return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
         }
     }
