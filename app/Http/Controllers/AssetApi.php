@@ -44,6 +44,7 @@ class AssetApi extends Controller
             'insurance_type_id'=>$input['insurance_type_id'] ?? null,
             'location_id'=>$input['location_id'] ?? null,
             'assigned_to_id'=>$input['assigned_to_id'] ?? null,
+            'staff_responsible_id'=>$input['staff_responsible_id'] ?? null,
             'assignee_type'=>!empty($input['assignee_type']) ? $input['assignee_type'] : null,
             'date_of_issue'=>!empty($input['date_of_issue']) ? date('Y-m-d', strtotime($input['date_of_issue'])) : null,
             'date_of_purchase'=>!empty($input['date_of_purchase']) ? date('Y-m-d', strtotime($input['date_of_purchase'])) : null,
@@ -77,6 +78,7 @@ class AssetApi extends Controller
         if(!empty($input['location_id'])) $asset->location_id=$input['location_id'];
         if(!empty($input['assigned_to_id'])) $asset->assigned_to_id=$input['assigned_to_id'];
         if(!empty($input['assignee_type'])) $asset->assignee_type = $input['assignee_type'];
+        if(!empty($input['staff_responsible_id'])) $asset->staff_responsible_id=$input['staff_responsible_id'];
         if(!empty($input['date_of_issue'])) $asset->date_of_issue=$input['date_of_issue'];
         if(!empty($input['date_of_purchase'])) $asset->date_of_purchase=$input['date_of_purchase'];
         $asset->last_updated_by=$this->current_user()->id;
@@ -93,7 +95,7 @@ class AssetApi extends Controller
     }
 
     public function getAsset($id){
-        $asset = Asset::with(['class','assigned_to','insurance_type','location',
+        $asset = Asset::with(['class','assigned_to','insurance_type','location','staff_responsible',
                             'status','supplier','type','logs.causer','lpo', 'asset_name'])
                         ->where('id', $id)
                         ->firstOrFail();           
@@ -104,7 +106,7 @@ class AssetApi extends Controller
         try{
             $input = Request::all();
             $user = JWTAuth::parseToken()->authenticate();
-            $assets = Asset::with('status','assigned_to','type','class','location','asset_name');
+            $assets = Asset::with('status','assigned_to','type','class','location','asset_name','staff_responsible');
             if(array_key_exists('my_assigned', $input) && !$user->hasRole(['admin-manager','admin'])){            // All assets
                 $assets = $assets->where('assigned_to_id', $user->id);
             }
@@ -145,6 +147,9 @@ class AssetApi extends Controller
             }
             if(array_key_exists('assigned_to_id', $input)){         // Assigned to
                 $assets = $assets->where('assigned_to_id', $input['assigned_to_id']);
+            }
+            if(array_key_exists('staff_responsible_id', $input)){    // Assigned to
+                $assets = $assets->where('staff_responsible_id', $input['staff_responsible_id']);
             }
             if(array_key_exists('assignee_type', $input)){          // Assignee type
                 $assets = $assets->where('assignee_type', $input['assignee_type']);
