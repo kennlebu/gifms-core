@@ -391,7 +391,7 @@ class SupplierApi extends Controller
 
         // Donation recepients
         if(array_key_exists('donation', $input)){
-            $qb->whereIn('supply_category_id', [10,21]);
+            $qb->whereIn('supply_category_id', [21]);   // Government organisations
         }
 
         if(array_key_exists('datatables', $input)){

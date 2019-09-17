@@ -65,7 +65,7 @@ class AssetApi extends Controller
         $input = Request::all();
         $asset = Asset::findOrFail($input['id']);
         if(!empty($input['asset_name_id'])) $asset->status_id=$input['asset_name_id'];
-        if(!empty($input['description'])) $asset->title = $input['description'];
+        if(!empty($input['description'])) $asset->description = $input['description'];
         if(!empty($input['model'])) $asset->model = $input['model'];
         if(!empty($input['type_id'])) $asset->type_id=$input['type_id'];
         if(!empty($input['tag'])) $asset->tag=$input['tag'];
@@ -162,7 +162,7 @@ class AssetApi extends Controller
             }
             if(array_key_exists('my_approvables', $input)){         // Approvables
                 if($user->hasRole(['admin-manager'])){
-                    $assets = $assets->whereIn('status_id', [6,9,14,15]);
+                    $assets = $assets->whereIn('status_id', [8,10,15,18]);
                 }
             }
             if(array_key_exists('datatables', $input)){             // Datatables
@@ -252,7 +252,7 @@ class AssetApi extends Controller
             activity()
                 ->performedOn($asset)
                 ->causedBy($this->current_user())
-                ->withProperties(['detail' => 'Asset returned, pending confirmation by admin. REASON: '. $input['reason']])
+                ->withProperties(['detail' => 'Asset returned, pending confirmation by admin.'])
                 ->log($log_message);
 
             $asset->save();
@@ -262,7 +262,7 @@ class AssetApi extends Controller
                 'asset_id' => $item,
                 'transfered_by_id' => $this->current_user(),
                 'transfer_type' => 'return',
-                'reason' => $input['reason']
+                'reason' => null
             ]);
         }
         return Response()->json(array('msg' => 'Success: assets returned','data' => $asset), 200);
@@ -288,16 +288,16 @@ class AssetApi extends Controller
             }
             if($input['op'] == 'request') {
                 $asset->donation_to_id = $input['recepient'];
-                $asset->donation_recepient_type = $input['recepient_type'];
+                $asset->donation_recepient_type = 'government';
                 $property_detail = 'Approval requested for asset donation to '. $asset->donation_to->supplier_name .'. '.
-                                    'DONATION REASON: '. $input['reason'];
+                                    'REASON: '. $input['reason'];
             }
             $asset->status_id = $status;
             if($input['op'] == 'approve') {
                 $transfered_by_id = $asset->assigned_to_id;
                 $asset->assigned_to_id = $asset->donation_to_id;
-                $asset->staff_responsible_id = $asset->staff_responsible_id;
-                $asset->assignee_type = $asset->donation_recepient_type;
+                $asset->staff_responsible_id = null;
+                $asset->assignee_type = 'government';
                 $property_detail = 'Asset donation approved by PM';
                 $batch = new AssetTransferBatch;
                 $batch->created_by_id = $this->current_user()->id;
@@ -363,20 +363,8 @@ class AssetApi extends Controller
         }
         
         if($asset->status_id == 10) {    // Donate
-            $asset->status_id = 14;
-            $transfered_by_id = $asset->assigned_to_id;
-            $asset->assigned_to_id = $asset->donation_to_id;
-            $asset->staff_responsible_id = $asset->donation_to_id;
-            $asset->assignee_type = $asset->donation_recepient_type;
-            $asset->location_id = null;
+            $asset->status_id = 13;
             $asset->disableLogging();
-            $asset->save();
-            $asset->donation_to_id = null;
-            $asset->donation_recepient_type = null;
-            $batch = new AssetTransferBatch;
-            $batch->created_by_id = $this->current_user()->id;
-            $batch->save();
-            $asset->donation_batch_id = $batch->id;
             $asset->save();
             
             // Approval
@@ -389,23 +377,11 @@ class AssetApi extends Controller
             $approval->disableLogging();
             $approval->save();
 
-            // Log the transfer
-            AssetTransfer::create([
-                'asset_id' => $id,
-                'transfered_by_id' => $transfered_by_id,
-                'transfered_to_id' => $asset->assigned_to_id,
-                'recepient_type' => $asset->assignee_type,
-                'transfer_type' => 'donation',
-                // 'reason' => $input['reason'],
-                'batch_id' => $batch->id ?? null,
-                'approved_by_id' => $this->current_user()->id
-            ]);
-
             // Logging
             activity()
                 ->performedOn($asset)
                 ->causedBy($this->current_user())
-                ->withProperties(['detail' => 'Asset donation to '. $asset->donation_to->supplier_name .' approved by PM.'])
+                ->withProperties(['detail' => 'Asset donation approved by PM.'])
                 ->log('Asset donated');
           
             if(!$multiple)
@@ -552,6 +528,7 @@ class AssetApi extends Controller
         foreach($input['assets'] as $item){
             $asset = Asset::findOrFail($item);
             $asset->assigned_to_id = $input['recepient'];
+            $asset->staff_responsible_id = $input['recepient'];
             $asset->status_id = $input['status'];
             $asset->date_of_issue = date('Y-m-d');
             $asset->assignee_type = 'individual';
@@ -626,21 +603,46 @@ class AssetApi extends Controller
             $input = Request::only('file');
             $file = $input['file'];
             $asset = Asset::findOrFail($id);
+            $transfered_by_id = $asset->assigned_to_id;
+            $asset->assigned_to_id = $asset->donation_to_id;
+            $asset->staff_responsible_id = $asset->donation_to_id;
+            $asset->assignee_type = 'government';
+            $asset->location_id = null;
+            $asset->donation_to_id = null;
+            $asset->donation_recepient_type = null;
+            $batch = new AssetTransferBatch;
+            $batch->created_by_id = $this->current_user()->id;
+            $batch->save();
+            $asset->donation_batch_id = $batch->id;
             $asset->disableLogging();
+            $asset->status_id = 14;
+            $asset->save();
+
             FTP::connection()->makeDir('/fixed_assets');
             FTP::connection()->makeDir('/fixed_assets/'.$id);
             FTP::connection()->uploadFile($file->getPathname(), '/fixed_assets/'.$id.'/D'.$id.'.'.$file->getClientOriginalExtension());
 
             $asset->donation_document = 'D'.$id.'.'.$file->getClientOriginalExtension();
-            $asset->status_id = 3;
             $asset->save();
+
+            // Log the transfer
+            AssetTransfer::create([
+                'asset_id' => $id,
+                'transfered_by_id' => $transfered_by_id,
+                'transfered_to_id' => $asset->assigned_to_id,
+                'recepient_type' => $asset->assignee_type,
+                'transfer_type' => 'donation',
+                // 'reason' => $input['reason'],
+                'batch_id' => $batch->id ?? null,
+                'approved_by_id' => $this->current_user()->id
+            ]);
 
             // Logging
             activity()
                 ->performedOn($asset)
                 ->causedBy($this->current_user())
-                ->withProperties(['detail' => 'Donation document uploaded. Asset donation confirmed.'])
-                ->log('Document uploaded, donation confirmed');
+                ->withProperties(['detail' => 'Donation document uploaded. Asset donation completed.'])
+                ->log('Document uploaded, donation completed');
 
             return Response()->json(array('success' => 'Document uploaded','asset' => $asset), 200);
         }
@@ -759,12 +761,12 @@ class AssetApi extends Controller
             $excel_row['tag'] = $row->tag;
             $excel_row['serial_no'] = $row->serial_no;
             $excel_row['status'] = $row->status->status ?? '';
-            $excel_row['date_of_issue'] = $row->date_of_issue;
+            // $excel_row['date_of_issue'] = $row->date_of_issue;
             $excel_row['cost'] = $row->cost;
             $excel_row['supplier'] = $row->supplier->supplier_name ?? '';
             $excel_row['date_of_purchase'] = $row->date_of_purchase;
             $excel_row['class'] = $row->class->name ?? '';
-            $excel_row['insurance_type'] = $row->insurance_type->type ?? '';
+            // $excel_row['insurance_type'] = $row->insurance_type->type ?? '';
             $excel_row['location'] = $row->location->location ?? '';
             $excel_row['assigned_to'] = $row->assignee_type == 'individual' ? ($row->assigned_to->name ?? '') : ($row->assignee->supplier_name ?? '');
             $excel_row['assignee_type'] = $row->assignee_type;
@@ -790,8 +792,8 @@ class AssetApi extends Controller
 
             $excel->setDescription('A (filtered) list of CHAI assets genetated on '.date('Y-m-d'));
 
-            $headings = array('Asset Name', 'Description', 'Asset type', 'Model', 'Tag', 'Serial No.', 'Status', 'Date of issue', 'Asset cost', 'Supplier', 'Date of purchase', 'Asset class', 
-            'Insurance type', 'Asset location', 'Assigned to', 'Assignee type', 'Insurance value', 'Comments');
+            $headings = array('Asset Name', 'Description', 'Asset type', 'Model', 'Tag', 'Serial No.', 'Status', 'Asset cost', 'Supplier', 'Date of purchase', 'Insurance class', 
+            'Asset location', 'Assigned to', 'Assignee type', 'Insurance value', 'Comments');
 
             $excel->sheet('Assets list', function ($sheet) use ($excel_data, $headings) {
                 $sheet->setStyle([
@@ -854,15 +856,13 @@ class AssetApi extends Controller
                     'G' => 35,
                     'H' => 15,
                     'I' => 15,
-                    'J' => 30,
+                    'J' => 35,
                     'K' => 15,
-                    'L' => 20,
-                    'M' => 20,
-                    'N' => 25,
-                    'O' => 35,
-                    'P' => 20,
-                    'Q' => 15,
-                    'R' => 50
+                    'L' => 30,
+                    'M' => 35,
+                    'N' => 20,
+                    'O' => 15,
+                    'P' => 50
                 ));
                 $sheet->getStyle('K1')->getAlignment()->setWrapText(true);
 
