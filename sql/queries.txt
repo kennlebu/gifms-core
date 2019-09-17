@@ -1416,3 +1416,58 @@ CREATE TABLE `asset_names` (
   `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
   `deleted_at` timestamp NULL
 );
+
+DROP TABLE `asset_statuses`;
+CREATE TABLE `asset_statuses` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `status` text NULL,
+  `default` int NULL,
+  `created_at` timestamp NULL,
+  `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL
+);
+INSERT INTO `asset_statuses` (`status`, `default`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('In use', '1', now(), now(), NULL);
+INSERT INTO `asset_statuses` (`status`, `default`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('In stock', NULL, now(), now(), NULL);
+INSERT INTO `asset_statuses` (`status`, `default`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Lost and Claimed', NULL, now(), now(), NULL);
+INSERT INTO `asset_statuses` (`status`, `default`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Lost/Stolen', NULL, now(), now(), NULL);
+INSERT INTO `asset_statuses` (`status`, `default`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Donated', NULL, now(), now(), NULL);
+INSERT INTO `asset_statuses` (`status`, `default`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Obsolete', NULL, now(), now(), NULL);
+INSERT INTO `asset_statuses` (`status`, `default`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Returned', NULL, now(), now(), NULL);
+INSERT INTO `asset_statuses` (`status`, `default`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Returned pending approval', NULL, now(), now(), NULL);
+INSERT INTO `asset_statuses` (`status`, `default`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Scrapped', NULL, now(), now(), NULL);
+INSERT INTO `asset_statuses` (`status`, `default`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Donation pending PM approval', NULL, now(), now(), NULL);
+INSERT INTO `asset_statuses` (`status`, `default`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Donation rejected by PM', NULL, now(), now(), NULL);
+INSERT INTO `asset_statuses` (`status`, `default`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Donation approved by PM', NULL, now(), now(), NULL);
+INSERT INTO `asset_statuses` (`status`, `default`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Pending receipt by donee', NULL, now(), now(), NULL);
+INSERT INTO `asset_statuses` (`status`, `default`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Donated', NULL, now(), now(), NULL);
+INSERT INTO `asset_statuses` (`status`, `default`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Asset loss reported awaiting verification', NULL, now(), now(), NULL);
+INSERT INTO `asset_statuses` (`status`, `default`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Asset loss Report rejected by PM/ Office Admin', NULL, now(), now(), NULL);
+INSERT INTO `asset_statuses` (`status`, `default`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Asset loss Report verified by PM/ Office Admin', NULL, now(), now(), NULL);
+INSERT INTO `asset_statuses` (`status`, `default`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Insurance claim compiled awaiting verification', NULL, now(), now(), NULL);
+INSERT INTO `asset_statuses` (`status`, `default`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Claim compilation returned by Admin/ PM', NULL, now(), now(), NULL);
+Insurance claim filed by Admin/ PM
+INSERT INTO `asset_statuses` (`status`, `default`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Claim paid', NULL, now(), now(), NULL);
+INSERT INTO `asset_statuses` (`status`, `default`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Claim rejected', NULL, now(), now(), NULL);
+INSERT INTO `asset_statuses` (`status`, `default`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Asset return rejected', NULL, now(), now(), NULL);

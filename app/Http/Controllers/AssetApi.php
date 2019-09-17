@@ -226,22 +226,23 @@ class AssetApi extends Controller
 
     public function returnAssets(){
         $input = Request::all();
-        $status = 6;
+        $status = 8;
         $log_message = 'Asset returned';
         if($input['op'] == 'request') {
-            $status = 6;
+            $status = 8;
             $log_message = 'Returned, pending confirmation';
         }
         elseif($input['op'] == 'approve') {
-            $status = 5;
-            $log_message = 'Asset return confirmed';
+            $status = 7;
+            $log_message = 'Asset return confirmed by admin';
         }
         foreach($input['assets'] as $item){
             $asset = Asset::find($item);
             $asset->status_id = $status;
             if($input['op'] == 'approve') {
                 $asset->assigned_to_id = null;
-                $asset->assignee_type = null;
+                $asset->staff_responsible_id = $this->current_user()->id;
+                $asset->assignee_type = 'individual';
                 $asset->location_id = null;
                 $asset->date_of_issue = null;
             }
@@ -251,7 +252,7 @@ class AssetApi extends Controller
             activity()
                 ->performedOn($asset)
                 ->causedBy($this->current_user())
-                ->withProperties(['detail' => 'Asset returned, pending confirmation by admin manager. REASON: '. $input['reason']])
+                ->withProperties(['detail' => 'Asset returned, pending confirmation by admin. REASON: '. $input['reason']])
                 ->log($log_message);
 
             $asset->save();
@@ -269,34 +270,35 @@ class AssetApi extends Controller
 
     public function donateAssets(){
         $input = Request::all();
-        $status = 9;
+        $status = 10;
         $transfered_by_id = '';
-        $log_message = 'Asset donated';
+        $log_message = 'Asset donated, pending approval';
         if($input['op'] == 'request') {
-            $status = 9;
-            $log_message = 'Requested donation verification';
+            $status = 10;
+            $log_message = 'Asset donated, pending approval';
         }
         elseif($input['op'] == 'approve') {
-            $status = 8;
-            $log_message = 'Asset donated';
+            $status = 12;
+            $log_message = 'Asset donation approved by PM';
         }
         foreach($input['assets'] as $item){
             $asset = Asset::find($item);
-            if($input['op'] == 'request' && $asset->status_id == 9) {
-                return Response()->json(array('error' => 'Donation pending verification','data' => $asset), 409);
+            if($input['op'] == 'request' && $asset->status_id == 10) {
+                return Response()->json(array('error' => 'Donation pending PM approval','data' => $asset), 409);
             }
             if($input['op'] == 'request') {
                 $asset->donation_to_id = $input['recepient'];
                 $asset->donation_recepient_type = $input['recepient_type'];
-                $property_detail = 'Verification requested for asset donation to '. $asset->donation_to->supplier_name .'. '.
+                $property_detail = 'Approval requested for asset donation to '. $asset->donation_to->supplier_name .'. '.
                                     'DONATION REASON: '. $input['reason'];
             }
             $asset->status_id = $status;
             if($input['op'] == 'approve') {
                 $transfered_by_id = $asset->assigned_to_id;
                 $asset->assigned_to_id = $asset->donation_to_id;
+                $asset->staff_responsible_id = $asset->staff_responsible_id;
                 $asset->assignee_type = $asset->donation_recepient_type;
-                $property_detail = 'Asset donation verified';
+                $property_detail = 'Asset donation approved by PM';
                 $batch = new AssetTransferBatch;
                 $batch->created_by_id = $this->current_user()->id;
                 $batch->save();
@@ -329,10 +331,11 @@ class AssetApi extends Controller
 
     public function approveAsset($id, $multiple=false){
         $asset = Asset::findOrFail($id);
-        if($asset->status_id == 6) {    // Return
-            $asset->status_id = 5;
+        if($asset->status_id == 8) {    // Return
+            $asset->status_id = 7;
             $asset->assigned_to_id = null;
-            $asset->assignee_type = null;
+            $asset->staff_responsible_id = $this->current_user()->id;
+            $asset->assignee_type = 'individual';
             $asset->location_id = null;
             $asset->date_of_issue = null;
             $asset->disableLogging();
@@ -352,17 +355,18 @@ class AssetApi extends Controller
             activity()
                 ->performedOn($asset)
                 ->causedBy($this->current_user())
-                ->withProperties(['detail' => 'Asset return confirmed'])
+                ->withProperties(['detail' => 'Asset return confirmed by admin'])
                 ->log('Asset returned');
         
             if(!$multiple)
             return Response()->json(array('msg' => 'Success: assets returned','data' => $asset), 200);
         }
         
-        if($asset->status_id == 9) {    // Donate
-            $asset->status_id = 8;
+        if($asset->status_id == 10) {    // Donate
+            $asset->status_id = 14;
             $transfered_by_id = $asset->assigned_to_id;
             $asset->assigned_to_id = $asset->donation_to_id;
+            $asset->staff_responsible_id = $asset->donation_to_id;
             $asset->assignee_type = $asset->donation_recepient_type;
             $asset->location_id = null;
             $asset->disableLogging();
@@ -401,7 +405,7 @@ class AssetApi extends Controller
             activity()
                 ->performedOn($asset)
                 ->causedBy($this->current_user())
-                ->withProperties(['detail' => 'Asset donation to '. $asset->donation_to->supplier_name .' verified.'])
+                ->withProperties(['detail' => 'Asset donation to '. $asset->donation_to->supplier_name .' approved by PM.'])
                 ->log('Asset donated');
           
             if(!$multiple)
@@ -409,9 +413,9 @@ class AssetApi extends Controller
         }
 
         //  Stolen
-        if($asset->status_id == 14){
+        if($asset->status_id == 15){
             $asset->disableLogging();
-            $asset->status_id = 12;
+            $asset->status_id = 17;
             $asset->save();
 
             // Logging
@@ -426,16 +430,16 @@ class AssetApi extends Controller
         }
 
         //  Claim
-        if($asset->status_id == 15){
+        if($asset->status_id == 18){
             $asset->disableLogging();
-            $asset->status_id = 13;
+            $asset->status_id = 20;
             $asset->save();
 
             // Logging
             activity()
                 ->performedOn($asset)
                 ->causedBy($this->current_user())
-                ->withProperties(['detail' => 'insurance claim has been verified'])
+                ->withProperties(['detail' => 'Insurance claim has been verified'])
                 ->log('Insurance claim verified');
 
             if(!$multiple)
@@ -462,8 +466,8 @@ class AssetApi extends Controller
     public function rejectAsset($id){
         $input = Request::only('rejection_reason');
         $asset = Asset::findOrFail($id);
-        if($asset->status_id == 6) {    // Return
-            $asset->status_id = 11;
+        if($asset->status_id == 8) {    // Return
+            $asset->status_id = 23;
             $asset->disableLogging();
             $asset->save();
             
@@ -485,12 +489,12 @@ class AssetApi extends Controller
             return Response()->json(array('msg' => 'Success: assets return rejected','data' => $asset), 200);
         }
 
-        if($asset->status_id == 9) {    // Donate
-            $asset->status_id = 10;
-            $asset->assigned_to_id = null;
-            $asset->assignee_type = null;
-            $asset->location_id = null;
-            $asset->date_of_issue = null;
+        if($asset->status_id == 10) {    // Donate
+            $asset->status_id = 11;
+            // $asset->assigned_to_id = null;
+            // $asset->assignee_type = null;
+            // $asset->location_id = null;
+            // $asset->date_of_issue = null;
             $asset->disableLogging();
             $asset->save();
             
@@ -512,7 +516,7 @@ class AssetApi extends Controller
             return Response()->json(array('msg' => 'Success: assets donation rejected','data' => $asset), 200);
         }
 
-        if($asset->status_id == 14) {    // Lost
+        if($asset->status_id == 15) {    // Lost
             $asset->status_id = 16;
             $asset->disableLogging();
             $asset->save();
@@ -527,8 +531,8 @@ class AssetApi extends Controller
             return Response()->json(array('msg' => 'Success: assets loss report rejected','data' => $asset), 200);
         }
 
-        if($asset->status_id == 15) {    // Claim
-            $asset->status_id = 17;
+        if($asset->status_id == 18) {    // Claim
+            $asset->status_id = 19;
             $asset->disableLogging();
             $asset->save();
             
@@ -536,7 +540,7 @@ class AssetApi extends Controller
             activity()
                 ->performedOn($asset)
                 ->causedBy($this->current_user())
-                ->withProperties(['detail' => 'Insurance claim rejected. REASON: '. $input['rejection_reason']])
+                ->withProperties(['detail' => 'Insurance claim returned. REASON: '. $input['rejection_reason']])
                 ->log('Insurance claim rejected');
         
             return Response()->json(array('msg' => 'Success: insurance claim rejected','data' => $asset), 200);
@@ -885,7 +889,7 @@ class AssetApi extends Controller
 
             $asset = Asset::findOrFail($id);
             $asset->disableLogging();
-            $asset->status_id = 14;     // reported stolen or lost
+            $asset->status_id = 15;     // reported stolen or lost
             $asset->save();
 
             FTP::connection()->makeDir('/fixed_assets');
@@ -923,7 +927,7 @@ class AssetApi extends Controller
 
             $asset = Asset::findOrFail($id);
             $asset->disableLogging();
-            $asset->status_id = 15;
+            $asset->status_id = 18;
             $asset->save();
 
             FTP::connection()->makeDir('/fixed_assets');
@@ -1178,6 +1182,7 @@ class AssetApi extends Controller
                         );
             }
             else{
+                $assets = $assets->whereIn('id', [1,2,3,4,5,6,7,8,9]);
                 $assets = $assets->get();
 
                 if(array_key_exists('dropdown', $input)){
