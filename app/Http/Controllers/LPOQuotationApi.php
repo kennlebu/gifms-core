@@ -220,7 +220,7 @@ class LPOQuotationApi extends Controller
     public function getLpoQuotationById($lpo_quotation_id)
     {
        try{
-        $response = LpoQuotation::with('supplier','uploaded_by')->firstOrFail($lpo_quotation_id);
+        $response = LpoQuotation::with('supplier','uploaded_by')->where('id', $lpo_quotation_id)->firstOrFail();
         return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
     }
     catch(Exception $e){
