@@ -7,7 +7,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use App\Models\PaymentModels\PaymentBatch;
 use App\Models\PaymentModels\Payment;
-use App\Models\StaffModels\User;
+use App\Models\StaffModels\Staff;
 use Config;
 
 class NotifyBatch extends Mailable

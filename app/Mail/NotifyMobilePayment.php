@@ -47,10 +47,6 @@ class NotifyMobilePayment extends Mailable
         foreach ($this->mobile_payment->approvals as $key => $value) {
             $this->mobile_payment->approvals[$key]['approver'] = Staff::find($this->mobile_payment->approvals[$key]['approver_id']);
         }
-
-        // $this->accountant           = Staff::findOrFail(    (int)   Config::get('app.accountant_id'));
-        // $this->financial_controller = Staff::findOrFail(    (int)   Config::get('app.financial_controller_id'));
-        // $this->director             = Staff::findOrFail(    (int)   Config::get('app.director_id'));
     }
 
     /**

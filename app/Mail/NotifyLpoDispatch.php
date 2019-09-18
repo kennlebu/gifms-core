@@ -123,7 +123,7 @@ class NotifyLpoDispatch extends Mailable
         $subtotal = array_sum($subtotals);
         $vat = array_sum($vats);
 
-        $pdf_data = array('lpo'=>$this->lpo, 'vat' => $vat, 'subtotal' => $subtotal, 'director'=>$this->director);
+        $pdf_data = array('lpo'=>$this->lpo, 'vat' => $vat, 'subtotal' => $subtotal);
         $pdf = PDF::loadView('pdf/notify_lpo_dispatch', $pdf_data);
         $pdf_file = $pdf->stream();
 
