@@ -103,6 +103,10 @@ class Asset extends BaseModel
     {
         return $this->hasMany('App\Models\Assets\AssetTransfer', 'batch_id');
     }
+    public function loss()
+    {
+        return $this->belongsTo('App\Models\Assets\AssetLoss', 'asset_id');
+    }
 
     public function getAssigneeAttribute(){
         $assignee = null;

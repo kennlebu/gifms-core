@@ -560,8 +560,7 @@ class AssetApi extends Controller
 
     public function getDonationDocument($id){
         try{
-            $asset = Asset::with('transfers')->where('id', $id)->firstOrFail();
-            // $transfers = AssetTransfer::where('asset_id', $id)->where('transfer_type', 'donation')->get();
+            $asset = Asset::findOrFail($id);
 
             $data = array('asset' => $asset);
 
@@ -575,6 +574,26 @@ class AssetApi extends Controller
             $response       = Response::make("", 200);
             $response->header('Content-Type', 'application/pdf');
             return $response;
+        }
+    }
+    
+    public function getPoliceAbstract($id){
+        try{
+            $asset          = Asset::findOrFail($id);
+            file_put_contents ( "C://Users//kennl//Documents//debug.txt" , PHP_EOL.json_encode($asset->loss) , FILE_APPEND);
+            $path           = '/fixed_assets/'.$id.'/'.$asset->loss->incident_file;
+            file_put_contents ( "C://Users//kennl//Documents//debug.txt" , PHP_EOL.json_encode($path) , FILE_APPEND);
+            $path_info      = pathinfo($path);
+            $basename       = $path_info['basename'];
+            $file_contents  = FTP::connection()->readFile($path);
+            $response       = Response::make($file_contents, 200);
+            $response->header('Content-Type', $this->get_mime_type($basename));
+            return $response;  
+        }
+        catch (Exception $e ){
+            $response       = Response::make("", 200);
+            $response->header('Content-Type', 'application/pdf');
+            return $response;  
         }
     }
 
@@ -666,7 +685,6 @@ class AssetApi extends Controller
             $response       = Response::make("", 200);
             $response->header('Content-Type', 'application/pdf');
             return $response;  
-
         }
     }
 

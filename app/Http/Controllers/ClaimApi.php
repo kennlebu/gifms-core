@@ -23,25 +23,18 @@ use App\Models\ClaimsModels\ClaimStatus;
 use App\Models\ProjectsModels\Project;
 use App\Models\AccountingModels\Account;
 use Anchu\Ftp\Facades\Ftp;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\NotifyClaim;
 use App\Models\ApprovalsModels\Approval;
-use App\Models\ApprovalsModels\ApprovalLevel;
-use App\Models\StaffModels\Staff;
 use App\Models\PaymentModels\Payment;
-use App\Models\PaymentModels\PaymentMode;
 use App\Models\PaymentModels\PaymentBatch;
-use App\Models\LookupModels\Currency;
-use App\Models\BankingModels\BankBranch;
 use App\Exceptions\NotFullyAllocatedException;
 use App\Exceptions\ApprovalException;
 use PDF;
-use App\Models\ReportModels\ReportingObjective;
-use App\Models\ActivityModels\Activity;
+use App\Models\AllocationModels\Allocation;
 use App\Models\PaymentModels\VoucherNumber;
+use Excel;
 
 class ClaimApi extends Controller
 {
@@ -1048,6 +1041,77 @@ class ClaimApi extends Controller
         }
         catch(Exception $e){
             return response()->json(['error'=>'Something went wrong during processing', 'msg'=>$e->getMessage()], 500);
+        }
+    }
+
+
+        /**
+     * Operation uploadAllocations
+     * CSV file with allocations
+     * @return Http response
+     */
+    public function uploadAllocations(){
+        $form = Request::all();
+
+        try{
+            $file = $form['file'];
+            $payable_type = $form['payable_type'];
+            $payable_id = $form['payable_id'];            
+            $user = JWTAuth::parseToken()->authenticate();
+            $payable = null;
+            $total = 0;
+
+            $payable = Claim::find($payable_id);
+            $total = $payable->total;
+
+            $data = Excel::load($file->getPathname(), function($reader) {
+            })->get()->toArray();
+            file_put_contents ( "C://Users//kennl//Documents//debug.txt" , PHP_EOL.json_encode($data) , FILE_APPEND);
+
+            $allocations_array = array();
+            foreach ($data as $key => $value) {
+                $allocation = new Allocation();
+
+                if($value[9] == 'KE'){
+
+                    try{
+                        $project = Project::where('project_code','like', '%'.trim($value[1]).'%')->firstOrFail();
+                        $account = Account::where('account_code', 'like', '%'.trim($value[5]).'%')->firstOrFail();
+
+                        $allocation->allocatable_id = $payable_id;
+                        $allocation->allocatable_type = $payable_type;
+                        $allocation->amount_allocated = $value['amount'];
+                        $allocation->allocation_purpose = $value[6];
+                        $allocation->percentage_allocated = (string) $this->getPercentage($value[8], $total);
+                        $allocation->allocated_by_id =  (int) $user->id;
+                        $allocation->account_id =  $account->id;
+                        $allocation->project_id = $project->id;
+                        array_push($allocations_array, $allocation);
+
+                    }
+                    catch(\Exception $e){
+                        $response =  ["error"=>'Account or Project not found. Please use form to allocate.',
+                                        "msg"=>$e->getMessage()];
+                        return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
+                    }
+                }
+            }
+
+            foreach($allocations_array as $allocation){
+                $allocation->save();
+            }
+
+            // Logging
+            activity()
+                ->performedOn($payable)
+                ->causedBy($user)
+                ->withProperties(['detail' => 'Asset allocations uploaded using CSV/Excel'])
+                ->log('Uploaded allocations');
+            return Response()->json(array('success' => 'allocations added','payable' => $payable), 200);
+
+        }
+        catch(\Exception $e){
+            return response()->json(['error'=>'Something went wrong', 'msg'=>$e->getMessage(), 'trace'=>$e->getTraceAsString()], 500);
         }
     }
     
