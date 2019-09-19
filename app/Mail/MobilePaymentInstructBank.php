@@ -52,21 +52,21 @@ class MobilePaymentInstructBank extends Mailable
             $query->where('role_id', 5);  
         })->get();
         foreach($fm as $f){
-            $chai_cc[] = array('first_name'=>$f->f_name, 'last_name'=>$f->l_name, 'email'=>$f->email);
+            $this->chai_cc[] = array('first_name'=>$f->f_name, 'last_name'=>$f->l_name, 'email'=>$f->email);
         }
         // Add Accountants to cc
         $accountant = Staff::whereHas('roles', function($query){
             $query->where('role_id', 8);  
         })->get();
         foreach($accountant as $am){
-            $chai_cc[] = array('first_name'=>$am->f_name, 'last_name'=>$am->l_name, 'email'=>$am->email);
+            $this->chai_cc[] = array('first_name'=>$am->f_name, 'last_name'=>$am->l_name, 'email'=>$am->email);
         }
         // Add directors to cc
         $director = Staff::whereHas('roles', function($query){
             $query->whereIn('role_id', [3,4]);  
         })->get();
         foreach($director as $am){
-            $chai_cc[] = array('first_name'=>$am->f_name, 'last_name'=>$am->l_name, 'email'=>$am->email);
+            $this->chai_cc[] = array('first_name'=>$am->f_name, 'last_name'=>$am->l_name, 'email'=>$am->email);
         }
     }
 
@@ -87,12 +87,12 @@ class MobilePaymentInstructBank extends Mailable
 
         $ccs = [];
         foreach($this->bank_cc as $bank_cc){
-            array_push($ccs, $bank_cc['email']);
+            $ccs[] = $bank_cc['email'];
         }
         foreach($this->chai_cc as $chai_cc){
-            array_push($ccs, $chai_cc['email']);
+            $ccs[] = $chai_cc['email'];
         }
-        array_push($ccs, $this->requester->email);
+        $ccs[] = $this->requester->email;
 
         $subject = "Bulk MPESA Payment - ".$this->pad_zeros(5,$this->mobile_payment->id);
 
