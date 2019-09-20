@@ -141,7 +141,7 @@ class InvoiceApi extends Controller
                 $invoice->supplier_id                       =   (int)       $form['supplier_id'];
                 $invoice->payment_mode_id                  =   (int)       $form['payment_mode_id'];
                 $invoice->total                             =   (double)    $form['total'];
-                $invoice->total                             =   (double)    $invoice->calculated_total;
+                // $invoice->total                             =   (double)    $invoice->calculated_total;
                 $invoice->currency_id                       =   (int)       $form['currency_id'];
                 $invoice->received_at                       =   date('Y-m-d H:i:s');
                 if(!empty($form['lpo_variation_reason']))
