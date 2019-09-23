@@ -439,24 +439,24 @@ class MobilePaymentApi extends Controller
             /* Send Email */
             Mail::queue(new MobilePaymentInstructBank($mobile_payment, $csv_data, $pdf_data));
 
+            $log = 'Sent to bank';
             if($mobile_payment->status_id == 1 || $mobile_payment->status_id == 14 || $mobile_payment->status_id == 7){
                 $mobile_payment->status_id = 15;  // Sent to Bank Awaiting verification
-                // Logging
-                activity()
-                    ->performedOn($mobile_payment)
-                    ->causedBy($this->current_user())
-                    ->log('Sent to bank');
+                $log = 'Sent to bank';
             }
             // If it was sent before, move to resent status
             elseif($mobile_payment->status_id == 15){
                 $mobile_payment->status_id = 16;  // Resent to Bank Awaiting Verification
-                // Logging
-                activity()
-                    ->performedOn($mobile_payment)
-                    ->causedBy($this->current_user())
-                    ->log('Resent to bank');
+                $log = 'Resent to bank';
             }
             $mobile_payment->save();
+
+            // Logging
+            activity()
+                ->performedOn($mobile_payment)
+                ->causedBy($this->current_user())
+                ->log($log);
+
             return Response()->json(array('result' => 'Success: mobile payment sent to bank','mobile_payment' => $mobile_payment), 200);
         }
         catch(Exception $e){
