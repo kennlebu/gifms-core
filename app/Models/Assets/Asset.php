@@ -105,7 +105,7 @@ class Asset extends BaseModel
     }
     public function loss()
     {
-        return $this->belongsTo('App\Models\Assets\AssetLoss', 'asset_id');
+        return $this->hasOne('App\Models\Assets\AssetLoss', 'asset_id');
     }
 
     public function getAssigneeAttribute(){

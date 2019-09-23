@@ -579,10 +579,8 @@ class AssetApi extends Controller
     
     public function getPoliceAbstract($id){
         try{
-            $asset          = Asset::findOrFail($id);
-            file_put_contents ( "C://Users//kennl//Documents//debug.txt" , PHP_EOL.json_encode($asset->loss) , FILE_APPEND);
+            $asset          = Asset::findOrfail($id);
             $path           = '/fixed_assets/'.$id.'/'.$asset->loss->incident_file;
-            file_put_contents ( "C://Users//kennl//Documents//debug.txt" , PHP_EOL.json_encode($path) , FILE_APPEND);
             $path_info      = pathinfo($path);
             $basename       = $path_info['basename'];
             $file_contents  = FTP::connection()->readFile($path);
@@ -937,7 +935,7 @@ class AssetApi extends Controller
             $input = Request::only('file', 'id', 'insurer_id');
             $id = $input['id'];
             $file = $input['file'];
-            $loss = AssetLoss::where('asset_id', $id);
+            $loss = AssetLoss::where('asset_id', $id)->first();
             $loss->disableLogging();
             $loss->claim_submitted = 1;
             $loss->insurer_id = $input['insurer_id'];
@@ -960,13 +958,13 @@ class AssetApi extends Controller
             activity()
                 ->performedOn($asset)
                 ->causedBy($this->current_user())
-                ->withProperties(['detail' => 'Insurance claim has been submitted'])
+                ->withProperties(['detail' => 'Insurance claim has been uploaded'])
                 ->log('Insurance claim submitted');
             
             return Response()->json(array('success' => 'Insurance claim has been submitted','asset' => $asset), 200);
             }
             catch(Exception $e){
-                return response()->json(['error'=>'Something went wrong'], 500);
+                return response()->json(['error'=>'Something went wrong','msg'=>$e->getMessage(),'trace'=>$e->getTraceAsString()], 500);
             }
     }
 
