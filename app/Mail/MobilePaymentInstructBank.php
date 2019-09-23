@@ -94,14 +94,14 @@ class MobilePaymentInstructBank extends Mailable
         }
         $ccs[] = $this->requester->email;
 
-        $subject = "Bulk MPESA Payment - ".$this->pad_zeros(5,$this->mobile_payment->id);
+        $subject = "Bulk MPESA Payment - ".$this->mobile_payment->ref;
 
         $this->view('emails/mobile_payment_instruct_bank')         
             ->replyTo([
                     'email' => Config::get('mail.reply_to')['address']
                 ])           
             ->cc($ccs)
-            ->attachData($csv_file, 'ALLOWANCES_.csv');      
+            ->attachData($csv_file, 'ALLOWANCES_'.str_replace('/','_',$this->mobile_payment->ref).'.csv');      
 
         return $this->to($this->bank_to['email'])
             ->with([
@@ -109,7 +109,7 @@ class MobilePaymentInstructBank extends Mailable
                     'bank_to' => $this->bank_to,
                     'js_url' => Config::get('app.js_url'),
                 ])
-            ->subject("Bulk MPESA Payment");
+            ->subject($subject);
     }
 
     /**
@@ -129,12 +129,12 @@ class MobilePaymentInstructBank extends Mailable
     // Writes an array to an open CSV file with a custom end of line.
     //
     // $fp: a seekable file pointer. Most file pointers are seekable, 
-    //   but some are not. example: fopen('php://output', 'w') is not seekable.
+    // but some are not. example: fopen('php://output', 'w') is not seekable.
     // $eol: probably one of "\r\n", "\n", or for super old macs: "\r"
     function fputcsv_eol($fp, $array, $eol) {
-    fputcsv($fp, $array);
-    if("\n" != $eol && 0 === fseek($fp, -1, SEEK_CUR)) {
-        fwrite($fp, $eol);
-    }
+        fputcsv($fp, $array);
+        if("\n" != $eol && 0 === fseek($fp, -1, SEEK_CUR)) {
+            fwrite($fp, $eol);
+        }
     }
 }

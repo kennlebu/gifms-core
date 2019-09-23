@@ -18,6 +18,7 @@ class NotifyLpoDispatch extends Mailable
     protected $lpo;
     protected $lpo_PM;
     protected $requester;
+    protected $m_director;
     /**
      * Create a new message instance.
      *
@@ -28,6 +29,9 @@ class NotifyLpoDispatch extends Mailable
         $this->lpo = $lpo;
         $this->requester = Staff::findOrFail($lpo->requested_by_id);
         $this->lpo_PM = Staff::findOrFail($lpo->project_manager_id);
+        $this->m_director = Staff::whereHas('roles', function($query){
+                                $query->whereIn('role_id', [3]);  
+                            })->where('official_post', 'Deputy Country Director')->first();
     }
 
     /**
@@ -123,7 +127,7 @@ class NotifyLpoDispatch extends Mailable
         $subtotal = array_sum($subtotals);
         $vat = array_sum($vats);
 
-        $pdf_data = array('lpo'=>$this->lpo, 'vat' => $vat, 'subtotal' => $subtotal);
+        $pdf_data = array('lpo'=>$this->lpo, 'vat' => $vat, 'subtotal' => $subtotal, 'director' => $this->m_director);
         $pdf = PDF::loadView('pdf/notify_lpo_dispatch', $pdf_data);
         $pdf_file = $pdf->stream();
 
@@ -147,11 +151,10 @@ class NotifyLpoDispatch extends Mailable
         $this->attachData($pdf_file, 'LPO_'.$lpo_no.'_'.$this->lpo->preffered_quotation->supplier->supplier_name.'.pdf');   
 
         return $this->to($supplier_to['email'])
-        // return $this->to('kennlebu@live.com') // for test
             ->with([
                     'lpo' => $this->lpo,
                     'lpo_no' => $lpo_no,
-                    'js_url' => Config::get('app.js_url'),
+                    'js_url' => Config::get('app.js_url')
                 ])
             ->subject($subject);
     }
