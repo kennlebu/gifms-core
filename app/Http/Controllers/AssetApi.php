@@ -594,6 +594,24 @@ class AssetApi extends Controller
             return $response;  
         }
     }
+    
+    public function getInsuranceclaim($id){
+        try{
+            $asset          = Asset::findOrfail($id);
+            $path           = '/fixed_assets/'.$id.'/'.$asset->loss->claim_file;
+            $path_info      = pathinfo($path);
+            $basename       = $path_info['basename'];
+            $file_contents  = FTP::connection()->readFile($path);
+            $response       = Response::make($file_contents, 200);
+            $response->header('Content-Type', $this->get_mime_type($basename));
+            return $response;  
+        }
+        catch (Exception $e ){
+            $response       = Response::make("", 200);
+            $response->header('Content-Type', 'application/pdf');
+            return $response;  
+        }
+    }
 
     public function getDonationTemplate($id){
         try{
