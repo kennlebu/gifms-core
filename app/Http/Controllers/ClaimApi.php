@@ -1063,26 +1063,24 @@ class ClaimApi extends Controller
 
             $payable = Claim::find($payable_id);
             $total = $payable->total;
-
-            $data = Excel::load($file->getPathname(), function($reader) {
-            })->get()->toArray();
-            file_put_contents ( "C://Users//kennl//Documents//debug.txt" , PHP_EOL.json_encode($data) , FILE_APPEND);
-
             $allocations_array = array();
-            foreach ($data as $key => $value) {
-                $allocation = new Allocation();
 
-                if($value[9] == 'KE'){
+            $handle = fopen($file->getRealPath(), "r");
+            $skip_rows = 3;
+            $skipped = 1;
 
+            while ($csvLine = fgetcsv($handle, 1000, ",")) {
+                if($csvLine[0] == 'update_data' && $csvLine[9] == 'KE'){
                     try{
-                        $project = Project::where('project_code','like', '%'.trim($value[1]).'%')->firstOrFail();
-                        $account = Account::where('account_code', 'like', '%'.trim($value[5]).'%')->firstOrFail();
+                        $project = Project::where('project_code','like', '%'.trim($csvLine[1]).'%')->firstOrFail();
+                        $account = Account::where('account_code', 'like', '%'.trim($csvLine[5]).'%')->firstOrFail();
 
+                        $allocation = new Allocation();
                         $allocation->allocatable_id = $payable_id;
                         $allocation->allocatable_type = $payable_type;
-                        $allocation->amount_allocated = $value['amount'];
-                        $allocation->allocation_purpose = $value[6];
-                        $allocation->percentage_allocated = (string) $this->getPercentage($value[8], $total);
+                        $allocation->amount_allocated = trim($csvLine[8]);
+                        $allocation->allocation_purpose = trim($csvLine[6]);
+                        $allocation->percentage_allocated = (string) $this->getPercentage(trim($csvLine[8]), $total);
                         $allocation->allocated_by_id =  (int) $user->id;
                         $allocation->account_id =  $account->id;
                         $allocation->project_id = $project->id;
@@ -1092,10 +1090,12 @@ class ClaimApi extends Controller
                     catch(\Exception $e){
                         $response =  ["error"=>'Account or Project not found. Please use form to allocate.',
                                         "msg"=>$e->getMessage()];
+                        fclose($handle);
                         return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
                     }
                 }
             }
+            fclose($handle);
 
             foreach($allocations_array as $allocation){
                 $allocation->save();
@@ -1113,6 +1113,10 @@ class ClaimApi extends Controller
         catch(\Exception $e){
             return response()->json(['error'=>'Something went wrong', 'msg'=>$e->getMessage(), 'trace'=>$e->getTraceAsString()], 500);
         }
+    }
+
+    public function getPercentage($amount, $total){
+        return ($amount / $total) * 100;
     }
     
 }

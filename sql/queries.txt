@@ -1474,6 +1474,6 @@ VALUES ('Claim rejected', NULL, now(), now(), NULL);
 INSERT INTO `asset_statuses` (`status`, `default`, `created_at`, `updated_at`, `deleted_at`)
 VALUES ('Asset return rejected', NULL, now(), now(), NULL);
 
-===== Loss report column on assets
+~===== Loss report column on assets
 ALTER TABLE `assets`
 ADD `loss_report_doc` text COLLATE 'latin1_swedish_ci' NULL AFTER `donation_document`;
