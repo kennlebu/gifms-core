@@ -5461,3 +5461,7 @@ Route::PUT('/assets/class', 'AssetApi@updateAssetClass')->middleware('jwt.auth')
 Route::GET('/assets/classes', 'AssetApi@getAssetClasses')->middleware('jwt.auth');
 Route::GET('/assets/class/{id}', 'AssetApi@getAssetClass')->middleware('jwt.auth');
 Route::DELETE('/assets/class/{id}', 'AssetApi@deleteAssetClass')->middleware('jwt.auth');
+
+/* Requisitions */
+Route::get('requisition_statuses', 'RequisitionApi@statuses')->middleware('jwt.auth');
+// Route::apiResource('RequisitionApi')->middleware('jwt.auth');

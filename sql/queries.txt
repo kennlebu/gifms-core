@@ -1477,3 +1477,47 @@ VALUES ('Asset return rejected', NULL, now(), now(), NULL);
 ~===== Loss report column on assets
 ALTER TABLE `assets`
 ADD `loss_report_doc` text COLLATE 'latin1_swedish_ci' NULL AFTER `donation_document`;
+
+===== Requisition statuses table
+CREATE TABLE `requisition_statuses` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `status` text NULL,
+  `default` int NULL,
+  `created_at` timestamp NULL,
+  `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL
+);
+
+INSERT INTO `requisition_statuses` (`status`, `default`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Created, pending submission', '1', now(), now(), NULL);
+INSERT INTO `requisition_statuses` (`status`, `default`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Pending PM approval', NULL, now(), now(), NULL);
+INSERT INTO `requisition_statuses` (`status`, `default`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Approved', NULL, now(), now(), NULL);
+INSERT INTO `requisition_statuses` (`status`, `default`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Returned', NULL, now(), now(), NULL);
+
+ALTER TABLE `requisition_statuses`
+ADD `display_color` varchar(12) NULL AFTER `default`,
+CHANGE `updated_at` `updated_at` timestamp NULL AFTER `created_at`;
+
+UPDATE `requisition_statuses` SET `display_color` = '#64547a6e' WHERE `id` = '1';
+UPDATE `requisition_statuses` SET `display_color` = '#64547a6e' WHERE `id` = '2';
+UPDATE `requisition_statuses` SET `display_color` = '#075b23a1' WHERE `id` = '3';
+UPDATE `requisition_statuses` SET `display_color` = '#ff5555c2' WHERE `id` = '4';
+
+===== Requisitions table
+CREATE TABLE `requisitions` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `ref` varchar(20) NULL,
+  `purpose` text NULL,
+  `description` text NULL,
+  `requested_by_id` int NULL,
+  `activity_id` int NULL,
+  `program_manager_id` int NULL,
+  `status_id` int NULL,
+  `submitted_at` timestamp NULL,
+  `created_at` timestamp NULL,
+  `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL
+);
