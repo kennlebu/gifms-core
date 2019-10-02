@@ -1,0 +1,40 @@
+select 
+s.id as id,
+s.supplier_name as 'supplier name',
+REPLACE(REPLACE(s.address,'\n',''), '\r', '') as address,
+s.telephone,
+s.email,
+s.website,
+b.bank_name as 'bank name',
+br.branch_name as 'branch name',
+s.chaque_address as 'cheque address',
+s.bank_account,
+s.usd_account,
+s.bank_code,
+s.swift_code,
+s.tax_pin,
+s.mobile_payment_number,
+s.mobile_payment_name,
+p.abrv as 'payment mode',
+c.currency_name as currency,
+#ct.city_name as city,
+s.contact_name_1,
+s.contact_email_1,
+s.contact_phone_1,
+s.contact_name_2,
+s.contact_email_2,
+s.contact_phone_2,
+s.requires_lpo,
+sc.supply_category_name as 'supply category',
+cy.county_name as county
+from suppliers as s
+left join banks as b on s.bank_id = b.id
+left join bank_branches as br on s.bank_branch_id = br.id
+left join payment_modes as p on s.payment_mode_id = p.id
+left join currencies as c on s.currency_id = c.id
+left join cities as ct on s.city_id = ct.id
+left join supply_categories as sc on s.supply_category_id = sc.id
+left join counties as cy on s.county_id = cy.id
+where status_id != 1
+and s.deleted_at is null
+order by id;
