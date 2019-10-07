@@ -1513,7 +1513,7 @@ CREATE TABLE `requisitions` (
   `purpose` text NULL,
   `description` text NULL,
   `requested_by_id` int NULL,
-  `activity_id` int NULL,
+  `program_activity_id` int NULL,
   `program_manager_id` int NULL,
   `status_id` int NULL,
   `submitted_at` timestamp NULL,
