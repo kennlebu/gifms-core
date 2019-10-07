@@ -90,7 +90,7 @@ class ClaimApi extends Controller
             $claim->project_manager_id                =   (int)       $form['project_manager_id'];
             $claim->payment_mode_id                   =   (int)       $form['payment_mode_id'];
             $claim->total                             =   (double)    $form['total'];
-            $claim->total                             =   (double)    $claim->calculated_total;
+            $claim->total                             =   (double) $claim->calculated_withdrawal_charges + $claim->total;
             $claim->currency_id                       =   (int)       $form['currency_id'];           
 
             $claim->status_id                         =   $this->default_status;
