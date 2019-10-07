@@ -2557,6 +2557,8 @@ Route::PATCH('/claims/approve', 'ClaimApi@approveSeveralClaims')->middleware('jw
 
 Route::POST('/claim/mark_as_paid', 'ClaimApi@markAsPaid')->middleware('jwt.auth');
 
+Route::PATCH('claim/{claim_id}/recall', 'ClaimApi@recallClaim')->middleware('jwt.auth');
+
 
 
 

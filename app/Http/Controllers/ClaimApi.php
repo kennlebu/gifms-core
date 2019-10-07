@@ -1050,5 +1050,41 @@ class ClaimApi extends Controller
             return response()->json(['error'=>'Something went wrong during processing', 'msg'=>$e->getMessage()], 500);
         }
     }
+
+
+
+        /**
+     * Operation recallClaim
+     * 
+     * Recalls a claim.
+     * 
+     * @param int $claim_id Claim id to recall (required)
+     * 
+     * @return Http response
+     */
+    public function recallClaim($claim_id)
+    {
+        $claim = Claim::find($claim_id);        
+
+        // Ensure claim is in the recallable statuses
+        if(!in_array($claim->status_id, [2,3,4,10])){
+            return response()->json(['msg'=>"you do not have permission to do this"], 403, array(), JSON_PRETTY_PRINT);
+        }
+
+        $claim->status_id = 11;     // Recalled
+
+        // Logging recall
+        activity()
+            ->performedOn($claim)
+            ->causedBy($this->current_user())
+            ->log('Claim recalled');
+
+        $claim->disableLogging(); //! Do not log the update        
+        if($claim->save()){
+            return response()->json(['msg'=>"claim recalled"], 200,array(),JSON_PRETTY_PRINT);
+        }else{
+            return response()->json(['error'=>"could not recall claim"], 404,array(),JSON_PRETTY_PRINT);
+        }
+    }
     
 }

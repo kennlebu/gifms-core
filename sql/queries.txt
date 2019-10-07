@@ -1230,3 +1230,7 @@ UPDATE `mobile_payment_statuses` SET `new_next_status_id` = '5', `new_order_prio
 UPDATE `mobile_payment_statuses` SET `approval_level_id` = '4' WHERE `id` = '17';
 UPDATE `mobile_payment_statuses` SET `new_next_status_id` = '9' WHERE `id` = '15';
 UPDATE `mobile_payment_statuses` SET `short_name` = 'Resent to Bank' WHERE `id` = '16';
+
+===== Add recalled status to claim statuses
+INSERT INTO `claim_statuses` (`claim_status`, `next_status_id`, `short_name`, `status_security_level`, `order_priority`, `display_color`, `default_status`, `approval_level_id`, `approvable`, `migration_status_security_level`, `migration_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Recalled', '10', 'Recalled', NULL, '11', '#ff5555c2', NULL, NULL, NULL, NULL, NULL, now(), now(), NULL);
