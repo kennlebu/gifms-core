@@ -1,0 +1,12 @@
+select 
+s.id,
+concat_ws(" ", s.f_name, s.l_name, s.o_names) as name,
+s.bank_account as "bank account",
+b.bank_name as bank,
+br.branch_name as "bank branch",
+b.bank_code as "bank code",
+br.branch_code as "branch code"
+from staff as s
+left join banks as b on b.id = s.bank_id
+left join bank_branches as br on s.bank_branch_id = br.id
+where s.deleted_at is null
