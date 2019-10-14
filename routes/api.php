@@ -5415,6 +5415,7 @@ Route::PATCH('/asset/{id}/approve', 'AssetApi@approveAsset')->middleware('jwt.au
 Route::PATCH('/asset/{id}/reject', 'AssetApi@rejectAsset')->middleware('jwt.auth');
 Route::PATCH('/assets/approve', 'AssetApi@approveAssets')->middleware('jwt.auth');
 Route::PATCH('/assets/transfer', 'AssetApi@transferAssets')->middleware('jwt.auth');
+Route::PATCH('/assets/issue', 'AssetApi@issueAssets')->middleware('jwt.auth');
 Route::PATCH('/assets/donate', 'AssetApi@donateAssets')->middleware('jwt.auth');
 Route::GET('/asset/{id}/get_donation_document', 'AssetApi@getDonationDocument')->middleware('jwt.auth');
 Route::GET('/asset/{id}/get_donation_template', 'AssetApi@getDonationTemplate')->middleware('jwt.auth');

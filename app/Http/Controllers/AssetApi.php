@@ -532,7 +532,6 @@ class AssetApi extends Controller
             $asset->status_id = $input['status'];
             $asset->date_of_issue = date('Y-m-d');
             $asset->assignee_type = 'individual';
-            $asset->added_by_id = $this->current_user()->id;
             $asset->last_updated_by = $this->current_user()->id;
             $asset->disableLogging();
             $asset->save();
@@ -555,7 +554,41 @@ class AssetApi extends Controller
                 ->log('Transfered');
         }
             
-        return Response()->json(array('msg' => 'Success: assets returned','data' => $input['assets']), 200);
+        return Response()->json(array('msg' => 'Success: asset(s) transfered','data' => $input['assets']), 200);
+    }
+
+    public function issueAssets(){
+        $input = Request::all();
+        foreach($input['assets'] as $item){
+            $asset = Asset::findOrFail($item);
+            $asset->assigned_to_id = $input['recepient'];
+            $asset->staff_responsible_id = $input['staff_responsible_id'];
+            $asset->status_id = $input['status'];
+            $asset->date_of_issue = date('Y-m-d');
+            $asset->assignee_type = 'individual';
+            $asset->last_updated_by = $this->current_user()->id;
+            $asset->disableLogging();
+            $asset->save();
+
+            // Log the transfer
+            AssetTransfer::create([
+                'asset_id' => $item,
+                'transfered_by_id' => $this->current_user()->id,
+                'transfered_to_id' => $input['recepient'],
+                'recepient_type' => 'individual',
+                'transfer_type' => 'issue',
+                'reason' => $input['reason']
+            ]);
+
+            // Logging
+            activity()
+                ->performedOn($asset)
+                ->causedBy($this->current_user())
+                ->withProperties(['detail' => 'Asset issued to '. $asset->assigned_to->name .' Staff responsible is '. $asset->staff_responsible->name .''])
+                ->log('Issued');
+        }
+            
+        return Response()->json(array('msg' => 'Success: asset(s) issued','data' => $input['assets']), 200);
     }
 
     public function getDonationDocument($id){
