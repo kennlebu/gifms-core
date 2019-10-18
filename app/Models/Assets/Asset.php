@@ -69,6 +69,11 @@ class Asset extends BaseModel
         return $this->belongsTo('App\Models\StaffModels\Staff', 'staff_responsible_id');
     }
 
+    public function program_manager()
+    {
+        return $this->belongsTo('App\Models\StaffModels\Staff', 'program_manager_id');
+    }
+
     public function added_by()
     {
         return $this->belongsTo('App\Models\StaffModels\Staff', 'added_by_id');

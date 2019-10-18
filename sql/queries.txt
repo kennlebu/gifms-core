@@ -1521,3 +1521,6 @@ CREATE TABLE `requisitions` (
   `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
   `deleted_at` timestamp NULL
 );
+
+===== Add PM id column to tableALTER TABLE `assets`
+ADD `program_manager_id` int NULL AFTER `loss_report_doc`;

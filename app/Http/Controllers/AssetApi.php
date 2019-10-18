@@ -108,7 +108,10 @@ class AssetApi extends Controller
             $user = JWTAuth::parseToken()->authenticate();
             $assets = Asset::with('status','assigned_to','type','class','location','asset_name','staff_responsible');
             if(array_key_exists('my_assigned', $input) && !$user->hasRole(['admin-manager','admin'])){            // All assets
-                $assets = $assets->where('assigned_to_id', $user->id);
+                $assets = $assets->where(function ($query) use ($user) {                
+                    $query->where('assigned_to_id', $user->id);
+                    $query->orWhere('staff_responsible_id', $user->id);
+                });
             }
             if(array_key_exists('all', $input)){                    // Plus deleted
                 $assets = $assets->withTrashed();
@@ -121,7 +124,10 @@ class AssetApi extends Controller
             }
             if(array_key_exists('status_id', $input)){              // Status
                 if($input['status_id']==-1){
-                    $assets = $assets->where('assigned_to_id', $user->id);
+                    $assets = $assets->where(function ($query) use ($user) {                
+                        $query->where('assigned_to_id', $user->id);
+                        $query->orWhere('staff_responsible_id', $user->id);
+                    });
                 }
                 elseif($input['status_id']==-2){
                     // Pass, don't filter
@@ -162,8 +168,14 @@ class AssetApi extends Controller
             }
             if(array_key_exists('my_approvables', $input)){         // Approvables
                 if($user->hasRole(['admin-manager'])){
-                    $assets = $assets->whereIn('status_id', [8,10,15,18]);
+                    $assets = $assets->whereIn('status_id', [8,15,18]);
+                }if($user->hasRole(['program-manager'])){
+                    $assets = $assets->whereIn('status_id', [10]);
+                    $assets = $assets->where('program_manager_id', $user->id);
                 }
+            }
+            if(array_key_exists('donated', $input)){                // Donated
+                $assets = $assets->whereIn('status_id', [5,14]);
             }
             if(array_key_exists('datatables', $input)){             // Datatables
                     $total_records = $assets->count();
@@ -233,7 +245,7 @@ class AssetApi extends Controller
             $log_message = 'Returned, pending confirmation';
         }
         elseif($input['op'] == 'approve') {
-            $status = 7;
+            $status = 2;
             $log_message = 'Asset return confirmed by admin';
         }
         foreach($input['assets'] as $item){
@@ -242,7 +254,7 @@ class AssetApi extends Controller
             if($input['op'] == 'approve') {
                 $asset->assigned_to_id = null;
                 $asset->staff_responsible_id = $this->current_user()->id;
-                $asset->assignee_type = 'individual';
+                $asset->assignee_type = null;
                 $asset->location_id = null;
                 $asset->date_of_issue = null;
             }
@@ -252,7 +264,7 @@ class AssetApi extends Controller
             activity()
                 ->performedOn($asset)
                 ->causedBy($this->current_user())
-                ->withProperties(['detail' => 'Asset returned, pending confirmation by admin.'])
+                ->withProperties(['detail' => $log_message])
                 ->log($log_message);
 
             $asset->save();
@@ -289,6 +301,7 @@ class AssetApi extends Controller
             if($input['op'] == 'request') {
                 $asset->donation_to_id = $input['recepient'];
                 $asset->donation_recepient_type = 'government';
+                $asset->program_manager_id = $input['program_manager_id'];
                 $property_detail = 'Approval requested for asset donation to '. $asset->donation_to->supplier_name .'. '.
                                     'REASON: '. $input['reason'];
             }
@@ -565,10 +578,12 @@ class AssetApi extends Controller
             $asset->staff_responsible_id = $input['staff_responsible_id'];
             $asset->status_id = $input['status'];
             $asset->date_of_issue = date('Y-m-d');
-            $asset->assignee_type = 'individual';
+            $asset->assignee_type = $input['assignee_type'];
             $asset->last_updated_by = $this->current_user()->id;
+            $asset->location_id = $input['location'];
             $asset->disableLogging();
             $asset->save();
+            $asset->refresh();
 
             // Log the transfer
             AssetTransfer::create([
@@ -584,7 +599,7 @@ class AssetApi extends Controller
             activity()
                 ->performedOn($asset)
                 ->causedBy($this->current_user())
-                ->withProperties(['detail' => 'Asset issued to '. $asset->assigned_to->name .' Staff responsible is '. $asset->staff_responsible->name .''])
+                ->withProperties(['detail' => 'Asset issued to '. $asset->assignee_type = 'individual' ? $asset->assigned_to->name ?? '--' : $asset->assignee->supplier_name ?? '--' .' Staff responsible is '. $asset->staff_responsible->name .'. REMARKS: '.$asset->reason])
                 ->log('Issued');
         }
             
