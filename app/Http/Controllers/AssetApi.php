@@ -169,8 +169,9 @@ class AssetApi extends Controller
             if(array_key_exists('my_approvables', $input)){         // Approvables
                 if($user->hasRole(['admin-manager'])){
                     $assets = $assets->whereIn('status_id', [8,15,18]);
-                }if($user->hasRole(['program-manager'])){
-                    $assets = $assets->whereIn('status_id', [10]);
+                }
+                if($user->hasRole(['program-manager'])){
+                    $assets = $assets->whereIn('status_id', [10,24]);
                     $assets = $assets->where('program_manager_id', $user->id);
                 }
             }
@@ -433,6 +434,24 @@ class AssetApi extends Controller
 
             if(!$multiple)
             return Response()->json(array('msg' => 'Success: assets donated','data' => $asset), 200);
+        }
+
+        // Obsolete
+        if($asset->status_id == 24){
+            $asset->disableLogging();
+            $asset->previous_status = $asset->status_id;
+            $asset->status_id = 6;
+            $asset->save();
+
+            // Logging
+            activity()
+                ->performedOn($asset)
+                ->causedBy($this->current_user())
+                ->withProperties(['detail' => 'Request confirmed by PM. Asset marked as obsolete'])
+                ->log('Marked obsolete');
+
+            if(!$multiple)
+            return Response()->json(array('msg' => 'Success: assets marked obsolete','data' => $asset), 200);
         }
     }
 
@@ -1032,6 +1051,29 @@ class AssetApi extends Controller
             catch(Exception $e){
                 return response()->json(['error'=>'Something went wrong','msg'=>$e->getMessage(),'trace'=>$e->getTraceAsString()], 500);
             }
+    }
+
+    public function markObsolete(){
+        try{
+            $input = Request::all();
+            $asset = Asset::findOrFail($input['id']);
+            $asset->previous_status_id = $asset->status_id;
+            $asset->status_id = 24;
+            $asset->disableLogging();
+            $asset->save();
+
+            // Logging
+            activity()
+                ->performedOn($asset)
+                ->causedBy($this->current_user())
+                ->withProperties(['detail' => 'Request to mark as obsolete. Awaiting PM confirmation.'])
+                ->log('Mark as obsolete');
+
+            return Response()->json(array('success' => 'Asset marked as obsolete','asset' => $asset), 200);
+        }
+        catch(Exception $e){
+            return response()->json(['error'=>'Something went wrong'], 500);
+        }
     }
 
 

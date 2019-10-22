@@ -1522,5 +1522,12 @@ CREATE TABLE `requisitions` (
   `deleted_at` timestamp NULL
 );
 
-===== Add PM id column to tableALTER TABLE `assets`
+~==== Add PM id column to tableALTER TABLE `assets`
+ALTER TABLE `assets`
 ADD `program_manager_id` int NULL AFTER `loss_report_doc`;
+
+INSERT INTO `asset_statuses` (`status`, `default`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Marked obsolete, pending PM confirmation', NULL, now(), now(), NULL);
+
+ALTER TABLE `assets`
+ADD `previous_status_id` int(11) NULL AFTER `program_manager_id`;
