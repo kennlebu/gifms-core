@@ -27,7 +27,16 @@ class RequisitionApi extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $requisition = new Requisition();
+        $requisition->requested_by_id = $request->requested_by_id;
+        $requisition->purpose = $request->purpose;
+        $requisition->program_manager_id = $request->program_manager_id;
+        $requisition->status_id = 1;
+        $requisition->submitted_at = date("Y-m-d H:i:s");
+        $requisition->save();
+        $requisition->disableLogging();
+        $requisition->ref = 'R-'.$this->pad_with_zeros(5,$requisition->id);
+        
     }
 
     /**
