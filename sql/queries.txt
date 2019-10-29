@@ -1478,6 +1478,16 @@ VALUES ('Asset return rejected', NULL, now(), now(), NULL);
 ALTER TABLE `assets`
 ADD `loss_report_doc` text COLLATE 'latin1_swedish_ci' NULL AFTER `donation_document`;
 
+~==== Add PM id column to table
+ALTER TABLE `assets`
+ADD `program_manager_id` int NULL AFTER `loss_report_doc`;
+
+INSERT INTO `asset_statuses` (`status`, `default`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Marked obsolete, pending PM confirmation', NULL, now(), now(), NULL);
+
+ALTER TABLE `assets`
+ADD `previous_status_id` int(11) NULL AFTER `program_manager_id`;
+
 ===== Requisition statuses table
 CREATE TABLE `requisition_statuses` (
   `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -1522,12 +1532,32 @@ CREATE TABLE `requisitions` (
   `deleted_at` timestamp NULL
 );
 
-~==== Add PM id column to tableALTER TABLE `assets`
-ALTER TABLE `assets`
-ADD `program_manager_id` int NULL AFTER `loss_report_doc`;
+===== Requisition allocations table
+CREATE TABLE `requisition_allocations` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `requisition_id` int NULL,
+  `percentage_allocated` double(3,3) NULL,
+  `purpose` text NULL,
+  `allocated_by_id` int NULL,
+  `project_id` int NULL,
+  `account_id` int NULL,
+  `created_at` timestamp NULL,
+  `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL
+);
 
-INSERT INTO `asset_statuses` (`status`, `default`, `created_at`, `updated_at`, `deleted_at`)
-VALUES ('Marked obsolete, pending PM confirmation', NULL, now(), now(), NULL);
-
-ALTER TABLE `assets`
-ADD `previous_status_id` int(11) NULL AFTER `program_manager_id`;
+===== Requisition items table
+CREATE TABLE `requisition_items` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `type` varchar(15) NULL,
+  `service_id` int NULL,
+  `service` text NULL,
+  `qty` double NULL,
+  `qty_description` varchar(256) NULL,
+  `start_date` varchar(20) NULL,
+  `end_date` varchar(20) NULL,
+  `status_id` int NULL,
+  `created_at` timestamp NULL,
+  `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL
+);
