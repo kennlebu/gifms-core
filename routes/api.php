@@ -5466,4 +5466,8 @@ Route::DELETE('/assets/class/{id}', 'AssetApi@deleteAssetClass')->middleware('jw
 
 /* Requisitions */
 Route::get('requisition_statuses', 'RequisitionApi@statuses')->middleware('jwt.auth');
-Route::apiResource('RequisitionApi')->middleware('jwt.auth');
+Route::POST('requisition', 'RequisitionApi@store')->middleware('jwt.auth');
+Route::PUT('requisition', 'RequisitionApi@update')->middleware('jwt.auth');
+Route::GET('requisitions', 'RequisitionApi@index')->middleware('jwt.auth');
+Route::GET('requisition/{id}', 'RequisitionApi@show')->middleware('jwt.auth');
+Route::DELETE('requisition/{id}', 'RequisitionApi@destroy')->middleware('jwt.auth');

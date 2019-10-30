@@ -2,7 +2,7 @@
 
 namespace App\Models\Requisitions;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\BaseModels\BaseModel;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class RequisitionItem extends BaseModel

@@ -16,7 +16,10 @@ class RequisitionApi extends Controller
      */
     public function index()
     {
-        //
+        $requisitions = Requisition::query();
+        
+        $requisitions = $requisitions->get();
+        return response()->json($requisitions, 200,array(),JSON_PRETTY_PRINT);
     }
 
     /**
@@ -63,6 +66,16 @@ class RequisitionApi extends Controller
                 $item->account_id = $i->account_id;
                 $item->disableLogging();
                 $item->save();
+            }
+
+            // Files
+            $files = $request->files;
+            foreach($files as $file){
+                if($file != 0){
+                    FTP::connection()->makeDir('/requisitions');
+                    FTP::connection()->makeDir('/requisitions/'.$requisition->ref);
+                    FTP::connection()->uploadFile($file->getPathname(), '/requisitions/'.$requisition->ref.'/'.$file->getClientOriginalName().'.'.$file->getClientOriginalExtension());
+                }
             }
 
             return Response()->json(array('msg' => 'Success: requisition added','requisition' => $requisition), 200);
