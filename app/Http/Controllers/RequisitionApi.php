@@ -54,7 +54,7 @@ class RequisitionApi extends Controller
 
             $items = $request->items;
             foreach($items as $i){
-                $item = new RequisitionItems();
+                $item = new RequisitionItem();
                 $item->requisition_id = $requisition->id;
                 $item->percentage_allocated = $i->percentage;
                 $item->purpose = $i->purpose;
