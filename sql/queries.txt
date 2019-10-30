@@ -1546,6 +1546,9 @@ CREATE TABLE `requisition_allocations` (
   `deleted_at` timestamp NULL
 );
 
+ALTER TABLE `requisition_allocations`
+CHANGE `percentage_allocated` `percentage_allocated` double NULL AFTER `requisition_id`;
+
 ===== Requisition items table
 CREATE TABLE `requisition_items` (
   `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -1561,3 +1564,7 @@ CREATE TABLE `requisition_items` (
   `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
   `deleted_at` timestamp NULL
 );
+
+ALTER TABLE `requisition_items`
+ADD `description` text COLLATE 'latin1_swedish_ci' NULL AFTER `service`,
+CHANGE `updated_at` `updated_at` timestamp NULL AFTER `created_at`;

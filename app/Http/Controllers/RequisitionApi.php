@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Requisitions\Requisition;
 use App\Models\Requisitions\RequisitionStatus;
+use App\Models\Requisitions\RequisitionAllocation;
+use App\Models\Requisitions\RequisitionItem;
 use Exception;
 use Illuminate\Http\Request;
+use Anchu\Ftp\Facades\Ftp;
 
 class RequisitionApi extends Controller
 {
@@ -42,46 +45,49 @@ class RequisitionApi extends Controller
             $requisition->ref = 'R-'.$this->pad_with_zeros(5,$requisition->id);
             $requisition->save();
 
-            $allocations = $request->allocations;
+            $allocations = json_decode($request->allocations);
             foreach($allocations as $alloc){
                 $allocation = new RequisitionAllocation();
                 $allocation->requisition_id = $requisition->id;
-                $allocation->percentage_allocated = $alloc->percentage;
-                $allocation->purpose = $alloc->purpose;
-                $allocation->allocated_by_id = $alloc->allocated_by_id;
+                $allocation->percentage_allocated = $alloc->rate;
+                $allocation->purpose = $alloc->purpose ?? '';
+                $allocation->allocated_by_id = $requisition->requested_by_id;
                 $allocation->project_id = $alloc->project_id;
                 $allocation->account_id = $alloc->account_id;
                 $allocation->disableLogging();
                 $allocation->save();
             }
 
-            $items = $request->items;
+            $items = json_decode($request->items);
             foreach($items as $i){
                 $item = new RequisitionItem();
-                $item->requisition_id = $requisition->id;
-                $item->percentage_allocated = $i->percentage;
-                $item->purpose = $i->purpose;
-                $item->allocated_by_id = $this->current_user()->id;
-                $item->project_id = $i->project_id;
-                $item->account_id = $i->account_id;
+                $item->type = $i->type ?? 'extra';
+                $item->service = $i->name;
+                $item->description = $i->description;
+                $item->qty = $i->qty;
+                $item->start_date = $i->dates;
                 $item->disableLogging();
                 $item->save();
             }
 
             // Files
-            $files = $request->files;
-            foreach($files as $file){
-                if($file != 0){
-                    FTP::connection()->makeDir('/requisitions');
-                    FTP::connection()->makeDir('/requisitions/'.$requisition->ref);
-                    FTP::connection()->uploadFile($file->getPathname(), '/requisitions/'.$requisition->ref.'/'.$file->getClientOriginalName().'.'.$file->getClientOriginalExtension());
-                }
+            $no_of_files = (int) $request->no_of_files;
+            $files = [];
+            for($i = 0; $i < $no_of_files; $i++) {
+                $name = 'file'.$i;
+                $files[] = $request->$name;
+            }
+
+            foreach($files as $file) {
+                FTP::connection()->makeDir('/requisitions');
+                FTP::connection()->makeDir('/requisitions/'.$requisition->ref);
+                FTP::connection()->uploadFile($file->getPathname(), '/requisitions/'.$requisition->ref.'/'.$file->getClientOriginalName().'.'.$file->getClientOriginalExtension());
             }
 
             return Response()->json(array('msg' => 'Success: requisition added','requisition' => $requisition), 200);
         }
         catch(Exception $e){
-            return response()->json(['error'=>"Something went wrong",'msg'=>$e->getMessage()], 500,array(),JSON_PRETTY_PRINT);
+            return response()->json(['error'=>"Something went wrong",'msg'=>$e->getMessage(),'trace'=>$e->getTraceAsString()], 500,array(),JSON_PRETTY_PRINT);
         }
     }
 
