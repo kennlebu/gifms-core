@@ -35,4 +35,9 @@ class Requisition extends BaseModel
     {
         return $this->hasMany('App\Models\Requisitions\RequisitionItem','requisition_id');
     }
+    
+    public function logs()
+    {
+        return $this->morphMany('App\Models\LogsModels\HistoryLog', 'subject')->orderBy('created_at','asc');
+    }
 }

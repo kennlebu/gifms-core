@@ -5471,3 +5471,8 @@ Route::PUT('requisition', 'RequisitionApi@update')->middleware('jwt.auth');
 Route::GET('requisitions', 'RequisitionApi@index')->middleware('jwt.auth');
 Route::GET('requisition/{id}', 'RequisitionApi@show')->middleware('jwt.auth');
 Route::DELETE('requisition/{id}', 'RequisitionApi@destroy')->middleware('jwt.auth');
+
+Route::PATCH('requisition/{id}/submit_for_approval', 'RequisitionApi@submit')->middleware('jwt.auth');
+Route::PATCH('requisition/{id}/approve', 'RequisitionApi@approve')->middleware('jwt.auth');
+Route::PATCH('requisition/{id}/reject', 'RequisitionApi@reject')->middleware('jwt.auth');
+Route::PATCH('requisitions/approve', 'RequisitionApi@approveMultiple')->middleware('jwt.auth');

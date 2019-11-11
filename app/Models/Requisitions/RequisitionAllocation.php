@@ -16,7 +16,7 @@ class RequisitionAllocation extends BaseModel
 
     public function project()
     {
-        return $this->belongsTo('App\Models\ProjetsModels\Project');
+        return $this->belongsTo('App\Models\ProjectsModels\Project');
     }    
 
     public function account()

@@ -208,7 +208,7 @@ class RequisitionApi extends Controller
     public function show($id)
     {
         try{
-            $requisition = Requisition::with('items.service','items.service','allocations.allocated_by','allocations.project','allocations.account')
+            $requisition = Requisition::with('requested_by','program_manager','items.service','allocations.allocated_by','allocations.project','allocations.account','logs.causer')
                                         ->find($id);
             return response()->json($requisition, 200,array(),JSON_PRETTY_PRINT);
         }
@@ -300,6 +300,122 @@ class RequisitionApi extends Controller
         }
         catch(Exception $e){
             return response()->json(['error'=>"Something went wrong"], 500,array(),JSON_PRETTY_PRINT);
+        }
+    }
+
+    /**
+     * Submit requisition for approval
+     */
+    public function submit($id){
+        try{
+            $requisition = Requisition::findOrFail($id);
+            $user = $this->current_user();
+            if(!$user->hasRole(['program-manager']) || $user->id != $requisition->program_manager_id){
+                return response()->json(['error'=>"You do not have permission for that action"], 403,array(),JSON_PRETTY_PRINT); 
+            }
+
+            if($requisition->status_id == 1){
+                $requisition->status_id = 2;
+                $requisition->disableLogging();
+                $requisition->save();
+
+                // Logging
+                activity()
+                    ->performedOn($requisition)
+                    ->causedBy($user)
+                    ->log('Submitted for approval');
+
+                // Mail::queue('Html.view', $requisition, function ($message) {
+                //     $message->from('john@johndoe.com', 'John Doe');
+                //     $message->sender('john@johndoe.com', 'John Doe');
+                //     $message->to('john@johndoe.com', 'John Doe');
+                //     $message->cc('john@johndoe.com', 'John Doe');
+                //     $message->bcc('john@johndoe.com', 'John Doe');
+                //     $message->replyTo('john@johndoe.com', 'John Doe');
+                //     $message->subject('Subject');
+                //     $message->priority(3);
+                //     $message->attach('pathToFile');
+                // });
+            }
+        }
+        catch(Exception $e){
+            return response()->json(['error'=>"Something went wrong"], 500,array(),JSON_PRETTY_PRINT);
+        }
+    }
+
+    /**
+     * Approvals and rejections
+     */
+    public function approve($id, $multiple=false){
+        $requisition = Requisition::findOrFail($id);
+        if($requisition->status_id == 2) {    // Return
+            $requisition->status_id = 4;
+            $requisition->disableLogging();
+            $requisition->save();
+
+            // Logging
+            activity()
+                ->performedOn($requisition)
+                ->causedBy($this->current_user())
+                ->log('Requisition approved');
+
+            $approval = new Approval;
+
+            $approval->approvable_id = (int) $requisition->id;
+            $approval->approvable_type = "requisitions";
+            $approval->approval_level_id = 2;
+            $approval->approver_id = (int) $this->current_user()->id;
+            $approval->disableLogging();
+            $approval->save();
+
+            // Mail::queue('Html.view', $requisition, function ($message) {
+            //     $message->from('john@johndoe.com', 'John Doe');
+            //     $message->sender('john@johndoe.com', 'John Doe');
+            //     $message->to('john@johndoe.com', 'John Doe');
+            //     $message->cc('john@johndoe.com', 'John Doe');
+            //     $message->bcc('john@johndoe.com', 'John Doe');
+            //     $message->replyTo('john@johndoe.com', 'John Doe');
+            //     $message->subject('Subject');
+            //     $message->priority(3);
+            //     $message->attach('pathToFile');
+            // });
+        
+            if(!$multiple)
+            return Response()->json(array('msg' => 'Success: requisitions approved','data' => $requisition), 200);
+        }
+    }
+
+    public function approveMultiple(){
+        try {
+            $form = Request::only("requisitions");
+            $requisition_ids = $form['requisitions'];
+
+            foreach ($requisition_ids as $key => $id) {
+                $this->approve($id, true);
+            }
+
+            return response()->json(['requisitions'=>$form['requisitions']], 201, array(), JSON_PRETTY_PRINT);
+            
+        } catch (Exception $e) {
+             return response()->json(['error'=>"An rerror occured during processing"], 500,array(),JSON_PRETTY_PRINT);
+        }
+    }
+
+    public function reject($id){
+        $input = Request::only('rejection_reason');
+        $requisition = Requisition::findOrFail($id);
+        if($requisition->status_id == 2) {
+            $requisition->status_id = 4;
+            $requisition->disableLogging();
+            $requisition->save();
+            
+            // Logging
+            activity()
+                ->performedOn($requisition)
+                ->causedBy($this->current_user())
+                ->log('Requisition returned');
+        
+            return Response()->json(array('msg' => 'Success: requisition returned','data' => $requisition), 200);
         }
     }
 

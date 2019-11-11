@@ -1516,6 +1516,11 @@ UPDATE `requisition_statuses` SET `display_color` = '#64547a6e' WHERE `id` = '2'
 UPDATE `requisition_statuses` SET `display_color` = '#075b23a1' WHERE `id` = '3';
 UPDATE `requisition_statuses` SET `display_color` = '#ff5555c2' WHERE `id` = '4';
 
+ALTER TABLE `requisition_statuses`
+ADD `approval_level_id` int NULL AFTER `display_color`;
+
+UPDATE `requisition_statuses` SET `approval_level_id` = '2' WHERE `id` = '2';
+
 ===== Requisitions table
 CREATE TABLE `requisitions` (
   `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
