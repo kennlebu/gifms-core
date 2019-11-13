@@ -9,7 +9,7 @@ class RequisitionItem extends BaseModel
 {
     use SoftDeletes;
 
-    public function service()
+    public function supplier_service()
     {
         return $this->belongsTo('App\Models\SuppliesModels\SupplierService','service_id');
     }

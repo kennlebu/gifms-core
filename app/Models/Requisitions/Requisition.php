@@ -40,4 +40,9 @@ class Requisition extends BaseModel
     {
         return $this->morphMany('App\Models\LogsModels\HistoryLog', 'subject')->orderBy('created_at','asc');
     }
+    
+    public function approvals()
+    {
+        return $this->morphMany('App\Models\ApprovalsModels\Approval', 'approvable')->where('approver_id', '!=', 0)->orderBy('approval_level_id', 'asc');
+    }
 }

@@ -9,6 +9,7 @@ use App\Models\Requisitions\RequisitionItem;
 use Exception;
 use Illuminate\Http\Request;
 use Anchu\Ftp\Facades\Ftp;
+use App\Models\ApprovalsModels\Approval;
 use Illuminate\Support\Facades\Request as IlluminateRequest;
 
 class RequisitionApi extends Controller
@@ -21,17 +22,18 @@ class RequisitionApi extends Controller
     public function index()
     {
         $input = IlluminateRequest::all();
-        $requisitions = Requisition::with('items','allocations','requested_by','status');
+        $requisitions = Requisition::with('items','allocations','requested_by','status','program_manager');
+        $user = $this->current_user();
 
         $response_dt;
         $total_records = $requisitions->count();
         $records_filtered = 0;
 
         if(array_key_exists('my_assigned',$input)){
-            $requisitions = $requisitions->where('requested_by_id', $this->current_user()->id);
+            $requisitions = $requisitions->where('requested_by_id', $user->id);
         }
         if(array_key_exists('my_pm_assigned',$input)){
-            $requisitions = $requisitions->where('program_manager_id', $this->current_user()->id);
+            $requisitions = $requisitions->where('program_manager_id', $user->id);
         }
         if(array_key_exists('project_id',$input)){
             $requisitions = $requisitions->whereHas('allocations', function($query) use ($input){
@@ -45,15 +47,18 @@ class RequisitionApi extends Controller
         }
         if(array_key_exists('status',$input)){
             $status = (int) $input['status'];
-            if($status > -1){
-                $requisitions = $requisitions->where('status_id', $input['status'])->where('requested_by_id',$this->current_user()->id);
+            if($status >= 1){
+                $requisitions = $requisitions->where('status_id', $status)->where('requested_by_id',$user->id);
             }
             elseif($status == -1){
-                $requisitions = $requisitions->where('requested_by_id',$this->current_user()->id);
+                $requisitions = $requisitions->where('requested_by_id',$user->id);
             }
             elseif($status == -2){
-                $requisitions = $requisitions->where('project_manager_id',$this->current_user()->id);
+                $requisitions = $requisitions->where('program_manager_id',$user->id);
             }
+        }
+        if(array_key_exists('my_approvables',$input)){
+            $requisitions = $requisitions->where('program_manager_id',$user->id)->where('status_id',2);
         }
         if(array_key_exists('service_id',$input)){
             $requisitions = $requisitions->whereHas('items', function($query) use ($input){
@@ -170,10 +175,12 @@ class RequisitionApi extends Controller
                 $item = new RequisitionItem();
                 $item->requisition_id = $requisition->id;
                 $item->type = $i->type ?? 'extra';
-                $item->service = $i->name;
-                $item->description = $i->description;
+                $item->service = $i->service;
+                $item->qty_description = $i->qty_description;
                 $item->qty = $i->qty;
-                $item->start_date = $i->dates;
+                $item->start_date = date('Y-m-d', strtotime($i->dates[0]));
+                $item->end_date = date('Y-m-d', strtotime($i->dates[1]));
+                $item->status_id = 1;
                 $item->disableLogging();
                 $item->save();
             }
@@ -208,7 +215,7 @@ class RequisitionApi extends Controller
     public function show($id)
     {
         try{
-            $requisition = Requisition::with('requested_by','program_manager','items.service','allocations.allocated_by','allocations.project','allocations.account','logs.causer')
+            $requisition = Requisition::with('status','requested_by','program_manager','items','allocations.allocated_by','allocations.project','allocations.account','logs.causer','approvals.approver')
                                         ->find($id);
             return response()->json($requisition, 200,array(),JSON_PRETTY_PRINT);
         }
@@ -251,10 +258,11 @@ class RequisitionApi extends Controller
                 $item = RequisitionItem::where('requisition_id', $id)->first();
                 // $item->requisition_id = $requisition->id;
                 $item->type = $i->type;
-                $item->service = $i->name;
-                $item->description = $i->description;
+                $item->service = $i->service;
+                $item->qty_description = $i->qty_description;
                 $item->qty = $i->qty;
-                $item->start_date = $i->dates;
+                $item->start_date = date('Y-m-d', strtotime($i->dates[0]));
+                $item->end_date = date('Y-m-d', strtotime($i->dates[1]));
                 $item->disableLogging();
                 $item->save();
             }
@@ -310,9 +318,6 @@ class RequisitionApi extends Controller
         try{
             $requisition = Requisition::findOrFail($id);
             $user = $this->current_user();
-            if(!$user->hasRole(['program-manager']) || $user->id != $requisition->program_manager_id){
-                return response()->json(['error'=>"You do not have permission for that action"], 403,array(),JSON_PRETTY_PRINT); 
-            }
 
             if($requisition->status_id == 1){
                 $requisition->status_id = 2;
@@ -336,6 +341,8 @@ class RequisitionApi extends Controller
                 //     $message->priority(3);
                 //     $message->attach('pathToFile');
                 // });
+
+            return Response()->json(array('msg' => 'Success: requisition submitted for approval','data' => $requisition), 200);
             }
         }
         catch(Exception $e){
@@ -348,23 +355,27 @@ class RequisitionApi extends Controller
      */
     public function approve($id, $multiple=false){
         $requisition = Requisition::findOrFail($id);
-        if($requisition->status_id == 2) {    // Return
-            $requisition->status_id = 4;
+        $user = $this->current_user();
+        if(!$user->hasRole(['program-manager']) || $user->id != $requisition->program_manager_id){
+            return response()->json(['error'=>"You do not have permission for that action"], 403,array(),JSON_PRETTY_PRINT); 
+        }
+        if($requisition->status_id == 2) {    // Approve
+            $requisition->status_id = 3;
             $requisition->disableLogging();
             $requisition->save();
 
             // Logging
             activity()
                 ->performedOn($requisition)
-                ->causedBy($this->current_user())
+                ->causedBy($user)
                 ->log('Requisition approved');
 
-            $approval = new Approval;
+            $approval = new Approval();
 
             $approval->approvable_id = (int) $requisition->id;
             $approval->approvable_type = "requisitions";
             $approval->approval_level_id = 2;
-            $approval->approver_id = (int) $this->current_user()->id;
+            $approval->approver_id = (int) $user->id;
             $approval->disableLogging();
             $approval->save();
 
@@ -425,7 +436,42 @@ class RequisitionApi extends Controller
      * Return requisition statuses
      */
     public function statuses(){
-        $statuses = RequisitionStatus::all();
+        $input = IlluminateRequest::all();
+        $statuses = RequisitionStatus::query();
+        if(array_key_exists('displayable_only',$input)){
+            $statuses = $statuses->whereIn('id',[1,4]);
+        }
+
+        $statuses = $statuses->get();
+        // Attach the other statuses
+        if(array_key_exists('displayable_only',$input)){
+            $user = $this->current_user();
+            $statuses[] = [
+                'id'=>-1,
+                'status'=>'All my requisitions',
+                'display_color'=>'#075b23a1',
+                'count'=>Requisition::where('requested_by_id',$user->id)->count()
+            ];
+
+            if ($user->hasRole('program-manager')){
+                $statuses[] = [
+                    'id'=>-2,
+                    'status'=>'My PM-assigned requisitions',
+                    'display_color'=>'#075b23a1',
+                    'count'=>Requisition::where('program_manager_id',$user->id)->count()
+                ];
+            }
+
+            if ($user->hasRole(['admin','super-admin','accountant','assistant-accountant','director','associate-director','admin-manager'])){
+                $statuses[] = [
+                    'id'=>-3,
+                    'status'=>'All requisitions',
+                    'display_color'=>'#075b23a1',
+                    'count'=>Requisition::count()
+                ];
+            }
+        }
+        
         return response()->json($statuses, 200,array(),JSON_PRETTY_PRINT);
     }
 }
