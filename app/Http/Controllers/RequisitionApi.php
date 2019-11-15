@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Anchu\Ftp\Facades\Ftp;
 use App\Models\ApprovalsModels\Approval;
 use Illuminate\Support\Facades\Request as IlluminateRequest;
+use Illuminate\Support\Facades\Response;
 
 class RequisitionApi extends Controller
 {
@@ -193,10 +194,24 @@ class RequisitionApi extends Controller
                 $files[] = $request->$name;
             }
 
+            $counter = 0;
             foreach($files as $file) {
                 FTP::connection()->makeDir('/requisitions');
                 FTP::connection()->makeDir('/requisitions/'.$requisition->ref);
-                FTP::connection()->uploadFile($file->getPathname(), '/requisitions/'.$requisition->ref.'/'.$file->getClientOriginalName().'.'.$file->getClientOriginalExtension());
+                FTP::connection()->uploadFile($file->getPathname(), '/requisitions/'.$requisition->ref.'/'.$requisition->ref.'doc_'.$counter.'.'.$file->getClientOriginalExtension());
+                $counter += 1;
+            }
+
+            // Airfare document
+            if($request->has('airfare_doc')){
+                $airfare_doc = $request->airfare_doc;
+                FTP::connection()->makeDir('/requisitions');
+                FTP::connection()->makeDir('/requisitions/'.$requisition->ref);
+                FTP::connection()->uploadFile($airfare_doc->getPathname(), '/requisitions/'.$requisition->ref.'/'.$file->getClientOriginalName().'.'.$file->getClientOriginalExtension());
+    
+                $requisition->airfare_doc = $file->getClientOriginalName().'.'.$file->getClientOriginalExtension();
+                $requisition->disableLogging();
+                $requisition->save();
             }
 
             return Response()->json(array('msg' => 'Success: requisition added','requisition' => $requisition), 200);
@@ -215,12 +230,12 @@ class RequisitionApi extends Controller
     public function show($id)
     {
         try{
-            $requisition = Requisition::with('status','requested_by','program_manager','items','allocations.allocated_by','allocations.project','allocations.account','logs.causer','approvals.approver')
+            $requisition = Requisition::with('status','requested_by','program_manager','items.status','allocations.allocated_by','allocations.project','allocations.account','logs.causer','approvals.approver')
                                         ->find($id);
             return response()->json($requisition, 200,array(),JSON_PRETTY_PRINT);
         }
         catch(Exception $e){
-            return response()->json(['error'=>"Something went wrong"], 500,array(),JSON_PRETTY_PRINT);
+            return response()->json(['error'=>"Something went wrong",'msg'=>$e->getMessage(),'trace'=>$e->getTraceAsString()], 500,array(),JSON_PRETTY_PRINT);
         }
     }
 
@@ -235,55 +250,82 @@ class RequisitionApi extends Controller
     {
         try {
             $requisition = Requisition::findOrFail($id);
-            $requisition->requested_by_id = $request->requested_by_id;
             $requisition->purpose = $request->purpose;
             $requisition->program_manager_id = $request->program_manager_id;
             $requisition->save();
-            $requisition->disableLogging();
+            // $requisition->disableLogging();
 
-            $allocations = $requisition->allocations;
+            $allocations = $request->allocations;
+            $new_allocations = [];
+            $old_allocations = RequisitionAllocation::where('requisition_id', $id)->pluck('id')->toArray();
             foreach($allocations as $alloc){
-                $allocation = RequisitionAllocation::where('requisition_id', $id)->first();
-                $allocation->percentage_allocated = $alloc->rate;
-                $allocation->purpose = $alloc->purpose ?? '';
-                $allocation->allocated_by_id = $requisition->requested_by_id;
-                $allocation->project_id = $alloc->project_id;
-                $allocation->account_id = $alloc->account_id;
+                if(empty($alloc['id'])) {
+                    $allocation = new RequisitionAllocation();
+                    $allocation->requisition_id = $requisition->id;
+                }
+                else {
+                    $allocation = RequisitionAllocation::find($alloc['id']);
+                }
+                $allocation->percentage_allocated = $alloc['percentage_allocated'];
+                $allocation->purpose = $alloc['purpose'] ?? '';
+                $allocation->allocated_by_id = $requisition['requested_by_id'];
+                $allocation->project_id = $alloc['project_id'];
+                $allocation->account_id = $alloc['account_id'];
                 $allocation->disableLogging();
                 $allocation->save();
+                $new_allocations[] = $allocation->id;
             }
-
-            $items = $requisition->items;
-            foreach($items as $i){
-                $item = RequisitionItem::where('requisition_id', $id)->first();
-                // $item->requisition_id = $requisition->id;
-                $item->type = $i->type;
-                $item->service = $i->service;
-                $item->qty_description = $i->qty_description;
-                $item->qty = $i->qty;
-                $item->start_date = date('Y-m-d', strtotime($i->dates[0]));
-                $item->end_date = date('Y-m-d', strtotime($i->dates[1]));
-                $item->disableLogging();
-                $item->save();
-            }
-
-            // Files
-            $no_of_files = (int) $request->no_of_files;
-            $files = [];
-            for($i = 0; $i < $no_of_files; $i++) {
-                $name = 'file'.$i;
-                $files[] = $request->$name;
-            }
-
-            foreach($files as $file) {
-                if($file != 0){
-                    FTP::connection()->makeDir('/requisitions');
-                    FTP::connection()->makeDir('/requisitions/'.$requisition->ref);
-                    FTP::connection()->uploadFile($file->getPathname(), '/requisitions/'.$requisition->ref.'/'.$file->getClientOriginalName().'.'.$file->getClientOriginalExtension());
+            foreach($old_allocations as $old_allocation){
+                if(!in_array($old_allocation, $new_allocations)){
+                    RequisitionAllocation::destroy($old_allocation);
                 }
             }
 
-            return Response()->json(array('msg' => 'Success: requisition added','requisition' => $requisition), 200);
+            $items = $request->items;
+            $new_items = [];
+            $old_items = RequisitionItem::where('requisition_id', $id)->pluck('id')->toArray();
+            foreach($items as $i){
+                if($i['id']){
+                    $item = new RequisitionItem();
+                    $item->requisition_id = $i['id'];
+                    $item->status_id = 1;
+                }
+                else {
+                    $item = RequisitionItem::find($i['id']);
+                }
+                $item->type = $i['type'] ?? 'extra';
+                $item->service = $i['service'];
+                $item->qty_description = $i['qty_description'];
+                $item->qty = $i['qty'];
+                // $item->start_date = date('Y-m-d', strtotime($i['dates'][0]));
+                // $item->end_date = date('Y-m-d', strtotime($i['dates'][1]));
+                $item->disableLogging();
+                $item->save();
+                $new_items[] = $item->id;
+            }
+            foreach($old_items as $old_item){
+                if(!in_array($old_item, $new_items)){
+                    RequisitionItem::destroy($old_item);
+                }
+            }
+
+            // // Files
+            // $no_of_files = (int) $request->no_of_files;
+            // $files = [];
+            // for($i = 0; $i < $no_of_files; $i++) {
+            //     $name = 'file'.$i;
+            //     $files[] = $request->$name;
+            // }
+
+            // foreach($files as $file) {
+            //     if($file != 0){
+            //         FTP::connection()->makeDir('/requisitions');
+            //         FTP::connection()->makeDir('/requisitions/'.$requisition->ref);
+            //         FTP::connection()->uploadFile($file->getPathname(), '/requisitions/'.$requisition->ref.'/'.$file->getClientOriginalName().'.'.$file->getClientOriginalExtension());
+            //     }
+            // }
+
+            return Response()->json(array('msg' => 'Success: requisition updated','requisition' => $requisition), 200);
         }
         catch(Exception $e){
             return response()->json(['error'=>"Something went wrong",'msg'=>$e->getMessage(),'trace'=>$e->getTraceAsString()], 500,array(),JSON_PRETTY_PRINT);
@@ -417,6 +459,8 @@ class RequisitionApi extends Controller
         $requisition = Requisition::findOrFail($id);
         if($requisition->status_id == 2) {
             $requisition->status_id = 4;
+            $requisition->return_reason = $input->rejection_reason;
+            $requisition->returned_by_id = $this->current_user()->id;
             $requisition->disableLogging();
             $requisition->save();
             
@@ -424,9 +468,45 @@ class RequisitionApi extends Controller
             activity()
                 ->performedOn($requisition)
                 ->causedBy($this->current_user())
+                ->withProperties(['detail' => 'REASON: '.$input->rejection_reason])
                 ->log('Requisition returned');
         
             return Response()->json(array('msg' => 'Success: requisition returned','data' => $requisition), 200);
+        }
+    }
+
+    public function deleteAllocation($id){
+        $allocation = RequisitionAllocation::findOrFail($id);
+        if($allocation->delete()){
+            $requisition = Requisition::find($allocation->requisition_id);
+            return response()->json(['msg'=>"Requisition removed",'requisition'=>$requisition], 200,array(),JSON_PRETTY_PRINT);
+        }
+        else {
+            return response()->json(['error'=>"Something went wrong"], 500,array(),JSON_PRETTY_PRINT);
+        }
+    }
+
+    /**
+     * Get document
+     */
+    public function getDocument($name){
+        try{
+            $ref = explode('doc_', $name)[0];
+            file_put_contents ( "C://Users//kennl//Documents//debug.txt" , PHP_EOL.$ref , FILE_APPEND);
+            $requisition = Requisition::where('ref', $ref)->firstOrFail();
+            $path           = '/requisitions/'.$requisition->ref.'/'.$name.'.pdf';
+            $path_info      = pathinfo($path);
+            $basename       = $path_info['basename'];
+            $file_contents  = FTP::connection()->readFile($path);
+            $response       = Response::make($file_contents, 200);
+            $response->header('Content-Type', $this->get_mime_type($basename));
+            return $response;  
+        }
+        catch (Exception $e){
+            file_put_contents ( "C://Users//kennl//Documents//debug.txt" , PHP_EOL.$e->getMessage() , FILE_APPEND);
+            $response       = Response::make("", 200);
+            $response->header('Content-Type', 'application/pdf');
+            return $response;  
         }
     }
 

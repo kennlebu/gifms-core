@@ -4,12 +4,14 @@ namespace App\Models\Requisitions;
 
 use App\Models\BaseModels\BaseModel;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Anchu\Ftp\Facades\Ftp;
 
 class Requisition extends BaseModel
 {
     use SoftDeletes;
 
     protected $dates = ['submitted_at'];
+    protected $appends = ['documents'];
 
     public function requested_by()
     {
@@ -44,5 +46,16 @@ class Requisition extends BaseModel
     public function approvals()
     {
         return $this->morphMany('App\Models\ApprovalsModels\Approval', 'approvable')->where('approver_id', '!=', 0)->orderBy('approval_level_id', 'asc');
+    }
+
+    public function getDocumentsAttribute(){
+        $sanitized_list = [];
+        $directory = '/requisitions/'.$this->ref.'/';
+        $listing = FTP::connection()->getDirListing($directory);
+        foreach($listing as $item){
+            $arr = explode('/',$item);
+            $sanitized_list[] = explode('.',$arr[count($arr)-1])[0];
+        }
+        return $sanitized_list;
     }
 }
