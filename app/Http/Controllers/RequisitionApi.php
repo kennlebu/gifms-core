@@ -528,7 +528,7 @@ class RequisitionApi extends Controller
             $user = $this->current_user();
             $statuses[] = [
                 'id'=>-1,
-                'status'=>'All my requisitions',
+                'status'=>'My requisitions',
                 'display_color'=>'#075b23a1',
                 'count'=>Requisition::where('requested_by_id',$user->id)->count()
             ];
