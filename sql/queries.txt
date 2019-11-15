@@ -1488,7 +1488,7 @@ VALUES ('Marked obsolete, pending PM confirmation', NULL, now(), now(), NULL);
 ALTER TABLE `assets`
 ADD `previous_status_id` int(11) NULL AFTER `program_manager_id`;
 
-===== Requisition statuses table
+~===== Requisition statuses table
 CREATE TABLE `requisition_statuses` (
   `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `status` text NULL,
@@ -1521,7 +1521,7 @@ ADD `approval_level_id` int NULL AFTER `display_color`;
 
 UPDATE `requisition_statuses` SET `approval_level_id` = '2' WHERE `id` = '2';
 
-===== Requisitions table
+~===== Requisitions table
 CREATE TABLE `requisitions` (
   `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `ref` varchar(20) NULL,
@@ -1537,7 +1537,7 @@ CREATE TABLE `requisitions` (
   `deleted_at` timestamp NULL
 );
 
-===== Requisition allocations table
+~===== Requisition allocations table
 CREATE TABLE `requisition_allocations` (
   `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `requisition_id` int NULL,
@@ -1554,7 +1554,7 @@ CREATE TABLE `requisition_allocations` (
 ALTER TABLE `requisition_allocations`
 CHANGE `percentage_allocated` `percentage_allocated` double NULL AFTER `requisition_id`;
 
-===== Requisition items table
+~===== Requisition items table
 CREATE TABLE `requisition_items` (
   `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `type` varchar(15) NULL,
@@ -1577,7 +1577,7 @@ CHANGE `updated_at` `updated_at` timestamp NULL AFTER `created_at`;
 ALTER TABLE `requisition_items`
 ADD `requisition_id` int NULL AFTER `id`;
 
-===== Requisition item statuses table
+~===== Requisition item statuses table
 CREATE TABLE `requisition_item_statuses` (
   `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `status` text NULL,
@@ -1595,12 +1595,12 @@ VALUES ('Invoice received', NULL);
 INSERT INTO `requisition_item_statuses` (`status`, `default`)
 VALUES ('Paid and completed', NULL);
 
-===== Add rejection columns to requisition table
+~===== Add rejection columns to requisition table
 ALTER TABLE `requisitions`
 ADD `returned_by_id` int NULL AFTER `submitted_at`,
 ADD `return_reason` text NULL AFTER `returned_by_id`;
 
-===== Add airfare staff to requisition items
+~===== Add airfare staff to requisition items
 ALTER TABLE `requisition_items`
 ADD `airfare_staff` varchar(10) NULL AFTER `status_id`;
 ALTER TABLE `requisition_items`

@@ -285,9 +285,9 @@ class RequisitionApi extends Controller
             $new_items = [];
             $old_items = RequisitionItem::where('requisition_id', $id)->pluck('id')->toArray();
             foreach($items as $i){
-                if($i['id']){
+                if(empty($i['id'])){
                     $item = new RequisitionItem();
-                    $item->requisition_id = $i['id'];
+                    $item->requisition_id = $requisition->id;
                     $item->status_id = 1;
                 }
                 else {
