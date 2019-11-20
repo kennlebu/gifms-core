@@ -66,7 +66,7 @@ class AllocationApi extends Controller
                 activity()
                    ->performedOn($allocation->allocatable)
                    ->causedBy($user)
-                   ->log('allocated');
+                   ->log('Allocated');
                 return Response()->json(array('success' => 'allocation added','allocation' => $allocation), 200);
             }
 

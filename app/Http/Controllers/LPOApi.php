@@ -30,12 +30,13 @@ use App\Mail\NotifyLpo;
 use App\Mail\NotifyLpoDispatch;
 use App\Mail\NotifyLpoCancellation;
 use App\Models\ApprovalsModels\Approval;
-use App\Models\ApprovalsModels\ApprovalLevel;
-use App\Models\StaffModels\Staff;
 use App\Models\SuppliesModels\SupplierRate;
 use App\Exceptions\NoLpoItemsException;
 use App\Exceptions\LpoQuotationAmountMismatchException;
 use App\Exceptions\ApprovalException;
+use App\Models\AllocationModels\Allocation;
+use App\Models\LPOModels\LpoItem;
+use App\Models\Requisitions\Requisition;
 use Excel;
 
 
@@ -100,17 +101,17 @@ class LPOApi extends Controller
 
         try{
             $lpo = new Lpo;
-            $lpo->requested_by_id                   =   (int)   $form['requested_by_id'];
-            $lpo->expense_desc                      =           $form['expense_desc'];
-            $lpo->expense_purpose                   =           $form['expense_purpose'];
-            $lpo->project_id                        =   (int)   $form['project_id'];
-            $lpo->account_id                        =   (int)   $form['account_id'];
+            $lpo->requested_by_id = (int) $form['requested_by_id'];
+            $lpo->expense_desc = $form['expense_desc'];
+            $lpo->expense_purpose = $form['expense_purpose'];
+            // $lpo->project_id                        =   (int)   $form['project_id'];
+            // $lpo->account_id                        =   (int)   $form['account_id'];
             if(!empty($form['currency_id'])) 
-            $lpo->currency_id                       =   (int)   $form['currency_id'];
-            $lpo->project_manager_id                =   (int)   $form['project_manager_id'];
-            $lpo->status_id                         =   $this->default_status;
+            $lpo->currency_id = (int) $form['currency_id'];
+            $lpo->project_manager_id = (int) $form['project_manager_id'];
+            $lpo->status_id = $this->default_status;
             if(!empty($form['quote_exempt_explanation']))
-            $lpo->quote_exempt_explanation          = $form['quote_exempt_explanation'];
+            $lpo->quote_exempt_explanation = $form['quote_exempt_explanation'];
             if(!empty($form['quote_exempt_details']))
             $lpo->quote_exempt_details = $form['quote_exempt_details'];
             if(!empty($form['expensive_quotation_reason']))
@@ -122,19 +123,62 @@ class LPOApi extends Controller
             $lpo->program_activity_id = $form['program_activity_id'];
 
             $user = JWTAuth::parseToken()->authenticate();
-            $lpo->request_action_by_id            =   (int)   $user->id;
-
+            $lpo->request_action_by_id = (int) $user->id;
 
             if($lpo->save()) {
-                if(!empty($form['lpo_type']) && $form['lpo_type']=='prenegotiated'){
-                    $lpo->ref = "CHAI/PLPO/#$lpo->id/".date_format($lpo->created_at,"Y/m/d");
+
+                $requisition = null;
+                if(!empty($form['requisition_id']) && (int) $form['requisition_id'] != 0){
+                    $lpo->requisition_id = $form['requisition_id'];
+                    $requisition = Requisition::findOrFail($form['requisition_id']);
+                    $allocation_purpose = '';
+                    $count = 0;
+    
+                    foreach($requisition->items as $item){
+                        $lpo_item = new LpoItem();
+                        $lpo_item->lpo_id = $lpo->id;
+                        $lpo_item->item = $item->service;
+                        $lpo_item->no_of_days = $item->no_of_days;
+                        $lpo_item->qty = $item->qty;
+                        $lpo_item->qty_description = $item->qty_description;
+                        $lpo_item->disableLogging();
+                        $lpo_item->save();
+                        if($count < 1){
+                            $allocation_purpose = $item->service;
+                        }
+                        else {
+                            $allocation_purpose = '; '.$item->service;
+                        }
+                    }
+                    $allocation_purpose = '; '.$requisition->purpose;
+
+                    foreach($requisition->allocations as $alloc){
+                        $allocation = new Allocation();
+                        $allocation->account_id = $alloc->account_id;
+                        $allocation->project_id = $alloc->project_id;
+                        $allocation->allocatable_id = $lpo->id;
+                        $allocation->allocatable_type = 'lpos';
+                        $allocation->percentage_allocated = $alloc->percentage_allocated;
+                        $allocation->allocation_purpose = $allocation_purpose;
+                        $allocation->objective_id = $alloc->objective_id;
+                        $allocation->allocated_by_id = $requisition->requested_by_id;
+                        $allocation->disableLogging();
+                        $allocation->save();
+                    }                   
                 }
-                else{
-                    $lpo->ref = "CHAI/LPO/#$lpo->id/".date_format($lpo->created_at,"Y/m/d");
-                }
+
+                // if(!empty($form['lpo_type']) && $form['lpo_type']=='prenegotiated'){
+                //     $lpo->ref = "CHAI/PLPO/#$lpo->id/".date_format($lpo->created_at,"Y/m/d");
+                // }
+                // else{
+                //     $lpo->ref = "CHAI/LPO/#$lpo->id/".date_format($lpo->created_at,"Y/m/d");
+                // }
+                $lpo_no = count($requisition->lpos) + 1;
+                $lpo->ref = $requisition->ref.'-LPO-'.$this->pad_with_zeros(2, $lpo_no);
+                $lpo->disableLogging();
                 $lpo->save();
 
-                return Response()->json(array('msg' => 'Success: lpo added','lpo' => Lpo::find((int)$lpo->id)), 200);
+                return Response()->json(array('msg' => 'Success: lpo added','lpo' => $lpo), 200);
             }
 
         }catch (JWTException $e){

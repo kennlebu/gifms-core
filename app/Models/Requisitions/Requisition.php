@@ -12,6 +12,7 @@ class Requisition extends BaseModel
 
     protected $dates = ['submitted_at'];
     protected $appends = ['documents'];
+    protected $hidden = ['updated_at', 'deleted_at'];
 
     public function requested_by()
     {
@@ -46,6 +47,11 @@ class Requisition extends BaseModel
     public function approvals()
     {
         return $this->morphMany('App\Models\ApprovalsModels\Approval', 'approvable')->where('approver_id', '!=', 0)->orderBy('approval_level_id', 'asc');
+    }
+
+    public function lpos()
+    {
+        return $this->hasMany('App\Models\LPOModels\LPO','requisition_id');
     }
 
     public function getDocumentsAttribute(){

@@ -153,6 +153,7 @@ class RequisitionApi extends Controller
             $requisition->program_manager_id = $request->program_manager_id;
             $requisition->status_id = 1;
             $requisition->submitted_at = date("Y-m-d H:i:s");
+            $requisition->objective_id = $request->objective_id;
             $requisition->save();
             $requisition->disableLogging();
             $requisition->ref = 'R-'.$this->pad_with_zeros(5,$requisition->id);
@@ -230,7 +231,7 @@ class RequisitionApi extends Controller
     public function show($id)
     {
         try{
-            $requisition = Requisition::with('status','requested_by','program_manager','items.status','allocations.allocated_by','allocations.project','allocations.account','logs.causer','approvals.approver')
+            $requisition = Requisition::with('status','allocation.objective','requested_by','program_manager','items.status','allocations.allocated_by','allocations.project','allocations.account','logs.causer','approvals.approver')
                                         ->find($id);
             return response()->json($requisition, 200,array(),JSON_PRETTY_PRINT);
         }
@@ -252,6 +253,7 @@ class RequisitionApi extends Controller
             $requisition = Requisition::findOrFail($id);
             $requisition->purpose = $request->purpose;
             $requisition->program_manager_id = $request->program_manager_id;
+            $requisition->objective_id = $request->objective_id;
             $requisition->save();
             // $requisition->disableLogging();
 

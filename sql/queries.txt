@@ -1595,6 +1595,8 @@ VALUES ('Invoice received', NULL);
 INSERT INTO `requisition_item_statuses` (`status`, `default`)
 VALUES ('Paid and completed', NULL);
 
+UPDATE `requisition_item_statuses` SET `status` = 'Awaiting ordering' WHERE `id` = '1';
+
 ~===== Add rejection columns to requisition table
 ALTER TABLE `requisitions`
 ADD `returned_by_id` int NULL AFTER `submitted_at`,
@@ -1605,3 +1607,14 @@ ALTER TABLE `requisition_items`
 ADD `airfare_staff` varchar(10) NULL AFTER `status_id`;
 ALTER TABLE `requisition_items`
 ADD `airfare_doc` text COLLATE 'latin1_swedish_ci' NULL AFTER `airfare_staff`;
+
+===== Add objective id column to requisitions table
+ALTER TABLE `requisitions`
+ADD `objective_id` int NULL AFTER `return_reason`;
+
+ALTER TABLE `lpos`
+ADD `requisition_id` int NULL AFTER `program_activity_id`,
+CHANGE `updated_at` `updated_at` timestamp NOT NULL DEFAULT current_timestamp() AFTER `created_at`;
+
+ALTER TABLE `requisition_items`
+ADD `no_of_days` int NULL AFTER `qty_description`;

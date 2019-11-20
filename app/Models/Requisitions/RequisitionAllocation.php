@@ -23,4 +23,9 @@ class RequisitionAllocation extends BaseModel
     {
         return $this->belongsTo('App\Models\AccountingModels\Account');
     }
+    
+    public function objective()
+    {
+        return $this->belongsTo('App\Models\ReportModels\ReportingObjective','objective_id');
+    }
 }
