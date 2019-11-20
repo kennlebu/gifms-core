@@ -897,6 +897,7 @@ Route::GET('/roles', 'RolesApi@rolesGet')->middleware('jwt.auth');
  * Output-Formats: [application/json, application/xml]
  */
 Route::PUT('/user_roles', 'RolesApi@assignUserRoles')->middleware('jwt.auth');
+Route::PUT('/user_permissions', 'RolesApi@assignRolePermissions')->middleware('jwt.auth');
 
 
 
