@@ -1618,3 +1618,16 @@ CHANGE `updated_at` `updated_at` timestamp NOT NULL DEFAULT current_timestamp() 
 
 ALTER TABLE `requisition_items`
 ADD `no_of_days` int NULL AFTER `qty_description`;
+
+===== Add unit column to supplier services
+ALTER TABLE `supplier_services`
+ADD `unit` varchar(100) NULL AFTER `daily_charge`,
+CHANGE `updated_at` `updated_at` timestamp NULL AFTER `created_at`;
+
+===== Add requisition item id to lpo items tableALTER TABLE `lpo_items`
+ADD `requisition_item_id` int NULL AFTER `no_of_days`,
+CHANGE `updated_at` `updated_at` timestamp NOT NULL DEFAULT current_timestamp() AFTER `created_at`;
+
+===== Add requisition to mobile paymentsALTER TABLE `mobile_payments`
+ADD `requisition_id` int NULL AFTER `program_activity_id`,
+CHANGE `updated_at` `updated_at` timestamp NOT NULL DEFAULT current_timestamp() AFTER `created_at`;

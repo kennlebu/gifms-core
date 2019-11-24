@@ -118,6 +118,10 @@ class Lpo extends BaseModel
     {
         return $this->belongsTo('App\Models\ActivityModels\Activity','program_activity_id');
     }
+    public function requisition()
+    {
+        return $this->belongsTo('App\Models\Requisitions\Requisition','requisition_id');
+    }
 
 
 

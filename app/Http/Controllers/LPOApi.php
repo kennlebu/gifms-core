@@ -37,6 +37,7 @@ use App\Exceptions\ApprovalException;
 use App\Models\AllocationModels\Allocation;
 use App\Models\LPOModels\LpoItem;
 use App\Models\Requisitions\Requisition;
+use App\Models\Requisitions\RequisitionItem;
 use Excel;
 
 
@@ -136,11 +137,13 @@ class LPOApi extends Controller
     
                     foreach($requisition->items as $item){
                         $lpo_item = new LpoItem();
+                        $item = RequisitionItem::findOrFail($item);
                         $lpo_item->lpo_id = $lpo->id;
                         $lpo_item->item = $item->service;
                         $lpo_item->no_of_days = $item->no_of_days;
                         $lpo_item->qty = $item->qty;
                         $lpo_item->qty_description = $item->qty_description;
+                        $lpo_item->requisition_item_id = $item;
                         $lpo_item->disableLogging();
                         $lpo_item->save();
                         if($count < 1){
@@ -149,6 +152,7 @@ class LPOApi extends Controller
                         else {
                             $allocation_purpose = '; '.$item->service;
                         }
+                        $count += 1;
                     }
                     $allocation_purpose = '; '.$requisition->purpose;
 
@@ -333,26 +337,44 @@ class LPOApi extends Controller
      */
     public function recallLpo($lpo_id)
     {
-        $lpo = Lpo::find($lpo_id);        
+        try{
+            $lpo = Lpo::find($lpo_id);
 
-        // Ensure LPO is in the recallable statuses
-        if(!in_array($lpo->status_id, [13,3,4,5])){
-            return response()->json(['msg'=>"you do not have permission to do this"], 403, array(), JSON_PRETTY_PRINT);
-        }
+            // Ensure LPO is in the recallable statuses
+            if(!in_array($lpo->status_id, [13,3,4,5])){
+                return response()->json(['msg'=>"you do not have permission to do this"], 403, array(), JSON_PRETTY_PRINT);
+            }
 
-        $lpo->status_id = 11;
+            $lpo->status_id = 11;
+            $lpo->disableLogging(); //! Do not log the update  
+            $lpo->save();
 
-        // Logging recall
-        activity()
-            ->performedOn($lpo)
-            ->causedBy($this->current_user())
-            ->log('LPO recalled');
+            // Logging recall
+            activity()
+                ->performedOn($lpo)
+                ->causedBy($this->current_user())
+                ->log('LPO recalled');
 
-        $lpo->disableLogging(); //! Do not log the update        
-        if($lpo->save()){
+            if(!empty($lpo->requisition_id)){
+                foreach($lpo->items as $item){
+                    $requisition_item = RequisitionItem::findOrFail($item->id);
+                    $requisition_item->status_id = 1;
+                    $requisition_item->disableLogging();
+                    $requisition_item->save();
+                }
+
+                // Logging item recall
+                activity()
+                    ->performedOn(Requisition::find($lpo->requisition_id))
+                    ->causedBy($this->current_user())
+                    ->withProperties(['detail'=>'LPO '.$lpo->ref.' has been recalled'])
+                    ->log('LPO recalled');
+                }
+        
             return response()->json(['msg'=>"lpo recalled"], 200,array(),JSON_PRETTY_PRINT);
-        }else{
-            return response()->json(['error'=>"could not recall lpo"], 404,array(),JSON_PRETTY_PRINT);
+        }
+        catch(Exception $e){
+            return response()->json(['error'=>"could not recall lpo",'msg'=>$e->getMessage()], 404,array(),JSON_PRETTY_PRINT);
         }
     }
 
@@ -745,7 +767,8 @@ class LPOApi extends Controller
                                             'approvals.approver','approvals.approval_level',
                                             'logs.causer','logs.subject',
                                             'deliveries',
-                                            'program_activity'
+                                            'program_activity',
+                                            'requisition'
                                 )->findOrFail($lpo_id);
            
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
@@ -1240,6 +1263,7 @@ class LPOApi extends Controller
             $data[$key]['deliveries']               = $lpo->deliveries;
             $data[$key]['totals']                   = $lpo->totals;
             $data[$key]['program_activity']         = $lpo->program_activity;
+            $data[$key]['requisition']              = $lpo->requisition;
 
             if(!empty($lpo->preffered_quotation_id) && !empty($lpo->preffered_quotation->supplier_id)){
                 if($lpo->preffered_quotation_id > 0 && $lpo->preffered_quotation->supplier_id > 0 ){

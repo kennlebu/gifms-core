@@ -10,6 +10,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Anchu\Ftp\Facades\Ftp;
 use App\Models\ApprovalsModels\Approval;
+use App\Models\SuppliesModels\SupplierService;
 use Illuminate\Support\Facades\Request as IlluminateRequest;
 use Illuminate\Support\Facades\Response;
 
@@ -23,7 +24,7 @@ class RequisitionApi extends Controller
     public function index()
     {
         $input = IlluminateRequest::all();
-        $requisitions = Requisition::with('items','allocations','requested_by','status','program_manager');
+        $requisitions = Requisition::with('items.service','allocations','requested_by','status','program_manager');
         $user = $this->current_user();
 
         $response_dt;
@@ -178,8 +179,13 @@ class RequisitionApi extends Controller
                 $item->requisition_id = $requisition->id;
                 $item->type = $i->type ?? 'extra';
                 $item->service = $i->service;
-                $item->qty_description = $i->qty_description;
+                $item->qty_description = $i->qty_description ?? null;
+                if(!empty($i->service_id)){
+                    $s = SupplierService::findOrFail($i->service_id);
+                    $item->qty_description = $i->qty . ' ' . $s->unit;
+                }
                 $item->qty = $i->qty;
+                $item->no_of_days = $i->no_of_days ?? null;
                 $item->start_date = date('Y-m-d', strtotime($i->dates[0]));
                 $item->end_date = date('Y-m-d', strtotime($i->dates[1]));
                 $item->status_id = 1;
@@ -231,7 +237,7 @@ class RequisitionApi extends Controller
     public function show($id)
     {
         try{
-            $requisition = Requisition::with('status','allocation.objective','requested_by','program_manager','items.status','allocations.allocated_by','allocations.project','allocations.account','logs.causer','approvals.approver')
+            $requisition = Requisition::with('status','allocations.objective','requested_by','program_manager','items.supplier_service','items.status','allocations.allocated_by','allocations.project','allocations.account','logs.causer','approvals.approver')
                                         ->find($id);
             return response()->json($requisition, 200,array(),JSON_PRETTY_PRINT);
         }
@@ -297,8 +303,13 @@ class RequisitionApi extends Controller
                 }
                 $item->type = $i['type'] ?? 'extra';
                 $item->service = $i['service'];
-                $item->qty_description = $i['qty_description'];
+                $item->qty_description = $i['qty_description'] ?? null;
                 $item->qty = $i['qty'];
+                $item->no_of_days = $i->no_of_days ?? null;                
+                if(!empty($i->service_id)){
+                    $s = SupplierService::findOrFail($i->service_id);
+                    $item->qty_description = $i->qty . ' ' . $s->unit;
+                }
                 // $item->start_date = date('Y-m-d', strtotime($i['dates'][0]));
                 // $item->end_date = date('Y-m-d', strtotime($i['dates'][1]));
                 $item->disableLogging();
