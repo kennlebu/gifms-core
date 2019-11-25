@@ -224,7 +224,7 @@ class LPOItemApi extends Controller
     public function getLpoItemById($lpo_item_id)
     {
        try{
-            $response = LpoItem::findOrFail($lpo_item_id);
+            $response = LpoItem::with('lpo')->findOrFail($lpo_item_id);
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
 
         }catch(Exception $e){

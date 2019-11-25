@@ -135,7 +135,7 @@ class LPOApi extends Controller
                     $allocation_purpose = '';
                     $count = 0;
     
-                    foreach($requisition->items as $item){
+                    foreach($form['requisition_items'] as $item){
                         $lpo_item = new LpoItem();
                         $item = RequisitionItem::findOrFail($item);
                         $lpo_item->lpo_id = $lpo->id;

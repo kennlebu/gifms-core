@@ -13,8 +13,12 @@ class LpoItem extends BaseModel
     use SoftDeletes;
 
 
-    protected $appends = ['calculated_unit_price','calculated_vat','calculated_sub_total', 'calculated_total'];
-
+	protected $appends = ['calculated_unit_price','calculated_vat','calculated_sub_total', 'calculated_total'];
+	
+    public function lpo()
+    {
+        return $this->belongsTo('App\Models\LPOModels\Lpo');
+    }
 
     public function getCalculatedUnitPriceAttribute()
     {	

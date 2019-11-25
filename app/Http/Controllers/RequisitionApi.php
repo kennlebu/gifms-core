@@ -24,7 +24,7 @@ class RequisitionApi extends Controller
     public function index()
     {
         $input = IlluminateRequest::all();
-        $requisitions = Requisition::with('items.service','allocations','requested_by','status','program_manager');
+        $requisitions = Requisition::with('items.supplier_service','allocations','requested_by','status','program_manager');
         $user = $this->current_user();
 
         $response_dt;
@@ -237,7 +237,8 @@ class RequisitionApi extends Controller
     public function show($id)
     {
         try{
-            $requisition = Requisition::with('status','allocations.objective','requested_by','program_manager','items.supplier_service','items.status','allocations.allocated_by','allocations.project','allocations.account','logs.causer','approvals.approver')
+            $requisition = Requisition::with('status','allocations.objective','requested_by','program_manager','items.supplier_service','items.status','allocations.allocated_by',
+                                            'allocations.project','allocations.account','logs.causer','approvals.approver','logs.causer')
                                         ->find($id);
             return response()->json($requisition, 200,array(),JSON_PRETTY_PRINT);
         }
