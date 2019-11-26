@@ -154,7 +154,7 @@ class LPOApi extends Controller
                         }
                         $count += 1;
                     }
-                    $allocation_purpose = '; '.$requisition->purpose;
+                    // $allocation_purpose = '; '.$requisition->purpose;
 
                     foreach($requisition->allocations as $alloc){
                         $allocation = new Allocation();
@@ -768,7 +768,9 @@ class LPOApi extends Controller
                                             'logs.causer','logs.subject',
                                             'deliveries',
                                             'program_activity',
-                                            'requisition'
+                                            'requisition',
+                                            'allocations.project',
+                                            'allocations.account'
                                 )->findOrFail($lpo_id);
            
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
