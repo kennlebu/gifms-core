@@ -169,6 +169,7 @@ class RequisitionApi extends Controller
                 $allocation->allocated_by_id = $requisition->requested_by_id;
                 $allocation->project_id = $alloc->project_id;
                 $allocation->account_id = $alloc->account_id;
+                $allocation->objective_id = $alloc->objective_id;
                 $allocation->disableLogging();
                 $allocation->save();
             }
@@ -280,6 +281,7 @@ class RequisitionApi extends Controller
                 $allocation->allocated_by_id = $requisition['requested_by_id'];
                 $allocation->project_id = $alloc['project_id'];
                 $allocation->account_id = $alloc['account_id'];
+                $allocation->objective_id = $alloc['objective_id'];
                 $allocation->disableLogging();
                 $allocation->save();
                 $new_allocations[] = $allocation->id;
