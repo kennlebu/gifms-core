@@ -1608,26 +1608,37 @@ ADD `airfare_staff` varchar(10) NULL AFTER `status_id`;
 ALTER TABLE `requisition_items`
 ADD `airfare_doc` text COLLATE 'latin1_swedish_ci' NULL AFTER `airfare_staff`;
 
-===== Add objective id column to requisitions table
+~===== Add objective id column to requisitions table
 ALTER TABLE `requisitions`
 ADD `objective_id` int NULL AFTER `return_reason`;
 
 ALTER TABLE `lpos`
 ADD `requisition_id` int NULL AFTER `program_activity_id`,
-CHANGE `updated_at` `updated_at` timestamp NOT NULL DEFAULT current_timestamp() AFTER `created_at`;
+CHANGE `updated_at` `updated_at` timestamp NULL DEFAULT current_timestamp() AFTER `created_at`;
 
 ALTER TABLE `requisition_items`
 ADD `no_of_days` int NULL AFTER `qty_description`;
 
-===== Add unit column to supplier services
+~===== Add unit column to supplier services
 ALTER TABLE `supplier_services`
 ADD `unit` varchar(100) NULL AFTER `daily_charge`,
 CHANGE `updated_at` `updated_at` timestamp NULL AFTER `created_at`;
 
-===== Add requisition item id to lpo items tableALTER TABLE `lpo_items`
+~===== Add requisition item id to lpo items table
+ALTER TABLE `lpo_items`
 ADD `requisition_item_id` int NULL AFTER `no_of_days`,
-CHANGE `updated_at` `updated_at` timestamp NOT NULL DEFAULT current_timestamp() AFTER `created_at`;
+CHANGE `updated_at` `updated_at` timestamp NULL DEFAULT current_timestamp() AFTER `created_at`;
 
-===== Add requisition to mobile paymentsALTER TABLE `mobile_payments`
+~===== Add requisition to mobile payments
+ALTER TABLE `mobile_payments`
 ADD `requisition_id` int NULL AFTER `program_activity_id`,
-CHANGE `updated_at` `updated_at` timestamp NOT NULL DEFAULT current_timestamp() AFTER `created_at`;
+CHANGE `updated_at` `updated_at` timestamp NULL DEFAULT current_timestamp() AFTER `created_at`;
+
+===== Requisition documents table
+CREATE TABLE `requisition_documents` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `title` text NULL,
+  `type` varchar(20) NULL,
+  `requisition_id` int NULL,
+  `uploaded_by_id` int NULL
+);

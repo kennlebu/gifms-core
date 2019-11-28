@@ -143,7 +143,7 @@ class LPOApi extends Controller
                         $lpo_item->no_of_days = $item->no_of_days;
                         $lpo_item->qty = $item->qty;
                         $lpo_item->qty_description = $item->qty_description;
-                        $lpo_item->requisition_item_id = $item;
+                        $lpo_item->requisition_item_id = $item->id;
                         $lpo_item->disableLogging();
                         $lpo_item->save();
                         if($count < 1){
@@ -153,6 +153,9 @@ class LPOApi extends Controller
                             $allocation_purpose = '; '.$item->service;
                         }
                         $count += 1;
+                        $item->status_id = 2;
+                        $item->disableLogging();
+                        $item->save();
                     }
                     // $allocation_purpose = '; '.$requisition->purpose;
 
