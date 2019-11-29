@@ -765,7 +765,7 @@ class LPOApi extends Controller
                                             'currency',
                                             'quotations',
                                             'preffered_quotation.supplier',
-                                            'items',
+                                            'items.requisition_item',
                                             'terms',
                                             'approvals.approver','approvals.approval_level',
                                             'logs.causer','logs.subject',

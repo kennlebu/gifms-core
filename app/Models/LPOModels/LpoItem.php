@@ -18,6 +18,10 @@ class LpoItem extends BaseModel
     public function lpo()
     {
         return $this->belongsTo('App\Models\LPOModels\Lpo');
+	}
+	public function requisition_item()
+    {
+        return $this->belongsTo('App\Models\Requisitions\RequisitionItem', 'requisition_item_id');
     }
 
     public function getCalculatedUnitPriceAttribute()

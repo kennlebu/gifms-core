@@ -1634,6 +1634,10 @@ ALTER TABLE `mobile_payments`
 ADD `requisition_id` int NULL AFTER `program_activity_id`,
 CHANGE `updated_at` `updated_at` timestamp NULL DEFAULT current_timestamp() AFTER `created_at`;
 
+~===== Add objectives to requisition allocations
+ALTER TABLE `requisition_allocations`
+ADD `objective_id` int(11) NULL AFTER `account_id`;
+
 ===== Requisition documents table
 CREATE TABLE `requisition_documents` (
   `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -1642,7 +1646,3 @@ CREATE TABLE `requisition_documents` (
   `requisition_id` int NULL,
   `uploaded_by_id` int NULL
 );
-
-===== Add objectives to requisition allocations
-ALTER TABLE `requisition_allocations`
-ADD `objective_id` int(11) NULL AFTER `account_id`;
