@@ -99,4 +99,34 @@ class Staff extends BaseModel
     {
         return $this->belongsTo('App\Models\BankingModels\BankBranch','bank_branch_id');
     }
+    public function getMobileNoAttribute($value)
+    {
+        $no = preg_replace("/[^0-9]/", "", $value);
+        // if(strlen($no)==9 && substr($no,0,1)=='7'){
+
+        // }
+        if(strlen($no)==12 && substr($no,0,3)=='254'){
+            $no = substr($no,3);
+        }
+        elseif(strlen($no)==10 && substr($no,0,2)=='07'){
+            $no = substr($no,1);
+        }
+
+        return $no;
+    }
+    public function getMpesaNoAttribute($value)
+    {
+        $no = preg_replace("/[^0-9]/", "", $value);
+        // if(strlen($no)==9 && substr($no,0,1)=='7'){
+
+        // }
+        if(strlen($no)==12 && substr($no,0,3)=='254'){
+            $no = substr($no,3);
+        }
+        elseif(strlen($no)==10 && substr($no,0,2)=='07'){
+            $no = substr($no,1);
+        }
+
+        return $no;
+    }
 }

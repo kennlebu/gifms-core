@@ -424,20 +424,21 @@ class MobilePaymentApi extends Controller
                 );
                 
                 // Add the data to the csv_data array
-                array_push($csv_data, $data);}
+                $csv_data[] = $data;
+            }
 
             /* Get PDF data */                    
             $deputy_director = Staff::findOrFail((int) Config::get('app.director_id'));
             $director = Staff::findOrFail(37); //TODO: Pick this from config
-            $pdf_data = array('mobile_payment' => $mobile_payment,
-                'addressee'=>'Maureen Adega',
-                'deputy_director'=>$deputy_director,
-                'director'=>$director
-                // 'our_ref'=>$voucher_number
-            );
+            // $pdf_data = array('mobile_payment' => $mobile_payment,
+            //     'addressee'=>'Maureen Adega',
+            //     'deputy_director'=>$deputy_director,
+            //     'director'=>$director
+            //     // 'our_ref'=>$voucher_number
+            // );
 
             /* Send Email */
-            Mail::queue(new MobilePaymentInstructBank($mobile_payment, $csv_data, $pdf_data));
+            Mail::queue(new MobilePaymentInstructBank($mobile_payment, $csv_data, null));
 
             $log = 'Sent to bank';
             if($mobile_payment->status_id == 1 || $mobile_payment->status_id == 14 || $mobile_payment->status_id == 7){
@@ -654,8 +655,6 @@ class MobilePaymentApi extends Controller
             })->get()->toArray();
 
             foreach ($data as $key => $value) {
-                $payee = new MobilePaymentPayee();
-
                 if(strlen($value['phone'])==9 && substr($value['phone'],0,1)=='7'){
                     
                 }else{

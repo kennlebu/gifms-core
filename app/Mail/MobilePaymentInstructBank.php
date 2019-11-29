@@ -16,7 +16,6 @@ class MobilePaymentInstructBank extends Mailable
 
     protected $mobile_payment;
     protected $csv_data;
-    protected $pdf_data;
     protected $bank_cc;
     protected $chai_cc;
     protected $bank_to;
@@ -30,7 +29,6 @@ class MobilePaymentInstructBank extends Mailable
     {
         $this->mobile_payment = $mobile_payment;
         $this->csv_data = $csv_data;
-        $this->pdf_data = $pdf_data;
         
         $this->requester = Staff::findOrFail($mobile_payment->requested_by_id);
         $this->PM = Staff::findOrFail($mobile_payment->project_manager_id);
