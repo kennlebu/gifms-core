@@ -315,8 +315,8 @@ class RequisitionApi extends Controller
                     $s = SupplierService::findOrFail($i->service_id);
                     $item->qty_description = $i->qty . ' ' . $s->unit;
                 }
-                // $item->start_date = date('Y-m-d', strtotime($i['dates'][0]));
-                // $item->end_date = date('Y-m-d', strtotime($i['dates'][1]));
+                $item->start_date = date('Y-m-d', strtotime($i['dates'][0]));
+                $item->end_date = date('Y-m-d', strtotime($i['dates'][1]));
                 $item->disableLogging();
                 $item->save();
                 $new_items[] = $item->id;
