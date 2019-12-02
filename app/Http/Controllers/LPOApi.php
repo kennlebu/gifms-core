@@ -127,10 +127,12 @@ class LPOApi extends Controller
             $lpo->request_action_by_id = (int) $user->id;
 
             if($lpo->save()) {
+                $lpo->disableLogging();
 
                 $requisition = null;
                 if(!empty($form['requisition_id']) && (int) $form['requisition_id'] != 0){
                     $lpo->requisition_id = $form['requisition_id'];
+                    $lpo->save();
                     $requisition = Requisition::findOrFail($form['requisition_id']);
                     $allocation_purpose = '';
                     $count = 0;
@@ -182,7 +184,6 @@ class LPOApi extends Controller
                 // }
                 $lpo_no = count($requisition->lpos) + 1;
                 $lpo->ref = $requisition->ref.'-LPO-'.$this->pad_with_zeros(2, $lpo_no);
-                $lpo->disableLogging();
                 $lpo->save();
 
                 return Response()->json(array('msg' => 'Success: lpo added','lpo' => $lpo), 200);
@@ -309,11 +310,34 @@ class LPOApi extends Controller
     */
     public function deleteLpo($lpo_id)
     {
-        $deleted = Lpo::destroy($lpo_id);
-        if($deleted){
+        try {
+            $lpo = Lpo::find($lpo_id);
+
+            if(!empty($lpo->requisition_id)){
+                foreach($lpo->items as $item){
+                    $requisition_item = RequisitionItem::findOrFail($item->requisition_item_id);
+                    $requisition_item->status_id = 1;
+                    $requisition_item->disableLogging();
+                    $requisition_item->save();
+                }
+
+                // Logging item recall
+                activity()
+                    ->performedOn(Requisition::find($lpo->requisition_id))
+                    ->causedBy($this->current_user())
+                    // ->withProperties(['detail'=>'LPO '.$lpo->ref.' has been deleted'])
+                    ->log('LPO deleted');
+            }
+
+            $lpo->delete();
+
+            // Delete the items too
+            LpoItem::where('lpo_id', $lpo_id)->delete();
+
             return response()->json(['msg'=>"lpo deleted"], 200,array(),JSON_PRETTY_PRINT);
-        }else{
-            return response()->json(['error'=>"Something went wrong"], 500,array(),JSON_PRETTY_PRINT);
+        }
+        catch(Exception $e) {
+            return response()->json(['error'=>"Something went wrong", 'msg'=>$e->getMessage()], 500,array(),JSON_PRETTY_PRINT);
         }
 
     }
@@ -360,7 +384,7 @@ class LPOApi extends Controller
 
             if(!empty($lpo->requisition_id)){
                 foreach($lpo->items as $item){
-                    $requisition_item = RequisitionItem::findOrFail($item->id);
+                    $requisition_item = RequisitionItem::findOrFail($item->requisition_item_id);
                     $requisition_item->status_id = 1;
                     $requisition_item->disableLogging();
                     $requisition_item->save();
@@ -372,7 +396,7 @@ class LPOApi extends Controller
                     ->causedBy($this->current_user())
                     ->withProperties(['detail'=>'LPO '.$lpo->ref.' has been recalled'])
                     ->log('LPO recalled');
-                }
+            }
         
             return response()->json(['msg'=>"lpo recalled"], 200,array(),JSON_PRETTY_PRINT);
         }
@@ -418,6 +442,22 @@ class LPOApi extends Controller
         $lpo->disableLogging(); //! Do not log the update
         
         if($lpo->save()){
+            if(!empty($lpo->requisition_id)){
+                foreach($lpo->items as $item){
+                    $requisition_item = RequisitionItem::findOrFail($item->requisition_item_id);
+                    $requisition_item->status_id = 1;
+                    $requisition_item->disableLogging();
+                    $requisition_item->save();
+                }
+
+                // Logging item recall
+                activity()
+                    ->performedOn(Requisition::find($lpo->requisition_id))
+                    ->causedBy($this->current_user())
+                    ->withProperties(['detail'=>'LPO '.$lpo->ref.' has been recalled'])
+                    ->log('LPO recalled');
+            }
+
             Mail::queue(new NotifyLpoCancellation($lpo));
             return response()->json(['msg'=>"lpo cancelled"], 200,array(),JSON_PRETTY_PRINT);
         }else{
@@ -779,7 +819,7 @@ class LPOApi extends Controller
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
 
         }catch(Exception $e){
-            $response =  ["error"=>"lpo could not be found"];
+            $response =  ["error"=>"Something went wrong",'msg'=>$e->getMessage(),'trace'=>$e->getTraceAsString()];
             return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
         }
     }
