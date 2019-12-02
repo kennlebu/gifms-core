@@ -349,11 +349,7 @@ class SupplierRateApi extends Controller
     public function findVendors(){
         $input = Request::all();
         //query builder
-        $qb = DB::table('supplier_rates');
-        $qb->leftJoin('suppliers', 'supplier_rates.supplier_id', '=', 'suppliers.id');
-        $qb->select('supplier_rates.*');
-
-        $qb->whereNull('supplier_rates.deleted_at');
+        $qb = SupplierRate::with('supplier.county','currency','terms', 'service');
 
         $response;
         $response_dt;
@@ -366,19 +362,15 @@ class SupplierRateApi extends Controller
             $county_ids = [];
             foreach($service_list as $service){
                 $service_ids[] = $service['id'];
-                $county_ids[] = $service['county_id'];
+                if(!empty($service['county_id'])) $county_ids[] = $service['county_id'];
             }
             $service_id_count = count($service_ids);
-            $qb->where('suppliers.county_id', $county_ids[0]);
-            $qb->whereIn('supplier_rates.service_id', $service_ids);            
+            if(!empty($county_ids)) $qb->where('suppliers.county_id', $county_ids[0]);
+            $qb = $qb->whereIn('supplier_rates.service_id', $service_ids);            
         }
 
-        $sql            = SupplierRate::bind_presql($qb->toSql(),$qb->getBindings());
-        $response       = json_decode(json_encode(DB::select($sql)), true);
-        if(!array_key_exists('lean', $input)){
-            $response       = $this->append_relationships_objects($response);
-            $response       = $this->append_relationships_nulls($response);
-        }
+        $response = $qb->get();
+        $response = json_decode(json_encode($response), true);
         
         $final_response = [];
         $service_list = $input['services'];
@@ -400,7 +392,7 @@ class SupplierRateApi extends Controller
                 $subtotal = 0;
                 $subtotal = $response[$key]['rate'] * $qty;
                 if(!empty($no_of_days)) $subtotal *= $no_of_days;
-                array_push($items, array(
+                $items[] = [
                     'service'=>$response[$key]['service'], 
                     'service_id'=>$response[$key]['service_id'], 
                     'rate'=>$response[$key]['rate'],
@@ -411,8 +403,7 @@ class SupplierRateApi extends Controller
                     'daily_charge'=>$response[$key]['daily_charge'],
                     'qty'=>$qty,
                     'no_of_days'=>$no_of_days
-                    )
-                );
+                ];
             }
             elseif($response[$key]['supplier_id'] != $prev_supplier_id && $prev_supplier_id != 0){
                 $final_response[] = array(
@@ -462,7 +453,7 @@ class SupplierRateApi extends Controller
         $real_final_response = [];
         foreach($final_response as $key => $value){
             if(count($final_response[$key]['items']) == $service_id_count){
-                array_push($real_final_response, $final_response[$key]);
+                $real_final_response[] = $final_response[$key];
             }
         }
         
