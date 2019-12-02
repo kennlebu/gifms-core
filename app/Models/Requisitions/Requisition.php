@@ -51,7 +51,7 @@ class Requisition extends BaseModel
 
     public function lpos()
     {
-        return $this->hasMany('App\Models\LPOModels\LPO','requisition_id');
+        return $this->hasMany('App\Models\LPOModels\Lpo','requisition_id');
     }
 
     public function getDocumentsAttribute(){
