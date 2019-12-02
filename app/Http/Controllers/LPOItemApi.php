@@ -33,7 +33,6 @@ class LPOItemApi extends Controller
     {
         try{
             $form = Request::all();
-                file_put_contents ( "C://Users//kennl//Documents//debug.txt" , PHP_EOL.json_encode($form) , FILE_APPEND);
             if(array_key_exists('requisition_item_id', $form) && !empty($form['requisition_item_id'])){
                 $lpo_item = LpoItem::where('requisition_item_id', $form['requisition_item_id'])
                                     ->where('lpo_id', $form['lpo_id'])->first();

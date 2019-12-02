@@ -510,7 +510,6 @@ class RequisitionApi extends Controller
     public function getDocument($name){
         try{
             $ref = explode('doc_', $name)[0];
-            file_put_contents ( "C://Users//kennl//Documents//debug.txt" , PHP_EOL.$ref , FILE_APPEND);
             $requisition = Requisition::where('ref', $ref)->firstOrFail();
             $path           = '/requisitions/'.$requisition->ref.'/'.$name.'.pdf';
             $path_info      = pathinfo($path);
@@ -521,7 +520,6 @@ class RequisitionApi extends Controller
             return $response;  
         }
         catch (Exception $e){
-            file_put_contents ( "C://Users//kennl//Documents//debug.txt" , PHP_EOL.$e->getMessage() , FILE_APPEND);
             $response       = Response::make("", 200);
             $response->header('Content-Type', 'application/pdf');
             return $response;  
