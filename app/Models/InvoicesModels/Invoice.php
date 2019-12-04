@@ -36,7 +36,6 @@ class Invoice extends BaseModel
 
 
     protected static $logAttributes = [
-
         'ref',
         'expense_desc',
         'expense_purpose',

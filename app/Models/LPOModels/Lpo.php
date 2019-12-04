@@ -30,7 +30,7 @@ class Lpo extends BaseModel
 
     protected $dates = ['created_at','updated_at','deleted_at'];
 
-    protected $appends = ['amount','vats','sub_totals','totals'];
+    protected $appends = ['amount','vats','sub_totals','totals','preferred_supplier'];
  
 
 
@@ -125,6 +125,17 @@ class Lpo extends BaseModel
     public function allocations()
     {
         return $this->morphMany('App\Models\AllocationModels\Allocation', 'allocatable')->orderBy('created_at','asc');
+    }
+    public function getPreferredSupplierAttribute()
+    {
+        $supplier = null;
+        if($this->lpo_type == 'prenegotiated'){
+            $supplier = $this->supplier;
+        }
+        else {
+            $supplier = $this->preffered_quotation->supplier;
+        }
+        return $supplier;
     }
 
 

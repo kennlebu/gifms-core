@@ -16,6 +16,11 @@ class RequisitionItem extends BaseModel
         return $this->belongsTo('App\Models\SuppliesModels\SupplierService','service_id');
     }
 
+    public function county()
+    {
+        return $this->belongsTo('App\Models\LookupModels\County','county_id');
+    }
+
     public function status()
     {
         return $this->belongsTo('App\Models\Requisitions\RequisitionItemStatus','status_id');

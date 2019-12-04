@@ -5,14 +5,19 @@ namespace App\Models\Requisitions;
 use App\Models\BaseModels\BaseModel;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Anchu\Ftp\Facades\Ftp;
+use App\Models\ClaimsModels\Claim;
+use App\Models\InvoicesModels\Invoice;
+use App\Models\LPOModels\Lpo;
+use App\Models\MobilePaymentModels\MobilePayment;
 
 class Requisition extends BaseModel
 {
     use SoftDeletes;
 
     protected $dates = ['submitted_at'];
-    protected $appends = ['documents'];
+    protected $appends = ['documents','transactions'];
     protected $hidden = ['updated_at', 'deleted_at'];
+    protected $guarded = [];
 
     public function requested_by()
     {
@@ -63,5 +68,22 @@ class Requisition extends BaseModel
             $sanitized_list[] = explode('.',$arr[count($arr)-1])[0];
         }
         return $sanitized_list;
+    }
+
+    public function getTransactionsAttribute(){
+        $list = [];
+        $lpos = Lpo::with('supplier','currency','status')->where('requisition_id', $this->id)->get();
+        $list['lpos'] = $lpos;
+
+        $invoices = Invoice::with('supplier','currency','status')->where('requisition_id', $this->id)->get();
+        $list['invoices'] = $invoices;
+
+        $claims = Claim::with('status','requested_by','currency')->where('requisition_id', $this->id)->get();
+        $list['claims'] = $claims;
+
+        $mpesas = MobilePayment::with('status','currency')->where('requisition_id', $this->id)->get();
+        $list['mobile_payments'] = $mpesas;
+
+        return $list;
     }
 }

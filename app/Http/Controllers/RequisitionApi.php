@@ -24,7 +24,7 @@ class RequisitionApi extends Controller
     public function index()
     {
         $input = IlluminateRequest::all();
-        $requisitions = Requisition::with('items.supplier_service','allocations','requested_by','status','program_manager');
+        $requisitions = Requisition::with('items.supplier_service','items.county','allocations','requested_by','status','program_manager');
         $user = $this->current_user();
 
         $response_dt;
@@ -182,6 +182,7 @@ class RequisitionApi extends Controller
                 $item->service = $i->service;
                 $item->service_id = $i->service_id ?? null;
                 $item->qty_description = $i->qty_description ?? null;
+                $item->county_id = $i->county_id ?? null;
                 if(!empty($i->service_id)){
                     $s = SupplierService::findOrFail($i->service_id);
                     $item->qty_description = $i->qty . ' ' . $s->unit;
@@ -240,7 +241,7 @@ class RequisitionApi extends Controller
     {
         try{
             $requisition = Requisition::with('status','allocations.objective','requested_by','program_manager','items.supplier_service','items.status','allocations.allocated_by',
-                                            'allocations.project','allocations.account','logs.causer','approvals.approver','logs.causer','lpos.status')
+                                            'allocations.project','allocations.account','logs.causer','approvals.approver','logs.causer','lpos.status','items.county')
                                         ->find($id);
             return response()->json($requisition, 200,array(),JSON_PRETTY_PRINT);
         }
@@ -263,8 +264,9 @@ class RequisitionApi extends Controller
             $requisition->purpose = $request->purpose;
             $requisition->program_manager_id = $request->program_manager_id;
             $requisition->objective_id = $request->objective_id;
+            $requisition->disableLogging();
+            // $changes[] = $this->modelChanges($requisition);
             $requisition->save();
-            // $requisition->disableLogging();
 
             $allocations = $request->allocations;
             $new_allocations = [];
@@ -286,6 +288,7 @@ class RequisitionApi extends Controller
                 $allocation->disableLogging();
                 $allocation->save();
                 $new_allocations[] = $allocation->id;
+                // $changes[] = $this->modelChanges($allocation);
             }
             foreach($old_allocations as $old_allocation){
                 if(!in_array($old_allocation, $new_allocations)){
@@ -310,7 +313,8 @@ class RequisitionApi extends Controller
                 $item->qty_description = $i['qty_description'] ?? null;
                 $item->qty = $i['qty'];
                 $item->no_of_days = $i->no_of_days ?? null;   
-                $item->service_id = $i['service_id'] ?? null;             
+                $item->service_id = $i['service_id'] ?? null;                
+                $item->county_id = $i['county_id'] ?? null;        
                 if(!empty($i->service_id)){
                     $s = SupplierService::findOrFail($i->service_id);
                     $item->qty_description = $i->qty . ' ' . $s->unit;
@@ -320,6 +324,7 @@ class RequisitionApi extends Controller
                 $item->disableLogging();
                 $item->save();
                 $new_items[] = $item->id;
+                // $changes[] = $this->modelChanges($item);
             }
             foreach($old_items as $old_item){
                 if(!in_array($old_item, $new_items)){
@@ -342,6 +347,13 @@ class RequisitionApi extends Controller
             //         FTP::connection()->uploadFile($file->getPathname(), '/requisitions/'.$requisition->ref.'/'.$file->getClientOriginalName().'.'.$file->getClientOriginalExtension());
             //     }
             // }
+            // Logging
+            $activity = activity()
+                ->performedOn($requisition)
+                ->causedBy($this->current_user())
+                ->log('Updated');
+
+            // file_put_contents ( "C://Users//kennl//Documents//debug.txt" , PHP_EOL.json_encode($activity->description) , FILE_APPEND);
 
             return Response()->json(array('msg' => 'Success: requisition updated','requisition' => $requisition), 200);
         }

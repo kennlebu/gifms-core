@@ -282,4 +282,21 @@ class Controller extends BaseController
         return $needle === ''
           || strrpos($haystack, $needle, -strlen($haystack)) !== false;
     }
+
+
+    /**
+     * Gets the changes in models
+     */
+    function modelChanges($model){
+        $changes = [];
+        $original = $model->getOriginal();
+        $changed = array_diff( $model->getAttributes(), $original );
+        foreach ($changed as $key => $value) {
+            $changes[] = [
+                'original' => $original[$key],
+                'changes' => $value
+            ];
+        }
+        return $changes;
+    }
 }

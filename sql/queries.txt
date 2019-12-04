@@ -1646,3 +1646,20 @@ CREATE TABLE `requisition_documents` (
   `requisition_id` int NULL,
   `uploaded_by_id` int NULL
 );
+
+===== Add requisition id fields to transactions
+ALTER TABLE `claims`
+ADD `requisition_id` int NULL AFTER `reporting_objective_id`,
+CHANGE `updated_at` `updated_at` timestamp NOT NULL DEFAULT current_timestamp() AFTER `created_at`;
+
+ALTER TABLE `deliveries`
+ADD `requisition_id` int NULL AFTER `delivery_made`,
+CHANGE `updated_at` `updated_at` timestamp NOT NULL DEFAULT current_timestamp() AFTER `created_at`;
+
+ALTER TABLE `invoices`
+ADD `requisition_id` int NULL AFTER `program_activity_id`,
+CHANGE `updated_at` `updated_at` timestamp NOT NULL DEFAULT current_timestamp() AFTER `created_at`;
+
+===== Add county id to requisition items
+ALTER TABLE `requisition_items`
+ADD `county_id` int NULL AFTER `airfare_doc`;

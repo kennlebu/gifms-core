@@ -7,13 +7,9 @@ use Spatie\Activitylog\Traits\LogsActivity;
 
 class BaseModel extends Model
 {
-    use LogsActivity;
-    
-
-
-	// public function newPivot(Eloquent $parent, array $attributes, $table, $exists){
-	//     return new BaseModel($parent, $attributes, $table, $exists);
-	// }
+	use LogsActivity;
+    protected static $logAttributes = ['*'];
+	protected static $logOnlyDirty = true;	
 
 	
 
