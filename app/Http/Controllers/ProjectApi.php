@@ -215,7 +215,8 @@ class ProjectApi extends Controller
             if(array_key_exists('with_chart_data', $input)&& $input['with_chart_data'] = "true"){
                 $project = Project::find($project_id);
                 $response["budget_expenditure_by_accounts_data"]    =   $project->getBudgetExpenditureByAccountsDataAttribute();
-                $response["grant_amount_allocated"]                 =  empty($project->budget->totals) ? 0 : $project->budget->totals;
+                $response["budget_expenditure_by_objectives_data"]  =   $project->getBudgetExpenditureByObjectivesDataAttribute();
+                $response["grant_amount_allocated"]                 =   empty($project->budget->totals) ? 0 : $project->budget->totals;
                 $response["total_expenditure"]                      =   $project->getTotalExpenditureAttribute();
                 $response["total_expenditure_perc"]                 =   $project->getTotalExpenditurePercAttribute();
             }
@@ -524,6 +525,7 @@ class ProjectApi extends Controller
 
             $projects = Project::find($data[$key]['id']);
             $data[$key]['expenditure_perc']         = $projects->total_expenditure_perc;
+            $data[$key]['total_expenditure']        = $projects->total_expenditure;
             $data[$key]['program']                  = $projects->program;
             $data[$key]['status']                   = $projects->status;
             $data[$key]['country']                  = $projects->country;

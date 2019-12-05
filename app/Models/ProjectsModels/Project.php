@@ -11,7 +11,11 @@ use App\Models\InvoicesModels\Invoice;
 use App\Models\MobilePaymentModels\MobilePayment;
 use App\Models\AdvancesModels\Advance;
 use App\Models\AccountingModels\Account;
+use App\Models\ActivityModels\ActivityObjective;
+use App\Models\AllocationModels\Allocation;
+use App\Models\FinanceModels\BudgetItem;
 use App\Models\FinanceModels\ExchangeRate;
+use App\Models\ReportModels\ReportingObjective;
 
 class Project extends BaseModel
 {
@@ -157,6 +161,32 @@ class Project extends BaseModel
     public function getExpenditureByAccountsDataAttribute(){
 
         $project_id = $this->id;
+        // $qb = Allocation::when('allocatable_type', 'mobile_payments', function ($q) {
+        //                     $q->whereHas('allocatable', function($query) {
+        //                         $query->whereNotIn('status_id', [1,7,14,15,16]);
+        //                     });
+        //                 })
+        //                 ->when('allocatable_type', 'invoices', function ($q) {
+        //                     $q->whereHas('allocatable', function($query) {
+        //                         $query->whereNotIn('status_id', [1,9,10,11,13]);
+        //                     });
+        //                 })
+        //                 ->when('allocatable_type', 'claims', function ($q) {
+        //                     $q->whereHas('allocatable', function($query) {
+        //                         $query->whereNotIn('status_id', [1,9,11]);
+        //                     });
+        //                 })
+        //                 ->when('allocatable_type', 'advances', function ($q) {
+        //                     $q->whereHas('allocatable', function($query) {
+        //                         $query->whereNotIn('status_id', [1,11]);
+        //                     });
+        //                 })
+        //                 ->whereYear('created_at', date('Y'));
+
+        // return Allocation::with('project','account')->whereYear('created_at', date('Y'))
+        //                 ->where('project_id', $this->id)
+        //                 ->groupBy('account_id')
+        //                 ->get();
 
         $qb = DB::table('allocations');
         $qb->whereYear('created_at', date('Y'));
@@ -245,7 +275,8 @@ class Project extends BaseModel
             }
             $result['total_expenditure'] = $allocation_total;
             
-            $result['total_budget'] = $this->sumArrayColumn($budget_items, 'amount');
+            // $result['total_budget'] = $this->sumArrayColumn($budget_items, 'amount');
+            $result['total_budget'] = $this->budget->items->where('account_id', $aid)->sum('amount');
 
             $response[] = $result;
         }
@@ -349,5 +380,34 @@ class Project extends BaseModel
 
         return $response;
 
+    }
+
+    public function getBudgetExpenditureByObjectivesDataAttribute(){
+        $uniqueOids = $this->uniqueArrayValues($this->allocations, 'objective_id');
+        $response = [];
+        foreach($uniqueOids as $oid){
+            $result = [];
+            $objective = ReportingObjective::find($oid);
+            $result['objective'] = $objective->objective ?? '';
+
+            $obj_expenditures = $this->pluck($this->allocations, 'objective_id', $oid);
+
+            $allocation_total = 0;
+            foreach ($obj_expenditures as $ex) {
+                if($ex->allocatable && $ex->allocatable->currency_id){
+                    if($ex->allocatable->currency_id == 2){  
+                        $allocation_total += (float) $ex->amount_allocated;
+                    }
+                    else if($ex->allocatable->currency_id == 1){
+                        $allocation_total += (float) ($ex->amount_allocated/100);
+                    }
+                }
+            }
+            $result['total_expenditure'] = $allocation_total;
+            $result['total_budget'] = BudgetItem::where('objective_id', $oid)->sum('amount');
+
+            $response[] = $result;
+        }
+        return $response;        
     }
 }
