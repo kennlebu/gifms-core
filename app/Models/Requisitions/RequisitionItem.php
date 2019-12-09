@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class RequisitionItem extends BaseModel
 {
     use SoftDeletes;
-    protected $appends = ['transaction_status', 'dates'];
+    protected $appends = ['transaction_status', 'dates', 'transaction'];
 
     public function supplier_service()
     {
@@ -33,6 +33,18 @@ class RequisitionItem extends BaseModel
             $status = 'LPO '.$lpo_item->lpo->status->lpo_status;
         }
         return $status;
+    }
+
+    public function getTransactionAttribute(){
+        $transaction = null;
+        if($this->status_id == 2){
+            if($this->transaction_type == 'lpo' || $this->transaction_type == 'lso'){
+                $lpo_item = LpoItem::where('requisition_item_id', $this->id)->first();
+                $transaction = ['type'=>'lpo', 'id'=>$lpo_item->lpo_id];
+            }
+        }
+
+        return $transaction;
     }
 
     public function getDatesAttribute(){

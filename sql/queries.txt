@@ -1638,7 +1638,7 @@ CHANGE `updated_at` `updated_at` timestamp NULL DEFAULT current_timestamp() AFTE
 ALTER TABLE `requisition_allocations`
 ADD `objective_id` int(11) NULL AFTER `account_id`;
 
-===== Requisition documents table
+~===== Requisition documents table
 CREATE TABLE `requisition_documents` (
   `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `title` text NULL,
@@ -1647,7 +1647,7 @@ CREATE TABLE `requisition_documents` (
   `uploaded_by_id` int NULL
 );
 
-===== Add requisition id fields to transactions
+~===== Add requisition id fields to transactions
 ALTER TABLE `claims`
 ADD `requisition_id` int NULL AFTER `reporting_objective_id`,
 CHANGE `updated_at` `updated_at` timestamp NOT NULL DEFAULT current_timestamp() AFTER `created_at`;
@@ -1660,6 +1660,13 @@ ALTER TABLE `invoices`
 ADD `requisition_id` int NULL AFTER `program_activity_id`,
 CHANGE `updated_at` `updated_at` timestamp NOT NULL DEFAULT current_timestamp() AFTER `created_at`;
 
-===== Add county id to requisition items
+~===== Add county id to requisition items
 ALTER TABLE `requisition_items`
 ADD `county_id` int NULL AFTER `airfare_doc`;
+
+===== Change requisition item status
+UPDATE `requisition_item_statuses` SET `status` = 'Item ordered' WHERE `id` = '2';
+
+===== Add transaction type to requisition item
+ALTER TABLE `requisition_items`
+ADD `transaction_type` varchar(20) NULL AFTER `county_id`;
