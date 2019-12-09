@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\DB;
 
 use App\Models\FinanceModels\TaxRate;
+use App\Models\FinanceModels\WithholdingVatRate;
 use Exception;
 
 class TaxRatesApi extends Controller
@@ -222,5 +223,100 @@ class TaxRatesApi extends Controller
         }
 
         return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+    }
+
+
+
+
+
+
+
+    /**
+     * Withholding rates
+     */
+    public function addWithholdingRate(){
+        $input = Request::all();
+        $rate = new WithholdingVatRate();
+        $rate->rate = $input['rate'];
+        $rate->save();
+        return Response()->json(array('msg' => 'Success: Rate added','rate' => $rate), 200);
+    }
+
+    public function updateWithholdingRate()
+    {
+        $form = Request::all();
+        $rate = WithholdingVatRate::find($form['id']);
+        $rate->rate = $form['rate'];
+        if($rate->save()) {
+            return Response()->json(array('msg' => 'Success: Rate updated','rate' => $rate), 200);
+        }
+    }
+
+    public function deleteWithholdingRate($id)
+    {
+        $deleted = WithholdingVatRate::destroy($id);
+        if($deleted){
+            return response()->json(['msg'=>"Rate deleted"], 200,array(),JSON_PRETTY_PRINT);
+        }else{
+            return response()->json(['error'=>"Somethign went wrong"], 500,array(),JSON_PRETTY_PRINT);
+        }
+    }
+
+    public function getWithholdingRate($id)
+    {
+
+        try{
+            $response = WithholdingVatRate::findOrFail($id);           
+            return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+
+        }catch(Exception $e){
+            $response =  ["error"=>"Something went wrong"];
+            return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
+        }
+    }
+
+    public function getWithholdingRates(){
+        $rates = WithholdingVatRate::query();
+        $input = Request::all();
+        $response_dt = null;
+        $total_records = $rates->count();
+        $records_filtered = 0;
+
+        if(array_key_exists('datatables', $input)){
+            //searching
+            $rates->where(function ($query) use ($input) {                
+                $query->orWhere('rate','like', '\'%' . $input['search']['value']. '%\'');
+            });
+
+            $records_filtered = $rates->count();
+
+            //ordering
+            $order_column_id    = (int) $input['order'][0]['column'];
+            $order_column_name  = $input['columns'][$order_column_id]['order_by'];
+            $order_direction    = $input['order'][0]['dir'];
+
+            if($order_column_name!=''){
+                $rates->orderBy($order_column_name, $order_direction);
+            }
+
+            //limit $ offset
+            if((int)$input['start']!= 0 ){
+                $response_dt = $rates->limit($input['length'])->offset($input['start']);
+            }else{
+                $rates->limit($input['length']);
+            }
+
+            $response_dt = $rates->get();
+            $rates = WithholdingVatRate::arr_to_dt_response( 
+                $response_dt, $input['draw'],
+                $total_records,
+                $records_filtered
+            );
+        }
+        else{
+            $rates = $rates->get();
+        }
+
+        return response()->json($rates, 200,array(),JSON_PRETTY_PRINT);
     }
 }

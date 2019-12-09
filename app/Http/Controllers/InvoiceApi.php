@@ -34,6 +34,7 @@ use App\Models\PaymentModels\Payment;
 use App\Models\PaymentModels\PaymentBatch;
 use App\Exceptions\NotFullyAllocatedException;
 use App\Exceptions\ApprovalException;
+use App\Models\FinanceModels\WithholdingVatRate;
 use App\Models\PaymentModels\VoucherNumber;
 use Excel;
 use App\Models\ReportModels\ReportingObjective;
@@ -1443,6 +1444,8 @@ class InvoiceApi extends Controller
             }
             if(!empty($input['withholding_vat'])){
                 $invoice->withholding_vat = $input['withholding_vat'];
+                $vat_rate = WithholdingVatRate::first();
+                $invoice->vat_rate = $vat_rate->rate;
             }
             if(!empty($input['usd_rate'])){
                 $invoice->usd_rate = $input['usd_rate'];

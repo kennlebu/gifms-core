@@ -1234,3 +1234,12 @@ UPDATE `mobile_payment_statuses` SET `short_name` = 'Resent to Bank' WHERE `id` 
 +===== Add recalled status to claim statuses
 INSERT INTO `claim_statuses` (`claim_status`, `next_status_id`, `short_name`, `status_security_level`, `order_priority`, `display_color`, `default_status`, `approval_level_id`, `approvable`, `migration_status_security_level`, `migration_id`, `created_at`, `updated_at`, `deleted_at`)
 VALUES ('Recalled', '10', 'Recalled', NULL, '11', '#ff5555c2', NULL, NULL, NULL, NULL, NULL, now(), now(), NULL);
+
+===== Make witholding VAT dynamic
+ALTER TABLE `invoices`
+CHANGE `vat` `vat_rate` int(11) NULL AFTER `recurr_end_date`;
+
+CREATE TABLE `withholding_vat_rates` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `rate` int NOT NULL
+);

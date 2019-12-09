@@ -5403,3 +5403,12 @@ Route::PATCH('leave-request/{request_id}/reject', 'LeaveManagementApi@rejectLeav
 Route::PATCH('leave-request/{request_id}/submit_for_approval', 'LeaveManagementApi@submitLeaveRequestForApproval')->middleware('jwt.auth');
 Route::PATCH('leave-request/{request_id}/cancel', 'LeaveManagementApi@cancelLeaveRequest')->middleware('jwt.auth');
 Route::PATCH('leave-request/{request_id}/recall', 'LeaveManagementApi@recallLeaveRequest')->middleware('jwt.auth');
+
+/**
+ * Withholding tax
+ */
+Route::POST('/withholding-vat-rate', 'TaxRatesApi@addWithholdingRate')->middleware('jwt.auth');
+Route::GET('/withholding-vat-rates', 'TaxRatesApi@getWithholdingRates')->middleware('jwt.auth');
+Route::GET('/withholding-vat-rate/{id}', 'TaxRatesApi@getWithholdingRate')->middleware('jwt.auth');
+Route::DELETE('/withholding-vat-rate/{id}', 'TaxRatesApi@deleteWithholdingRate')->middleware('jwt.auth');
+Route::PUT('/withholding-vat-rate', 'TaxRatesApi@updateWithholdingRate')->middleware('jwt.auth');
