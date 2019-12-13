@@ -130,10 +130,10 @@ class Lpo extends BaseModel
     {
         $supplier = null;
         if($this->lpo_type == 'prenegotiated'){
-            $supplier = $this->supplier;
+            $supplier = Supplier::with('supply_category')->find($this->supplier_id);
         }
         else {
-            $supplier = $this->preffered_quotation->supplier;
+            $supplier = Supplier::with('supply_category')->find($this->preffered_quotation->supplier_id);
         }
         return $supplier;
     }

@@ -156,6 +156,12 @@ class LPOApi extends Controller
                         }
                         $count += 1;
                         $item->status_id = 2;
+                        if($item->type == 'non_lpo'){
+                            $item->transaction_type = 'lso';
+                        }
+                        else {
+                            $item->transaction_type = 'lpo';
+                        }
                         $item->disableLogging();
                         $item->save();
                     }
@@ -537,11 +543,10 @@ class LPOApi extends Controller
                 $approval->save();
 
                 // Logging
-                $lpo->enableLogging(); //! Re-enable logging
                 activity()
                    ->performedOn($approval->approvable)
                    ->causedBy($user)
-                   ->log('approved');
+                   ->log('Approved');
 
                 if($lpo->status_id!=7){
                     Mail::queue(new NotifyLpo($lpo));
@@ -1309,6 +1314,8 @@ class LPOApi extends Controller
             $data[$key]['totals']                   = $lpo->totals;
             $data[$key]['program_activity']         = $lpo->program_activity;
             $data[$key]['requisition']              = $lpo->requisition;
+            $data[$key]['preferred_supplier']       = $lpo->preferred_supplier;
+            $data[$key]['preferred_supplier']['supply_category'] = $lpo->preferred_supplier->supply_category ?? '';
 
             if(!empty($lpo->preffered_quotation_id) && !empty($lpo->preffered_quotation->supplier_id)){
                 if($lpo->preffered_quotation_id > 0 && $lpo->preffered_quotation->supplier_id > 0 ){

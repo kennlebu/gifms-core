@@ -38,9 +38,13 @@ class RequisitionItem extends BaseModel
     public function getTransactionAttribute(){
         $transaction = null;
         if($this->status_id == 2){
-            if($this->transaction_type == 'lpo' || $this->transaction_type == 'lso'){
+            if($this->type == 'prenegotiated' || $this->type == 'extra'){
                 $lpo_item = LpoItem::where('requisition_item_id', $this->id)->first();
                 $transaction = ['type'=>'lpo', 'id'=>$lpo_item->lpo_id];
+            }
+            else if($this->type == 'non_lpo'){
+                $lpo_item = LpoItem::where('requisition_item_id', $this->id)->first();
+                $transaction = ['lpo'=>'invoice', 'id'=>$lpo_item->lpo_id];
             }
         }
 
