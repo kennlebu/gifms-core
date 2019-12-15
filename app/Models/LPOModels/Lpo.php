@@ -133,6 +133,7 @@ class Lpo extends BaseModel
             $supplier = Supplier::with('supply_category')->find($this->supplier_id);
         }
         else {
+            if($this->preffered_quotation_id)
             $supplier = Supplier::with('supply_category')->find($this->preffered_quotation->supplier_id);
         }
         return $supplier;
