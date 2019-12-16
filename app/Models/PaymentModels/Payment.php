@@ -14,6 +14,7 @@ class Payment extends BaseModel
     use SoftDeletes;
 
     protected $appends = ['simple_date', 'bank_transaction', 'net_amount'];
+    protected $with = ['payable'];
     
     public function payable()
     {

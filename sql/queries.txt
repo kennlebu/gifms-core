@@ -1243,3 +1243,6 @@ CREATE TABLE `withholding_vat_rates` (
   `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `rate` int NOT NULL
 );
+
+INSERT INTO `withholding_vat_rates` (`rate`)
+VALUES ('6');

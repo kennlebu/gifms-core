@@ -449,7 +449,7 @@ class ReportsApi extends Controller
 
                 if(!empty($programs)){
                     $pids = Project::whereIn('program_id', $programs)->pluck('id')->toArray();
-                    $advance = $advance->whereHas('allocations', function($query) use ($pids){
+                    $advance = $advance->whereHas('allocations', function($query) use ($pids, $pm_pids){
                         $query->whereIn('project_id', $pids);
                         $query->whereIn('project_id', $pm_pids);
                     });
@@ -475,7 +475,7 @@ class ReportsApi extends Controller
                             ->where('id', $payment->payable_id);
                 if(!empty($programs)){
                     $pids = Project::whereIn('program_id', $programs)->pluck('id')->toArray();
-                    $claim = $claim->whereHas('allocations', function($query) use ($pids){
+                    $claim = $claim->whereHas('allocations', function($query) use ($pids, $pm_pids){
                         $query->whereIn('project_id', $pids);  
                         $query->whereIn('project_id', $pm_pids);
                     });
@@ -503,7 +503,7 @@ class ReportsApi extends Controller
 
                 if(!empty($programs)){
                     $pids = Project::whereIn('program_id', $programs)->pluck('id')->toArray();
-                    $invoice = $invoice->whereHas('allocations', function($query) use ($pids){
+                    $invoice = $invoice->whereHas('allocations', function($query) use ($pids, $pm_pids){
                         $query->whereIn('project_id', $pids);
                         $query->whereIn('project_id', $pm_pids);
                     });
@@ -532,7 +532,7 @@ class ReportsApi extends Controller
             
                             if(!empty($programs)){
                                 $pids = Project::whereIn('program_id', $programs)->pluck('id')->toArray();
-                                $mobile_payments = $mobile_payments->whereHas('allocations', function($query) use ($pids){
+                                $mobile_payments = $mobile_payments->whereHas('allocations', function($query) use ($pids, $pm_pids){
                                     $query->whereIn('project_id', $pids);
                                     $query->whereIn('project_id', $pm_pids); 
                                 });
@@ -553,7 +553,6 @@ class ReportsApi extends Controller
                             $mobile_payments = $mobile_payments->get();
 
         foreach($mobile_payments as $mobile_payment){
-            $res = array();
             $res = ['payable_type'=>'mobile_payments', 'payment'=>null, 'payable'=>$mobile_payment, 'payment_date'=>$mobile_payment->management_approval_at];
             array_push($payables, $res);
         }
@@ -582,6 +581,11 @@ class ReportsApi extends Controller
             }
                 
                 foreach($row['payable']['allocations'] as $allocation){
+
+                    // Filter out PIDs not belonging to the current PM
+                    if(!empty($pm_pids) && (empty($allocation['project_id']) || !in_array($allocation['project_id'], $pm_pids))){
+                        continue;
+                    }
 
                     // Filter out results not in the search arrays
                     if(!empty($objectives) && (empty($allocation['objective_id']) || !in_array($allocation['objective_id'], $objectives))){

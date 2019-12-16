@@ -98,10 +98,10 @@ class InvoiceApi extends Controller
                 $invoice_date = $dt->format('Y-m-d');
             }
 
-            $exists = Invoice::where('external_ref', $form['external_ref'])
-                        ->where('supplier_id', $form['supplier_id'])
-                        ->first();
-            if(!empty($exists) && $form['submission_type']!='upload_logged'){
+            // $exists = Invoice::where('external_ref', $form['external_ref'])
+            //             ->where('supplier_id', $form['supplier_id'])
+            //             ->first();
+            if(Invoice::where('external_ref', $invoice->external_ref)->where('supplier_id', $form['supplier_id'])->exists() && $form['submission_type']!='upload_logged' && $form['submission_type']!='finish_allocations'){
                 return response()->json(['error'=>'Invoice with the same invoice number already exists'], 409);
             }
 
@@ -306,7 +306,7 @@ class InvoiceApi extends Controller
             $invoice->expense_purpose                   =               $form['expense_purpose'];
             $invoice->external_ref                      =               trim($form['external_ref']);
             $invoice->invoice_date                      =               $invoice_date;
-            $invoice->lpo_id                            =   (((int) $form['lpo_id'])>0)?$form['lpo_id']:null;;
+            $invoice->lpo_id                            =   (((int) $form['lpo_id'])>0)?$form['lpo_id']:null;
             $invoice->supplier_id                       =   (int)       $form['supplier_id'];
             $invoice->payment_mode_id                   =   (int)       $form['payment_mode_id'];
             $invoice->project_manager_id                =   (int)       $form['project_manager_id'];
