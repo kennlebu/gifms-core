@@ -1043,6 +1043,8 @@ Route::PATCH('/project/{project_id}/team', 'ProjectApi@updateProjectTeamDef')->m
  */
 Route::GET('/project_activities', 'ProjectActivityApi@projectActivitiesGet')->middleware('jwt.auth');
 
+Route::GET('/project_tracker', 'ProjectApi@getTrackerList')->middleware('jwt.auth');
+
 
 
 
@@ -1830,6 +1832,7 @@ Route::PATCH('/mobile_payment/{mobile_payment_id}/approve', 'MobilePaymentApi@ap
 Route::PATCH('/mobile_payment/{mobile_payment_id}/send-to-bank', 'MobilePaymentApi@sendToBank')->middleware('jwt.auth');
 Route::GET('/mobile-payment-csv/{mobile_payment_id}', 'MobilePaymentApi@downloadCSV')->middleware('jwt.auth');
 Route::PATCH('/mobile-payment/{mobile_payment_id}/mark-as-uploaded', 'MobilePaymentApi@markAsUploaded')->middleware('jwt.auth');
+Route::PATCH('/mobile-payment/request_signitories_multi', 'MobilePaymentApi@requestSignatoriesMulti')->middleware('jwt.auth');
 Route::POST('/mobile-payment/request_signitories/{mobile_payment_id}', 'MobilePaymentApi@requestSignatories')->middleware('jwt.auth');
 Route::POST('/mobile-payment/mark_as_paid', 'MobilePaymentApi@markAsPaid')->middleware('jwt.auth');
 Route::GET('/mobile-payment/download_dump', 'MobilePaymentApi@downloadDump')->middleware('jwt.auth');

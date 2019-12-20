@@ -490,7 +490,7 @@ class MobilePaymentApi extends Controller
     }
 
 
-    public function requestSignatories($mobile_payment_id){
+    public function requestSignatories($mobile_payment_id, $multiple = false){
         try{
             $mobile_payment = MobilePayment::findOrFail($mobile_payment_id);
             Mail::queue(new RequestMPBankSigning($mobile_payment_id));
@@ -499,11 +499,28 @@ class MobilePaymentApi extends Controller
                 ->causedBy($this->current_user())
                 ->log('Requested bank signatories');
 
+            if(!$multiple)
             return Response()->json(array('result' => 'Success: request sent'), 200);
         }
         catch(Exception $e){
             $response =  ["error"=>"There was an error uploading the mobile payment", "msg"=>$e->getMessage(), "stack"=>$e->getTraceAsString()];
             return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+        }
+    }
+
+    public function requestSignatoriesMulti(){
+        try {
+            $form = Request::only("mobile_payments");
+            $mobile_payment_ids = $form['mobile_payments'];
+
+            foreach ($mobile_payment_ids as $key => $mobile_payment_id) {
+                $this->requestSignatories($mobile_payment_id, true);
+            }
+
+            return response()->json(['mobile_payments'=>$form['mobile_payments']], 201,array(),JSON_PRETTY_PRINT);
+            
+        } catch (Exception $e) {
+             return response()->json(['error'=>"An rerror occured during processing"], 500,array(),JSON_PRETTY_PRINT);            
         }
     }
 
