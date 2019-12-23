@@ -282,4 +282,17 @@ class Controller extends BaseController
         return $needle === ''
           || strrpos($haystack, $needle, -strlen($haystack)) !== false;
     }
+
+    /**
+	 * Returns an array with matching values given a key
+	 */
+	public function pluck($ARR, $key, $value) {
+		$RESULTS = [];
+		foreach ($ARR as $item){
+			if ($item[$key] == $value) {
+				$RESULTS[] = $item;
+			}
+		}
+		return $RESULTS;
+	}
 }

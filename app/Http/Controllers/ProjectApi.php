@@ -15,6 +15,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AccountingModels\Account;
+use App\Models\AdvancesModels\Advance;
+use App\Models\AllocationModels\Allocation;
+use App\Models\ClaimsModels\Claim;
+use App\Models\InvoicesModels\Invoice;
+use App\Models\MobilePaymentModels\MobilePayment;
+use App\Models\PaymentModels\Payment;
+use App\Models\PaymentModels\PaymentBatch;
+use App\Models\ProgramModels\ProgramManager;
 use JWTAuth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\DB;
@@ -347,7 +356,6 @@ class ProjectApi extends Controller
         elseif ((array_key_exists('my_assigned', $input)&& $input['my_assigned'] = "true") && array_key_exists('staff_responsible', $input)) {
             
             if(array_key_exists('staff_responsible', $input)){
-                $user_id = (int) $input['staff_responsible'];
                 $qb->select(DB::raw('projects.*'))
                  ->rightJoin('project_teams', 'project_teams.project_id', '=', 'projects.id')
                  ->rightJoin('staff', 'staff.id', '=', 'project_teams.staff_id')
@@ -570,5 +578,110 @@ class ProjectApi extends Controller
         }
 
         return $data;
+    }
+
+
+    public function getTrackerList(){
+        try{
+            $result = [];
+            // $pids = Project::with('budget','program');
+            
+            // Get pm pids
+            $pm_programs = ProgramManager::where('program_manager_id', $this->current_user()->id)->pluck('program_id')->toArray();
+            $pm_pids = Project::with('budget')->has('budget')->whereIn('program_id', $pm_programs)->get();
+
+            // foreach($pids as $key => $value){
+            //     // Get total expenditure
+            //     $allocation_total = 0;
+            //     $allocations = Allocation::where('project_id', $value->id)->whereYear('created_at', date('Y'))->get();
+            //     foreach ($allocations as $ex) {
+            //         $allocatable = null;
+            //         if($ex->allocatable_type=='invoices' && !empty($ex->allocatable_id)){
+            //             $allocatable = Invoice::has('payments')->where('id', $ex->allocatable_id)->first();
+            //         }else if($ex->allocatable_type=='mobile_payments' && !empty($ex->allocatable_id)){
+            //             $allocatable = MobilePayment::whereIn('status_id',[4,5,6,11,12,13,17])->where('id', $ex->allocatable_id)->first();
+            //         }else if($ex->allocatable_type=='claims' && !empty($ex->allocatable_id)){
+            //             $allocatable = Claim::has('payments')->where('id', $ex->allocatable_id)->first();
+            //         }else if($ex->allocatable_type=='advances' && !empty($ex->allocatable_id)){
+            //             $allocatable = Advance::has('payments')->where('id', $ex->allocatable_id)->first();
+            //         }
+    
+            //         if($allocatable && $allocatable->currency_id){
+            //             $allocation_total += (float) $ex->converted_usd;
+            //         }
+            //     }
+            //     $pids[$key]['total_expenditure'] = $allocation_total;
+            //     if(!empty($this->budget)) $budget_amount = (int) $this->budget->totals;
+            //     else $budget_amount = 0;
+            //     $pids[$key]['expenditure_perc'] = $budget_amount==0 ? 0 : ($allocation_total/$budget_amount)*100;
+            // }
+
+            $batches = PaymentBatch::whereYear('created_at', date('Y'))->pluck('id')->toArray();
+            $payments = Payment::whereIn('payment_batch_id', $batches)->get();
+            $payables = [];
+            $allocations = [];
+
+            $res = [];
+            $c = 0;
+            $total_expenditure = 0;
+            foreach($pm_pids as $pid){
+                // file_put_contents ( "C://Users//kennl//Documents//debug.txt" , PHP_EOL.json_encode($pid) , FILE_APPEND);
+                foreach($payments as $p){
+                    // $allocs = [];
+                    // $payable = null;
+                    // if($p->payable_type=='invoices' && !empty($p->payable_id)){
+                    //     $payable = Invoice::with('allocations')->whereIn('status_id',[5,6,7,8])->where('id', $p->payable_id)->first();
+                    // }else if($p->payable_type=='mobile_payments' && !empty($p->payable_id)){
+                    //     $payable = MobilePayment::with('allocations')->whereIn('status_id',[4,5,6,11,12,13,17])->where('id', $p->payable_id)->first();
+                    // }else if($p->payable_type=='claims' && !empty($p->payable_id)){
+                    //     $payable = Claim::with('allocations')->whereIn('status_id',[6,7,8])->where('id', $p->payable_id)->first();
+                    // }else if($p->payable_type=='advances' && !empty($p->payable_id)){
+                    //     $payable = Advance::with('allocations')->whereIn('status_id',[5,6,7,9,10])->where('id', $p->payable_id)->first();
+                    // }
+                    // // $payables[] = ['allocatable'=>$allocatable, 'allocatable_type'=>$p->allocatable_type];
+                    //     // file_put_contents ( "C://Users//kennl//Documents//debug.txt" , PHP_EOL.json_encode($allocatable) , FILE_APPEND);
+                        
+                    // // if($c < 10){
+                    // //     file_put_contents ( "C://Users//kennl//Documents//debug.txt" , PHP_EOL.json_encode($payable->allocations) , FILE_APPEND);
+                    // //     $c += 1;
+                    // // }
+                    // if(!empty($payable)){
+                    //     foreach ($payable->allocations as $item){
+                    //         if ($item->project_id == $pid->id) {
+                    //             $total_expenditure += $item->amount_allocated;
+                    //         }
+                    //     }
+                    //     // array_merge($allocations, $this->pluck($payable->allocations, 'project_id', $pid->id));
+                    // }
+                    // file_put_contents ( "C://Users//kennl//Documents//debug.txt" , PHP_EOL.is_array($allocations) , FILE_APPEND);
+
+                    if(!empty($p->payable_id)){
+                        $a = Allocation::where('allocatable_id', $p->payable_id)->where('project_id', $pid)->get()->toArray(); 
+                        array_merge($allocations, $a);
+                    }
+                    
+                }
+                foreach ($allocations as $item) {
+                    $total_expenditure += $item['converted_usd'];
+                }
+                if(!empty($this->budget)) $budget_amount = (int) $this->budget->totals;
+                else $budget_amount = 0;
+
+                $res[] = [
+                    'budget'=>$pid->budget,
+                    'program'=>$pid->program,
+                    'expenditure_perc'=> $budget_amount == 0 ? 0 : ($total_expenditure/$budget_amount)*100,
+                    'project_code'=>$pid->project_code,
+                    'project_name'=>$pid->project_name,
+                    'total_expenditure'=>$total_expenditure
+                ];
+            }
+
+
+            return response()->json($res, 200,array(),JSON_PRETTY_PRINT);
+        }
+        catch(Exception $e){
+            return response()->json(['error'=>"something went wrong", 'msg'=>$e->getMessage(), 'stack'=>$e->getTraceAsString()], 500,array(),JSON_PRETTY_PRINT);
+        }
     }
 }

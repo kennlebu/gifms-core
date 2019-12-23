@@ -440,7 +440,7 @@ class ReportsApi extends Controller
 
         $payables = [];
         foreach($payments as $payment){
-            $res = array();
+            $res = [];
             $pids = [];
             $batch_date = PaymentBatch::find($payment->payment_batch_id);
             if($payment->payable_type=='advances'){
