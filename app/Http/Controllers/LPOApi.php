@@ -122,6 +122,8 @@ class LPOApi extends Controller
             }
             if(!empty($form['program_activity_id'])) 
             $lpo->program_activity_id = $form['program_activity_id'];
+            if(!empty($form['module']))
+            $lpo->module = $form['module'];
 
             $user = JWTAuth::parseToken()->authenticate();
             $lpo->request_action_by_id = (int) $user->id;
@@ -713,7 +715,7 @@ class LPOApi extends Controller
                                             'deliveries'
                                 )->findOrFail($lpo_id);
 
-            if ((empty($lpo->lpo_type) || $lpo->lpo_type!='prenegotiated') && $lpo->preffered_quotation->amount != $lpo->totals ){
+            if ((empty($lpo->lpo_type) || $lpo->lpo_type!='prenegotiated') && $lpo->preffered_quotation && $lpo->preffered_quotation->amount != $lpo->totals ){
                 throw new LpoQuotationAmountMismatchException("Total amount does not match with quotation amount");             
             }
 
@@ -742,7 +744,8 @@ class LPOApi extends Controller
 
             $lpo->disableLogging(); //! Do not log the update
             if($lpo->save()) {
-                Mail::queue(new NotifyLpo($lpo));
+                if($lpo->lpo_type != 'lso')
+                    Mail::queue(new NotifyLpo($lpo));
                 return Response()->json(array('msg' => 'Success: lpo submitted','lpo' => $lpo), 200);
             }
 
@@ -756,7 +759,7 @@ class LPOApi extends Controller
             return response()->json($response, 403,array(),JSON_PRETTY_PRINT);
         }catch(Exception $e){
 
-            $response =  ["error"=>"Something went wrong"];
+            $response =  ["error"=>"Something went wrong", 'msg'=>$e->getMessage(), 'trace'=>$e->getTraceAsString()];
             return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
         }
     }

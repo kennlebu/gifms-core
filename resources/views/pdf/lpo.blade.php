@@ -47,6 +47,7 @@
     <div>
       <table style="width: 100%;font-size:13px;" cellspacing="0">
         <tbody>
+          @if ($lpo->lpo_type != 'lso')
           <tr>
             <td style="text-align:center;font-size:14px;" colspan="10"  height="30"><span style="text-decoration: underline;"><strong><span style="color: #092d50; font-size: x-large; text-decoration: underline;">LOCAL PURCHASE ORDER </span></strong></span></td>
           </tr>
@@ -252,6 +253,276 @@
           <tr>
             <td colspan="10">&nbsp;</td>
           </tr>
+        @elseif ($lpo->lpo_type == 'lso')
+        <tr>
+          <td style="text-align:center;font-size:14px;" colspan="10"  height="30"><span style="text-decoration: underline;"><strong><span style="color: #092d50; font-size: x-large; text-decoration: underline;">LOCAL SERVICE ORDER </span></strong></span></td>
+        </tr>
+        <tr>
+          <td colspan="7" ></td>
+          <td colspan="1" bgcolor="#092d50" height="20"><strong><span style="color: #ffffff;font-size:12px;">REF:</span></strong></td>
+          <td style="text-align:right;" bgcolor="#092d50" colspan="2" ><strong><span style="color: #ffffff;">{{$lpo->ref}}</span></strong></td>
+        </tr>
+        <tr>
+            <td colspan="10">
+              Suppliers are warned that this order in INVALID unless availability of funds is confirmed here below by the Program Manager/ Budget holder
+            </td>
+        </tr>
+        <tr>
+          <td style="border: 1px solid #000000; border-bottom: 1px solid #c0c0c0;" colspan="2"  ><strong>Attn:</strong></td>
+          <td style="border-width: 1px; border-style: solid; border-color: #000000 #000000 #c0c0c0; border-image: initial; text-align: right;" colspan="4" >
+              @if(empty($lpo->lpo_type)||$lpo->lpo_type!='prenegotiated')
+              {{$lpo->preffered_quotation->supplier->contact_name_1}}
+              @elseif(!empty($lpo->lpo_type)&&$lpo->lpo_type=='prenegotiated')
+              {{$lpo->supplier->contact_name_1}}
+              @endif
+            </td>
+          <td colspan="1"></td>
+          <td colspan="1"><strong>Contract/ Quotation Ref. No.</strong></td>
+          <td style="text-align: right;" colspan="2">###-#####</td>
+        </tr>
+        <tr>
+          <td style="border: 1px solid #000000; border-bottom: 1px solid #c0c0c0; border-top: 1px solid #c0c0c0;" colspan="2"  ><strong>Your Ref</strong></td>
+          <td style="border-width: 1px; border-style: solid; border-color: #c0c0c0 #000000; border-image: initial; text-align: right;" colspan="4" ></td>
+          <td colspan="1"></td>
+          <td colspan="1"><strong>Requisition No.</strong></td>
+          <td style="text-align: right;" colspan="2">{{$lpo->requisition->ref ?? '###'}}</td>
+        </tr>
+        <tr>
+          <td style="border: 1px solid #000000; border-bottom: 1px solid #c0c0c0; border-top: 1px solid #c0c0c0;" colspan="2"  ><strong>Company Name</strong></td>
+          <td style="border-width: 1px; border-style: solid; border-color: #c0c0c0 #000000; border-image: initial; text-align: right;" colspan="4" >
+            @if(empty($lpo->lpo_type)||$lpo->lpo_type!='prenegotiated')
+            {{$lpo->preffered_quotation->supplier->supplier_name}}
+            @elseif(!empty($lpo->lpo_type)&&$lpo->lpo_type=='prenegotiated')
+            {{$lpo->supplier->supplier_name}}
+            @endif
+          </td>
+          <td colspan="1" ></td>
+          <td colspan="5"></td>
+        </tr>
+        <tr>
+          <td style="border: 1px solid #000000; border-bottom: 1px solid #c0c0c0; border-top: 1px solid #c0c0c0;" colspan="2"  ><strong>Email</strong></td>
+          <td style="border-width: 1px; border-style: solid; border-color: #c0c0c0 #000000; border-image: initial; text-align: right;" colspan="4" >
+            @if(empty($lpo->lpo_type)||$lpo->lpo_type!='prenegotiated')
+            <a href="mailto:{{$lpo->preffered_quotation->supplier->email}}" target="_blank">{{str_replace("@","@ ",$lpo->preffered_quotation->supplier->email)}}</a>
+            @elseif(!empty($lpo->lpo_type)&&$lpo->lpo_type=='prenegotiated')
+            <a href="mailto:{{$lpo->supplier->email}}" target="_blank">{{str_replace("@","@ ",$lpo->supplier->email)}}</a>
+            @endif
+          </td>
+          <td colspan="1" ></td>
+          <td colspan="1"><strong>Date</strong></td>
+          <td style="text-align: right;" colspan="2">{{date('d F, Y', strtotime($lpo->created_at)) }}</td>
+        </tr>
+        <tr>
+          <td style="border: 1px solid #000000; border-bottom: 1px solid #c0c0c0; border-top: 1px solid #c0c0c0;" colspan="2"  ><strong>Address (City/Town)</strong></td>
+          <td style="border-width: 1px; border-style: solid; border-color: #c0c0c0 #000000; border-image: initial; text-align: right;" colspan="4" >
+            @if(empty($lpo->lpo_type)||$lpo->lpo_type!='prenegotiated')
+            {{$lpo->preffered_quotation->supplier->address}}
+            @elseif(!empty($lpo->lpo_type)&&$lpo->lpo_type=='prenegotiated')
+            {{$lpo->supplier->address}}
+            @endif
+          </td>
+          <td colspan="1"></td>
+          <td colspan="5"></td>
+        </tr>
+        <tr>
+          <td style="border: 1px solid #000000; border-top: 1px solid #c0c0c0;" colspan="2"  ><strong>Phone</strong></td>
+          <td style="border-width: 1px; border-style: solid; border-color: #c0c0c0 #000000 #000000; border-image: initial; text-align: right;" colspan="4"  >
+            @if(empty($lpo->lpo_type)||$lpo->lpo_type!='prenegotiated')
+            <a href="mailto:{{$lpo->preffered_quotation->supplier->telephone}}">{{$lpo->preffered_quotation->supplier->contact_phone_1}}</a>
+            @elseif(!empty($lpo->lpo_type)&&$lpo->lpo_type=='prenegotiated')
+            <a href="mailto:{{$lpo->supplier->telephone}}">{{$lpo->supplier->contact_phone_1}}</a>
+            @endif
+          </td>
+          <td colspan="1"></td>
+          <td colspan="5"></td>
+        </tr>
+        <tr>
+          <td colspan="9">&nbsp;</td>
+        </tr>
+        <tr>
+          <td colspan="9">
+              Please carry out the services listed here below at place of delivery as advised by "the CHAI project Officer of 
+              mobile number <a href="mailto:{{$lpo->requested_by->mobile_no}}">{{$lpo->requested_by->mobile_no}}</a> and/
+              or email <a href="mailto:{{$lpo->requested_by->email}}" target="_blank">{{str_replace("@","@ ",$lpo->requested_by->email)}}</a>" 
+              or "CHAI's Authorised/ Designated oficer" vide mobile number …………………………. and/ or email address …………………………………………………. on terms and conditions stated in this order, 
+              on or before (date) .............................. and send the invoices immediately to CHAI. P.O. Box2011 - 00100, Nairobi			
+          </td>
+        </tr>
+        <tr>
+          <td colspan="9">&nbsp;</td>
+        </tr>
+        <tr>
+          <td style="font-size:13px;border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #c0c0c0;" bgcolor="#092d50" ><strong><span style="color: #ffffff;">ITEM NO</span></strong></td>
+          <td style="font-size:13px;border: 1px solid #c0c0c0;" colspan="5" bgcolor="#092d50"><span style="color: #ffffff;width:30%;"><strong>Description of service</strong></span></td>
+          <td style="font-size:13px;border: 1px solid #c0c0c0;" bgcolor="#092d50"><strong><span style="color: #ffffff;"></span></strong></td>
+          <td style="font-size:13px;border: 1px solid #c0c0c0;" bgcolor="#092d50"><span style="color: #ffffff;"><strong>SUBTOTAL</strong></span></td>
+          <td style="font-size:13px;border: 1px solid #c0c0c0;" bgcolor="#092d50"><span style="color: #ffffff;"><strong>VAT</strong></span></td>
+          <td style="font-size:13px;border: 1px solid #c0c0c0;" bgcolor="#092d50"><strong><span style="color: #ffffff;">TOTAL({{$lpo->currency->currency_name}})</span></strong></td>
+        </tr>
+
+        @foreach ($lpo->items as $key => $item)
+        <tr>
+          <td style="border-top:1px solid #c0c0c0;border-bottom:1px solid #c0c0c0;border-left:1px solid #000000;border-right:1px solid #000000;font-size:12px;">{{$key+1}}</td>
+          <td style="border-top:1px solid #c0c0c0;border-bottom:1px solid #c0c0c0;border-left:1px solid #000000;border-right:1px solid #000000;font-size:12px;" colspan="5" >{{$item->item_description}}</td>
+          <td style="border-top:1px solid #c0c0c0;border-bottom:1px solid #c0c0c0;border-left:1px solid #000000;border-right:1px solid #000000;font-size:12px;" align="right"></td>
+          <td style="border-top:1px solid #c0c0c0;border-bottom:1px solid #c0c0c0;border-left:1px solid #000000;border-right:1px solid #000000;font-size:12px;" align="right">{{number_format($item->calculated_sub_total,2)}}</td>
+          <td style="border-top:1px solid #c0c0c0;border-bottom:1px solid #c0c0c0;border-left:1px solid #000000;border-right:1px solid #000000;font-size:12px;" align="right">{{number_format($item->calculated_vat,2)}}</td>
+          <td style="border-top:1px solid #c0c0c0;border-bottom:1px solid #c0c0c0;border-left:1px solid #000000;border-right:1px solid #000000;font-size:12px;" align="right" bgcolor="#E4E8F3">{{number_format($item->calculated_total,2)}}</td>
+        </tr>
+        @endforeach
+
+        <tr>
+          <td style="border-top: 1px solid #000000;" colspan="10" >&nbsp;</td>
+        </tr>
+        <tr>
+          <td ></td>
+          <td ></td>
+          <td ></td>
+          <td ></td>
+          <td ></td>
+          <td ></td>
+          <td ><span style="color: #ffffff;"></span></td>
+          <td colspan="1" >SUBTOTALS</td>
+          <td >{{$lpo->currency->currency_name}}</td>
+          <td align="right" bgcolor="#E4E8F3">{{number_format($lpo->sub_totals,2)}}</td>
+        </tr>
+        <tr>
+          <td colspan="6">&nbsp;</td>
+          <td ></td>
+          <td colspan="1" >VAT RATE</td>
+          <td ></td>
+          <td align="right">16%</td>
+        </tr>
+        <tr>
+          <td colspan="6">&nbsp;</td>
+          <td ></td>
+          <td >VAT</td>
+          <td >{{$lpo->currency->currency_name}}</td>
+          <td align="right" bgcolor="#E4E8F3">{{number_format($lpo->vats,2)}}</td>
+        </tr>
+        <tr>
+          <td colspan="6">&nbsp;</td>
+          <td >&nbsp;</td>
+          <td style="border-bottom: 3px double #000000;" colspan="1" ></td>
+          <td style="border-bottom: 3px double #000000;" ></td>
+          <td style="border-bottom: 3px double #000000;" align="right"></td>
+        </tr>
+        <tr>
+          <td colspan="6">&nbsp;</td>
+          <td ></td>
+          <td colspan="1" ><strong>TOTALS</strong></td>
+          <td >{{$lpo->currency->currency_name}}</td>
+          <td align="right" bgcolor="#E4E8F3"><strong>{{number_format($lpo->totals,2)}}</strong></td>
+        </tr>
+        <tr>
+          <td colspan="6">&nbsp;</td>
+          <td >&nbsp;</td>
+          <td ></td>
+          <td ></td>
+        </tr>
+
+        @if (!empty($lpo->quote_exempt_explanation))
+        <tr>
+          <td colspan="10">&nbsp;</td>
+        </tr>
+        <tr>
+            <td style="border:1px solid #666666;margin-right:20px;" colspan="10"  bgcolor="#C0C0C0" ><strong>Allocations</strong></td>
+        </tr>
+        <tr>
+          <th colspan="3">Project</th>
+          <th colspan="2">Grant</th>
+          <th colspan="2">Account</th>
+          <th colspan="2">Objective</th>
+          <th colspan="1">Rate</th>
+        </tr>
+        @foreach ($lpo->terms as $term)
+        <tr>
+          <td colspan="3">{{allocation->project->project_code ?? ''}} - {{allocation->project->project_name ?? ''}}</td>
+          <td colspan="2">{{allocation->grant->grant_code ?? ''}} - {{allocation->grant->gramt_name ?? ''}}</td>
+          <td colspan="2">{{allocation->account->account_name ?? ''}}</td>
+          <td colspan="2">{{allocation->objective->objective ?? ''}}</td>
+          <td colspan="1">{{number_format(allocation->percentage_allocated,2)}}%</td>
+        </tr>
+        @endforeach
+        @endif
+        <tr colspan="10"></tr>
+
+        <tr>
+          <td colspan="2"><strong>Signature:</strong></td>
+          <td colspan="4">
+            <img style="height:70px;width:200px;" alt="." src="{{asset('storage/signatures/signature'.$approval->approver_id.'.png')}}">
+          </td>
+          <td colspan="4"></td>
+        </tr>
+        <tr>
+          <td colspan="2"><strong>Designation:</strong></td>
+          <td colspan="4">{{$lpo->requested_by->official_post ?? ''}}</td>
+          <td colspan="4"></td>
+        </tr>
+        <tr>
+          <td colspan="2"><strong>Date:</strong></td>
+          <td colspan="4">{{date('d F, Y')}}</td>
+          <td colspan="4"></td>
+        </tr>
+        <tr>
+            <td colspan="10">&nbsp;</td>
+        </tr>
+        
+        <tr>
+          <td colspan="10">I confirm that funds are available and that commitment has been allocated in the budget/ grant</td>
+        </tr>
+        @foreach ($unique_approvals as $key => $approval)
+        @if($approval->approval_level == 2)
+        <tr>
+          <td colspan="2"><strong>Signature:</strong></td>
+          <td colspan="4">
+            <img style="height:70px;width:200px;" alt="." src="{{asset('storage/signatures/signature'.$approval->approver_id.'.png')}}">
+          </td>
+          <td colspan="4"></td>
+        </tr>
+        <tr>
+          <td colspan="2"><strong>Date:</strong></td>
+          <td colspan="4">{{date('d F, Y', strtotime($approval->created_at))}}</td>
+          <td colspan="4"></td>
+        </tr>
+        @endif
+        @endforeach
+        <tr>
+            <td colspan="10">&nbsp;</td>
+        </tr>
+        
+        <tr>
+          <td colspan="6">I confirm receipt of this order</td>
+          <td colspan="4"></td>
+        </tr>
+        <tr>
+          <td colspan="6"></td>
+          <td colspan="4">__________________________________________________________ (Vendor name)</td>
+        </tr>
+        <tr>
+          <td colspan="6"></td>
+          <td colspan="4">__________________________________________________________ (Date)</td>
+        </tr>
+        <tr>
+            <td colspan="10">&nbsp;</td>
+        </tr>
+
+        <tr>
+            <td style="border: 1px solid #666666;margin-right: 20px;" colspan="10"  bgcolor="#C0C0C0" ><strong>Terms And Conditions</strong></td>
+        </tr>
+        <tr>
+          <td style="border: 1px solid #666666;margin-right: 20px;" colspan="10" valign="top" >
+            <ul style="list-style-type: square;">
+              @foreach ($lpo->terms as $term)
+              <li><span style="font-size:12px;">{{$term->terms}}</span></li>
+              @endforeach
+            </ul>
+          </td>
+        </tr>
+        <tr>
+            <td colspan="10">&nbsp;</td>
+        </tr>
+        @endif
         </tbody>
       </table>      
     </div>

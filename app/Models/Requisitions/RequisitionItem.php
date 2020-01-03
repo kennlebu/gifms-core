@@ -3,7 +3,9 @@
 namespace App\Models\Requisitions;
 
 use App\Models\BaseModels\BaseModel;
+use App\Models\ClaimsModels\Claim;
 use App\Models\LPOModels\LpoItem;
+use App\Models\MobilePaymentModels\MobilePayment;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class RequisitionItem extends BaseModel
@@ -29,8 +31,26 @@ class RequisitionItem extends BaseModel
     public function getTransactionStatusAttribute(){
         $status = $this->status->status;
         if($this->status_id == 2){
-            $lpo_item = LpoItem::where('requisition_item_id', $this->id)->first();
-            $status = 'LPO '.$lpo_item->lpo->status->lpo_status;
+            if($this->transaction_type == 'lpo'){
+                $prefix = 'LPO';
+                // if($lpo_item->lpo->lpo_type=='lso') $prefix = 'LSO';
+                // $status = $prefix.' '.$lpo_item->lpo->status->lpo_status;
+            }
+            elseif($this->transaction_type == 'lso'){
+                $prefix = 'LSO';
+            }
+            $lpo_item = LpoItem::where('requisition_item_id', $this->id)->orderBy('id','desc')->first();
+            $status = $prefix.' '.$lpo_item->lpo->status->lpo_status;
+        }
+        if($this->status_id == 3){
+            if($this->module == 'mobile_payment'){
+                $mb = MobilePayment::where('requisition_id', $this->requisition_id)->first();
+                $status = 'Mobile Payment '.$mb->status->mobile_payment_status;
+            }
+            if($this->module == 'claim'){
+                $claim = Claim::where('requisition_id', $this->requisition_id)->first();
+                $status = 'Claim '.$claim->status->claim_status;
+            }
         }
         return $status;
     }
@@ -38,13 +58,21 @@ class RequisitionItem extends BaseModel
     public function getTransactionAttribute(){
         $transaction = null;
         if($this->status_id == 2){
-            if($this->type == 'prenegotiated' || $this->type == 'extra'){
+            $lpo_item = LpoItem::where('requisition_item_id', $this->id)->first();
+            $transaction = ['type'=>'lpo', 'id'=>$lpo_item->lpo_id];
+        }
+        if($this->status_id == 3){
+            if($this->module == 'mobile_payment'){
                 $lpo_item = LpoItem::where('requisition_item_id', $this->id)->first();
-                $transaction = ['type'=>'lpo', 'id'=>$lpo_item->lpo_id];
+                $transaction = ['type'=>'mobile_payment', 'id'=>$lpo_item->lpo_id];
             }
-            else if($this->type == 'non_lpo'){
+            else if($this->module == 'claim'){
                 $lpo_item = LpoItem::where('requisition_item_id', $this->id)->first();
-                $transaction = ['lpo'=>'invoice', 'id'=>$lpo_item->lpo_id];
+                $transaction = ['type'=>'claim', 'id'=>$lpo_item->lpo_id];
+            }
+            else if($this->module == 'invoice'){
+                $lpo_item = LpoItem::where('requisition_item_id', $this->id)->first();
+                $transaction = ['type'=>'invoice', 'id'=>$lpo_item->lpo_id];
             }
         }
 

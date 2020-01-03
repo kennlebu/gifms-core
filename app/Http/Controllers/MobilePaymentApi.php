@@ -329,24 +329,24 @@ class MobilePaymentApi extends Controller
             $mobile_payment->disableLogging(); //! Do not log the update
             if($mobile_payment->save()) {
 
-                $mobile_payment   = MobilePayment::with(
-                                    'requested_by',
-                                    'requested_action_by',
-                                    'project',
-                                    'account',
-                                    'mobile_payment_type',
-                                    'invoice',
-                                    'status',
-                                    'project_manager',
-                                    'region',
-                                    'county',
-                                    'currency',
-                                    'rejected_by',
-                                    'payees_upload_mode',
-                                    'payees',
-                                    'approvals',
-                                    'allocations'
-                                )->findOrFail($mobile_payment_id);
+                // $mobile_payment   = MobilePayment::with(
+                //                     'requested_by',
+                //                     'requested_action_by',
+                //                     'project',
+                //                     'account',
+                //                     'mobile_payment_type',
+                //                     'invoice',
+                //                     'status',
+                //                     'project_manager',
+                //                     'region',
+                //                     'county',
+                //                     'currency',
+                //                     'rejected_by',
+                //                     'payees_upload_mode',
+                //                     'payees',
+                //                     'approvals',
+                //                     'allocations'
+                //                 )->findOrFail($mobile_payment_id);
 
                 $approval = new Approval;
                 $approval->approvable_id            =   (int)   $mobile_payment->id;
@@ -370,7 +370,7 @@ class MobilePaymentApi extends Controller
                     /* Send Email */
                     Mail::queue(new NotifyMobilePayment($mobile_payment));
                     
-                // Save the approval if the bdirector has approved
+                    // Save the approval if the bdirector has approved
                     $approval->approval_level_id = 4;
                     $mobile_payment->management_approval_at = $mgt_approval_time;
                     $mobile_payment->save();
