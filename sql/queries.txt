@@ -1664,10 +1664,10 @@ CHANGE `updated_at` `updated_at` timestamp NOT NULL DEFAULT current_timestamp() 
 ALTER TABLE `requisition_items`
 ADD `county_id` int NULL AFTER `airfare_doc`;
 
-===== Change requisition item status
+~===== Change requisition item status
 UPDATE `requisition_item_statuses` SET `status` = 'Item ordered' WHERE `id` = '2';
 
-===== Add transaction type and module to requisition item
+~===== Add transaction type and module to requisition item
 ALTER TABLE `requisition_items`
 ADD `transaction_type` varchar(20) NULL AFTER `county_id`;
 
@@ -1676,7 +1676,7 @@ ADD `module` varchar(20) COLLATE 'latin1_swedish_ci' NULL AFTER `transaction_typ
 ALTER TABLE `lpos`
 ADD `module` varchar(20) NULL AFTER `requisition_id`;
 
-===== Add more statuses to requisition items
+~===== Add more statuses to requisition items
 INSERT INTO `requisition_item_statuses` (`status`, `default`)
 VALUES ('Mobile payment created', NULL);
 
