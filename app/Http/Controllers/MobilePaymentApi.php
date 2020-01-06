@@ -44,6 +44,9 @@ use App\Exceptions\ApprovalException;
 use App\Models\PaymentModels\VoucherNumber;
 use App\Models\ReportModels\ReportingObjective;
 use App\Mail\RequestMPBankSigning;
+use App\Models\AllocationModels\Allocation;
+use App\Models\Requisitions\Requisition;
+use App\Models\Requisitions\RequisitionItem;
 
 class MobilePaymentApi extends Controller
 {
@@ -104,7 +107,9 @@ class MobilePaymentApi extends Controller
                 'rejection_reason',
                 'file',
                 'rejected_by_id',
-                'program_activity_id'
+                'program_activity_id',
+                'requisition_id',
+                'requisition_items'
                 );
                 
             $file = $form['file'];
@@ -135,6 +140,43 @@ class MobilePaymentApi extends Controller
             if($mobile_payment->save()) {
 
                 $mobile_payment->disableLogging(); // Do not log the subsequent update(s)
+
+                $requisition = null;
+                if(!empty($form['requisition_id']) && (int) $form['requisition_id'] != 0){
+                    $mobile_payment->requisition_id = $form['requisition_id'];
+                    $mobile_payment->save();
+                    $requisition = Requisition::findOrFail($form['requisition_id']);
+                    $allocation_purpose = '';
+                    $count = 0;
+    
+                    foreach(json_decode($form['requisition_items']) as $item){
+                        $item = RequisitionItem::findOrFail($item);;
+                        if($count < 1){
+                            $allocation_purpose = $item->service;
+                        }
+                        else {
+                            $allocation_purpose = '; '.$item->service;
+                        }
+                        $count += 1;
+                        $item->status_id = 6;
+                        $item->disableLogging();
+                        $item->save();
+                    }
+
+                    foreach($requisition->allocations as $alloc){
+                        $allocation = new Allocation();
+                        $allocation->account_id = $alloc->account_id;
+                        $allocation->project_id = $alloc->project_id;
+                        $allocation->allocatable_id = $mobile_payment->id;
+                        $allocation->allocatable_type = 'mobile_payments';
+                        $allocation->percentage_allocated = $alloc->percentage_allocated;
+                        $allocation->allocation_purpose = $allocation_purpose;
+                        $allocation->objective_id = $alloc->objective_id;
+                        $allocation->allocated_by_id = $requisition->requested_by_id;
+                        $allocation->disableLogging();
+                        $allocation->save();
+                    }                   
+                }
 
                 FTP::connection()->makeDir('/mobile_payments');
                 FTP::connection()->makeDir('/mobile_payments/'.$mobile_payment->id);

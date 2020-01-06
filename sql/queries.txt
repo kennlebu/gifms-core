@@ -1675,3 +1675,10 @@ ALTER TABLE `requisition_items`
 ADD `module` varchar(20) COLLATE 'latin1_swedish_ci' NULL AFTER `transaction_type`;
 ALTER TABLE `lpos`
 ADD `module` varchar(20) NULL AFTER `requisition_id`;
+
+===== Add more statuses to requisition items
+INSERT INTO `requisition_item_statuses` (`status`, `default`)
+VALUES ('Mobile payment created', NULL);
+
+INSERT INTO `requisition_item_statuses` (`status`, `default`)
+VALUES ('Claim created', NULL);

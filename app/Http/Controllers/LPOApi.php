@@ -1317,6 +1317,7 @@ class LPOApi extends Controller
             $data[$key]['totals']                   = $lpo->totals;
             $data[$key]['program_activity']         = $lpo->program_activity;
             $data[$key]['requisition']              = $lpo->requisition;
+            $data[$key]['lpo_requisition_items']    = $lpo->lpo_requisition_items;
             $data[$key]['preferred_supplier']       = $lpo->preferred_supplier;
             $data[$key]['preferred_supplier']['supply_category'] = $lpo->preferred_supplier->supply_category ?? '';
 

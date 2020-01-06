@@ -20,6 +20,7 @@ use App\Models\InvoicesModels\Invoice;
 use App\Models\LookupModels\Region;
 use App\Models\LookupModels\County;
 use App\Models\LookupModels\Currency;
+use App\Models\Requisitions\RequisitionItem;
 use App\Models\SuppliesModels\Supplier;
 
 class Lpo extends BaseModel
@@ -30,7 +31,7 @@ class Lpo extends BaseModel
 
     protected $dates = ['created_at','updated_at','deleted_at'];
 
-    protected $appends = ['amount','vats','sub_totals','totals','preferred_supplier'];
+    protected $appends = ['amount','vats','sub_totals','totals','preferred_supplier','lpo_requisition_items'];
  
 
 
@@ -221,6 +222,14 @@ class Lpo extends BaseModel
 
 
 
+    }
+
+    public function getLpoRequisitionItemsAttribute(){
+        $items = [];
+        foreach($this->items as $item){
+            $items[] = RequisitionItem::where('id',$item->requisition_item_id)->orderBy('id','desc')->first();
+        }
+        return $items;
     }
 
 

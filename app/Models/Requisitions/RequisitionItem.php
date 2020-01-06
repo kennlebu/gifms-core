@@ -30,11 +30,10 @@ class RequisitionItem extends BaseModel
 
     public function getTransactionStatusAttribute(){
         $status = $this->status->status;
+        $prefix = '';
         if($this->status_id == 2){
             if($this->transaction_type == 'lpo'){
                 $prefix = 'LPO';
-                // if($lpo_item->lpo->lpo_type=='lso') $prefix = 'LSO';
-                // $status = $prefix.' '.$lpo_item->lpo->status->lpo_status;
             }
             elseif($this->transaction_type == 'lso'){
                 $prefix = 'LSO';
@@ -42,15 +41,19 @@ class RequisitionItem extends BaseModel
             $lpo_item = LpoItem::where('requisition_item_id', $this->id)->orderBy('id','desc')->first();
             $status = $prefix.' '.$lpo_item->lpo->status->lpo_status;
         }
-        if($this->status_id == 3){
-            if($this->module == 'mobile_payment'){
-                $mb = MobilePayment::where('requisition_id', $this->requisition_id)->first();
-                $status = 'Mobile Payment '.$mb->status->mobile_payment_status;
-            }
-            if($this->module == 'claim'){
+        if($this->status_id == 6){
+            $mb = MobilePayment::where('requisition_id', $this->requisition_id)->first();
+            $status = 'Mobile Payment '.$mb->status->mobile_payment_status;
+        }
+        if($this->status_id == 7){
+            // if($this->module == 'mobile_payment'){
+            //     $mb = MobilePayment::where('requisition_id', $this->requisition_id)->first();
+            //     $status = 'Mobile Payment '.$mb->status->mobile_payment_status;
+            // }
+            // if($this->module == 'claim'){
                 $claim = Claim::where('requisition_id', $this->requisition_id)->first();
                 $status = 'Claim '.$claim->status->claim_status;
-            }
+            // }
         }
         return $status;
     }
