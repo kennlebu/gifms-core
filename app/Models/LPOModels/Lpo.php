@@ -130,7 +130,7 @@ class Lpo extends BaseModel
     public function getPreferredSupplierAttribute()
     {
         $supplier = null;
-        if($this->lpo_type == 'prenegotiated'){
+        if($this->lpo_type == 'prenegotiated' || $this->lpo_type == 'lso'){
             $supplier = Supplier::with('supply_category')->find($this->supplier_id);
         }
         else {

@@ -174,6 +174,8 @@ Route::PATCH('/lpo/{lpo_id}/recall', 'LPOApi@recallLpo')->middleware('jwt.auth')
  */
 Route::PATCH('/lpo/{lpo_id}/cancel', 'LPOApi@cancelLpo')->middleware('jwt.auth');
 
+Route::PUT('/lpo-supplier', 'LPOApi@updateLpoSupplier')->middleware('jwt.auth');
+
 // New pre-negotiated LPO
 Route::POST('/prenegotiated', 'LPOApi@addPrenegotiatedLpoRate')->middleware('jwt.auth');
 Route::POST('/lpos_not_selected', 'LPOApi@addVendorsNotSelected')->middleware('jwt.auth');
@@ -5478,3 +5480,4 @@ Route::PATCH('requisition/{id}/reject', 'RequisitionApi@reject')->middleware('jw
 Route::PATCH('requisitions/approve', 'RequisitionApi@approveMultiple')->middleware('jwt.auth');
 Route::DELETE('requisition/allocation/{id}', 'RequisitionApi@deleteAllocation')->middleware('jwt.auth');
 Route::GET('requisition/document/{name}', 'RequisitionApi@getDocument')->middleware('jwt.auth');
+Route::GET('/requisition/{id}/get_document', 'RequisitionApi@getRequisitionDocument')->middleware('jwt.auth');

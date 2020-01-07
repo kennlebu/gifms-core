@@ -40,4 +40,8 @@ class Delivery extends BaseModel
     {
         return $this->hasMany('App\Models\DeliveriesModels\DeliveryItem');
     }
+    public function requisition()
+    {
+        return $this->belongsTo('App\Models\Requisitions\Requisition')->with('items');
+    }
 }

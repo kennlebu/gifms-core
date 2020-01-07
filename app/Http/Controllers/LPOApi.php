@@ -553,7 +553,7 @@ class LPOApi extends Controller
                 if($lpo->status_id!=7){
                     Mail::queue(new NotifyLpo($lpo));
                 }
-                elseif($lpo->status_id==7){
+                elseif($lpo->status_id==7 && $lpo->lpo_type != 'lso'){
                     Mail::queue(new NotifyLpoDispatch($lpo));
                 }
 
@@ -1535,7 +1535,14 @@ class LPOApi extends Controller
     }
 
 
-
+    public function updateLpoSupplier(){
+        $form = Request::all();
+        $lpo = Lpo::find($form['id']);
+        $lpo->supplier_id = (int) $form['supplier_id'] ?? null;
+        if($lpo->save()) {
+            return Response()->json(array('msg' => 'Success: lpo supplier updated','lpo' => $lpo), 200);
+        }
+    }
 
 
 

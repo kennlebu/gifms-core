@@ -15,7 +15,7 @@ class Requisition extends BaseModel
     use SoftDeletes;
 
     protected $dates = ['submitted_at'];
-    protected $appends = ['documents','transactions'];
+    protected $appends = ['documents','transactions','generated_ref'];
     protected $hidden = ['updated_at', 'deleted_at'];
     protected $guarded = [];
 
@@ -51,7 +51,8 @@ class Requisition extends BaseModel
     
     public function approvals()
     {
-        return $this->morphMany('App\Models\ApprovalsModels\Approval', 'approvable')->where('approver_id', '!=', 0)->orderBy('approval_level_id', 'asc');
+        return $this->morphMany('App\Models\ApprovalsModels\Approval', 'approvable');
+        // return $this->morphMany('App\Models\ApprovalsModels\Approval', 'approvable')->where('approver_id', '!=', 0)->orderBy('approval_level_id', 'asc');
     }
 
     public function lpos()
@@ -85,5 +86,33 @@ class Requisition extends BaseModel
         $list['mobile_payments'] = $mpesas;
 
         return $list;
+    }
+
+    public function getGeneratedRefAttribute(){
+        // Get the last requisition with a ref
+        $last = Requisition::whereNotNull('ref')->orderBy('id', 'desc')->first();
+
+        // Get current year and month
+        $year = date('y', strtotime($this->created_at));
+        $month = date('m', strtotime($this->created_at));
+        $combination = $year.$month;
+
+        // Get last year and month
+        $last_year = date('y', strtotime($last->created_at));
+        $last_month = date('m', strtotime($last->created_at));
+        $last_combination = $last_year.$last_month;
+
+        // Use current combination if it isn't the same as the previous
+        $month_year = $last_combination;
+        if($combination != $last_combination){
+            $month_year = $combination;
+        }
+
+        // Get requisition number in month 
+        $last_number = explode('-', $last->ref)[1] ?? 0;
+        $new_number = $this->pad(3, ($last_number + 1));
+
+        return 'KE'.$month_year.'-'.$new_number;
+        // return 'DUMMY';
     }
 }

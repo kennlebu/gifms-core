@@ -7,6 +7,7 @@ use App\Models\Requisitions\RequisitionStatus;
 use App\Models\Requisitions\RequisitionAllocation;
 use App\Models\Requisitions\RequisitionItem;
 use Exception;
+use PDF;
 use Illuminate\Http\Request;
 use Anchu\Ftp\Facades\Ftp;
 use App\Models\ApprovalsModels\Approval;
@@ -157,7 +158,7 @@ class RequisitionApi extends Controller
             $requisition->objective_id = $request->objective_id;
             $requisition->save();
             $requisition->disableLogging();
-            $requisition->ref = 'R-'.$this->pad_with_zeros(5,$requisition->id);
+            $requisition->ref = $requisition->generated_ref;
             $requisition->save();
 
             $allocations = json_decode($request->allocations);
@@ -381,7 +382,7 @@ class RequisitionApi extends Controller
             return response()->json(['msg'=>"Requisition removed"], 200,array(),JSON_PRETTY_PRINT);
         }
         catch(Exception $e){
-            return response()->json(['error'=>"Something went wrong"], 500,array(),JSON_PRETTY_PRINT);
+            return response()->json(['error'=>"Something went wrong", 'msg'=>$e->getMessage(), 'stack'=>$e->getTraceAsString()], 500,array(),JSON_PRETTY_PRINT);
         }
     }
 
@@ -519,7 +520,7 @@ class RequisitionApi extends Controller
     }
 
     /**
-     * Get document
+     * Get documents
      */
     public function getDocument($name){
         try{
@@ -537,6 +538,29 @@ class RequisitionApi extends Controller
             $response       = Response::make("", 200);
             $response->header('Content-Type', 'application/pdf');
             return $response;  
+        }
+    }
+
+    public function getRequisitionDocument($id){
+        try{
+            $requisition = Requisition::findOrFail($id);
+            $unique_approvals = $this->unique_multidim_array($requisition->approvals, 'approver_id');
+
+            $data = array(
+                'requisition' => $requisition,
+                'unique_approvals' => $unique_approvals
+                );
+
+            $pdf = PDF::loadView('pdf/requisition', $data);
+            $file_contents  = $pdf->stream();
+            $response = Response::make($file_contents, 200);
+            $response->header('Content-Type', 'application/pdf');
+            return $response;
+        }
+        catch (Exception $e){
+            $response = Response::make("", 200);
+            $response->header('Content-Type', 'application/pdf');
+            return $response;
         }
     }
 

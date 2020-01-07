@@ -50,7 +50,8 @@ class DeliveryApi extends Controller
                 'supplier_id',
                 'delivery_made',
                 'received_for_id',
-                'file'
+                'file',
+                'requisition_id'
             );
 
             $file = $form['file'];
@@ -61,6 +62,7 @@ class DeliveryApi extends Controller
             $delivery->supplier_id = (int) $form['supplier_id'];
             $delivery->delivery_made = $form['delivery_made'];
             $delivery->received_for_id = (int) $form['received_for_id'];
+            $delivery->requisition_id = $form['requisition_id'];
 
             if($delivery->save()) {
                 // Mark LPO as delivered if it's a partial delivery
@@ -241,12 +243,13 @@ class DeliveryApi extends Controller
                                         'comments',
                                         'supplier',
                                         'lpo',
-                                        'logs'
+                                        'logs',
+                                        'requisition'
                                     )->findOrFail($delivery_id);
 
             foreach ($response->logs as $key => $value) {                
-                $response['logs'][$key]['causer']   =   $value->causer;
-                $response['logs'][$key]['subject']  =   $value->subject;
+                $response['logs'][$key]['causer'] = $value->causer;
+                $response['logs'][$key]['subject'] = $value->subject;
             }
 
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
@@ -322,9 +325,8 @@ class DeliveryApi extends Controller
             $response->header('Content-Type', 'application/pdf');
 
             return $response;
-        }catch (Exception $e ){            
-
-            $response       = Response::make("", 200);
+        }catch (Exception $e){
+            $response = Response::make("", 200);
             $response->header('Content-Type', 'application/pdf');
 
             return $response;  
@@ -523,6 +525,7 @@ class DeliveryApi extends Controller
             $data[$key]['received_by']              = $delivery->received_by;
             $data[$key]['received_for']             = $delivery->received_for;
             $data[$key]['supplier']                 = $delivery->supplier;
+            $data[$key]['requisition']              = $delivery->requisition;
         }
 
         return $data;
