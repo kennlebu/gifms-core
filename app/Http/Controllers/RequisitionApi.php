@@ -543,7 +543,9 @@ class RequisitionApi extends Controller
 
     public function getRequisitionDocument($id){
         try{
-            $requisition = Requisition::findOrFail($id);
+            $requisition = Requisition::with('status','allocations.objective','requested_by','program_manager','items.supplier_service','items.status','allocations.allocated_by',
+                                        'allocations.project','allocations.account','logs.causer','approvals.approver','logs.causer','lpos.status','items.county')
+                                        ->findOrFail($id);
             $unique_approvals = $this->unique_multidim_array($requisition->approvals, 'approver_id');
 
             $data = array(
