@@ -1,6 +1,7 @@
 <?php
 
 use Anchu\Ftp\Facades\Ftp;
+use App\Http\Controllers\Controller;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,7 +35,6 @@ Route::get('storage/app/staff/{filename}', function ($filename)
    return $response;
 });
 
-
 Route::get('/test/ftp', function () {
     // return view('welcome');
 
@@ -48,13 +48,15 @@ Route::get('/test/ftp', function () {
             echo $status;
 });
 
-
 Route::get('test/pdf_lpo', function () {
 
-    $lpo   = App\Models\LPOModels\Lpo::findOrFail(128);
+    $lpo   = App\Models\LPOModels\Lpo::findOrFail(2194);
+    $controller = new Controller();
+    $unique_approvals = $controller->unique_multidim_array($lpo->approvals, 'approver_id');
 
     $data = array(
-            'lpo'   => $lpo
+            'lpo'   => $lpo,
+            'unique_approvals' => $unique_approvals
         );
 
     return view('pdf/lpo',$data);
@@ -95,8 +97,6 @@ Route::get('test/pdf_voucher', function () {
     return view('pdf/payment_voucher',$data);
 });
 
-
-
 Route::get('test/pdf_mobile_payment', function () {
 
 	$mp   = App\Models\MobilePaymentModels\MobilePayment::findOrFail(128);
@@ -107,8 +107,6 @@ Route::get('test/pdf_mobile_payment', function () {
 
     return view('pdf/mobile_payment',$data);
 });
-
-
 
 Route::get('test/email_lpo', function () {
 
@@ -145,3 +143,7 @@ Route::get('test/email_lpo', function () {
 
     return view('emails/notify_lpo',$data);
 });
+
+Route::get('/event/register/{url}', 'MeetingApi@registerIndex');
+Route::post('/event/register', 'MeetingApi@register')->name('register');
+Route::post('/event/register-attendee', 'MeetingApi@registerAttendee')->name('register-attendee');

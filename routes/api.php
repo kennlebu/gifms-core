@@ -5481,3 +5481,11 @@ Route::PATCH('requisitions/approve', 'RequisitionApi@approveMultiple')->middlewa
 Route::DELETE('requisition/allocation/{id}', 'RequisitionApi@deleteAllocation')->middleware('jwt.auth');
 Route::GET('requisition/document/{name}', 'RequisitionApi@getDocument')->middleware('jwt.auth');
 Route::GET('/requisition/{id}/get_document', 'RequisitionApi@getRequisitionDocument')->middleware('jwt.auth');
+
+
+/* Meetings */
+Route::POST('event', 'MeetingApi@store')->middleware('jwt.auth');
+Route::PUT('event/{id}', 'MeetingApi@update')->middleware('jwt.auth');
+Route::GET('events', 'MeetingApi@index')->middleware('jwt.auth');
+Route::GET('event/{id}', 'MeetingApi@show')->middleware('jwt.auth');
+Route::DELETE('event/{id}', 'MeetingApi@destroy')->middleware('jwt.auth');

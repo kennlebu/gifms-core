@@ -1682,3 +1682,67 @@ VALUES ('Mobile payment created', NULL);
 
 INSERT INTO `requisition_item_statuses` (`status`, `default`)
 VALUES ('Claim created', NULL);
+
+===== Create tables for meeting attendance
+CREATE TABLE `meeting_attendees` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `name` text NULL,
+  `id_no` varchar(10) NULL,
+  `organisation` text NULL,
+  `designation` text NULL,
+  `phone` varchar(20) NULL,
+  `bank_id` int NULL,
+  `bank_branch_id` int NULL,
+  `bank_name` text NULL,
+  `bank_branch_name` text NULL,
+  `bank_account` varchar(256) NULL,
+  `kra_pin` varchar(15) NULL,
+  `fp_template_1` text NULL,
+  `fp_template_2` text NULL,
+  `fp_template_3` text NULL,
+  `fp_template_4` text NULL,
+  `created_at` timestamp NULL,
+  `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL
+);
+
+CREATE TABLE `meetings` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `title` text NULL,
+  `county_id` int NULL,
+  `starts_on` varchar(50) NULL,
+  `ends_on` varchar(50) NULL,
+  `created_by_id` int NULL,
+  `created_at` timestamp NULL,
+  `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL
+);
+
+CREATE TABLE `meeting_attendance_logs` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `meeting_id` int NULL,
+  `attendee_id` int NULL,
+  `time_in` varchar(50) NULL,
+  `time_out` varchar(50) NULL,
+  `date` varchar(20) NULL,
+  `meeting_day` varchar(5) NULL,
+  `created_at` timestamp NULL,
+  `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL
+);
+
+ALTER TABLE `meetings`
+ADD `invite_url` text NULL AFTER `created_by_id`,
+CHANGE `updated_at` `updated_at` timestamp NULL AFTER `created_at`;
+
+CREATE TABLE `meeting_attendee_registers` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `attendee_id` int NULL,
+  `meeting_id` int NULL,
+  `created_at` timestamp NULL,
+  `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL
+);
+ALTER TABLE `meeting_attendee_registers`
+CHANGE `updated_at` `updated_at` timestamp NULL AFTER `created_at`,
+RENAME TO `meeting_attendance_registers`;
