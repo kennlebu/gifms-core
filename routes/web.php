@@ -50,7 +50,7 @@ Route::get('/test/ftp', function () {
 
 Route::get('test/pdf_lpo', function () {
 
-    $lpo   = App\Models\LPOModels\Lpo::findOrFail(2194);
+    $lpo   = App\Models\LPOModels\Lpo::with('allocations')->findOrFail(2201);
     $controller = new Controller();
     $unique_approvals = $controller->unique_multidim_array($lpo->approvals, 'approver_id');
 

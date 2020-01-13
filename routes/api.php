@@ -5489,3 +5489,7 @@ Route::PUT('event/{id}', 'MeetingApi@update')->middleware('jwt.auth');
 Route::GET('events', 'MeetingApi@index')->middleware('jwt.auth');
 Route::GET('event/{id}', 'MeetingApi@show')->middleware('jwt.auth');
 Route::DELETE('event/{id}', 'MeetingApi@destroy')->middleware('jwt.auth');
+
+Route::POST('log-attendance', 'MeetingApi@logAttendance')->middleware('jwt.auth');
+Route::POST('enroll-attendee', 'MeetingApi@enrollAttendee')->middleware('jwt.auth');
+Route::POST('register-attendee', 'MeetingApi@registerAttendeeApi')->middleware('jwt.auth');

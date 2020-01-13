@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Meetings\Meeting;
+use App\Models\Meetings\MeetingAttendanceLog;
 use App\Models\Meetings\MeetingAttendanceRegister;
 use App\Models\Meetings\MeetingAttendee;
 use Illuminate\Http\Request;
@@ -274,6 +275,89 @@ class MeetingApi extends Controller
         }
         catch(Exception $e){
             return back()->with('error', $e->getMessage());
+        }
+    }
+
+
+    public function logAttendance(Request $request){
+        try{
+            $attendee = MeetingAttendee::where('id_no', $request->id_no)->first();
+            if(empty($attendee)){
+                return response()->json(['error'=>"Attendee does not exist"], 404, array(), JSON_PRETTY_PRINT);
+            }
+            if(empty($attendee->fp_template_1)){
+                return response()->json(['error'=>"Attendee not enrolled", 'attendee'=>$attendee], 404, array(), JSON_PRETTY_PRINT);
+            }
+
+            $attendee = MeetingAttendee::where('id_no', $request->id_no)->where('fp_template_1', $request->fp_template_1)->first();
+            if(empty($attendee)){
+                return response()->json(['error'=>"Fingerprints do not match"], 401, array(), JSON_PRETTY_PRINT);
+            }
+
+            $previous_log = MeetingAttendanceLog::where('date', date('Y-m-d'))->first();
+            $log = new MeetingAttendanceLog();
+            $log->meeting_id = $request->meeting_id;
+            $log->attendee_id = $attendee->id;
+            $log->date = date('Y-m-d');
+            
+            if(!empty($previous_log)){
+                $log->time_out = date('H:i:s');
+            }
+            else {
+                $log->time_in = date('H:i:s');
+            }            
+            $log->disableLogging();
+            $log->save();
+
+            return Response()->json(array('msg' => 'Attendance logged','log' => $log), 200);
+        }
+        catch(Exception $e){
+            return response()->json(['error'=>"Something went wrong",'msg'=>$e->getMessage(),'trace'=>$e->getTraceAsString()], 500,array(),JSON_PRETTY_PRINT);
+        }
+    }
+
+
+
+    public function enrollAttendee(Request $request){
+        try{
+            $attendee = MeetingAttendee::where('id_no', $request->id_no)->first();
+            if(empty($attendee)){
+                return response()->json(['error'=>"Attendee does not exist"], 404, array(), JSON_PRETTY_PRINT);
+            }
+
+            $attendee->fp_template_1 = $request->fp_template_1;
+            $attendee->disableLogging();
+            $attendee->save();
+
+            return Response()->json(array('msg' => 'Attendee enrolled','attendee' => $attendee), 200);
+        }
+        catch(Exception $e){
+            return response()->json(['error'=>"Something went wrong",'msg'=>$e->getMessage(),'trace'=>$e->getTraceAsString()], 500,array(),JSON_PRETTY_PRINT);
+        }
+    }
+
+
+
+    public function registerAttendeeApi(Request $request){
+        try{
+            $attendee = new MeetingAttendee();
+            $attendee->name = $request->name;
+            $attendee->id_no = $request->id_no;
+            $attendee->organisation = $request->organisation;
+            $attendee->designation = $request->designation;
+            $attendee->phone = $request->phone;
+            $attendee->bank_name = $request->bank_name;
+            $attendee->bank_branch_name = $request->bank_branch_name;
+            $attendee->bank_account = $request->bank_account;
+            $attendee->kra_pin = $request->kra_pin;
+            $attendee->fp_template_1 = $request->fp_template_1;
+            $attendee->disableLogging();
+            $attendee->save();
+
+            return Response()->json(array('msg' => 'Attendee registered','attendee' => $attendee), 200);
+        }
+        catch(Exception $e){
+            return response()->json(['error'=>"Something went wrong",'msg'=>$e->getMessage(),'trace'=>$e->getTraceAsString()], 500,array(),JSON_PRETTY_PRINT);
         }
     }
 }

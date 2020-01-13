@@ -930,7 +930,13 @@ class LPOApi extends Controller
                 'unique_approvals' => $unique_approvals
                 );
 
-            $pdf = PDF::loadView('pdf/lpo', $data);
+            $pdf = null;
+            if($lpo->lpo_type == 'lso'){
+                $pdf = PDF::loadView('pdf/lso', $data);
+            }
+            else {
+                $pdf = PDF::loadView('pdf/lpo', $data);
+            }
             $file_contents  = $pdf->stream();
             $response = Response::make($file_contents, 200);
             $response->header('Content-Type', 'application/pdf');

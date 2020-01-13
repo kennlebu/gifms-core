@@ -1683,7 +1683,7 @@ VALUES ('Mobile payment created', NULL);
 INSERT INTO `requisition_item_statuses` (`status`, `default`)
 VALUES ('Claim created', NULL);
 
-===== Create tables for meeting attendance
+~===== Create tables for meeting attendance
 CREATE TABLE `meeting_attendees` (
   `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `name` text NULL,
