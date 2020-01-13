@@ -1747,7 +1747,7 @@ ALTER TABLE `meeting_attendee_registers`
 CHANGE `updated_at` `updated_at` timestamp NULL AFTER `created_at`,
 RENAME TO `meeting_attendance_registers`;
 
-===== Change some stuff
+~===== Change some stuff
 ALTER TABLE `meeting_attendees`
 CHANGE `updated_at` `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP AFTER `created_at`;
 

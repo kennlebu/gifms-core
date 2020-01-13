@@ -190,7 +190,7 @@ class LPOApi extends Controller
                 // else{
                 //     $lpo->ref = "CHAI/LPO/#$lpo->id/".date_format($lpo->created_at,"Y/m/d");
                 // }
-                $lpo_no = count($requisition->lpos) + 1;
+                $lpo_no = count($requisition->lpos);
                 $lpo->ref = $requisition->ref.'-LPO-'.$this->pad_with_zeros(2, $lpo_no);
                 $lpo->save();
 
