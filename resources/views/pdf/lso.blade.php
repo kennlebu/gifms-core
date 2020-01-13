@@ -136,7 +136,7 @@
         @foreach ($lpo->items as $key => $item)
         <tr>
           <td style="border-top:1px solid #c0c0c0;border-bottom:1px solid #c0c0c0;border-left:1px solid #000000;border-right:1px solid #000000;font-size:12px;">{{$key+1}}</td>
-          <td style="border-top:1px solid #c0c0c0;border-bottom:1px solid #c0c0c0;border-left:1px solid #000000;border-right:1px solid #000000;font-size:12px;" colspan="5" >{{$item->item_description}}</td>
+          <td style="border-top:1px solid #c0c0c0;border-bottom:1px solid #c0c0c0;border-left:1px solid #000000;border-right:1px solid #000000;font-size:12px;" colspan="5" >{{$item->item}}</td>
           <td style="border-top:1px solid #c0c0c0;border-bottom:1px solid #c0c0c0;border-left:1px solid #000000;border-right:1px solid #000000;font-size:12px;" align="right"></td>
           <td style="border-top:1px solid #c0c0c0;border-bottom:1px solid #c0c0c0;border-left:1px solid #000000;border-right:1px solid #000000;font-size:12px;" align="right">{{number_format($item->calculated_sub_total,2)}}</td>
           <td style="border-top:1px solid #c0c0c0;border-bottom:1px solid #c0c0c0;border-left:1px solid #000000;border-right:1px solid #000000;font-size:12px;" align="right">{{number_format($item->calculated_vat,2)}}</td>
@@ -188,59 +188,50 @@
           <td align="right" bgcolor="#E4E8F3"><strong>{{number_format($lpo->totals,2)}}</strong></td>
         </tr>
         <tr>
-          <td colspan="6">&nbsp;</td>
-          <td>&nbsp;</td>
-          <td></td>
-          <td></td>
+          <td colspan="10">&nbsp;</td>
         </tr>
 
-        @if (!empty($lpo->quote_exempt_explanation))
         <tr>
           <td colspan="10">&nbsp;</td>
         </tr>
         <tr>
-            <td style="border:1px solid #666666;margin-right:20px;" colspan="10"  bgcolor="#C0C0C0" ><strong>Allocations</strong></td>
+            <td style="border:1px solid #666666;margin-right:20px;" colspan="10"><strong>Allocations</strong></td>
         </tr>
         <tr>
-          <th colspan="3">Project</th>
-          <th colspan="2">Grant</th>
-          <th colspan="2">Account</th>
-          <th colspan="2">Objective</th>
-          <th colspan="1">Rate</th>
+          <th colspan="3" style="font-size:13px;border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0; border-left: 1px solid #c0c0c0;" bgcolor="#092d50" ><strong><span style="color:#ffffff;"width:30%;>Project</span></strong></th>
+          <th colspan="2" style="font-size:13px;border: 1px solid #c0c0c0;" bgcolor="#092d50"><span style="color:#ffffff;"><strong>Grant</strong></span></th>
+          <th colspan="2" style="font-size:13px;border: 1px solid #c0c0c0;" bgcolor="#092d50"><strong><span style="color:#ffffff;">Account</span></strong></th>
+          <th colspan="2" style="font-size:13px;border: 1px solid #c0c0c0;" bgcolor="#092d50"><span style="color:#ffffff;"><strong>Objective</strong></span></th>
+          <th colspan="1" style="font-size:13px;border: 1px solid #c0c0c0;" bgcolor="#092d50"><span style="color:#ffffff;"><strong>Rate</strong></span></th>
         </tr>
         @foreach ($lpo->allocations as $allocation)
         <tr>
-          <td colspan="3">project</td>
-          <td colspan="2">grant</td>
-          <td colspan="2">account</td>
-          <td colspan="2">objective</td>
-          <td colspan="1">100%</td>
+          <td colspan="3">{{$allocation->project->project_code ?? ''}} - {{$allocation->project->project_name ?? ''}}</td>
+          <td colspan="2">{{$allocation->grant->grant_name ?? '-'}}</td>
+          <td colspan="2">{{$allocation->account->account_name ?? ''}}</td>
+          <td colspan="2">{{$allocation->objective->objective ?? ''}}</td>
+          <td colspan="1">{{$allocation->percentage_allocated}} %</td>
         </tr>
         @endforeach
-        @endif
-        <tr colspan="10"></tr>
+        <tr colspan="10"><td>&nbsp;</td></tr>
 
-        @foreach ($unique_approvals as $approval)
-        @if ($approval->approval_level_id == 2)
         <tr>
           <td colspan="2"><strong>Signature:</strong></td>
           <td colspan="4">
-            <img style="height:70px;width:200px;" alt="." src="{{asset('storage/signatures/signature'.$approval->approver_id.'.png')}}">
+            <img style="height:70px;width:200px;" alt="." src="{{asset('storage/signatures/signature'.$lpo->requested_by_id.'.png')}}">
           </td>
-          <td colspan="4"></td>
+          <td colspan="4">&nbsp;</td>
         </tr>
         <tr>
           <td colspan="2"><strong>Designation:</strong></td>
           <td colspan="4">{{$lpo->requested_by->official_post ?? ''}}</td>
-          <td colspan="4"></td>
+          <td colspan="4">&nbsp;</td>
         </tr>
         <tr>
           <td colspan="2"><strong>Date:</strong></td>
           <td colspan="4">{{date('d F, Y')}}</td>
-          <td colspan="4"></td>
+          <td colspan="4">&nbsp;</td>
         </tr>
-        @endif
-        @endforeach
         <tr>
             <td colspan="10">&nbsp;</td>
         </tr>
@@ -267,6 +258,9 @@
         <tr>
             <td colspan="10">&nbsp;</td>
         </tr>
+        <tr>
+          <td colspan="10">&nbsp;</td>
+      </tr>
         
         <tr>
           <td colspan="6">I confirm receipt of this order</td>
@@ -276,6 +270,9 @@
           <td colspan="6"></td>
           <td colspan="4">__________________________________________________________ (Vendor name)</td>
         </tr>
+        <tr>
+          <td colspan="10">&nbsp;</td>
+      </tr>
         <tr>
           <td colspan="6"></td>
           <td colspan="4">__________________________________________________________ (Date)</td>

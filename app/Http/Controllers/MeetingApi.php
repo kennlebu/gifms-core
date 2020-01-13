@@ -9,6 +9,7 @@ use App\Models\Meetings\MeetingAttendee;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Request as IlluminateRequest;
 use Exception;
+use Anchu\Ftp\Facades\Ftp;
 
 class MeetingApi extends Controller
 {
@@ -289,7 +290,7 @@ class MeetingApi extends Controller
                 return response()->json(['error'=>"Attendee not enrolled", 'attendee'=>$attendee], 404, array(), JSON_PRETTY_PRINT);
             }
 
-            $attendee = MeetingAttendee::where('id_no', $request->id_no)->where('fp_template_1', $request->fp_template_1)->first();
+            /* $attendee = MeetingAttendee::where('id_no', $request->id_no)->where('fp_template_1', $request->fp_template_1)->first();
             if(empty($attendee)){
                 return response()->json(['error'=>"Fingerprints do not match"], 401, array(), JSON_PRETTY_PRINT);
             }
@@ -309,7 +310,8 @@ class MeetingApi extends Controller
             $log->disableLogging();
             $log->save();
 
-            return Response()->json(array('msg' => 'Attendance logged','log' => $log), 200);
+            return Response()->json(array('msg' => 'Attendance logged','log' => $log), 200); */
+            return Response()->json(array('attendee' => $attendee), 200);
         }
         catch(Exception $e){
             return response()->json(['error'=>"Something went wrong",'msg'=>$e->getMessage(),'trace'=>$e->getTraceAsString()], 500,array(),JSON_PRETTY_PRINT);
@@ -324,10 +326,19 @@ class MeetingApi extends Controller
             if(empty($attendee)){
                 return response()->json(['error'=>"Attendee does not exist"], 404, array(), JSON_PRETTY_PRINT);
             }
+            file_put_contents ( "C://Users//kennl//Documents//debug.txt" , PHP_EOL.json_encode($request) , FILE_APPEND);
 
-            $attendee->fp_template_1 = $request->fp_template_1;
+            /* $attendee->fp_template_1 = $request->fp_template_1;
             $attendee->disableLogging();
-            $attendee->save();
+            $attendee->save(); */
+            if($request->file!=0){
+                FTP::connection()->makeDir('/fpts');
+                FTP::connection()->makeDir('/fpts/'.$attendee->id);
+                FTP::connection()->uploadFile($file->getPathname(), '/fpts/'.$attendee->id.'.'.$file->getClientOriginalExtension());
+            }
+            else {
+                return response()->json(['error'=>"Failed to read file"], 500, array(), JSON_PRETTY_PRINT);
+            }
 
             return Response()->json(array('msg' => 'Attendee enrolled','attendee' => $attendee), 200);
         }

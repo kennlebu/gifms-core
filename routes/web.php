@@ -62,6 +62,20 @@ Route::get('test/pdf_lpo', function () {
     return view('pdf/lpo',$data);
 });
 
+Route::get('test/pdf_lso', function () {
+
+    $lpo   = App\Models\LPOModels\Lpo::with('allocations')->findOrFail(2201);
+    $controller = new Controller();
+    $unique_approvals = $controller->unique_multidim_array($lpo->approvals, 'approver_id');
+
+    $data = array(
+            'lpo'   => $lpo,
+            'unique_approvals' => $unique_approvals
+        );
+
+    return view('pdf/lso',$data);
+});
+
 Route::get('test/pdf_invoice_voucher', function () {
 
     $inv   = App\Models\InvoicesModels\Invoice::findOrFail(128);
