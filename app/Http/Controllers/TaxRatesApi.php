@@ -283,11 +283,6 @@ class TaxRatesApi extends Controller
         $records_filtered = 0;
 
         if(array_key_exists('datatables', $input)){
-            //searching
-            $rates->where(function ($query) use ($input) {                
-                $query->orWhere('rate','like', '\'%' . $input['search']['value']. '%\'');
-            });
-
             $records_filtered = $rates->count();
 
             //ordering
