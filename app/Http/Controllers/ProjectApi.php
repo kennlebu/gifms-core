@@ -216,18 +216,17 @@ class ProjectApi extends Controller
         $input = Request::all();
 
         try{
-            $response   = Project::with(["budget","project_manager","staffs", "grant"])
-                                    ->findOrFail($project_id);
-
+            $response = Project::with(["budget","project_manager","staffs", "grant"])->findOrFail($project_id);
 
             //with_chart_data
-            if(array_key_exists('with_chart_data', $input)&& $input['with_chart_data'] = "true"){
-                $project = Project::find($project_id);
-                $response["budget_expenditure_by_accounts_data"]    =   $project->getBudgetExpenditureByAccountsDataAttribute();
-                $response["budget_expenditure_by_objectives_data"]  =   $project->getBudgetExpenditureByObjectivesDataAttribute();
-                $response["grant_amount_allocated"]                 =   empty($project->budget->totals) ? 0 : $project->budget->totals;
-                $response["total_expenditure"]                      =   $project->getTotalExpenditureAttribute();
-                $response["total_expenditure_perc"]                 =   $project->getTotalExpenditurePercAttribute();
+            if(array_key_exists('with_chart_data', $input)&& $input['with_chart_data'] == "true"){
+                // $project = Project::find($project_id);
+                $response["budget_expenditure_by_accounts_data"]    =   $response->getBudgetExpenditureByAccountsDataAttribute();
+                $response["budget_expenditure_by_objectives_data"]  =   $response->getBudgetExpenditureByObjectivesDataAttribute();
+                $response["grant_amount_allocated"]                 =   empty($response->current_budget->totals) ? 0 : $response->current_budget->totals;
+                $response["total_expenditure"]                      =   $response->getTotalExpenditureAttribute();
+                $response["total_expenditure_perc"]                 =   $response->getTotalExpenditurePercAttribute();
+                $response["current_budget"]                         =   $response->current_budget;
             }
            
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
@@ -668,6 +667,7 @@ class ProjectApi extends Controller
                 else $budget_amount = 0;
 
                 $res[] = [
+                    'id'=>$pid->id,
                     'budget'=>$pid->budget,
                     'current_budget'=>$pid->current_budget,
                     'program'=>$pid->program,
