@@ -326,21 +326,26 @@ class MeetingApi extends Controller
             if(empty($attendee)){
                 return response()->json(['error'=>"Attendee does not exist"], 404, array(), JSON_PRETTY_PRINT);
             }
-            file_put_contents ( "C://Users//kennl//Documents//debug.txt" , PHP_EOL.json_encode($request) , FILE_APPEND);
 
-            /* $attendee->fp_template_1 = $request->fp_template_1;
-            $attendee->disableLogging();
-            $attendee->save(); */
+            // $attendee->fp_template_1 = base64_decode(urldecode($request->fp_template_1));
+            // $attendee->disableLogging();
+            // $attendee->save();
             if($request->file!=0){
                 FTP::connection()->makeDir('/fpts');
                 FTP::connection()->makeDir('/fpts/'.$attendee->id);
-                FTP::connection()->uploadFile($file->getPathname(), '/fpts/'.$attendee->id.'.'.$file->getClientOriginalExtension());
+                FTP::connection()->uploadFile($request->file->getPathname(), '/fpts/'.$attendee->id.'/'.$attendee->id.'.'."fpt");
+
+                activity()
+                    ->performedOn($attendee)
+                    ->causedBy($this->current_user())
+                    ->withProperties(['detail' => "Uploaded fingerprint for ".$attendee->name.", ID: ".$attendee->id_no])
+                    ->log('Uploaded fingerprint');
             }
             else {
                 return response()->json(['error'=>"Failed to read file"], 500, array(), JSON_PRETTY_PRINT);
             }
 
-            return Response()->json(array('msg' => 'Attendee enrolled','attendee' => $attendee), 200);
+            return Response()->json(array('msg' => 'Attendee prints uploaded'), 200);
         }
         catch(Exception $e){
             return response()->json(['error'=>"Something went wrong",'msg'=>$e->getMessage(),'trace'=>$e->getTraceAsString()], 500,array(),JSON_PRETTY_PRINT);
