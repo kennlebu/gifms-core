@@ -212,8 +212,12 @@ class InvoiceApi extends Controller
             }
 
             if($invoice->save()) {
-
                 $invoice->disableLogging(); //! Do not log the update
+
+                if($form['submission_type']=='log'){
+
+                }
+
                 if($form['submission_type']=='full'||$form['submission_type']=='upload_logged'){
                     
                     FTP::connection()->makeDir('/invoices');
@@ -813,13 +817,11 @@ class InvoiceApi extends Controller
 
             $invoice->disableLogging(); //! Do not log the update
             if($invoice->save()) {
-
                 Mail::queue(new NotifyInvoice($invoice));
 
-                $user = JWTAuth::parseToken()->authenticate();
                 activity()
                    ->performedOn($invoice)
-                   ->causedBy($user)
+                   ->causedBy($this->current_user())
                    ->log('submited for approval');
 
                 return Response()->json(array('msg' => 'Success: invoice submitted','invoice' => $invoice), 200);

@@ -1754,3 +1754,7 @@ CHANGE `updated_at` `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP AFTE
 ALTER TABLE `meeting_attendees`
 CHANGE `fp_template_1` `fp_template_1` blob NULL AFTER `kra_pin`,
 CHANGE `updated_at` `updated_at` timestamp NULL AFTER `created_at`;
+
+===== Add requisitioned by field in lpos
+ALTER TABLE `lpos`
+ADD `requisitioned_by_id` int NULL AFTER `module`;
