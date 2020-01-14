@@ -664,11 +664,12 @@ class ProjectApi extends Controller
                 foreach ($allocations as $item) {
                     $total_expenditure += $item['converted_usd'];
                 }
-                if(!empty($this->budget)) $budget_amount = (int) $this->budget->totals;
+                if(!empty($this->current_budget)) $budget_amount = (int) $this->current_budget->totals;
                 else $budget_amount = 0;
 
                 $res[] = [
                     'budget'=>$pid->budget,
+                    'current_budget'=>$pid->current_budget,
                     'program'=>$pid->program,
                     'expenditure_perc'=> $budget_amount == 0 ? 0 : ($total_expenditure/$budget_amount)*100,
                     'project_code'=>$pid->project_code,

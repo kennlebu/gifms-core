@@ -13,6 +13,7 @@ use App\Models\AdvancesModels\Advance;
 use App\Models\AccountingModels\Account;
 use App\Models\ActivityModels\ActivityObjective;
 use App\Models\AllocationModels\Allocation;
+use App\Models\FinanceModels\Budget;
 use App\Models\FinanceModels\BudgetItem;
 use App\Models\FinanceModels\ExchangeRate;
 use App\Models\PaymentModels\Payment;
@@ -24,7 +25,7 @@ class Project extends BaseModel
     use SoftDeletes;
 
 
-    protected $hidden = ['client','closed_on','cluster','deleted_at','migration_id','migration_project_manager_id','qb','start_date'];
+    protected $hidden = ['client','closed_on','cluster','deleted_at','migration_id','migration_project_manager_id','qb','start_date','current_budget'];
 
     public function program()
     {
@@ -65,6 +66,9 @@ class Project extends BaseModel
     public function grant()
     {
         return $this->belongsTo('App\Models\GrantModels\Grant', 'grant_id');
+    }
+    public function getCurrentBudgetAttribute(){
+        return Budget::where('id', $this->budget_id)->whereYear('end_date', date('Y'))->first();
     }
     // public function getAmountAllocatedAttribute(){
 
@@ -154,30 +158,28 @@ class Project extends BaseModel
             }else if($value->allocatable_type=='mobile_payments' && !empty($value->allocatable_id)){
                 $allocatable = MobilePayment::whereIn('status_id',[4,5,6,11,12,13,17])->where('id', $value->allocatable_id)->first();
             }else if($value->allocatable_type=='claims' && !empty($value->allocatable_id)){
-                $allocatable = Claim::has('payments')->where('id', $value->allocatable_id)->first();
+                $allocatable = Claim::whereIn('status_id',[6,7,8])->where('id', $value->allocatable_id)->first();
             }else if($value->allocatable_type=='advances' && !empty($value->allocatable_id)){
-                $allocatable = Advance::has('payments')->where('id', $value->allocatable_id)->first();
+                $allocatable = Advance::whereIn('status_id',[5,6,7,9,10])->where('id', $value->allocatable_id)->first();
             }
 
             if($allocatable && $allocatable->currency_id){
                 if($allocatable->currency_id == 2){  
-                    $totals += (float) $value->converted_usd;
+                    $totals    +=  (float) $value->amount_allocated;
                 }
                 else if($value->allocatable->currency_id == 1){
-                    // $rate = ExchangeRate::whereMonth('active_date', date('m'))->orderBy('active_date', 'DESC')->first();
-                    // // $rate = DB::select("select * from exchange_rates
-                    // //     where ((DATE_ADD('".date('Y-m-d')."', INTERVAL 1 DAY) between 
-                    // //     cast(active_date as date) and cast(end_date as date)
-                    // //     or DATE_SUB('".date('Y-m-d')."', INTERVAL 1 DAY) between
-                    // //     cast(active_date as date) and cast(end_date as date))");
-                    // if(!empty($rate)) $rate = $rate->exchange_rate;
-                    // else $rate = 101.72;
+                    $rate = ExchangeRate::whereMonth('active_date', date('m'))->orderBy('active_date', 'DESC')->first();
+                    // $rate = DB::select("select * from exchange_rates
+                    //     where ((DATE_ADD('".date('Y-m-d')."', INTERVAL 1 DAY) between 
+                    //     cast(active_date as date) and cast(end_date as date)
+                    //     or DATE_SUB('".date('Y-m-d')."', INTERVAL 1 DAY) between
+                    //     cast(active_date as date) and cast(end_date as date))");
+                    if(!empty($rate)) $rate = $rate->exchange_rate;
+                    else $rate = 102.10;
 
-                    // $totals += (float) ($value->amount_allocated/$rate);
-                    $totals += (float) $value->converted_usd;
+                    $totals += (float) ($value->amount_allocated/$rate);
                 }
             }
-            // $totals += (float) $value->converted_usd;
         }
 
         return $totals;
