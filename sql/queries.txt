@@ -1246,3 +1246,9 @@ CREATE TABLE `withholding_vat_rates` (
 
 INSERT INTO `withholding_vat_rates` (`rate`)
 VALUES ('6');
+
+===== Add soft dalete fields to withholding vat table
+ALTER TABLE `withholding_vat_rates`
+ADD `created_at` timestamp NULL,
+ADD `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP AFTER `created_at`,
+ADD `deleted_at` timestamp NULL AFTER `updated_at`;
