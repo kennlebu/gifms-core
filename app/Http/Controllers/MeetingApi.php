@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Request as IlluminateRequest;
 use Exception;
 use Anchu\Ftp\Facades\Ftp;
+use Illuminate\Support\Facades\Response;
 
 class MeetingApi extends Controller
 {
@@ -280,7 +281,7 @@ class MeetingApi extends Controller
     }
 
 
-    public function logAttendance(Request $request){
+    public function verifyAttendee(Request $request){
         try{
             $attendee = MeetingAttendee::where('id_no', $request->id_no)->first();
             if(empty($attendee)){
@@ -290,9 +291,30 @@ class MeetingApi extends Controller
                 return response()->json(['error'=>"Attendee not enrolled", 'attendee'=>$attendee], 404, array(), JSON_PRETTY_PRINT);
             }
 
-            /* $attendee = MeetingAttendee::where('id_no', $request->id_no)->where('fp_template_1', $request->fp_template_1)->first();
+            $path           = '/fpts/'.$attendee->id.'/'.$attendee->id.'.fpt';
+            $path_info      = pathinfo($path);
+            $basename       = $path_info['basename'];
+            $file_contents  = FTP::connection()->readFile($path);
+            $response       = Response::make($file_contents, 200);
+            $response->header('Content-Type', "image/bmp");
+            return $response;  
+        }
+        catch(Exception $e){
+            $response = Response::make("", 200);
+            $response->header('Content-Type', 'application/image');
+            return $response;  
+        }
+    }
+
+
+    public function logAttendance(Request $request){
+        try{
+            $attendee = MeetingAttendee::where('id_no', $request->id_no)->first();
             if(empty($attendee)){
-                return response()->json(['error'=>"Fingerprints do not match"], 401, array(), JSON_PRETTY_PRINT);
+                return response()->json(['error'=>"Attendee does not exist"], 404, array(), JSON_PRETTY_PRINT);
+            }
+            if(empty($attendee->fp_template_1)){
+                return response()->json(['error'=>"Attendee not enrolled", 'attendee'=>$attendee], 404, array(), JSON_PRETTY_PRINT);
             }
 
             $previous_log = MeetingAttendanceLog::where('date', date('Y-m-d'))->first();
@@ -310,8 +332,8 @@ class MeetingApi extends Controller
             $log->disableLogging();
             $log->save();
 
-            return Response()->json(array('msg' => 'Attendance logged','log' => $log), 200); */
-            return Response()->json(array('attendee' => $attendee), 200);
+            return Response()->json(array('msg' => 'Attendance logged','log' => $log, 'attendee'=>$attendee), 200);
+            // return Response()->json(array('attendee' => $attendee), 200);
         }
         catch(Exception $e){
             return response()->json(['error'=>"Something went wrong",'msg'=>$e->getMessage(),'trace'=>$e->getTraceAsString()], 500,array(),JSON_PRETTY_PRINT);
@@ -334,6 +356,9 @@ class MeetingApi extends Controller
                 FTP::connection()->makeDir('/fpts');
                 FTP::connection()->makeDir('/fpts/'.$attendee->id);
                 FTP::connection()->uploadFile($request->file->getPathname(), '/fpts/'.$attendee->id.'/'.$attendee->id.'.'."fpt");
+
+                $attendee->fp_template_1 = 1;
+                $attendee->save();
 
                 activity()
                     ->performedOn($attendee)
@@ -375,5 +400,16 @@ class MeetingApi extends Controller
         catch(Exception $e){
             return response()->json(['error'=>"Something went wrong",'msg'=>$e->getMessage(),'trace'=>$e->getTraceAsString()], 500,array(),JSON_PRETTY_PRINT);
         }
+    }
+
+
+    public function getAttendee(Request $request){
+         try{
+            $attendee = MeetingAttendee::where('id_no', $request->id_no);
+            return Response()->json(['attendee' => $attendee], 200);
+         }
+         catch(Exception $e){
+            return response()->json(['error'=>"Something went wrong",'msg'=>$e->getMessage(),'trace'=>$e->getTraceAsString()], 500,array(),JSON_PRETTY_PRINT);
+         }
     }
 }

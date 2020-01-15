@@ -5493,3 +5493,5 @@ Route::DELETE('event/{id}', 'MeetingApi@destroy')->middleware('jwt.auth');
 Route::POST('log-attendance', 'MeetingApi@logAttendance')->middleware('jwt.auth');
 Route::POST('enroll-attendee', 'MeetingApi@enrollAttendee')->middleware('jwt.auth');
 Route::POST('register-attendee', 'MeetingApi@registerAttendeeApi')->middleware('jwt.auth');
+Route::POST('verify-attendee', 'MeetingApi@verifyAttendee')->middleware('jwt.auth');
+Route::POST('attendee', 'MeetingApi@getAttendee')->middleware('jwt.auth');
