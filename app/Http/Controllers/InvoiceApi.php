@@ -215,7 +215,21 @@ class InvoiceApi extends Controller
                 $invoice->disableLogging(); //! Do not log the update
 
                 if($form['submission_type']=='log'){
-
+                    if(!empty($invoice->lpo)){
+                        foreach($invoice->lpo->allocations as $alloc){
+                            $allocation = new Allocation();
+                            $allocation->account_id = $alloc->account_id;
+                            $allocation->project_id = $alloc->project_id;
+                            $allocation->allocatable_id = $invoice->id;
+                            $allocation->allocatable_type = 'invoices';
+                            $allocation->percentage_allocated = $alloc->percentage_allocated;
+                            $allocation->allocation_purpose = $alloc->allocation_purpose;
+                            $allocation->objective_id = $alloc->objective_id;
+                            $allocation->allocated_by_id = $invoice->requested_by_id;
+                            $allocation->disableLogging();
+                            $allocation->save();
+                        }
+                    }
                 }
 
                 if($form['submission_type']=='full'||$form['submission_type']=='upload_logged'){

@@ -5495,3 +5495,4 @@ Route::POST('enroll-attendee', 'MeetingApi@enrollAttendee')->middleware('jwt.aut
 Route::POST('register-attendee', 'MeetingApi@registerAttendeeApi')->middleware('jwt.auth');
 Route::POST('verify-attendee', 'MeetingApi@verifyAttendee')->middleware('jwt.auth');
 Route::POST('attendee', 'MeetingApi@getAttendee')->middleware('jwt.auth');
+Route::POST('event/donwload-attendance', 'MeetingApi@downloadAttendanceSheet')->middleware('jwt.auth');

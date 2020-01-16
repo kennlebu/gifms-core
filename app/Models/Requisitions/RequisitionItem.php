@@ -4,6 +4,7 @@ namespace App\Models\Requisitions;
 
 use App\Models\BaseModels\BaseModel;
 use App\Models\ClaimsModels\Claim;
+use App\Models\LPOModels\Lpo;
 use App\Models\LPOModels\LpoItem;
 use App\Models\MobilePaymentModels\MobilePayment;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -11,7 +12,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class RequisitionItem extends BaseModel
 {
     use SoftDeletes;
-    protected $appends = ['transaction_status', 'dates', 'transaction'];
+    protected $appends = ['transaction_status', 'dates', 'transaction', 'can_continue'];
 
     public function supplier_service()
     {
@@ -92,6 +93,16 @@ class RequisitionItem extends BaseModel
         }
         
         return $dates;
+    }
+
+    public function getCanContinueAttribute(){
+        if($this->status_id != 2) return false;
+        $lpo_item = LpoItem::where('requisition_item_id', $this->id)->first();
+        $lpo = Lpo::find($lpo_item->lpo_id);
+        if($lpo->status_id != 7){   // Dispatched
+            return false;
+        }
+        return true;
     }
 
 }

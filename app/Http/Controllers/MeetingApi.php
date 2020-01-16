@@ -9,6 +9,7 @@ use App\Models\Meetings\MeetingAttendee;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Request as IlluminateRequest;
 use Exception;
+use Excel;
 use Anchu\Ftp\Facades\Ftp;
 use Illuminate\Support\Facades\Response;
 
@@ -309,6 +310,7 @@ class MeetingApi extends Controller
 
     public function logAttendance(Request $request){
         try{
+            $final_log = null;
             $attendee = MeetingAttendee::where('id_no', $request->id_no)->first();
             if(empty($attendee)){
                 return response()->json(['error'=>"Attendee does not exist"], 404, array(), JSON_PRETTY_PRINT);
@@ -317,22 +319,28 @@ class MeetingApi extends Controller
                 return response()->json(['error'=>"Attendee not enrolled", 'attendee'=>$attendee], 404, array(), JSON_PRETTY_PRINT);
             }
 
-            $previous_log = MeetingAttendanceLog::where('date', date('Y-m-d'))->first();
-            $log = new MeetingAttendanceLog();
-            $log->meeting_id = $request->meeting_id;
-            $log->attendee_id = $attendee->id;
-            $log->date = date('Y-m-d');
+            $previous_log = MeetingAttendanceLog::where('date', date('Y-m-d'))->where('attendee_id', $attendee->id)->orderBy('id', 'desc')->first();
+
+            if(!empty($previous_log->time_out)){
+                return response()->json(['error'=>"Attendee already clocked out", 'attendee'=>$attendee], 409, array(), JSON_PRETTY_PRINT);
+            }
             
             if(!empty($previous_log)){
-                $log->time_out = date('H:i:s');
+                $previous_log->time_out = date('H:i:s');
+                $final_log = $previous_log;
             }
             else {
-                $log->time_in = date('H:i:s');
-            }            
-            $log->disableLogging();
-            $log->save();
+                $log = new MeetingAttendanceLog();
+                $log->meeting_id = $request->meeting_id;
+                $log->attendee_id = $attendee->id;
+                $log->date = date('Y-m-d');
+                $log->time_in = date('H:i:s'); 
+                $log->disableLogging();
+                $log->save();
+                $final_log = $log;
+            }
 
-            return Response()->json(array('msg' => 'Attendance logged','log' => $log, 'attendee'=>$attendee), 200);
+            return Response()->json(array('msg' => 'Attendance logged','log' => $final_log, 'attendee'=>$attendee), 200);
             // return Response()->json(array('attendee' => $attendee), 200);
         }
         catch(Exception $e){
@@ -391,7 +399,6 @@ class MeetingApi extends Controller
             $attendee->bank_branch_name = $request->bank_branch_name;
             $attendee->bank_account = $request->bank_account;
             $attendee->kra_pin = $request->kra_pin;
-            $attendee->fp_template_1 = $request->fp_template_1;
             $attendee->disableLogging();
             $attendee->save();
 
@@ -411,5 +418,96 @@ class MeetingApi extends Controller
          catch(Exception $e){
             return response()->json(['error'=>"Something went wrong",'msg'=>$e->getMessage(),'trace'=>$e->getTraceAsString()], 500,array(),JSON_PRETTY_PRINT);
          }
+    }
+
+
+
+    public function downloadAttendanceSheet(Request $request){
+        try{    
+            $logs = MeetingAttendanceLog::with('attendee')->where('meeting_id', $request->meeting_id)->get();  
+            $meeting = Meeting::find($request->meeting_id);          
+                
+            // Generate excel and return it
+    
+            $excel_data = [];
+            foreach($logs as $log){
+                $excel_row = [];
+                $excel_row['name'] = $log->name;
+                $excel_row['phone'] = $log->phone;
+                $excel_row['amount'] = $log->amount;
+                $excel_row['id'] = $log->id_no;
+                $excel_row['pin'] = $log->amount;
+                $excel_row['email'] = $log->amount;
+                $excel_row['organisation'] = $log->amount;
+                $excel_row['designation'] = $log->amount;
+                
+                $excel_data[] = $excel_row;
+            }
+            $headers = [
+                'Access-Control-Allow-Origin'      => '*',
+                'Allow'                            => 'GET, POST, OPTIONS',
+                'Access-Control-Allow-Headers'     => 'Origin, Content-Type, Accept, Authorization, X-Requested-With',
+                'Access-Control-Allow-Credentials' => 'true'
+            ];
+            // Build excel
+            Excel::create('Attendance sheet for '.$meeting->title ?? '[No name]', function($excel) use ($excel_data, $meeting) {
+
+            // Set the title
+            $excel->setTitle('Attendance sheet');
+
+            // Chain the setters
+            $excel->setCreator('GIFMS')->setCompany('Clinton Health Access Initiative - Kenya');
+
+            $excel->setDescription('Attendance sheet for '.$meeting->title ?? '[No name]');
+
+            $headings = array('Name', 'Phone#', 'Amount', 'ID', 'KRA', 'Email', 'Organisation', 'Designation');
+
+            $excel->sheet("Attendance sheet", function ($sheet) use ($excel_data, $headings) {
+                $sheet->setStyle([
+                    'borders' => [
+                        'allborders' => [
+                            'color' => [
+                                'rgb' => '000000'
+                            ]
+                        ]
+                    ]
+                ]);
+                $i = 1;
+                $alternate = true;
+                foreach($excel_data as $data_row){
+                    $sheet->appendRow($data_row);
+                }
+                
+                $sheet->prependRow(1, $headings);
+                $sheet->setFontSize(10);
+                $sheet->setHeight(1, 25);
+                $sheet->row(1, function($row){
+                    $row->setFontSize(11);
+                    $row->setFontWeight('bold');
+                    $row->setAlignment('center');
+                    $row->setValignment('center');
+                    $row->setBorder('none', 'thin', 'none', 'thin');
+                    $row->setBackground('#004080');                        
+                    $row->setFontColor('#ffffff');
+                });
+                $sheet->setWidth(array(
+                    'A' => 30,
+                    'B' => 15,
+                    'C' => 20,
+                    'D' => 20,
+                    'E' => 15,
+                    'F' => 35,
+                    'G' => 50,
+                    'H' => 50
+                ));
+
+                $sheet->setFreeze('B2');
+            });
+    
+            })->download('xlsx', $headers);
+        }
+        catch(Exception $e){
+            return response()->json(['error'=>"Something went wrong",'msg'=>$e->getMessage(),'trace'=>$e->getTraceAsString()], 500,array(),JSON_PRETTY_PRINT);
+        }
     }
 }
