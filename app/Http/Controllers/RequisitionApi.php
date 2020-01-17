@@ -243,7 +243,7 @@ class RequisitionApi extends Controller
     {
         try{
             $requisition = Requisition::with('status','allocations.objective','requested_by','program_manager','items.supplier_service','items.status','allocations.allocated_by',
-                                            'allocations.project','allocations.account','logs.causer','approvals.approver','logs.causer','lpos.status','items.county')
+                                            'allocations.project','allocations.account','logs.causer','approvals.approver','logs.causer','lpos.status','items.county','invoices')
                                         ->find($id);
             return response()->json($requisition, 200,array(),JSON_PRETTY_PRINT);
         }

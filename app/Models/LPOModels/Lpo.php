@@ -119,13 +119,13 @@ class Lpo extends BaseModel
     {
         return $this->belongsTo('App\Models\ActivityModels\Activity','program_activity_id');
     }
-    public function requisition()
-    {
-        return $this->belongsTo('App\Models\Requisitions\Requisition','requisition_id');
-    }
     public function allocations()
     {
         return $this->morphMany('App\Models\AllocationModels\Allocation', 'allocatable')->orderBy('created_at','asc');
+    }
+    public function requisition()
+    {
+        return $this->belongsTo('App\Models\Requisitions\Requisition','requisition_id');
     }
     public function getPreferredSupplierAttribute()
     {

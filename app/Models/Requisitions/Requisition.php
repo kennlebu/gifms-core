@@ -60,6 +60,21 @@ class Requisition extends BaseModel
         return $this->hasMany('App\Models\LPOModels\Lpo','requisition_id');
     }
 
+    public function invoices()
+    {
+        return $this->hasMany('App\Models\InvoicesModels\Invoice','requisition_id');
+    }
+
+    public function mobile_payments()
+    {
+        return $this->hasMany('App\Models\MobilePaymentModels\MobilePayment','requisition_id');
+    }
+
+    public function deliveries()
+    {
+        return $this->hasMany('App\Models\DeliveriesModels\Delivery','requisition_id');
+    }
+
     public function getDocumentsAttribute(){
         $sanitized_list = [];
         $directory = '/requisitions/'.$this->ref.'/';

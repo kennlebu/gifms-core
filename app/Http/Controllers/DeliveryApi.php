@@ -24,6 +24,9 @@ use Illuminate\Support\Facades\Response;
 use App\Models\LPOModels\Lpo;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\NotifyDelivery;
+use App\Models\DeliveriesModels\DeliveryItem;
+use App\Models\Requisitions\Requisition;
+use App\Models\Requisitions\RequisitionItem;
 use PDF;
 
 class DeliveryApi extends Controller
@@ -65,7 +68,7 @@ class DeliveryApi extends Controller
             $delivery->requisition_id = $form['requisition_id'];
 
             if($delivery->save()) {
-                // Mark LPO as delivered if it's a partial delivery
+                // Mark LPO as delivered if it's a full delivery
                 if($delivery->delivery_made == 'full'){
                     $lpo = Lpo::find($delivery->lpo_id);
                     $lpo->date_delivered = date("Y-m-d H:i:s");
@@ -73,8 +76,19 @@ class DeliveryApi extends Controller
                     $lpo->delivery_made = $delivery->delivery_made;
                     $lpo->status_id = $lpo->status->next_status_id;
                     $lpo->save();
+                    
+                    foreach($lpo->items as $lpo_item){ 
+                        $delivery_item = new DeliveryItem();
+                        $delivery_item->delivery_id = $delivery->id;
+                        $delivery_item->item = $lpo_item->item;
+                        $delivery_item->item_description = $lpo_item->item_description;
+                        $delivery_item->qty = $lpo_item->qty;
+                        $delivery_item->qty_description = $lpo_item->qty_description;
+                        $delivery_item->disableLogging();
+                        $delivery_item->save();
+                    }
 
-                // Email delivery owner
+                    // Email delivery owner
                     Mail::queue(new NotifyDelivery($delivery, $lpo));
                 }
 
@@ -82,9 +96,28 @@ class DeliveryApi extends Controller
                 FTP::connection()->makeDir('/deliveries/'.$delivery->id);
                 FTP::connection()->uploadFile($file->getPathname(), '/deliveries/'.$delivery->id.'/'.$delivery->id.'.'.$file->getClientOriginalExtension());
 
-                $delivery->delivery_document           =   $delivery->id.'.'.$file->getClientOriginalExtension();
-                $delivery->ref = "CHAI/DLV/#$delivery->id/".date_format($delivery->created_at,"Y/m/d");
+                $delivery->delivery_document = $delivery->id.'.'.$file->getClientOriginalExtension();
+                // $delivery->ref = "CHAI/DLV/#$delivery->id/".date_format($delivery->created_at,"Y/m/d");
                 $delivery->save();
+
+                $requisition = Requisition::find($lpo->requisition_id);
+
+                if(!empty($lpo->lpo_requisition_items)){
+                    foreach($lpo->lpo_requisition_items as $req_item){
+                        $item = RequisitionItem::findOrFail($req_item->id);
+                        $item->status_id = 3;
+                        $item->disableLogging();
+                        $item->save();
+                    }
+                }
+                $delivery_no = count($requisition->deliveries);
+                $delivery->ref = $requisition->ref.'-GRN-'.$this->pad_with_zeros(2, $delivery_no);
+
+                activity()
+                    ->performedOn($delivery)
+                    ->causedBy($this->current_user())
+                    ->withProperties(['detail' => 'Created delivery '.$delivery->ref])
+                    ->log('Delivery created');
 
                 return Response()->json(array('msg' => 'Success: delivery added','delivery' => Delivery::find((int)$delivery->id)), 200);
             }
@@ -244,7 +277,8 @@ class DeliveryApi extends Controller
                                         'supplier',
                                         'lpo',
                                         'logs',
-                                        'requisition'
+                                        'requisition',
+                                        'items'
                                     )->findOrFail($delivery_id);
 
             foreach ($response->logs as $key => $value) {                

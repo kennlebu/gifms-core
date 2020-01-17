@@ -38,7 +38,7 @@ class Delivery extends BaseModel
     }
     public function items()
     {
-        return $this->hasMany('App\Models\DeliveriesModels\DeliveryItem');
+        return $this->hasMany('App\Models\DeliveriesModels\DeliveryItem', 'delivery_id');
     }
     public function requisition()
     {

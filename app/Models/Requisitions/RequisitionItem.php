@@ -4,6 +4,8 @@ namespace App\Models\Requisitions;
 
 use App\Models\BaseModels\BaseModel;
 use App\Models\ClaimsModels\Claim;
+use App\Models\DeliveriesModels\Delivery;
+use App\Models\InvoicesModels\Invoice;
 use App\Models\LPOModels\Lpo;
 use App\Models\LPOModels\LpoItem;
 use App\Models\MobilePaymentModels\MobilePayment;
@@ -42,11 +44,19 @@ class RequisitionItem extends BaseModel
             $lpo_item = LpoItem::where('requisition_item_id', $this->id)->orderBy('id','desc')->first();
             $status = $prefix.' '.$lpo_item->lpo->status->lpo_status;
         }
-        if($this->status_id == 6){
-            $mb = MobilePayment::where('requisition_id', $this->requisition_id)->first();
+        elseif($this->status_id == 4){
+            $inv = Invoice::where('requisition_id', $this->requisition_id)->orderBy('id','desc')->first();
+            $status = 'Invoice '.$inv->status->invoice_status;
+        }
+        elseif($this->status_id == 6){
+            $mb = MobilePayment::where('requisition_id', $this->requisition_id)->orderBy('id','desc')->first();
             $status = 'Mobile Payment '.$mb->status->mobile_payment_status;
         }
-        if($this->status_id == 7){
+        elseif($this->status_id == 3){
+            $grn = Delivery::where('requisition_id', $this->requisition_id)->orderBy('id','desc')->first();
+            $status = $this->status->status;
+        }
+        elseif($this->status_id == 7){
             // if($this->module == 'mobile_payment'){
             //     $mb = MobilePayment::where('requisition_id', $this->requisition_id)->first();
             //     $status = 'Mobile Payment '.$mb->status->mobile_payment_status;

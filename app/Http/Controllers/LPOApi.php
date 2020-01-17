@@ -820,7 +820,6 @@ class LPOApi extends Controller
                                             'logs.causer','logs.subject',
                                             'deliveries',
                                             'program_activity',
-                                            'requisition',
                                             'allocations.project',
                                             'allocations.account'
                                 )->findOrFail($lpo_id);
@@ -1327,6 +1326,7 @@ class LPOApi extends Controller
             $data[$key]['lpo_requisition_items']    = $lpo->lpo_requisition_items;
             $data[$key]['preferred_supplier']       = $lpo->preferred_supplier;
             $data[$key]['preferred_supplier']['supply_category'] = $lpo->preferred_supplier->supply_category ?? '';
+            $data[$key]['requisition']              = $lpo->requisition;
 
             if(!empty($lpo->preffered_quotation_id) && !empty($lpo->preffered_quotation->supplier_id)){
                 if($lpo->preffered_quotation_id > 0 && $lpo->preffered_quotation->supplier_id > 0 ){

@@ -319,7 +319,10 @@ class MeetingApi extends Controller
                 return response()->json(['error'=>"Attendee not enrolled", 'attendee'=>$attendee], 404, array(), JSON_PRETTY_PRINT);
             }
 
-            $previous_log = MeetingAttendanceLog::where('date', date('Y-m-d'))->where('attendee_id', $attendee->id)->orderBy('id', 'desc')->first();
+            $previous_log = MeetingAttendanceLog::where('date', date('Y-m-d'))
+                                                ->where('attendee_id', $attendee->id)
+                                                ->where('meeting_id', $request->meeting_id)
+                                                ->orderBy('id', 'desc')->first();
 
             if(!empty($previous_log->time_out)){
                 return response()->json(['error'=>"Attendee already clocked out", 'attendee'=>$attendee], 409, array(), JSON_PRETTY_PRINT);
@@ -327,6 +330,7 @@ class MeetingApi extends Controller
             
             if(!empty($previous_log)){
                 $previous_log->time_out = date('H:i:s');
+                $previous_log->save();
                 $final_log = $previous_log;
             }
             else {
@@ -423,7 +427,7 @@ class MeetingApi extends Controller
 
 
     public function downloadAttendanceSheet(Request $request){
-        try{    
+        try{
             $logs = MeetingAttendanceLog::with('attendee')->where('meeting_id', $request->meeting_id)->get();  
             $meeting = Meeting::find($request->meeting_id);          
                 
@@ -450,60 +454,58 @@ class MeetingApi extends Controller
                 'Access-Control-Allow-Credentials' => 'true'
             ];
             // Build excel
-            Excel::create('Attendance sheet for '.$meeting->title ?? '[No name]', function($excel) use ($excel_data, $meeting) {
+            $file = Excel::create('Attendance sheet for '.$meeting->title ?? '[No name]', function($excel) use ($excel_data, $meeting) {
 
-            // Set the title
-            $excel->setTitle('Attendance sheet');
+                // Set the title
+                $excel->setTitle('Attendance sheet');
 
-            // Chain the setters
-            $excel->setCreator('GIFMS')->setCompany('Clinton Health Access Initiative - Kenya');
+                // Chain the setters
+                $excel->setCreator('GIFMS')->setCompany('Clinton Health Access Initiative - Kenya');
 
-            $excel->setDescription('Attendance sheet for '.$meeting->title ?? '[No name]');
+                $excel->setDescription('Attendance sheet for '.$meeting->title ?? '[No name]');
 
-            $headings = array('Name', 'Phone#', 'Amount', 'ID', 'KRA', 'Email', 'Organisation', 'Designation');
+                $headings = array('Name', 'Phone#', 'Amount', 'ID', 'KRA', 'Email', 'Organisation', 'Designation');
 
-            $excel->sheet("Attendance sheet", function ($sheet) use ($excel_data, $headings) {
-                $sheet->setStyle([
-                    'borders' => [
-                        'allborders' => [
-                            'color' => [
-                                'rgb' => '000000'
+                $excel->sheet("Attendance sheet", function ($sheet) use ($excel_data, $headings) {
+                    $sheet->setStyle([
+                        'borders' => [
+                            'allborders' => [
+                                'color' => [
+                                    'rgb' => '000000'
+                                ]
                             ]
                         ]
-                    ]
-                ]);
-                $i = 1;
-                $alternate = true;
-                foreach($excel_data as $data_row){
-                    $sheet->appendRow($data_row);
-                }
-                
-                $sheet->prependRow(1, $headings);
-                $sheet->setFontSize(10);
-                $sheet->setHeight(1, 25);
-                $sheet->row(1, function($row){
-                    $row->setFontSize(11);
-                    $row->setFontWeight('bold');
-                    $row->setAlignment('center');
-                    $row->setValignment('center');
-                    $row->setBorder('none', 'thin', 'none', 'thin');
-                    $row->setBackground('#004080');                        
-                    $row->setFontColor('#ffffff');
-                });
-                $sheet->setWidth(array(
-                    'A' => 30,
-                    'B' => 15,
-                    'C' => 20,
-                    'D' => 20,
-                    'E' => 15,
-                    'F' => 35,
-                    'G' => 50,
-                    'H' => 50
-                ));
+                    ]);
+                    foreach($excel_data as $data_row){
+                        $sheet->appendRow($data_row);
+                    }
+                    
+                    $sheet->prependRow(1, $headings);
+                    $sheet->setFontSize(10);
+                    $sheet->setHeight(1, 25);
+                    $sheet->row(1, function($row){
+                        $row->setFontSize(11);
+                        $row->setFontWeight('bold');
+                        $row->setAlignment('center');
+                        $row->setValignment('center');
+                        $row->setBorder('none', 'thin', 'none', 'thin');
+                        $row->setBackground('#004080');                        
+                        $row->setFontColor('#ffffff');
+                    });
+                    $sheet->setWidth(array(
+                        'A' => 30,
+                        'B' => 15,
+                        'C' => 20,
+                        'D' => 20,
+                        'E' => 15,
+                        'F' => 35,
+                        'G' => 50,
+                        'H' => 50
+                    ));
 
-                $sheet->setFreeze('B2');
-            });
-    
+                    $sheet->setFreeze('B2');
+                });
+        
             })->download('xlsx', $headers);
         }
         catch(Exception $e){

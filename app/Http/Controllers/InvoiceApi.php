@@ -37,6 +37,8 @@ use App\Exceptions\ApprovalException;
 use App\Models\PaymentModels\VoucherNumber;
 use Excel;
 use App\Models\ReportModels\ReportingObjective;
+use App\Models\Requisitions\Requisition;
+use App\Models\Requisitions\RequisitionItem;
 
 class InvoiceApi extends Controller
 {
@@ -86,7 +88,8 @@ class InvoiceApi extends Controller
                 'file',
                 'submission_type',
                 'lpo_variation_reason',
-                'program_activity_id'
+                'program_activity_id',
+                'requisition_id'
                 );
 
             $file = $form['file'];
@@ -100,7 +103,7 @@ class InvoiceApi extends Controller
             $exists = Invoice::where('external_ref', $form['external_ref'])
                         ->where('supplier_id', $form['supplier_id'])
                         ->first();
-            if(!empty($exists) && $form['submission_type']!='upload_logged'){
+            if(!empty($exists) && ($form['submission_type']!='upload_logged' && $form['submission_type']!='finish_allocations')){
                 return response()->json(['error'=>'Invoice with the same invoice number already exists'], 409);
             }
 
@@ -124,6 +127,7 @@ class InvoiceApi extends Controller
                 $invoice->lpo_variation_reason = $form['lpo_variation_reason'];
                 if(!empty($form['program_activity_id']))
                 $invoice->program_activity_id = $form['program_activity_id'];
+                $invoice->requisition_id = $form['requisition_id'] ?? null;
 
                 $invoice->status_id                         =   $this->default_status;
 
@@ -148,6 +152,7 @@ class InvoiceApi extends Controller
                 $invoice->lpo_variation_reason = $form['lpo_variation_reason'];
                 if(!empty($form['program_activity_id']))
                 $invoice->program_activity_id = $form['program_activity_id'];
+                $invoice->requisition_id = $form['requisition_id'] ?? null;
 
                 $invoice->status_id                         =   $this->default_log_status;
 
@@ -223,11 +228,34 @@ class InvoiceApi extends Controller
                             $allocation->allocatable_id = $invoice->id;
                             $allocation->allocatable_type = 'invoices';
                             $allocation->percentage_allocated = $alloc->percentage_allocated;
+                            $allocation->amount_allocated = ($lpo->totals * (float)$alloc->percentage_allocated/100);
                             $allocation->allocation_purpose = $alloc->allocation_purpose;
                             $allocation->objective_id = $alloc->objective_id;
                             $allocation->allocated_by_id = $invoice->requested_by_id;
                             $allocation->disableLogging();
                             $allocation->save();
+                        }
+
+                        if($lpo->requisition_id){
+                            $requisition = Requisition::find($lpo->requisition_id);
+
+                            if(!empty($lpo->lpo_requisition_items)){
+                                foreach($lpo->lpo_requisition_items as $req_item){
+                                    $item = RequisitionItem::findOrFail($req_item->id);
+                                    $item->status_id = 4;
+                                    $item->disableLogging();
+                                    $item->save();
+                                }
+                            }
+                            $invoice_no = count($requisition->invoices);
+                            $invoice->ref = $requisition->ref.'-INV-'.$this->pad_with_zeros(2, $invoice_no);
+                            $invoice->save();
+
+                            activity()
+                                ->performedOn($requisition)
+                                ->causedBy($this->current_user())
+                                ->withProperties(['detail' => 'Created invoice '.$invoice->ref])
+                                ->log('Invoice created');
                         }
                     }
                 }
@@ -239,11 +267,11 @@ class InvoiceApi extends Controller
                     FTP::connection()->uploadFile($file->getPathname(), '/invoices/'.$invoice->id.'/'.$invoice->id.'.'.$file->getClientOriginalExtension());
 
                     $invoice->invoice_document           =   $invoice->id.'.'.$file->getClientOriginalExtension();
-                    $invoice->ref                        = "CHAI/INV/#$invoice->id/".date_format($invoice->created_at,"Y/m/d");
+                    // $invoice->ref                        = "CHAI/INV/#$invoice->id/".date_format($invoice->created_at,"Y/m/d");
                     $invoice->save();
 
                 }else if($form['submission_type']=='log'){
-                    $invoice->ref                        = "CHAI/INV/#$invoice->id/".date_format($invoice->created_at,"Y/m/d");
+                    // $invoice->ref                        = "CHAI/INV/#$invoice->id/".date_format($invoice->created_at,"Y/m/d");
                     $invoice->save();
                     Mail::queue(new NotifyInvoice($invoice));
                 }
@@ -461,7 +489,8 @@ class InvoiceApi extends Controller
                                         'logs.causer',
                                         'vouchers',
                                         'comments',
-                                        'program_activity'
+                                        'program_activity',
+                                        'requisition'
                                     )->findOrFail($invoice_id);
 
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
