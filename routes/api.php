@@ -5092,6 +5092,7 @@ Route::GET('/budget/{budget_id}', 'BudgetApi@getBudgetById')->middleware('jwt.au
 
  */
 Route::GET('/budgets', 'BudgetApi@budgetsGet')->middleware('jwt.auth');
+Route::POST('/budgets/csv_upload', 'BudgetApi@uploadBudgetFile')->middleware('jwt.auth');
 
 
 

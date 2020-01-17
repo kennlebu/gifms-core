@@ -22,6 +22,8 @@ use App\Models\FinanceModels\Budget;
 use App\Models\AccountingModels\Account;
 use App\Models\ProjectsModels\Project;
 use Exception;
+use Excel;
+use JWTAuth;
 use App\Models\StaffModels\Staff;
 
 class BudgetApi extends Controller
@@ -442,5 +444,76 @@ class BudgetApi extends Controller
             }
         }
         return $data;
+    }
+
+
+
+    public function uploadBudgetFile(){
+        $form = Request::all();
+
+        try{
+            $file = $form['file'];
+            $year = $form['year'];
+            $user = JWTAuth::parseToken()->authenticate();
+
+            $data = Excel::load($file->getPathname(), function($reader) {
+            })->get()->toArray();
+
+            $rows = [];
+            $keys = array_keys($data);
+            $row_num = 1;
+            $pids = [];
+            foreach($keys as $key){
+                $query = 'CHKENY';
+                file_put_contents ( "C://Users//kennl//Documents//debug.txt" , PHP_EOL.'Enters here' , FILE_APPEND);
+                if(!empty($key) && strlen($key) > 6 && substr($key, 0, strlen($query)) === strtoupper($query) ){
+                    $pids[] = $key;
+                }
+            }
+
+            foreach ($data as $key => $value) {
+                try{
+
+                    $account_code = trim($value[$keys[0]]);
+                    if(!empty($account_code)){
+                        $rows[] = [$account_code => ['pid'=>$key, 'amount'=>]]
+                    }
+
+                    $project = Project::where('project_code','like', '%'.trim($value[$keys[0]]).'%')->firstOrFail();
+                    $account = Account::where('account_code', 'like', '%'.trim($value['account_code']).'%')->firstOrFail();
+
+                    $allocation->allocatable_id = $payable_id;
+                    $allocation->allocatable_type = $payable_type;
+                    $allocation->amount_allocated = $value['amount_allocation'];
+                    $allocation->allocation_purpose = $value['specific_journal_rference'];
+                    $allocation->percentage_allocated = (string) $this->getPercentage($value['amount_allocation'], $total);
+                    $allocation->allocated_by_id =  (int) $user->id;
+                    $allocation->account_id =  $account->id;
+                    $allocation->project_id = $project->id;
+                    array_push($allocations_array, $allocation);
+
+                }
+                catch(\Exception $e){
+                    $response =  ["error"=>'Account or Project not found. Please use form to allocate.',
+                                    "msg"=>$e->getMessage()];
+                    return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+                }
+            }
+
+            foreach($allocations_array as $allocation){
+                $allocation->save();
+            }
+
+            // Logging
+            activity()
+                ->performedOn($payable)
+                ->causedBy($user)
+                ->log('uploaded allocations');
+            return Response()->json(array('success' => 'allocations added','payable' => $payable), 200);
+
+        }
+        catch(\Exception $e){
+            return response()->json(['error'=>'Something went wrong'], 500);
+        }
     }
 }
