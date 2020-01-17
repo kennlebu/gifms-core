@@ -1762,3 +1762,7 @@ ADD `requisitioned_by_id` int NULL AFTER `module`;
 ~===== Alter fp_template_1 field in meeting attendees
 ALTER TABLE `meeting_attendees`
 CHANGE `fp_template_1` `fp_template_1` varchar(1) NULL AFTER `kra_pin`;
+
+~===== Add email field to meeting attendees
+ALTER TABLE `meeting_attendees`
+ADD `email` text COLLATE 'latin1_swedish_ci' NULL AFTER `kra_pin`;

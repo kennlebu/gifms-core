@@ -356,8 +356,6 @@ class RequisitionApi extends Controller
                 ->causedBy($this->current_user())
                 ->log('Updated');
 
-            // file_put_contents ( "C://Users//kennl//Documents//debug.txt" , PHP_EOL.json_encode($activity->description) , FILE_APPEND);
-
             return Response()->json(array('msg' => 'Success: requisition updated','requisition' => $requisition), 200);
         }
         catch(Exception $e){

@@ -255,6 +255,7 @@ class MeetingApi extends Controller
             $attendee = new MeetingAttendee();
             $attendee->name = $request->name;
             $attendee->id_no = $request->id_no;
+            $attendee->email = $request->email;
             $attendee->organisation = $request->organisation;
             $attendee->designation = $request->designation;
             $attendee->phone = $request->phone;
@@ -361,15 +362,13 @@ class MeetingApi extends Controller
                 return response()->json(['error'=>"Attendee does not exist"], 404, array(), JSON_PRETTY_PRINT);
             }
 
-            // $attendee->fp_template_1 = base64_decode(urldecode($request->fp_template_1));
-            // $attendee->disableLogging();
-            // $attendee->save();
             if($request->file!=0){
                 FTP::connection()->makeDir('/fpts');
                 FTP::connection()->makeDir('/fpts/'.$attendee->id);
                 FTP::connection()->uploadFile($request->file->getPathname(), '/fpts/'.$attendee->id.'/'.$attendee->id.'.'."fpt");
 
                 $attendee->fp_template_1 = 1;
+                $attendee->disableLogging();
                 $attendee->save();
 
                 activity()
@@ -396,6 +395,7 @@ class MeetingApi extends Controller
             $attendee = new MeetingAttendee();
             $attendee->name = $request->name;
             $attendee->id_no = $request->id_no;
+            $attendee->email = $request->email;
             $attendee->organisation = $request->organisation;
             $attendee->designation = $request->designation;
             $attendee->phone = $request->phone;
@@ -428,22 +428,27 @@ class MeetingApi extends Controller
 
     public function downloadAttendanceSheet(Request $request){
         try{
-            $logs = MeetingAttendanceLog::with('attendee')->where('meeting_id', $request->meeting_id)->get();  
-            $meeting = Meeting::find($request->meeting_id);          
+            $logs = MeetingAttendanceLog::with('attendee')->where('meeting_id', $request->meeting_id)->groupBy('attendee_id')->get();  
+            $meeting = Meeting::find($request->meeting_id);
+
+            // Record user action
+            activity()
+                ->performedOn($meeting)
+                ->causedBy($this->current_user())
+                ->log('Downloaded attendance sheet');
                 
-            // Generate excel and return it
-    
+            // Generate excel and return it    
             $excel_data = [];
             foreach($logs as $log){
                 $excel_row = [];
-                $excel_row['name'] = $log->name;
-                $excel_row['phone'] = $log->phone;
-                $excel_row['amount'] = $log->amount;
-                $excel_row['id'] = $log->id_no;
-                $excel_row['pin'] = $log->amount;
-                $excel_row['email'] = $log->amount;
-                $excel_row['organisation'] = $log->amount;
-                $excel_row['designation'] = $log->amount;
+                $excel_row['name'] = $log->attendee->name;
+                $excel_row['phone'] = $log->attendee->phone;
+                $excel_row['amount'] = $log->attendee->amount;
+                $excel_row['id'] = $log->attendee->id_no;
+                $excel_row['pin'] = $log->attendee->kra_pin;
+                $excel_row['email'] = $log->attendee->email;
+                $excel_row['organisation'] = $log->attendee->organisation;
+                $excel_row['designation'] = $log->attendee->designation;
                 
                 $excel_data[] = $excel_row;
             }

@@ -101,7 +101,6 @@ class LPOApi extends Controller
         $form = Request::all();
 
         try{
-            file_put_contents ( "C://Users//kennl//Documents//debug.txt" , PHP_EOL.'Enters here: '.$form['module'] , FILE_APPEND);
             $lpo = new Lpo;
             $lpo->requested_by_id = (int) $form['requested_by_id'];
             $lpo->expense_desc = $form['expense_desc'];

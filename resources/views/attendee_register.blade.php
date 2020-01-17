@@ -46,6 +46,14 @@
                     </div>
                     <div class="row">
                         <div class="col-2">
+                            Email:
+                        </div>
+                        <div class="col-10">
+                            <input id="email" name="email" required class="form-control form-control-md" placeholder="Email" type="text"><br/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-2">
                             Organisation:
                         </div>
                         <div class="col-10">
