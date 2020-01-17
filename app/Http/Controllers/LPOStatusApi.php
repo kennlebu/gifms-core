@@ -341,7 +341,7 @@ class LpoStatusApi extends Controller
                 //-1
                 $response[]=array(
                         "id"=> -1,
-                        "lpo_status"=> "My Lpos",
+                        "lpo_status"=> "My Lpos/Lsos",
                         "order_priority"=> 998,
                         "display_color"=> "#37A9E17A",
                         "lpos_count"=> Lpo::where('requested_by_id',$this->current_user()->id)->count(),
@@ -351,7 +351,7 @@ class LpoStatusApi extends Controller
                 if ($user->hasRole('program-manager')){
                     $response[]=array(
                             "id"=> -3,
-                            "lpo_status"=> "My PM-Assigned Lpos",
+                            "lpo_status"=> "My PM-Assigned Lpos/Lsos",
                             "order_priority"=> 999,
                             "display_color"=> "#49149c7a",
                             "lpos_count"=> Lpo::where('project_manager_id',$this->current_user()->id)->count(),
@@ -364,7 +364,7 @@ class LpoStatusApi extends Controller
                     //-1
                     $response[]=array(
                             "id"=> -2,
-                            "lpo_status"=> "All Lpos",
+                            "lpo_status"=> "All Lpos/Lsos",
                             "order_priority"=> 1000,
                             "display_color"=> "#092D50",
                             "lpos_count"=> Lpo::count(),
