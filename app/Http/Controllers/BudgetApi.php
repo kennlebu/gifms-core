@@ -476,20 +476,9 @@ class BudgetApi extends Controller
 
                     $account_code = trim($value[$keys[0]]);
                     if(!empty($account_code)){
-                        $rows[] = [$account_code => ['pid'=>$key, 'amount'=>]]
+                        $rows[] = [$account_code => ['pid'=>$key, 'amount'=>]];
                     }
 
-                    $project = Project::where('project_code','like', '%'.trim($value[$keys[0]]).'%')->firstOrFail();
-                    $account = Account::where('account_code', 'like', '%'.trim($value['account_code']).'%')->firstOrFail();
-
-                    $allocation->allocatable_id = $payable_id;
-                    $allocation->allocatable_type = $payable_type;
-                    $allocation->amount_allocated = $value['amount_allocation'];
-                    $allocation->allocation_purpose = $value['specific_journal_rference'];
-                    $allocation->percentage_allocated = (string) $this->getPercentage($value['amount_allocation'], $total);
-                    $allocation->allocated_by_id =  (int) $user->id;
-                    $allocation->account_id =  $account->id;
-                    $allocation->project_id = $project->id;
                     array_push($allocations_array, $allocation);
 
                 }
