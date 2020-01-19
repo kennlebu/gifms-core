@@ -17,6 +17,8 @@ use App\Models\FinanceModels\Budget;
 use App\Models\FinanceModels\BudgetItem;
 use App\Models\FinanceModels\ExchangeRate;
 use App\Models\PaymentModels\Payment;
+use App\Models\PaymentModels\PaymentBatch;
+use App\Models\ProgramModels\ProgramManager;
 use App\Models\ReportModels\ReportingObjective;
 
 class Project extends BaseModel
@@ -24,7 +26,7 @@ class Project extends BaseModel
     //
     use SoftDeletes;
 
-
+    protected $appends = ['program_manager'];
     protected $hidden = ['client','closed_on','cluster','deleted_at','migration_id','migration_project_manager_id','qb','start_date','current_budget'];
 
     public function program()
@@ -70,6 +72,11 @@ class Project extends BaseModel
     public function getCurrentBudgetAttribute(){
         return Budget::where('id', $this->budget_id)->whereYear('end_date', date('Y'))->first();
     }
+    public function getProgramManagerAttribute()
+    {
+        $pm = ProgramManager::where('program_id', $this->program_id)->first();
+        return $pm->program_manager;
+    }
     // public function getAmountAllocatedAttribute(){
 
     //     $grant_allocations     =   $this->grant_allocations;
@@ -101,38 +108,41 @@ class Project extends BaseModel
         $final_allocations = [];
         // $payables = [];
         $totals = 0;
+        $total = 0;
+        $allocs = [];
 
-        // $payments = Payment::whereHas('payment_batch', function($query){
-        //     $query->whereYear('created_at', date('Y'));
-        // })->get();
-        // foreach($payments as $p){
-        //     $allocs = [];
-        //     if($p->payable_type=='advances'){
-        //         $allocs = Advance::where('id',$p->payable_id)->get()->pluck('allocations')->collapse()->toArray();
-        //     }
-        //     elseif($p->payable_type=='claims'){
-        //         $allocs = Claim::where('id',$p->payable_id)->get()->pluck('allocations')->collapse()->toArray();
-        //     }
-        //     elseif($p->payable_type=='invoices'){
-        //         // $payable = Invoice::find($p->payable_id);
-        //         $allocs = Invoice::where('id',$p->payable_id)->get()->pluck('allocations')->where('project_id', $this->id)->collapse()->toArray();
-        //         file_put_contents ( "C://Users//kennl//Documents//debug.txt" , PHP_EOL.json_encode($allocs) , FILE_APPEND);
-        //     }
-        //     // $all_allocations[] = $payable->allocations;
-        //     // if(!empty($payable->allocations))
-        //     array_merge($all_allocations, $allocs);
+        // $batches = PaymentBatch::whereYear('created_at', '2019')->pluck('id')->toArray();
+        $payments = Payment::whereHas('payment_batch', function($query){
+            $query->whereYear('created_at', '2019');
+        })->get();
+        // $payments = Payment::whereIn('payment_batch_id', $batches)->get();
+        foreach($payments as $p){
+            // $allocs = [];
+            $allocs = Allocation::where('allocatable_id',$p->payable_id)->where('allocatable_type',$p->payable_type)->where('project_id',$this->id)->get()->pluck('converted_usd')->toArray();
+            // if($p->payable_type=='advances'){
+            //     $allocs = Allocation::where('allocatable_id',$p->payable_id)->where('allocatable_type','advances')->where('project_id',$this->id)->get()->pluck('converted_usd')->toArray();
+            // }
+            // elseif($p->payable_type=='claims'){
+            //     $allocs = Allocation::where('allocatable_id',$p->payable_id)->where('allocatable_type','claims')->where('project_id',$this->id)->get()->pluck('converted_usd')->toArray();
+            // }
+            // elseif($p->payable_type=='invoices'){
+            //     $allocs = Allocation::where('allocatable_id',$p->payable_id)->where('allocatable_type','invoices')->where('project_id',$this->id)->get()->pluck('converted_usd')->toArray();
+            
+            // }
+            array_merge($all_allocations, $allocs);
+        }
+        file_put_contents ( "C://Users//kennl//Documents//debug.txt" , PHP_EOL.count($all_allocations) , FILE_APPEND);
+        
+        // Mobile Payments
+        // $mps = MobilePayment::whereIn('status_id',[4,5,6,11,12,13,17])->whereYear('management_approval_at', date('Y'))->get();
+        // foreach($mps as $mp){
+        //     $allocs = Allocation::where('allocatable_id',$mp->id)->where('allocatable_type','mobile_payments')->where('project_id',$this->id)->get()->pluck('converted_usd')->toArray();
         // }
-        // // Add mobile payments to payables
-        // $allocs = MobilePayment::whereIn('status_id',[4,5,6,11,12,13,17])->whereYear('management_approval_at', date('Y'))
-        //                         ->get()->pluck('allocations')->collapse()->toArray();
-        // // $all_allocations[] = $payable->allocations;
         // array_merge($all_allocations, $allocs);
 
-        // foreach($all_allocations as $a){
-        //     if($a->project_id && $a->project_id){
-        //         $final_allocations[] = $a;
-        //     }
-        // }
+        foreach($all_allocations as $alloc){
+            $total +=  $alloc;
+        }
 
         // foreach($payables as $py){
         //     if(!empty($py->allocations))
@@ -151,38 +161,38 @@ class Project extends BaseModel
         //     }
         // }
 
-        foreach ($allocations as $key => $value) {
-            $allocatable = null;
-            if($value->allocatable_type=='invoices' && !empty($value->allocatable_id)){
-                $allocatable = Invoice::has('payments')->where('id', $value->allocatable_id)->first();
-            }else if($value->allocatable_type=='mobile_payments' && !empty($value->allocatable_id)){
-                $allocatable = MobilePayment::whereIn('status_id',[4,5,6,11,12,13,17])->where('id', $value->allocatable_id)->first();
-            }else if($value->allocatable_type=='claims' && !empty($value->allocatable_id)){
-                $allocatable = Claim::whereIn('status_id',[6,7,8])->where('id', $value->allocatable_id)->first();
-            }else if($value->allocatable_type=='advances' && !empty($value->allocatable_id)){
-                $allocatable = Advance::whereIn('status_id',[5,6,7,9,10])->where('id', $value->allocatable_id)->first();
-            }
+        // foreach ($allocations as $key => $value) {
+        //     $allocatable = null;
+        //     if($value->allocatable_type=='invoices' && !empty($value->allocatable_id)){
+        //         $allocatable = Invoice::has('payments')->where('id', $value->allocatable_id)->first();
+        //     }else if($value->allocatable_type=='mobile_payments' && !empty($value->allocatable_id)){
+        //         $allocatable = MobilePayment::whereIn('status_id',[4,5,6,11,12,13,17])->where('id', $value->allocatable_id)->first();
+        //     }else if($value->allocatable_type=='claims' && !empty($value->allocatable_id)){
+        //         $allocatable = Claim::whereIn('status_id',[6,7,8])->where('id', $value->allocatable_id)->first();
+        //     }else if($value->allocatable_type=='advances' && !empty($value->allocatable_id)){
+        //         $allocatable = Advance::whereIn('status_id',[5,6,7,9,10])->where('id', $value->allocatable_id)->first();
+        //     }
 
-            if($allocatable && $allocatable->currency_id){
-                if($allocatable->currency_id == 2){  
-                    $totals    +=  (float) $value->amount_allocated;
-                }
-                else if($value->allocatable->currency_id == 1){
-                    $rate = ExchangeRate::whereMonth('active_date', date('m'))->orderBy('active_date', 'DESC')->first();
-                    // $rate = DB::select("select * from exchange_rates
-                    //     where ((DATE_ADD('".date('Y-m-d')."', INTERVAL 1 DAY) between 
-                    //     cast(active_date as date) and cast(end_date as date)
-                    //     or DATE_SUB('".date('Y-m-d')."', INTERVAL 1 DAY) between
-                    //     cast(active_date as date) and cast(end_date as date))");
-                    if(!empty($rate)) $rate = $rate->exchange_rate;
-                    else $rate = 102.10;
+        //     if($allocatable && $allocatable->currency_id){
+        //         if($allocatable->currency_id == 2){  
+        //             $totals    +=  (float) $value->amount_allocated;
+        //         }
+        //         else if($value->allocatable->currency_id == 1){
+        //             $rate = ExchangeRate::whereMonth('active_date', date('m'))->orderBy('active_date', 'DESC')->first();
+        //             // $rate = DB::select("select * from exchange_rates
+        //             //     where ((DATE_ADD('".date('Y-m-d')."', INTERVAL 1 DAY) between 
+        //             //     cast(active_date as date) and cast(end_date as date)
+        //             //     or DATE_SUB('".date('Y-m-d')."', INTERVAL 1 DAY) between
+        //             //     cast(active_date as date) and cast(end_date as date))");
+        //             if(!empty($rate)) $rate = $rate->exchange_rate;
+        //             else $rate = 102.10;
 
-                    $totals += (float) ($value->amount_allocated/$rate);
-                }
-            }
-        }
+        //             $totals += (float) ($value->amount_allocated/$rate);
+        //         }
+        //     }
+        // }
 
-        return $totals;
+        return $total;
     }
 
     public function getTotalExpenditurePercAttribute(){

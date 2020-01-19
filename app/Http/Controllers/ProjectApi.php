@@ -655,7 +655,7 @@ class ProjectApi extends Controller
                     // file_put_contents ( "C://Users//kennl//Documents//debug.txt" , PHP_EOL.is_array($allocations) , FILE_APPEND);
 
                     if(!empty($p->payable_id)){
-                        $a = Allocation::where('allocatable_id', $p->payable_id)->where('project_id', $pid)->get()->toArray(); 
+                        $a = Allocation::where('allocatable_id', $p->payable_id)->where('project_id', $pid)->where('allocatable_type',$p->payable_type)->get()->toArray(); 
                         array_merge($allocations, $a);
                     }
                     
