@@ -1766,3 +1766,7 @@ CHANGE `fp_template_1` `fp_template_1` varchar(1) NULL AFTER `kra_pin`;
 ~===== Add email field to meeting attendees
 ALTER TABLE `meeting_attendees`
 ADD `email` text COLLATE 'latin1_swedish_ci' NULL AFTER `kra_pin`;
+
+===== Add physical address to meeting attendee table
+ALTER TABLE `meeting_attendees`
+ADD `physical_address` text COLLATE 'latin1_swedish_ci' NULL AFTER `email`;

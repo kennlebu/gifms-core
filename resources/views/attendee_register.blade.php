@@ -54,6 +54,14 @@
                     </div>
                     <div class="row">
                         <div class="col-2">
+                            Physical Address:
+                        </div>
+                        <div class="col-10">
+                            <input id="physical_address" name="physical_address" required class="form-control form-control-md" placeholder="Physical Address" type="text"><br/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-2">
                             Organisation:
                         </div>
                         <div class="col-10">
