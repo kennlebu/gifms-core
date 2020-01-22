@@ -41,6 +41,7 @@ use App\Exceptions\ApprovalException;
 use PDF;
 use App\Models\ReportModels\ReportingObjective;
 use App\Models\ActivityModels\Activity;
+use App\Models\AllocationModels\Allocation;
 use App\Models\PaymentModels\VoucherNumber;
 
 class ClaimApi extends Controller
@@ -196,6 +197,8 @@ class ClaimApi extends Controller
         $deleted = Claim::destroy($claim_id);
 
         if($deleted){
+            // Delete the allocations too
+            Allocation::where('allocatable_id', $claim_id)->where('allocatable_type', 'claims')->delete();
             return response()->json(['msg'=>"Claim deleted"], 200,array(),JSON_PRETTY_PRINT);
         }else{
             return response()->json(['error'=>"Claim not found"], 404,array(),JSON_PRETTY_PRINT);

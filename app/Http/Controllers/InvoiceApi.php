@@ -380,6 +380,8 @@ class InvoiceApi extends Controller
         try {                   
             $deleted_allocation = Invoice::destroy($invoice_id);
             if($deleted_allocation){
+                // Delete the allocations too
+                Allocation::where('allocatable_id', $invoice_id)->where('allocatable_type', 'invoices')->delete();
                 return response()->json(['msg'=>"Invoice deleted"], 200,array(),JSON_PRETTY_PRINT);
             }else{
                 return response()->json(['error'=>"Invoice not found"], 404,array(),JSON_PRETTY_PRINT);

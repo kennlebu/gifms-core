@@ -1252,3 +1252,14 @@ ALTER TABLE `withholding_vat_rates`
 ADD `created_at` timestamp NULL,
 ADD `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP AFTER `created_at`,
 ADD `deleted_at` timestamp NULL AFTER `updated_at`;
+
+===== Create expenditure tracker table
+CREATE TABLE `expenditure_trackers` (
+  `id` int NOT NULL,
+  `budget_id` int NULL,
+  `project_id` int NULL,
+  `expenditure` float NULL,
+  `created_at` timestamp NULL,
+  `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL
+);

@@ -44,6 +44,7 @@ use App\Exceptions\ApprovalException;
 use App\Models\PaymentModels\VoucherNumber;
 use App\Models\ReportModels\ReportingObjective;
 use App\Mail\RequestMPBankSigning;
+use App\Models\AllocationModels\Allocation;
 
 class MobilePaymentApi extends Controller
 {
@@ -888,6 +889,8 @@ class MobilePaymentApi extends Controller
     {
         $deleted = MobilePayment::destroy($mobile_payment_id);
         if($deleted){
+            // Delete the allocations too
+            Allocation::where('allocatable_id', $mobile_payment_id)->where('allocatable_type', 'mobile_payments')->delete();
             return response()->json(['msg'=>"Mobile Payment deleted"], 200,array(),JSON_PRETTY_PRINT);
         }else{
             return response()->json(['error'=>"Something went wrong"], 500,array(),JSON_PRETTY_PRINT);

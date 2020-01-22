@@ -531,8 +531,8 @@ class ProjectApi extends Controller
         foreach ($data as $key => $value) {
 
             $projects = Project::find($data[$key]['id']);
-            $data[$key]['expenditure_perc']         = $projects->total_expenditure_perc;
             $data[$key]['total_expenditure']        = $projects->total_expenditure;
+            $data[$key]['expenditure_perc']         = $projects->budget->totals ?? 0 == 0 ? 0 : ($data[$key]['total_expenditure'] /$projects->budget->totals)*100;
             $data[$key]['program']                  = $projects->program;
             $data[$key]['status']                   = $projects->status;
             $data[$key]['country']                  = $projects->country;
@@ -584,24 +584,85 @@ class ProjectApi extends Controller
         try{            
             // Get pm pids
             $pm_programs = ProgramManager::where('program_manager_id', $this->current_user()->id)->pluck('program_id')->toArray();
-            $pm_pids = Project::with('budget')->has('budget')->whereIn('program_id', $pm_programs)->get();
+            $pm_pids = Project::whereIn('program_id', $pm_programs)->get();
+            $user_id = $this->current_user()->id;
+            $payables = [];
+            $my_res = [];
 
-            $res = [];
-            $total_expenditure = 0;
-            foreach($pm_pids as $pid){
-                $budget_amount = $pid->current_budget->totals;
+            $payments = Payment::whereHas('payment_batch', function($query){
+                $query->whereYear('created_at', date('Y'));  
+            })->get();
 
-                $res[] = [
-                    'id'=>$pid->id,
-                    'budget'=>$pid->budget,
-                    'current_budget'=>$pid->current_budget,
-                    'program'=>$pid->program,
-                    'expenditure_perc'=> $budget_amount == 0 ? 0 : ($total_expenditure/$budget_amount)*100,
-                    'project_code'=>$pid->project_code,
-                    'project_name'=>$pid->project_name,
-                    'total_expenditure'=>$total_expenditure
-                ];
+            foreach($payments as $payment){
+                $res = [];
+                if($payment->payable_type=='advances'){
+                    $advance = Advance::with('allocations')->where('project_manager_id', $user_id)
+                                ->where('id', $payment->payable_id)->first();
+
+                    $res = ['currency_id'=>$payment->currency_id, 'payment'=>$payment, 'payable'=>$advance];
+                }
+                elseif($payment->payable_type=='claims'){
+                    $claim = Claim::with('allocations.budget')->where('project_manager_id', $user_id)
+                                ->where('id', $payment->payable_id)->first();
+                        
+                    $res = ['currency_id'=>$payment->currency_id, 'payment'=>$payment, 'payable'=>$claim];
+                }
+                elseif($payment->payable_type=='invoices'){
+                    $invoice = Invoice::with('allocations')->where('project_manager_id', $user_id)
+                                    ->where('id', $payment->payable_id)->first();
+
+                    $res = ['currency_id'=>$payment->currency_id, 'payment'=>$payment, 'payable'=>$invoice];
+                }
+                $payables[] = $res;
             }
+
+            $mobile_payments = MobilePayment::with('allocations')->whereYear('management_approval_at', date('Y'))->where('project_manager_id', $user_id)->get();
+
+            foreach($mobile_payments as $mobile_payment){
+                $res = ['currency_id'=>$mobile_payment->currency_id, 'payment'=>null, 'payable'=>$mobile_payment];
+                $payables[] = $res;
+            }
+
+            foreach($payables as $row){
+                if(isset($row['payable']['allocations'])){                    
+                    foreach($row['payable']['allocations'] as $allocation){
+    
+                        // Filter out PIDs not belonging to the current PM
+                        if(!empty($pm_pids) && (empty($allocation['project_id']) || !in_array($allocation['project_id'], $pm_pids))){
+                            continue;
+                        }
+
+                        $budget_amount = $allocation['current_budget']['totals'];
+                        $total_expenditure = 0;
+                        $my_res[] = [
+                            'id'=>$allocation['id'],
+                            'current_budget'=>$allocation['current_budget'],
+                            'program'=>$allocation['program'],
+                            'expenditure_perc'=> $budget_amount == 0 ? 0 : ($total_expenditure/$budget_amount)*100,
+                            'project_code'=>$allocation['project_code'],
+                            'project_name'=>$allocation['project_name'],
+                            'total_expenditure'=>$total_expenditure
+                        ];      
+                    }
+                }
+            }
+
+            // $res = [];
+            // $total_expenditure = 0;
+            // foreach($pm_pids as $pid){
+            //     $budget_amount = $pid->current_budget->totals;
+
+            //     $res[] = [
+            //         'id'=>$pid->id,
+            //         'budget'=>$pid->budget,
+            //         'current_budget'=>$pid->current_budget,
+            //         'program'=>$pid->program,
+            //         'expenditure_perc'=> $budget_amount == 0 ? 0 : ($total_expenditure/$budget_amount)*100,
+            //         'project_code'=>$pid->project_code,
+            //         'project_name'=>$pid->project_name,
+            //         'total_expenditure'=>$total_expenditure
+            //     ];
+            // }
 
 
             return response()->json($res, 200,array(),JSON_PRETTY_PRINT);

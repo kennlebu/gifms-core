@@ -36,6 +36,7 @@ use App\Models\SuppliesModels\SupplierRate;
 use App\Exceptions\NoLpoItemsException;
 use App\Exceptions\LpoQuotationAmountMismatchException;
 use App\Exceptions\ApprovalException;
+use App\Models\AllocationModels\Allocation;
 use Excel;
 
 
@@ -260,6 +261,8 @@ class LPOApi extends Controller
     {
         $deleted = Lpo::destroy($lpo_id);
         if($deleted){
+            // Delete the allocations too
+            Allocation::where('allocatable_id', $lpo_id)->where('allocatable_type', 'lpos')->delete();
             return response()->json(['msg'=>"lpo deleted"], 200,array(),JSON_PRETTY_PRINT);
         }else{
             return response()->json(['error'=>"Something went wrong"], 500,array(),JSON_PRETTY_PRINT);
