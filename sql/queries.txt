@@ -1263,3 +1263,8 @@ CREATE TABLE `expenditure_trackers` (
   `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
   `deleted_at` timestamp NULL
 );
+
+ALTER TABLE `expenditure_trackers`
+ADD `account_id` int NULL AFTER `project_id`,
+ADD `objective_id` int NULL AFTER `account_id`,
+CHANGE `updated_at` `updated_at` timestamp NULL AFTER `created_at`;
