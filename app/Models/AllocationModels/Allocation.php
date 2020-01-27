@@ -18,7 +18,7 @@ class Allocation extends BaseModel
     protected $hidden = ['account_2013_id','account_2016_id','allocation_month','allocation_year','deleted_at','migration_account_2013_code',
                         'migration_account_2016_code','migration_allocatable_id','migration_allocated_by_id','migration_id','migration_project_id',
                         ];
-    // protected $appends = ['converted_usd'];
+    protected $appends = ['converted_usd'];
 
     public function allocatable()
     {

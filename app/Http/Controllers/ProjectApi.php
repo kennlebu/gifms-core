@@ -584,13 +584,13 @@ class ProjectApi extends Controller
         try{            
             // Get pm pids
             $pm_programs = ProgramManager::where('program_manager_id', $this->current_user()->id)->pluck('program_id')->toArray();
-            $pm_pids = Project::whereIn('program_id', $pm_programs)->get();
+            $pm_pids = Project::whereIn('program_id', $pm_programs)->pluck('id')->toArray();
             $user_id = $this->current_user()->id;
             $payables = [];
             $my_res = [];
 
             $payments = Payment::whereHas('payment_batch', function($query){
-                $query->whereYear('created_at', date('Y'));  
+                $query->whereYear('created_at', '2019');  
             })->get();
 
             foreach($payments as $payment){
@@ -602,7 +602,7 @@ class ProjectApi extends Controller
                     $res = ['currency_id'=>$payment->currency_id, 'payment'=>$payment, 'payable'=>$advance];
                 }
                 elseif($payment->payable_type=='claims'){
-                    $claim = Claim::with('allocations.budget')->where('project_manager_id', $user_id)
+                    $claim = Claim::with('allocations')->where('project_manager_id', $user_id)
                                 ->where('id', $payment->payable_id)->first();
                         
                     $res = ['currency_id'=>$payment->currency_id, 'payment'=>$payment, 'payable'=>$claim];
@@ -665,7 +665,7 @@ class ProjectApi extends Controller
             // }
 
 
-            return response()->json($res, 200,array(),JSON_PRETTY_PRINT);
+            return response()->json($my_res, 200,array(),JSON_PRETTY_PRINT);
         }
         catch(Exception $e){
             return response()->json(['error'=>"something went wrong", 'msg'=>$e->getMessage(), 'stack'=>$e->getTraceAsString()], 500,array(),JSON_PRETTY_PRINT);

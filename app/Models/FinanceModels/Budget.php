@@ -12,7 +12,7 @@ class Budget extends BaseModel
     //
     use SoftDeletes;
 
-    protected $appends = ['totals','project'];
+    protected $appends = ['totals'];
 
 
     public function items()
@@ -31,6 +31,10 @@ class Budget extends BaseModel
     {
         return $this->belongsTo('App\Models\FinanceModels\BudgetStatus');
     }
+    public function project()
+    {
+        return $this->belongsTo('App\Models\ProjectsModels\Project');
+    }
     
     public function getTotalsAttribute(){
 
@@ -43,14 +47,5 @@ class Budget extends BaseModel
 
         return $totals;
 
-    }
-
-    public function getProjectAttribute(){
-        $project = Project::where('budget_id', $this->id)->first();
-        if(!empty($project)){
-            return $project;
-        }
-        else return null;
-        
     }
 }

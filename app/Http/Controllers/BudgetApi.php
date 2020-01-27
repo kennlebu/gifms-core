@@ -55,14 +55,15 @@ class BudgetApi extends Controller
         $budget->created_by_id                = (int)   $this->current_user()->id;
         $budget->create_action_by_id          = (int)   $this->current_user()->id;
         $budget->status_id                    =         1;
+        $budget->project_id                   = $form['project_id'];
 
         if($budget->save()) {
-            if(!empty($form['project_id'])){
-                $project = Project::find($form['project_id']);
-                $project->disableLogging();
-                $project->budget_id = $budget->id;
-                $project->save();
-            }
+            // if(!empty($form['project_id'])){
+            //     $project = Project::find($form['project_id']);
+            //     $project->disableLogging();
+            //     $project->budget_id = $budget->id;
+            //     $project->save();
+            // }
 
             return Response()->json(array('msg' => 'Success: budget added','budget' => $budget), 200);
         }
@@ -122,14 +123,15 @@ class BudgetApi extends Controller
         $budget->currency_id                  = (int)   $form['currency_id'];
         $budget->start_date                   =         $start_date;
         $budget->end_date                     =         $end_date;
+        $budget->project_id                   = $form['project_id'];
 
         if($budget->save()) {
-            if(!empty($form['project_id'])){
-                $project = Project::find($form['project_id']);
-                $project->disableLogging();
-                $project->budget_id = $budget->id;
-                $project->save();
-            }
+            // if(!empty($form['project_id'])){
+            //     $project = Project::find($form['project_id']);
+            //     $project->disableLogging();
+            //     $project->budget_id = $budget->id;
+            //     $project->save();
+            // }
 
             return Response()->json(array('msg' => 'Success: budget updated','budget' => $budget), 200);
         }
