@@ -51,13 +51,13 @@ class Project extends BaseModel
     {
         return $this->belongsToMany('App\Models\StaffModels\Staff', 'project_teams', 'project_id', 'staff_id');
     }
-    public function budget()
+    public function budgets()
     {
-        return $this->belongsTo('App\Models\FinanceModels\Budget', 'budget_id')->whereYear('end_date', date('Y'));
+        return $this->hasMany('App\Models\FinanceModels\Budget', 'budget_id');
     }
     public function current_budget()
     {
-        return $this->belongsTo('App\Models\FinanceModels\Budget', 'budget_id')->whereYear('end_date', date('Y'));
+        return $this->belongsTo('App\Models\FinanceModels\Budget', 'budget_id')->whereDate('end_date', '>=', date('Y-m-d'))->whereDate('start_date', '<=', date('Y-m-d'));
     }
     // public function grant_allocations()
     // {
@@ -78,7 +78,7 @@ class Project extends BaseModel
     public function getProgramManagerAttribute()
     {
         $pm = ProgramManager::where('program_id', $this->program_id)->first();
-        return $pm->program_manager;
+        return $pm->program_manager ?? null;
     }
     // public function getAmountAllocatedAttribute(){
 
