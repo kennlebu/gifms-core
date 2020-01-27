@@ -1253,7 +1253,7 @@ ADD `created_at` timestamp NULL,
 ADD `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP AFTER `created_at`,
 ADD `deleted_at` timestamp NULL AFTER `updated_at`;
 
-===== Create expenditure tracker table
++===== Create expenditure tracker table
 CREATE TABLE `expenditure_trackers` (
   `id` int NOT NULL,
   `budget_id` int NULL,
@@ -1268,3 +1268,18 @@ ALTER TABLE `expenditure_trackers`
 ADD `account_id` int NULL AFTER `project_id`,
 ADD `objective_id` int NULL AFTER `account_id`,
 CHANGE `updated_at` `updated_at` timestamp NULL AFTER `created_at`;
+
++===== Add project id field to budget
+ALTER TABLE `budgets`
+ADD `project_id` int NULL AFTER `create_action_by_id`,
+CHANGE `updated_at` `updated_at` timestamp NOT NULL DEFAULT current_timestamp() AFTER `created_at`;
+
+// Refractor budgets
+php artisan refractor:budgets
+
++===== Add primary id to expenditure tracker table
+ALTER TABLE `expenditure_trackers`
+CHANGE `id` `id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY FIRST;
+
+ALTER TABLE `expenditure_trackers`
+ADD `for_new_budget` varchar(5) NULL AFTER `expenditure`;
