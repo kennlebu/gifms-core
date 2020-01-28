@@ -538,7 +538,7 @@ class ProjectApi extends Controller
             $data[$key]['country']                  = $projects->country;
             $data[$key]['staffs']                   = $projects->staffs;
             $data[$key]['budget']                   = $projects->current_budget;
-            $data[$key]['current_budget']                   = $projects->current_budget;
+            $data[$key]['current_budget']           = $projects->current_budget;
             $data[$key]['grant']                    = $projects->grant;
         }
 
