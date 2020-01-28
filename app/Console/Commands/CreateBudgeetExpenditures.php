@@ -51,33 +51,41 @@ class CreateBudgeetExpenditures extends Command
                 foreach($mobile_payment->allocations as $allocation){
                     $project = Project::find($allocation->project_id);
                     if(!empty($project)){
-                        $budget = $project->current_budget;
-                        if(!empty($budget)){
-                            $tracker = ExpenditureTracker::where('account_id', $allocation->account_id)
-                                                        ->where('budget_id', $budget->id)
-                                                        ->first();
+                        // $budget = $project->current_budget;
+                        // if(!empty($budget)){
+                        //     $tracker = ExpenditureTracker::where('budget_id', $budget->id)
+                        //                                 ->first();
                             
-                            if(!empty($tracker)){
-                                $tracker->expenditure = $tracker->expenditure += $allocation->converted_usd;
-                            }
-                            else{
-                                $tracker = new ExpenditureTracker();
-                                $tracker->budget_id = $budget->id;
-                                $tracker->account_id = $allocation->account_id;
-                                $tracker->expenditure = $allocation->converted_usd;
-                                $tracker->disableLogging();
-                                $tracker->save();
-                            }
-                        }
-                        else {
+                        //     if(!empty($tracker)){
+                        //         $tracker->expenditure = $tracker->expenditure += $allocation->converted_usd;
+                        //         $tracker->disableLogging();
+                        //         $tracker->save();
+                        //     }
+                        //     else{
+                        //         $tracker = new ExpenditureTracker();
+                        //         $tracker->budget_id = $budget->id;
+                        //         // $tracker->account_id = $allocation->account_id;
+                        //         $tracker->expenditure = $allocation->converted_usd;
+                        //         $tracker->disableLogging();
+                        //         $tracker->save();
+                        //     }
+                        // }
+                        // else {
                             // If the current budget is empty and allocation year is current year,
                             // assume it is for a new budget that is yet to be uploaded.
-                            $allocation_date = date('Y-m-d', strtotime($allocation->created_at));
-                            $budget = Budget::whereDate('start_date', '<=', $allocation_date)->whereDate('end_date', '>=', $allocation_date)->first();
+                            if($mobile_payment->management_approval_at)
+                            {
+                                $payment_date = date('Y-m-d', strtotime($mobile_payment->management_approval_at));
+                                $budget = Budget::whereDate('start_date', '<=', $payment_date)->whereDate('end_date', '>=', $payment_date)->first();
+                            }
+                            else{
+                                $budget = null;
+                            }
+                            
 
                             if(!empty($budget)){
-                                $tracker = ExpenditureTracker::where('account_id', $allocation->account_id)
-                                                            ->where('budget_id', $budget->id)
+
+                                $tracker = ExpenditureTracker::where('budget_id', $budget->id)
                                                             ->first();
                                 
                                 if(!empty($tracker)){
@@ -87,25 +95,35 @@ class CreateBudgeetExpenditures extends Command
                                 }
                                 else {
                                     $tracker = new ExpenditureTracker();
-                                    $tracker->account_id = $allocation->account_id;
+                                    // $tracker->account_id = $allocation->account_id;
                                     $tracker->expenditure = $allocation->converted_usd;
                                     $tracker->budget_id = $budget->id;
                                     $tracker->disableLogging();
                                     $tracker->save();
                                 }
                             }
-                            elseif(date('Y') == date('Y', strtotime($allocation->created_at))) {
-                                $tracker = new ExpenditureTracker();
-                                $tracker->account_id = $allocation->account_id;
-                                $tracker->expenditure = $allocation->converted_usd;
-                                $tracker->for_new_budget = 'true';
-                                $tracker->disableLogging();
-                                $tracker->save();
+                            elseif($mobile_payment->management_approval_at && date('Y') == date('Y', strtotime($mobile_payment->management_approval_at))) {
+                                $new_tracker = ExpenditureTracker::where('for_new_budget', 'true')
+                                                            ->first();
+                                
+                                if(!empty($new_tracker)){
+                                    $new_tracker->expenditure = $new_tracker->expenditure += $allocation->converted_usd;
+                                    $new_tracker->disableLogging();
+                                    $new_tracker->save();
+                                }
+                                else {
+                                    $new_tracker = new ExpenditureTracker();
+                                    // $new_tracker->account_id = $allocation->account_id;
+                                    $new_tracker->expenditure = $allocation->converted_usd;
+                                    $new_tracker->for_new_budget = 'true';
+                                    $new_tracker->disableLogging();
+                                    $new_tracker->save();
+                                }
                             }
                             else {
                                 // These are old allocations that had no budgets. Let them rot.
                             }
-                        }
+                        // }
                         $project = null;
                     }
                 }
@@ -114,7 +132,7 @@ class CreateBudgeetExpenditures extends Command
 
 
         $this->info('Running payments...');
-        Payment::chunk(100, function($payments) {
+        Payment::with('payment_batch')->chunk(100, function($payments) {
             foreach($payments as $payment){
                 $allocations = [];
                 if($payment->payable_id && $payment->payable_type == 'invoices'){
@@ -139,35 +157,37 @@ class CreateBudgeetExpenditures extends Command
                 foreach($allocations as $allocation){
                     $project = Project::find($allocation->project_id);
                     if(!empty($project)){
-                        $budget = $project->current_budget;
-                        if(!empty($budget)){
-                            $tracker = ExpenditureTracker::where('account_id', $allocation->account_id)
-                                                        ->where('budget_id', $budget->id)
-                                                        ->first();
+                        // $budget = $project->current_budget;
+                        // if(!empty($budget)){
+                        //     $tracker = ExpenditureTracker::where('budget_id', $budget->id)
+                        //                                 ->first();
                             
-                            if(!empty($tracker)){
-                                $tracker->expenditure = $tracker->expenditure += $allocation->converted_usd;
-                                $tracker->disableLogging();
-                                $tracker->save();
-                            }
-                            else{
-                                $tracker = new ExpenditureTracker();
-                                $tracker->budget_id = $budget->id;
-                                $tracker->account_id = $allocation->account_id;
-                                $tracker->expenditure = $allocation->converted_usd;
-                                $tracker->disableLogging();
-                                $tracker->save();
-                            }
-                        }
-                        else {
+                        //     if(!empty($tracker)){
+                        //         $tracker->expenditure = $tracker->expenditure += $allocation->converted_usd;
+                        //         $tracker->disableLogging();
+                        //         $tracker->save();
+                        //     }
+                        //     else{
+                        //         $tracker = new ExpenditureTracker();
+                        //         $tracker->budget_id = $budget->id;
+                        //         $tracker->expenditure = $allocation->converted_usd;
+                        //         $tracker->disableLogging();
+                        //         $tracker->save();
+                        //     }
+                        // }
+                        // else {
                             // If the current budget is empty and allocation year is current year,
                             // assume it is for a new budget that is yet to be uploaded.
-                            $allocation_date = date('Y-m-d', strtotime($allocation->created_at));
-                            $budget = Budget::whereDate('start_date', '<=', $allocation_date)->whereDate('end_date', '>=', $allocation_date)->first();
+                            if($payment->payment_batch){
+                                $batch_date = date('Y-m-d', strtotime($payment->payment_batch->created_at));
+                                $budget = Budget::whereDate('start_date', '<=', $batch_date)->whereDate('end_date', '>=', $batch_date)->first();
+                            }
+                            else{
+                                $budget = null;
+                            }
 
                             if(!empty($budget)){
-                                $tracker = ExpenditureTracker::where('account_id', $allocation->account_id)
-                                                            ->where('budget_id', $budget->id)
+                                $tracker = ExpenditureTracker::where('budget_id', $budget->id)
                                                             ->first();
                                 
                                 if(!empty($tracker)){
@@ -177,25 +197,33 @@ class CreateBudgeetExpenditures extends Command
                                 }
                                 else {
                                     $tracker = new ExpenditureTracker();
-                                    $tracker->account_id = $allocation->account_id;
                                     $tracker->expenditure = $allocation->converted_usd;
                                     $tracker->budget_id = $budget->id;
                                     $tracker->disableLogging();
                                     $tracker->save();
                                 }
                             }
-                            elseif(date('Y') == date('Y', strtotime($allocation->created_at))) {
-                                $tracker = new ExpenditureTracker();
-                                $tracker->account_id = $allocation->account_id;
-                                $tracker->expenditure = $allocation->converted_usd;
-                                $tracker->for_new_budget = 'true';
-                                $tracker->disableLogging();
-                                $tracker->save();
+                            elseif($payment->payment_batch && date('Y') == date('Y', strtotime($payment->payment_batch->created_at))) {
+                                $new_tracker = ExpenditureTracker::where('for_new_budget', 'true')
+                                                            ->first();
+                                
+                                if(!empty($new_tracker)){
+                                    $new_tracker->expenditure = $new_tracker->expenditure += $allocation->converted_usd;
+                                    $new_tracker->disableLogging();
+                                    $new_tracker->save();
+                                }
+                                else {
+                                    $new_tracker = new ExpenditureTracker();
+                                    $new_tracker->expenditure = $allocation->converted_usd;
+                                    $new_tracker->for_new_budget = 'true';
+                                    $new_tracker->disableLogging();
+                                    $new_tracker->save();
+                                }
                             }
                             else {
                                 // These are old allocations that had no budgets. Let them rot.
                             }
-                        }
+                        // }
                     }
                     $project = null;
                 }
