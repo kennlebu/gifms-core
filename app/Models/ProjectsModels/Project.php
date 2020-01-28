@@ -69,7 +69,7 @@ class Project extends BaseModel
     }
     public function year_allocations()
     {
-        return $this->hasMany('App\Models\AllocationModels\Allocation','project_id')->whereYear('created_at', '2019');
+        return $this->hasMany('App\Models\AllocationModels\Allocation','project_id')->whereYear('created_at', date('Y'));
     }
     public function grant()
     {

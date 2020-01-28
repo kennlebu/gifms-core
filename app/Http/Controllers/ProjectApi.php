@@ -216,7 +216,7 @@ class ProjectApi extends Controller
         $input = Request::all();
 
         try{
-            $response = Project::with(["budget","project_manager","staffs", "grant"])->findOrFail($project_id);
+            $response = Project::with(["current_budget","project_manager","staffs", "grant"])->findOrFail($project_id);
 
             //with_chart_data
             if(array_key_exists('with_chart_data', $input)&& $input['with_chart_data'] == "true"){
@@ -281,7 +281,7 @@ class ProjectApi extends Controller
         try{
             $project  =   Project::findOrFail($project_id);
             $project->staffs()->sync($form->staffs);
-            $response   = Project::with(["budget","project_manager","staffs"])->findOrFail($project_id);
+            $response   = Project::with(["current_budget","project_manager","staffs"])->findOrFail($project_id);
            
             return response()->json(['msg'=>"Team Updated", 'staffs'=>$response], 200,array(),JSON_PRETTY_PRINT);
         }catch(Exception $e){
@@ -532,12 +532,13 @@ class ProjectApi extends Controller
 
             $projects = Project::find($data[$key]['id']);
             $data[$key]['total_expenditure']        = $projects->total_expenditure;
-            $data[$key]['expenditure_perc']         = $projects->budget->totals ?? 0 == 0 ? 0 : ($data[$key]['total_expenditure'] /$projects->budget->totals)*100;
+            $data[$key]['expenditure_perc']         = $projects->current_budget->totals ?? 0 == 0 ? 0 : ($data[$key]['total_expenditure'] /$projects->current_budget->totals)*100;
             $data[$key]['program']                  = $projects->program;
             $data[$key]['status']                   = $projects->status;
             $data[$key]['country']                  = $projects->country;
             $data[$key]['staffs']                   = $projects->staffs;
-            $data[$key]['budget']                   = $projects->budget;
+            $data[$key]['budget']                   = $projects->current_budget;
+            $data[$key]['current_budget']                   = $projects->current_budget;
             $data[$key]['grant']                    = $projects->grant;
         }
 
@@ -570,6 +571,9 @@ class ProjectApi extends Controller
             }
             if($data[$key]["budget"]==null){
                 $data[$key]["budget"] = array("budget_desc"=>"N/A","totals"=>0);
+            }
+            if($data[$key]["current_budget"]==null){
+                $data[$key]["current_budget"] = array("budget_desc"=>"N/A","totals"=>0);
             }
             if($data[$key]["grant"]==null){
                 $data[$key]["grant"] = array("grant_name"=>"");
