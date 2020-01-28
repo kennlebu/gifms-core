@@ -1283,3 +1283,12 @@ CHANGE `id` `id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY FIRST;
 
 ALTER TABLE `expenditure_trackers`
 ADD `for_new_budget` varchar(5) NULL AFTER `expenditure`;
+
++===== Add name field to bank contacts
+ALTER TABLE `bank_contacts`
+CHANGE `email` `email` varchar(255) COLLATE 'utf8_unicode_ci' NULL AFTER `id`,
+CHANGE `phone` `phone` varchar(255) COLLATE 'utf8_unicode_ci' NULL AFTER `email`,
+CHANGE `f_name` `f_name` varchar(255) COLLATE 'utf8_unicode_ci' NULL AFTER `phone`,
+CHANGE `l_name` `l_name` varchar(255) COLLATE 'utf8_unicode_ci' NULL AFTER `f_name`,
+ADD `name` varchar(255) COLLATE 'utf8_unicode_ci' NULL AFTER `l_name`,
+CHANGE `updated_at` `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE CURRENT_TIMESTAMP AFTER `created_at`;

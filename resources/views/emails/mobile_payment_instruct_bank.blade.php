@@ -4,7 +4,10 @@
 <body  style="font-family: monospace;">
   <main>
     <div>
-      Hi {{$bank_to['first_name'] ?? ''}}
+      Hi
+      @foreach ($bank_to as $to)
+        &nbsp;{{$to['first_name'] ?? ''}},
+      @endforeach
       <br/>
       <br/>
       <p>Kindly find the attached bulk MPESA payee detail verification inquiry.</p>

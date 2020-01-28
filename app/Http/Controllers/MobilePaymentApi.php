@@ -429,8 +429,8 @@ class MobilePaymentApi extends Controller
             }
 
             /* Get PDF data */                    
-            $deputy_director = Staff::findOrFail((int) Config::get('app.director_id'));
-            $director = Staff::findOrFail(37); //TODO: Pick this from config
+            // $deputy_director = Staff::findOrFail((int) Config::get('app.director_id'));
+            // $director = Staff::findOrFail(37); //TODO: Pick this from config
             // $pdf_data = array('mobile_payment' => $mobile_payment,
             //     'addressee'=>'Maureen Adega',
             //     'deputy_director'=>$deputy_director,
@@ -462,8 +462,8 @@ class MobilePaymentApi extends Controller
             return Response()->json(array('result' => 'Success: mobile payment sent to bank','mobile_payment' => $mobile_payment), 200);
         }
         catch(Exception $e){
-            $response =  ["error"=>$e->getMessage()];
-            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+            $response =  ["error"=>"Something went wrong", "msg"=>$e->getMessage(), "trace"=>$e->getTraceAsString()];
+            return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
         }
     }
 

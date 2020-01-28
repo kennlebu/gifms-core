@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\BaseModels\BaseModel;
 
-class BankContacts extends BaseModel
+class BankContact extends BaseModel
 {
     //
     use SoftDeletes;

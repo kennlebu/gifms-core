@@ -2467,6 +2467,31 @@ Route::GET('/accounts', 'AccountApi@accountsGet')->middleware('jwt.auth');
 
 
 
+/**
+ * Bank contacts
+ */
+Route::POST('/bank-contact', 'BankContactApi@store')->middleware('jwt.auth');
+Route::PUT('/bank-contact', 'BankContactApi@update')->middleware('jwt.auth');
+Route::DELETE('/bank-contact/{id}', 'BankContactApi@destroy')->middleware('jwt.auth');
+Route::GET('/bank-contact/{id}', 'BankContactApi@show')->middleware('jwt.auth');
+Route::GET('/bank-contacts', 'BankContactApi@index')->middleware('jwt.auth');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
