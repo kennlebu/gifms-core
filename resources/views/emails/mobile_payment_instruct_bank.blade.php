@@ -4,9 +4,9 @@
 <body  style="font-family: monospace;">
   <main>
     <div>
-      Hi
+      Hi 
       @foreach ($bank_to as $to)
-        &nbsp;{{$to['first_name'] ?? ''}},
+        {{$to['first_name'] ?? ''}},&nbsp;
       @endforeach
       <br/>
       <br/>
