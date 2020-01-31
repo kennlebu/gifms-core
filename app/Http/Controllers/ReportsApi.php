@@ -33,6 +33,8 @@ use App\Models\PaymentModels\VoucherNumber;
 use App\Models\ReportModels\ReportingObjective;
 use App\Models\ActivityModels\ActivityObjective;
 use App\Models\BankingModels\BankTransaction;
+use App\Models\FinanceModels\Budget;
+use Illuminate\Http\Request as HttpRequest;
 
 class ReportsApi extends Controller
 {
@@ -361,10 +363,7 @@ class ReportsApi extends Controller
 
     /**
      * Operation getPmJournal
-     *
      * Get PM journal.
-     *
-     *
      * @return Http response
      */
     public function PmJournal()
@@ -798,6 +797,107 @@ class ReportsApi extends Controller
 
 
     /**
+     * Operation expenseReport
+     * Get expense report
+     * @return Http response
+     */
+    public function expenseReport(HttpRequest $request){
+        try{
+            $table_data = [
+                'account'=>null,
+                'budget'=>null,
+                'expenditure'=>0
+            ];
+            $project = Project::findOrFail($request->project_id);
+            $result = ['project'=> $project, 'table_data'=>[]];
+            $fromDate = date('Y-m-d', strtotime($request->date_range[0]));
+            $toDate = date('Y-m-d', strtotime($request->date_range[1]));
+            $budget = Budget::whereDate('end_date', '>=', $toDate)->whereDate('start_date', '<=', $fromDate)->where('project_id', $request->project_id)->first();
+
+            if(!empty($budget)){
+
+                // Get all transactions
+                $payments = Payment::whereHas('payment_batch', function($query) use ($fromDate, $toDate){
+                    $query->whereBetween('created_at', [$fromDate, $toDate]);  
+                })->get();
+
+                $payables = [];
+                foreach($payments as $payment){
+                    $res = [];
+                    if($payment->payable_type=='advances'){
+                        $advance = Advance::find($payment->payable_id);
+                        $res = ['payable_type'=>$payment->payable_type, 'payment'=>$payment, 'payable'=>$advance];
+                    }
+                    elseif($payment->payable_type=='claims'){
+                        $claim = Claim::find($payment->payable_id);
+                        $res = ['payable_type'=>$payment->payable_type, 'payment'=>$payment, 'payable'=>$claim];
+                    }
+                    elseif($payment->payable_type=='invoices'){
+                        $invoice = Invoice::find($payment->payable_id);
+                        $res = ['payable_type'=>$payment->payable_type, 'payment'=>$payment, 'payable'=>$invoice];
+                    }
+                    $payables[] = $res;
+                }
+
+                $mobile_payments = MobilePayment::whereHas('voucher_number', function($query) use ($fromDate, $toDate){
+                    $query->whereBetween('created_at', [$fromDate, $toDate]);  
+                })->get();
+
+                foreach($mobile_payments as $mobile_payment){
+                    $res = array();
+                    $res = ['payable_type'=>'mobile_payments', 'payment'=>null, 'payable'=>$mobile_payment];
+                    $payables[] = $res;
+                }
+
+                // $count = 0;
+                // Go through the items
+                foreach($budget->items as $item){
+                    $exp = 0;
+                    $exp2 = 0;
+                    $my_result = $table_data;
+                    $my_result['account'] = $item->account;
+                    $my_result['budget'] = $item->amount;                    
+
+                    foreach($payables as $row){
+                        if(isset($row['payable']['allocations'])){
+                            foreach($row['payable']['allocations'] as $allocation){
+                                // if($count < 5){
+                                //     file_put_contents ( "C://Users//kennl//Documents//debug.txt" , PHP_EOL.json_encode($item) , FILE_APPEND);
+                                //     $count += 1;
+                                // } 
+            
+                                // if($item->account){
+                                    if($allocation->account_id == $item->account_id && $allocation->project_id == $request->project_id){
+                                        // if(!empty($my_result['expenditure'])){
+                                        //     $my_result['expenditure'] += $allocation['converted_usd'] ?? 0;
+                                        // }
+                                        // else {
+                                        $exp += $allocation->converted_usd;
+                                        $exp2 += $allocation->amount_allocated;
+                                        // }
+                                    }
+                                // }
+                            }
+                        }
+                    }
+                    $my_result['expenditure'] = $exp;
+
+                    $result['table_data'][] = $my_result;
+                }
+            }
+
+            return response()->json($result, 200,array(),JSON_PRETTY_PRINT);
+        }
+        catch(\Exception $e){
+            $response =  ["error"=>"An error occurred during processing", "message"=>$e->getMessage()];
+            return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
+        }
+    }
+
+
+
+
+    /**
      * Operation getReportingObjectives
      * Get reporting objectives
      * @return Http response
@@ -1073,4 +1173,3 @@ class ReportsApi extends Controller
         }
     }
 }
-?>

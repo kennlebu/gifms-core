@@ -216,7 +216,8 @@ class BudgetApi extends Controller
                                 'currency',
                                 'created_by',
                                 'status',
-                                'items.objective'
+                                'items.account',
+                                'project'
                             )->findOrFail($budget_id);
 
             foreach ($response->items as $key => $value) {
