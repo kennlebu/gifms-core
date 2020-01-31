@@ -365,7 +365,7 @@ class SupplierRateApi extends Controller
                 if(!empty($service['county_id'])) $county_ids[] = $service['county_id'];
             }
             $service_id_count = count($service_ids);
-            if(!empty($county_ids)) $qb->where('suppliers.county_id', $county_ids[0]);
+            // if(!empty($county_ids)) $qb->where('suppliers.county_id', $county_ids[0]);
             $qb = $qb->whereIn('supplier_rates.service_id', $service_ids);            
         }
 
