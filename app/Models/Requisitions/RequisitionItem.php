@@ -42,7 +42,8 @@ class RequisitionItem extends BaseModel
                 $prefix = 'LSO';
             }
             $lpo_item = LpoItem::where('requisition_item_id', $this->id)->orderBy('id','desc')->first();
-            $status = $prefix.' '.$lpo_item->lpo->status->lpo_status;
+            // $status = $prefix.' '.!empty($lpo_item->lpo->status->lpo_status) ? $lpo_item->lpo->status->lpo_status : '';
+            $status = 'N/A';
         }
         elseif($this->status_id == 4){
             $inv = Invoice::where('requisition_id', $this->requisition_id)->orderBy('id','desc')->first();
@@ -73,20 +74,20 @@ class RequisitionItem extends BaseModel
         $transaction = null;
         if($this->status_id == 2){
             $lpo_item = LpoItem::where('requisition_item_id', $this->id)->first();
-            $transaction = ['type'=>'lpo', 'id'=>$lpo_item->lpo_id];
+            // $transaction = ['type'=>'lpo', 'id'=>$lpo_item->lpo_id];
         }
         if($this->status_id == 3){
             if($this->module == 'mobile_payment'){
                 $lpo_item = LpoItem::where('requisition_item_id', $this->id)->first();
-                $transaction = ['type'=>'mobile_payment', 'id'=>$lpo_item->lpo_id];
+                // $transaction = ['type'=>'mobile_payment', 'id'=>$lpo_item->lpo_id];
             }
             else if($this->module == 'claim'){
                 $lpo_item = LpoItem::where('requisition_item_id', $this->id)->first();
-                $transaction = ['type'=>'claim', 'id'=>$lpo_item->lpo_id];
+                // $transaction = ['type'=>'claim', 'id'=>$lpo_item->lpo_id];
             }
             else if($this->module == 'invoice'){
                 $lpo_item = LpoItem::where('requisition_item_id', $this->id)->first();
-                $transaction = ['type'=>'invoice', 'id'=>$lpo_item->lpo_id];
+                // $transaction = ['type'=>'invoice', 'id'=>$lpo_item->lpo_id];
             }
         }
 
@@ -108,8 +109,10 @@ class RequisitionItem extends BaseModel
     public function getCanContinueAttribute(){
         if($this->status_id != 2) return false;
         $lpo_item = LpoItem::where('requisition_item_id', $this->id)->first();
+        $lpo = null;
+        if($lpo_item)
         $lpo = Lpo::find($lpo_item->lpo_id);
-        if($lpo->status_id != 7){   // Dispatched
+        if($lpo && $lpo->status_id != 7){   // Dispatched
             return false;
         }
         return true;
