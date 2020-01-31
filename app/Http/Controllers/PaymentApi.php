@@ -22,6 +22,7 @@ use App\Models\MobilePaymentModels\MobilePayment;
 use App\Models\PaymentModels\VoucherNumber;
 use App\Models\AdvancesModels\Advance;
 use App\Models\ClaimsModels\Claim;
+use App\Models\FinanceModels\WithholdingVatRate;
 use App\Models\InvoicesModels\Invoice;
 
 class PaymentApi extends Controller
@@ -582,7 +583,7 @@ class PaymentApi extends Controller
                 $taxable_amount = $payment->payable->total;
                 $amount = 0;
                 if($type == 'vat') {
-                    $amount = $payment->vat_amount_withheld * 6/16;
+                    $amount = $payment->vat_amount_withheld * ($payment->payable->vat_rate || 6)/16;
                     $taxable_amount = round($payment->vat_amount_withheld * 100/16,2);
                 }
                 elseif($type == 'income') $amount = $payment->income_tax_amount_withheld;
