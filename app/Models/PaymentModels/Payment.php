@@ -2,13 +2,11 @@
 
 namespace App\Models\PaymentModels;
 
-use App\Models\AdvancesModels\Advance;
+
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\BaseModels\BaseModel;
 use App\Models\BankingModels\BankTransaction;
-use App\Models\ClaimsModels\Claim;
-use App\Models\InvoicesModels\Invoice;
 
 class Payment extends BaseModel
 {
@@ -67,13 +65,6 @@ class Payment extends BaseModel
     }
 
     public function getNetAmountAttribute(){
-        $payable = null;
-        if($this->payable_type == 'invoices') $payable = Invoice::find($this->payable_id);
-        elseif($this->payable_type == 'claims') $payable = Claim::find($this->payable_id);
-        elseif($this->payable_type == 'advances') $payable = Advance::find($this->payable_id);
-
-        $vat_rate = $payable->vat_rate ?? 6;
-
         $net_amount = $this->amount;
         if(!empty($this->amount)){
             if(!empty($this->income_tax_amount_withheld)){
@@ -81,7 +72,7 @@ class Payment extends BaseModel
             }
             
             if(!empty($this->vat_amount_withheld)){
-                $vat_withhold_amount = $vat_rate*$this->vat_amount_withheld;
+                $vat_withhold_amount = (6/16)*$this->vat_amount_withheld;
                 $net_amount -= ceil($vat_withhold_amount);
             }
         }
