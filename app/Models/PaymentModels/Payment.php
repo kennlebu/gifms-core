@@ -72,7 +72,7 @@ class Payment extends BaseModel
             }
             
             if(!empty($this->vat_amount_withheld)){
-                $vat_withhold_amount = (6/16)*$this->vat_amount_withheld;
+                $vat_withhold_amount = (($this->payable->vat_rate ?? 6)/16)*$this->vat_amount_withheld;
                 $net_amount -= ceil($vat_withhold_amount);
             }
         }
