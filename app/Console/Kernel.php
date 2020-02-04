@@ -19,7 +19,8 @@ class Kernel extends ConsoleKernel
         Commands\ReformatPhoneNumbers::class,
         Commands\TestSeed::class,
         Commands\MigrateMobilePaymentDates::class,
-        Commands\CopyActivityObjectives::class
+        Commands\CopyActivityObjectives::class,
+        Commands\GenerateRequisitionDocuments::class
     ];
 
     /**

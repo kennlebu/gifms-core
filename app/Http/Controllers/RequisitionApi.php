@@ -11,6 +11,7 @@ use PDF;
 use Illuminate\Http\Request;
 use Anchu\Ftp\Facades\Ftp;
 use App\Models\ApprovalsModels\Approval;
+use App\Models\Requisitions\RequisitionDocument;
 use App\Models\SuppliesModels\SupplierService;
 use Illuminate\Support\Facades\Request as IlluminateRequest;
 use Illuminate\Support\Facades\Response;
@@ -155,7 +156,7 @@ class RequisitionApi extends Controller
             $requisition->program_manager_id = $request->program_manager_id;
             $requisition->status_id = 1;
             $requisition->submitted_at = date("Y-m-d H:i:s");
-            $requisition->objective_id = $request->objective_id;
+            $requisition->objective_id = $request->objective_id ?? null;
             $requisition->save();
             $requisition->disableLogging();
             $requisition->ref = $requisition->generated_ref;
@@ -170,7 +171,7 @@ class RequisitionApi extends Controller
                 $allocation->allocated_by_id = $requisition->requested_by_id;
                 $allocation->project_id = $alloc->project_id;
                 $allocation->account_id = $alloc->account_id;
-                $allocation->objective_id = $alloc->objective_id;
+                $allocation->objective_id = $alloc->objective_id ?? null;
                 $allocation->disableLogging();
                 $allocation->save();
             }
@@ -201,29 +202,66 @@ class RequisitionApi extends Controller
             // Files
             $no_of_files = (int) $request->no_of_files;
             $files = [];
+            $titles = [];
             for($i = 0; $i < $no_of_files; $i++) {
                 $name = 'file'.$i;
+                $file_title = 'file'.$i.'_title';
                 $files[] = $request->$name;
+                $titles[] = $request->$file_title;
+                file_put_contents ( "C://Users//kennl//Documents//debug.txt" , PHP_EOL.json_encode($request->$name) , FILE_APPEND);
             }
+//////////////////////////////
+            // $no_of_files = (int) $request->no_of_files;
+            // $files = [];
+            // for($i = 0; $i < $no_of_files; $i++) {
+            //     $name = 'file'.$i;
+            //     $files[] = $request->$name;
+            // }
+
+            // $counter = 0;
+            // foreach($files as $file) {
+            //     FTP::connection()->makeDir('/requisitions');
+            //     FTP::connection()->makeDir('/requisitions/'.$requisition->ref);
+            //     FTP::connection()->uploadFile($file->getPathname(), '/requisitions/'.$requisition->ref.'/'.$requisition->ref.'doc_'.$counter.'.'.$file->getClientOriginalExtension());
+            //     $counter += 1;
+            // }
+/////////////////////////
+
+
 
             $counter = 0;
-            foreach($files as $file) {
+            for($f = 0; $f < count($files); $f++) {
+                if($files[$f] == 0){
+                    continue;
+                }
+                $requisition_doc = new RequisitionDocument();
+                $requisition_doc->title = $titles[$f];
+                $requisition_doc->requisition_id = $requisition->id;
+                $requisition_doc->uploaded_by_id = $this->current_user()->id;
+                $requisition_doc->filename = $requisition->ref.'doc_'.$counter;
+                $requisition_doc->type = $files[$f]->getClientOriginalExtension();
+                $requisition_doc->save();
+                
                 FTP::connection()->makeDir('/requisitions');
                 FTP::connection()->makeDir('/requisitions/'.$requisition->ref);
-                FTP::connection()->uploadFile($file->getPathname(), '/requisitions/'.$requisition->ref.'/'.$requisition->ref.'doc_'.$counter.'.'.$file->getClientOriginalExtension());
+                FTP::connection()->uploadFile($files[$f]->getPathname(), '/requisitions/'.$requisition->ref.'/'.$requisition_doc->filename.'.'.$requisition_doc->type);
                 $counter += 1;
             }
 
             // Airfare document
-            if($request->has('airfare_doc')){
-                $airfare_doc = $request->airfare_doc;
+            $airfare_doc = $request->airfare_doc;
+            if($airfare_doc != 0){
+                $requisition_doc = new RequisitionDocument();
+                $requisition_doc->title = "Airfare support document";
+                $requisition_doc->requisition_id = $requisition->id;
+                $requisition_doc->uploaded_by_id = $this->current_user()->id;
+                $requisition_doc->filename = $requisition->ref.'doc_'.$counter;
+                $requisition_doc->type = $airfare_doc->getClientOriginalExtension();
+                $requisition_doc->save();
+
                 FTP::connection()->makeDir('/requisitions');
                 FTP::connection()->makeDir('/requisitions/'.$requisition->ref);
-                FTP::connection()->uploadFile($airfare_doc->getPathname(), '/requisitions/'.$requisition->ref.'/'.$file->getClientOriginalName().'.'.$file->getClientOriginalExtension());
-    
-                $requisition->airfare_doc = $file->getClientOriginalName().'.'.$file->getClientOriginalExtension();
-                $requisition->disableLogging();
-                $requisition->save();
+                FTP::connection()->uploadFile($airfare_doc->getPathname(), '/requisitions/'.$requisition->ref.'/'.$requisition_doc->filename.'.'.$requisition_doc->type);
             }
 
             return Response()->json(array('msg' => 'Success: requisition added','requisition' => $requisition), 200);
@@ -243,7 +281,7 @@ class RequisitionApi extends Controller
     {
         try{
             $requisition = Requisition::with('status','allocations.objective','requested_by','program_manager','items.supplier_service','items.status','allocations.allocated_by',
-                                            'allocations.project','allocations.account','logs.causer','approvals.approver','logs.causer','lpos.status','items.county','invoices')
+                                            'allocations.project','allocations.account','logs.causer','approvals.approver','logs.causer','lpos.status','items.county','invoices','documents')
                                         ->find($id);
             return response()->json($requisition, 200,array(),JSON_PRETTY_PRINT);
         }
@@ -265,9 +303,8 @@ class RequisitionApi extends Controller
             $requisition = Requisition::findOrFail($id);
             $requisition->purpose = $request->purpose;
             $requisition->program_manager_id = $request->program_manager_id;
-            $requisition->objective_id = $request->objective_id;
+            $requisition->objective_id = $request->objective_id ?? null;
             $requisition->disableLogging();
-            // $changes[] = $this->modelChanges($requisition);
             $requisition->save();
 
             $allocations = $request->allocations;
@@ -286,11 +323,10 @@ class RequisitionApi extends Controller
                 $allocation->allocated_by_id = $requisition['requested_by_id'];
                 $allocation->project_id = $alloc['project_id'];
                 $allocation->account_id = $alloc['account_id'];
-                $allocation->objective_id = $alloc['objective_id'];
+                if(!empty($alloc['objective_id'])) $allocation->objective_id = $alloc['objective_id'];
                 $allocation->disableLogging();
                 $allocation->save();
                 $new_allocations[] = $allocation->id;
-                // $changes[] = $this->modelChanges($allocation);
             }
             foreach($old_allocations as $old_allocation){
                 if(!in_array($old_allocation, $new_allocations)){
@@ -327,7 +363,6 @@ class RequisitionApi extends Controller
                 $item->disableLogging();
                 $item->save();
                 $new_items[] = $item->id;
-                // $changes[] = $this->modelChanges($item);
             }
             foreach($old_items as $old_item){
                 if(!in_array($old_item, $new_items)){
@@ -376,6 +411,7 @@ class RequisitionApi extends Controller
             if(!empty($id)){
                 RequisitionItem::where('requisition_id',$id)->delete();
                 RequisitionAllocation::where('requisition_id',$id)->delete();
+                RequisitionDocument::where('requisition_id',$id)->delete();
             }
             return response()->json(['msg'=>"Requisition removed"], 200,array(),JSON_PRETTY_PRINT);
         }

@@ -15,7 +15,7 @@ class Requisition extends BaseModel
     use SoftDeletes;
 
     protected $dates = ['submitted_at'];
-    protected $appends = ['documents','transactions','generated_ref'];
+    protected $appends = ['transactions','generated_ref'];
     protected $hidden = ['updated_at', 'deleted_at'];
     protected $guarded = [];
 
@@ -75,16 +75,21 @@ class Requisition extends BaseModel
         return $this->hasMany('App\Models\DeliveriesModels\Delivery','requisition_id');
     }
 
-    public function getDocumentsAttribute(){
-        $sanitized_list = [];
-        $directory = '/requisitions/'.$this->ref.'/';
-        $listing = FTP::connection()->getDirListing($directory);
-        foreach($listing as $item){
-            $arr = explode('/',$item);
-            $sanitized_list[] = explode('.',$arr[count($arr)-1])[0];
-        }
-        return $sanitized_list;
+    public function documents()
+    {
+        return $this->hasMany('App\Models\Requisitions\RequisitionDocument','requisition_id');
     }
+
+    // public function getDocumentsAttribute(){
+    //     $sanitized_list = [];
+    //     $directory = '/requisitions/'.$this->ref.'/';
+    //     $listing = FTP::connection()->getDirListing($directory);
+    //     foreach($listing as $item){
+    //         $arr = explode('/',$item);
+    //         $sanitized_list[] = explode('.',$arr[count($arr)-1])[0];
+    //     }
+    //     return $sanitized_list;
+    // }
 
     public function getTransactionsAttribute(){
         $list = [];

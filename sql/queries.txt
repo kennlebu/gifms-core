@@ -1774,3 +1774,9 @@ ADD `physical_address` text COLLATE 'latin1_swedish_ci' NULL AFTER `email`;
 ~===== Add in_assets field to deliveries
 ALTER TABLE `delivery_items`
 ADD `in_assets` varchar(5) COLLATE 'latin1_swedish_ci' NULL AFTER `qty_description`;
+
+===== Add filename field in requisition documents
+ALTER TABLE `requisition_documents`
+ADD `filename` varchar(255) NULL;
+
+php artisan generate:requisition-docs

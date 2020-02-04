@@ -58,7 +58,7 @@
           <tr>
             <td colspan="3" style="border:1px solid black;">{{$allocation->project->project_code}} - {{$allocation->project->project_name}}</td>
             <td colspan="3" style="border:1px solid black;">{{$allocation->account->account_name}}</td>
-            <td colspan="2" style="border:1px solid black;">{{$allocation->objective->objective}}</td>
+            <td colspan="2" style="border:1px solid black;">{{$allocation->objective->objective ?? ''}}</td>
             <td colspan="1" style="border:1px solid black;">{{$allocation->percentage_allocated}}</td>
             <td>&nbsp;</td>
           </tr>
