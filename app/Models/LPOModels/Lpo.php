@@ -9,6 +9,7 @@ use App\Models\BaseModels\BaseModel;
 use App\Models\StaffModels\Staff;
 use App\Models\ProjectsModels\Project;
 use App\Models\AccountingModels\Account;
+use App\Models\DeliveriesModels\Delivery;
 use App\Models\LPOModels\LpoApproval;
 use App\Models\LPOModels\LpoComment;
 use App\Models\LPOModels\LpoDefaultTerm;
@@ -31,7 +32,7 @@ class Lpo extends BaseModel
 
     protected $dates = ['created_at','updated_at','deleted_at'];
 
-    protected $appends = ['amount','vats','sub_totals','totals','preferred_supplier','lpo_requisition_items'];
+    protected $appends = ['amount','vats','sub_totals','totals','preferred_supplier','lpo_requisition_items','can_invoice'];
  
 
 
@@ -230,6 +231,23 @@ class Lpo extends BaseModel
             $items[] = RequisitionItem::where('id',$item->requisition_item_id)->orderBy('id','desc')->first();
         }
         return $items;
+    }
+
+    public function getCanInvoiceAttribute(){
+        $can_invoice = true;
+        $deliveries = Delivery::where('lpo_id', $this->id)->get();
+        if(count($deliveries) < 1){
+            $can_invoice = false;
+        }
+        else {
+            foreach($deliveries as $delivery){
+                if(!$delivery->in_assets){
+                    $can_invoice = false;
+                }
+            }
+        }
+        
+        return $can_invoice;
     }
 
 
