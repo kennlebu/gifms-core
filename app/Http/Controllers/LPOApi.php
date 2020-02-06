@@ -101,12 +101,12 @@ class LPOApi extends Controller
         $form = Request::all();
 
         try{
+            $lpo_type = 'LPO';
+
             $lpo = new Lpo;
             $lpo->requested_by_id = (int) $form['requested_by_id'];
             $lpo->expense_desc = $form['expense_desc'];
             $lpo->expense_purpose = $form['expense_purpose'];
-            // $lpo->project_id                        =   (int)   $form['project_id'];
-            // $lpo->account_id                        =   (int)   $form['account_id'];
             if(!empty($form['currency_id'])) 
             $lpo->currency_id = (int) $form['currency_id'];
             $lpo->project_manager_id = (int) $form['project_manager_id'];
@@ -160,9 +160,11 @@ class LPOApi extends Controller
                         $item->status_id = 2;
                         if($item->type == 'non_lpo'){
                             $item->transaction_type = 'lso';
+                            $lpo_type = 'LSO';
                         }
                         else {
                             $item->transaction_type = 'lpo';
+                            $lpo_type = 'LPO';
                         }
                         $item->disableLogging();
                         $item->save();
@@ -183,15 +185,9 @@ class LPOApi extends Controller
                         $allocation->save();
                     }                   
                 }
-
-                // if(!empty($form['lpo_type']) && $form['lpo_type']=='prenegotiated'){
-                //     $lpo->ref = "CHAI/PLPO/#$lpo->id/".date_format($lpo->created_at,"Y/m/d");
-                // }
-                // else{
-                //     $lpo->ref = "CHAI/LPO/#$lpo->id/".date_format($lpo->created_at,"Y/m/d");
-                // }
+                
                 $lpo_no = count($requisition->lpos);
-                $lpo->ref = $requisition->ref.'-LPO-'.$this->pad_with_zeros(2, $lpo_no);
+                $lpo->ref = $requisition->ref.'-'.$lpo_type.'-'.$this->pad_with_zeros(2, $lpo_no);
                 $lpo->save();
 
                 return Response()->json(array('msg' => 'Success: lpo added','lpo' => $lpo), 200);
