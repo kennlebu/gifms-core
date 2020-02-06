@@ -20,4 +20,8 @@ class DeliveryItem extends BaseModel
     {
         return $this->morphMany('App\Models\LogsModels\HistoryLog', 'subject')->orderBy('created_at','asc');
     }
+    public function asset()
+    {
+        return $this->belongsTo('App\Models\Assets\Asset','asset_id');
+    }
 }

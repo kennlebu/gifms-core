@@ -112,6 +112,10 @@ class Asset extends BaseModel
     {
         return $this->hasOne('App\Models\Assets\AssetLoss', 'asset_id');
     }
+    public function delivery_item()
+    {
+        return $this->belongsTo('App\Models\DeliveriesModels\DeliveryItem', 'delivery_item_id');
+    }
 
     public function getAssigneeAttribute(){
         $assignee = null;

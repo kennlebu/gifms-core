@@ -9,8 +9,8 @@ use App\Models\SuppliesModels\Supplier;
 
 class Delivery extends BaseModel
 {
-    //
     use SoftDeletes;
+    protected $appends = ['in_assets'];
     
     public function comments()
     {
@@ -43,5 +43,15 @@ class Delivery extends BaseModel
     public function requisition()
     {
         return $this->belongsTo('App\Models\Requisitions\Requisition')->with('items');
+    }
+
+    public function getInAssetsAttribute(){
+        $in_assets = true;
+        foreach($this->items as $item){
+            if(!$item->in_assets){
+                $in_assets = false;
+            }
+        }
+        return $in_assets;
     }
 }

@@ -1780,3 +1780,10 @@ ALTER TABLE `requisition_documents`
 ADD `filename` varchar(255) NULL;
 
 php artisan generate:requisition-docs
+
+===== Add assets from deliveries
+ALTER TABLE `delivery_items`
+ADD `asset_id` int NULL AFTER `in_assets`;
+
+ALTER TABLE `assets`
+ADD `delivery_item_id` int NULL AFTER `previous_status_id`;

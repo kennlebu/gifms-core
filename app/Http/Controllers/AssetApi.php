@@ -19,6 +19,7 @@ use JWTAuth;
 use Illuminate\Support\Facades\Response;
 use Anchu\Ftp\Facades\Ftp;
 use App\Models\Assets\AssetLoss;
+use App\Models\DeliveriesModels\DeliveryItem;
 use Excel;
 
 class AssetApi extends Controller
@@ -55,9 +56,19 @@ class AssetApi extends Controller
             'comments'=>$input['comments'] ?? null,
             'requisition_id'=>$input['requisition_id'] ?? null,
             'lpo_id'=>$input['lpo_id'] ?? null,
-            'invoice_id'=>$input['invoice_id'] ?? null
+            'invoice_id'=>$input['invoice_id'] ?? null,
+            'delivery_item_id'=>$input['delivery_item_id'] ?? null
         ];
         $asset = Asset::create($asset);
+
+        // Update delivery item
+        if(!empty($input['delivery_item_id'])){
+            $delivery_item = DeliveryItem::find($input['delivery_item_id']);
+            $delivery_item->in_assets = true;
+            $delivery_item->asset_id = $asset->id;
+            $delivery_item->disableLogging();
+            $delivery_item->save();
+        }
         return Response()->json(array('msg' => 'Success: asset added','data' => $asset), 200);
     }
 
