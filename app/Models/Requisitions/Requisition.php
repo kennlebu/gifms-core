@@ -23,6 +23,11 @@ class Requisition extends BaseModel
     {
         return $this->belongsTo('App\Models\StaffModels\Staff','requested_by_id');
     }
+    
+    public function returned_by()
+    {
+        return $this->belongsTo('App\Models\StaffModels\Staff','returned_by_id');
+    }
 
     public function program_manager()
     {
@@ -51,8 +56,7 @@ class Requisition extends BaseModel
     
     public function approvals()
     {
-        return $this->morphMany('App\Models\ApprovalsModels\Approval', 'approvable');
-        // return $this->morphMany('App\Models\ApprovalsModels\Approval', 'approvable')->where('approver_id', '!=', 0)->orderBy('approval_level_id', 'asc');
+        return $this->hasMany('App\Models\ApprovalsModels\Approval', 'approvable_id')->with('approval_level')->where('approvable_type', 'requisitions');
     }
 
     public function lpos()

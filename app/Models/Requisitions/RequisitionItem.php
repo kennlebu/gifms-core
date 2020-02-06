@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class RequisitionItem extends BaseModel
 {
     use SoftDeletes;
-    protected $appends = ['transaction_status', 'dates', 'transaction', 'can_continue'];
+    protected $appends = ['transaction_status', 'dates', 'transaction', 'can_continue', 'qty_unit'];
 
     public function supplier_service()
     {
@@ -42,8 +42,7 @@ class RequisitionItem extends BaseModel
                 $prefix = 'LSO';
             }
             $lpo_item = LpoItem::where('requisition_item_id', $this->id)->orderBy('id','desc')->first();
-            // $status = $prefix.' '.!empty($lpo_item->lpo->status->lpo_status) ? $lpo_item->lpo->status->lpo_status : '';
-            $status = 'N/A';
+            $status = $prefix.' '.($lpo_item->lpo->status->lpo_status ?? 'N/A');
         }
         elseif($this->status_id == 4){
             $inv = Invoice::where('requisition_id', $this->requisition_id)->orderBy('id','desc')->first();
@@ -74,20 +73,20 @@ class RequisitionItem extends BaseModel
         $transaction = null;
         if($this->status_id == 2){
             $lpo_item = LpoItem::where('requisition_item_id', $this->id)->first();
-            // $transaction = ['type'=>'lpo', 'id'=>$lpo_item->lpo_id];
+            $transaction = ['type'=>'lpo', 'id'=>$lpo_item->lpo_id ?? 0];
         }
         if($this->status_id == 3){
             if($this->module == 'mobile_payment'){
                 $lpo_item = LpoItem::where('requisition_item_id', $this->id)->first();
-                // $transaction = ['type'=>'mobile_payment', 'id'=>$lpo_item->lpo_id];
+                $transaction = ['type'=>'mobile_payment', 'id'=>$lpo_item->lpo_id ?? 0];
             }
             else if($this->module == 'claim'){
                 $lpo_item = LpoItem::where('requisition_item_id', $this->id)->first();
-                // $transaction = ['type'=>'claim', 'id'=>$lpo_item->lpo_id];
+                $transaction = ['type'=>'claim', 'id'=>$lpo_item->lpo_id ?? 0];
             }
             else if($this->module == 'invoice'){
                 $lpo_item = LpoItem::where('requisition_item_id', $this->id)->first();
-                // $transaction = ['type'=>'invoice', 'id'=>$lpo_item->lpo_id];
+                $transaction = ['type'=>'invoice', 'id'=>$lpo_item->lpo_id ?? 0];
             }
         }
 
@@ -116,6 +115,18 @@ class RequisitionItem extends BaseModel
             return false;
         }
         return true;
+    }
+
+    public function getQtyUnitAttribute(){
+        $unit = '';
+        if(!empty($this->qty_description)){
+            $arr = explode(' ', $this->qty_description);
+            if(is_numeric($arr[0])){
+                array_shift($arr);
+            }
+            $unit = implode(' ' ,$arr);
+        }
+        return $unit;
     }
 
 }

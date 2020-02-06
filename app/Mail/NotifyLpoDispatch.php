@@ -139,7 +139,6 @@ class NotifyLpoDispatch extends Mailable
         $this->attachData($pdf_file, 'LPO_'.$lpo_no.'_'.$this->lpo->preffered_quotation->supplier->supplier_name.'.pdf');   
 
         return $this->to($supplier_to['email'])
-        // return $this->to('kennlebu@live.com') // for test
             ->with([
                     'lpo' => $this->lpo,
                     'lpo_no' => $lpo_no,

@@ -368,6 +368,7 @@ class SupplierRateApi extends Controller
             if(!empty($county_ids)){
                 $qb = $qb->whereHas('supplier', function($query) use ($county_ids){
                     $query->where('county_id', $county_ids[0]);
+                    $query->orWhere('county_id', 49);   //National
                 });
                 
                 // where('suppliers.county_id', $county_ids[0]);

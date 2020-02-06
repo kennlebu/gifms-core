@@ -10,11 +10,13 @@ use Exception;
 use PDF;
 use Illuminate\Http\Request;
 use Anchu\Ftp\Facades\Ftp;
+use App\Mail\NotifyRequisition;
 use App\Models\ApprovalsModels\Approval;
 use App\Models\Requisitions\RequisitionDocument;
 use App\Models\SuppliesModels\SupplierService;
 use Illuminate\Support\Facades\Request as IlluminateRequest;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Mail;
 
 class RequisitionApi extends Controller
 {
@@ -208,24 +210,7 @@ class RequisitionApi extends Controller
                 $file_title = 'file'.$i.'_title';
                 $files[] = $request->$name;
                 $titles[] = $request->$file_title;
-                file_put_contents ( "C://Users//kennl//Documents//debug.txt" , PHP_EOL.json_encode($request->$name) , FILE_APPEND);
             }
-//////////////////////////////
-            // $no_of_files = (int) $request->no_of_files;
-            // $files = [];
-            // for($i = 0; $i < $no_of_files; $i++) {
-            //     $name = 'file'.$i;
-            //     $files[] = $request->$name;
-            // }
-
-            // $counter = 0;
-            // foreach($files as $file) {
-            //     FTP::connection()->makeDir('/requisitions');
-            //     FTP::connection()->makeDir('/requisitions/'.$requisition->ref);
-            //     FTP::connection()->uploadFile($file->getPathname(), '/requisitions/'.$requisition->ref.'/'.$requisition->ref.'doc_'.$counter.'.'.$file->getClientOriginalExtension());
-            //     $counter += 1;
-            // }
-/////////////////////////
 
 
 
@@ -280,7 +265,7 @@ class RequisitionApi extends Controller
     public function show($id)
     {
         try{
-            $requisition = Requisition::with('status','allocations.objective','requested_by','program_manager','items.supplier_service','items.status','allocations.allocated_by',
+            $requisition = Requisition::with('status','allocations.objective','requested_by','returned_by','program_manager','items.supplier_service','items.status','allocations.allocated_by',
                                             'allocations.project','allocations.account','logs.causer','approvals.approver','logs.causer','lpos.status','items.county','invoices','documents')
                                         ->find($id);
             return response()->json($requisition, 200,array(),JSON_PRETTY_PRINT);
@@ -439,17 +424,7 @@ class RequisitionApi extends Controller
                     ->causedBy($user)
                     ->log('Submitted for approval');
 
-                // Mail::queue('Html.view', $requisition, function ($message) {
-                //     $message->from('john@johndoe.com', 'John Doe');
-                //     $message->sender('john@johndoe.com', 'John Doe');
-                //     $message->to('john@johndoe.com', 'John Doe');
-                //     $message->cc('john@johndoe.com', 'John Doe');
-                //     $message->bcc('john@johndoe.com', 'John Doe');
-                //     $message->replyTo('john@johndoe.com', 'John Doe');
-                //     $message->subject('Subject');
-                //     $message->priority(3);
-                //     $message->attach('pathToFile');
-                // });
+                Mail::queue(new NotifyRequisition($requisition->id));
 
             return Response()->json(array('msg' => 'Success: requisition submitted for approval','data' => $requisition), 200);
             }
@@ -488,17 +463,7 @@ class RequisitionApi extends Controller
             $approval->disableLogging();
             $approval->save();
 
-            // Mail::queue('Html.view', $requisition, function ($message) {
-            //     $message->from('john@johndoe.com', 'John Doe');
-            //     $message->sender('john@johndoe.com', 'John Doe');
-            //     $message->to('john@johndoe.com', 'John Doe');
-            //     $message->cc('john@johndoe.com', 'John Doe');
-            //     $message->bcc('john@johndoe.com', 'John Doe');
-            //     $message->replyTo('john@johndoe.com', 'John Doe');
-            //     $message->subject('Subject');
-            //     $message->priority(3);
-            //     $message->attach('pathToFile');
-            // });
+            Mail::queue(new NotifyRequisition($requisition->id));
         
             if(!$multiple)
             return Response()->json(array('msg' => 'Success: requisitions approved','data' => $requisition), 200);
@@ -522,20 +487,22 @@ class RequisitionApi extends Controller
     }
 
     public function reject($id){
-        $input = Request::only('rejection_reason');
+        $input = IlluminateRequest::only('rejection_reason');
         $requisition = Requisition::findOrFail($id);
         if($requisition->status_id == 2) {
             $requisition->status_id = 4;
-            $requisition->return_reason = $input->rejection_reason;
+            $requisition->return_reason = $input['rejection_reason'];
             $requisition->returned_by_id = $this->current_user()->id;
             $requisition->disableLogging();
             $requisition->save();
+
+            Mail::queue(new NotifyRequisition($requisition->id));
             
             // Logging
             activity()
                 ->performedOn($requisition)
                 ->causedBy($this->current_user())
-                ->withProperties(['detail' => 'REASON: '.$input->rejection_reason])
+                ->withProperties(['detail' => 'REASON: '.$input['rejection_reason']])
                 ->log('Requisition returned');
         
             return Response()->json(array('msg' => 'Success: requisition returned','data' => $requisition), 200);
