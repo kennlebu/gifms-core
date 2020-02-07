@@ -344,7 +344,7 @@
                     @foreach ($unique_approvals as $key => $approval) @isset($approval->approver_id) @if($approval->approval_level_id == 2)
                     <tr style="height: 65px;">
                         <td colspan="2">
-                            <strong>APPROVAL<br/><small>(Program Manager)</small></strong>
+                            <strong>VERIFICATION<br/><small>(Program Manager)</small></strong>
                         </td>
                         <td style="border-top: 1px solid #C0C0C0; border-bottom: 1px solid #C0C0C0; border-left: 1px solid #C0C0C0; border-right: 1px solid #C0C0C0; vertical-align: middle;" colspan="2">
                             {{-- <strong><small>Initials</small></strong><br/><br/>  --}}
@@ -366,7 +366,7 @@
                     @endif @if($approval->approval_level_id == 3)
                     <tr style="height:65px;">
                         <td colspan="2">
-                            <strong>VERIFICATION<br/><small>(Accounting)</small><br/><br/></strong>
+                            <strong>APPROVAL<br/><small>(Finance Manager)</small><br/><br/></strong>
                         </td>
                         <td style="border-top: 1px solid #C0C0C0; border-bottom: 1px solid #C0C0C0; border-left: 1px solid #C0C0C0; border-right: 1px solid #C0C0C0; vertical-align: middle;" colspan="2">
                             {{-- <strong><small>Initials</small></strong><br/><br/>  --}}
