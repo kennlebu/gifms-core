@@ -21,6 +21,7 @@ use App\Models\InvoicesModels\Invoice;
 use App\Models\LookupModels\Region;
 use App\Models\LookupModels\County;
 use App\Models\LookupModels\Currency;
+use App\Models\Requisitions\Requisition;
 use App\Models\Requisitions\RequisitionItem;
 use App\Models\SuppliesModels\Supplier;
 
@@ -235,6 +236,14 @@ class Lpo extends BaseModel
 
     public function getCanInvoiceAttribute(){
         $can_invoice = true;
+
+        if($this->requisition_id){
+            $requisition = Requisition::find($this->requisition_id);
+            if($requisition && $requisition->requisition_id == 3){
+                return true;
+            }
+        }
+
         $deliveries = Delivery::where('lpo_id', $this->id)->get();
         if(count($deliveries) < 1){
             $can_invoice = false;

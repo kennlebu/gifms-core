@@ -195,12 +195,12 @@
                     <tr>
                         <td style="border: 1px solid #000000; border-top: 0px solid #c0c0c0;" colspan="3">
                             <strong>
-                                    @if($payable_type=='Invoice')
-                                    <span>{{$payable->external_ref}}</span>
-                                    @else
-                                    <span>{{$payable->ref}}</span>
-                                    @endif
-                                </strong>
+                                @if($payable_type=='Invoice')
+                                <span>{{$payable->external_ref}}</span>
+                                @else
+                                <span>{{$payable->ref}}</span>
+                                @endif
+                            </strong>
                         </td>
                         <td style="border: 1px solid #000000; border-top: 0px solid #c0c0c0;text-align:left;" colspan="3">
                             {{$payable->expense_desc}}

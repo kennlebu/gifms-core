@@ -124,9 +124,14 @@ class LPOApi extends Controller
             $lpo->program_activity_id = $form['program_activity_id'];
             if(!empty($form['module']))
             $lpo->module = $form['module'];
+            $lpo->requisitioned_by_id = $form['requisitioned_by_id'] ?? null;
 
             $user = JWTAuth::parseToken()->authenticate();
             $lpo->request_action_by_id = (int) $user->id;
+
+            if(empty($form['requisition_id']) || (int) $form['requisition_id'] == 0){
+                return response()->json(['error'=>'You cannot create an LPO without a requisition'], 403);
+            }
 
             if($lpo->save()) {
                 $lpo->disableLogging();
@@ -169,7 +174,6 @@ class LPOApi extends Controller
                         $item->disableLogging();
                         $item->save();
                     }
-                    // $allocation_purpose = '; '.$requisition->purpose;
 
                     foreach($requisition->allocations as $alloc){
                         $allocation = new Allocation();
@@ -816,7 +820,8 @@ class LPOApi extends Controller
                                             'deliveries',
                                             'program_activity',
                                             'allocations.project',
-                                            'allocations.account'
+                                            'allocations.account',
+                                            'requisition'
                                 )->findOrFail($lpo_id);
            
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
@@ -1059,8 +1064,8 @@ class LPOApi extends Controller
             $qb->whereIn('lpos.status_id', [6,7,8,9,10,14]);
         }
 
-         // if for invoice
-         if(array_key_exists('for_invoice',$input)&&$input['for_invoice']==true){
+        // if for invoice
+        if(array_key_exists('for_invoice',$input)&&$input['for_invoice']==true){
             if(!$this->current_user()->hasRole([
                 'super-admin',
                 'admin',
@@ -1070,7 +1075,7 @@ class LPOApi extends Controller
                 'accountant', 
                 'assistant-accountant']
             )){
-                $qb->where('lpos.requested_by_id', $this->current_user()->id);
+                $qb->where('lpos.requested_by_id', $this->current_user()->id)->orWhere('lpos.requisitioned_by_id',$this->current_user()->id);
             }
             $qb->where(function ($query){
                 $query->whereNull('lpos.invoice_paid');
@@ -1090,9 +1095,9 @@ class LPOApi extends Controller
 
             if($status_ >-1){
                 $qb->where('lpos.status_id', $input['status']);
-                $qb->where('lpos.requested_by_id',$this->current_user()->id);
+                $qb->where('lpos.requested_by_id',$this->current_user()->id)->orWhere('lpos.requisitioned_by_id',$this->current_user()->id);
             }elseif ($status_==-1) {
-                $qb->where('lpos.requested_by_id',$this->current_user()->id);
+                $qb->where('lpos.requested_by_id',$this->current_user()->id)->orWhere('lpos.requisitioned_by_id',$this->current_user()->id);
             }elseif ($status_==-3) {
                 $qb->where('project_manager_id',$this->current_user()->id);
             }

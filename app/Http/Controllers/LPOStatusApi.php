@@ -344,7 +344,7 @@ class LpoStatusApi extends Controller
                         "lpo_status"=> "My Lpos/Lsos",
                         "order_priority"=> 998,
                         "display_color"=> "#37A9E17A",
-                        "lpos_count"=> Lpo::where('requested_by_id',$this->current_user()->id)->count(),
+                        "lpos_count"=> Lpo::where('requested_by_id',$this->current_user()->id)->orWhere('lpos.requisitioned_by_id',$this->current_user()->id)->count(),
                         "prenegotiated_count"=> Lpo::where('requested_by_id',$this->current_user()->id)->where('lpo_type', 'prenegotiated')->count()
                       );
 
