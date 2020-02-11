@@ -239,9 +239,15 @@
                         </td>
                         <td style="border: 1px solid #000000; border-right: 1px solid #000000;" colspan="5">
                             <small><span class="muted">Bank Ref(s):</span></small><br/>
-                            {{implode(", ", array_map(function ($value) {
+                            @foreach ($bank_transactions as $key => $transaction)
+                                {{$transaction->bank_ref}} - {{$transaction->amount}}
+                                @if ($key < count($bank_transactions)-1)
+                                    , 
+                                @endif
+                            @endforeach
+                            {{-- {{implode(", ", array_map(function ($value) {
                                     return  $value['bank_ref'].' - '.number_format($value['amount']);
-                                }, $bank_transactions))}}
+                                }, $bank_transactions))}} --}}
                         </td>
                     </tr>
                     <tr>

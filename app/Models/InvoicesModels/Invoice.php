@@ -2,10 +2,12 @@
 
 namespace App\Models\InvoicesModels;
 
+use App\Models\BankingModels\BankTransaction;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\BaseModels\BaseModel;
 use DB;
 use App\Models\PaymentModels\Payment;
+use App\Models\PaymentModels\VoucherNumber;
 
 class Invoice extends BaseModel
 {
@@ -164,16 +166,19 @@ class Invoice extends BaseModel
     }
 
     public function getBankTransactionsAttribute(){
-        $payment = Payment::with('paid_to_bank', 'paid_to_bank_branch')->where('payable_id', $this->attributes['id'])
+        $payment = Payment::where('payable_id', $this->attributes['id'])
                     ->where('payable_type', 'invoices')
-                    ->get();
+                    ->first();
                 
         $bank_trans = [];
-        foreach($payment as $p){
-            if(!empty($p->bank_transaction)){
-                $bank_trans[] = $p->bank_transaction;
+
+        if(!empty($payment->voucher_no)){
+            $voucher = VoucherNumber::find($payment->voucher_no);
+            if(!empty($voucher) && !empty($voucher->voucher_number)){
+                $bank_trans = BankTransaction::where('chai_ref', $voucher->voucher_number)->groupBy('bank_ref')->get();
             }
         }
+        
         return $bank_trans;
     }
 
