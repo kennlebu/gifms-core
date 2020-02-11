@@ -13,7 +13,7 @@ class Payment extends BaseModel
     //
     use SoftDeletes;
 
-    protected $appends = ['simple_date', 'bank_transaction', 'net_amount'];
+    protected $appends = ['simple_date', 'bank_transaction', 'net_amount', 'bank_transactions'];
     protected $with = ['payable'];
     
     public function payable()
@@ -62,6 +62,16 @@ class Payment extends BaseModel
             return BankTransaction::where('chai_ref', $voucher->voucher_number)->first();
         else
             return null;
+    }
+
+    public function getBankTransactionsAttribute(){
+        $bank_trans = [];
+        $voucher = VoucherNumber::find($this->attributes['voucher_no']);
+        if(!empty($voucher) && !empty($voucher->voucher_number)){
+            $bank_trans = BankTransaction::where('chai_ref', $voucher->voucher_number)->groupBy('bank_ref')->get();
+        }
+        
+        return $bank_trans;
     }
 
     public function getNetAmountAttribute(){
