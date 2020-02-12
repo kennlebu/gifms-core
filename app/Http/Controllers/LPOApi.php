@@ -125,6 +125,7 @@ class LPOApi extends Controller
             if(!empty($form['module']))
             $lpo->module = $form['module'];
             $lpo->requisitioned_by_id = $form['requisitioned_by_id'] ?? null;
+            $lpo->supplier_id = $form['supplier_id'] ?? null;
 
             $user = JWTAuth::parseToken()->authenticate();
             $lpo->request_action_by_id = (int) $user->id;
@@ -159,7 +160,7 @@ class LPOApi extends Controller
                             $allocation_purpose = $item->service;
                         }
                         else {
-                            $allocation_purpose = '; '.$item->service;
+                            $allocation_purpose = $allocation_purpose.'; '.$item->service;
                         }
                         $count += 1;
                         $item->status_id = 2;
@@ -174,6 +175,7 @@ class LPOApi extends Controller
                         $item->disableLogging();
                         $item->save();
                     }
+                    $allocation_purpose = $allocation_purpose.'; '.$requisition->purpose;
 
                     foreach($requisition->allocations as $alloc){
                         $allocation = new Allocation();
@@ -187,7 +189,7 @@ class LPOApi extends Controller
                         $allocation->allocated_by_id = $requisition->requested_by_id;
                         $allocation->disableLogging();
                         $allocation->save();
-                    }                   
+                    }
                 }
                 
                 $lpo_no = count($requisition->lpos);

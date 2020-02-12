@@ -137,6 +137,10 @@ class InvoiceApi extends Controller
 
             }else if($form['submission_type']=='log'){
 
+                if(empty($form['requisition_id']) || (int) $form['requisition_id'] == 0){
+                    return response()->json(['error'=>'You cannot create an Invoice without a requisition'], 403);
+                }
+
                 $invoice->received_by_id                    =   (int)       $form['received_by_id'];
                 $invoice->raised_by_id                      =   (int)       $form['raised_by_id'];
                 $invoice->external_ref                      =               trim($form['external_ref']); 
@@ -204,6 +208,16 @@ class InvoiceApi extends Controller
                 }
                 if(!empty($form['lpo_variation_reason']))
                 $invoice->lpo_variation_reason = $form['lpo_variation_reason'];
+
+                if(!empty($invoice->lpo) && $invoice->total - $invoice->lpo->totals != 0){
+                    foreach($invoice->allocations as $alloc){
+                        $allocation = Allocation::find($alloc->id);
+                        $allocation->amount_allocated = ($invoice->total * ($alloc->percentage_allocated/100));
+                        // $allocation->percentage_allocated = ($allocation->amount_allocated/$invoice->total)*100;
+                        $allocation->disableLogging();
+                        $allocation->save();
+                    }
+                }
                 
             }
             else if($form['submission_type']=='finish_allocations'){
@@ -227,8 +241,8 @@ class InvoiceApi extends Controller
                             $allocation->project_id = $alloc->project_id;
                             $allocation->allocatable_id = $invoice->id;
                             $allocation->allocatable_type = 'invoices';
-                            $allocation->percentage_allocated = $alloc->percentage_allocated;
-                            $allocation->amount_allocated = ($lpo->totals * (float)$alloc->percentage_allocated/100);
+                            $allocation->amount_allocated = ($invoice->total * (float)$alloc->percentage_allocated/100);
+                            $allocation->percentage_allocated = ($allocation->amount_allocated/$invoice->total)*100;
                             $allocation->allocation_purpose = $alloc->allocation_purpose;
                             $allocation->objective_id = $alloc->objective_id;
                             $allocation->allocated_by_id = $invoice->requested_by_id;

@@ -6,34 +6,19 @@ namespace App\Models\LPOModels;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\BaseModels\BaseModel;
-use App\Models\StaffModels\Staff;
-use App\Models\ProjectsModels\Project;
-use App\Models\AccountingModels\Account;
 use App\Models\DeliveriesModels\Delivery;
-use App\Models\LPOModels\LpoApproval;
-use App\Models\LPOModels\LpoComment;
-use App\Models\LPOModels\LpoDefaultTerm;
-use App\Models\LPOModels\LpoItem;
-use App\Models\LPOModels\LpoQuotation;
-use App\Models\LPOModels\LpoStatus;
-use App\Models\LPOModels\LpoTerm;
 use App\Models\InvoicesModels\Invoice;
-use App\Models\LookupModels\Region;
-use App\Models\LookupModels\County;
-use App\Models\LookupModels\Currency;
 use App\Models\Requisitions\Requisition;
 use App\Models\Requisitions\RequisitionItem;
 use App\Models\SuppliesModels\Supplier;
 
 class Lpo extends BaseModel
 {
-    //
-
     use SoftDeletes;
 
     protected $dates = ['created_at','updated_at','deleted_at'];
 
-    protected $appends = ['amount','vats','sub_totals','totals','preferred_supplier','lpo_requisition_items','can_invoice'];
+    protected $appends = ['amount','vats','sub_totals','totals','preferred_supplier','lpo_requisition_items','can_invoice','invoices_total'];
  
 
 
@@ -257,6 +242,16 @@ class Lpo extends BaseModel
         }
         
         return $can_invoice;
+    }
+
+    public function getInvoicesTotalAttribute(){
+        $total = 0;
+        $inovices = Invoice::where('lpo_id', $this->id)->get();
+        foreach($inovices as $invoice){
+            $total += (float)$invoice->total;
+        }
+
+        return $total;
     }
 
 
