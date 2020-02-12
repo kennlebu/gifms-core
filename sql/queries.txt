@@ -1779,7 +1779,7 @@ ADD `in_assets` varchar(5) COLLATE 'latin1_swedish_ci' NULL AFTER `qty_descripti
 ALTER TABLE `requisition_documents`
 ADD `filename` varchar(255) NULL;
 
-===== Generate requisition document entries
+~===== Generate requisition document entries
 php artisan generate:requisition-docs
 
 ~===== Add assets from deliveries
@@ -1788,3 +1788,20 @@ ADD `asset_id` int NULL AFTER `in_assets`;
 
 ALTER TABLE `assets`
 ADD `delivery_item_id` int NULL AFTER `previous_status_id`;
+
+===== Add approver id to advances, invoices, claims, mobile payments and lpos
+ALTER TABLE `advances`
+ADD `approver_id` int(11) NULL AFTER `reporting_objective_id`,
+CHANGE `updated_at` `updated_at` timestamp NOT NULL DEFAULT current_timestamp() AFTER `created_at`;
+
+ALTER TABLE `claims`
+ADD `approver_id` int(11) NULL AFTER `requisition_id`;
+
+ALTER TABLE `lpos`
+ADD `approver_id` int(11) NULL AFTER `requisitioned_by_id`;
+
+ALTER TABLE `invoices`
+ADD `approver_id` int(11) NULL AFTER `requisition_id`;
+
+ALTER TABLE `mobile_payments`
+ADD `approver_id` int(11) NULL AFTER `requisition_id`;
