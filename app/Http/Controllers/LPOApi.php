@@ -116,7 +116,7 @@ class LPOApi extends Controller
             if(!empty($form['quote_exempt_details']))
             $lpo->quote_exempt_details = $form['quote_exempt_details'];
             if(!empty($form['expensive_quotation_reason']))
-            $lpo->expensive_quotation_reason = $form['expensive_quotation_reason'];
+            $lpo->expensive_quotation_reason = $form['expensive_quotation_reason'] ?? null;
             if(!empty($form['lpo_type'])){
                 $lpo->lpo_type = $form['lpo_type'];
             }
@@ -264,7 +264,7 @@ class LPOApi extends Controller
         if(!empty($form['quote_exempt_details']))
         $lpo->quote_exempt_details = $form['quote_exempt_details'];
         if(!empty($form['expensive_quotation_reason']))
-        $lpo->expensive_quotation_reason = $form['expensive_quotation_reason'];
+        $lpo->expensive_quotation_reason = $form['expensive_quotation_reason'] ?? null;
         if(!empty($form['program_activity_id'])) 
         $lpo->program_activity_id = $form['program_activity_id'];
 
@@ -1081,7 +1081,7 @@ class LPOApi extends Controller
             }
             $qb->where(function ($query){
                 $query->whereNull('lpos.invoice_paid');
-                $query->orWhere('lpos.invoice_paid', 'not like', '\'%full%\'');
+                $query->orWhere('lpos.invoice_paid', '!=', "'full'");
             });
             $qb->whereIn('lpos.status_id', [6,7,8,9,10,14]);
         }
@@ -1330,6 +1330,7 @@ class LPOApi extends Controller
             $data[$key]['preferred_supplier']['supply_category'] = $lpo->preferred_supplier->supply_category ?? '';
             $data[$key]['requisition']              = $lpo->requisition;
             $data[$key]['can_invoice']              = $lpo->can_invoice;
+            $data[$key]['invoices_total']           = $lpo->invoices_total;
 
             if(!empty($lpo->preffered_quotation_id) && !empty($lpo->preffered_quotation->supplier_id)){
                 if($lpo->preffered_quotation_id > 0 && $lpo->preffered_quotation->supplier_id > 0 ){

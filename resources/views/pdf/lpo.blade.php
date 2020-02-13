@@ -232,7 +232,17 @@
 
           @foreach ($unique_approvals as $key => $approval)
             <tr>
-                <td colspan="3">Authorized by:<br/>
+                <td colspan="3">
+                  @if ($approval->approval_level_id == 1)
+                      Reviewed by:
+                  @elseif($approval->approval_level_id == 2)
+                      Verified by:
+                  @elseif($approval->approval_level_id == 3)
+                      Approved by:
+                  @elseif($approval->approval_level_id == 4)
+                      Authorised by:
+                  @endif                  
+                  <br/>
                   <img style="height:70px;width:200px;" alt="." src="{{asset('storage/signatures/signature'.$approval->approver_id.'.png')}}"><br/>
                   @isset($approval->approver_id)
                       <strong>{{$approval->approver->full_name}}</strong>

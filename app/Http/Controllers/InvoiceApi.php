@@ -135,10 +135,17 @@ class InvoiceApi extends Controller
                     return response()->json(["error"=>"Invoice with the same invoice number already exists"], 409,array(),JSON_PRETTY_PRINT);
                 }
 
-            }else if($form['submission_type']=='log'){
+            }
+            else if($form['submission_type']=='log'){
 
-                if(empty($form['requisition_id']) || (int) $form['requisition_id'] == 0){
-                    return response()->json(['error'=>'You cannot create an Invoice without a requisition'], 403);
+                // if(empty($form['requisition_id']) || (int) $form['requisition_id'] == 0){
+                //     return response()->json(['error'=>'You cannot create an Invoice without a requisition'], 403);
+                // }
+                if($invoice->lpo_id){
+                    $m_lpo = Lpo::find($invoice->lpo_id);
+                    if($m_lpo->requisition && $m_lpo->requisition->status_id != 3){
+                        return response()->json(['error'=>'Requisition needs to be approved first'], 409);
+                    }
                 }
 
                 $invoice->received_by_id                    =   (int)       $form['received_by_id'];
@@ -183,7 +190,7 @@ class InvoiceApi extends Controller
                                         'project_manager',
                                         'supplier',
                                         'currency',
-                                        'lpo',
+                                        'lpo.requisition',
                                         'rejected_by',
                                         'approvals',
                                         'allocations',
@@ -381,6 +388,15 @@ class InvoiceApi extends Controller
             }
 
             if($invoice->save()) {
+
+                if(!empty($invoice->lpo) && $invoice->total - $invoice->lpo->totals != 0){
+                    foreach($invoice->allocations as $alloc){
+                        $allocation = Allocation::find($alloc->id);
+                        $allocation->amount_allocated = ($invoice->total * ($alloc->percentage_allocated/100));
+                        $allocation->disableLogging();
+                        $allocation->save();
+                    }
+                }
 
                 $invoice->disableLogging(); //! Do not log the update again
                 if($form['submission_type']=='full' && $file!=0){

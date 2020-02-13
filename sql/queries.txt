@@ -1789,7 +1789,7 @@ ADD `asset_id` int NULL AFTER `in_assets`;
 ALTER TABLE `assets`
 ADD `delivery_item_id` int NULL AFTER `previous_status_id`;
 
-===== Add approver id to advances, invoices, claims, mobile payments and lpos
+~===== Add approver id to advances, invoices, claims, mobile payments and lpos
 ALTER TABLE `advances`
 ADD `approver_id` int(11) NULL AFTER `reporting_objective_id`,
 CHANGE `updated_at` `updated_at` timestamp NOT NULL DEFAULT current_timestamp() AFTER `created_at`;
@@ -1805,3 +1805,7 @@ ADD `approver_id` int(11) NULL AFTER `requisition_id`;
 
 ALTER TABLE `mobile_payments`
 ADD `approver_id` int(11) NULL AFTER `requisition_id`;
+
+~===== Change approval descriptions
+UPDATE `approval_levels` SET `approval_level` = 'PM Verification' WHERE `id` = '2';
+UPDATE `approval_levels` SET `approval_level` = 'Management Authorisation' WHERE `id` = '4';

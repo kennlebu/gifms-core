@@ -472,7 +472,7 @@ class RequisitionApi extends Controller
 
     public function approveMultiple(){
         try {
-            $form = Request::only("requisitions");
+            $form = IlluminateRequest::only("requisitions");
             $requisition_ids = $form['requisitions'];
 
             foreach ($requisition_ids as $key => $id) {
@@ -482,7 +482,7 @@ class RequisitionApi extends Controller
             return response()->json(['requisitions'=>$form['requisitions']], 201, array(), JSON_PRETTY_PRINT);
             
         } catch (Exception $e) {
-             return response()->json(['error'=>"An rerror occured during processing"], 500,array(),JSON_PRETTY_PRINT);
+             return response()->json(['error'=>"An error occured during processing",'msg'=>$e->getMessage()], 500,array(),JSON_PRETTY_PRINT);
         }
     }
 
