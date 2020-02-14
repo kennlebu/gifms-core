@@ -1809,3 +1809,7 @@ ADD `approver_id` int(11) NULL AFTER `requisition_id`;
 ~===== Change approval descriptions
 UPDATE `approval_levels` SET `approval_level` = 'PM Verification' WHERE `id` = '2';
 UPDATE `approval_levels` SET `approval_level` = 'Management Authorisation' WHERE `id` = '4';
+
+~===== Add LPO id to mobile payment table
+ALTER TABLE `mobile_payments`
+ADD `lpo_id` int NULL AFTER `approver_id`;

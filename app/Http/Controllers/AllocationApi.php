@@ -283,8 +283,8 @@ class AllocationApi extends Controller
                 $allocation = new Allocation();
 
                 try{
-                    $project = Project::where(DB::raw("TRIM(project_code)", trim($value['pid']))->firstOrFail();
-                    $account = Account::where(DB::raw("TRIM(account_code)", trim($value['account_code']))->firstOrFail();
+                    $project = Project::where(DB::raw("TRIM(project_code)", trim($value['pid'])))->firstOrFail();
+                    $account = Account::where(DB::raw("TRIM(account_code)", trim($value['account_code'])))->firstOrFail();
 
                     $allocation->allocatable_id = $payable_id;
                     $allocation->allocatable_type = $payable_type;

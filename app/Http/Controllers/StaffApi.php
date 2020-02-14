@@ -356,13 +356,10 @@ class StaffApi extends Controller
     {
         $input = Request::all();
         //query builder
-        // $qb = DB::table('staff');
         $qb = Staff::query();
         if(!array_key_exists('lean', $input)){
             $qb = Staff::with('roles','programs','department','payment_mode','bank','bank_branch');
         }
-
-        // $qb->whereNull('staff.deleted_at');
 
         $response;
         $response_dt;
@@ -380,11 +377,6 @@ class StaffApi extends Controller
                 $query->orWhere('staff.email','like', '\'%' . $input['searchval']. '%\'');
             });
 
-            // $sql = Staff::bind_presql($qb->toSql(),$qb->getBindings());
-            // $sql = str_replace("*"," count(*) AS count ", $sql);
-            // $dt = json_decode(json_encode(DB::select($sql)), true);
-
-            // $records_filtered = (int) $dt[0]['count'];
             $qb = $qb->count();
         }
 
@@ -484,10 +476,16 @@ class StaffApi extends Controller
                 //  ->where('roles.acronym', '=', "'pm'")
                 //  ->groupBy('staff.id');
 
-                 $qb = $qb->whereHas('roles', function($query) use ($input){
+                $qb = $qb->whereHas('roles', function($query) use ($input){
                     $query->where('acronym', '=', 'pm');  
                 }); 
             }
+        }
+
+        if(array_key_exists('peer_pms', $input)){
+            $qb = $qb->whereHas('roles', function($query) use ($input){
+                $query->where('acronym', '=', 'pm');  
+            }); 
         }
 
         if(array_key_exists('datatables', $input)){

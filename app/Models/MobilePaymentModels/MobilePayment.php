@@ -110,6 +110,10 @@ class MobilePayment extends BaseModel
     {
         return $this->belongsTo('App\Models\Requisitions\Requisition','requisition_id');
     }
+    public function lpo()
+    {
+        return $this->belongsTo('App\Models\LPOModels\Lpo');
+    }
 
 
 

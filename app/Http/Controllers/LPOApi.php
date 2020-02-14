@@ -124,8 +124,12 @@ class LPOApi extends Controller
             $lpo->program_activity_id = $form['program_activity_id'];
             if(!empty($form['module']))
             $lpo->module = $form['module'];
+            if(!empty($form['requisitioned_by_id']))
             $lpo->requisitioned_by_id = $form['requisitioned_by_id'] ?? null;
+            if(!empty($form['supplier_id']))
             $lpo->supplier_id = $form['supplier_id'] ?? null;
+            if(!empty($form['approver_id']))
+            $lpo->approver_id = $form['approver_id'] ?? null;
 
             $user = JWTAuth::parseToken()->authenticate();
             $lpo->request_action_by_id = (int) $user->id;
@@ -267,6 +271,10 @@ class LPOApi extends Controller
         $lpo->expensive_quotation_reason = $form['expensive_quotation_reason'] ?? null;
         if(!empty($form['program_activity_id'])) 
         $lpo->program_activity_id = $form['program_activity_id'];
+        if(!empty($form['supplier_id']))
+        $lpo->supplier_id = $form['supplier_id'] ?? null;
+        if(!empty($form['approver_id']))
+        $lpo->approver_id = $form['approver_id'] ?? null;
 
         if($lpo->save()) {
             return Response()->json(array('msg' => 'Success: lpo updated','lpo' => $lpo), 200);
@@ -1117,7 +1125,7 @@ class LPOApi extends Controller
         }
 
         if(array_key_exists('my_approvables', $input)){
-            $current_user =  JWTAuth::parseToken()->authenticate();
+            $current_user = JWTAuth::parseToken()->authenticate();
             if($current_user->hasRole([
                 'super-admin',
                 'admin',
@@ -1133,8 +1141,18 @@ class LPOApi extends Controller
                         $permission = 'APPROVE_LPO_'.$value['id'];
                         if($current_user->can($permission)&&$value['id']==3){
                             $query->orWhere(function ($query1) use ($value,$current_user) {
-                                $query1->Where('status_id',$value['id']);
-                                $query1->Where('project_manager_id',$current_user->id);
+                                
+                                $query1->where(function ($query1) use ($value,$current_user) {
+                                    $query1->where('status_id',$value['id']);
+                                    $query1->where('project_manager_id',$current_user->id)
+                                            ->whereNull('approver_id');
+                                });
+                                $query1->orWhere(function ($query1) use ($value,$current_user) {
+                                    $query1->where('status_id',$value['id']);
+                                    $query1->where('approver_id',$current_user->id);
+                                });
+                                // $query1->where('project_manager_id',$current_user->id);
+                                // $query1->orWhere('approver_id', $current_user->id);
                             });
                         }
                         else if($current_user->can($permission)){

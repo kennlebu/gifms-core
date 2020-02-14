@@ -127,6 +127,7 @@ class InvoiceApi extends Controller
                 $invoice->lpo_variation_reason = $form['lpo_variation_reason'];
                 if(!empty($form['program_activity_id']))
                 $invoice->program_activity_id = $form['program_activity_id'];
+                if(!empty($form['requisition_id']))
                 $invoice->requisition_id = $form['requisition_id'] ?? null;
 
                 $invoice->status_id                         =   $this->default_status;
@@ -146,6 +147,9 @@ class InvoiceApi extends Controller
                     if($m_lpo->requisition && $m_lpo->requisition->status_id != 3){
                         return response()->json(['error'=>'Requisition needs to be approved first'], 409);
                     }
+                    if($m_lpo->approver_id && $m_lpo->approver_id != 0){
+                        $invoice->approver_id = $m_lpo->approver_id;
+                    }
                 }
 
                 $invoice->received_by_id                    =   (int)       $form['received_by_id'];
@@ -163,6 +167,7 @@ class InvoiceApi extends Controller
                 $invoice->lpo_variation_reason = $form['lpo_variation_reason'];
                 if(!empty($form['program_activity_id']))
                 $invoice->program_activity_id = $form['program_activity_id'];
+                if(!empty($form['requisition_id']))
                 $invoice->requisition_id = $form['requisition_id'] ?? null;
 
                 $invoice->status_id                         =   $this->default_log_status;
@@ -182,22 +187,7 @@ class InvoiceApi extends Controller
 
             }else if($form['submission_type']=='upload_logged'){
 
-                $invoice = Invoice::with( 
-                                        'raised_by',
-                                        'received_by',
-                                        'raise_action_by',
-                                        'status',
-                                        'project_manager',
-                                        'supplier',
-                                        'currency',
-                                        'lpo.requisition',
-                                        'rejected_by',
-                                        'approvals',
-                                        'allocations',
-                                        'vouchers',
-                                        'comments',
-                                        'program_activity'
-                                    )->find((int) $form['id']);
+                $invoice = Invoice::find((int) $form['id']);
 
                 $invoice->raised_by_id                      =   (int)       $form['raised_by_id'];
                 $invoice->external_ref                      =               trim($form['external_ref']);
@@ -215,12 +205,13 @@ class InvoiceApi extends Controller
                 }
                 if(!empty($form['lpo_variation_reason']))
                 $invoice->lpo_variation_reason = $form['lpo_variation_reason'];
+                if(!empty($form['approver_id']))
+                $invoice->approver_id = $form['approver_id'];
 
                 if(!empty($invoice->lpo) && $invoice->total - $invoice->lpo->totals != 0){
                     foreach($invoice->allocations as $alloc){
                         $allocation = Allocation::find($alloc->id);
                         $allocation->amount_allocated = ($invoice->total * ($alloc->percentage_allocated/100));
-                        // $allocation->percentage_allocated = ($allocation->amount_allocated/$invoice->total)*100;
                         $allocation->disableLogging();
                         $allocation->save();
                     }
@@ -268,6 +259,7 @@ class InvoiceApi extends Controller
                                     $item->save();
                                 }
                             }
+                            $invoice->requisition_id = $lpo->requisition_id;
                             $invoice_no = count($requisition->invoices);
                             $invoice->ref = $requisition->ref.'-INV-'.$this->pad_with_zeros(2, $invoice_no);
                             $invoice->save();
@@ -288,11 +280,9 @@ class InvoiceApi extends Controller
                     FTP::connection()->uploadFile($file->getPathname(), '/invoices/'.$invoice->id.'/'.$invoice->id.'.'.$file->getClientOriginalExtension());
 
                     $invoice->invoice_document           =   $invoice->id.'.'.$file->getClientOriginalExtension();
-                    // $invoice->ref                        = "CHAI/INV/#$invoice->id/".date_format($invoice->created_at,"Y/m/d");
                     $invoice->save();
 
                 }else if($form['submission_type']=='log'){
-                    // $invoice->ref                        = "CHAI/INV/#$invoice->id/".date_format($invoice->created_at,"Y/m/d");
                     $invoice->save();
                     Mail::queue(new NotifyInvoice($invoice));
                 }
@@ -382,6 +372,8 @@ class InvoiceApi extends Controller
                 $invoice->lpo_variation_reason = $form['lpo_variation_reason'];    
             if(!empty($form['program_activity_id']))
                 $invoice->program_activity_id = $form['program_activity_id'];
+            if(!empty($form['approver_id']))
+                $invoice->approver_id = $form['approver_id'];
 
             if(Invoice::where('external_ref', $invoice->external_ref)->where('supplier_id', $form['supplier_id'])->where('id', '!=', $form['id'])->exists()){
                 return response()->json(["error"=>"Invoice with the same invoice number already exists"], 409,array(),JSON_PRETTY_PRINT);
@@ -510,7 +502,7 @@ class InvoiceApi extends Controller
                                         'project_manager',
                                         'supplier',
                                         'currency',
-                                        'lpo',
+                                        'lpo.requisition',
                                         'rejected_by',
                                         'approvals.approver', 'approvals.approval_level',
                                         'payments.payment_mode','payments.currency','payments.payment_batch','payments.paid_to_bank_branch',
@@ -1052,8 +1044,19 @@ class InvoiceApi extends Controller
                         $permission = 'APPROVE_INVOICE_'.$value['id'];
                         if($current_user->can($permission)&&$value['id']==1){
                             $query->orWhere(function ($query1) use ($value,$current_user) {
-                                $query1->Where('invoices.status_id',$value['id']);
-                                $query1->Where('invoices.project_manager_id',$current_user->id);
+
+                                $query1->where(function ($query1) use ($value,$current_user) {
+                                    $query1->where('invoices.status_id',$value['id']);
+                                    $query1->where('invoices.project_manager_id',$current_user->id)
+                                            ->whereNull('invoices.approver_id');
+                                });
+                                $query1->orWhere(function ($query1) use ($value,$current_user) {
+                                    $query1->where('invoices.status_id',$value['id']);
+                                    $query1->where('invoices.approver_id',$current_user->id);
+                                });
+
+                                // $query1->Where('invoices.status_id',$value['id']);
+                                // $query1->Where('invoices.project_manager_id',$current_user->id);
                             });
                         }
                         else if($current_user->can($permission)){

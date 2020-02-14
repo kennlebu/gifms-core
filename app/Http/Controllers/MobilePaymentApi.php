@@ -109,7 +109,8 @@ class MobilePaymentApi extends Controller
                 'rejected_by_id',
                 'program_activity_id',
                 'requisition_id',
-                'requisition_items'
+                'requisition_items',
+                'lpo_id'
                 );
                 
             $file = $form['file'];
@@ -131,6 +132,8 @@ class MobilePaymentApi extends Controller
             $mobile_payment->rejected_by_id                 =   (int)   $form['rejected_by_id'];
             if(!empty($form['program_activity_id']))
             $mobile_payment->program_activity_id            =   (int)   $form['program_activity_id'];
+            if(!empty($form['lpo_id']))
+            $mobile_payment->lpo_id                         =   (int)   $form['lpo_id'];
 
             $mobile_payment->status_id                      =   $this->default_status;
             
@@ -144,6 +147,9 @@ class MobilePaymentApi extends Controller
                 $requisition = null;
                 if(!empty($form['requisition_id']) && (int) $form['requisition_id'] != 0){
                     $mobile_payment->requisition_id = $form['requisition_id'];
+                    if($mobile_payment->lpo){
+                        $mobile_payment->approver_id = $mobile_payment->lpo->approver_id;
+                    }
                     $mobile_payment->save();
                     $requisition = Requisition::findOrFail($form['requisition_id']);
                     $allocation_purpose = '';
@@ -302,7 +308,8 @@ class MobilePaymentApi extends Controller
                                     'vouchers',
                                     'payments.payment_mode','payments.currency','payments.payment_batch','payments.paid_to_bank_branch',
                                     'allocations.project','allocations.account','allocations.objective',
-                                    'program_activity'
+                                    'program_activity',
+                                    'lpo'
                                 )->findOrFail($mobile_payment_id);
 
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
@@ -1306,8 +1313,18 @@ class MobilePaymentApi extends Controller
                         $permission = 'APPROVE_MOBILE_PAYMENT_'.$value['id'];
                         if($current_user->can($permission)&&$value['id']==2){
                             $query->orWhere(function ($query1) use ($value,$current_user) {
-                                $query1->Where('status_id',$value['id']);
-                                $query1->Where('project_manager_id',$current_user->id);
+
+                                $query1->where(function ($query1) use ($value,$current_user) {
+                                    $query1->where('status_id',$value['id']);
+                                    $query1->where('project_manager_id',$current_user->id)
+                                            ->whereNull('approver_id');
+                                });
+                                $query1->orWhere(function ($query1) use ($value,$current_user) {
+                                    $query1->where('status_id',$value['id']);
+                                    $query1->where('approver_id',$current_user->id);
+                                });
+                                // $query1->Where('status_id',$value['id']);
+                                // $query1->Where('project_manager_id',$current_user->id);
                             });
                         }
                         else if($current_user->can($permission)){
