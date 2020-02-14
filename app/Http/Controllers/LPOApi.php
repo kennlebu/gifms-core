@@ -1349,6 +1349,7 @@ class LPOApi extends Controller
             $data[$key]['requisition']              = $lpo->requisition;
             $data[$key]['can_invoice']              = $lpo->can_invoice;
             $data[$key]['invoices_total']           = $lpo->invoices_total;
+            $data[$key]['requisitioned_by']         = $lpo->requisitioned_by;
 
             if(!empty($lpo->preffered_quotation_id) && !empty($lpo->preffered_quotation->supplier_id)){
                 if($lpo->preffered_quotation_id > 0 && $lpo->preffered_quotation->supplier_id > 0 ){

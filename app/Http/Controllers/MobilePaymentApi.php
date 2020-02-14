@@ -45,6 +45,7 @@ use App\Models\PaymentModels\VoucherNumber;
 use App\Models\ReportModels\ReportingObjective;
 use App\Mail\RequestMPBankSigning;
 use App\Models\AllocationModels\Allocation;
+use App\Models\LPOModels\Lpo;
 use App\Models\Requisitions\Requisition;
 use App\Models\Requisitions\RequisitionItem;
 
@@ -919,11 +920,32 @@ class MobilePaymentApi extends Controller
      */
     public function deleteMobilePayment($mobile_payment_id)
     {
-        $deleted = MobilePayment::destroy($mobile_payment_id);
-        if($deleted){
+        try{
+            $mobile_payment = MobilePayment::find($mobile_payment_id);
+
+            if(!empty($mobile_payment->requisition_id) && !empty($mobile_payment->lpo_id)){
+                $lpo = Lpo::find($mobile_payment->lpo_id);
+                foreach($lpo->items as $item){
+                    $requisition_item = RequisitionItem::findOrFail($item->requisition_item_id);
+                    $requisition_item->status_id = 1;
+                    $requisition_item->disableLogging();
+                    $requisition_item->save();
+                }
+
+                // Logging item recall
+                activity()
+                    ->performedOn(Requisition::find($lpo->requisition_id))
+                    ->causedBy($this->current_user())
+                    // ->withProperties(['detail'=>'LPO '.$lpo->ref.' has been deleted'])
+                    ->log('LPO deleted');
+            }
+
+            $mobile_payment->delete();
+
             return response()->json(['msg'=>"Mobile Payment deleted"], 200,array(),JSON_PRETTY_PRINT);
-        }else{
-            return response()->json(['error'=>"Something went wrong"], 500,array(),JSON_PRETTY_PRINT);
+        }
+        catch(Exception $e) {
+            return response()->json(['error'=>"Something went wrong", 'msg'=>$e->getMessage()], 500,array(),JSON_PRETTY_PRINT);
         }
 
     }

@@ -853,27 +853,17 @@ class InvoiceApi extends Controller
     public function submitInvoiceForApproval($invoice_id)
     {
         try{
-            $invoice   = Invoice::with( 
-                                        'raised_by',
-                                        'received_by',
-                                        'raise_action_by',
-                                        'status',
-                                        'project_manager',
-                                        'supplier',
-                                        'payment_mode',
-                                        'currency',
-                                        'lpo',
-                                        'rejected_by',
-                                        'approvals',
-                                        'allocations',
-                                        'logs',
-                                        'vouchers',
-                                        'comments'
-                                    )->findOrFail($invoice_id);
+            $invoice = Invoice::findOrFail($invoice_id);
 
-           if (($invoice->total - $invoice->amount_allocated) > 1 ){ //allowance of 1
-             throw new NotFullyAllocatedException("This invoice has not been fully allocated");             
-           }
+            if(!empty($invoice->lpo) && !empty($invoice->lpo->requisition)){
+                if($invoice->lpo->requisition->status_id != 3){
+                    return response()->json(['error'=>'Requisition must be approved before you can submit this invoice'], 403);
+                }
+            }
+
+            if (($invoice->total - $invoice->amount_allocated) > 1 ){ //allowance of 1
+                throw new NotFullyAllocatedException("This invoice has not been fully allocated");             
+            }
 
             $invoice->status_id = $invoice->status->next_status_id;
             if($invoice->status_id  != 9){ // Only set request time if its not after corrections
