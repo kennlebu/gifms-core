@@ -38,6 +38,7 @@ class MeetingApi extends Controller
                 $query->orWhere('ends_on','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('created_by_id','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('invite_url','like', '\'%' . $input['search']['value']. '%\'');
+                $query->orWhere('organiser_email','like', '\'%' . $input['search']['value']. '%\'');
             });
             
             $records_filtered = $meetings->count();
@@ -117,6 +118,7 @@ class MeetingApi extends Controller
             $meeting->county_id = $request->county_id;
             $meeting->starts_on = $request->starts_on;
             $meeting->ends_on = $request->ends_on;
+            $meeting->organiser_email = $request->organiser_email;
             $meeting->created_by_id = $this->current_user()->id;
             $meeting->save();
             $meeting->disableLogging();
@@ -173,6 +175,7 @@ class MeetingApi extends Controller
             $meeting->county_id = $request->county_id;
             $meeting->starts_on = $request->starts_on;
             $meeting->ends_on = $request->ends_on;
+            $meeting->organiser_email = $request->organiser_email;
             $meeting->created_by_id = $request->created_by_id;
             $meeting->save();
             $meeting->disableLogging();

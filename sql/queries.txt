@@ -1813,3 +1813,7 @@ UPDATE `approval_levels` SET `approval_level` = 'Management Authorisation' WHERE
 ~===== Add LPO id to mobile payment table
 ALTER TABLE `mobile_payments`
 ADD `lpo_id` int NULL AFTER `approver_id`;
+
+~===== Add organiser email to meetings
+ALTER TABLE `meetings`
+ADD `organiser_email` text COLLATE 'latin1_swedish_ci' NULL AFTER `invite_url`;
