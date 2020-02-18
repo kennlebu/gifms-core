@@ -228,8 +228,8 @@ class InvoiceApi extends Controller
                 
             }
 
-            if($invoice->save()) {
-                $invoice->disableLogging(); //! Do not log the update
+            $invoice->disableLogging();
+            if($invoice->save()) {               
 
                 if($form['submission_type']=='log'){
                     if(!empty($invoice->lpo)){
@@ -267,10 +267,22 @@ class InvoiceApi extends Controller
                             activity()
                                 ->performedOn($requisition)
                                 ->causedBy($this->current_user())
-                                ->withProperties(['detail' => 'Created invoice '.$invoice->ref])
-                                ->log('Invoice created');
+                                ->withProperties(['detail' => 'Created invoice '.$invoice->ref, 'summary'=> true])
+                                ->log('Logged invoice');
                         }
                     }
+
+                    if(empty($invoice->lpo) || empty($invoice->lpo->requisition_id)){
+                        $invoice->ref = "CHAI/INV/#$invoice->id/".date_format($invoice->created_at,"Y/m/d");
+                        $invoice->save();
+
+                        activity()
+                            ->performedOn($invoice)
+                            ->causedBy($this->current_user())
+                            ->withProperties(['detail' => 'Logged invoice '.$invoice->ref, 'summary'=> true])
+                            ->log('Logged');
+                    }
+
                 }
 
                 if($form['submission_type']=='full'||$form['submission_type']=='upload_logged'){
@@ -279,8 +291,14 @@ class InvoiceApi extends Controller
                     FTP::connection()->makeDir('/invoices/'.$invoice->id);
                     FTP::connection()->uploadFile($file->getPathname(), '/invoices/'.$invoice->id.'/'.$invoice->id.'.'.$file->getClientOriginalExtension());
 
-                    $invoice->invoice_document           =   $invoice->id.'.'.$file->getClientOriginalExtension();
+                    $invoice->invoice_document = $invoice->id.'.'.$file->getClientOriginalExtension();
                     $invoice->save();
+
+                    activity()
+                        ->performedOn($invoice)
+                        ->causedBy($this->current_user())
+                        ->withProperties(['detail' => 'Uploaded invoice '.$invoice->ref])
+                        ->log('Uploaded');
 
                 }else if($form['submission_type']=='log'){
                     $invoice->save();
@@ -560,23 +578,7 @@ class InvoiceApi extends Controller
         $invoice = [];
         $user = JWTAuth::parseToken()->authenticate();
         try{
-            $invoice   = Invoice::with( 
-                                        'raised_by',
-                                        'received_by',
-                                        'raise_action_by',
-                                        'status',
-                                        'project_manager',
-                                        'supplier',
-                                        'payment_mode',
-                                        'currency',
-                                        'lpo',
-                                        'rejected_by',
-                                        'approvals',
-                                        'allocations',
-                                        'vouchers',
-                                        'comments'
-                                    )->findOrFail($invoice_id);
-
+            $invoice   = Invoice::findOrFail($invoice_id);
            
             if (!$user->can("APPROVE_INVOICE_".$invoice->status_id)){
                 throw new ApprovalException("No approval permission");             
@@ -585,25 +587,10 @@ class InvoiceApi extends Controller
             $approvable_status  = $invoice->status;
             $invoice->status_id = $invoice->status->next_status_id;
             
-            $invoice->disableLogging(); //! Do not log the update
+            $invoice->disableLogging();
             if($invoice->save()) {
 
-                $invoice   = Invoice::with( 
-                                        'raised_by',
-                                        'received_by',
-                                        'raise_action_by',
-                                        'status',
-                                        'project_manager',
-                                        'supplier',
-                                        'payment_mode',
-                                        'currency',
-                                        'lpo',
-                                        'rejected_by',
-                                        'approvals',
-                                        'allocations',
-                                        'vouchers',
-                                        'comments'
-                                    )->findOrFail($invoice_id);
+                $invoice   = Invoice::findOrFail($invoice_id);
 
                 $approval = new Approval;
                 $approval->approvable_id            =   (int)   $invoice->id;
@@ -643,10 +630,12 @@ class InvoiceApi extends Controller
                     $this->generate_payable_payment($payable);
                 }
 
+                // Logging
                 activity()
                    ->performedOn($invoice)
                    ->causedBy($user)
-                   ->log('approved');
+                   ->withProperties(['detail' => 'Invoice '.$invoice->external_ref.' approved', 'summary'=> true])
+                   ->log($approval->approval_level->approval_level);
 
                 Mail::queue(new NotifyInvoice($invoice));
 
@@ -693,22 +682,7 @@ class InvoiceApi extends Controller
         $form = Request::only('rejection_reason');
         $user = JWTAuth::parseToken()->authenticate();
         try{
-            $invoice = Invoice::with( 
-                                        'raised_by',
-                                        'received_by',
-                                        'raise_action_by',
-                                        'status',
-                                        'project_manager',
-                                        'supplier',
-                                        'payment_mode',
-                                        'currency',
-                                        'lpo',
-                                        'rejected_by',
-                                        'approvals',
-                                        'allocations',
-                                        'vouchers',
-                                        'comments'
-                                    )->findOrFail($invoice_id);
+            $invoice = Invoice::findOrFail($invoice_id);
            
             if (!$user->can("APPROVE_INVOICE_".$invoice->status_id)){
                 throw new ApprovalException("No approval permission");             
@@ -719,14 +693,15 @@ class InvoiceApi extends Controller
             $invoice->rejected_at               =   date('Y-m-d H:i:s');
             $invoice->rejection_reason          =   $form['rejection_reason'];
 
-            $invoice->disableLogging(); //! Do not log the update
+            $invoice->disableLogging();
             if($invoice->save()) {
                 Mail::queue(new NotifyInvoice($invoice));
 
                 activity()
                    ->performedOn($invoice)
                    ->causedBy($user)
-                   ->log('rejected');
+                   ->withProperties(['detail' => 'Invoice '.$invoice->external_ref.' returned. REASON: '.$invoice->rejection_reason, 'summary'=> true])
+                   ->log('Returned');
 
                 return Response()->json(array('msg' => 'Success: invoice approved','invoice' => $invoice), 200);
             }

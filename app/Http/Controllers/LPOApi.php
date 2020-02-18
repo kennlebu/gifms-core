@@ -130,6 +130,8 @@ class LPOApi extends Controller
             $lpo->supplier_id = $form['supplier_id'] ?? null;
             if(!empty($form['approver_id']))
             $lpo->approver_id = $form['approver_id'] ?? null;
+            if(!empty($form['quotation_ref']))
+            $lpo->approver_id = $form['quotation_ref'] ?? null;
 
             $user = JWTAuth::parseToken()->authenticate();
             $lpo->request_action_by_id = (int) $user->id;
@@ -138,8 +140,8 @@ class LPOApi extends Controller
                 return response()->json(['error'=>'You cannot create an LPO without a requisition'], 403);
             }
 
-            if($lpo->save()) {
-                $lpo->disableLogging();
+            $lpo->disableLogging();
+            if($lpo->save()) {                
 
                 $requisition = null;
                 if(!empty($form['requisition_id']) && (int) $form['requisition_id'] != 0){
@@ -199,6 +201,12 @@ class LPOApi extends Controller
                 $lpo_no = count($requisition->lpos);
                 $lpo->ref = $requisition->ref.'-'.$lpo_type.'-'.$this->pad_with_zeros(2, $lpo_no);
                 $lpo->save();
+
+                activity()
+                    ->performedOn($requisition)
+                    ->causedBy($this->current_user())
+                    ->withProperties(['detail' => 'Created '. $lpo_type .' '.$lpo->ref, 'summary'=> true])
+                    ->log('Created '. $lpo_type);
 
                 return Response()->json(array('msg' => 'Success: lpo added','lpo' => $lpo), 200);
             }
@@ -275,6 +283,8 @@ class LPOApi extends Controller
         $lpo->supplier_id = $form['supplier_id'] ?? null;
         if(!empty($form['approver_id']))
         $lpo->approver_id = $form['approver_id'] ?? null;
+        if(!empty($form['quotation_ref']))
+        $lpo->approver_id = $form['quotation_ref'] ?? null;
 
         if($lpo->save()) {
             return Response()->json(array('msg' => 'Success: lpo updated','lpo' => $lpo), 200);
@@ -524,41 +534,22 @@ class LPOApi extends Controller
             $lpo->disableLogging(); //! Do not log the update
             if($lpo->save()) {
 
-                $lpo   = LPO::with(
-                                            'requested_by',
-                                            'request_action_by',
-                                            'project',
-                                            'account',
-                                            'invoices',
-                                            'status',
-                                            'project_manager',
-                                            'rejected_by',
-                                            'cancelled_by',
-                                            'received_by',
-                                            'supplier',
-                                            'currency',
-                                            'quotations',
-                                            'preffered_quotation',
-                                            'items',
-                                            'terms',
-                                            'approvals',
-                                            'deliveries'
-                                )->findOrFail($lpo_id);
+                $lpo = LPO::findOrFail($lpo_id);
 
                 $approval = new Approval;
-
                 $approval->approvable_id            =   (int)   $lpo->id;
                 $approval->approvable_type          =   "lpos";
                 $approval->approval_level_id        =   $approvable_status->approval_level_id;
                 $approval->approver_id              =   (int)   $user->id;
-
+                $approval->disableLogging();
                 $approval->save();
 
                 // Logging
                 activity()
                    ->performedOn($approval->approvable)
                    ->causedBy($user)
-                   ->log('Approved');
+                   ->withProperties(['detail' => $lpo->lpo_type == 'lso'?'LSO':'LPO'. $lpo->ref .' approved', 'summary'=> true])
+                   ->log($approval->approval_level->approval_level);
 
                 if($lpo->status_id!=7){
                     Mail::queue(new NotifyLpo($lpo));
@@ -617,27 +608,7 @@ class LPOApi extends Controller
         $user = JWTAuth::parseToken()->authenticate();
 
         try{
-            $lpo   = LPO::with(
-                                            'requested_by',
-                                            'request_action_by',
-                                            'project',
-                                            'account',
-                                            'invoices',
-                                            'status',
-                                            'project_manager',
-                                            'rejected_by',
-                                            'cancelled_by',
-                                            'received_by',
-                                            'supplier',
-                                            'currency',
-                                            'quotations',
-                                            'preffered_quotation',
-                                            'items',
-                                            'terms',
-                                            'approvals',
-                                            'deliveries'
-                                )->findOrFail($lpo_id);
-           
+            $lpo   = LPO::findOrFail($lpo_id);           
            
             if (!$user->can("APPROVE_LPO_".$lpo->status_id)){
                 throw new ApprovalException("No approval permission");             
@@ -647,27 +618,27 @@ class LPOApi extends Controller
             $lpo->rejected_at              =   date('Y-m-d H:i:s');
             $lpo->rejection_reason             =   $form['rejection_reason'];
 
-            $lpo->disableLogging(); //! Disable logging for the update
+            $lpo->disableLogging();
             if($lpo->save()) {
 
             // Logging
-            $lpo->enableLogging();
-                activity()
+            activity()
                 ->performedOn($lpo)
                 ->causedBy($user)
-                ->log('rejected');
+                ->withProperties(['detail' => $lpo->lpo_type == 'lso'?'LSO':'LPO'.' returned. REASON: '.$lpo->rejection_reason, 'summary'=> true])
+                ->log('Returned');
 
                 Mail::queue(new NotifyLpo($lpo));
 
                 return Response()->json(array('msg' => 'Success: lpo rejected','lpo' => $lpo), 200);
             }
 
-        }catch(ApprovalException $ae){
-
+        }
+        catch(ApprovalException $ae){
             $response =  ["error"=>"You do not have the permissions to perform this action at this point"];
             return response()->json($response, 403,array(),JSON_PRETTY_PRINT);
-        }catch(Exception $e){
-
+        }
+        catch(Exception $e){
             $response =  ["error"=>"lpo could not be found", "msg"=>$e->getMessage()];
             return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
         }

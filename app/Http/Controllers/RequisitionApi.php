@@ -159,8 +159,8 @@ class RequisitionApi extends Controller
             $requisition->status_id = 1;
             $requisition->submitted_at = date("Y-m-d H:i:s");
             $requisition->objective_id = $request->objective_id ?? null;
-            $requisition->save();
             $requisition->disableLogging();
+            $requisition->save();
             $requisition->ref = $requisition->generated_ref;
             $requisition->save();
 
@@ -188,7 +188,7 @@ class RequisitionApi extends Controller
                 $item->qty_description = $i->qty_description ?? null;
                 $item->county_id = $i->county_id ?? null;
                 $item->module = $i->module ?? null;
-                if(!empty($i->service_id)){
+                if(empty($i->no_of_days) && !empty($i->service_id)){
                     $s = SupplierService::findOrFail($i->service_id);
                     $item->qty_description = $i->qty . ' ' . $s->unit;
                 }
@@ -248,6 +248,14 @@ class RequisitionApi extends Controller
                 FTP::connection()->makeDir('/requisitions/'.$requisition->ref);
                 FTP::connection()->uploadFile($airfare_doc->getPathname(), '/requisitions/'.$requisition->ref.'/'.$requisition_doc->filename.'.'.$requisition_doc->type);
             }
+
+            // Logging
+            activity()
+                ->performedOn($requisition)
+                ->causedBy($this->current_user())
+                ->withProperties(['detail' => 'Created new requisition '. $requisition->ref,
+                                'summary'=> true])
+                ->log('Created');
 
             return Response()->json(array('msg' => 'Success: requisition added','requisition' => $requisition), 200);
         }
@@ -339,7 +347,7 @@ class RequisitionApi extends Controller
                 $item->service_id = $i['service_id'] ?? null;                
                 $item->county_id = $i['county_id'] ?? null;
                 $item->module = $i->module ?? null;      
-                if(!empty($i->service_id)){
+                if(empty($i->no_of_days) && !empty($i->service_id)){
                     $s = SupplierService::findOrFail($i->service_id);
                     $item->qty_description = $i->qty . ' ' . $s->unit;
                 }
@@ -452,6 +460,7 @@ class RequisitionApi extends Controller
             activity()
                 ->performedOn($requisition)
                 ->causedBy($user)
+                ->withProperties(['detail' => 'Requisition '.$requisition->ref.' approved', 'summary'=> true])
                 ->log('Requisition approved');
 
             $approval = new Approval();
@@ -502,7 +511,7 @@ class RequisitionApi extends Controller
             activity()
                 ->performedOn($requisition)
                 ->causedBy($this->current_user())
-                ->withProperties(['detail' => 'REASON: '.$input['rejection_reason']])
+                ->withProperties(['detail' => 'Requisition '.$requisition->ref.' returned. REASON: '.$input['rejection_reason'], 'summary'=> true])
                 ->log('Requisition returned');
         
             return Response()->json(array('msg' => 'Success: requisition returned','data' => $requisition), 200);
