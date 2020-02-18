@@ -1817,3 +1817,7 @@ ADD `lpo_id` int NULL AFTER `approver_id`;
 ~===== Add organiser email to meetings
 ALTER TABLE `meetings`
 ADD `organiser_email` text COLLATE 'latin1_swedish_ci' NULL AFTER `invite_url`;
+
+~==== Add quotation reference field to lpos table
+ALTER TABLE `lpos`
+ADD `quotation_ref` text NULL AFTER `approver_id`;

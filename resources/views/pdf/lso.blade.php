@@ -67,14 +67,14 @@
             </td>
           <td colspan="1"></td>
           <td colspan="1"><strong>Contract/ Quotation Ref. No.</strong></td>
-          <td style="text-align: right;" colspan="2">###-#####</td>
+          <td style="text-align: right;" colspan="2">{{$lpo->quotation_ref ?? '-'}}</td>
         </tr>
         <tr>
           <td style="border: 1px solid #000000; border-bottom: 1px solid #c0c0c0; border-top: 1px solid #c0c0c0;" colspan="2"  ><strong>Your Ref</strong></td>
           <td style="border-width: 1px; border-style: solid; border-color: #c0c0c0 #000000; border-image: initial; text-align: right;" colspan="4" ></td>
           <td colspan="1"></td>
           <td colspan="1"><strong>Requisition No.</strong></td>
-          <td style="text-align: right;" colspan="2">{{$lpo->requisition->ref ?? '###'}}</td>
+          <td style="text-align: right;" colspan="2">{{$lpo->requisition->ref ?? '-'}}</td>
         </tr>
         <tr>
           <td style="border: 1px solid #000000; border-bottom: 1px solid #c0c0c0; border-top: 1px solid #c0c0c0;" colspan="2"  ><strong>Company Name</strong></td>
@@ -115,8 +115,8 @@
         <tr>
           <td colspan="9">
               Please carry out the services listed here below at place of delivery as advised by "the CHAI project Officer of 
-              mobile number <a href="mailto:{{$lpo->requested_by->mobile_no}}">{{$lpo->requested_by->mobile_no}}</a> and/
-              or email <a href="mailto:{{$lpo->requested_by->email}}" target="_blank">{{str_replace("@","@ ",$lpo->requested_by->email)}}</a>" 
+              mobile number <a href="mailto:{{$lpo->requisitioned_by->mobile_no ?? $lpo->requested_by->mobile_no}}">{{$lpo->requisitioned_by->mobile_no ?? $lpo->requested_by->mobile_no}}</a> and/
+              or email <a href="mailto:{{$lpo->requisitioned_by->email ?? $lpo->requested_by->email}}" target="_blank">{{str_replace("@","@ ",($lpo->requisitioned_by->email ?? $lpo->requested_by->email))}}</a>" 
               or "CHAI's Authorised/ Designated oficer" vide mobile number …………………………. and/ or email address …………………………………………………. on terms and conditions stated in this order, 
               on or before (date) .............................. and send the invoices immediately to CHAI. P.O. Box2011 - 00100, Nairobi			
           </td>
