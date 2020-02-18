@@ -140,10 +140,9 @@ class MobilePaymentApi extends Controller
             
             $user = JWTAuth::parseToken()->authenticate();
             $mobile_payment->request_action_by_id            =   (int)   $user->id;
+            $mobile_payment->disableLogging();
 
             if($mobile_payment->save()) {
-
-                $mobile_payment->disableLogging(); // Do not log the subsequent update(s)
 
                 $requisition = null;
                 if(!empty($form['requisition_id']) && (int) $form['requisition_id'] != 0){
@@ -177,6 +176,8 @@ class MobilePaymentApi extends Controller
                         $allocation->allocatable_id = $mobile_payment->id;
                         $allocation->allocatable_type = 'mobile_payments';
                         $allocation->percentage_allocated = $alloc->percentage_allocated;
+                        $allocation->amount_allocated = ($mobile_payment->totals * (float)$alloc->percentage_allocated/100);
+                        $allocation->percentage_allocated = ($allocation->amount_allocated/$mobile_payment->totals)*100;
                         $allocation->allocation_purpose = $allocation_purpose;
                         $allocation->objective_id = $alloc->objective_id;
                         $allocation->allocated_by_id = $requisition->requested_by_id;
@@ -190,8 +191,31 @@ class MobilePaymentApi extends Controller
                 FTP::connection()->makeDir('/mobile_payments/'.$mobile_payment->id.'/signsheet');
                 FTP::connection()->uploadFile($file->getPathname(), '/mobile_payments/'.$mobile_payment->id.'/signsheet/'.$mobile_payment->id.'.'.$file->getClientOriginalExtension());
 
-                $mobile_payment->attendance_sheet           =   $mobile_payment->id.'.'.$file->getClientOriginalExtension();
-                $mobile_payment->ref = "CHAI/MPYMT/#$mobile_payment->id/".date_format($mobile_payment->created_at,"Y/m/d");
+                $mobile_payment->attendance_sheet =  $mobile_payment->id.'.'.$file->getClientOriginalExtension();
+                
+                if(empty($mobile_payment->requisition)){
+                    $mobile_payment->ref = "CHAI/MPYMT/#$mobile_payment->id/".date_format($mobile_payment->created_at,"Y/m/d");
+
+                    // Logging
+                    activity()
+                        ->performedOn($mobile_payment)
+                        ->causedBy($this->current_user())
+                        ->withProperties(['detail' => 'Created new mobile payment (ref: '. $mobile_payment->ref .')', 'summary'=> true])
+                        ->log('Created');
+                }
+                else {
+                    // $requisition = Requisition::findOrFail($mobile_payment->requisition->id);
+                    $mobile_payment_no = count($requisition->transactions['mobile_payments']);
+                    $mobile_payment->ref = $requisition->ref.'-MPT-'.$this->pad_with_zeros(2, $mobile_payment_no);
+
+                    // Logging
+                    activity()
+                        ->performedOn($mobile_payment)
+                        ->causedBy($this->current_user())
+                        ->withProperties(['detail' => 'Created new mobile payment (ref: '. $mobile_payment->ref .') from requisition '. $mobile_payment->requisition->ref,
+                                        'summary'=> true])
+                        ->log('Created');
+                }
                 $mobile_payment->save();
 
                 return Response()->json(array('msg' => 'Success: mobile payment added','mobile_payment' => $mobile_payment), 200);
@@ -987,24 +1011,13 @@ class MobilePaymentApi extends Controller
         $user = JWTAuth::parseToken()->authenticate();
 
         try{
-            $mobile_payment = MobilePayment::with(
-                                    'requested_by',
-                                    'requested_action_by',
-                                    'project',
-                                    'account',
-                                    'mobile_payment_type',
-                                    'invoice',
-                                    'status',
-                                    'project_manager',
-                                    'region',
-                                    'county',
-                                    'currency',
-                                    'rejected_by',
-                                    'payees_upload_mode',
-                                    'payees',
-                                    'approvals',
-                                    'allocations'
-                                )->findOrFail($mobile_payment_id);           
+            $mobile_payment = MobilePayment::findOrFail($mobile_payment_id);
+            
+            if(!empty($mobile_payment->lpo) && !empty($mobile_payment->lpo->requisition)){
+                if($mobile_payment->lpo->requisition->status_id != 3){
+                    return response()->json(['error'=>'Requisition must be approved before you can submit this mobile payment'], 403);
+                }
+            }
 
            if (($mobile_payment->total - $mobile_payment->amount_allocated) > 1 ){ //allowance of 1
              throw new NotFullyAllocatedException("This mobile payment has not been fully allocated");             
