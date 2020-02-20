@@ -903,7 +903,7 @@ class LPOApi extends Controller
     public function getDocumentById($lpo_id)
     {   
         try{
-            $lpo   = Lpo::findOrFail($lpo_id);
+            $lpo   = Lpo::with('requisition')->findOrFail($lpo_id);
             $unique_approvals = $this->unique_multidim_array($lpo->approvals, 'approver_id');
 
             $data = array(
