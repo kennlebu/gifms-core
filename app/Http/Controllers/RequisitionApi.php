@@ -339,17 +339,18 @@ class RequisitionApi extends Controller
                 else {
                     $item = RequisitionItem::find($i['id']);
                 }
+                
                 $item->type = $i['type'] ?? 'extra';
                 $item->service = $i['service'];
                 $item->qty_description = $i['qty_description'] ?? null;
                 $item->qty = $i['qty'];
-                $item->no_of_days = $i->no_of_days ?? null;   
+                $item->no_of_days = $i['no_of_days'] ?? null;   
                 $item->service_id = $i['service_id'] ?? null;                
                 $item->county_id = $i['county_id'] ?? null;
-                $item->module = $i->module ?? null;      
-                if(empty($i->no_of_days) && !empty($i->service_id)){
-                    $s = SupplierService::findOrFail($i->service_id);
-                    $item->qty_description = $i->qty . ' ' . $s->unit;
+                $item->module = $i['module'] ?? null;      
+                if(empty($i['no_of_days']) && !empty($i['service_id'])){
+                    $s = SupplierService::findOrFail($i['service_id']);
+                    $item->qty_description = $i['qty'] . ' ' . $s->unit;
                 }
                 $item->start_date = date('Y-m-d', strtotime($i['dates'][0]));
                 $item->end_date = date('Y-m-d', strtotime($i['dates'][1]));

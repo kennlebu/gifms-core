@@ -195,6 +195,13 @@ class MobilePayment extends BaseModel
         return $bank_trans;
     }
 
+    // public function getRequisitionedByAttribute(){
+    //     if($this->requisition){
+    //         return $this->requisition->requested_by;
+    //     }
+    //     return null;
+    // }
+
 
 
 

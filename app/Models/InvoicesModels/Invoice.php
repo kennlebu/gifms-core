@@ -8,6 +8,7 @@ use App\Models\BaseModels\BaseModel;
 use DB;
 use App\Models\PaymentModels\Payment;
 use App\Models\PaymentModels\VoucherNumber;
+use App\Models\Requisitions\Requisition;
 
 class Invoice extends BaseModel
 {
@@ -206,4 +207,12 @@ class Invoice extends BaseModel
     	$amount = (double) $this->attributes['total'];
         return  $amount + (double)	$this->calculated_withdrawal_charges;
     }
+
+    // public function getRequisitionedByAttribute(){
+    //     $requisition = 'null';
+    //     // if($this->requisition_id){
+    //     //     $requisition =  Requisition::find($this->requisition_id);
+    //     // }
+    //     return $requisition;
+    // }
 }
