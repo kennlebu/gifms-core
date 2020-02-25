@@ -1821,3 +1821,7 @@ ADD `organiser_email` text COLLATE 'latin1_swedish_ci' NULL AFTER `invite_url`;
 ~==== Add quotation reference field to lpos table
 ALTER TABLE `lpos`
 ADD `quotation_ref` text NULL AFTER `approver_id`;
+
+~===== Add account id field to requisition items
+ALTER TABLE `requisition_items`
+ADD `account_id` int NULL AFTER `module`;

@@ -150,6 +150,7 @@ class LPOApi extends Controller
                     $requisition = Requisition::findOrFail($form['requisition_id']);
                     $allocation_purpose = '';
                     $count = 0;
+                    $accounts = [];
     
                     foreach($form['requisition_items'] as $item){
                         $lpo_item = new LpoItem();
@@ -180,22 +181,45 @@ class LPOApi extends Controller
                         }
                         $item->disableLogging();
                         $item->save();
+                        if(!empty($item->account_id) && !in_array($item->account_id, $accounts)){
+                            $accounts[] = $item->account_id;
+                        }
                     }
                     $allocation_purpose = $allocation_purpose.'; '.$requisition->purpose;
 
-                    foreach($requisition->allocations as $alloc){
-                        $allocation = new Allocation();
-                        $allocation->account_id = $alloc->account_id;
-                        $allocation->project_id = $alloc->project_id;
-                        $allocation->allocatable_id = $lpo->id;
-                        $allocation->allocatable_type = 'lpos';
-                        $allocation->percentage_allocated = $alloc->percentage_allocated;
-                        $allocation->allocation_purpose = $allocation_purpose;
-                        $allocation->objective_id = $alloc->objective_id;
-                        $allocation->allocated_by_id = $requisition->requested_by_id;
-                        $allocation->disableLogging();
-                        $allocation->save();
+                    if(!empty($accounts)){
+                        foreach($accounts as $account){
+                            foreach($requisition->allocations as $alloc){
+                                $allocation = new Allocation();
+                                $allocation->account_id = $account;
+                                $allocation->project_id = $alloc->project_id;
+                                $allocation->allocatable_id = $lpo->id;
+                                $allocation->allocatable_type = 'lpos';
+                                $allocation->percentage_allocated = $alloc->percentage_allocated;
+                                $allocation->allocation_purpose = $allocation_purpose;
+                                $allocation->objective_id = $alloc->objective_id;
+                                $allocation->allocated_by_id = $requisition->requested_by_id;
+                                $allocation->disableLogging();
+                                $allocation->save();
+                            }
+                        }  
                     }
+                    else {  // For the existing requisitions. Remove after going live.
+                        foreach($requisition->allocations as $alloc){
+                            $allocation = new Allocation();
+                            $allocation->account_id = $alloc->account_id;
+                            $allocation->project_id = $alloc->project_id;
+                            $allocation->allocatable_id = $lpo->id;
+                            $allocation->allocatable_type = 'lpos';
+                            $allocation->percentage_allocated = $alloc->percentage_allocated;
+                            $allocation->allocation_purpose = $allocation_purpose;
+                            $allocation->objective_id = $alloc->objective_id;
+                            $allocation->allocated_by_id = $requisition->requested_by_id;
+                            $allocation->disableLogging();
+                            $allocation->save();
+                        }
+                    }
+                                      
                 }
                 
                 $lpo_no = count($requisition->lpos);
