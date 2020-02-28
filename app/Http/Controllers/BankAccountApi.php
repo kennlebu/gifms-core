@@ -19,7 +19,9 @@ use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\DB;
 
 use App\Models\BankingModels\BankAccount;
+use App\Models\BankingModels\BankProjectBalances;
 use Exception;
+use Illuminate\Http\Request as HttpRequest;
 
 class BankAccountApi extends Controller
 {
@@ -33,12 +35,7 @@ class BankAccountApi extends Controller
      */
     public function addBankAccount()
     {
-        $form = Request::only(
-            'account_number',
-            'bank_name',
-            'bank_branch',
-            'title'
-            );
+        $form = Request::all();
 
         $bank_account = new BankAccount;
         $bank_account->account_number                   =         $form['account_number'];
@@ -81,13 +78,7 @@ class BankAccountApi extends Controller
      */
     public function updateBankAccount()
     {
-        $form = Request::only(
-            'id',
-            'account_number',
-            'bank_name',
-            'bank_branch',
-            'title'
-            );
+        $form = Request::all();
 
         $bank_account = BankAccount::find($form['id']);
         $bank_account->account_number                   =         $form['account_number'];
@@ -212,30 +203,22 @@ class BankAccountApi extends Controller
     public function bankAccountsGet()
     {
         $input = Request::all();
-        //query builder
-        $qb = DB::table('bank_accounts');
 
-        $qb->whereNull('bank_accounts.deleted_at');
-
-        $response;
-        $response_dt;
-
-        $total_records          = $qb->count();
-        $records_filtered       = 0;
+        $qb = BankAccount::query();
+        if(!array_key_exists('lean', $input)){
+            $qb = BankAccount::with('currency');
+        }
+        $total_records = $qb->count();
+        $records_filtered = 0;
 
         //searching
         if(array_key_exists('searchval', $input)){
-            $qb->where(function ($query) use ($input) {                
+            $qb = $qb->where(function ($query) use ($input) {                
                 $query->orWhere('bank_accounts.id','like', '\'%' . $input['searchval']. '%\'');
                 $query->orWhere('bank_accounts.account_number','like', '\'%' . $input['searchval']. '%\'');
                 $query->orWhere('bank_accounts.title','like', '\'%' . $input['searchval']. '%\'');
             });
-
-            $sql = BankAccount::bind_presql($qb->toSql(),$qb->getBindings());
-            $sql = str_replace("*"," count(*) AS count ", $sql);
-            $dt = json_decode(json_encode(DB::select($sql)), true);
-
-            $records_filtered = (int) $dt[0]['count'];
+            $records_filtered = (int) $qb->count;
         }
 
         //ordering
@@ -245,27 +228,24 @@ class BankAccountApi extends Controller
             if(array_key_exists('order_dir', $input)&&$input['order_dir']!=''){                
                 $order_direction = $input['order_dir'];
             }
-            $qb->orderBy($order_column_name, $order_direction);
+            $qb = $qb->orderBy($order_column_name, $order_direction);
         }
 
         //limit
         if(array_key_exists('limit', $input)){
-            $qb->limit($input['limit']);
+            $qb = $qb->limit($input['limit']);
         }
 
         if(array_key_exists('datatables', $input)){
             //searching
-            $qb->where(function ($query) use ($input) {                
-                $query->orWhere('bank_accounts.id','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('bank_accounts.account_number','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('bank_accounts.title','like', '\'%' . $input['search']['value']. '%\'');
-            });
-
-            $sql = BankAccount::bind_presql($qb->toSql(),$qb->getBindings());
-            $sql = str_replace("*"," count(*) AS count ", $sql);
-            $dt = json_decode(json_encode(DB::select($sql)), true);
-
-            $records_filtered = (int) $dt[0]['count'];
+            if(!empty($input['search']['value'])){
+                $qb = $qb->where(function ($query) use ($input) {                
+                    $query->orWhere('bank_accounts.id','like', '\'%' . $input['search']['value']. '%\'');
+                    $query->orWhere('bank_accounts.account_number','like', '\'%' . $input['search']['value']. '%\'');
+                    $query->orWhere('bank_accounts.title','like', '\'%' . $input['search']['value']. '%\'');
+                });
+            }
+            $records_filtered = (int) $qb->count();
 
             //ordering
             $order_column_id    = (int) $input['order'][0]['column'];
@@ -273,35 +253,24 @@ class BankAccountApi extends Controller
             $order_direction    = $input['order'][0]['dir'];
 
             if($order_column_name!=''){
-                $qb->orderBy($order_column_name, $order_direction);
+                $qb = $qb->orderBy($order_column_name, $order_direction);
             }
 
             //limit $ offset
             if((int)$input['start']!= 0 ){
-                $response_dt    =   $qb->limit($input['length'])->offset($input['start']);
+                $response_dt = $qb->limit($input['length'])->offset($input['start']);
             }else{
-                $qb->limit($input['length']);
+                $qb = $qb->limit($input['length']);
             }
 
-            $sql = BankAccount::bind_presql($qb->toSql(),$qb->getBindings());
-
-            $response_dt = DB::select($sql);
-            $response_dt = json_decode(json_encode($response_dt), true);
-            $response_dt    = $this->append_relationships_objects($response_dt);
-            $response_dt    = $this->append_relationships_nulls($response_dt);
-            $response       = BankAccount::arr_to_dt_response( 
-                $response_dt, $input['draw'],
+            $response = BankAccount::arr_to_dt_response( 
+                $qb->get(), $input['draw'],
                 $total_records,
                 $records_filtered
                 );
         }
         else{
-            $sql            = BankAccount::bind_presql($qb->toSql(),$qb->getBindings());
-            $response       = json_decode(json_encode(DB::select($sql)), true);
-            if(!array_key_exists('lean', $input)){
-                $response       = $this->append_relationships_objects($response);
-                $response       = $this->append_relationships_nulls($response);
-            }
+            $response = $qb->get();
         }
 
         return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
@@ -313,49 +282,79 @@ class BankAccountApi extends Controller
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-    public function append_relationships_objects($data = array()){
-
-        foreach ($data as $key => $value) {
-            $bank_accounts = BankAccount::find($data[$key]['id']);
-            $data[$key]['currency']                    = $bank_accounts->currency;
+    /** Bank Balances */
+    public function addBankBalance(HttpRequest $request){
+        try{
+            $bank_balance = new BankProjectBalances();
+            $bank_balance->balance = $request->balance;
+            $bank_balance->balance_date = date('Y-m-d H:i:s');
+            $bank_balance->disableLogging();
+            $bank_balance->save();
+            return response()->json(['msg' => 'Bank balance added','bank_account' => $bank_balance], 200);
         }
-
-        return $data;
+        catch (Exception $e){
+            return response()->json(['error'=>'Something went wrong', 'msg'=>$e->getTraceAsString()], 500,[],JSON_PRETTY_PRINT);
+        }
     }
 
-
-
-
-
-
-
-
-
-
-    
-
-
-
-    public function append_relationships_nulls($data = array()){
-        foreach ($data as $key => $value) {
-            if($data[$key]["currency"]==null){
-                $data[$key]["currency"] = array("currency_name"=>"N/A");
-            }
+    public function updateBankBalance(HttpRequest $request){
+        try{
+            $bank_balance = BankProjectBalances::find($request->id);
+            $bank_balance->balance = $request->balance;
+            $bank_balance->disableLogging();
+            $bank_balance->save();
+            return response()->json(['msg' => 'Bank balance updated','bank_account' => $bank_balance], 200);
         }
+        catch (Exception $e){
+            return response()->json(['error'=>'Something went wrong', 'msg'=>$e->getTraceAsString()], 500,[],JSON_PRETTY_PRINT);
+        }
+    }
 
-        return $data;
+    public function getBankBalance($id){
+        try{
+            $bank_balance = BankProjectBalances::find($id);
+            return response()->json($bank_balance, 200,array(),JSON_PRETTY_PRINT);
+        }
+        catch (Exception $e){
+            return response()->json(['error'=>'Something went wrong', 'msg'=>$e->getTraceAsString()], 500,[],JSON_PRETTY_PRINT);
+        }
+    }
+
+    public function getBankBalances(){
+        try{
+            $input = Request::all();
+            $bank_balances = BankProjectBalances::query();
+            
+            //ordering
+            if(array_key_exists('order_by', $input)&&$input['order_by']!=''){
+                $order_direction = "asc";
+                $order_column_name = $input['order_by'];
+                if(array_key_exists('order_dir', $input)&&$input['order_dir']!=''){                
+                    $order_direction = $input['order_dir'];
+                }
+                $bank_balances = $bank_balances->orderBy($order_column_name, $order_direction);
+            }
+
+            //limit
+            if(array_key_exists('limit', $input)){
+                $bank_balances = $bank_balances->limit($input['limit']);
+            }
+
+            $bank_balances = $bank_balances->get();
+            return response()->json($bank_balances, 200,array(),JSON_PRETTY_PRINT);
+        }
+        catch (Exception $e){
+            return response()->json(['error'=>'Something went wrong', 'msg'=>$e->getTraceAsString()], 500,[],JSON_PRETTY_PRINT);
+        }
+    }
+
+    public function deleteBankBalance($id){
+        try{
+            BankProjectBalances::destroy($id);
+            return response()->json(['msg'=>"Bank balance removed"], 200,array(),JSON_PRETTY_PRINT);
+        }
+        catch (Exception $e){
+            return response()->json(['error'=>'Something went wrong', 'msg'=>$e->getTraceAsString()], 500,[],JSON_PRETTY_PRINT);
+        }
     }
 }

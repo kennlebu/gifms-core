@@ -4187,6 +4187,13 @@ Route::GET('/bank_account/{bank_account_id}', 'BankAccountApi@getBankAccountById
  */
 Route::GET('/bank_accounts', 'BankAccountApi@bankAccountsGet')->middleware('jwt.auth');
 
+/** Bank balances */
+Route::POST('bank-balance', 'BankAccountApi@addBankBalance')->middleware('jwt.auth');
+Route::PUT('bank-balance', 'BankAccountApi@updateBankBalance')->middleware('jwt.auth');
+Route::GET('bank-balances', 'BankAccountApi@getBankBalances')->middleware('jwt.auth');
+Route::GET('bank-balance/{id}', 'BankAccountApi@getBankBalance')->middleware('jwt.auth');
+Route::DELETE('bank-balance/{id}', 'BankAccountApi@deleteBankBalance')->middleware('jwt.auth');
+
 
 
 
@@ -4860,70 +4867,6 @@ Route::GET('/account_types', 'AccountTypeApi@accountTypesGet')->middleware('jwt.
 
 
 
-/**
- * GET citiesGet
- * Summary: Cities List
- * Notes: The city endpoint returns multiple city requested given the parameters injected.  
-
- */
-Route::GET('/cities', 'CityApi@citiesGet')->middleware('jwt.auth');
-/**
- * POST addCity
- * Summary: Add a new city
- * Notes: new city
- * Output-Formats: [application/json, application/xml]
- */
-Route::POST('/city', 'CityApi@addCity')->middleware('jwt.auth');
-/**
- * PUT updateCity
- * Summary: Update an existing city
- * Notes: 
- * Output-Formats: [application/json, application/xml]
- */
-Route::PUT('/city', 'CityApi@updateCity')->middleware('jwt.auth');
-/**
- * DELETE deleteCity
- * Summary: Deletes an city
- * Notes: 
- * Output-Formats: [application/json, application/xml]
- */
-Route::DELETE('/city/{city_id}', 'CityApi@deleteCity')->middleware('jwt.auth');
-/**
- * GET getCityById
- * Summary: Find city by ID
- * Notes: Returns a single city
- * Output-Formats: [application/json, application/xml]
- */
-Route::GET('/city/{city_id}', 'CityApi@getCityById')->middleware('jwt.auth');
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -5496,3 +5439,7 @@ Route::POST('register-attendee', 'MeetingApi@registerAttendeeApi')->middleware('
 Route::POST('verify-attendee', 'MeetingApi@verifyAttendee')->middleware('jwt.auth');
 Route::POST('attendee', 'MeetingApi@getAttendee')->middleware('jwt.auth');
 Route::GET('download-attendance', 'MeetingApi@downloadAttendanceSheet')->middleware('jwt.auth');
+
+
+/* Notifications and tasks */
+Route::POST('month_bank_balance', 'NotificationsApi@checkMonthBalance')->middleware('jwt.auth');
