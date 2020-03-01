@@ -1826,8 +1826,8 @@ ADD `quotation_ref` text NULL AFTER `approver_id`;
 ALTER TABLE `requisition_items`
 ADD `account_id` int NULL AFTER `module`;
 
-===== Delete or project balances not being used
+~===== Delete or project balances not being used
 truncate bank_project_balances
 
-===== Drop cities table
+~===== Drop cities table
 DROP TABLE `cities`;

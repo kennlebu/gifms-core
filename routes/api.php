@@ -5443,3 +5443,4 @@ Route::GET('download-attendance', 'MeetingApi@downloadAttendanceSheet')->middlew
 
 /* Notifications and tasks */
 Route::POST('month_bank_balance', 'NotificationsApi@checkMonthBalance')->middleware('jwt.auth');
+Route::get('metrics', 'Dashboard@getMetrics')->middleware('jwt.auth');
