@@ -1831,3 +1831,11 @@ truncate bank_project_balances
 
 ~===== Drop cities table
 DROP TABLE `cities`;
+
+~===== Add accruals and cash received fields in bank balances
+ALTER TABLE `bank_project_balances`
+ADD `accruals` double NULL AFTER `invoice`,
+CHANGE `updated_at` `updated_at` timestamp NOT NULL DEFAULT current_timestamp() AFTER `created_at`;
+
+ALTER TABLE `bank_project_balances`
+ADD `cash_received` double NULL AFTER `accruals`;

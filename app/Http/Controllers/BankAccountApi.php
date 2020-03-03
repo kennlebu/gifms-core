@@ -288,6 +288,8 @@ class BankAccountApi extends Controller
             $bank_balance = new BankProjectBalances();
             $bank_balance->balance = $request->balance;
             $bank_balance->balance_date = date('Y-m-d H:i:s');
+            $bank_balance->accruals = $request->accruals ?? 0;
+
             $bank_balance->disableLogging();
             $bank_balance->save();
             return response()->json(['msg' => 'Bank balance added','bank_account' => $bank_balance], 200);
@@ -301,6 +303,7 @@ class BankAccountApi extends Controller
         try{
             $bank_balance = BankProjectBalances::find($request->id);
             $bank_balance->balance = $request->balance;
+            $bank_balance->accruals = $request->accruals;
             $bank_balance->disableLogging();
             $bank_balance->save();
             return response()->json(['msg' => 'Bank balance updated','bank_account' => $bank_balance], 200);
@@ -352,6 +355,19 @@ class BankAccountApi extends Controller
         try{
             BankProjectBalances::destroy($id);
             return response()->json(['msg'=>"Bank balance removed"], 200,array(),JSON_PRETTY_PRINT);
+        }
+        catch (Exception $e){
+            return response()->json(['error'=>'Something went wrong', 'msg'=>$e->getTraceAsString()], 500,[],JSON_PRETTY_PRINT);
+        }
+    }
+
+    public function addCashReceived(HttpRequest $request){
+        try{
+            $bank_balance = BankProjectBalances::find($request->id);
+            $bank_balance->cash_received = $bank_balance->cash_received ?? 0 + $request->cash_received;
+            $bank_balance->disableLogging();
+            $bank_balance->save();
+            return response()->json(['msg' => 'Cash received added','bank_balance' => $bank_balance], 200);
         }
         catch (Exception $e){
             return response()->json(['error'=>'Something went wrong', 'msg'=>$e->getTraceAsString()], 500,[],JSON_PRETTY_PRINT);
