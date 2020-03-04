@@ -366,21 +366,55 @@ class RequisitionApi extends Controller
                 }
             }
 
-            // // Files
+            // Files
             // $no_of_files = (int) $request->no_of_files;
             // $files = [];
+            // $titles = [];
             // for($i = 0; $i < $no_of_files; $i++) {
             //     $name = 'file'.$i;
+            //     $file_title = 'file'.$i.'_title';
             //     $files[] = $request->$name;
+            //     $titles[] = $request->$file_title;
             // }
 
-            // foreach($files as $file) {
-            //     if($file != 0){
-            //         FTP::connection()->makeDir('/requisitions');
-            //         FTP::connection()->makeDir('/requisitions/'.$requisition->ref);
-            //         FTP::connection()->uploadFile($file->getPathname(), '/requisitions/'.$requisition->ref.'/'.$file->getClientOriginalName().'.'.$file->getClientOriginalExtension());
-            //     }
+            // file_put_contents ( "C://Users//kennl//Documents//debug.txt" , PHP_EOL.$no_of_files , FILE_APPEND);
+            // file_put_contents ( "C://Users//kennl//Documents//debug.txt" , PHP_EOL.json_encode($titles) , FILE_APPEND);
+
+            // // $counter = 0;
+            // // for($f = 0; $f < count($files); $f++) {
+            // //     if($files[$f] == 0){
+            // //         continue;
+            // //     }
+            // //     $requisition_doc = new RequisitionDocument();
+            // //     $requisition_doc->title = $titles[$f];
+            // //     $requisition_doc->requisition_id = $requisition->id;
+            // //     $requisition_doc->uploaded_by_id = $this->current_user()->id;
+            // //     $requisition_doc->filename = $requisition->ref.'doc_'.$counter;
+            // //     $requisition_doc->type = $files[$f]->getClientOriginalExtension();
+            // //     $requisition_doc->save();
+                
+            // //     FTP::connection()->makeDir('/requisitions');
+            // //     FTP::connection()->makeDir('/requisitions/'.$requisition->ref);
+            // //     FTP::connection()->uploadFile($files[$f]->getPathname(), '/requisitions/'.$requisition->ref.'/'.$requisition_doc->filename.'.'.$requisition_doc->type);
+            // //     $counter += 1;
+            // // }
+
+            // // Airfare document
+            // $airfare_doc = $request->airfare_doc;
+            // if($airfare_doc != 0){
+            //     $requisition_doc = new RequisitionDocument();
+            //     $requisition_doc->title = "Airfare support document";
+            //     $requisition_doc->requisition_id = $requisition->id;
+            //     $requisition_doc->uploaded_by_id = $this->current_user()->id;
+            //     // $requisition_doc->filename = $requisition->ref.'doc_'.$counter;
+            //     $requisition_doc->type = $airfare_doc->getClientOriginalExtension();
+            //     $requisition_doc->save();
+
+            //     FTP::connection()->makeDir('/requisitions');
+            //     FTP::connection()->makeDir('/requisitions/'.$requisition->ref);
+            //     FTP::connection()->uploadFile($airfare_doc->getPathname(), '/requisitions/'.$requisition->ref.'/'.$requisition_doc->filename.'.'.$requisition_doc->type);
             // }
+
             // Logging
             $activity = activity()
                 ->performedOn($requisition)
