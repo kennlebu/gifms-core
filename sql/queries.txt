@@ -1839,3 +1839,7 @@ CHANGE `updated_at` `updated_at` timestamp NOT NULL DEFAULT current_timestamp() 
 
 ALTER TABLE `bank_project_balances`
 ADD `cash_received` double NULL AFTER `accruals`;
+
+~===== Add notes to requisition items
+ALTER TABLE `requisition_items`
+ADD `notes` text NULL AFTER `account_id`;

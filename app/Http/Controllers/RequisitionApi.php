@@ -189,6 +189,7 @@ class RequisitionApi extends Controller
                 $item->county_id = $i->county_id ?? null;
                 $item->module = $i->module ?? null;
                 $item->account_id = $i->account_id ?? null;
+                $item->notes = $i->notes ?? null;
                 if(empty($i->no_of_days) && !empty($i->service_id)){
                     $s = SupplierService::findOrFail($i->service_id);
                     $item->qty_description = $i->qty . ' ' . $s->unit;
@@ -348,8 +349,9 @@ class RequisitionApi extends Controller
                 $item->no_of_days = $i['no_of_days'] ?? null;   
                 $item->service_id = $i['service_id'] ?? null;                
                 $item->county_id = $i['county_id'] ?? null;
-                $item->module = $i['module'] ?? null;    
+                $item->module = $i['module'] ?? null;
                 $item->account_id = $i['account_id'] ?? null;  
+                $item->notes = $i['notes'] ?? null;  
                 if(empty($i['no_of_days']) && !empty($i['service_id'])){
                     $s = SupplierService::findOrFail($i['service_id']);
                     $item->qty_description = $i['qty'] . ' ' . $s->unit;

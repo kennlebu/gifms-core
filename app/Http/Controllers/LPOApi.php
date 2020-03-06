@@ -195,7 +195,7 @@ class LPOApi extends Controller
                                 $allocation->project_id = $alloc->project_id;
                                 $allocation->allocatable_id = $lpo->id;
                                 $allocation->allocatable_type = 'lpos';
-                                $allocation->percentage_allocated = $alloc->percentage_allocated;
+                                $allocation->percentage_allocated = $alloc->percentage_allocated / count($accounts);
                                 $allocation->allocation_purpose = $allocation_purpose;
                                 $allocation->objective_id = $alloc->objective_id;
                                 $allocation->allocated_by_id = $requisition->requested_by_id;
