@@ -15,11 +15,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\FinanceModels\Budget;
+use App\Models\FinanceModels\BudgetObjective;
+use App\Models\FinanceModels\BudgetAccount;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\DB;
 
 use App\Models\FinanceModels\BudgetItem;
 use Exception;
+use Illuminate\Http\Request as HttpRequest;
 
 class BudgetItemApi extends Controller
 {
@@ -31,20 +35,34 @@ class BudgetItemApi extends Controller
      *
      * @return Http response
      */
-    public function addBudgetItem()
+    public function addBudgetItem(HttpRequest $httpRequest)
     {
-        $form = Request::all();
+        try{
+            $budget_objective = new BudgetObjective();
+            $budget_objective->budget_id = $httpRequest->budget_id;
+            $budget_objective->objective_id = $httpRequest->objective_id;
+            if ($httpRequest->objective_id == '-1') {
+                $budget = Budget::find($httpRequest->budget_id);
+                $budget_objective->objective_name = (!empty($budget->project) ? ($budget->project->project_code ?? '').' '.($budget->project->project_name ?? '') : ''). ' Objective 1';
+            }
+            $budget_objective->disableLogging();
+            $budget_objective->save();
+    
+            $accounts = $httpRequest->accounts;
+            foreach($accounts as $account){
+                $budget_account = new BudgetAccount();
+                $budget_account->budget_objective_id = $budget_objective->id;
+                $budget_account->account_id = $account['account_id'];
+                $budget_account->amount = $account['amount'];
+                $budget_account->created_by_id = $this->current_user()->id;
+                $budget_account->disableLogging();
+                $budget_account->save();
+            }
 
-        $budget_item = new BudgetItem;
-        $budget_item->budget_id = (int) $form['budget_id'];
-        $budget_item->objective_id = $form['objective_id'] ?? null;
-        $budget_item->account_id = $form['account_id'] ?? null;
-        $budget_item->amount = (double) $form['amount'];
-        $budget_item->created_by_id = (int) $this->current_user()->id;
-        $budget_item->create_action_by_id = (int) $this->current_user()->id;
-
-        if($budget_item->save()) {
-            return Response()->json(array('msg' => 'Success: budget_item added','budget_item' => $budget_item), 200);
+            return Response()->json(['msg' => 'Success: budget_item added','budget_objective' => $budget_objective], 200);
+        }
+        catch(Exception $e){
+            return Response()->json(['error' => 'Something went wrong','msg' => $e->getMessage()], 500);
         }
     }
     

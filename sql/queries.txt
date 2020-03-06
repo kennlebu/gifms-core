@@ -1292,3 +1292,30 @@ CHANGE `f_name` `f_name` varchar(255) COLLATE 'utf8_unicode_ci' NULL AFTER `phon
 CHANGE `l_name` `l_name` varchar(255) COLLATE 'utf8_unicode_ci' NULL AFTER `f_name`,
 ADD `name` varchar(255) COLLATE 'utf8_unicode_ci' NULL AFTER `l_name`,
 CHANGE `updated_at` `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE CURRENT_TIMESTAMP AFTER `created_at`;
+
+===== Add budget objectives and accounts
+CREATE TABLE `budget_objectives` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `budget_id` int NULL,
+  `objective_id` int NULL,
+  `created_at` timestamp NULL,
+  `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL
+);
+
+CREATE TABLE `budget_accounts` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `budget_objective_id` int NULL,
+  `account_id` int NULL,
+  `amount` double NULL,
+  `created_by_id` int NULL,
+  `created_at` timestamp NULL,
+  `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL
+);
+
+ALTER TABLE `budget_objectives`
+ADD `objective_name` text NULL AFTER `objective_id`,
+CHANGE `updated_at` `updated_at` timestamp NULL AFTER `created_at`;
+
+php artisan refractor:budgets

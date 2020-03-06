@@ -19,6 +19,10 @@ class Budget extends BaseModel
     {
         return $this->hasMany('App\Models\FinanceModels\BudgetItem');
     }
+    public function budget_objectives()
+    {
+        return $this->hasMany('App\Models\FinanceModels\BudgetObjective');
+    }
     public function currency()
     {
         return $this->belongsTo('App\Models\LookupModels\Currency','currency_id');
@@ -38,14 +42,13 @@ class Budget extends BaseModel
     
     public function getTotalsAttribute(){
 
-        $items     =   $this->items;
-        $totals    =   0;
+        $items = $this->budget_objectives;
+        $totals = 0;
 
-        foreach ($items as $key => $value) {
-            $totals    +=  (float) $value->amount;
+        foreach ($items as $objective) {
+            $totals += (float) $objective->total;
         }
 
         return $totals;
-
     }
 }
