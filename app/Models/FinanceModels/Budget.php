@@ -46,7 +46,7 @@ class Budget extends BaseModel
         $totals = 0;
 
         foreach ($items as $objective) {
-            $totals += (float) $objective->total;
+            $totals += (float) $objective->objective_total;
         }
 
         return $totals;

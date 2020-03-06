@@ -14,7 +14,7 @@ class BudgetObjective extends BaseModel
     }
     public function accounts()
     {
-        return $this->hasMany('App\Models\FinanceModels\BudgetAccount');
+        return $this->hasMany('App\Models\FinanceModels\BudgetAccount')->with('account');
     }
 
     public function getObjectiveTotalAttribute(){

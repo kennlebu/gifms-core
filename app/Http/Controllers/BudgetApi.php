@@ -58,13 +58,6 @@ class BudgetApi extends Controller
         $budget->project_id                   = $form['project_id'];
 
         if($budget->save()) {
-            // if(!empty($form['project_id'])){
-            //     $project = Project::find($form['project_id']);
-            //     $project->disableLogging();
-            //     $project->budget_id = $budget->id;
-            //     $project->save();
-            // }
-
             return Response()->json(array('msg' => 'Success: budget added','budget' => $budget), 200);
         }
     }
@@ -126,13 +119,6 @@ class BudgetApi extends Controller
         $budget->project_id                   = $form['project_id'];
 
         if($budget->save()) {
-            // if(!empty($form['project_id'])){
-            //     $project = Project::find($form['project_id']);
-            //     $project->disableLogging();
-            //     $project->budget_id = $budget->id;
-            //     $project->save();
-            // }
-
             return Response()->json(array('msg' => 'Success: budget updated','budget' => $budget), 200);
         }
     }
@@ -217,7 +203,8 @@ class BudgetApi extends Controller
                                 'created_by',
                                 'status',
                                 'items.account',
-                                'project'
+                                'project',
+                                'budget_objectives.objective'
                             )->findOrFail($budget_id);
 
             foreach ($response->items as $key => $value) {
