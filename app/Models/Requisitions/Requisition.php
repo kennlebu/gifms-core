@@ -114,7 +114,7 @@ class Requisition extends BaseModel
 
     public function getGeneratedRefAttribute(){
         // Get the last requisition with a ref
-        $last = Requisition::whereNotNull('ref')->orderBy('id', 'desc')->first();
+        $last = Requisition::whereNotNull('ref')->orderBy('id', 'desc')->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->first();
 
         // Get current year and month
         $year = date('y', strtotime($this->created_at));
