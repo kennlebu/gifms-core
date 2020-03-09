@@ -177,7 +177,12 @@ class MobilePaymentApi extends Controller
                         $allocation->allocatable_type = 'mobile_payments';
                         $allocation->percentage_allocated = $alloc->percentage_allocated;
                         $allocation->amount_allocated = ($mobile_payment->totals * (float)$alloc->percentage_allocated/100);
-                        $allocation->percentage_allocated = ($allocation->amount_allocated/$mobile_payment->totals)*100;
+                        // if(!empty($requisition->lpo)){
+                        //     $allocation->amount_allocated = ($requisition->lpo->totals * (float)$alloc->percentage_allocated/100);
+                        //     $allocation->percentage_allocated = ($allocation->amount_allocated/$requisition->lpo->totals)*100;
+                        // }
+                        // else
+                        //     $allocation->percentage_allocated = $allocation->amount_allocated;
                         $allocation->allocation_purpose = $allocation_purpose;
                         $allocation->objective_id = $alloc->objective_id;
                         $allocation->allocated_by_id = $requisition->requested_by_id;

@@ -56,7 +56,8 @@ class MobilePaymentPayeeApi extends Controller
                 if(!empty($mobile_payment) && !empty($mobile_payment->requisition_id)){
                     foreach($mobile_payment->allocations as $alloc){
                         $a = Allocation::find($alloc->id);
-                        $a->amount_allocated = ($mobile_payment->totals / $a->percentage_allocated) * 100;
+                        if($a->percentage_allocated != 0)
+                            $a->amount_allocated = ($a->percentage_allocated / 100) * $mobile_payment->totals;
                         $a->disableLogging();
                         $a->save();
                     }
@@ -65,6 +66,9 @@ class MobilePaymentPayeeApi extends Controller
             }
         }catch (JWTException $e){
             return response()->json(['error'=>'You are not Authenticated'], 500);
+        }
+        catch (Exception $e){
+            return response()->json(['error'=>'Something went wrong', 'msg'=>$e->getMessage()], 500);
         }
     }
 
