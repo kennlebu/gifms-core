@@ -382,24 +382,27 @@ class RequisitionApi extends Controller
             // file_put_contents ( "C://Users//kennl//Documents//debug.txt" , PHP_EOL.$no_of_files , FILE_APPEND);
             // file_put_contents ( "C://Users//kennl//Documents//debug.txt" , PHP_EOL.json_encode($titles) , FILE_APPEND);
 
-            // // $counter = 0;
-            // // for($f = 0; $f < count($files); $f++) {
-            // //     if($files[$f] == 0){
-            // //         continue;
-            // //     }
-            // //     $requisition_doc = new RequisitionDocument();
-            // //     $requisition_doc->title = $titles[$f];
-            // //     $requisition_doc->requisition_id = $requisition->id;
-            // //     $requisition_doc->uploaded_by_id = $this->current_user()->id;
-            // //     $requisition_doc->filename = $requisition->ref.'doc_'.$counter;
-            // //     $requisition_doc->type = $files[$f]->getClientOriginalExtension();
-            // //     $requisition_doc->save();
+            // $documents = $request->documents;
+            // $counter = 0;
+            // foreach($documents as $document) {
+            //     if(!empty($document['id'])){
+            //         continue;
+            //     }
+            //     file_put_contents ( "C://Users//kennl//Documents//debug.txt" , PHP_EOL.json_encode($request->all()) , FILE_APPEND);
+            //     $file = $document['doc'][0];
+            //     $requisition_doc = new RequisitionDocument();
+            //     $requisition_doc->title = $document['title'];
+            //     $requisition_doc->requisition_id = $requisition->id;
+            //     $requisition_doc->uploaded_by_id = $this->current_user()->id;
+            //     $requisition_doc->filename = $requisition->ref.'doc_'.$counter;
+            //     $requisition_doc->type = $file->getClientOriginalExtension();
+            //     $requisition_doc->save();
                 
-            // //     FTP::connection()->makeDir('/requisitions');
-            // //     FTP::connection()->makeDir('/requisitions/'.$requisition->ref);
-            // //     FTP::connection()->uploadFile($files[$f]->getPathname(), '/requisitions/'.$requisition->ref.'/'.$requisition_doc->filename.'.'.$requisition_doc->type);
-            // //     $counter += 1;
-            // // }
+            //     FTP::connection()->makeDir('/requisitions');
+            //     FTP::connection()->makeDir('/requisitions/'.$requisition->ref);
+            //     FTP::connection()->uploadFile($file->getPathname(), '/requisitions/'.$requisition->ref.'/'.$requisition_doc->filename.'.'.$requisition_doc->type);
+            //     $counter += 1;
+            // }
 
             // // Airfare document
             // $airfare_doc = $request->airfare_doc;
@@ -612,6 +615,52 @@ class RequisitionApi extends Controller
             $response = Response::make("", 200);
             $response->header('Content-Type', 'application/pdf');
             return $response;
+        }
+    }
+
+    public function addDocument(Request $request){
+        try{
+            $form = IlluminateRequest::all();
+            $requisition = Requisition::findOrFail($request->requisition_id);
+            if(empty($request->document_id)){
+                $file = $form['file'];
+                $requisition_document = new RequisitionDocument();
+                $requisition_document->requisition_id = $request->requisition_id;
+                $requisition_document->filename = $requisition->ref.'doc_'.(count($requisition->documents));
+                $requisition_document->type = $file->getClientOriginalExtension();
+                $requisition_document->title = $request->title;
+                $requisition_document->uploaded_by_id = $this->current_user()->id;
+                $requisition_document->save();
+                
+                FTP::connection()->makeDir('/requisitions');
+                FTP::connection()->makeDir('/requisitions/'.$requisition->ref);
+                FTP::connection()->uploadFile($file->getPathname(), '/requisitions/'.$requisition->ref.'/'.$requisition_document->filename.'.'.$requisition_document->type);
+            }
+            else {
+                $requisition_document = RequisitionDocument::findOrFail($request->document_id);
+                $requisition_document->title = $request->title;
+                $requisition_document->uploaded_by_id = $this->current_user()->id;
+                $requisition_document->save();
+            }
+            $requisition->refresh();
+
+            return response()->json(['msg'=>"Document added", "requisition"=>$requisition], 200,array(),JSON_PRETTY_PRINT);
+        }
+        catch(Exception $e){
+            return response()->json(['error'=>"Something went wrong", 'msg'=>$e->getMessage()], 500,array(),JSON_PRETTY_PRINT);
+        }
+    }
+
+    public function removeDocument(Request $request){
+        try{
+            $requisition_document = RequisitionDocument::findOrFail($request->id);
+            $requisition = Requisition::findOrFail($requisition_document->requisition_id);
+            FTP::connection()->delete('/requisitions/'.$requisition->ref.'/'.$requisition_document->filename.'.'.$requisition_document->type);
+            $requisition_document->delete();
+            return response()->json(['msg'=>"Attachment removed",'requisition'=>$requisition], 200,array(),JSON_PRETTY_PRINT);
+        }
+        catch(Exception $e){
+            return response()->json(['error'=>"Something went wrong", 'msg'=>$e->getMessage()], 500,array(),JSON_PRETTY_PRINT);
         }
     }
 
