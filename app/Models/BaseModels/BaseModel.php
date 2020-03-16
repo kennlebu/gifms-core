@@ -210,11 +210,11 @@ class BaseModel extends Model
 		else if($seconds < 3*60*60)
 			$time = $hours." hour".($hours >= 2 ? "s": "")." ago";
 		else if($seconds < 24*60*60)
-			$time = date('g:i a');
+			$time = date('g:i a', strtotime($date));
 		else if($seconds < 7*24*60*60)
-			$time = date('D g:i a');
+			$time = date('D g:i a', strtotime($date));
 		else
-		$time = date('d M, g:i a');
+		$time = date('d M, g:i a', strtotime($date));
 
 		return $time;
 	}
