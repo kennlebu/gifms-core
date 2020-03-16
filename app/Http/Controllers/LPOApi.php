@@ -232,6 +232,9 @@ class LPOApi extends Controller
                     ->withProperties(['detail' => 'Created '. $lpo_type .' '.$lpo->ref, 'summary'=> true])
                     ->log('Created '. $lpo_type);
 
+                // Add activity notification
+                $this->addActivityNotification('Created '. $lpo_type .' '.$lpo->ref, null, $this->current_user()->id, $lpo->requisitioned_by_id??$lpo->requested_by_id, 'info', 'lpos', true);
+
                 return Response()->json(array('msg' => 'Success: lpo added','lpo' => $lpo), 200);
             }
 
@@ -379,6 +382,9 @@ class LPOApi extends Controller
                     ->causedBy($this->current_user())
                     // ->withProperties(['detail'=>'LPO '.$lpo->ref.' has been deleted'])
                     ->log('LPO deleted');
+                    
+                // Add activity notification
+                $this->addActivityNotification('Deleted '. $lpo->lpo_type=='lso'?'LSO':'LSO' .' '.$lpo->ref, null, $this->current_user()->id, $lpo->requisitioned_by_id ?? $lpo->requested_by_id, 'danger', 'lpos', false);
             }
 
             $lpo->delete();
@@ -432,7 +438,10 @@ class LPOApi extends Controller
             activity()
                 ->performedOn($lpo)
                 ->causedBy($this->current_user())
-                ->log('LPO recalled');
+                ->log($lpo->lpo_type=='lso'?'LSO':'LPO'.' recalled');
+            
+            // Add activity notification
+            $this->addActivityNotification($lpo->lpo_type=='lso'?'LSO':'LPO'.' '. $lpo->ref .' recalled', null, $this->current_user()->id, $lpo->requisitioned_by_id ?? $lpo->requested_by_id, 'danger', 'lpos', true);
 
             if(!empty($lpo->requisition_id)){
                 foreach($lpo->items as $item){
@@ -489,7 +498,10 @@ class LPOApi extends Controller
         activity()
             ->performedOn($lpo)
             ->causedBy($this->current_user())
-            ->log('LPO canceled');
+            ->log($lpo->lpo_type=='lso'?'LSO':'LPO'.' canceled');
+            
+        // Add activity notification
+        $this->addActivityNotification($lpo->lpo_type=='lso'?'LSO':'LPO'.' '. $lpo->ref .' cancelled', null, $this->current_user()->id, $lpo->requisitioned_by_id ?? $lpo->requested_by_id, 'danger', 'lpos', true);
 
         $lpo->disableLogging(); //! Do not log the update
         
@@ -506,8 +518,8 @@ class LPOApi extends Controller
                 activity()
                     ->performedOn(Requisition::find($lpo->requisition_id))
                     ->causedBy($this->current_user())
-                    ->withProperties(['detail'=>'LPO '.$lpo->ref.' has been recalled'])
-                    ->log('LPO recalled');
+                    ->withProperties(['detail'=>$lpo->lpo_type=='lso'?'LSO':'LPO'.' '.$lpo->ref.' has been recalled'])
+                    ->log($lpo->lpo_type=='lso'?'LSO':'LPO'.' recalled');
             }
 
             Mail::queue(new NotifyLpoCancellation($lpo));
@@ -574,6 +586,9 @@ class LPOApi extends Controller
                    ->causedBy($user)
                    ->withProperties(['detail' => $lpo->lpo_type == 'lso'?'LSO':'LPO'. $lpo->ref .' approved', 'summary'=> true])
                    ->log($approval->approval_level->approval_level);
+                
+                // Add activity notification
+                $this->addActivityNotification($lpo->lpo_type == 'lso'?'LSO ':'LPO '. $lpo->ref .' approved', null, $this->current_user()->id, $lpo->requisitioned_by_id ?? $lpo->requested_by_id, 'success', 'lpos', true);
 
                 if($lpo->status_id!=7){
                     Mail::queue(new NotifyLpo($lpo));
@@ -651,6 +666,9 @@ class LPOApi extends Controller
                 ->causedBy($user)
                 ->withProperties(['detail' => $lpo->lpo_type == 'lso'?'LSO':'LPO'.' returned. REASON: '.$lpo->rejection_reason, 'summary'=> true])
                 ->log('Returned');
+
+            // Add activity notification
+            $this->addActivityNotification($lpo->lpo_type=='lso'?'LSO':'LPO'.' '. $lpo->ref .' returned', null, $this->current_user()->id, $lpo->requisitioned_by_id ?? $lpo->requested_by_id, 'danger', 'lpos', false);
 
                 Mail::queue(new NotifyLpo($lpo));
 
@@ -746,6 +764,9 @@ class LPOApi extends Controller
                     ->causedBy($this->current_user())
                     ->log('submitted');
             }
+
+            // Add activity notification
+            $this->addActivityNotification($lpo->lpo_type=='lso'?'LSO':'LPO'.' '. $lpo->ref .' submitted for approval', null, $this->current_user()->id, $lpo->requisitioned_by_id ?? $lpo->requested_by_id, 'info', 'lpos', false);
 
             $lpo->disableLogging(); //! Do not log the update
             if($lpo->save()) {

@@ -91,6 +91,9 @@ class ClaimApi extends Controller
             if($claim->save()) {
                 $claim->disableLogging();
 
+                // Add activity notification
+                $this->addActivityNotification('Claim '.$claim->ref.' created', null, $this->current_user()->id, $claim->requested_by_id, 'info', 'claims', true);
+
                 FTP::connection()->makeDir('/claims');
                 FTP::connection()->makeDir('/claims/'.$claim->id);
                 FTP::connection()->uploadFile($file->getPathname(), '/claims/'.$claim->id.'/'.$claim->id.'.'.$file->getClientOriginalExtension());
@@ -330,6 +333,9 @@ class ClaimApi extends Controller
                    ->performedOn($claim)
                    ->causedBy($user)
                    ->log('approved');
+                   
+                // Add activity notification
+                $this->addActivityNotification('Claim '.$claim->ref.' approved', null, $this->current_user()->id, $claim->requested_by_id, 'success', 'claims', true);
 
                 $approval->save();
 
@@ -450,6 +456,9 @@ class ClaimApi extends Controller
                    ->performedOn($claim)
                    ->causedBy($user)
                    ->log('rejected');
+                   
+                // Add activity notification
+                $this->addActivityNotification('Claim '.$claim->ref.' returned', null, $this->current_user()->id, $claim->requested_by_id, 'danger', 'claims', true);
 
                 Mail::queue(new NotifyClaim($claim));
 
@@ -650,6 +659,10 @@ class ClaimApi extends Controller
             $claim->disableLogging(); //! Do not log the update
 
             if($claim->save()) {
+                
+                // Add activity notification
+                $this->addActivityNotification('claim '.$claim->ref.' submitted', null, $this->current_user()->id, $claim->requested_by_id, 'info', 'claims', true);
+
                 Mail::queue(new NotifyClaim($claim));
                 return Response()->json(array('msg' => 'Success: claim submitted','claim' => $claim), 200);
             }

@@ -108,6 +108,9 @@ class AdvanceApi extends Controller
 
 
             if($advance->save()) {
+  
+                // Add activity notification
+                $this->addActivityNotification('Advance '.$advance->ref.' created', null, $this->current_user()->id, $advance->requested_by_id, 'info', 'advances', true);
 
                 FTP::connection()->makeDir('/advances/'.$advance->id);
                 FTP::connection()->makeDir('/advances/'.$advance->id);
@@ -398,6 +401,9 @@ class AdvanceApi extends Controller
 
                 }
                 
+                // Add activity notification
+                $this->addActivityNotification('Advance '.$advance->ref.' approved', null, $this->current_user()->id, $advance->requested_by_id, 'success', 'advances', false);
+
                 Mail::queue(new NotifyAdvance($advance));
 
                 if($several!=true)
@@ -471,7 +477,10 @@ class AdvanceApi extends Controller
             $advance->rejected_at              =   date('Y-m-d H:i:s');
             $advance->rejection_reason             =   $form['rejection_reason'];
             $advance->disableLogging();
-            if($advance->save()) {
+            if($advance->save()) {                
+                // Add activity notification
+                $this->addActivityNotification('Advance '.$advance->ref.' deleted', null, $this->current_user()->id, $advance->requested_by_id, 'info', 'accounts', true);
+
                 Mail::queue(new NotifyAdvance($advance));
                 return Response()->json(array('msg' => 'Success: advance approved','advance' => $advance), 200);
             }

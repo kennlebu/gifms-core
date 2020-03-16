@@ -50,6 +50,8 @@ class AccountApi extends Controller
         }
 
         if($account->save()) {
+            // Add activity notification
+            $this->addActivityNotification('New account '.$account->account_code.' created', null, $this->current_user()->id, $this->current_user()->id, 'info', 'accounts', true);
 
             return Response()->json(array('msg' => 'Success: account added','account' => $account), 200);
         }

@@ -119,6 +119,9 @@ class DeliveryApi extends Controller
                     ->withProperties(['detail' => 'Created delivery '.$delivery->ref])
                     ->log('Delivery created');
 
+                // Add activity notification
+                $this->addActivityNotification('Received delivery '.$delivery->ref, null, $this->current_user()->id, $delivery->received_for_id, 'info', 'deliveries', true);
+
                 return Response()->json(array('msg' => 'Success: delivery added','delivery' => Delivery::find((int)$delivery->id)), 200);
             }
 

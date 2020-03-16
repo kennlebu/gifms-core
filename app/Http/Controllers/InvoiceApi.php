@@ -281,6 +281,9 @@ class InvoiceApi extends Controller
                             ->causedBy($this->current_user())
                             ->withProperties(['detail' => 'Logged invoice '.$invoice->ref, 'summary'=> true])
                             ->log('Logged');
+                            
+                        // Add activity notification
+                        $this->addActivityNotification('Invoice '.$invoice->external_ref.' logged', null, $this->current_user()->id, $invoice->requested_by_id, 'info', 'invoices', false);
                     }
 
                 }
@@ -299,6 +302,9 @@ class InvoiceApi extends Controller
                         ->causedBy($this->current_user())
                         ->withProperties(['detail' => 'Uploaded invoice '.$invoice->ref])
                         ->log('Uploaded');
+
+                    // Add activity notification
+                    $this->addActivityNotification('Invoice '.$invoice->external_ref.' uploaded', null, $this->current_user()->id, $invoice->requested_by_id, 'info', 'invoices', true);
 
                 }else if($form['submission_type']=='log'){
                     $invoice->save();
@@ -636,6 +642,9 @@ class InvoiceApi extends Controller
                    ->causedBy($user)
                    ->withProperties(['detail' => 'Invoice '.$invoice->external_ref.' approved', 'summary'=> true])
                    ->log($approval->approval_level->approval_level);
+                   
+                // Add activity notification
+                $this->addActivityNotification('Invoice '.$invoice->external_ref.' approved', null, $this->current_user()->id, $invoice->requested_by_id, 'success', 'invoices', true);
 
                 Mail::queue(new NotifyInvoice($invoice));
 
@@ -702,6 +711,9 @@ class InvoiceApi extends Controller
                    ->causedBy($user)
                    ->withProperties(['detail' => 'Invoice '.$invoice->external_ref.' returned. REASON: '.$invoice->rejection_reason, 'summary'=> true])
                    ->log('Returned');
+                   
+                // Add activity notification
+                $this->addActivityNotification('Invoice '.$invoice->external_ref.' returned', null, $this->current_user()->id, $invoice->requested_by_id, 'danger', 'invoices', false);
 
                 return Response()->json(array('msg' => 'Success: invoice approved','invoice' => $invoice), 200);
             }
@@ -852,7 +864,10 @@ class InvoiceApi extends Controller
                 activity()
                    ->performedOn($invoice)
                    ->causedBy($this->current_user())
-                   ->log('submited for approval');
+                   ->log('Submited for approval');
+                   
+                // Add activity notification
+                $this->addActivityNotification('Invoice '.$invoice->ref.' submitted', null, $this->current_user()->id, $invoice->requested_by_id, 'info', 'invoices', true);
 
                 return Response()->json(array('msg' => 'Success: invoice submitted','invoice' => $invoice), 200);
             }
@@ -1399,6 +1414,10 @@ class InvoiceApi extends Controller
                    ->performedOn($invoice)
                    ->causedBy($user)
                    ->log('recalled');
+                   
+            // Add activity notification
+            $this->addActivityNotification('Invoice '.$invoice->external_ref.' recalled', null, $this->current_user()->id, $invoice->requested_by_id, 'danger', 'invoices', true);
+
             return response()->json(['msg'=>"invoice recalled"], 200,array(),JSON_PRETTY_PRINT);
         }else{
             return response()->json(['error'=>"could not recall invoice"], 404,array(),JSON_PRETTY_PRINT);
@@ -1432,6 +1451,11 @@ class InvoiceApi extends Controller
             $new_invoice->created_at = date('Y-m-d H:i:s');
             
             if($new_invoice->save()){
+                
+                // Add activity notification
+                $this->addActivityNotification('Invoice '.$invoice->external_ref.' created', null, $this->current_user()->id, $invoice->requested_by_id, 'info', 'invoices', true);
+
+                //TODO: Change invoice ref to match the requisition format
                 $new_invoice->ref = "CHAI/INV/#$new_invoice->id/".date_format($new_invoice->created_at,"Y/m/d");
 
                 $new_invoice->disableLogging(); //! Do not log the update

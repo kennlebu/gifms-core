@@ -92,7 +92,7 @@ class PaymentBatchApi extends Controller
                         activity()
                             ->performedOn($invoice)
                             ->causedBy($user)
-                            ->log('confirmed & processed payment');
+                            ->log('Confirmed & processed payments');
                     }
                     elseif($payment->payable_type == 'advances'){
                         $advance                = Advance::find($payment->payable_id);
@@ -102,7 +102,7 @@ class PaymentBatchApi extends Controller
                         activity()
                             ->performedOn($advance)
                             ->causedBy($user)
-                            ->log('confirmed & processed payment');
+                            ->log('Confirmed & processed payments');
                     }
                     elseif($payment->payable_type == 'claims'){
                         $claim                = Claim::find($payment->payable_id);
@@ -112,11 +112,12 @@ class PaymentBatchApi extends Controller
                         activity()
                             ->performedOn($claim)
                             ->causedBy($user)
-                            ->log('confirmed & processed payment');
+                            ->log('Confirmed & processed payments');
                     }
-
-
                 }
+                
+                // Add activity notification
+                $this->addActivityNotification('Payments consolidated (batched)', null, $this->current_user()->id, $this->current_user()->id, 'success', 'payment_batches', true);
 
                 Mail::queue(new NotifyBatch($payment_batch->id));
 

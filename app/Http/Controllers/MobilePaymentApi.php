@@ -222,6 +222,9 @@ class MobilePaymentApi extends Controller
                         ->log('Created');
                 }
                 $mobile_payment->save();
+                
+                // Add activity notification
+                $this->addActivityNotification('Mobile payment '.$mobile_payment->ref.' created', null, $this->current_user()->id, $mobile_payment->requested_by_id, 'info', 'mobile_payments', true);
 
                 return Response()->json(array('msg' => 'Success: mobile payment added','mobile_payment' => $mobile_payment), 200);
             }
@@ -461,6 +464,9 @@ class MobilePaymentApi extends Controller
                    ->performedOn($approval->approvable)
                    ->causedBy($user)
                    ->log('Approved');
+                   
+                // Add activity notification
+                $this->addActivityNotification('Mobile payment '.$mobile_payment->ref.' approved', null, $this->current_user()->id, $mobile_payment->requested_by_id, 'success', 'mobile_payments', true);
 
                 if($several!=true)
                 return Response()->json(array('result' => 'Success: mobile payment approved','mobile_payment' => $mobile_payment), 200);
@@ -663,6 +669,9 @@ class MobilePaymentApi extends Controller
                     ->performedOn($mobile_payment)
                     ->causedBy($user)
                     ->log('Returned');
+                    
+                // Add activity notification
+                $this->addActivityNotification('Mobile payment '.$mobile_payment->ref.' returned', null, $this->current_user()->id, $mobile_payment->requested_by_id, 'danger', 'mobile_payments', true);
 
                 Mail::queue(new NotifyMobilePayment($mobile_payment));
 
@@ -1041,6 +1050,9 @@ class MobilePaymentApi extends Controller
                    ->causedBy($user)
                    ->log('Submitted for approval');
                    
+                // Add activity notification
+                $this->addActivityNotification('Mobile payment '.$mobile_payment->ref.' submitted', null, $this->current_user()->id, $mobile_payment->requested_by_id, 'info', 'mobile_payments', true);
+                   
                 Mail::queue(new NotifyMobilePayment($mobile_payment));
 
                 return Response()->json(array('msg' => 'Success: mobile_payment submitted','mobile_payment' => $mobile_payment), 200);
@@ -1201,6 +1213,9 @@ class MobilePaymentApi extends Controller
             ->performedOn($mobile_payment)
             ->causedBy($this->current_user())
             ->log('Recalled');
+            
+        // Add activity notification
+        $this->addActivityNotification('Mobile payment '.$mobile_payment->ref.' recalled', null, $this->current_user()->id, $mobile_payment->requested_by_id, 'danger', 'mobile_payments', true);
 
         $mobile_payment->disableLogging(); //! Do not log the update
         

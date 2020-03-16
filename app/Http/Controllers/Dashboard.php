@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\BankingModels\BankProjectBalances;
 use App\Models\FinanceModels\ExchangeRate;
 use App\Models\InvoicesModels\Invoice;
+use App\Models\OtherModels\ActivityNotification;
 use App\Models\PaymentModels\Payment;
 use App\Models\PaymentModels\PaymentBatch;
 use DateTime;
@@ -67,6 +68,26 @@ class Dashboard extends Controller
             $metrics[] = ['id'=>$bank_balance->id, 'title'=>'Bank balance estimate', 'total_balance'=>$bank_balance->total_balance, 'beginning_balance'=>$bank_balance->balance, 'accruals'=>$bank_balance->accruals ?? 0, 'unpaid'=>$unpaid_total, 'paid'=>$paid_total, 'current'=>$current];
         }
 
+
+        // Get unapproved transactions
+        //TODO
+
         return response()->json($metrics, 200,array(),JSON_PRETTY_PRINT);
+    }
+
+
+    public function getRecentActivity(){
+        $user = $this->current_user();
+        $activity = ActivityNotification::with('action_by', 'user')->where('user_id', $user->id);
+
+        // Show all the relevant activity to the admins
+        if($user->hasRole([ 'super-admin', 'admin', 'director', 'associate-director', 'financial-controller', 'accountant', 'assistant-accountant'])){
+            $activity = $activity->orWhere('show_admins', 'true');
+        }
+
+        $activity = $activity->get();
+
+
+        return response()->json($activity, 200,array(),JSON_PRETTY_PRINT);
     }
 }

@@ -189,4 +189,32 @@ class BaseModel extends Model
         return array_unique($uniques);
 	}
 
+
+
+	/**
+	 * Returns time difference of the date
+	 */
+	public function calculate_time_span($date){
+		$seconds  = strtotime(date('Y-m-d H:i:s')) - strtotime($date);
+	
+		$months = floor($seconds / (3600*24*30));
+		$day = floor($seconds / (3600*24));
+		$hours = floor($seconds / 3600);
+		$mins = floor(($seconds - ($hours*3600)) / 60);
+		$secs = floor($seconds % 60);
+
+		if($seconds < 60)
+			$time = $secs." seconds ago";
+		else if($seconds < 60*60 )
+			$time = $mins." min ago";
+		else if($seconds < 24*60*60)
+			$time = $hours." hour".($hours >= 2 ? "s": "")." ago";
+		else if($seconds < 24*60*60)
+			$time = $day." day".($day >= 2 ? "s": "")." ago";
+		else
+			$time = $months." month".($months >= 2 ? "s": "")." ago";
+
+		return $time;
+	}
+
 }

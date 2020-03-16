@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-
+use App\Models\OtherModels\ActivityNotification;
 use JWTAuth;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Routing\Controller as BaseController;
@@ -298,5 +298,23 @@ class Controller extends BaseController
             ];
         }
         return $changes;
+    }
+
+
+
+    /**
+     * Adds activity to the activity notifications table
+     */
+    public function addActivityNotification($data, $actions=null, $action_by_id=null, $user_id=null, $severity=null, $type=null, $show_admins=false){
+        $activity = new ActivityNotification();
+        $activity->data = $data;
+        $activity->actions = $actions;
+        $activity->action_by_id = $action_by_id;
+        $activity->user_id = $user_id;
+        $activity->severity = $severity;
+        $activity->type = $type;
+        $activity->show_admins = $show_admins;
+        $activity->disableLogging();
+        $activity->save();
     }
 }

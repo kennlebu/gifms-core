@@ -1843,3 +1843,23 @@ ADD `cash_received` double NULL AFTER `accruals`;
 ~===== Add notes to requisition items
 ALTER TABLE `requisition_items`
 ADD `notes` text NULL AFTER `account_id`;
+
+===== Create activity notifications table
+CREATE TABLE `activity_notifications` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `data` text NULL,
+  `actions` text NULL,
+  `action_by_id` int NULL,
+  `user_id` int NULL,
+  `severity` text NULL,
+  `created_at` timestamp NULL,
+  `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL
+);
+
+ALTER TABLE `activity_notifications`
+ADD `type` text COLLATE 'latin1_swedish_ci' NULL AFTER `severity`,
+CHANGE `updated_at` `updated_at` timestamp NULL AFTER `created_at`;
+
+ALTER TABLE `activity_notifications`
+ADD `show_admins` text COLLATE 'latin1_swedish_ci' NULL AFTER `type`;
