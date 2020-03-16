@@ -16,6 +16,6 @@ class BankProjectBalances extends BaseModel
     }
 
     public function getTotalBalanceAttribute(){
-        return $this->balance ?? 0 + $this->accruals ?? 0 + $this->cash_received ?? 0;
+        return ($this->balance ?? 0) + ($this->accruals ?? 0) + ($this->cash_received ?? 0);
     }
 }
