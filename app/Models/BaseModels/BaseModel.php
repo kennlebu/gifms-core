@@ -207,12 +207,14 @@ class BaseModel extends Model
 			$time = $secs." seconds ago";
 		else if($seconds < 60*60 )
 			$time = $mins." min ago";
-		else if($seconds < 24*60*60)
+		else if($seconds < 3*60*60)
 			$time = $hours." hour".($hours >= 2 ? "s": "")." ago";
 		else if($seconds < 24*60*60)
-			$time = $day." day".($day >= 2 ? "s": "")." ago";
+			$time = date('g:i a');
+		else if($seconds < 7*24*60*60)
+			$time = date('D g:i a');
 		else
-			$time = $months." month".($months >= 2 ? "s": "")." ago";
+		$time = date('d M, g:i a');
 
 		return $time;
 	}
