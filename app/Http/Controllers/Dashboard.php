@@ -3,11 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\BankingModels\BankProjectBalances;
+use App\Models\ClaimsModels\Claim;
 use App\Models\FinanceModels\ExchangeRate;
+use App\Models\FundsRequestModels\FundsRequest;
 use App\Models\InvoicesModels\Invoice;
+use App\Models\LeaveManagementModels\LeaveRequest;
+use App\Models\LPOModels\Lpo;
+use App\Models\MobilePaymentModels\MobilePayment;
 use App\Models\OtherModels\ActivityNotification;
 use App\Models\PaymentModels\Payment;
 use App\Models\PaymentModels\PaymentBatch;
+use App\Models\Requisitions\Requisition;
 use DateTime;
 use Illuminate\Http\Request;
 
@@ -16,6 +22,29 @@ class Dashboard extends Controller
     public function getMetrics(){
         $metrics = [];
 
+        $metrics[] = $this->getBankBalance();
+        $metrics[] = $this->getUnapproved();
+
+        return response()->json($metrics, 200,array(),JSON_PRETTY_PRINT);
+    }
+
+
+    public function getRecentActivity(){
+        $user = $this->current_user();
+        $activity = ActivityNotification::with('action_by', 'user')->where('user_id', $user->id)->orWhere('action_by_id', $user->id);
+
+        // Show all the relevant activity to the admins
+        if($user->hasRole([ 'super-admin', 'admin', 'director', 'associate-director', 'financial-controller', 'accountant', 'assistant-accountant'])){
+            $activity = $activity->orWhere('show_admins', 'true');
+        }
+
+        $activity = $activity->get();
+
+
+        return response()->json($activity, 200,array(),JSON_PRETTY_PRINT);
+    }
+
+    private function getBankBalance(){
         // Get bank balance projections
         $unpaid_total = 0;
         $paid_total = 0;
@@ -61,33 +90,62 @@ class Dashboard extends Controller
         
         if(empty($bank_balance) || $bank_balance->balance == 0){
             $current = 0 - $unpaid_total - $paid_total;
-            $metrics[] = ['title'=>'Bank balance estimate', 'total_balance'=>0, 'beginning_balance'=>0, 'accruals'=>0, 'unpaid'=>$unpaid_total, 'paid'=>$paid_total, 'action'=>'Add bank balance', 'current'=>$current];
+            return ['type'=>'bank_balance', 'title'=>'Bank balance estimate', 'total_balance'=>0, 'beginning_balance'=>0, 'accruals'=>0, 'unpaid'=>$unpaid_total, 'paid'=>$paid_total, 'action'=>'Add bank balance', 'current'=>$current];
         }
         else{
             $current = $bank_balance->total_balance ?? 0 - $bank_balance->accruals ?? 0 - $unpaid_total - $paid_total;
-            $metrics[] = ['id'=>$bank_balance->id, 'title'=>'Bank balance estimate', 'total_balance'=>$bank_balance->total_balance, 'beginning_balance'=>$bank_balance->balance, 'accruals'=>$bank_balance->accruals ?? 0, 'unpaid'=>$unpaid_total, 'paid'=>$paid_total, 'current'=>$current];
+            return ['type'=>'bank_balance', 'id'=>$bank_balance->id, 'title'=>'Bank balance estimate', 'total_balance'=>$bank_balance->total_balance, 'beginning_balance'=>$bank_balance->balance, 'accruals'=>$bank_balance->accruals ?? 0, 'unpaid'=>$unpaid_total, 'paid'=>$paid_total, 'current'=>$current];
         }
-
-
-        // Get unapproved transactions
-        //TODO
-
-        return response()->json($metrics, 200,array(),JSON_PRETTY_PRINT);
     }
 
-
-    public function getRecentActivity(){
+    private function getUnapproved(){
+        $total = 0;
+        $invoices = 0;
+        $lpos = 0;
+        $claims = 0;
+        $mobile_payments = 0;
+        $requisitions = 0;
+        $others = 0;
         $user = $this->current_user();
-        $activity = ActivityNotification::with('action_by', 'user')->where('user_id', $user->id);
 
-        // Show all the relevant activity to the admins
-        if($user->hasRole([ 'super-admin', 'admin', 'director', 'associate-director', 'financial-controller', 'accountant', 'assistant-accountant'])){
-            $activity = $activity->orWhere('show_admins', 'true');
+        // Accountants
+        if($user->hasRole(['accountant', 'assistant-accountant'])){
+            $invoices += Invoice::where('status_id', 12)->count();
+            $lpos += Lpo::where('status_id', 13)->count();
+            $claims += Claim::where('status_id', 10)->count();
+            $mobile_payments += MobilePayment::where('status_id', 9)->count();
         }
 
-        $activity = $activity->get();
+        // Finance
+        if($user->hasRole(['financial-controller'])){
+            $invoices += Invoice::where('status_id', 2)->count();
+            $lpos += Lpo::where('status_id', 4)->count();
+            $claims += Claim::where('status_id', 3)->count();
+            $mobile_payments += MobilePayment::where('status_id', 3)->count();
+            $others += FundsRequest::where('status_id', 2)->count();
+        }
 
+        // PMs
+        if($user->hasRole(['program-manager'])){
+            $invoices += Invoice::where('status_id', 1)->where('project_manager_id', $user->id)->count();
+            $lpos += Lpo::where('status_id', 3)->where('project_manager_id', $user->id)->count();
+            $claims += Claim::where('status_id', 2)->where('project_manager_id', $user->id)->count();
+            $mobile_payments += MobilePayment::where('status_id', 2)->where('project_manager_id', $user->id)->count();
+            $requisitions += Requisition::where('status_id', 2)->where('program_manager_id', $user->id)->count();
+            $others += LeaveRequest::where('status_id', 2)->where('line_manager_id', $user->id)->count();
+        }
 
-        return response()->json($activity, 200,array(),JSON_PRETTY_PRINT);
+        // Directors
+        if($user->hasRole(['director', 'associate-director'])){
+            $invoices += Invoice::where('status_id', 3)->count();
+            $lpos += Lpo::where('status_id', 5)->count();
+            $claims += Claim::where('status_id', 4)->count();
+            $mobile_payments += MobilePayment::where('status_id', 8)->count();
+            $others += LeaveRequest::where('status_id', 2)->where('line_manager_id', $user->id)->count();
+        }
+        
+        $total += ($invoices + $lpos + $claims + $mobile_payments + $requisitions + $others);
+
+        return ['type'=>'approvals', 'invoices'=>$invoices, 'lpos'=>$lpos, 'claims'=>$claims, 'mobile_payments'=>$mobile_payments, 'requisitions'=>$requisitions, 'others'=>$others, 'total'=>$total];
     }
 }
