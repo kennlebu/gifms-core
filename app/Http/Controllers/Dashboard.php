@@ -22,7 +22,10 @@ class Dashboard extends Controller
     public function getMetrics(){
         $metrics = [];
 
-        $metrics[] = $this->getBankBalance();
+        if($this->current_user()->hasRole(['accountant', 'assistant-accountant','financial-controller','director', 'associate-director'])){
+            $metrics[] = $this->getBankBalance();
+        }
+        
         $metrics[] = $this->getUnapproved();
 
         return response()->json($metrics, 200,array(),JSON_PRETTY_PRINT);
