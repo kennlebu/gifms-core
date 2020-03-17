@@ -180,6 +180,7 @@ Route::PUT('/lpo-supplier', 'LPOApi@updateLpoSupplier')->middleware('jwt.auth');
 Route::POST('/prenegotiated', 'LPOApi@addPrenegotiatedLpoRate')->middleware('jwt.auth');
 Route::POST('/lpos_not_selected', 'LPOApi@addVendorsNotSelected')->middleware('jwt.auth');
 Route::GET('/lpos_not_selected', 'LPOApi@getVendorsNotSelected')->middleware('jwt.auth');
+Route::POST('/add-lpo-terms', 'LPOApi@addLpoTerms')->middleware('jwt.auth');
 
 
 

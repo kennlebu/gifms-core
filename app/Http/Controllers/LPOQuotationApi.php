@@ -57,7 +57,8 @@ class LPOQuotationApi extends Controller
                 FTP::connection()->makeDir('/lpos/'.$lpo_quotation->lpo_id.'/quotations/'.$lpo_quotation->id);
                 FTP::connection()->uploadFile($file->getPathname(), '/lpos/'.$lpo_quotation->lpo_id.'/quotations/'.$lpo_quotation->id.'/'.$lpo_quotation->id.'.'.$file->getClientOriginalExtension());
 
-                $lpo_quotation->quotation_doc                   =   $lpo_quotation->id.'.'.$file->getClientOriginalExtension();
+                $lpo_quotation->quotation_doc = $lpo_quotation->id.'.'.$file->getClientOriginalExtension();
+                $lpo_quotation->disableLogging();
                 $lpo_quotation->save();                
 
                 $lpo = Lpo::with("preffered_quotation")->findOrFail($lpo_quotation->lpo_id);
@@ -67,7 +68,8 @@ class LPOQuotationApi extends Controller
                     activity()
                         ->performedOn($lpo)
                         ->causedBy($this->current_user())
-                        ->log('quotation added');
+                        ->withProperties(['detail' => 'Added quotation from '.$lpo_quotation->supplier->supplier_name ?? '-'.'. Amount: '.$lpo_quotation->amount, 'summary'=> true])
+                        ->log('Quotation added');
 
                     $lpo->disableLogging(); //! Do not log the update
                     $lpo->save();
@@ -181,8 +183,17 @@ class LPOQuotationApi extends Controller
      */
     public function deleteLpoQuotation($lpo_quotation_id)
     {
-        $deleted_lpo_quotation = LpoQuotation::destroy($lpo_quotation_id);
-        if($deleted_lpo_quotation){
+        $lpo_quotation = LpoQuotation::destroy($lpo_quotation_id);
+        $lpo_quotation->delete();
+        if($lpo_quotation){
+            $lpo = Lpo::find($lpo_quotation->lpo_id);
+            if(!empty($lpo)){
+                activity()
+                ->performedOn($lpo)
+                ->causedBy($this->current_user())
+                ->withProperties(['detail' => 'Deleted quotation from '.$lpo_quotation->supplier->supplier_name ?? '-'.'. Amount: '.$lpo_quotation->amount, 'summary'=> true])
+                ->log('Quotation deleted');
+            }
             return response()->json(['msg'=>"lpo quotation deleted"], 200,array(),JSON_PRETTY_PRINT);
         }else{
             return response()->json(['error'=>"Somethnig went wrong"], 500,array(),JSON_PRETTY_PRINT);

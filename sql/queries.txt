@@ -1863,3 +1863,8 @@ CHANGE `updated_at` `updated_at` timestamp NULL AFTER `created_at`;
 
 ALTER TABLE `activity_notifications`
 ADD `show_admins` text COLLATE 'latin1_swedish_ci' NULL AFTER `type`;
+
+===== Add supply category column on LPO terms table
+ALTER TABLE `lpo_default_terms`
+ADD `supply_category_id` int NULL AFTER `terms`,
+CHANGE `updated_at` `updated_at` timestamp NOT NULL DEFAULT current_timestamp() AFTER `created_at`;

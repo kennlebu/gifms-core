@@ -35,11 +35,13 @@ use App\Exceptions\NoLpoItemsException;
 use App\Exceptions\LpoQuotationAmountMismatchException;
 use App\Exceptions\ApprovalException;
 use App\Models\AllocationModels\Allocation;
+use App\Models\LpoModels\LpoDefaultTerm;
 use App\Models\LPOModels\LpoItem;
+use App\Models\LPOModels\LpoTerm;
 use App\Models\Requisitions\Requisition;
 use App\Models\Requisitions\RequisitionItem;
 use Excel;
-
+use Illuminate\Http\Request as HttpRequest;
 
 class LPOApi extends Controller
 {
@@ -141,7 +143,7 @@ class LPOApi extends Controller
             }
 
             $lpo->disableLogging();
-            if($lpo->save()) {                
+            if($lpo->save()) {
 
                 $requisition = null;
                 if(!empty($form['requisition_id']) && (int) $form['requisition_id'] != 0){
@@ -226,10 +228,18 @@ class LPOApi extends Controller
                 $lpo->ref = $requisition->ref.'-'.$lpo_type.'-'.$this->pad_with_zeros(2, $lpo_no);
                 $lpo->save();
 
+                if(!empty($requisition)){
+                    // Create a requisition log for LPO creation
+                    activity()
+                        ->performedOn($requisition)
+                        ->causedBy($this->current_user())
+                        ->withProperties(['detail' => 'Created '.$lpo_type.' '.$lpo->ref, 'summary'=> true])
+                        ->log('Created '.$lpo_type);
+                }
+
                 activity()
-                    ->performedOn($requisition)
+                    ->performedOn($lpo)
                     ->causedBy($this->current_user())
-                    ->withProperties(['detail' => 'Created '. $lpo_type .' '.$lpo->ref, 'summary'=> true])
                     ->log('Created '. $lpo_type);
 
                 // Add activity notification
@@ -441,7 +451,7 @@ class LPOApi extends Controller
                 ->log($lpo->lpo_type=='lso'?'LSO':'LPO'.' recalled');
             
             // Add activity notification
-            $this->addActivityNotification($lpo->lpo_type=='lso'?'LSO':'LPO'.' '. $lpo->ref .' recalled', null, $this->current_user()->id, $lpo->requisitioned_by_id ?? $lpo->requested_by_id, 'danger', 'lpos', true);
+            $this->addActivityNotification('Recalled '.$lpo->lpo_type=='lso'?'LSO':'LPO'.' '. $lpo->ref , null, $this->current_user()->id, $lpo->requisitioned_by_id ?? $lpo->requested_by_id, 'danger', 'lpos', true);
 
             if(!empty($lpo->requisition_id)){
                 foreach($lpo->items as $item){
@@ -501,7 +511,7 @@ class LPOApi extends Controller
             ->log($lpo->lpo_type=='lso'?'LSO':'LPO'.' canceled');
             
         // Add activity notification
-        $this->addActivityNotification($lpo->lpo_type=='lso'?'LSO':'LPO'.' '. $lpo->ref .' cancelled', null, $this->current_user()->id, $lpo->requisitioned_by_id ?? $lpo->requested_by_id, 'danger', 'lpos', true);
+        $this->addActivityNotification('Cancelled '.$lpo->lpo_type=='lso'?'LSO':'LPO'.' '. $lpo->ref, null, $this->current_user()->id, $lpo->requisitioned_by_id ?? $lpo->requested_by_id, 'danger', 'lpos', true);
 
         $lpo->disableLogging(); //! Do not log the update
         
@@ -588,7 +598,7 @@ class LPOApi extends Controller
                    ->log($approval->approval_level->approval_level);
                 
                 // Add activity notification
-                $this->addActivityNotification($lpo->lpo_type == 'lso'?'LSO ':'LPO '. $lpo->ref .' approved', null, $this->current_user()->id, $lpo->requisitioned_by_id ?? $lpo->requested_by_id, 'success', 'lpos', true);
+                $this->addActivityNotification('Approved '.$lpo->lpo_type == 'lso'?'LSO ':'LPO '. $lpo->ref, null, $this->current_user()->id, $lpo->requisitioned_by_id ?? $lpo->requested_by_id, 'success', 'lpos', true);
 
                 if($lpo->status_id!=7){
                     Mail::queue(new NotifyLpo($lpo));
@@ -668,7 +678,7 @@ class LPOApi extends Controller
                 ->log('Returned');
 
             // Add activity notification
-            $this->addActivityNotification($lpo->lpo_type=='lso'?'LSO':'LPO'.' '. $lpo->ref .' returned', null, $this->current_user()->id, $lpo->requisitioned_by_id ?? $lpo->requested_by_id, 'danger', 'lpos', false);
+            $this->addActivityNotification('Returned '.$lpo->lpo_type=='lso'?'LSO':'LPO'.' '. $lpo->ref, null, $this->current_user()->id, $lpo->requisitioned_by_id ?? $lpo->requested_by_id, 'danger', 'lpos', false);
 
                 Mail::queue(new NotifyLpo($lpo));
 
@@ -766,7 +776,7 @@ class LPOApi extends Controller
             }
 
             // Add activity notification
-            $this->addActivityNotification($lpo->lpo_type=='lso'?'LSO':'LPO'.' '. $lpo->ref .' submitted for approval', null, $this->current_user()->id, $lpo->requisitioned_by_id ?? $lpo->requested_by_id, 'info', 'lpos', false);
+            $this->addActivityNotification('Submitted '.$lpo->lpo_type=='lso'?'LSO':'LPO'.' '. $lpo->ref, null, $this->current_user()->id, $lpo->requisitioned_by_id ?? $lpo->requested_by_id, 'info', 'lpos', false);
 
             $lpo->disableLogging(); //! Do not log the update
             if($lpo->save()) {
@@ -1588,6 +1598,37 @@ class LPOApi extends Controller
         if($lpo->save()) {
             return Response()->json(array('msg' => 'Success: lpo supplier updated','lpo' => $lpo), 200);
         }
+    }
+
+
+    public function addLpoTerms(HttpRequest $request){
+        $lpo = Lpo::findOrFail($request->lpo_id);
+        $lpo_terms = [];
+        if(!empty($lpo->preferred_supplier) && !empty($lpo->preferred_supplier->supply_category_id)){
+            $supply_category_terms = LpoDefaultTerm::where('supply_category_id', $lpo->preferred_supplier->supply_category_id)->get();
+            foreach($supply_category_terms as $term){
+                $lpo_terms[] = $term;
+            }
+        }
+        $default_terms = LpoDefaultTerm::whereNull('supply_category_id')->get();
+        foreach($default_terms as $term){
+            $lpo_terms[] = $term;
+        }
+
+        foreach($lpo_terms as $term){
+            $check_term = LpoTerm::where('lpo_id', $request->lpo_id)->where('terms', $term->terms)->exists();
+            if(!$check_term){
+                $new_term = new LpoTerm();
+                $new_term->lpo_id = $request->lpo_id;
+                $new_term->terms = $term->terms;
+                $new_term->disableLogging();
+                $new_term->save();
+            }            
+        }
+
+        $saved_terms = LpoTerm::where('lpo_id', $request->lpo_id)->get();
+        return response()->json($saved_terms, 200, [], JSON_PRETTY_PRINT);
+
     }
 
 
