@@ -37,11 +37,11 @@ class Dashboard extends Controller
         $activity = ActivityNotification::with('action_by', 'user')->where('user_id', $user->id)->orWhere('action_by_id', $user->id);
 
         // Show all the relevant activity to the admins
-        if($user->hasRole([ 'super-admin', 'admin', 'director', 'associate-director', 'financial-controller', 'accountant', 'assistant-accountant'])){
-            $activity = $activity->orWhere('show_admins', 'true');
+        if($user->hasRole(['super-admin', 'admin', 'director', 'associate-director', 'financial-controller', 'accountant', 'assistant-accountant', 'admin-manager'])){
+            $activity = $activity->orWhere('show_admins', true);
         }
 
-        $activity = $activity->limit(15)->get();
+        $activity = $activity->orderBy('created_at', 'DESC')->limit(15)->get();
 
 
         return response()->json($activity, 200,array(),JSON_PRETTY_PRINT);
