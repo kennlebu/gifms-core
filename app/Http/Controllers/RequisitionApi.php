@@ -259,6 +259,9 @@ class RequisitionApi extends Controller
                                 'summary'=> true])
                 ->log('Created');
 
+            // Add activity notification
+            $this->addActivityNotification('Created requisition '.$requisition->ref, null, $this->current_user()->id, $requisition->requested_by_id, 'info', 'requisitions', true);
+
             return Response()->json(array('msg' => 'Success: requisition added','requisition' => $requisition), 200);
         }
         catch(Exception $e){
@@ -473,6 +476,9 @@ class RequisitionApi extends Controller
                     ->performedOn($requisition)
                     ->causedBy($user)
                     ->log('Submitted for approval');
+                    
+                // Add activity notification
+                $this->addActivityNotification('Submitted requisition '.$requisition->ref, null, $this->current_user()->id, $requisition->requested_by_id, 'info', 'requisitions', true);
 
                 Mail::queue(new NotifyRequisition($requisition->id));
 
@@ -504,6 +510,9 @@ class RequisitionApi extends Controller
                 ->causedBy($user)
                 ->withProperties(['detail' => 'Requisition '.$requisition->ref.' approved', 'summary'=> true])
                 ->log('Requisition approved');
+                
+            // Add activity notification
+            $this->addActivityNotification('Requisition '.$requisition->ref.' approved', null, $this->current_user()->id, $requisition->requested_by_id, 'success', 'requisitions', true);
 
             $approval = new Approval();
 
@@ -555,6 +564,9 @@ class RequisitionApi extends Controller
                 ->causedBy($this->current_user())
                 ->withProperties(['detail' => 'Requisition '.$requisition->ref.' returned. REASON: '.$input['rejection_reason'], 'summary'=> true])
                 ->log('Requisition returned');
+
+            // Add activity notification
+            $this->addActivityNotification('Requisition '.$requisition->ref.' returned', null, $this->current_user()->id, $requisition->requested_by_id, 'danger', 'requisitions', true);
         
             return Response()->json(array('msg' => 'Success: requisition returned','data' => $requisition), 200);
         }

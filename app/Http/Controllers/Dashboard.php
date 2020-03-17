@@ -41,7 +41,7 @@ class Dashboard extends Controller
             $activity = $activity->orWhere('show_admins', 'true');
         }
 
-        $activity = $activity->get();
+        $activity = $activity->limit(15)->get();
 
 
         return response()->json($activity, 200,array(),JSON_PRETTY_PRINT);
