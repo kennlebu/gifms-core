@@ -1293,7 +1293,7 @@ CHANGE `l_name` `l_name` varchar(255) COLLATE 'utf8_unicode_ci' NULL AFTER `f_na
 ADD `name` varchar(255) COLLATE 'utf8_unicode_ci' NULL AFTER `l_name`,
 CHANGE `updated_at` `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE CURRENT_TIMESTAMP AFTER `created_at`;
 
-===== Add budget objectives and accounts
++===== Add budget objectives and accounts
 CREATE TABLE `budget_objectives` (
   `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `budget_id` int NULL,
