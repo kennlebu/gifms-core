@@ -4,7 +4,7 @@
 <body  style="font-family: monospace;">
   <main>
     <div>
-      Attn. {{$addressed_to->f_name ?? ''}}
+      Attn. @isset($addressed_to) {{$addressed_to->f_name ?? ''}} @endisset
       <br/>
       <br/>
       @if ($mobile_payment->status_id==9||$mobile_payment->status_id==2||$mobile_payment->status_id==3||$mobile_payment->status_id==4)

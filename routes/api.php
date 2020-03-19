@@ -900,6 +900,7 @@ Route::GET('/roles', 'RolesApi@rolesGet')->middleware('jwt.auth');
  * Output-Formats: [application/json, application/xml]
  */
 Route::PUT('/user_roles', 'RolesApi@assignUserRoles')->middleware('jwt.auth');
+Route::PUT('/user_permissions', 'RolesApi@assignRolePermissions')->middleware('jwt.auth');
 
 
 
@@ -1044,6 +1045,8 @@ Route::PATCH('/project/{project_id}/team', 'ProjectApi@updateProjectTeamDef')->m
 
  */
 Route::GET('/project_activities', 'ProjectActivityApi@projectActivitiesGet')->middleware('jwt.auth');
+
+Route::GET('/project_tracker', 'ProjectApi@getTrackerList')->middleware('jwt.auth');
 
 
 
@@ -1493,6 +1496,7 @@ Route::GET('/suppliers', 'SupplierApi@suppliersGet')->middleware('jwt.auth');
 Route::GET('/suppliers/search', 'SupplierApi@suppliersSearch')->middleware('jwt.auth');
 
 Route::POST('/suppliers/excel_upload', 'SupplierApi@uploadExcel')->middleware('jwt.auth');
+Route::get('/suppliers/download', 'SupplierApi@downloadExcel')->middleware('jwt.auth');
 
 
 
@@ -1832,6 +1836,7 @@ Route::PATCH('/mobile_payment/{mobile_payment_id}/approve', 'MobilePaymentApi@ap
 Route::PATCH('/mobile_payment/{mobile_payment_id}/send-to-bank', 'MobilePaymentApi@sendToBank')->middleware('jwt.auth');
 Route::GET('/mobile-payment-csv/{mobile_payment_id}', 'MobilePaymentApi@downloadCSV')->middleware('jwt.auth');
 Route::PATCH('/mobile-payment/{mobile_payment_id}/mark-as-uploaded', 'MobilePaymentApi@markAsUploaded')->middleware('jwt.auth');
+Route::PATCH('/mobile-payment/request_signitories_multi', 'MobilePaymentApi@requestSignatoriesMulti')->middleware('jwt.auth');
 Route::POST('/mobile-payment/request_signitories/{mobile_payment_id}', 'MobilePaymentApi@requestSignatories')->middleware('jwt.auth');
 Route::POST('/mobile-payment/mark_as_paid', 'MobilePaymentApi@markAsPaid')->middleware('jwt.auth');
 Route::GET('/mobile-payment/download_dump', 'MobilePaymentApi@downloadDump')->middleware('jwt.auth');
@@ -2466,6 +2471,31 @@ Route::GET('/accounts', 'AccountApi@accountsGet')->middleware('jwt.auth');
 
 
 
+/**
+ * Bank contacts
+ */
+Route::POST('/bank-contact', 'BankContactApi@store')->middleware('jwt.auth');
+Route::PUT('/bank-contact', 'BankContactApi@update')->middleware('jwt.auth');
+Route::DELETE('/bank-contact/{id}', 'BankContactApi@destroy')->middleware('jwt.auth');
+Route::GET('/bank-contact/{id}', 'BankContactApi@show')->middleware('jwt.auth');
+Route::GET('/bank-contacts', 'BankContactApi@index')->middleware('jwt.auth');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -2560,6 +2590,8 @@ Route::PATCH('/claims/approve', 'ClaimApi@approveSeveralClaims')->middleware('jw
 
 Route::POST('/claim/mark_as_paid', 'ClaimApi@markAsPaid')->middleware('jwt.auth');
 Route::POST('/claim/upload_allocations', 'ClaimApi@uploadAllocations')->middleware('jwt.auth');
+
+Route::PATCH('claim/{claim_id}/recall', 'ClaimApi@recallClaim')->middleware('jwt.auth');
 
 
 
@@ -5033,6 +5065,7 @@ Route::GET('/budget/{budget_id}', 'BudgetApi@getBudgetById')->middleware('jwt.au
 
  */
 Route::GET('/budgets', 'BudgetApi@budgetsGet')->middleware('jwt.auth');
+Route::POST('/budgets/csv_upload', 'BudgetApi@uploadBudgetFile')->middleware('jwt.auth');
 
 
 
@@ -5116,6 +5149,7 @@ Route::GET('/budget_items', 'BudgetItemApi@budgetItemsGet')->middleware('jwt.aut
  */
 Route::GET('/reports/2016', 'ReportsApi@get2016Report')->middleware('jwt.auth');
 Route::POST('/reports/pm-journal', 'ReportsApi@PmJournal')->middleware('jwt.auth');
+Route::POST('/reports/expense-report', 'ReportsApi@expenseReport')->middleware('jwt.auth');
 
 /**
  * GET getReportingCategories
@@ -5347,6 +5381,16 @@ Route::PATCH('leave-request/{request_id}/reject', 'LeaveManagementApi@rejectLeav
 Route::PATCH('leave-request/{request_id}/submit_for_approval', 'LeaveManagementApi@submitLeaveRequestForApproval')->middleware('jwt.auth');
 Route::PATCH('leave-request/{request_id}/cancel', 'LeaveManagementApi@cancelLeaveRequest')->middleware('jwt.auth');
 Route::PATCH('leave-request/{request_id}/recall', 'LeaveManagementApi@recallLeaveRequest')->middleware('jwt.auth');
+
+/**
+ * Withholding tax
+ */
+Route::POST('/withholding-vat-rate', 'TaxRatesApi@addWithholdingRate')->middleware('jwt.auth');
+Route::GET('/withholding-vat-rates', 'TaxRatesApi@getWithholdingRates')->middleware('jwt.auth');
+Route::GET('/withholding-vat-rate/{id}', 'TaxRatesApi@getWithholdingRate')->middleware('jwt.auth');
+Route::DELETE('/withholding-vat-rate/{id}', 'TaxRatesApi@deleteWithholdingRate')->middleware('jwt.auth');
+Route::PUT('/withholding-vat-rate', 'TaxRatesApi@updateWithholdingRate')->middleware('jwt.auth');
+
 
 /**
  * Assets

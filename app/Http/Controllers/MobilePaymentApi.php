@@ -452,7 +452,7 @@ class MobilePaymentApi extends Controller
                     /* Send Email */
                     Mail::queue(new NotifyMobilePayment($mobile_payment));
                     
-                    // Save the approval if the bdirector has approved
+                    // Save the approval if the director has approved
                     $approval->approval_level_id = 4;
                     $mobile_payment->management_approval_at = $mgt_approval_time;
                     $mobile_payment->save();
@@ -476,7 +476,7 @@ class MobilePaymentApi extends Controller
             $response =  ["error"=>"You do not have the permissions to perform this action at this point"];
             return response()->json($response, 403,array(),JSON_PRETTY_PRINT);
         }catch(Exception $e){
-            $response =  ["error"=>$e->getMessage()];
+            $response =  ["error"=>$e->getMessage(), 'trace'=>$e->getTraceAsString()];
             return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
         }
     }
@@ -509,44 +509,45 @@ class MobilePaymentApi extends Controller
                 );
                 
                 // Add the data to the csv_data array
-                array_push($csv_data, $data);}
+                $csv_data[] = $data;
+            }
 
             /* Get PDF data */                    
-            $deputy_director = Staff::findOrFail((int) Config::get('app.director_id'));
-            $director = Staff::findOrFail(37); //TODO: Pick this from config
-            $pdf_data = array('mobile_payment' => $mobile_payment,
-                'addressee'=>'Maureen Adega',
-                'deputy_director'=>$deputy_director,
-                'director'=>$director
-                // 'our_ref'=>$voucher_number
-            );
+            // $deputy_director = Staff::findOrFail((int) Config::get('app.director_id'));
+            // $director = Staff::findOrFail(37); //TODO: Pick this from config
+            // $pdf_data = array('mobile_payment' => $mobile_payment,
+            //     'addressee'=>'Maureen Adega',
+            //     'deputy_director'=>$deputy_director,
+            //     'director'=>$director
+            //     // 'our_ref'=>$voucher_number
+            // );
 
             /* Send Email */
-            Mail::queue(new MobilePaymentInstructBank($mobile_payment, $csv_data, $pdf_data));
+            Mail::queue(new MobilePaymentInstructBank($mobile_payment, $csv_data, null));
 
+            $log = 'Sent to bank';
             if($mobile_payment->status_id == 1 || $mobile_payment->status_id == 14 || $mobile_payment->status_id == 7){
                 $mobile_payment->status_id = 15;  // Sent to Bank Awaiting verification
-                // Logging
-                activity()
-                    ->performedOn($mobile_payment)
-                    ->causedBy($this->current_user())
-                    ->log('Sent to bank');
+                $log = 'Sent to bank';
             }
             // If it was sent before, move to resent status
             elseif($mobile_payment->status_id == 15){
                 $mobile_payment->status_id = 16;  // Resent to Bank Awaiting Verification
-                // Logging
-                activity()
-                    ->performedOn($mobile_payment)
-                    ->causedBy($this->current_user())
-                    ->log('Resent to bank');
+                $log = 'Resent to bank';
             }
             $mobile_payment->save();
+
+            // Logging
+            activity()
+                ->performedOn($mobile_payment)
+                ->causedBy($this->current_user())
+                ->log($log);
+
             return Response()->json(array('result' => 'Success: mobile payment sent to bank','mobile_payment' => $mobile_payment), 200);
         }
         catch(Exception $e){
-            $response =  ["error"=>$e->getMessage()];
-            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+            $response =  ["error"=>"Something went wrong", "msg"=>$e->getMessage(), "trace"=>$e->getTraceAsString()];
+            return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
         }
     }
 
@@ -574,7 +575,7 @@ class MobilePaymentApi extends Controller
     }
 
 
-    public function requestSignatories($mobile_payment_id){
+    public function requestSignatories($mobile_payment_id, $multiple = false){
         try{
             $mobile_payment = MobilePayment::findOrFail($mobile_payment_id);
             Mail::queue(new RequestMPBankSigning($mobile_payment_id));
@@ -583,11 +584,28 @@ class MobilePaymentApi extends Controller
                 ->causedBy($this->current_user())
                 ->log('Requested bank signatories');
 
+            if(!$multiple)
             return Response()->json(array('result' => 'Success: request sent'), 200);
         }
         catch(Exception $e){
             $response =  ["error"=>"There was an error uploading the mobile payment", "msg"=>$e->getMessage(), "stack"=>$e->getTraceAsString()];
             return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+        }
+    }
+
+    public function requestSignatoriesMulti(){
+        try {
+            $form = Request::only("mobile_payments");
+            $mobile_payment_ids = $form['mobile_payments'];
+
+            foreach ($mobile_payment_ids as $key => $mobile_payment_id) {
+                $this->requestSignatories($mobile_payment_id, true);
+            }
+
+            return response()->json(['mobile_payments'=>$form['mobile_payments']], 201,array(),JSON_PRETTY_PRINT);
+            
+        } catch (Exception $e) {
+             return response()->json(['error'=>"An rerror occured during processing"], 500,array(),JSON_PRETTY_PRINT);            
         }
     }
 
@@ -742,8 +760,6 @@ class MobilePaymentApi extends Controller
             })->get()->toArray();
 
             foreach ($data as $key => $value) {
-                $payee = new MobilePaymentPayee();
-
                 if(strlen($value['phone'])==9 && substr($value['phone'],0,1)=='7'){
                     
                 }else{
@@ -980,6 +996,8 @@ class MobilePaymentApi extends Controller
 
             $mobile_payment->delete();
 
+            // Delete the allocations too
+            Allocation::where('allocatable_id', $mobile_payment_id)->where('allocatable_type', 'mobile_payments')->delete();
             return response()->json(['msg'=>"Mobile Payment deleted"], 200,array(),JSON_PRETTY_PRINT);
         }
         catch(Exception $e) {

@@ -14,6 +14,7 @@ class Payment extends BaseModel
     use SoftDeletes;
 
     protected $appends = ['simple_date', 'bank_transaction', 'net_amount', 'bank_transactions'];
+    protected $with = ['payable'];
     
     public function payable()
     {
@@ -49,7 +50,7 @@ class Payment extends BaseModel
     }
     public function getSimpleDateAttribute(){
         $timestamp = strtotime($this->attributes['created_at']); 
-        return $new_date = date('Ymd', $timestamp);
+        return date('Ymd', $timestamp);
     }
     public function voucher_number(){
         return $this->belongsTo('App\Models\PaymentModels\VoucherNumber', 'voucher_no', 'id');
@@ -81,7 +82,7 @@ class Payment extends BaseModel
             }
             
             if(!empty($this->vat_amount_withheld)){
-                $vat_withhold_amount = (6/16)*$this->vat_amount_withheld;
+                $vat_withhold_amount = (($this->payable->vat_rate ?? 6)/16)*$this->vat_amount_withheld;
                 $net_amount -= ceil($vat_withhold_amount);
             }
         }

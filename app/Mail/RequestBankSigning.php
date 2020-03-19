@@ -33,8 +33,10 @@ class RequestBankSigning extends Mailable
     public function build()
     {      
         // Recepients
-        $accountant           = Staff::findOrFail(    (int)   Config::get('app.accountant_id'));
-        $directors = User::withRole('director')->get();
+        // $accountant = Staff::findOrFail((int) Config::get('app.accountant_id'));
+        $directors = Staff::whereHas('roles', function($query){
+            $query->whereIn('role_id', [3,4]);  
+        })->get();
         $rosemary = Staff::find(42); //TODO: Make this dynamic
         $to = [];
         $ccs = [];
@@ -43,11 +45,20 @@ class RequestBankSigning extends Mailable
         }
         $to[] = $rosemary->email;
 
-        $finance = Staff::withRole('financial-controller')->get();
+        $finance = Staff::whereHas('roles', function($query){
+            $query->where('role_id', 5);  
+        })->get();
         foreach($finance as $fin){
             $ccs[] = $fin->email;
         }
-        $ccs[] = $accountant;
+
+        $accountant = Staff::whereHas('roles', function($query){
+            $query->where('role_id', 8);  
+        })->get();
+        foreach($accountant as $acc){
+            $ccs[] = $acc->email;
+        }
+        // $ccs[] = $accountant;
 
         $payments = Payment::with('currency')->where('payment_batch_id', $this->batch_id)->get();
         $batch = PaymentBatch::find($this->batch_id);

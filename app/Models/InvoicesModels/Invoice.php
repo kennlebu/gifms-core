@@ -135,6 +135,11 @@ class Invoice extends BaseModel
     {
         return $this->belongsTo('App\Models\ActivityModels\Activity','program_activity_id');
     }
+    public function getVatRateAttribute($value)   // return the default (6) if it
+    {                                             // has not been set.
+        if(empty($value)) return 6;
+        return $value;
+    }
        
     public function requisition()
     {

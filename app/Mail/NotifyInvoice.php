@@ -70,7 +70,9 @@ class NotifyInvoice extends Mailable
         }else if($this->invoice->status_id == 12){
             
             $ccs[] = $this->invoice->raised_by;
-            $to = User::withRole('accountant')->get();
+            $to = Staff::whereHas('roles', function($query){
+                $query->where('role_id', 8);  
+            })->get();
 
             return $this->to($to)
                     ->with([
@@ -91,7 +93,9 @@ class NotifyInvoice extends Mailable
                     ->subject("Invoice Approval Request ".$this->invoice->external_ref);
         }else if($this->invoice->status_id == 2){
 
-            $to = User::withRole('financial-controller')->get();
+            $to = Staff::whereHas('roles', function($query){
+                $query->where('role_id', 5);  
+            })->get();
             return $this->to($to)
                     ->with([
                             'invoice' => $this->invoice,
@@ -101,7 +105,9 @@ class NotifyInvoice extends Mailable
                     ->subject("Invoice Approval Request ".$this->invoice->external_ref);
         }else if($this->invoice->status_id == 3){
 
-            $to = User::withRole('director')->get();
+            $to = Staff::whereHas('roles', function($query){
+                $query->whereIn('role_id', [3,4]);  
+            })->get();
             return $this->to($to)
                     ->with([
                             'invoice' => $this->invoice,
@@ -111,7 +117,9 @@ class NotifyInvoice extends Mailable
                     ->subject("Invoice Approval Request ".$this->invoice->external_ref);
         }else if($this->invoice->status_id == 4){
 
-            $to = User::withRole('financial-controller')->get();
+            $to = Staff::whereHas('roles', function($query){
+                $query->where('role_id', 5);  
+            })->get();
             return $this->to($to)
                     ->with([
                             'invoice' => $this->invoice,

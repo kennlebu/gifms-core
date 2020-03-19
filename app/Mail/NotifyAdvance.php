@@ -57,7 +57,9 @@ class NotifyAdvance extends Mailable
         if($this->advance->status_id == 13){
             $ccs[] = $this->advance->requested_by;
 
-            $to = User::withRole('accountant')->get();
+            $to = Staff::whereHas('roles', function($query){
+                $query->where('role_id', 8);  
+            })->get();
             return $this->to($to)
                     ->with([
                             'advance' => $this->advance,
@@ -77,7 +79,9 @@ class NotifyAdvance extends Mailable
                     ->subject("Advance Approval Request ".$this->advance->ref);
         }else if($this->advance->status_id == 3){
 
-            $to = User::withRole('financial-controller')->get();
+            $to = Staff::whereHas('roles', function($query){
+                $query->where('role_id', 5);  
+            })->get();
             return $this->to($to)
                     ->with([
                             'advance' => $this->advance,
@@ -87,7 +91,9 @@ class NotifyAdvance extends Mailable
                     ->subject("Advance Approval Request ".$this->advance->ref);
         }else if($this->advance->status_id == 4){
 
-            $to = User::withRole('director')->get();
+            $to = Staff::whereHas('roles', function($query){
+                $query->whereIn('role_id', [3,4]);  
+            })->get();
             return $this->to($to)
                     ->with([
                             'advance' => $this->advance,
@@ -97,7 +103,9 @@ class NotifyAdvance extends Mailable
                     ->subject("Advance Approval Request ".$this->advance->ref);
         }else if($this->advance->status_id == 8){
 
-            $to = User::withRole('financial-controller')->get();
+            $to = Staff::whereHas('roles', function($query){
+                $query->where('role_id', 5);  
+            })->get();
             return $this->to($to)
                     ->with([
                             'advance' => $this->advance,

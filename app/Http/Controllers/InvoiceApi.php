@@ -34,6 +34,7 @@ use App\Models\PaymentModels\Payment;
 use App\Models\PaymentModels\PaymentBatch;
 use App\Exceptions\NotFullyAllocatedException;
 use App\Exceptions\ApprovalException;
+use App\Models\FinanceModels\WithholdingVatRate;
 use App\Models\PaymentModels\VoucherNumber;
 use Excel;
 use App\Models\ReportModels\ReportingObjective;
@@ -100,10 +101,10 @@ class InvoiceApi extends Controller
                 $invoice_date = $dt->format('Y-m-d');
             }
 
-            $exists = Invoice::where('external_ref', $form['external_ref'])
-                        ->where('supplier_id', $form['supplier_id'])
-                        ->first();
-            if(!empty($exists) && ($form['submission_type']!='upload_logged' && $form['submission_type']!='finish_allocations')){
+            // $exists = Invoice::where('external_ref', $form['external_ref'])
+            //             ->where('supplier_id', $form['supplier_id'])
+            //             ->first();
+            if(Invoice::where('external_ref', $invoice->external_ref)->where('supplier_id', $form['supplier_id'])->exists() && $form['submission_type']!='upload_logged' && $form['submission_type']!='finish_allocations'){
                 return response()->json(['error'=>'Invoice with the same invoice number already exists'], 409);
             }
 
@@ -160,7 +161,7 @@ class InvoiceApi extends Controller
                 $invoice->supplier_id                       =   (int)       $form['supplier_id'];
                 $invoice->payment_mode_id                  =   (int)       $form['payment_mode_id'];
                 $invoice->total                             =   (double)    $form['total'];
-                $invoice->total                             =   (double)    $invoice->calculated_total;
+                // $invoice->total                             =   (double)    $invoice->calculated_total;
                 $invoice->currency_id                       =   (int)       $form['currency_id'];
                 $invoice->received_at                       =   date('Y-m-d H:i:s');
                 if(!empty($form['lpo_variation_reason']))
@@ -386,7 +387,7 @@ class InvoiceApi extends Controller
             $invoice->expense_purpose                   =               $form['expense_purpose'];
             $invoice->external_ref                      =               trim($form['external_ref']);
             $invoice->invoice_date                      =               $invoice_date;
-            $invoice->lpo_id                            =   (((int) $form['lpo_id'])>0)?$form['lpo_id']:null;;
+            $invoice->lpo_id                            =   (((int) $form['lpo_id'])>0)?$form['lpo_id']:null;
             $invoice->supplier_id                       =   (int)       $form['supplier_id'];
             $invoice->payment_mode_id                   =   (int)       $form['payment_mode_id'];
             $invoice->project_manager_id                =   (int)       $form['project_manager_id'];
@@ -471,6 +472,8 @@ class InvoiceApi extends Controller
         try {                   
             $deleted_allocation = Invoice::destroy($invoice_id);
             if($deleted_allocation){
+                // Delete the allocations too
+                Allocation::where('allocatable_id', $invoice_id)->where('allocatable_type', 'invoices')->delete();
                 return response()->json(['msg'=>"Invoice deleted"], 200,array(),JSON_PRETTY_PRINT);
             }else{
                 return response()->json(['error'=>"Invoice not found"], 404,array(),JSON_PRETTY_PRINT);
@@ -1510,6 +1513,8 @@ class InvoiceApi extends Controller
             }
             if(!empty($input['withholding_vat'])){
                 $invoice->withholding_vat = $input['withholding_vat'];
+                $vat_rate = WithholdingVatRate::first();
+                $invoice->vat_rate = $vat_rate->rate;
             }
             if(!empty($input['usd_rate'])){
                 $invoice->usd_rate = $input['usd_rate'];

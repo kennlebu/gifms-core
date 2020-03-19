@@ -36,18 +36,24 @@ class LpoInstructSupplier extends Mailable
         $ccs[] = $this->lpo->requested_by;
 
         // Add financial controllers to cc
-        $fm = User::withRole('financial-controller')->get();
+        $fm = Staff::whereHas('roles', function($query){
+            $query->where('role_id', 5);  
+        })->get();
         foreach($fm as $f){
             $ccs[] = array('first_name'=>$f->f_name, 'last_name'=>$f->l_name, 'email'=>$f->email);
         }
 
         // Add Accountants to cc
-        $accountant = User::withRole('accountant')->get();
+        $accountant = Staff::whereHas('roles', function($query){
+            $query->where('role_id', 8);  
+        })->get();
         foreach($accountant as $am){
             $ccs[] = array('first_name'=>$am->f_name, 'last_name'=>$am->l_name, 'email'=>$am->email);
         }
         // Add directors to cc
-        $director = User::withRole('director')->get();
+        $director = Staff::whereHas('roles', function($query){
+            $query->whereIn('role_id', [3,4]);  
+        })->get();
         foreach($director as $am){
             $ccs[] = array('first_name'=>$am->f_name, 'last_name'=>$am->l_name, 'email'=>$am->email);
         }
@@ -61,7 +67,9 @@ class LpoInstructSupplier extends Mailable
 
         if($this->lpo->status_id == 13){
 
-            $accountant = User::withRole('accountant')->get();
+            $accountant = Staff::whereHas('roles', function($query){
+                $query->where('role_id', 8);  
+            })->get();
             return $this->to($accountant)
                     ->with([
                             'lpo' => $this->lpo,
@@ -80,7 +88,9 @@ class LpoInstructSupplier extends Mailable
                     ->subject("LPO Approval Request ".$this->lpo->ref);
         }else if($this->lpo->status_id == 4){
 
-            $fm = User::withRole('financial-controller')->get();
+            $fm = Staff::whereHas('roles', function($query){
+                $query->where('role_id', 5);  
+            })->get();
             return $this->to($fm)
                     ->with([
                             'lpo' => $this->lpo,
@@ -90,7 +100,9 @@ class LpoInstructSupplier extends Mailable
                     ->subject("LPO Approval Request ".$this->lpo->ref);
         }else if($this->lpo->status_id == 5){
 
-            $director = User::withRole('director')->get();
+            $director = Staff::whereHas('roles', function($query){
+                $query->whereIn('role_id', [3,4]);  
+            })->get();
             return $this->to($director)
                     ->with([
                             'lpo' => $this->lpo,

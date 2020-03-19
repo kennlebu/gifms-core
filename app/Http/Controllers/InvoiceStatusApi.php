@@ -360,7 +360,7 @@ class InvoiceStatusApi extends Controller
                           );
                 }
                 
-                if ($user->can('READ_INVOICE_-2')){
+                if ($user->can('READ_INVOICE_-2') || $user->can('See all invoices')){
                     //-2
                     $response[]=array(
                             "id"=> -2,

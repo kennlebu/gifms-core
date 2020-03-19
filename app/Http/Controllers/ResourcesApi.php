@@ -12,25 +12,27 @@ use Illuminate\Support\Facades\Response;
 use Anchu\Ftp\Facades\Ftp;
 use Illuminate\Support\Facades\File;
 use App\Models\ResourcesModels\Resource;
+use Illuminate\Support\Facades\Storage;
 
 class ResourcesApi extends Controller
 {
     public function downloadTemplate($type){
         try{
             $path2 = '';
-            if($type=='allocations') $path2 = '/allocation_template.xlsx';
-            elseif($type=='mpesa') $path2 = '/MPESA_TEMPLATE.xlsx';
+            if($type=='allocations') $path2 = 'allocation_template.xlsx';
+            elseif($type=='mpesa') $path2 = 'MPESA_TEMPLATE.xlsx';
 
-            $path           = '/templates'.$path2;
+            $path           = '/templates/'.$path2;
             $path_info      = pathinfo($path);
             $basename       = $path_info['basename'];
-            $file_contents  = FTP::connection()->readFile($path);
+            $file_contents  = Storage::get($path);
             $response       = Response::make($file_contents, 200);
             $response->header('Content-Type', $this->get_mime_type($basename));
 
-            return $response;  
+            return $response;
 
         }catch (Exception $e ){
+            file_put_contents ( "C://Users//kennl//Documents//debug.txt" , PHP_EOL.$e->getMessage() , FILE_APPEND);
             $response       = Response::make("", 500);
             $response->header('Content-Type', 'application/vnd.ms-excel');
             return $response;

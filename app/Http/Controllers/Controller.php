@@ -317,4 +317,17 @@ class Controller extends BaseController
         $activity->disableLogging();
         $activity->save();
     }
+
+    /**
+	 * Returns an array with matching values given a key
+	 */
+	public function pluck($ARR, $key, $value) {
+		$RESULTS = [];
+		foreach ($ARR as $item){
+			if ($item[$key] == $value) {
+				$RESULTS[] = $item;
+			}
+		}
+		return $RESULTS;
+	}
 }

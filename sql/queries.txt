@@ -1231,6 +1231,96 @@ UPDATE `mobile_payment_statuses` SET `approval_level_id` = '4' WHERE `id` = '17'
 UPDATE `mobile_payment_statuses` SET `new_next_status_id` = '9' WHERE `id` = '15';
 UPDATE `mobile_payment_statuses` SET `short_name` = 'Resent to Bank' WHERE `id` = '16';
 
++~===== Add recalled status to claim statuses
+INSERT INTO `claim_statuses` (`claim_status`, `next_status_id`, `short_name`, `status_security_level`, `order_priority`, `display_color`, `default_status`, `approval_level_id`, `approvable`, `migration_status_security_level`, `migration_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Recalled', '10', 'Recalled', NULL, '11', '#ff5555c2', NULL, NULL, NULL, NULL, NULL, now(), now(), NULL);
+
++~===== Make witholding VAT dynamic
+ALTER TABLE `invoices`
+CHANGE `vat` `vat_rate` int(11) NULL AFTER `recurr_end_date`;
+
+CREATE TABLE `withholding_vat_rates` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `rate` int NOT NULL
+);
+
+INSERT INTO `withholding_vat_rates` (`rate`)
+VALUES ('6');
+
++~===== Add soft dalete fields to withholding vat table
+ALTER TABLE `withholding_vat_rates`
+ADD `created_at` timestamp NULL,
+ADD `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP AFTER `created_at`,
+ADD `deleted_at` timestamp NULL AFTER `updated_at`;
+
++~===== Create expenditure tracker table
+CREATE TABLE `expenditure_trackers` (
+  `id` int NOT NULL,
+  `budget_id` int NULL,
+  `project_id` int NULL,
+  `expenditure` float NULL,
+  `created_at` timestamp NULL,
+  `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL
+);
+
+ALTER TABLE `expenditure_trackers`
+ADD `account_id` int NULL AFTER `project_id`,
+ADD `objective_id` int NULL AFTER `account_id`,
+CHANGE `updated_at` `updated_at` timestamp NULL AFTER `created_at`;
+
++~===== Add project id field to budget
+ALTER TABLE `budgets`
+ADD `project_id` int NULL AFTER `create_action_by_id`,
+CHANGE `updated_at` `updated_at` timestamp NOT NULL DEFAULT current_timestamp() AFTER `created_at`;
+
++~===== Refractor budgets
+php artisan refractor:budgets
+
++~===== Add primary id to expenditure tracker table
+ALTER TABLE `expenditure_trackers`
+CHANGE `id` `id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY FIRST;
+
+ALTER TABLE `expenditure_trackers`
+ADD `for_new_budget` varchar(5) NULL AFTER `expenditure`;
+
++~===== Add name field to bank contacts
+ALTER TABLE `bank_contacts`
+CHANGE `email` `email` varchar(255) COLLATE 'utf8_unicode_ci' NULL AFTER `id`,
+CHANGE `phone` `phone` varchar(255) COLLATE 'utf8_unicode_ci' NULL AFTER `email`,
+CHANGE `f_name` `f_name` varchar(255) COLLATE 'utf8_unicode_ci' NULL AFTER `phone`,
+CHANGE `l_name` `l_name` varchar(255) COLLATE 'utf8_unicode_ci' NULL AFTER `f_name`,
+ADD `name` varchar(255) COLLATE 'utf8_unicode_ci' NULL AFTER `l_name`,
+CHANGE `updated_at` `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE CURRENT_TIMESTAMP AFTER `created_at`;
+
++===== Add budget objectives and accounts
+CREATE TABLE `budget_objectives` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `budget_id` int NULL,
+  `objective_id` int NULL,
+  `created_at` timestamp NULL,
+  `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL
+);
+
+CREATE TABLE `budget_accounts` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `budget_objective_id` int NULL,
+  `account_id` int NULL,
+  `amount` double NULL,
+  `created_by_id` int NULL,
+  `created_at` timestamp NULL,
+  `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL
+);
+
+ALTER TABLE `budget_objectives`
+ADD `objective_name` text NULL AFTER `objective_id`,
+CHANGE `updated_at` `updated_at` timestamp NULL AFTER `created_at`;
+
+php artisan refractor:budgets
+
+
 // Asset tables
 ~===== Create assets
 CREATE TABLE `assets` (

@@ -21,6 +21,8 @@ class Kernel extends ConsoleKernel
         Commands\MigrateMobilePaymentDates::class,
         Commands\CopyActivityObjectives::class,
         Commands\GenerateRequisitionDocuments::class
+        Commands\RefractorBudgets::class,
+        Commands\CreateBudgeetExpenditures::class
     ];
 
     /**

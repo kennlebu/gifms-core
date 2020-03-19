@@ -20,4 +20,10 @@ class Program extends BaseModel
     {
         return $this->hasMany('App\Models\ProgramModels\ProgramStaff');
     }
+
+    public function program_manager()
+    {
+        $pm = ProgramManager::where('program_id', $this->id)->first();
+        return $pm->program_manager ?? null;
+    }
 }

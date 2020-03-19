@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\DB;
 
 use App\Models\StaffModels\Permission;
+use App\Models\StaffModels\Staff;
 use Exception;
 
 class PermissionApi extends Controller

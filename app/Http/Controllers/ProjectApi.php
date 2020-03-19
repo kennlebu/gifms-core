@@ -15,6 +15,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AccountingModels\Account;
+use App\Models\AdvancesModels\Advance;
+use App\Models\AllocationModels\Allocation;
+use App\Models\ClaimsModels\Claim;
+use App\Models\InvoicesModels\Invoice;
+use App\Models\MobilePaymentModels\MobilePayment;
+use App\Models\PaymentModels\Payment;
+use App\Models\PaymentModels\PaymentBatch;
+use App\Models\ProgramModels\ProgramManager;
 use JWTAuth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\DB;
@@ -207,17 +216,17 @@ class ProjectApi extends Controller
         $input = Request::all();
 
         try{
-            $response   = Project::with(["budget","project_manager","staffs", "grant"])
-                                    ->findOrFail($project_id);
-
+            $response = Project::with(["current_budget","project_manager","staffs", "grant"])->findOrFail($project_id);
 
             //with_chart_data
-            if(array_key_exists('with_chart_data', $input)&& $input['with_chart_data'] = "true"){
-                $project = Project::find($project_id);
-                $response["budget_expenditure_by_accounts_data"]    =   $project->getBudgetExpenditureByAccountsDataAttribute();
-                $response["grant_amount_allocated"]                 =  empty($project->budget->totals) ? 0 : $project->budget->totals;
-                $response["total_expenditure"]                      =   $project->getTotalExpenditureAttribute();
-                $response["total_expenditure_perc"]                 =   $project->getTotalExpenditurePercAttribute();
+            if(array_key_exists('with_chart_data', $input)&& $input['with_chart_data'] == "true"){
+                // $project = Project::find($project_id);
+                $response["budget_expenditure_by_accounts_data"]    =   $response->getBudgetExpenditureByAccountsDataAttribute();
+                $response["budget_expenditure_by_objectives_data"]  =   $response->getBudgetExpenditureByObjectivesDataAttribute();
+                $response["grant_amount_allocated"]                 =   empty($response->current_budget->totals) ? 0 : $response->current_budget->totals;
+                $response["total_expenditure"]                      =   $response->getTotalExpenditureAttribute();
+                $response["total_expenditure_perc"]                 =   $response->getTotalExpenditurePercAttribute();
+                $response["current_budget"]                         =   $response->current_budget;
             }
            
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
@@ -272,7 +281,7 @@ class ProjectApi extends Controller
         try{
             $project  =   Project::findOrFail($project_id);
             $project->staffs()->sync($form->staffs);
-            $response   = Project::with(["budget","project_manager","staffs"])->findOrFail($project_id);
+            $response   = Project::with(["current_budget","project_manager","staffs"])->findOrFail($project_id);
            
             return response()->json(['msg'=>"Team Updated", 'staffs'=>$response], 200,array(),JSON_PRETTY_PRINT);
         }catch(Exception $e){
@@ -346,7 +355,6 @@ class ProjectApi extends Controller
         elseif ((array_key_exists('my_assigned', $input)&& $input['my_assigned'] = "true") && array_key_exists('staff_responsible', $input)) {
             
             if(array_key_exists('staff_responsible', $input)){
-                $user_id = (int) $input['staff_responsible'];
                 $qb->select(DB::raw('projects.*'))
                  ->rightJoin('project_teams', 'project_teams.project_id', '=', 'projects.id')
                  ->rightJoin('staff', 'staff.id', '=', 'project_teams.staff_id')
@@ -523,12 +531,14 @@ class ProjectApi extends Controller
         foreach ($data as $key => $value) {
 
             $projects = Project::find($data[$key]['id']);
-            $data[$key]['expenditure_perc']         = $projects->total_expenditure_perc;
+            $data[$key]['total_expenditure']        = $projects->total_expenditure;
+            $data[$key]['expenditure_perc']         = $projects->current_budget->totals ?? 0 == 0 ? 0 : ($data[$key]['total_expenditure'] /$projects->current_budget->totals)*100;
             $data[$key]['program']                  = $projects->program;
             $data[$key]['status']                   = $projects->status;
             $data[$key]['country']                  = $projects->country;
             $data[$key]['staffs']                   = $projects->staffs;
-            $data[$key]['budget']                   = $projects->budget;
+            $data[$key]['budget']                   = $projects->current_budget;
+            $data[$key]['current_budget']           = $projects->current_budget;
             $data[$key]['grant']                    = $projects->grant;
         }
 
@@ -562,11 +572,107 @@ class ProjectApi extends Controller
             if($data[$key]["budget"]==null){
                 $data[$key]["budget"] = array("budget_desc"=>"N/A","totals"=>0);
             }
+            if($data[$key]["current_budget"]==null){
+                $data[$key]["current_budget"] = array("budget_desc"=>"N/A","totals"=>0);
+            }
             if($data[$key]["grant"]==null){
                 $data[$key]["grant"] = array("grant_name"=>"");
             }
         }
 
         return $data;
+    }
+
+
+    public function getTrackerList(){
+        try{            
+            // Get pm pids
+            $pm_programs = ProgramManager::where('program_manager_id', $this->current_user()->id)->pluck('program_id')->toArray();
+            $pm_pids = Project::whereIn('program_id', $pm_programs)->pluck('id')->toArray();
+            $user_id = $this->current_user()->id;
+            $payables = [];
+            $my_res = [];
+
+            $payments = Payment::whereHas('payment_batch', function($query){
+                $query->whereYear('created_at', '2019');  
+            })->get();
+
+            foreach($payments as $payment){
+                $res = [];
+                if($payment->payable_type=='advances'){
+                    $advance = Advance::with('allocations')->where('project_manager_id', $user_id)
+                                ->where('id', $payment->payable_id)->first();
+
+                    $res = ['currency_id'=>$payment->currency_id, 'payment'=>$payment, 'payable'=>$advance];
+                }
+                elseif($payment->payable_type=='claims'){
+                    $claim = Claim::with('allocations')->where('project_manager_id', $user_id)
+                                ->where('id', $payment->payable_id)->first();
+                        
+                    $res = ['currency_id'=>$payment->currency_id, 'payment'=>$payment, 'payable'=>$claim];
+                }
+                elseif($payment->payable_type=='invoices'){
+                    $invoice = Invoice::with('allocations')->where('project_manager_id', $user_id)
+                                    ->where('id', $payment->payable_id)->first();
+
+                    $res = ['currency_id'=>$payment->currency_id, 'payment'=>$payment, 'payable'=>$invoice];
+                }
+                $payables[] = $res;
+            }
+
+            $mobile_payments = MobilePayment::with('allocations')->whereYear('management_approval_at', date('Y'))->where('project_manager_id', $user_id)->get();
+
+            foreach($mobile_payments as $mobile_payment){
+                $res = ['currency_id'=>$mobile_payment->currency_id, 'payment'=>null, 'payable'=>$mobile_payment];
+                $payables[] = $res;
+            }
+
+            foreach($payables as $row){
+                if(isset($row['payable']['allocations'])){                    
+                    foreach($row['payable']['allocations'] as $allocation){
+    
+                        // Filter out PIDs not belonging to the current PM
+                        if(!empty($pm_pids) && (empty($allocation['project_id']) || !in_array($allocation['project_id'], $pm_pids))){
+                            continue;
+                        }
+
+                        $budget_amount = $allocation['current_budget']['totals'];
+                        $total_expenditure = 0;
+                        $my_res[] = [
+                            'id'=>$allocation['id'],
+                            'current_budget'=>$allocation['current_budget'],
+                            'program'=>$allocation['program'],
+                            'expenditure_perc'=> $budget_amount == 0 ? 0 : ($total_expenditure/$budget_amount)*100,
+                            'project_code'=>$allocation['project_code'],
+                            'project_name'=>$allocation['project_name'],
+                            'total_expenditure'=>$total_expenditure
+                        ];      
+                    }
+                }
+            }
+
+            // $res = [];
+            // $total_expenditure = 0;
+            // foreach($pm_pids as $pid){
+            //     $budget_amount = $pid->current_budget->totals;
+
+            //     $res[] = [
+            //         'id'=>$pid->id,
+            //         'budget'=>$pid->budget,
+            //         'current_budget'=>$pid->current_budget,
+            //         'program'=>$pid->program,
+            //         'expenditure_perc'=> $budget_amount == 0 ? 0 : ($total_expenditure/$budget_amount)*100,
+            //         'project_code'=>$pid->project_code,
+            //         'project_name'=>$pid->project_name,
+            //         'total_expenditure'=>$total_expenditure
+            //     ];
+            // }
+
+
+            return response()->json($my_res, 200,array(),JSON_PRETTY_PRINT);
+        }
+        catch(Exception $e){
+            return response()->json(['error'=>"something went wrong", 'msg'=>$e->getMessage(), 'stack'=>$e->getTraceAsString()], 500,array(),JSON_PRETTY_PRINT);
+        }
     }
 }

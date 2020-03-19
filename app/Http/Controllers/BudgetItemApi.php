@@ -15,11 +15,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\FinanceModels\Budget;
+use App\Models\FinanceModels\BudgetObjective;
+use App\Models\FinanceModels\BudgetAccount;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\DB;
 
 use App\Models\FinanceModels\BudgetItem;
 use Exception;
+use Illuminate\Http\Request as HttpRequest;
 
 class BudgetItemApi extends Controller
 {
@@ -31,19 +35,34 @@ class BudgetItemApi extends Controller
      *
      * @return Http response
      */
-    public function addBudgetItem()
+    public function addBudgetItem(HttpRequest $httpRequest)
     {
-        $form = Request::all();
+        try{
+            $budget_objective = new BudgetObjective();
+            $budget_objective->budget_id = $httpRequest->budget_id;
+            $budget_objective->objective_id = $httpRequest->objective_id;
+            if ($httpRequest->objective_id == '-1') {
+                $budget = Budget::find($httpRequest->budget_id);
+                $budget_objective->objective_name = (!empty($budget->project) ? ($budget->project->project_code ?? '').' '.($budget->project->project_name ?? '') : ''). ' Objective 1';
+            }
+            $budget_objective->disableLogging();
+            $budget_objective->save();
+    
+            $accounts = $httpRequest->accounts;
+            foreach($accounts as $account){
+                $budget_account = new BudgetAccount();
+                $budget_account->budget_objective_id = $budget_objective->id;
+                $budget_account->account_id = $account['account_id'];
+                $budget_account->amount = $account['amount'];
+                $budget_account->created_by_id = $this->current_user()->id;
+                $budget_account->disableLogging();
+                $budget_account->save();
+            }
 
-        $budget_item = new BudgetItem;
-        $budget_item->budget_id = (int) $form['budget_id'];
-        $budget_item->objective_id = (int) $form['objective_id'];
-        $budget_item->amount = (double) $form['amount'];
-        $budget_item->created_by_id = (int) $this->current_user()->id;
-        $budget_item->create_action_by_id = (int) $this->current_user()->id;
-
-        if($budget_item->save()) {
-            return Response()->json(array('msg' => 'Success: budget_item added','budget_item' => $budget_item), 200);
+            return Response()->json(['msg' => 'Success: budget_item added','budget_objective' => $budget_objective], 200);
+        }
+        catch(Exception $e){
+            return Response()->json(['error' => 'Something went wrong','msg' => $e->getMessage()], 500);
         }
     }
     
@@ -83,7 +102,10 @@ class BudgetItemApi extends Controller
 
         $budget_item = BudgetItem::find($form['id']);
         $budget_item->budget_id = (int) $form['budget_id'];
-        $budget_item->objective_id = (int) $form['objective_id'];
+        if(!empty($form['objective_id']))
+        $budget_item->objective_id = $form['objective_id'];
+        if(!empty($form['account_id']))
+        $budget_item->objective_id = $form['account_id'];
         $budget_item->amount = (double) $form['amount'];
 
         if($budget_item->save()) {
@@ -213,24 +235,26 @@ class BudgetItemApi extends Controller
 
         $qb->whereNull('budget_items.deleted_at');
 
+        $qb = BudgetItem::with('account');
+
         $response;
         $response_dt;
 
-        $total_records          = $qb->count();
-        $records_filtered       = 0;
+        $total_records = $qb->count();
+        $records_filtered = 0;
 
         //searching
         if(array_key_exists('searchval', $input)){
-            $qb->where(function ($query) use ($input) {
+            $qb = $qb->where(function ($query) use ($input) {
                 $query->orWhere('budget_items.id','like', '\'%' . $input['searchval']. '%\'');
                 $query->orWhere('budget_items.budget_item_purpose','like', '\'%' . $input['searchval']. '%\'');
             });
 
-            $sql = BudgetItem::bind_presql($qb->toSql(),$qb->getBindings());
+            /* $sql = BudgetItem::bind_presql($qb->toSql(),$qb->getBindings());
             $sql = str_replace("*"," count(*) AS count ", $sql);
-            $dt = json_decode(json_encode(DB::select($sql)), true);
+            $dt = json_decode(json_encode(DB::select($sql)), true); */
 
-            $records_filtered = (int) $dt[0]['count'];
+            $records_filtered = (int) $qb->count();
         }
 
 
@@ -241,17 +265,17 @@ class BudgetItemApi extends Controller
             if(array_key_exists('order_dir', $input)&&$input['order_dir']!=''){                
                 $order_direction = $input['order_dir'];
             }
-            $qb->orderBy($order_column_name, $order_direction);
+            $qb = $qb->orderBy($order_column_name, $order_direction);
         }
 
         //limit
         if(array_key_exists('limit', $input)){
-            $qb->limit($input['limit']);
+            $qb = $qb->limit($input['limit']);
         }
 
         if(array_key_exists('datatables', $input)){
             //searching
-            $qb->where(function ($query) use ($input) {                
+            $qb = $qb->where(function ($query) use ($input) {                
                 $query->orWhere('budget_items.id','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('budget_items.budget_item_purpose','like', '\'%' . $input['search']['value']. '%\'');
             });
@@ -260,7 +284,7 @@ class BudgetItemApi extends Controller
             $sql = str_replace("*"," count(*) AS count ", $sql);
             $dt = json_decode(json_encode(DB::select($sql)), true);
 
-            $records_filtered = (int) $dt[0]['count'];
+            $records_filtered = (int) $qb->count();
 
             //ordering
             $order_column_id    = (int) $input['order'][0]['column'];
@@ -268,20 +292,21 @@ class BudgetItemApi extends Controller
             $order_direction    = $input['order'][0]['dir'];
 
             if($order_column_name!=''){
-                $qb->orderBy($order_column_name, $order_direction);
+                $qb = $qb->orderBy($order_column_name, $order_direction);
             }
 
             //limit $ offset
             if((int)$input['start']!= 0 ){
-                $response_dt    =   $qb->limit($input['length'])->offset($input['start']);
+                $qb =  $qb->limit($input['length'])->offset($input['start']);
             }else{
-                $qb->limit($input['length']);
+                $qb = $qb->limit($input['length']);
             }
 
-            $sql = BudgetItem::bind_presql($qb->toSql(),$qb->getBindings());
+            /* $sql = BudgetItem::bind_presql($qb->toSql(),$qb->getBindings());
 
             $response_dt = DB::select($sql);
-            $response_dt = json_decode(json_encode($response_dt), true);
+            $response_dt = json_decode(json_encode($response_dt), true); */
+            $response_dt = $qb->get();
             $response       = BudgetItem::arr_to_dt_response( 
                 $response_dt, $input['draw'],
                 $total_records,
@@ -289,8 +314,9 @@ class BudgetItemApi extends Controller
                 );
         }else{
 
-            $sql            = BudgetItem::bind_presql($qb->toSql(),$qb->getBindings());
-            $response       = json_decode(json_encode(DB::select($sql)), true);
+            /* $sql            = BudgetItem::bind_presql($qb->toSql(),$qb->getBindings());
+            $response       = json_decode(json_encode(DB::select($sql)), true); */
+            $response = $qb->get();
         }
 
         return response()->json($response, 200,array(),JSON_PRETTY_PRINT);

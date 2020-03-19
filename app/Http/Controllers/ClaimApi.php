@@ -32,6 +32,8 @@ use App\Models\PaymentModels\PaymentBatch;
 use App\Exceptions\NotFullyAllocatedException;
 use App\Exceptions\ApprovalException;
 use PDF;
+use App\Models\ReportModels\ReportingObjective;
+use App\Models\ActivityModels\Activity;
 use App\Models\AllocationModels\Allocation;
 use App\Models\PaymentModels\VoucherNumber;
 use Excel;
@@ -83,7 +85,7 @@ class ClaimApi extends Controller
             $claim->project_manager_id                =   (int)       $form['project_manager_id'];
             $claim->payment_mode_id                   =   (int)       $form['payment_mode_id'];
             $claim->total                             =   (double)    $form['total'];
-            $claim->total                             =   (double)    $claim->calculated_total;
+            $claim->total                             =   (double) $claim->calculated_withdrawal_charges + $claim->total;
             $claim->currency_id                       =   (int)       $form['currency_id'];           
 
             $claim->status_id                         =   $this->default_status;
@@ -192,6 +194,8 @@ class ClaimApi extends Controller
         $deleted = Claim::destroy($claim_id);
 
         if($deleted){
+            // Delete the allocations too
+            Allocation::where('allocatable_id', $claim_id)->where('allocatable_type', 'claims')->delete();
             return response()->json(['msg'=>"Claim deleted"], 200,array(),JSON_PRETTY_PRINT);
         }else{
             return response()->json(['error'=>"Claim not found"], 404,array(),JSON_PRETTY_PRINT);
@@ -1130,6 +1134,42 @@ class ClaimApi extends Controller
 
     public function getPercentage($amount, $total){
         return ($amount / $total) * 100;
+    }
+
+
+
+        /**
+     * Operation recallClaim
+     * 
+     * Recalls a claim.
+     * 
+     * @param int $claim_id Claim id to recall (required)
+     * 
+     * @return Http response
+     */
+    public function recallClaim($claim_id)
+    {
+        $claim = Claim::find($claim_id);        
+
+        // Ensure claim is in the recallable statuses
+        if(!in_array($claim->status_id, [2,3,4,10])){
+            return response()->json(['msg'=>"you do not have permission to do this"], 403, array(), JSON_PRETTY_PRINT);
+        }
+
+        $claim->status_id = 11;     // Recalled
+
+        // Logging recall
+        activity()
+            ->performedOn($claim)
+            ->causedBy($this->current_user())
+            ->log('Claim recalled');
+
+        $claim->disableLogging(); //! Do not log the update        
+        if($claim->save()){
+            return response()->json(['msg'=>"claim recalled"], 200,array(),JSON_PRETTY_PRINT);
+        }else{
+            return response()->json(['error'=>"could not recall claim"], 404,array(),JSON_PRETTY_PRINT);
+        }
     }
     
 }

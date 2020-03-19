@@ -401,6 +401,8 @@ class LPOApi extends Controller
 
             // Delete the items too
             LpoItem::where('lpo_id', $lpo_id)->delete();
+            // Delete the allocations too
+            Allocation::where('allocatable_id', $lpo_id)->where('allocatable_type', 'lpos')->delete();
 
             return response()->json(['msg'=>"lpo deleted"], 200,array(),JSON_PRETTY_PRINT);
         }
@@ -765,14 +767,14 @@ class LPOApi extends Controller
                 activity()
                    ->performedOn($lpo)
                    ->causedBy($this->current_user())
-                   ->log('submitted');
+                   ->log('Submitted for verification');
             }
             else{
                 // Logging resubmission
                 activity()
                     ->performedOn($lpo)
                     ->causedBy($this->current_user())
-                    ->log('submitted');
+                    ->log('Submitted for approval');
             }
 
             // Add activity notification

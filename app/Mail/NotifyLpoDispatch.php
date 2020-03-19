@@ -18,6 +18,7 @@ class NotifyLpoDispatch extends Mailable
     protected $lpo;
     protected $lpo_PM;
     protected $requester;
+    protected $m_director;
     /**
      * Create a new message instance.
      *
@@ -28,6 +29,9 @@ class NotifyLpoDispatch extends Mailable
         $this->lpo = $lpo;
         $this->requester = Staff::findOrFail($lpo->requested_by_id);
         $this->lpo_PM = Staff::findOrFail($lpo->project_manager_id);
+        $this->m_director = Staff::whereHas('roles', function($query){
+                                $query->whereIn('role_id', [3]);  
+                            })->where('official_post', 'Deputy Country Director')->first();
     }
 
     /**
@@ -73,24 +77,32 @@ class NotifyLpoDispatch extends Mailable
         );
 
         // Add financial controllers to cc
-        $fm = User::withRole('financial-controller')->get();
+        $fm = Staff::whereHas('roles', function($query){
+            $query->where('role_id', 5);  
+        })->get();
         foreach($fm as $f){
             $chai_cc[] = array('first_name'=>$f->f_name, 'last_name'=>$f->l_name, 'email'=>$f->email);
         }
 
         // Add Accountants to cc
-        $accountant = User::withRole('accountant')->get();
+        $accountant = Staff::whereHas('roles', function($query){
+            $query->where('role_id', 8);  
+        })->get();
         foreach($accountant as $am){
             $chai_cc[] = array('first_name'=>$am->f_name, 'last_name'=>$am->l_name, 'email'=>$am->email);
         }
         // Add directors to cc
-        $director = User::withRole('director')->get();
+        $director = Staff::whereHas('roles', function($query){
+            $query->whereIn('role_id', [3,4]);  
+        })->get();
         foreach($director as $am){
             $chai_cc[] = array('first_name'=>$am->f_name, 'last_name'=>$am->l_name, 'email'=>$am->email);
         }
 
         // Add Admin Manager to cc
-        $admin_manager = User::withRole('admin-manager')->get();
+        $admin_manager = Staff::whereHas('roles', function($query){
+            $query->where('role_id', 10);  
+        })->get();
         foreach($admin_manager as $am){
             $chai_cc[] = array('first_name'=>$am->f_name, 'last_name'=>$am->l_name, 'email'=>$am->email);
         }
@@ -115,7 +127,7 @@ class NotifyLpoDispatch extends Mailable
         $subtotal = array_sum($subtotals);
         $vat = array_sum($vats);
 
-        $pdf_data = array('lpo'=>$this->lpo, 'vat' => $vat, 'subtotal' => $subtotal, 'director'=>$this->director);
+        $pdf_data = array('lpo'=>$this->lpo, 'vat' => $vat, 'subtotal' => $subtotal, 'director' => $this->m_director);
         $pdf = PDF::loadView('pdf/notify_lpo_dispatch', $pdf_data);
         $pdf_file = $pdf->stream();
 
@@ -142,7 +154,7 @@ class NotifyLpoDispatch extends Mailable
             ->with([
                     'lpo' => $this->lpo,
                     'lpo_no' => $lpo_no,
-                    'js_url' => Config::get('app.js_url'),
+                    'js_url' => Config::get('app.js_url')
                 ])
             ->subject($subject);
     }

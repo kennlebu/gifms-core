@@ -7,7 +7,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use App\Models\PaymentModels\PaymentBatch;
 use App\Models\PaymentModels\Payment;
-use App\Models\StaffModels\User;
+use App\Models\StaffModels\Staff;
 use Config;
 
 class NotifyBatch extends Mailable
@@ -42,7 +42,9 @@ class NotifyBatch extends Mailable
 
                 ]);
 
-        $to = User::withRole('accountant')->get();
+        $to = Staff::whereHas('roles', function($query){
+            $query->where('role_id', 8);  
+        })->get();
         return $this->to($to)
                 ->with([
                         'payments' => $payments,

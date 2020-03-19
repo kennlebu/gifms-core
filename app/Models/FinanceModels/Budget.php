@@ -12,12 +12,16 @@ class Budget extends BaseModel
     //
     use SoftDeletes;
 
-    protected $appends = ['totals','project'];
+    protected $appends = ['totals'];
 
 
     public function items()
     {
         return $this->hasMany('App\Models\FinanceModels\BudgetItem');
+    }
+    public function budget_objectives()
+    {
+        return $this->hasMany('App\Models\FinanceModels\BudgetObjective');
     }
     public function currency()
     {
@@ -31,26 +35,20 @@ class Budget extends BaseModel
     {
         return $this->belongsTo('App\Models\FinanceModels\BudgetStatus');
     }
+    public function project()
+    {
+        return $this->belongsTo('App\Models\ProjectsModels\Project');
+    }
     
     public function getTotalsAttribute(){
 
-        $items     =   $this->items;
-        $totals    =   0;
+        $items = $this->budget_objectives;
+        $totals = 0;
 
-        foreach ($items as $key => $value) {
-            $totals    +=  (float) $value->amount;
+        foreach ($items as $objective) {
+            $totals += (float) $objective->objective_total;
         }
 
         return $totals;
-
-    }
-
-    public function getProjectAttribute(){
-        $project = Project::where('budget_id', $this->id)->first();
-        if(!empty($project)){
-            return $project;
-        }
-        else return null;
-        
     }
 }

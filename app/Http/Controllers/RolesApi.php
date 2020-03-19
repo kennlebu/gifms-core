@@ -15,6 +15,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\StaffModels\Permission;
 use JWTAuth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\DB;
@@ -35,14 +36,11 @@ class RolesApi extends Controller
      */
     public function addRole()
     {
-        $form = Request::only(
-            'name',
-            'acronym'
-            );
-
+        $form = Request::all();
         $role = new Role;
-        $role->name                   =         $form['name'];
-        $role->acronym                   =         $form['acronym'];
+        $role->name = $form['name'];
+        $role->acronym = $form['acronym'];
+        $role->display_name = $form['display_name'];
 
         if($role->save()) {
             return Response()->json(array('msg' => 'Success: role added','role' => $role), 200);
@@ -79,15 +77,11 @@ class RolesApi extends Controller
      */
     public function updateRole()
     {
-        $form = Request::only(
-            'id',
-            'name',
-            'acronym'
-            );
-
+        $form = Request::all();
         $role = Role::find($form['id']);
-        $role->name                   =         $form['name'];
-        $role->acronym                   =         $form['acronym'];
+        $role->name = $form['name'];
+        $role->acronym = $form['acronym'];
+        $role->display_name = $form['display_name'];
 
         if($role->save()) {
             return Response()->json(array('msg' => 'Success: role updated','role' => $role), 200);
@@ -453,17 +447,49 @@ public function getRightsTransfers()
             }
 
             // Add new roles
-            $insert_array = array();
+            $insert_array = [];
             foreach($new_roles as $new_role){
                 if(!in_array($new_role, $old_roles)){
-                    $new_record = array('user_id'=>$user_id, 'role_id'=>$new_role);
-                    array_push($insert_array, array('user_id'=>$user_id, 'role_id'=>$new_role));
+                    $insert_array[] = ['user_id'=>$user_id, 'role_id'=>$new_role];
                 }
             }
             if(!empty($insert_array))
                 DB::table('user_roles')->insert($insert_array);
 
             return Response()->json(array('msg' => 'Success: roles updated'), 200);
+        }
+        catch(\Exception $e){
+            return response()->json(['error'=>'Something went wrong'], 500);
+        }
+    }
+
+    public function assignRolePermissions(){
+        try{
+            $form = Request::all();
+            $role_id = $form['role_id'];
+            $new_perms = $form['permissions'];
+            $old_perms = [];
+
+            $old_perms = DB::table('role_permissions')->where('role_id', $role_id)->pluck('permission_id')->toArray();
+
+            // Remove removed roles
+            foreach($old_perms as $old_perm){
+                if(!in_array($old_perm, $new_perms)){
+                    DB::table('role_permissions')->where('role_id', $role_id)->where('permission_id', $old_perm)->delete();
+                }
+            }
+
+            // Add new roles
+            $insert_array = array();
+            foreach($new_perms as $new_perm){
+                if(!in_array($new_perm, $old_perms)){
+                    $insert_array[] = ['role_id'=>$role_id, 'permission_id'=>$new_perm];
+                }
+            }
+            if(!empty($insert_array))
+                DB::table('role_permissions')->insert($insert_array);
+
+            return Response()->json(array('msg' => 'Success: permissions updated'), 200);
         }
         catch(\Exception $e){
             return response()->json(['error'=>'Something went wrong'], 500);

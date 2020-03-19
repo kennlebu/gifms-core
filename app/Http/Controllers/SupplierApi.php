@@ -677,4 +677,136 @@ class SupplierApi extends Controller
             return response()->json(['error'=>"An rerror occured during processing"], 500,array(),JSON_PRETTY_PRINT);
         }
     }
+
+
+
+
+
+    public function downloadExcel(){
+        // try {
+            $suppliers = Supplier::with('bank','bank_branch','payment_mode','currency','county','supply_category')->where('status_id', '!=', '1')->get();
+            $excel_data = [];
+
+            foreach($suppliers as $row){
+                $excel_row = [];
+                $excel_row['id'] = $row->id;
+                $excel_row['supplier_name'] = $row->supplier_name;
+                $excel_row['address'] = $row->address;
+                $excel_row['telephone'] = " ".$row->telephone;
+                $excel_row['email'] = $row->email;
+                $excel_row['website'] = $row->website;
+                $excel_row['bank'] = $row->bank->bank_name ?? '';
+                $excel_row['bank_branch'] = $row->bank_branch->branch_name ?? '';
+                $excel_row['cheque_address'] = $row->chaque_address;
+                $excel_row['bank_account'] = " ".$row->bank_account;
+                $excel_row['usd_account'] = " ".$row->usd_account;
+                $excel_row['bank_code'] = " ".$row->bank_code;
+                $excel_row['swift_code'] = $row->swift_code;
+                $excel_row['tax_pin'] = $row->tax_pin;
+                $excel_row['mobile_payment_number'] = " ".$row->mobile_payment_number;
+                $excel_row['mobile_payment_name'] = $row->mobile_payment_name;
+                $excel_row['payment_mode'] = $row->payment_mode->abrv ?? '';
+                $excel_row['currency'] = $row->currency->currency_name ?? '';
+                $excel_row['contact_name_1'] = $row->contact_name_1;
+                $excel_row['contact_email_1'] = $row->contact_email_1;
+                $excel_row['contact_phone_1'] = " ".$row->contact_phone_1;
+                $excel_row['contact_name_2'] = $row->contact_name_2;
+                $excel_row['contact_email_2'] = $row->contact_email_2;
+                $excel_row['contact_phone_2'] = " ".$row->contact_phone_2;
+                $excel_row['requires_lpo'] = $row->requires_lpo;
+                $excel_row['supply_category'] = $row->supply_category->supply_category_name ?? '';
+                $excel_row['county'] = $row->county->county_name ?? '';
+
+                $excel_data[] = $excel_row;
+            }
+            $headers = [
+                'Access-Control-Allow-Origin'      => '*',
+                'Allow'                            => 'GET, POST, OPTIONS',
+                'Access-Control-Allow-Headers'     => 'Origin, Content-Type, Accept, Authorization, X-Requested-With',
+                'Access-Control-Allow-Credentials' => 'true'
+            ];
+            $date = date('Y-m-d');
+            // Build excel
+            $file = Excel::create('Suppliers '.$date, function($excel) use ($excel_data, $date) {
+
+                // Set the title
+                $excel->setTitle('Suppliers '.$date);
+    
+                // Chain the setters
+                $excel->setCreator('GIFMS')->setCompany('Clinton Health Access Initiative - Kenya');
+    
+                $excel->setDescription('A list of vendors in the GIFMS system as of '.$date);
+    
+                $headings = ['ID', 'Supplier Name', 'Address', 'Telephone', 'Email', 'Website', 'Bank name', 'Bank branch', 'Cheque address', 'Bank account', 'USD Account', 
+                            'Bank code', 'Swift code', 'Tax PIN', 'Mobile Payment number', 'Mobile Payment name', 'Payment mode', 'Currency', 'Contact Name 1', 'Contact Email 1',
+                            'Contact Phone 1', 'Contact Name 2', 'Contact Email 2', 'Contact Phone 2', 'Requires LPO', 'Supply Category', 'Location'];
+    
+                $excel->sheet('Suppliers', function ($sheet) use ($excel_data, $headings) {
+                    // $i = 1;
+                    // $alternate = true;
+                    foreach($excel_data as $data_row){
+
+                        $sheet->appendRow($data_row);
+                        // if($alternate){
+                        //     $sheet->cells('A'.$i.':AA'.$i, function($cells) {
+                        //         $cells->setBackground('#edf1f3');  
+                        //         $cells->setFontSize(10);                          
+                        //     });
+                        // }
+                        // $i++;
+                        // $alternate = !$alternate;
+                    }
+                    
+                    $sheet->prependRow(1, $headings);
+                    $sheet->setFontSize(10);
+                    $sheet->setHeight(1, 25);
+                    $sheet->row(1, function($row){
+                        $row->setFontSize(11);
+                        $row->setFontWeight('bold');
+                        $row->setAlignment('center');
+                        $row->setValignment('center');
+                        $row->setBorder('none', 'thin', 'none', 'thin');
+                        $row->setBackground('#004080');                        
+                        $row->setFontColor('#ffffff');
+                    });
+                    $sheet->setWidth([
+                        'A' => 10,
+                        'B' => 50,
+                        'C' => 50,
+                        'D' => 30,
+                        'E' => 50,
+                        'F' => 35,
+                        'G' => 35,
+                        'H' => 35,
+                        'I' => 50,
+                        'J' => 35,
+                        'K' => 35,
+                        'L' => 15,
+                        'M' => 20,
+                        'N' => 20,
+                        'O' => 35,
+                        'P' => 50,
+                        'Q' => 15,
+                        'R' => 15,
+                        'S' => 50,
+                        'T' => 35,
+                        'U' => 35,
+                        'V' => 50,
+                        'W' => 35,
+                        'X' => 35,
+                        'Y' => 15,
+                        'Z' => 50,
+                        'AA' => 15
+                    ]);
+
+                    $sheet->setFreeze('A2');
+                });
+    
+            })->download('xlsx', $headers);
+
+        // }
+        // catch(\Exception $e){
+        //     return response()->json(["error"=>"Something went wrong","msg"=>$e->getMessage(),"trace"=>$e->getTraceAsString()], 500,array(),JSON_PRETTY_PRINT);
+        // }
+    }
 }
