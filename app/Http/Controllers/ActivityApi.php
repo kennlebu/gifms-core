@@ -148,16 +148,18 @@ class ActivityApi extends Controller
     {
         $input = Request::all();
         //query builder
-        $qb = DB::table('activities');
+        $activities = Activity::query();
+        if(!array_key_exists('lean', $input)){
+            $activities = Activity::with('requested_by','program','program_manager','status','objectives');
+        }
 
-        $qb->whereNull('activities.deleted_at');
-        $current_user = JWTAuth::parseToken()->authenticate();
+        $current_user = $this->current_user();
 
         $response;
         $response_dt;
 
-        $total_records          = $qb->count();
-        $records_filtered       = 0;
+        $total_records = $activities->count();
+        $records_filtered = 0;
 
         //if status is set
         if(array_key_exists('status', $input)){
@@ -165,18 +167,18 @@ class ActivityApi extends Controller
             $status_ = (int) $input['status'];
 
             if($status_ >-1){
-                $qb->where('activities.status_id', $input['status']);
-                $qb->where('activities.requested_by_id',$this->current_user()->id);
+                $activities = $activities->where('status_id', $input['status'])
+                                        ->where('requested_by_id',$current_user->id);
             }elseif ($status_==-1) {
-                $qb->where('activities.requested_by_id',$this->current_user()->id);
+                $activities = $activities->where('requested_by_id',$current_user->id);
             }elseif ($status_==-2) {
                 
             }elseif ($status_==-3) {
-                $program_ids = ProgramStaff::select('program_id')->where('staff_id', $this->current_user()->id)->get();
+                $program_ids = ProgramStaff::select('program_id')->where('staff_id', $current_user->id)->get();
                 $objective_ids = ReportingObjective::select('id')->whereIn('program_id', $program_ids)->get();
-                $qb->whereIn('activities.objective_id', $objective_ids)
-                    ->whereNotNull('activities.id')
-                    ->groupBy('activities.id');
+                $activities = $activities->whereIn('objective_id', $objective_ids)
+                                        ->whereNotNull('id')
+                                        ->groupBy('id');
             }
         }
         
@@ -184,27 +186,27 @@ class ActivityApi extends Controller
         if (array_key_exists('my_assigned', $input)&& $input['my_assigned'] = "true"||(!$current_user->hasRole(['accountant','assistant-accountant','financial-controller','admin-manager']))) {
 
             if($current_user->hasRole('program-manager')){
-                $qb->where('program_manager_id', $current_user->id);
+                $activities = $activities->where('program_manager_id', $current_user->id);
             }
             else{
-                $staff_programs = ProgramStaff::where('staff_id', $this->current_user()->id)->pluck('program_id')->toArray();
-                $qb->whereIn('program_id', $staff_programs);
+                $staff_programs = ProgramStaff::where('staff_id', $current_user->id)->pluck('program_id')->toArray();
+                $activities = $activities->whereIn('program_id', $staff_programs);
             }
         }
 
         //my_pm_assigned
         if(array_key_exists('my_pm_assigned', $input)&& $input['my_pm_assigned'] = "true"){
-            $qb->select(DB::raw('activities.*'))->where('program_manager_id', $current_user->id);
+            $activities = $activities->where('program_manager_id', $current_user->id);
         }
 
         // my approvables
         if(array_key_exists('my_approvables', $input)){
             if($current_user->hasRole('program-manager')){               
-                $qb->where('activities.status_id',2); 
-                $qb->where('activities.program_manager_id', $current_user->id);
+                $activities = $activities->where('activities.status_id',2)
+                                        ->where('activities.program_manager_id', $current_user->id);
             }
             else{ 
-                $qb->where('id',0);
+                $activities = $activities->where('id',0);
             }
         }
 
@@ -214,7 +216,7 @@ class ActivityApi extends Controller
 
             if($objective_id==0){
             }else if($objective_id==1){
-                $qb->where('objective_id',$objective_id);
+                $activities = $activities->where('objective_id',$objective_id);
             }
         }
 
@@ -226,7 +228,7 @@ class ActivityApi extends Controller
                 $date = strtotime('+1 months');
             }
             $date = date('Y-m-d', $date);
-            $qb->whereRaw('CAST(end_date as datetime) >= '.$date.'');
+            $activities = $activities->whereRaw('CAST(end_date as datetime) >= '.$date.'');
         }
 
         //project_id
@@ -235,89 +237,73 @@ class ActivityApi extends Controller
 
             if($project_id==0){
             }else if($project_id==1){
-                $qb->where('project_id',$project_id);
+                $activities = $activities->where('project_id',$project_id);
             }
         }
 
         //searching
         if(array_key_exists('searchval', $input)){
-            $qb->where(function ($query) use ($input) {                
+            $activities = $activities->where(function ($query) use ($input) {                
                 $query->orWhere('activities.id','like', '\'%' . $input['searchval']. '%\'');
                 $query->orWhere('activities.title','like', '\'%' . $input['searchval']. '%\'');
                 $query->orWhere('activities.description','like', '\'%' . $input['searchval']. '%\'');
             });
 
-            $sql = Activity::bind_presql($qb->toSql(),$qb->getBindings());
-            $sql = str_replace("activities.*"," count(*) AS count ", $sql);
-            $dt = json_decode(json_encode(DB::select($sql)), true);
-
-            $records_filtered = (int) $dt[0]['count'];
+            $records_filtered = (int) $activities->count();
         }
 
         //ordering
         if(array_key_exists('order_by', $input)&&$input['order_by']!=''){
-            $order_direction     = "asc";
-            $order_column_name   = 'activities.'.$input['order_by'];
+            $order_direction = "asc";
+            $order_column_name = 'activities.'.$input['order_by'];
             if(array_key_exists('order_dir', $input)&&$input['order_dir']!=''){                
                 $order_direction = $input['order_dir'];
             }
 
-            $qb->orderBy($order_column_name, $order_direction);
+            $activities = $activities->orderBy($order_column_name, $order_direction);
         }
 
         //limit
         if(array_key_exists('limit', $input)){
-            $qb->limit($input['limit']);
+            $activities = $activities->limit($input['limit']);
         }
 
         if(array_key_exists('datatables', $input)){
 
             //searching
-            $qb->where(function ($query) use ($input) {                
+            $activities = $activities->where(function ($query) use ($input) {                
                 $query->orWhere('activities.id','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('activities.title','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('activities.description','like', '\'%' . $input['search']['value']. '%\'');
             });
 
-            $sql = Activity::bind_presql($qb->toSql(),$qb->getBindings());
-            $sql = str_replace("*"," count(*) AS count ", $sql);
-            $dt = json_decode(json_encode(DB::select($sql)), true);
-
-            $records_filtered = (int) $dt[0]['count'];
+            $records_filtered = (int) $activities->count();
 
             //ordering
-            $order_column_id    = (int) $input['order'][0]['column'];
-            $order_column_name  = 'activities.'.$input['columns'][$order_column_id]['order_by'];
-            $order_direction    = $input['order'][0]['dir'];
+            $order_column_id = (int) $input['order'][0]['column'];
+            $order_column_name  = $input['columns'][$order_column_id]['order_by'];
+            $order_direction = $input['order'][0]['dir'];
 
             if($order_column_name!=''){
-                $qb->orderBy($order_column_name, $order_direction);
+                $activities = $activities->orderBy($order_column_name, $order_direction);
             }
 
             //limit $ offset
             if((int)$input['start']!= 0 ){
-                $response_dt = $qb->limit($input['length'])->offset($input['start']);
+                $activities = $activities->limit($input['length'])->offset($input['start']);
             }else{
-                $qb->limit($input['length']);
+                $activities = $activities->limit($input['length']);
             }
 
-            $sql = Activity::bind_presql($qb->toSql(),$qb->getBindings());
-
-            $response_dt = DB::select($sql);
-            $response_dt = json_decode(json_encode($response_dt), true);            
-            $response_dt = $this->append_relationships_objects($response_dt);
+            $activities = $activities->get();
             $response = Activity::arr_to_dt_response( 
-                $response_dt, $input['draw'],
+                $activities, $input['draw'],
                 $total_records,
                 $records_filtered
                 );
 
         }else{
-            $sql            = Activity::bind_presql($qb->toSql(),$qb->getBindings());
-            $response       = json_decode(json_encode(DB::select($sql)), true);
-            if(!array_key_exists('lean', $input)){
-                $response       = $this->append_relationships_objects($response);
-            }
+            $response = $activities->get();
         }
 
         return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
