@@ -156,12 +156,12 @@ class Dashboard extends Controller
         $bank_balance = BankProjectBalances::whereMonth('balance_date', date('m'))->whereYear('balance_date', date('Y'))->first();
         
         if(empty($bank_balance) || $bank_balance->balance == 0){
-            $current = 0 - $paid_total;
-            return ['type'=>'bank_balance', 'title'=>'Bank balance estimate', 'total_balance'=>0, 'beginning_balance'=>0, 'accruals'=>0, 'unpaid'=>$unpaid_total, 'paid'=>$paid_total, 'action'=>'Add bank balance', 'current'=>$current];
+            $current = 0 - $paid_total - $unpaid_total;
+            return ['type'=>'bank_balance', 'title'=>'Cash available', 'total_balance'=>0, 'beginning_balance'=>0, 'accruals'=>0, 'unpaid'=>$unpaid_total, 'paid'=>$paid_total, 'action'=>'Add bank balance', 'current'=>$current];
         }
         else{
-            $current = $bank_balance->total_balance - $paid_total;
-            return ['type'=>'bank_balance', 'id'=>$bank_balance->id, 'title'=>'Bank balance estimate', 'total_balance'=>$bank_balance->total_balance, 'beginning_balance'=>$bank_balance->balance, 'accruals'=>$bank_balance->accruals ?? 0, 'unpaid'=>$unpaid_total, 'paid'=>$paid_total, 'current'=>$current];
+            $current = $bank_balance->total_balance - $paid_total - $unpaid_total;
+            return ['type'=>'bank_balance', 'id'=>$bank_balance->id, 'title'=>'Cash available', 'total_balance'=>$bank_balance->total_balance, 'beginning_balance'=>$bank_balance->balance, 'accruals'=>$bank_balance->accruals ?? 0, 'unpaid'=>$unpaid_total, 'paid'=>$paid_total, 'current'=>$current];
         }
     }
 
