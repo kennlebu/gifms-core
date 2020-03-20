@@ -1960,3 +1960,14 @@ ADD `show_admins` text COLLATE 'latin1_swedish_ci' NULL AFTER `type`;
 ALTER TABLE `lpo_default_terms`
 ADD `supply_category_id` int NULL AFTER `terms`,
 CHANGE `updated_at` `updated_at` timestamp NOT NULL DEFAULT current_timestamp() AFTER `created_at`;
+
++~===== Add cash received table
+CREATE TABLE `cash_received` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `bank_balance_id` int NULL,
+  `amount` double NULL,
+  `date` varchar(14) NULL,
+  `created_at` timestamp NULL,
+  `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL
+);
