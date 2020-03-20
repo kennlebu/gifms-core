@@ -23,19 +23,12 @@ use App\Models\ClaimsModels\ClaimStatus;
 use App\Models\ProjectsModels\Project;
 use App\Models\AccountingModels\Account;
 use Anchu\Ftp\Facades\Ftp;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\NotifyClaim;
 use App\Models\ApprovalsModels\Approval;
-use App\Models\ApprovalsModels\ApprovalLevel;
-use App\Models\StaffModels\Staff;
 use App\Models\PaymentModels\Payment;
-use App\Models\PaymentModels\PaymentMode;
 use App\Models\PaymentModels\PaymentBatch;
-use App\Models\LookupModels\Currency;
-use App\Models\BankingModels\BankBranch;
 use App\Exceptions\NotFullyAllocatedException;
 use App\Exceptions\ApprovalException;
 use PDF;
@@ -43,6 +36,7 @@ use App\Models\ReportModels\ReportingObjective;
 use App\Models\ActivityModels\Activity;
 use App\Models\AllocationModels\Allocation;
 use App\Models\PaymentModels\VoucherNumber;
+use Excel;
 
 class ClaimApi extends Controller
 {
@@ -98,6 +92,9 @@ class ClaimApi extends Controller
 
             if($claim->save()) {
                 $claim->disableLogging();
+
+                // Add activity notification
+                $this->addActivityNotification('Claim '.$claim->ref.' created', null, $this->current_user()->id, $claim->requested_by_id, 'info', 'claims', true);
 
                 FTP::connection()->makeDir('/claims');
                 FTP::connection()->makeDir('/claims/'.$claim->id);
@@ -340,6 +337,9 @@ class ClaimApi extends Controller
                    ->performedOn($claim)
                    ->causedBy($user)
                    ->log('approved');
+                   
+                // Add activity notification
+                $this->addActivityNotification('Claim '.$claim->ref.' approved', null, $this->current_user()->id, $claim->requested_by_id, 'success', 'claims', true);
 
                 $approval->save();
 
@@ -460,6 +460,9 @@ class ClaimApi extends Controller
                    ->performedOn($claim)
                    ->causedBy($user)
                    ->log('rejected');
+                   
+                // Add activity notification
+                $this->addActivityNotification('Claim '.$claim->ref.' returned', null, $this->current_user()->id, $claim->requested_by_id, 'danger', 'claims', true);
 
                 Mail::queue(new NotifyClaim($claim));
 
@@ -660,6 +663,10 @@ class ClaimApi extends Controller
             $claim->disableLogging(); //! Do not log the update
 
             if($claim->save()) {
+                
+                // Add activity notification
+                $this->addActivityNotification('claim '.$claim->ref.' submitted', null, $this->current_user()->id, $claim->requested_by_id, 'info', 'claims', true);
+
                 Mail::queue(new NotifyClaim($claim));
                 return Response()->json(array('msg' => 'Success: claim submitted','claim' => $claim), 200);
             }
@@ -1052,6 +1059,81 @@ class ClaimApi extends Controller
         catch(Exception $e){
             return response()->json(['error'=>'Something went wrong during processing', 'msg'=>$e->getMessage()], 500);
         }
+    }
+
+
+        /**
+     * Operation uploadAllocations
+     * CSV file with allocations
+     * @return Http response
+     */
+    public function uploadAllocations(){
+        $form = Request::all();
+
+        try{
+            $file = $form['file'];
+            $payable_type = $form['payable_type'];
+            $payable_id = $form['payable_id'];            
+            $user = JWTAuth::parseToken()->authenticate();
+            $payable = null;
+            $total = 0;
+
+            $payable = Claim::find($payable_id);
+            $total = $payable->total;
+            $allocations_array = array();
+
+            $handle = fopen($file->getRealPath(), "r");
+            $skip_rows = 3;
+            $skipped = 1;
+
+            while ($csvLine = fgetcsv($handle, 1000, ",")) {
+                if($csvLine[0] == 'update_data' && $csvLine[9] == 'KE'){
+                    try{
+                        $project = Project::where('project_code','like', '%'.trim($csvLine[1]).'%')->firstOrFail();
+                        $account = Account::where('account_code', 'like', '%'.trim($csvLine[5]).'%')->firstOrFail();
+
+                        $allocation = new Allocation();
+                        $allocation->allocatable_id = $payable_id;
+                        $allocation->allocatable_type = $payable_type;
+                        $allocation->amount_allocated = trim($csvLine[8]);
+                        $allocation->allocation_purpose = trim($csvLine[6]);
+                        $allocation->percentage_allocated = (string) $this->getPercentage(trim($csvLine[8]), $total);
+                        $allocation->allocated_by_id =  (int) $user->id;
+                        $allocation->account_id =  $account->id;
+                        $allocation->project_id = $project->id;
+                        array_push($allocations_array, $allocation);
+
+                    }
+                    catch(\Exception $e){
+                        $response =  ["error"=>'Account or Project not found. Please use form to allocate.',
+                                        "msg"=>$e->getMessage()];
+                        fclose($handle);
+                        return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
+                    }
+                }
+            }
+            fclose($handle);
+
+            foreach($allocations_array as $allocation){
+                $allocation->save();
+            }
+
+            // Logging
+            activity()
+                ->performedOn($payable)
+                ->causedBy($user)
+                ->withProperties(['detail' => 'Asset allocations uploaded using CSV/Excel'])
+                ->log('Uploaded allocations');
+            return Response()->json(array('success' => 'allocations added','payable' => $payable), 200);
+
+        }
+        catch(\Exception $e){
+            return response()->json(['error'=>'Something went wrong', 'msg'=>$e->getMessage(), 'trace'=>$e->getTraceAsString()], 500);
+        }
+    }
+
+    public function getPercentage($amount, $total){
+        return ($amount / $total) * 100;
     }
 
 

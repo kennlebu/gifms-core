@@ -269,7 +269,7 @@
                         @if($approval->approval_level_id == 2)
                         <tr style="    height: 55px; ">
                             <td colspan="2">
-                                <strong>APPROVAL<br/><small>(Program Manager)</small></strong>                          
+                                <strong>VERIFICATION<br/><small>(Program Manager)</small></strong>                          
                             </td>
                             <td style="border-top: 1px solid #C0C0C0; border-bottom: 1px solid #C0C0C0; border-left: 1px solid #000000; border-right: 1px solid #000000;   vertical-align: top;  background-color: #f7f8fb;"  colspan="2">
                                 <strong><small>Initials</small></strong><br/><br/>
@@ -292,7 +292,7 @@
                         @if($approval->approval_level_id == 3)
                         <tr style="    height: 55px; ">
                             <td colspan="2">
-                                <strong>VERIFICATION<br/><small>(Accounting)</small><br/><br/></strong>                          
+                                <strong>APPROVAL<br/><small>(Finance Manager)</small><br/><br/></strong>                          
                             </td>
                             <td style="border-top: 1px solid #C0C0C0; border-bottom: 1px solid #C0C0C0; border-left: 1px solid #000000; border-right: 1px solid #000000;   vertical-align: top;  background-color: #f7f8fb;"  colspan="2">
                                 <strong><small>Initials</small></strong><br/><br/>

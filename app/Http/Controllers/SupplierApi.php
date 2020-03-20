@@ -389,15 +389,9 @@ class SupplierApi extends Controller
             $qb->limit($input['limit']);
         }
 
-        //migrated
-        if(array_key_exists('migrated', $input)){
-            $mig = (int) $input['migrated'];
-
-            if($mig==0){
-                $qb->whereNull('migration_id');
-            }else if($mig==1){
-                $qb->whereNotNull('migration_id');
-            }
+        // Donation recepients
+        if(array_key_exists('donation', $input)){
+            $qb->whereIn('supply_category_id', [21]);   // Government organisations
         }
 
         if(array_key_exists('datatables', $input)){

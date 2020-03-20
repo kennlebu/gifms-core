@@ -37,19 +37,13 @@ class RoomsApi extends Controller
 
     public function getRooms(){
         try{
-            $response;
-            $response_dt;
-
-            $total_records          = MeetingRoom::count();
-            $records_filtered       = 0;
-
             $input = Request::all();
             $rooms = MeetingRoom::query();
 
             $response;
             $response_dt;
 
-            $total_records          = $rooms->count();
+            $total_records          = MeetingRoom::count();
             $records_filtered       = 0;
 
             //searching
@@ -235,7 +229,10 @@ class RoomsApi extends Controller
                 return response()->json(array('msg' => 'already booked'), 409);
             }
 
-            if($booking->save()){
+            if($booking->save()){                
+                // Add activity notification
+                $this->addActivityNotification('Booked room '.$booking->room->name ?? '', null, $this->current_user()->id, $this->current_user()->id, 'info', 'meeting_rooms', false);
+
                 return response()->json(array('msg' => 'Room booked'), 200);
             }
         }

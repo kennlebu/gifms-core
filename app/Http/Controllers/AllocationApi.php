@@ -24,6 +24,7 @@ use App\Models\MobilePaymentModels\MobilePayment;
 use App\Models\AccountingModels\Account;
 use App\Models\ProjectsModels\Project;
 use Excel;
+use Illuminate\Support\Facades\DB;
 
 class AllocationApi extends Controller
 {
@@ -66,7 +67,7 @@ class AllocationApi extends Controller
                 activity()
                    ->performedOn($allocation->allocatable)
                    ->causedBy($user)
-                   ->log('allocated');
+                   ->log('Allocated');
                 return Response()->json(array('success' => 'allocation added','allocation' => $allocation), 200);
             }
 
@@ -283,8 +284,8 @@ class AllocationApi extends Controller
 
                 if(!empty($value['pid'])){
                     try{
-                        $project = Project::where('project_code','like', '%'.trim($value['pid']).'%')->firstOrFail();
-                        $account = Account::where('account_code', 'like', '%'.trim($value['account_code']).'%')->firstOrFail();
+                    $project = Project::where(DB::raw("TRIM(project_code)", trim($value['pid'])))->firstOrFail();
+                    $account = Account::where(DB::raw("TRIM(account_code)", trim($value['account_code'])))->firstOrFail();
     
                         $allocation->allocatable_id = $payable_id;
                         $allocation->allocatable_type = $payable_type;
@@ -293,7 +294,6 @@ class AllocationApi extends Controller
                         $allocation->percentage_allocated = (string) $this->getPercentage($value['amount_allocation'], $total);
                         $allocation->allocated_by_id =  (int) $user->id;
                         $allocation->account_id =  $account->id;
-                        $allocation->project_id = $project->id;
                         array_push($allocations_array, $allocation);
     
                     }
@@ -302,6 +302,7 @@ class AllocationApi extends Controller
                                         "msg"=>$e->getMessage()];
                         return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
                     }
+                        $allocation->project_id = $project->id;
                 }
             }
 

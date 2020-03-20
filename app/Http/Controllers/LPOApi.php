@@ -30,15 +30,18 @@ use App\Mail\NotifyLpo;
 use App\Mail\NotifyLpoDispatch;
 use App\Mail\NotifyLpoCancellation;
 use App\Models\ApprovalsModels\Approval;
-use App\Models\ApprovalsModels\ApprovalLevel;
-use App\Models\StaffModels\Staff;
 use App\Models\SuppliesModels\SupplierRate;
 use App\Exceptions\NoLpoItemsException;
 use App\Exceptions\LpoQuotationAmountMismatchException;
 use App\Exceptions\ApprovalException;
 use App\Models\AllocationModels\Allocation;
+use App\Models\LpoModels\LpoDefaultTerm;
+use App\Models\LPOModels\LpoItem;
+use App\Models\LPOModels\LpoTerm;
+use App\Models\Requisitions\Requisition;
+use App\Models\Requisitions\RequisitionItem;
 use Excel;
-
+use Illuminate\Http\Request as HttpRequest;
 
 class LPOApi extends Controller
 {
@@ -100,42 +103,149 @@ class LPOApi extends Controller
         $form = Request::all();
 
         try{
+            $lpo_type = 'LPO';
+
             $lpo = new Lpo;
-            $lpo->requested_by_id                   =   (int)   $form['requested_by_id'];
-            $lpo->expense_desc                      =           $form['expense_desc'];
-            $lpo->expense_purpose                   =           $form['expense_purpose'];
-            $lpo->project_id                        =   (int)   $form['project_id'];
-            $lpo->account_id                        =   (int)   $form['account_id'];
+            $lpo->requested_by_id = (int) $form['requested_by_id'];
+            $lpo->expense_desc = $form['expense_desc'];
+            $lpo->expense_purpose = $form['expense_purpose'];
             if(!empty($form['currency_id'])) 
-            $lpo->currency_id                       =   (int)   $form['currency_id'];
-            $lpo->project_manager_id                =   (int)   $form['project_manager_id'];
-            $lpo->status_id                         =   $this->default_status;
+            $lpo->currency_id = (int) $form['currency_id'];
+            $lpo->project_manager_id = (int) $form['project_manager_id'];
+            $lpo->status_id = $this->default_status;
             if(!empty($form['quote_exempt_explanation']))
-            $lpo->quote_exempt_explanation          = $form['quote_exempt_explanation'];
+            $lpo->quote_exempt_explanation = $form['quote_exempt_explanation'];
             if(!empty($form['quote_exempt_details']))
             $lpo->quote_exempt_details = $form['quote_exempt_details'];
             if(!empty($form['expensive_quotation_reason']))
-            $lpo->expensive_quotation_reason = $form['expensive_quotation_reason'];
+            $lpo->expensive_quotation_reason = $form['expensive_quotation_reason'] ?? null;
             if(!empty($form['lpo_type'])){
                 $lpo->lpo_type = $form['lpo_type'];
             }
             if(!empty($form['program_activity_id'])) 
             $lpo->program_activity_id = $form['program_activity_id'];
+            if(!empty($form['module']))
+            $lpo->module = $form['module'];
+            if(!empty($form['requisitioned_by_id']))
+            $lpo->requisitioned_by_id = $form['requisitioned_by_id'] ?? null;
+            if(!empty($form['supplier_id']))
+            $lpo->supplier_id = $form['supplier_id'] ?? null;
+            if(!empty($form['approver_id']))
+            $lpo->approver_id = $form['approver_id'] ?? null;
+            if(!empty($form['quotation_ref']))
+            $lpo->approver_id = $form['quotation_ref'] ?? null;
 
             $user = JWTAuth::parseToken()->authenticate();
-            $lpo->request_action_by_id            =   (int)   $user->id;
+            $lpo->request_action_by_id = (int) $user->id;
 
+            if(empty($form['requisition_id']) || (int) $form['requisition_id'] == 0){
+                return response()->json(['error'=>'You cannot create an LPO without a requisition'], 403);
+            }
 
+            $lpo->disableLogging();
             if($lpo->save()) {
-                if(!empty($form['lpo_type']) && $form['lpo_type']=='prenegotiated'){
-                    $lpo->ref = "CHAI/PLPO/#$lpo->id/".date_format($lpo->created_at,"Y/m/d");
+
+                $requisition = null;
+                if(!empty($form['requisition_id']) && (int) $form['requisition_id'] != 0){
+                    $lpo->requisition_id = $form['requisition_id'];
+                    $lpo->save();
+                    $requisition = Requisition::findOrFail($form['requisition_id']);
+                    $allocation_purpose = '';
+                    $count = 0;
+                    $accounts = [];
+    
+                    foreach($form['requisition_items'] as $item){
+                        $lpo_item = new LpoItem();
+                        $item = RequisitionItem::findOrFail($item);
+                        $lpo_item->lpo_id = $lpo->id;
+                        $lpo_item->item = $item->service;
+                        $lpo_item->no_of_days = $item->no_of_days;
+                        $lpo_item->qty = $item->qty;
+                        $lpo_item->qty_description = $item->qty_description;
+                        $lpo_item->requisition_item_id = $item->id;
+                        $lpo_item->disableLogging();
+                        $lpo_item->save();
+                        if($count < 1){
+                            $allocation_purpose = $item->service;
+                        }
+                        else {
+                            $allocation_purpose = $allocation_purpose.'; '.$item->service;
+                        }
+                        $count += 1;
+                        $item->status_id = 2;
+                        if($item->type == 'non_lpo'){
+                            $item->transaction_type = 'lso';
+                            $lpo_type = 'LSO';
+                        }
+                        else {
+                            $item->transaction_type = 'lpo';
+                            $lpo_type = 'LPO';
+                        }
+                        $item->disableLogging();
+                        $item->save();
+                        if(!empty($item->account_id) && !in_array($item->account_id, $accounts)){
+                            $accounts[] = $item->account_id;
+                        }
+                    }
+                    $allocation_purpose = $allocation_purpose.'; '.$requisition->purpose;
+
+                    if(!empty($accounts)){
+                        foreach($accounts as $account){
+                            foreach($requisition->allocations as $alloc){
+                                $allocation = new Allocation();
+                                $allocation->account_id = $account;
+                                $allocation->project_id = $alloc->project_id;
+                                $allocation->allocatable_id = $lpo->id;
+                                $allocation->allocatable_type = 'lpos';
+                                $allocation->percentage_allocated = $alloc->percentage_allocated / count($accounts);
+                                $allocation->allocation_purpose = $allocation_purpose;
+                                $allocation->objective_id = $alloc->objective_id;
+                                $allocation->allocated_by_id = $requisition->requested_by_id;
+                                $allocation->disableLogging();
+                                $allocation->save();
+                            }
+                        }  
+                    }
+                    else {  // For the existing requisitions. Remove after going live.
+                        foreach($requisition->allocations as $alloc){
+                            $allocation = new Allocation();
+                            $allocation->account_id = $alloc->account_id;
+                            $allocation->project_id = $alloc->project_id;
+                            $allocation->allocatable_id = $lpo->id;
+                            $allocation->allocatable_type = 'lpos';
+                            $allocation->percentage_allocated = $alloc->percentage_allocated;
+                            $allocation->allocation_purpose = $allocation_purpose;
+                            $allocation->objective_id = $alloc->objective_id;
+                            $allocation->allocated_by_id = $requisition->requested_by_id;
+                            $allocation->disableLogging();
+                            $allocation->save();
+                        }
+                    }
+                                      
                 }
-                else{
-                    $lpo->ref = "CHAI/LPO/#$lpo->id/".date_format($lpo->created_at,"Y/m/d");
-                }
+                
+                $lpo_no = count($requisition->lpos);
+                $lpo->ref = $requisition->ref.'-'.$lpo_type.'-'.$this->pad_with_zeros(2, $lpo_no);
                 $lpo->save();
 
-                return Response()->json(array('msg' => 'Success: lpo added','lpo' => Lpo::find((int)$lpo->id)), 200);
+                if(!empty($requisition)){
+                    // Create a requisition log for LPO creation
+                    activity()
+                        ->performedOn($requisition)
+                        ->causedBy($this->current_user())
+                        ->withProperties(['detail' => 'Created '.$lpo_type.' '.$lpo->ref, 'summary'=> true])
+                        ->log('Created '.$lpo_type);
+                }
+
+                activity()
+                    ->performedOn($lpo)
+                    ->causedBy($this->current_user())
+                    ->log('Created '. $lpo_type);
+
+                // Add activity notification
+                $this->addActivityNotification('Created '. $lpo_type .' '.$lpo->ref, null, $this->current_user()->id, $lpo->requisitioned_by_id??$lpo->requested_by_id, 'info', 'lpos', true);
+
+                return Response()->json(array('msg' => 'Success: lpo added','lpo' => $lpo), 200);
             }
 
         }catch (JWTException $e){
@@ -203,9 +313,15 @@ class LPOApi extends Controller
         if(!empty($form['quote_exempt_details']))
         $lpo->quote_exempt_details = $form['quote_exempt_details'];
         if(!empty($form['expensive_quotation_reason']))
-        $lpo->expensive_quotation_reason = $form['expensive_quotation_reason'];
+        $lpo->expensive_quotation_reason = $form['expensive_quotation_reason'] ?? null;
         if(!empty($form['program_activity_id'])) 
         $lpo->program_activity_id = $form['program_activity_id'];
+        if(!empty($form['supplier_id']))
+        $lpo->supplier_id = $form['supplier_id'] ?? null;
+        if(!empty($form['approver_id']))
+        $lpo->approver_id = $form['approver_id'] ?? null;
+        if(!empty($form['quotation_ref']))
+        $lpo->approver_id = $form['quotation_ref'] ?? null;
 
         if($lpo->save()) {
             return Response()->json(array('msg' => 'Success: lpo updated','lpo' => $lpo), 200);
@@ -259,13 +375,39 @@ class LPOApi extends Controller
     */
     public function deleteLpo($lpo_id)
     {
-        $deleted = Lpo::destroy($lpo_id);
-        if($deleted){
+        try {
+            $lpo = Lpo::find($lpo_id);
+
+            if(!empty($lpo->requisition_id)){
+                foreach($lpo->items as $item){
+                    $requisition_item = RequisitionItem::findOrFail($item->requisition_item_id);
+                    $requisition_item->status_id = 1;
+                    $requisition_item->disableLogging();
+                    $requisition_item->save();
+                }
+
+                // Logging item recall
+                activity()
+                    ->performedOn(Requisition::find($lpo->requisition_id))
+                    ->causedBy($this->current_user())
+                    // ->withProperties(['detail'=>'LPO '.$lpo->ref.' has been deleted'])
+                    ->log('LPO deleted');
+                    
+                // Add activity notification
+                $this->addActivityNotification('Deleted '. $lpo->lpo_type=='lso'?'LSO':'LSO' .' '.$lpo->ref, null, $this->current_user()->id, $lpo->requisitioned_by_id ?? $lpo->requested_by_id, 'danger', 'lpos', false);
+            }
+
+            $lpo->delete();
+
+            // Delete the items too
+            LpoItem::where('lpo_id', $lpo_id)->delete();
             // Delete the allocations too
             Allocation::where('allocatable_id', $lpo_id)->where('allocatable_type', 'lpos')->delete();
+
             return response()->json(['msg'=>"lpo deleted"], 200,array(),JSON_PRETTY_PRINT);
-        }else{
-            return response()->json(['error'=>"Something went wrong"], 500,array(),JSON_PRETTY_PRINT);
+        }
+        catch(Exception $e) {
+            return response()->json(['error'=>"Something went wrong", 'msg'=>$e->getMessage()], 500,array(),JSON_PRETTY_PRINT);
         }
 
     }
@@ -292,26 +434,47 @@ class LPOApi extends Controller
      */
     public function recallLpo($lpo_id)
     {
-        $lpo = Lpo::find($lpo_id);        
+        try{
+            $lpo = Lpo::find($lpo_id);
 
-        // Ensure LPO is in the recallable statuses
-        if(!in_array($lpo->status_id, [13,3,4,5])){
-            return response()->json(['msg'=>"you do not have permission to do this"], 403, array(), JSON_PRETTY_PRINT);
-        }
+            // Ensure LPO is in the recallable statuses
+            if(!in_array($lpo->status_id, [13,3,4,5])){
+                return response()->json(['msg'=>"you do not have permission to do this"], 403, array(), JSON_PRETTY_PRINT);
+            }
 
-        $lpo->status_id = 11;
+            $lpo->status_id = 11;
+            $lpo->disableLogging(); //! Do not log the update  
+            $lpo->save();
 
-        // Logging recall
-        activity()
-            ->performedOn($lpo)
-            ->causedBy($this->current_user())
-            ->log('LPO recalled');
+            // Logging recall
+            activity()
+                ->performedOn($lpo)
+                ->causedBy($this->current_user())
+                ->log($lpo->lpo_type=='lso'?'LSO':'LPO'.' recalled');
+            
+            // Add activity notification
+            $this->addActivityNotification('Recalled '.$lpo->lpo_type=='lso'?'LSO':'LPO'.' '. $lpo->ref , null, $this->current_user()->id, $lpo->requisitioned_by_id ?? $lpo->requested_by_id, 'danger', 'lpos', true);
 
-        $lpo->disableLogging(); //! Do not log the update        
-        if($lpo->save()){
+            if(!empty($lpo->requisition_id)){
+                foreach($lpo->items as $item){
+                    $requisition_item = RequisitionItem::findOrFail($item->requisition_item_id);
+                    $requisition_item->status_id = 1;
+                    $requisition_item->disableLogging();
+                    $requisition_item->save();
+                }
+
+                // Logging item recall
+                activity()
+                    ->performedOn(Requisition::find($lpo->requisition_id))
+                    ->causedBy($this->current_user())
+                    ->withProperties(['detail'=>'LPO '.$lpo->ref.' has been recalled'])
+                    ->log('LPO recalled');
+            }
+        
             return response()->json(['msg'=>"lpo recalled"], 200,array(),JSON_PRETTY_PRINT);
-        }else{
-            return response()->json(['error'=>"could not recall lpo"], 404,array(),JSON_PRETTY_PRINT);
+        }
+        catch(Exception $e){
+            return response()->json(['error'=>"could not recall lpo",'msg'=>$e->getMessage()], 404,array(),JSON_PRETTY_PRINT);
         }
     }
 
@@ -347,11 +510,30 @@ class LPOApi extends Controller
         activity()
             ->performedOn($lpo)
             ->causedBy($this->current_user())
-            ->log('LPO canceled');
+            ->log($lpo->lpo_type=='lso'?'LSO':'LPO'.' canceled');
+            
+        // Add activity notification
+        $this->addActivityNotification('Cancelled '.$lpo->lpo_type=='lso'?'LSO':'LPO'.' '. $lpo->ref, null, $this->current_user()->id, $lpo->requisitioned_by_id ?? $lpo->requested_by_id, 'danger', 'lpos', true);
 
         $lpo->disableLogging(); //! Do not log the update
         
         if($lpo->save()){
+            if(!empty($lpo->requisition_id)){
+                foreach($lpo->items as $item){
+                    $requisition_item = RequisitionItem::findOrFail($item->requisition_item_id);
+                    $requisition_item->status_id = 1;
+                    $requisition_item->disableLogging();
+                    $requisition_item->save();
+                }
+
+                // Logging item recall
+                activity()
+                    ->performedOn(Requisition::find($lpo->requisition_id))
+                    ->causedBy($this->current_user())
+                    ->withProperties(['detail'=>$lpo->lpo_type=='lso'?'LSO':'LPO'.' '.$lpo->ref.' has been recalled'])
+                    ->log($lpo->lpo_type=='lso'?'LSO':'LPO'.' recalled');
+            }
+
             Mail::queue(new NotifyLpoCancellation($lpo));
             return response()->json(['msg'=>"lpo cancelled"], 200,array(),JSON_PRETTY_PRINT);
         }else{
@@ -400,47 +582,30 @@ class LPOApi extends Controller
             $lpo->disableLogging(); //! Do not log the update
             if($lpo->save()) {
 
-                $lpo   = LPO::with(
-                                            'requested_by',
-                                            'request_action_by',
-                                            'project',
-                                            'account',
-                                            'invoices',
-                                            'status',
-                                            'project_manager',
-                                            'rejected_by',
-                                            'cancelled_by',
-                                            'received_by',
-                                            'supplier',
-                                            'currency',
-                                            'quotations',
-                                            'preffered_quotation',
-                                            'items',
-                                            'terms',
-                                            'approvals',
-                                            'deliveries'
-                                )->findOrFail($lpo_id);
+                $lpo = LPO::findOrFail($lpo_id);
 
                 $approval = new Approval;
-
                 $approval->approvable_id            =   (int)   $lpo->id;
                 $approval->approvable_type          =   "lpos";
                 $approval->approval_level_id        =   $approvable_status->approval_level_id;
                 $approval->approver_id              =   (int)   $user->id;
-
+                $approval->disableLogging();
                 $approval->save();
 
                 // Logging
-                $lpo->enableLogging(); //! Re-enable logging
                 activity()
                    ->performedOn($approval->approvable)
                    ->causedBy($user)
-                   ->log('Approved');
+                   ->withProperties(['detail' => $lpo->lpo_type == 'lso'?'LSO':'LPO'. $lpo->ref .' approved', 'summary'=> true])
+                   ->log($approval->approval_level->approval_level);
+                
+                // Add activity notification
+                $this->addActivityNotification('Approved '.$lpo->lpo_type == 'lso'?'LSO ':'LPO '. $lpo->ref, null, $this->current_user()->id, $lpo->requisitioned_by_id ?? $lpo->requested_by_id, 'success', 'lpos', true);
 
                 if($lpo->status_id!=7){
                     Mail::queue(new NotifyLpo($lpo));
                 }
-                elseif($lpo->status_id==7){
+                elseif($lpo->status_id==7 && $lpo->lpo_type != 'lso'){
                     Mail::queue(new NotifyLpoDispatch($lpo));
                 }
 
@@ -494,27 +659,7 @@ class LPOApi extends Controller
         $user = JWTAuth::parseToken()->authenticate();
 
         try{
-            $lpo   = LPO::with(
-                                            'requested_by',
-                                            'request_action_by',
-                                            'project',
-                                            'account',
-                                            'invoices',
-                                            'status',
-                                            'project_manager',
-                                            'rejected_by',
-                                            'cancelled_by',
-                                            'received_by',
-                                            'supplier',
-                                            'currency',
-                                            'quotations',
-                                            'preffered_quotation',
-                                            'items',
-                                            'terms',
-                                            'approvals',
-                                            'deliveries'
-                                )->findOrFail($lpo_id);
-           
+            $lpo   = LPO::findOrFail($lpo_id);           
            
             if (!$user->can("APPROVE_LPO_".$lpo->status_id)){
                 throw new ApprovalException("No approval permission");             
@@ -524,27 +669,30 @@ class LPOApi extends Controller
             $lpo->rejected_at              =   date('Y-m-d H:i:s');
             $lpo->rejection_reason             =   $form['rejection_reason'];
 
-            $lpo->disableLogging(); //! Disable logging for the update
+            $lpo->disableLogging();
             if($lpo->save()) {
 
             // Logging
-            $lpo->enableLogging();
-                activity()
+            activity()
                 ->performedOn($lpo)
                 ->causedBy($user)
-                ->log('rejected');
+                ->withProperties(['detail' => $lpo->lpo_type == 'lso'?'LSO':'LPO'.' returned. REASON: '.$lpo->rejection_reason, 'summary'=> true])
+                ->log('Returned');
+
+            // Add activity notification
+            $this->addActivityNotification('Returned '.$lpo->lpo_type=='lso'?'LSO':'LPO'.' '. $lpo->ref, null, $this->current_user()->id, $lpo->requisitioned_by_id ?? $lpo->requested_by_id, 'danger', 'lpos', false);
 
                 Mail::queue(new NotifyLpo($lpo));
 
                 return Response()->json(array('msg' => 'Success: lpo rejected','lpo' => $lpo), 200);
             }
 
-        }catch(ApprovalException $ae){
-
+        }
+        catch(ApprovalException $ae){
             $response =  ["error"=>"You do not have the permissions to perform this action at this point"];
             return response()->json($response, 403,array(),JSON_PRETTY_PRINT);
-        }catch(Exception $e){
-
+        }
+        catch(Exception $e){
             $response =  ["error"=>"lpo could not be found", "msg"=>$e->getMessage()];
             return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
         }
@@ -602,7 +750,7 @@ class LPOApi extends Controller
                                             'deliveries'
                                 )->findOrFail($lpo_id);
 
-            if ((empty($lpo->lpo_type) || $lpo->lpo_type!='prenegotiated') && abs($lpo->preffered_quotation->amount - $lpo->totals) > 1){
+            if ((empty($lpo->lpo_type) || $lpo->lpo_type!='prenegotiated') && $lpo->preffered_quotation && $lpo->preffered_quotation->amount != $lpo->totals ){
                 throw new LpoQuotationAmountMismatchException("Total amount does not match with quotation amount");             
             }
 
@@ -629,9 +777,13 @@ class LPOApi extends Controller
                     ->log('Submitted for approval');
             }
 
+            // Add activity notification
+            $this->addActivityNotification('Submitted '.$lpo->lpo_type=='lso'?'LSO':'LPO'.' '. $lpo->ref, null, $this->current_user()->id, $lpo->requisitioned_by_id ?? $lpo->requested_by_id, 'info', 'lpos', false);
+
             $lpo->disableLogging(); //! Do not log the update
             if($lpo->save()) {
-                Mail::queue(new NotifyLpo($lpo));
+                if($lpo->lpo_type != 'lso')
+                    Mail::queue(new NotifyLpo($lpo));
                 return Response()->json(array('msg' => 'Success: lpo submitted','lpo' => $lpo), 200);
             }
 
@@ -645,7 +797,7 @@ class LPOApi extends Controller
             return response()->json($response, 403,array(),JSON_PRETTY_PRINT);
         }catch(Exception $e){
 
-            $response =  ["error"=>"Something went wrong"];
+            $response =  ["error"=>"Something went wrong", 'msg'=>$e->getMessage(), 'trace'=>$e->getTraceAsString()];
             return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
         }
     }
@@ -699,18 +851,21 @@ class LPOApi extends Controller
                                             'currency',
                                             'quotations',
                                             'preffered_quotation.supplier',
-                                            'items',
+                                            'items.requisition_item.supplier_service',
                                             'terms',
                                             'approvals.approver','approvals.approval_level',
                                             'logs.causer','logs.subject',
                                             'deliveries',
-                                            'program_activity'
+                                            'program_activity',
+                                            'allocations.project',
+                                            'allocations.account',
+                                            'requisition'
                                 )->findOrFail($lpo_id);
            
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
 
         }catch(Exception $e){
-            $response =  ["error"=>"lpo could not be found"];
+            $response =  ["error"=>"Something went wrong",'msg'=>$e->getMessage(),'trace'=>$e->getTraceAsString()];
             return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
         }
     }
@@ -805,7 +960,7 @@ class LPOApi extends Controller
     public function getDocumentById($lpo_id)
     {   
         try{
-            $lpo   = Lpo::findOrFail($lpo_id);
+            $lpo   = Lpo::with('requisition')->findOrFail($lpo_id);
             $unique_approvals = $this->unique_multidim_array($lpo->approvals, 'approver_id');
 
             $data = array(
@@ -813,7 +968,13 @@ class LPOApi extends Controller
                 'unique_approvals' => $unique_approvals
                 );
 
-            $pdf = PDF::loadView('pdf/lpo', $data);
+            $pdf = null;
+            if($lpo->lpo_type == 'lso'){
+                $pdf = PDF::loadView('pdf/lso', $data);
+            }
+            else {
+                $pdf = PDF::loadView('pdf/lpo', $data);
+            }
             $file_contents  = $pdf->stream();
             $response = Response::make($file_contents, 200);
             $response->header('Content-Type', 'application/pdf');
@@ -941,8 +1102,8 @@ class LPOApi extends Controller
             $qb->whereIn('lpos.status_id', [6,7,8,9,10,14]);
         }
 
-         // if for invoice
-         if(array_key_exists('for_invoice',$input)&&$input['for_invoice']==true){
+        // if for invoice
+        if(array_key_exists('for_invoice',$input)&&$input['for_invoice']==true){
             if(!$this->current_user()->hasRole([
                 'super-admin',
                 'admin',
@@ -952,11 +1113,11 @@ class LPOApi extends Controller
                 'accountant', 
                 'assistant-accountant']
             )){
-                $qb->where('lpos.requested_by_id', $this->current_user()->id);
+                $qb->where('lpos.requested_by_id', $this->current_user()->id)->orWhere('lpos.requisitioned_by_id',$this->current_user()->id);
             }
             $qb->where(function ($query){
                 $query->whereNull('lpos.invoice_paid');
-                $query->orWhere('lpos.invoice_paid', 'not like', '\'%full%\'');
+                $query->orWhere('lpos.invoice_paid', '!=', "'full'");
             });
             $qb->whereIn('lpos.status_id', [6,7,8,9,10,14]);
         }
@@ -972,9 +1133,9 @@ class LPOApi extends Controller
 
             if($status_ >-1){
                 $qb->where('lpos.status_id', $input['status']);
-                $qb->where('lpos.requested_by_id',$this->current_user()->id);
+                $qb->where('lpos.requested_by_id',$this->current_user()->id)->orWhere('lpos.requisitioned_by_id',$this->current_user()->id);
             }elseif ($status_==-1) {
-                $qb->where('lpos.requested_by_id',$this->current_user()->id);
+                $qb->where('lpos.requested_by_id',$this->current_user()->id)->orWhere('lpos.requisitioned_by_id',$this->current_user()->id);
             }elseif ($status_==-3) {
                 $qb->where('project_manager_id',$this->current_user()->id);
             }
@@ -992,7 +1153,7 @@ class LPOApi extends Controller
         }
 
         if(array_key_exists('my_approvables', $input)){
-            $current_user =  JWTAuth::parseToken()->authenticate();
+            $current_user = JWTAuth::parseToken()->authenticate();
             if($current_user->hasRole([
                 'super-admin',
                 'admin',
@@ -1008,8 +1169,18 @@ class LPOApi extends Controller
                         $permission = 'APPROVE_LPO_'.$value['id'];
                         if($current_user->can($permission)&&$value['id']==3){
                             $query->orWhere(function ($query1) use ($value,$current_user) {
-                                $query1->Where('status_id',$value['id']);
-                                $query1->Where('project_manager_id',$current_user->id);
+                                
+                                $query1->where(function ($query1) use ($value,$current_user) {
+                                    $query1->where('status_id',$value['id']);
+                                    $query1->where('project_manager_id',$current_user->id)
+                                            ->whereNull('approver_id');
+                                });
+                                $query1->orWhere(function ($query1) use ($value,$current_user) {
+                                    $query1->where('status_id',$value['id']);
+                                    $query1->where('approver_id',$current_user->id);
+                                });
+                                // $query1->where('project_manager_id',$current_user->id);
+                                // $query1->orWhere('approver_id', $current_user->id);
                             });
                         }
                         else if($current_user->can($permission)){
@@ -1199,6 +1370,14 @@ class LPOApi extends Controller
             $data[$key]['deliveries']               = $lpo->deliveries;
             $data[$key]['totals']                   = $lpo->totals;
             $data[$key]['program_activity']         = $lpo->program_activity;
+            $data[$key]['requisition']              = $lpo->requisition;
+            $data[$key]['lpo_requisition_items']    = $lpo->lpo_requisition_items;
+            $data[$key]['preferred_supplier']       = $lpo->preferred_supplier;
+            $data[$key]['preferred_supplier']['supply_category'] = $lpo->preferred_supplier->supply_category ?? '';
+            $data[$key]['requisition']              = $lpo->requisition;
+            $data[$key]['can_invoice']              = $lpo->can_invoice;
+            $data[$key]['invoices_total']           = $lpo->invoices_total;
+            $data[$key]['requisitioned_by']         = $lpo->requisitioned_by;
 
             if(!empty($lpo->preffered_quotation_id) && !empty($lpo->preffered_quotation->supplier_id)){
                 if($lpo->preffered_quotation_id > 0 && $lpo->preffered_quotation->supplier_id > 0 ){
@@ -1414,7 +1593,45 @@ class LPOApi extends Controller
     }
 
 
+    public function updateLpoSupplier(){
+        $form = Request::all();
+        $lpo = Lpo::find($form['id']);
+        $lpo->supplier_id = (int) $form['supplier_id'] ?? null;
+        if($lpo->save()) {
+            return Response()->json(array('msg' => 'Success: lpo supplier updated','lpo' => $lpo), 200);
+        }
+    }
 
+
+    public function addLpoTerms(HttpRequest $request){
+        $lpo = Lpo::findOrFail($request->lpo_id);
+        $lpo_terms = [];
+        if(!empty($lpo->preferred_supplier) && !empty($lpo->preferred_supplier->supply_category_id)){
+            $supply_category_terms = LpoDefaultTerm::where('supply_category_id', $lpo->preferred_supplier->supply_category_id)->get();
+            foreach($supply_category_terms as $term){
+                $lpo_terms[] = $term;
+            }
+        }
+        $default_terms = LpoDefaultTerm::whereNull('supply_category_id')->get();
+        foreach($default_terms as $term){
+            $lpo_terms[] = $term;
+        }
+
+        foreach($lpo_terms as $term){
+            $check_term = LpoTerm::where('lpo_id', $request->lpo_id)->where('terms', $term->terms)->exists();
+            if(!$check_term){
+                $new_term = new LpoTerm();
+                $new_term->lpo_id = $request->lpo_id;
+                $new_term->terms = $term->terms;
+                $new_term->disableLogging();
+                $new_term->save();
+            }            
+        }
+
+        $saved_terms = LpoTerm::where('lpo_id', $request->lpo_id)->get();
+        return response()->json($saved_terms, 200, [], JSON_PRETTY_PRINT);
+
+    }
 
 
 

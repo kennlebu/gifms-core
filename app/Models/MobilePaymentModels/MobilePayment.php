@@ -2,22 +2,9 @@
 
 namespace App\Models\MobilePaymentModels;
 
-
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\BaseModels\BaseModel;
-use App\Models\StaffModels\Staff;
-use App\Models\ProjectsModels\Project;
-use App\Models\AccountingModels\Account;
-use App\Models\MobilePaymentModels\MobilePaymentType;
-use App\Models\InvoicesModels\Invoice;
-use App\Models\MobilePaymentModels\MobilePaymentStatus;
-use App\Models\LookupModels\Region;
-use App\Models\LookupModels\County;
-use App\Models\MobilePaymentModels\MobilePaymentPayee;
-use App\Models\MobilePaymentModels\MobilePaymentApproval;
 use App\Models\PaymentModels\VoucherNumber;
-use App\Models\PaymentModels\Payment;
 
 class MobilePayment extends BaseModel
 {
@@ -119,6 +106,14 @@ class MobilePayment extends BaseModel
     {
         return $this->belongsTo('App\Models\ActivityModels\Activity','program_activity_id');
     }
+    public function requisition()
+    {
+        return $this->belongsTo('App\Models\Requisitions\Requisition','requisition_id');
+    }
+    public function lpo()
+    {
+        return $this->belongsTo('App\Models\LPOModels\Lpo');
+    }
 
 
 
@@ -199,6 +194,13 @@ class MobilePayment extends BaseModel
         }
         return $bank_trans;
     }
+
+    // public function getRequisitionedByAttribute(){
+    //     if($this->requisition){
+    //         return $this->requisition->requested_by;
+    //     }
+    //     return null;
+    // }
 
 
 

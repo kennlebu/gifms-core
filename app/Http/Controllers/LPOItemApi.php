@@ -31,9 +31,16 @@ class LPOItemApi extends Controller
      */
     public function addLpoItem()
     {
-        $lpo_item = new LpoItem;
         try{
             $form = Request::all();
+            if(array_key_exists('requisition_item_id', $form) && !empty($form['requisition_item_id'])){
+                $lpo_item = LpoItem::where('requisition_item_id', $form['requisition_item_id'])
+                                    ->where('lpo_id', $form['lpo_id'])->first();
+                $lpo_item->requisition_item_id = $form['requisition_item_id'];
+            }
+            else {
+                $lpo_item = new LpoItem;
+            }
 
             $lpo_item->lpo_id                       =               $form['lpo_id'];
             $lpo_item->item                         =               $form['item'];
@@ -235,7 +242,7 @@ class LPOItemApi extends Controller
     public function getLpoItemById($lpo_item_id)
     {
        try{
-            $response = LpoItem::findOrFail($lpo_item_id);
+            $response = LpoItem::with('lpo')->findOrFail($lpo_item_id);
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
 
         }catch(Exception $e){

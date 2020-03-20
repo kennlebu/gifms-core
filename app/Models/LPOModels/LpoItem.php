@@ -13,13 +13,21 @@ class LpoItem extends BaseModel
     use SoftDeletes;
 
 
-    protected $appends = ['calculated_unit_price','calculated_vat','calculated_sub_total', 'calculated_total'];
-
+	protected $appends = ['calculated_unit_price','calculated_vat','calculated_sub_total', 'calculated_total'];
+	
+    public function lpo()
+    {
+        return $this->belongsTo('App\Models\LPOModels\Lpo');
+	}
+	public function requisition_item()
+    {
+        return $this->belongsTo('App\Models\Requisitions\RequisitionItem', 'requisition_item_id');
+    }
 
     public function getCalculatedUnitPriceAttribute()
     {	
-    	$up 			=	(float)		$this->attributes['unit_price'];
-    	$vat_charge 	=	(int)		$this->attributes['vat_charge'];
+    	$up 			=	(float)		$this->unit_price;
+    	$vat_charge 	=	(int)		$this->vat_charge;
     	$cup 			=	$up;
 
     	if($vat_charge==1){
@@ -31,12 +39,12 @@ class LpoItem extends BaseModel
     }
     public function getCalculatedVatAttribute()
     {
-    	$up 			=	(float)		$this->attributes['unit_price'];
-    	$vat_charge 	=	(int)		$this->attributes['vat_charge'];
-		$qty 			=	(int)		$this->attributes['qty'];
+    	$up 			=	(float)		$this->unit_price;
+    	$vat_charge 	=	(int)		$this->vat_charge;
+		$qty 			=	(int)		$this->qty;
 		$days = 1;										// Set default no of days to 1 so that everything is multiplied
-		if(!empty($this->attributes['no_of_days'])){	// by 1 hence no difference. Otherwise, set it to the set no of 
-			$days = $this->attributes['no_of_days'];	// days in the DB
+		if(!empty($this->no_of_days)){					// by 1 hence no difference. Otherwise, set it to the set no of 
+			$days = $this->no_of_days;					// days in the DB
 		}
     	$vat = 0 ;
     	$cup 			=	$up;
@@ -54,12 +62,12 @@ class LpoItem extends BaseModel
     }
     public function getCalculatedSubTotalAttribute()
     {
-    	$up 			=	(float)		$this->attributes['unit_price'];
-    	$vat_charge 	=	(int)		$this->attributes['vat_charge'];
-		$qty 			=	(int)		$this->attributes['qty'];
+    	$up 			=	(float)		$this->unit_price;
+    	$vat_charge 	=	(int)		$this->vat_charge;
+		$qty 			=	(int)		$this->qty;
 		$days = 1;										// Set default no of days to 1 so that everything is multiplied
-		if(!empty($this->attributes['no_of_days'])){	// by 1 hence no difference. Otherwise, set it to the set no of 
-			$days = $this->attributes['no_of_days'];	// days in the DB
+		if(!empty($this->no_of_days)){					// by 1 hence no difference. Otherwise, set it to the set no of 
+			$days = $this->no_of_days;					// days in the DB
 		}
     	$vat = 0;
     	$cup 			=	$up;
@@ -80,12 +88,12 @@ class LpoItem extends BaseModel
     }
     public function getCalculatedTotalAttribute()
     {
-    	$up 			=	(float)		$this->attributes['unit_price'];
-    	$vat_charge 	=	(int)		$this->attributes['vat_charge'];
-		$qty 			=	(int)		$this->attributes['qty'];
+    	$up 			=	(float)		$this->unit_price;
+    	$vat_charge 	=	(int)		$this->vat_charge;
+		$qty 			=	(int)		$this->qty;
 		$days = 1;										// Set default no of days to 1 so that everything is multiplied
-		if(!empty($this->attributes['no_of_days'])){	// by 1 hence no difference. Otherwise, set it to the set no of 
-			$days = $this->attributes['no_of_days'];	// days in the DB
+		if(!empty($this->no_of_days)){					// by 1 hence no difference. Otherwise, set it to the set no of 
+			$days = $this->no_of_days;					// days in the DB
 		}
     	$vat = 0;
     	$cup 			=	$up;

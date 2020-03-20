@@ -97,7 +97,7 @@
             </td>
             <td colspan="1" ></td>
             <td style="border: 1px solid #666666;" rowspan="3" ><strong>Ordered By:</strong></td>
-            <td style="text-align: right; border: 1px solid #666666; border-bottom: 1px solid #c0c0c0;" colspan="2" >{{$lpo->requested_by->full_name}}</td>
+            <td style="text-align: right; border: 1px solid #666666; border-bottom: 1px solid #c0c0c0;" colspan="2" >{{$lpo->requisitioned_by? ($lpo->requisitioned_by->f_name. ' '. $lpo->requisitioned_by->l_name) : $lpo->requested_by->full_name}}</td>
           </tr>
           <tr>
             <td style="border: 1px solid #000000; border-bottom: 1px solid #c0c0c0; border-top: 1px solid #c0c0c0;" colspan="2"  ><strong>Address (City/Town)</strong></td>
@@ -109,7 +109,7 @@
               @endif
             </td>
             <td colspan="1" ></td>
-            <td style="text-align: right; border: 1px solid #666666; border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0;" colspan="2" ><a href="mailto:{{$lpo->requested_by->mobile_no}}">{{$lpo->requested_by->mobile_no}}</a></td>
+            <td style="text-align: right; border: 1px solid #666666; border-top: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0;" colspan="2" ><a href="mailto:{{$lpo->requisitioned_by->mobile_no ?? $lpo->requested_by->mobile_no}}">{{$lpo->requisitioned_by->mobile_no ?? $lpo->requested_by->mobile_no}}</a></td>
           </tr>
           <tr>
             <td style="border: 1px solid #000000; border-top: 1px solid #c0c0c0;" colspan="2"  ><strong>Phone</strong></td>
@@ -121,7 +121,7 @@
               @endif
             </td>
             <td colspan="1" ></td>
-            <td style="text-align: right; border: 1px solid #666666; border-top: 1px solid #c0c0c0;" colspan="2" ><a href="mailto:{{$lpo->requested_by->email}}" target="_blank">{{str_replace("@","@ ",$lpo->requested_by->email)}}</a></td>
+            <td style="text-align: right; border: 1px solid #666666; border-top: 1px solid #c0c0c0;" colspan="2" ><a href="mailto:{{$lpo->requisitioned_by->email ?? $lpo->requested_by->email}}" target="_blank">{{str_replace("@","@ ",($lpo->requisitioned_by->email ?? $lpo->requested_by->email))}}</a></td>
           </tr>
           <tr>
             <td colspan="9" >&nbsp;</td>
@@ -140,7 +140,15 @@
           @foreach ($lpo->items as $key => $item)
           <tr>
             <td style="border-top:1px solid #c0c0c0;border-bottom:1px solid #c0c0c0;border-left:1px solid #000000;border-right:1px solid #000000;font-size:12px;">{{$key+1}}</td>
-            <td style="border-top:1px solid #c0c0c0;border-bottom:1px solid #c0c0c0;border-left:1px solid #000000;border-right:1px solid #000000;font-size:12px;" colspan="3" >{{$item->item_description}}</td>
+            <td style="border-top:1px solid #c0c0c0;border-bottom:1px solid #c0c0c0;border-left:1px solid #000000;border-right:1px solid #000000;font-size:12px;" colspan="3" >{{$item->item}} {{$item->item_description ? ('; '.$item->item_description) : ''}}
+            {{-- @if (!empty($item->no_of_days) && !empty($item->requisition_item))
+              @if($item->no_of_days > 1)
+                . From {{date('d M, Y', strtotime($item->requisition_item->start_date)) ?? ''}} to {{date('d M, Y', strtotime($item->requisition_item->end_date)) ?? ''}}
+              @elseif($item->no_of_days == 1)
+                . On {{date('d M, Y', strtotime($item->requisition_item->start_date)) ?? ''}}
+              @endif
+            @endif --}}
+            </td>
             <td style="border-top:1px solid #c0c0c0;border-bottom:1px solid #c0c0c0;border-left:1px solid #000000;border-right:1px solid #000000;font-size:12px;" align="center">{{$item->qty_description}}</td>
             <td style="border-top:1px solid #c0c0c0;border-bottom:1px solid #c0c0c0;border-left:1px solid #000000;border-right:1px solid #000000;font-size:12px;" align="right">{{number_format($item->calculated_unit_price,2)}}</td>
             <td style="border-top:1px solid #c0c0c0;border-bottom:1px solid #c0c0c0;border-left:1px solid #000000;border-right:1px solid #000000;font-size:12px;" align="right"></td>
@@ -232,7 +240,17 @@
 
           @foreach ($unique_approvals as $key => $approval)
             <tr>
-                <td colspan="3">Authorized by:<br/>
+                <td colspan="3">
+                  @if ($approval->approval_level_id == 1)
+                      Reviewed by:
+                  @elseif($approval->approval_level_id == 2)
+                      Verified by:
+                  @elseif($approval->approval_level_id == 3)
+                      Approved by:
+                  @elseif($approval->approval_level_id == 4)
+                      Authorised by:
+                  @endif                  
+                  <br/>
                   <img style="height:70px;width:200px;" alt="." src="{{asset('storage/signatures/signature'.$approval->approver_id.'.png')}}"><br/>
                   @isset($approval->approver_id)
                       <strong>{{$approval->approver->full_name}}</strong>

@@ -15,6 +15,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AllocationModels\Allocation;
 use Illuminate\Support\Facades\Request;
 use App\Models\MobilePaymentModels\MobilePaymentPayee;
 use DB;
@@ -48,13 +49,26 @@ class MobilePaymentPayeeApi extends Controller
             $mobile_payment_payee->amount                     =   (double)    $form['amount'];
             $mobile_payment_payee->withdrawal_charges         =               $mobile_payment_payee->calculated_withdrawal_charges;
             $mobile_payment_payee->total                      =               $mobile_payment_payee->calculated_total;
+            $mobile_payment_payee->disableLogging();
 
             if($mobile_payment_payee->save()) {
-                $mobile_payment_payee->save();
+                $mobile_payment = MobilePayment::find($mobile_payment_payee->mobile_payment_id);
+                if(!empty($mobile_payment) && !empty($mobile_payment->requisition_id)){
+                    foreach($mobile_payment->allocations as $alloc){
+                        $a = Allocation::find($alloc->id);
+                        if($a->percentage_allocated != 0)
+                            $a->amount_allocated = ($a->percentage_allocated / 100) * $mobile_payment->totals;
+                        $a->disableLogging();
+                        $a->save();
+                    }
+                }
                 return Response()->json(array('success' => 'mobile payment payee added','mobile_payment_payee' => $mobile_payment_payee), 200);
             }
         }catch (JWTException $e){
             return response()->json(['error'=>'You are not Authenticated'], 500);
+        }
+        catch (Exception $e){
+            return response()->json(['error'=>'Something went wrong', 'msg'=>$e->getMessage()], 500);
         }
     }
 

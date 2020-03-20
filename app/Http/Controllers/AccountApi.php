@@ -37,20 +37,21 @@ class AccountApi extends Controller
         $form = Request::all();
 
         $account = new Account;
-
-            $account->account_code                     =         $form['account_code'];
-            $account->account_name                     =         $form['account_name'];
-            $account->account_desc                     =         $form['account_desc'];
-            $account->account_format                   =         $form['account_format'];
-            $account->status                           =         $form['status'];
-            $account->account_type_id                  =  (int)  $form['account_type_id'];
-            if(!empty($form['view_mode'])&&((int)$form['view_mode'])==1) 
-            $account->view_mode = 'public';
-            else if(!empty($form['view_mode'])&&((int)$form['view_mode'])==0){
-                $account->view_mode = '';
-            }
+        $account->account_code                     =         $form['account_code'];
+        $account->account_name                     =         $form['account_name'];
+        $account->account_desc                     =         $form['account_desc'];
+        $account->account_format                   =         $form['account_format'];
+        $account->status                           =         $form['status'];
+        $account->account_type_id                  =  (int)  $form['account_type_id'];
+        if(!empty($form['view_mode'])&&((int)$form['view_mode'])==1) 
+        $account->view_mode = 'public';
+        else if(!empty($form['view_mode'])&&((int)$form['view_mode'])==0){
+            $account->view_mode = '';
+        }
 
         if($account->save()) {
+            // Add activity notification
+            $this->addActivityNotification('New account '.$account->account_code.' created', null, $this->current_user()->id, $this->current_user()->id, 'info', 'accounts', true);
 
             return Response()->json(array('msg' => 'Success: account added','account' => $account), 200);
         }

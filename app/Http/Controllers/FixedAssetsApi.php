@@ -470,7 +470,6 @@ class FixedAssetsApi extends Controller
 
                 try{
                     $line = trim($value['asset_name']).' | '.trim($value['tag_number']).' | '.trim($value['location_optional']).' | '.trim($value['staff_optional']).' | '.trim($value['status']);
-                    // file_put_contents ( "C://Users//Kenn//Desktop//debug.txt" , PHP_EOL.$line , FILE_APPEND);
                 //     $project = Project::where('project_code','like', '%'.trim($value['pid']).'%')->firstOrFail();
                 //     $account = Account::where('account_code', 'like', '%'.trim($value['account_code']).'%')->firstOrFail();
 

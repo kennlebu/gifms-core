@@ -195,12 +195,12 @@
                     <tr>
                         <td style="border: 1px solid #000000; border-top: 0px solid #c0c0c0;" colspan="3">
                             <strong>
-                                    @if($payable_type=='Invoice')
-                                    <span>{{$payable->external_ref}}</span>
-                                    @else
-                                    <span>{{$payable->ref}}</span>
-                                    @endif
-                                </strong>
+                                @if($payable_type=='Invoice')
+                                <span>{{$payable->external_ref}}</span>
+                                @else
+                                <span>{{$payable->ref}}</span>
+                                @endif
+                            </strong>
                         </td>
                         <td style="border: 1px solid #000000; border-top: 0px solid #c0c0c0;text-align:left;" colspan="3">
                             {{$payable->expense_desc}}
@@ -350,7 +350,7 @@
                     @foreach ($unique_approvals as $key => $approval) @isset($approval->approver_id) @if($approval->approval_level_id == 2)
                     <tr style="height: 65px;">
                         <td colspan="2">
-                            <strong>APPROVAL<br/><small>(Program Manager)</small></strong>
+                            <strong>VERIFICATION<br/><small>(Program Manager)</small></strong>
                         </td>
                         <td style="border-top: 1px solid #C0C0C0; border-bottom: 1px solid #C0C0C0; border-left: 1px solid #C0C0C0; border-right: 1px solid #C0C0C0; vertical-align: middle;" colspan="2">
                             {{-- <strong><small>Initials</small></strong><br/><br/>  --}}
@@ -372,7 +372,7 @@
                     @endif @if($approval->approval_level_id == 3)
                     <tr style="height:65px;">
                         <td colspan="2">
-                            <strong>VERIFICATION<br/><small>(Accounting)</small><br/><br/></strong>
+                            <strong>APPROVAL<br/><small>(Finance Manager)</small><br/><br/></strong>
                         </td>
                         <td style="border-top: 1px solid #C0C0C0; border-bottom: 1px solid #C0C0C0; border-left: 1px solid #C0C0C0; border-right: 1px solid #C0C0C0; vertical-align: middle;" colspan="2">
                             {{-- <strong><small>Initials</small></strong><br/><br/>  --}}

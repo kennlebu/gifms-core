@@ -46,17 +46,13 @@ class Staff extends BaseModel
 
 
     public function getFullNameAttribute()
-    {       
-
-        return $this->attributes['f_name'].' '.$this->attributes['l_name'];
-
+    {
+        return trim($this->attributes['f_name']).' '.trim($this->attributes['l_name']);
     }
 
     public function getNameAttribute()
-    {       
-
-        return $this->attributes['f_name'].' '.$this->attributes['l_name'];
-
+    {
+        return trim($this->attributes['f_name']).' '.trim($this->attributes['l_name']);
     }
 
     public function getIsAdminAttribute()

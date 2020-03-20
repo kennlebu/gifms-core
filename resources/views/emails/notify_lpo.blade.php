@@ -20,7 +20,7 @@
 
     <table style="width: 100%;font-size: smaller;border: 1px solid #c0c0c0;"  cellspacing="0">
       <tbody>
-        <tr style="border-bottom: : 1px solid #c0c0c0;">
+        <tr style="border-bottom:1px solid #c0c0c0;">
           <td style="text-align: left; border-bottom: 1px dotted #ccbcbc;" colspan="3"  height="30">
             <span style="text-decoration: underline;">
               <strong>
@@ -73,30 +73,19 @@
           </td>
           <td style="text-align: left; border-bottom: 1px dotted #ccbcbc;" bgcolor="#ffffff" colspan="2" >
             <strong>
-                @if(empty($lpo->lpo_type)||$lpo->lpo_type!='prenegotiated')
+                {{-- @if(empty($lpo->lpo_type)||$lpo->lpo_type!='prenegotiated')
                 <span style="color: #092d50;">{{$lpo->preffered_quotation->supplier->supplier_name}}</span>
                 @elseif(!empty($lpo->lpo_type)&&$lpo->lpo_type=='prenegotiated')
                 <span style="color: #092d50;">{{$lpo->supplier->supplier_name}}</span>
-                @endif
+                @endif --}}
+                <span style="color: #092d50;">{{$lpo->preferred_supplier->supplier_name}}</span>
             </strong>
           </td>
         </tr>
         <tr>
           <td style="text-align: left; border-bottom: 1px dotted #ccbcbc;" colspan="1"  bgcolor="#ffffff" height="20">
             <strong>
-              <span style="color: #7c7c7c;">Project:</span>
-            </strong>
-          </td>
-          <td style="text-align: left; border-bottom: 1px dotted #ccbcbc;" bgcolor="#ffffff" colspan="2" >
-            <strong>
-              <span style="color: #092d50;">{{$lpo->project->project_name}}</span>
-            </strong>
-          </td>
-        </tr> 
-        <tr>
-          <td style="text-align: left; border-bottom: 1px dotted #ccbcbc;" colspan="1"  bgcolor="#ffffff" height="20">
-            <strong>
-              <span style="color: #7c7c7c;">Project Manager:</span>
+              <span style="color: #7c7c7c;">Program Manager:</span>
             </strong>
           </td>
           <td style="text-align: left; border-bottom: 1px dotted #ccbcbc;" bgcolor="#ffffff" colspan="2" >

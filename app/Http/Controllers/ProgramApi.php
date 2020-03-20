@@ -305,13 +305,18 @@ class ProgramApi extends Controller
 
         // my assigned
         if (array_key_exists('my_assigned', $input)&& $input['my_assigned'] = "true") {
-
-            $qb->select(DB::raw('programs.*'))
-                 ->rightJoin('program_teams', 'program_teams.program_id', '=', 'programs.id')
-                 ->rightJoin('staff', 'staff.id', '=', 'program_teams.staff_id')
-                 ->where('staff.id', '=', $current_user->id)
-                 ->whereNotNull('programs.id')
-                 ->groupBy('programs.id');
+            if($current_user->hasRole(['program-manager'])){
+                $program_ids = ProgramManager::where('program_manager_id', $current_user->id)->pluck('program_id')->toArray();
+                $qb->whereIn('id', $program_ids);
+            }
+            else{
+                $qb->select(DB::raw('programs.*'))
+                ->rightJoin('program_teams', 'program_teams.program_id', '=', 'programs.id')
+                ->rightJoin('staff', 'staff.id', '=', 'program_teams.staff_id')
+                ->where('staff.id', '=', $current_user->id)
+                ->whereNotNull('programs.id')
+                ->groupBy('programs.id');
+            }            
         }
 
         //searching

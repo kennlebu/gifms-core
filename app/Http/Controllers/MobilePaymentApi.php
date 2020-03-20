@@ -45,6 +45,9 @@ use App\Models\PaymentModels\VoucherNumber;
 use App\Models\ReportModels\ReportingObjective;
 use App\Mail\RequestMPBankSigning;
 use App\Models\AllocationModels\Allocation;
+use App\Models\LPOModels\Lpo;
+use App\Models\Requisitions\Requisition;
+use App\Models\Requisitions\RequisitionItem;
 
 class MobilePaymentApi extends Controller
 {
@@ -105,7 +108,10 @@ class MobilePaymentApi extends Controller
                 'rejection_reason',
                 'file',
                 'rejected_by_id',
-                'program_activity_id'
+                'program_activity_id',
+                'requisition_id',
+                'requisition_items',
+                'lpo_id'
                 );
                 
             $file = $form['file'];
@@ -127,24 +133,98 @@ class MobilePaymentApi extends Controller
             $mobile_payment->rejected_by_id                 =   (int)   $form['rejected_by_id'];
             if(!empty($form['program_activity_id']))
             $mobile_payment->program_activity_id            =   (int)   $form['program_activity_id'];
+            if(!empty($form['lpo_id']))
+            $mobile_payment->lpo_id                         =   (int)   $form['lpo_id'];
 
             $mobile_payment->status_id                      =   $this->default_status;
             
             $user = JWTAuth::parseToken()->authenticate();
             $mobile_payment->request_action_by_id            =   (int)   $user->id;
+            $mobile_payment->disableLogging();
 
             if($mobile_payment->save()) {
 
-                $mobile_payment->disableLogging(); // Do not log the subsequent update(s)
+                $requisition = null;
+                if(!empty($form['requisition_id']) && (int) $form['requisition_id'] != 0){
+                    $mobile_payment->requisition_id = $form['requisition_id'];
+                    if($mobile_payment->lpo){
+                        $mobile_payment->approver_id = $mobile_payment->lpo->approver_id;
+                    }
+                    $mobile_payment->save();
+                    $requisition = Requisition::findOrFail($form['requisition_id']);
+                    $allocation_purpose = '';
+                    $count = 0;
+    
+                    foreach(json_decode($form['requisition_items']) as $item){
+                        $item = RequisitionItem::findOrFail($item);;
+                        if($count < 1){
+                            $allocation_purpose = $item->service;
+                        }
+                        else {
+                            $allocation_purpose = '; '.$item->service;
+                        }
+                        $count += 1;
+                        $item->status_id = 6;
+                        $item->disableLogging();
+                        $item->save();
+                    }
+
+                    foreach($requisition->allocations as $alloc){
+                        $allocation = new Allocation();
+                        $allocation->account_id = $alloc->account_id;
+                        $allocation->project_id = $alloc->project_id;
+                        $allocation->allocatable_id = $mobile_payment->id;
+                        $allocation->allocatable_type = 'mobile_payments';
+                        $allocation->percentage_allocated = $alloc->percentage_allocated;
+                        $allocation->amount_allocated = ($mobile_payment->totals * (float)$alloc->percentage_allocated/100);
+                        // if(!empty($requisition->lpo)){
+                        //     $allocation->amount_allocated = ($requisition->lpo->totals * (float)$alloc->percentage_allocated/100);
+                        //     $allocation->percentage_allocated = ($allocation->amount_allocated/$requisition->lpo->totals)*100;
+                        // }
+                        // else
+                        //     $allocation->percentage_allocated = $allocation->amount_allocated;
+                        $allocation->allocation_purpose = $allocation_purpose;
+                        $allocation->objective_id = $alloc->objective_id;
+                        $allocation->allocated_by_id = $requisition->requested_by_id;
+                        $allocation->disableLogging();
+                        $allocation->save();
+                    }                   
+                }
 
                 FTP::connection()->makeDir('/mobile_payments');
                 FTP::connection()->makeDir('/mobile_payments/'.$mobile_payment->id);
                 FTP::connection()->makeDir('/mobile_payments/'.$mobile_payment->id.'/signsheet');
                 FTP::connection()->uploadFile($file->getPathname(), '/mobile_payments/'.$mobile_payment->id.'/signsheet/'.$mobile_payment->id.'.'.$file->getClientOriginalExtension());
 
-                $mobile_payment->attendance_sheet           =   $mobile_payment->id.'.'.$file->getClientOriginalExtension();
-                $mobile_payment->ref = "CHAI/MPYMT/#$mobile_payment->id/".date_format($mobile_payment->created_at,"Y/m/d");
+                $mobile_payment->attendance_sheet =  $mobile_payment->id.'.'.$file->getClientOriginalExtension();
+                
+                if(empty($mobile_payment->requisition)){
+                    $mobile_payment->ref = "CHAI/MPYMT/#$mobile_payment->id/".date_format($mobile_payment->created_at,"Y/m/d");
+
+                    // Logging
+                    activity()
+                        ->performedOn($mobile_payment)
+                        ->causedBy($this->current_user())
+                        ->withProperties(['detail' => 'Created new mobile payment (ref: '. $mobile_payment->ref .')', 'summary'=> true])
+                        ->log('Created');
+                }
+                else {
+                    // $requisition = Requisition::findOrFail($mobile_payment->requisition->id);
+                    $mobile_payment_no = count($requisition->transactions['mobile_payments']);
+                    $mobile_payment->ref = $requisition->ref.'-MPT-'.$this->pad_with_zeros(2, $mobile_payment_no);
+
+                    // Logging
+                    activity()
+                        ->performedOn($mobile_payment)
+                        ->causedBy($this->current_user())
+                        ->withProperties(['detail' => 'Created new mobile payment (ref: '. $mobile_payment->ref .') from requisition '. $mobile_payment->requisition->ref,
+                                        'summary'=> true])
+                        ->log('Created');
+                }
                 $mobile_payment->save();
+                
+                // Add activity notification
+                $this->addActivityNotification('Mobile payment '.$mobile_payment->ref.' created', null, $this->current_user()->id, $mobile_payment->requested_by_id, 'info', 'mobile_payments', true);
 
                 return Response()->json(array('msg' => 'Success: mobile payment added','mobile_payment' => $mobile_payment), 200);
             }
@@ -261,7 +341,8 @@ class MobilePaymentApi extends Controller
                                     'vouchers',
                                     'payments.payment_mode','payments.currency','payments.payment_batch','payments.paid_to_bank_branch',
                                     'allocations.project','allocations.account','allocations.objective',
-                                    'program_activity'
+                                    'program_activity',
+                                    'lpo'
                                 )->findOrFail($mobile_payment_id);
 
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
@@ -330,24 +411,24 @@ class MobilePaymentApi extends Controller
             $mobile_payment->disableLogging(); //! Do not log the update
             if($mobile_payment->save()) {
 
-                $mobile_payment   = MobilePayment::with(
-                                    'requested_by',
-                                    'requested_action_by',
-                                    'project',
-                                    'account',
-                                    'mobile_payment_type',
-                                    'invoice',
-                                    'status',
-                                    'project_manager',
-                                    'region',
-                                    'county',
-                                    'currency',
-                                    'rejected_by',
-                                    'payees_upload_mode',
-                                    'payees',
-                                    'approvals',
-                                    'allocations'
-                                )->findOrFail($mobile_payment_id);
+                // $mobile_payment   = MobilePayment::with(
+                //                     'requested_by',
+                //                     'requested_action_by',
+                //                     'project',
+                //                     'account',
+                //                     'mobile_payment_type',
+                //                     'invoice',
+                //                     'status',
+                //                     'project_manager',
+                //                     'region',
+                //                     'county',
+                //                     'currency',
+                //                     'rejected_by',
+                //                     'payees_upload_mode',
+                //                     'payees',
+                //                     'approvals',
+                //                     'allocations'
+                //                 )->findOrFail($mobile_payment_id);
 
                 $approval = new Approval;
                 $approval->approvable_id            =   (int)   $mobile_payment->id;
@@ -383,6 +464,9 @@ class MobilePaymentApi extends Controller
                    ->performedOn($approval->approvable)
                    ->causedBy($user)
                    ->log('Approved');
+                   
+                // Add activity notification
+                $this->addActivityNotification('Mobile payment '.$mobile_payment->ref.' approved', null, $this->current_user()->id, $mobile_payment->requested_by_id, 'success', 'mobile_payments', true);
 
                 if($several!=true)
                 return Response()->json(array('result' => 'Success: mobile payment approved','mobile_payment' => $mobile_payment), 200);
@@ -603,6 +687,9 @@ class MobilePaymentApi extends Controller
                     ->performedOn($mobile_payment)
                     ->causedBy($user)
                     ->log('Returned');
+                    
+                // Add activity notification
+                $this->addActivityNotification('Mobile payment '.$mobile_payment->ref.' returned', null, $this->current_user()->id, $mobile_payment->requested_by_id, 'danger', 'mobile_payments', true);
 
                 Mail::queue(new NotifyMobilePayment($mobile_payment));
 
@@ -887,13 +974,34 @@ class MobilePaymentApi extends Controller
      */
     public function deleteMobilePayment($mobile_payment_id)
     {
-        $deleted = MobilePayment::destroy($mobile_payment_id);
-        if($deleted){
+        try{
+            $mobile_payment = MobilePayment::find($mobile_payment_id);
+
+            if(!empty($mobile_payment->requisition_id) && !empty($mobile_payment->lpo_id)){
+                $lpo = Lpo::find($mobile_payment->lpo_id);
+                foreach($lpo->items as $item){
+                    $requisition_item = RequisitionItem::findOrFail($item->requisition_item_id);
+                    $requisition_item->status_id = 1;
+                    $requisition_item->disableLogging();
+                    $requisition_item->save();
+                }
+
+                // Logging item recall
+                activity()
+                    ->performedOn(Requisition::find($lpo->requisition_id))
+                    ->causedBy($this->current_user())
+                    // ->withProperties(['detail'=>'LPO '.$lpo->ref.' has been deleted'])
+                    ->log('LPO deleted');
+            }
+
+            $mobile_payment->delete();
+
             // Delete the allocations too
             Allocation::where('allocatable_id', $mobile_payment_id)->where('allocatable_type', 'mobile_payments')->delete();
             return response()->json(['msg'=>"Mobile Payment deleted"], 200,array(),JSON_PRETTY_PRINT);
-        }else{
-            return response()->json(['error'=>"Something went wrong"], 500,array(),JSON_PRETTY_PRINT);
+        }
+        catch(Exception $e) {
+            return response()->json(['error'=>"Something went wrong", 'msg'=>$e->getMessage()], 500,array(),JSON_PRETTY_PRINT);
         }
 
     }
@@ -935,24 +1043,13 @@ class MobilePaymentApi extends Controller
         $user = JWTAuth::parseToken()->authenticate();
 
         try{
-            $mobile_payment = MobilePayment::with(
-                                    'requested_by',
-                                    'requested_action_by',
-                                    'project',
-                                    'account',
-                                    'mobile_payment_type',
-                                    'invoice',
-                                    'status',
-                                    'project_manager',
-                                    'region',
-                                    'county',
-                                    'currency',
-                                    'rejected_by',
-                                    'payees_upload_mode',
-                                    'payees',
-                                    'approvals',
-                                    'allocations'
-                                )->findOrFail($mobile_payment_id);           
+            $mobile_payment = MobilePayment::findOrFail($mobile_payment_id);
+            
+            if(!empty($mobile_payment->lpo) && !empty($mobile_payment->lpo->requisition)){
+                if($mobile_payment->lpo->requisition->status_id != 3){
+                    return response()->json(['error'=>'Requisition must be approved before you can submit this mobile payment'], 403);
+                }
+            }
 
            if (($mobile_payment->total - $mobile_payment->amount_allocated) > 1 ){ //allowance of 1
              throw new NotFullyAllocatedException("This mobile payment has not been fully allocated");             
@@ -970,6 +1067,9 @@ class MobilePaymentApi extends Controller
                    ->performedOn($mobile_payment)
                    ->causedBy($user)
                    ->log('Submitted for approval');
+                   
+                // Add activity notification
+                $this->addActivityNotification('Mobile payment '.$mobile_payment->ref.' submitted', null, $this->current_user()->id, $mobile_payment->requested_by_id, 'info', 'mobile_payments', true);
                    
                 Mail::queue(new NotifyMobilePayment($mobile_payment));
 
@@ -1131,6 +1231,9 @@ class MobilePaymentApi extends Controller
             ->performedOn($mobile_payment)
             ->causedBy($this->current_user())
             ->log('Recalled');
+            
+        // Add activity notification
+        $this->addActivityNotification('Mobile payment '.$mobile_payment->ref.' recalled', null, $this->current_user()->id, $mobile_payment->requested_by_id, 'danger', 'mobile_payments', true);
 
         $mobile_payment->disableLogging(); //! Do not log the update
         
@@ -1283,8 +1386,18 @@ class MobilePaymentApi extends Controller
                         $permission = 'APPROVE_MOBILE_PAYMENT_'.$value['id'];
                         if($current_user->can($permission)&&$value['id']==2){
                             $query->orWhere(function ($query1) use ($value,$current_user) {
-                                $query1->Where('status_id',$value['id']);
-                                $query1->Where('project_manager_id',$current_user->id);
+
+                                $query1->where(function ($query1) use ($value,$current_user) {
+                                    $query1->where('status_id',$value['id']);
+                                    $query1->where('project_manager_id',$current_user->id)
+                                            ->whereNull('approver_id');
+                                });
+                                $query1->orWhere(function ($query1) use ($value,$current_user) {
+                                    $query1->where('status_id',$value['id']);
+                                    $query1->where('approver_id',$current_user->id);
+                                });
+                                // $query1->Where('status_id',$value['id']);
+                                // $query1->Where('project_manager_id',$current_user->id);
                             });
                         }
                         else if($current_user->can($permission)){

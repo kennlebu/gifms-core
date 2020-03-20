@@ -33,12 +33,11 @@ class SupplyCategoryApi extends Controller
      */
     public function addSupplyCategory()
     {
-        $form = Request::only(
-            'supply_category_name'
-            );
+        $form = Request::all();
 
         $supply_category = new SupplyCategory;
-        $supply_category->supply_category_name                   =         $form['supply_category_name'];
+        $supply_category->supply_category_name = $form['supply_category_name'];
+        $supply_category->service_type = $form['service_type'];
 
         if($supply_category->save()) {
             return Response()->json(array('msg' => 'Success: supply_category added','supply_category' => $supply_category), 200);
@@ -75,13 +74,11 @@ class SupplyCategoryApi extends Controller
      */
     public function updateSupplyCategory()
     {
-        $form = Request::only(
-            'id',
-            'supply_category_name'
-            );
+        $form = Request::all();
 
         $supply_category = SupplyCategory::find($form['id']);
-        $supply_category->supply_category_name                   =         $form['supply_category_name'];
+        $supply_category->supply_category_name = $form['supply_category_name'];
+        $supply_category->service_type = $form['service_type'];
 
         if($supply_category->save()) {
             return Response()->json(array('msg' => 'Success: supply_category updated','supply_category' => $supply_category), 200);

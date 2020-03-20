@@ -7,14 +7,9 @@ use Spatie\Activitylog\Traits\LogsActivity;
 
 class BaseModel extends Model
 {
-    use LogsActivity;
-
-    
-
-
-	// public function newPivot(Eloquent $parent, array $attributes, $table, $exists){
-	//     return new BaseModel($parent, $attributes, $table, $exists);
-	// }
+	use LogsActivity;
+    protected static $logAttributes = ['*'];
+	protected static $logOnlyDirty = true;	
 
 	
 
@@ -35,13 +30,13 @@ class BaseModel extends Model
 			$data[$key]['DT_RowData'] = array('pkey'=>$value['id']);
 		}
 
-		return array(
+		return [
 					'draw' 				=> 	$draw,
 					'sEcho' 			=> 	$draw,
 					'recordsTotal' 		=> 	$total_records,
 					'recordsFiltered' 	=> 	$records_filtered,
 					'data' 				=> 	$data
-			);
+				];
 
 	}
 
@@ -192,6 +187,36 @@ class BaseModel extends Model
             $uniques[] = $item[$key];
         }
         return array_unique($uniques);
+	}
+
+
+
+	/**
+	 * Returns time difference of the date
+	 */
+	public function calculate_time_span($date){
+		$seconds  = strtotime(date('Y-m-d H:i:s')) - strtotime($date);
+	
+		$months = floor($seconds / (3600*24*30));
+		$day = floor($seconds / (3600*24));
+		$hours = floor($seconds / 3600);
+		$mins = floor(($seconds - ($hours*3600)) / 60);
+		$secs = floor($seconds % 60);
+
+		if($seconds < 60)
+			$time = $secs." seconds ago";
+		else if($seconds < 60*60 )
+			$time = $mins." min ago";
+		else if($seconds < 3*60*60)
+			$time = $hours." hour".($hours >= 2 ? "s": "")." ago";
+		else if($seconds < 24*60*60)
+			$time = date('g:i a', strtotime($date));
+		else if($seconds < 7*24*60*60)
+			$time = date('D g:i a', strtotime($date));
+		else
+		$time = date('d M, g:i a', strtotime($date));
+
+		return $time;
 	}
 
 }

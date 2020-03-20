@@ -6,31 +6,19 @@ namespace App\Models\LPOModels;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\BaseModels\BaseModel;
-use App\Models\StaffModels\Staff;
-use App\Models\ProjectsModels\Project;
-use App\Models\AccountingModels\Account;
-use App\Models\LPOModels\LpoApproval;
-use App\Models\LPOModels\LpoComment;
-use App\Models\LPOModels\LpoDefaultTerm;
-use App\Models\LPOModels\LpoItem;
-use App\Models\LPOModels\LpoQuotation;
-use App\Models\LPOModels\LpoStatus;
-use App\Models\LPOModels\LpoTerm;
+use App\Models\DeliveriesModels\Delivery;
 use App\Models\InvoicesModels\Invoice;
-use App\Models\LookupModels\Region;
-use App\Models\LookupModels\County;
-use App\Models\LookupModels\Currency;
+use App\Models\Requisitions\Requisition;
+use App\Models\Requisitions\RequisitionItem;
 use App\Models\SuppliesModels\Supplier;
 
 class Lpo extends BaseModel
 {
-    //
-
     use SoftDeletes;
 
     protected $dates = ['created_at','updated_at','deleted_at'];
 
-    protected $appends = ['amount','vats','sub_totals','totals'];
+    protected $appends = ['amount','vats','sub_totals','totals','preferred_supplier','lpo_requisition_items','can_invoice','invoices_total'];
  
 
 
@@ -73,6 +61,10 @@ class Lpo extends BaseModel
     public function received_by()
     {
         return $this->belongsTo('App\Models\StaffModels\Staff','received_by_id');
+    }
+    public function requisitioned_by()
+    {
+        return $this->belongsTo('App\Models\StaffModels\Staff','requisitioned_by_id');
     }
     public function cancelled_by()
     {
@@ -117,6 +109,26 @@ class Lpo extends BaseModel
     public function program_activity()
     {
         return $this->belongsTo('App\Models\ActivityModels\Activity','program_activity_id');
+    }
+    public function allocations()
+    {
+        return $this->morphMany('App\Models\AllocationModels\Allocation', 'allocatable')->orderBy('created_at','asc');
+    }
+    public function requisition()
+    {
+        return $this->belongsTo('App\Models\Requisitions\Requisition','requisition_id');
+    }
+    public function getPreferredSupplierAttribute()
+    {
+        $supplier = null;
+        if($this->lpo_type == 'prenegotiated' || $this->lpo_type == 'lso'){
+            $supplier = Supplier::with('supply_category')->find($this->supplier_id);
+        }
+        else {
+            if($this->preffered_quotation_id)
+            $supplier = Supplier::with('supply_category')->find($this->preffered_quotation->supplier_id);
+        }
+        return $supplier;
     }
 
 
@@ -201,6 +213,49 @@ class Lpo extends BaseModel
 
 
 
+    }
+
+    public function getLpoRequisitionItemsAttribute(){
+        $items = [];
+        foreach($this->items as $item){
+            $items[] = RequisitionItem::where('id',$item->requisition_item_id)->orderBy('id','desc')->first();
+        }
+        return $items;
+    }
+
+    public function getCanInvoiceAttribute(){
+        $can_invoice = true;
+
+        if($this->requisition_id){
+            $requisition = Requisition::find($this->requisition_id);
+            if($requisition && $requisition->requisition_id == 3){
+                return true;
+            }
+        }
+
+        $deliveries = Delivery::where('lpo_id', $this->id)->get();
+        if(count($deliveries) < 1){
+            $can_invoice = false;
+        }
+        else {
+            foreach($deliveries as $delivery){
+                if(!$delivery->in_assets){
+                    $can_invoice = false;
+                }
+            }
+        }
+        
+        return $can_invoice;
+    }
+
+    public function getInvoicesTotalAttribute(){
+        $total = 0;
+        $inovices = Invoice::where('lpo_id', $this->id)->get();
+        foreach($inovices as $invoice){
+            $total += (float)$invoice->total;
+        }
+
+        return $total;
     }
 
 

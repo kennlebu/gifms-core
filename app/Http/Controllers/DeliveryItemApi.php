@@ -49,7 +49,7 @@ class DeliveryItemApi extends Controller
     {
         $form = Request::all();
 
-        $delivery_item = DeliveryItem::find($form['id']);
+        $delivery_item = DeliveryItem::find($form['delivery_id']);
         $delivery_item->item = $form['item'];
         $delivery_item->item_description = $form['item_description'];
         $delivery_item->qty = (int) $form['qty'];
