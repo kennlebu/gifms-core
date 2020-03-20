@@ -17,5 +17,5 @@ gifms_resources/
 fixed-assets/
 asset-claims/
 fixed_assets/
-requisitions/
+requisitions/*
 fpts/
