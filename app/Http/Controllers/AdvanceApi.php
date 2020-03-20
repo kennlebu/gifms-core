@@ -110,7 +110,7 @@ class AdvanceApi extends Controller
             if($advance->save()) {
   
                 // Add activity notification
-                $this->addActivityNotification('Advance '.$advance->ref.' created', null, $this->current_user()->id, $advance->requested_by_id, 'info', 'advances', true);
+                $this->addActivityNotification('Advance '.$advance->ref.' created', null, $this->current_user()->id, $advance->requested_by_id, 'info', 'advances', false);
 
                 FTP::connection()->makeDir('/advances/'.$advance->id);
                 FTP::connection()->makeDir('/advances/'.$advance->id);
@@ -479,7 +479,7 @@ class AdvanceApi extends Controller
             $advance->disableLogging();
             if($advance->save()) {                
                 // Add activity notification
-                $this->addActivityNotification('Advance '.$advance->ref.' deleted', null, $this->current_user()->id, $advance->requested_by_id, 'info', 'accounts', true);
+                $this->addActivityNotification('Advance '.$advance->ref.' deleted', null, $this->current_user()->id, $advance->requested_by_id, 'info', 'accounts', false);
 
                 Mail::queue(new NotifyAdvance($advance));
                 return Response()->json(array('msg' => 'Success: advance approved','advance' => $advance), 200);

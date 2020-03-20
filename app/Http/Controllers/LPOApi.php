@@ -243,7 +243,7 @@ class LPOApi extends Controller
                     ->log('Created '. $lpo_type);
 
                 // Add activity notification
-                $this->addActivityNotification('Created '. $lpo_type .' '.$lpo->ref, null, $this->current_user()->id, $lpo->requisitioned_by_id??$lpo->requested_by_id, 'info', 'lpos', true);
+                $this->addActivityNotification('Created '. $lpo_type .' '.$lpo->ref, null, $this->current_user()->id, $lpo->requisitioned_by_id??$lpo->requested_by_id, 'info', 'lpos', false);
 
                 return Response()->json(array('msg' => 'Success: lpo added','lpo' => $lpo), 200);
             }
@@ -453,7 +453,7 @@ class LPOApi extends Controller
                 ->log($lpo->lpo_type=='lso'?'LSO':'LPO'.' recalled');
             
             // Add activity notification
-            $this->addActivityNotification('Recalled '.$lpo->lpo_type=='lso'?'LSO':'LPO'.' '. $lpo->ref , null, $this->current_user()->id, $lpo->requisitioned_by_id ?? $lpo->requested_by_id, 'danger', 'lpos', true);
+            $this->addActivityNotification('Recalled '.$lpo->lpo_type=='lso'?'LSO':'LPO'.' '. $lpo->ref , null, $this->current_user()->id, $lpo->requisitioned_by_id ?? $lpo->requested_by_id, 'danger', 'lpos', false);
 
             if(!empty($lpo->requisition_id)){
                 foreach($lpo->items as $item){
@@ -600,7 +600,7 @@ class LPOApi extends Controller
                    ->log($approval->approval_level->approval_level);
                 
                 // Add activity notification
-                $this->addActivityNotification('Approved '.$lpo->lpo_type == 'lso'?'LSO ':'LPO '. $lpo->ref, null, $this->current_user()->id, $lpo->requisitioned_by_id ?? $lpo->requested_by_id, 'success', 'lpos', true);
+                $this->addActivityNotification('Approved '.$lpo->lpo_type == 'lso'?'LSO ':'LPO '. $lpo->ref, null, $this->current_user()->id, $lpo->requisitioned_by_id ?? $lpo->requested_by_id, 'success', 'lpos', false);
 
                 if($lpo->status_id!=7){
                     Mail::queue(new NotifyLpo($lpo));

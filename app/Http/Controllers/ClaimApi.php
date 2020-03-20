@@ -94,7 +94,7 @@ class ClaimApi extends Controller
                 $claim->disableLogging();
 
                 // Add activity notification
-                $this->addActivityNotification('Claim '.$claim->ref.' created', null, $this->current_user()->id, $claim->requested_by_id, 'info', 'claims', true);
+                $this->addActivityNotification('Claim '.$claim->ref.' created', null, $this->current_user()->id, $claim->requested_by_id, 'info', 'claims', false);
 
                 FTP::connection()->makeDir('/claims');
                 FTP::connection()->makeDir('/claims/'.$claim->id);
@@ -339,7 +339,7 @@ class ClaimApi extends Controller
                    ->log('approved');
                    
                 // Add activity notification
-                $this->addActivityNotification('Claim '.$claim->ref.' approved', null, $this->current_user()->id, $claim->requested_by_id, 'success', 'claims', true);
+                $this->addActivityNotification('Claim '.$claim->ref.' approved', null, $this->current_user()->id, $claim->requested_by_id, 'success', 'claims', false);
 
                 $approval->save();
 
@@ -462,7 +462,7 @@ class ClaimApi extends Controller
                    ->log('rejected');
                    
                 // Add activity notification
-                $this->addActivityNotification('Claim '.$claim->ref.' returned', null, $this->current_user()->id, $claim->requested_by_id, 'danger', 'claims', true);
+                $this->addActivityNotification('Claim '.$claim->ref.' returned', null, $this->current_user()->id, $claim->requested_by_id, 'danger', 'claims', false);
 
                 Mail::queue(new NotifyClaim($claim));
 
@@ -665,7 +665,7 @@ class ClaimApi extends Controller
             if($claim->save()) {
                 
                 // Add activity notification
-                $this->addActivityNotification('claim '.$claim->ref.' submitted', null, $this->current_user()->id, $claim->requested_by_id, 'info', 'claims', true);
+                $this->addActivityNotification('Claim '.$claim->ref.' submitted', null, $this->current_user()->id, $claim->requested_by_id, 'info', 'claims', false);
 
                 Mail::queue(new NotifyClaim($claim));
                 return Response()->json(array('msg' => 'Success: claim submitted','claim' => $claim), 200);
