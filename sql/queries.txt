@@ -1199,7 +1199,7 @@ CHANGE `name` `name` text COLLATE 'latin1_swedish_ci' NULL AFTER `id`;
 ALTER TABLE staff
 DROP INDEX staff_email_unique;
 
-~===== Add new next status id column to mobile payment statuses
++~===== Add new next status id column to mobile payment statuses
 ALTER TABLE `mobile_payment_statuses`
 ADD `new_next_status_id` int(11) NULL AFTER `next_status_id`;
 
@@ -1322,7 +1322,7 @@ php artisan refractor:budgets
 
 
 // Asset tables
-~===== Create assets
++~===== Create assets
 CREATE TABLE `assets` (
   `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `title` text NULL,
@@ -1388,7 +1388,7 @@ VALUES ('Scrapped', NULL, now(), now(), NULL);
 INSERT INTO `asset_statuses` (`status`, `default`, `created_at`, `updated_at`, `deleted_at`)
 VALUES ('Returned, pending acceptance', NULL, now(), now(), NULL);
 
-~===== Asset transfers
++~===== Asset transfers
 CREATE TABLE `asset_transfers` (
   `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `asset_id` int NULL,
@@ -1413,7 +1413,7 @@ VALUES ('Donated, pending receipt', NULL, now(), now(), NULL);
 INSERT INTO `asset_statuses` (`status`, `default`, `created_at`, `updated_at`, `deleted_at`)
 VALUES ('Donated, pending confirmation', NULL, now(), now(), NULL);
 
-~===== Asset transfer batches
++~===== Asset transfer batches
 CREATE TABLE `asset_transfer_batches` (
   `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `created_by_id` int NULL,
@@ -1457,7 +1457,7 @@ ADD `donation_document` text NULL AFTER `donation_batch_id`;
 ALTER TABLE `asset_transfers`
 ADD `approved_by_id` int NULL AFTER `rejection_reason`;
 
-~===== Asset losses table
++~===== Asset losses table
 CREATE TABLE `asset_losses` (
   `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `asset_id` int NULL,
@@ -1474,7 +1474,7 @@ ALTER TABLE `asset_losses`
 ADD `insurer_id` int(11) NULL AFTER `submitted_by_id`,
 CHANGE `updated_at` `updated_at` timestamp NULL AFTER `created_at`;
 
-~===== Changes to some asset tables
++~===== Changes to some asset tables
 ALTER TABLE `asset_losses`
 ADD `claim_submitted` int NULL AFTER `insurer_id`;
 ALTER TABLE `asset_losses`
@@ -1489,7 +1489,7 @@ VALUES ('Loss report rejected', NULL, now(), now(), NULL);
 INSERT INTO `asset_statuses` (`status`, `default`, `created_at`, `updated_at`, `deleted_at`)
 VALUES ('Insurance claim rejected', NULL, now(), now(), NULL);
 
-~=====
++~=====
 ALTER TABLE `supply_categories`
 ADD `service_type` varchar(20) COLLATE 'utf8_unicode_ci' NULL AFTER `supply_category_name`,
 CHANGE `updated_at` `updated_at` timestamp NOT NULL DEFAULT current_timestamp() AFTER `created_at`;
@@ -1499,7 +1499,7 @@ ALTER TABLE `assets`
 CHANGE `title` `asset_name_id` int NULL AFTER `ref`,
 ADD `description` text COLLATE 'latin1_swedish_ci' NULL AFTER `asset_name_id`,
 ADD `staff_responsible_id` int NULL AFTER `assignee_type`;
-~=====
++~=====
 CREATE TABLE `asset_names` (
   `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `name` varchar(256) NULL,
@@ -1508,7 +1508,7 @@ CREATE TABLE `asset_names` (
   `deleted_at` timestamp NULL
 );
 
-~===== Change statuses
++~===== Change statuses
 DROP TABLE `asset_statuses`;
 CREATE TABLE `asset_statuses` (
   `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -1564,11 +1564,11 @@ VALUES ('Claim rejected', NULL, now(), now(), NULL);
 INSERT INTO `asset_statuses` (`status`, `default`, `created_at`, `updated_at`, `deleted_at`)
 VALUES ('Asset return rejected', NULL, now(), now(), NULL);
 
-~===== Loss report column on assets
++~===== Loss report column on assets
 ALTER TABLE `assets`
 ADD `loss_report_doc` text COLLATE 'latin1_swedish_ci' NULL AFTER `donation_document`;
 
-~==== Add PM id column to table
++~==== Add PM id column to table
 ALTER TABLE `assets`
 ADD `program_manager_id` int NULL AFTER `loss_report_doc`;
 
@@ -1578,7 +1578,7 @@ VALUES ('Marked obsolete, pending PM confirmation', NULL, now(), now(), NULL);
 ALTER TABLE `assets`
 ADD `previous_status_id` int(11) NULL AFTER `program_manager_id`;
 
-~===== Requisition statuses table
++~===== Requisition statuses table
 CREATE TABLE `requisition_statuses` (
   `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `status` text NULL,
@@ -1611,7 +1611,7 @@ ADD `approval_level_id` int NULL AFTER `display_color`;
 
 UPDATE `requisition_statuses` SET `approval_level_id` = '2' WHERE `id` = '2';
 
-~===== Requisitions table
++~===== Requisitions table
 CREATE TABLE `requisitions` (
   `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `ref` varchar(20) NULL,
@@ -1627,7 +1627,7 @@ CREATE TABLE `requisitions` (
   `deleted_at` timestamp NULL
 );
 
-~===== Requisition allocations table
++~===== Requisition allocations table
 CREATE TABLE `requisition_allocations` (
   `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `requisition_id` int NULL,
@@ -1644,7 +1644,7 @@ CREATE TABLE `requisition_allocations` (
 ALTER TABLE `requisition_allocations`
 CHANGE `percentage_allocated` `percentage_allocated` double NULL AFTER `requisition_id`;
 
-~===== Requisition items table
++~===== Requisition items table
 CREATE TABLE `requisition_items` (
   `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `type` varchar(15) NULL,
@@ -1667,7 +1667,7 @@ CHANGE `updated_at` `updated_at` timestamp NULL AFTER `created_at`;
 ALTER TABLE `requisition_items`
 ADD `requisition_id` int NULL AFTER `id`;
 
-~===== Requisition item statuses table
++~===== Requisition item statuses table
 CREATE TABLE `requisition_item_statuses` (
   `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `status` text NULL,
@@ -1687,18 +1687,18 @@ VALUES ('Paid and completed', NULL);
 
 UPDATE `requisition_item_statuses` SET `status` = 'Awaiting ordering' WHERE `id` = '1';
 
-~===== Add rejection columns to requisition table
++~===== Add rejection columns to requisition table
 ALTER TABLE `requisitions`
 ADD `returned_by_id` int NULL AFTER `submitted_at`,
 ADD `return_reason` text NULL AFTER `returned_by_id`;
 
-~===== Add airfare staff to requisition items
++~===== Add airfare staff to requisition items
 ALTER TABLE `requisition_items`
 ADD `airfare_staff` varchar(10) NULL AFTER `status_id`;
 ALTER TABLE `requisition_items`
 ADD `airfare_doc` text COLLATE 'latin1_swedish_ci' NULL AFTER `airfare_staff`;
 
-~===== Add objective id column to requisitions table
++~===== Add objective id column to requisitions table
 ALTER TABLE `requisitions`
 ADD `objective_id` int NULL AFTER `return_reason`;
 
@@ -1709,26 +1709,26 @@ CHANGE `updated_at` `updated_at` timestamp NULL DEFAULT current_timestamp() AFTE
 ALTER TABLE `requisition_items`
 ADD `no_of_days` int NULL AFTER `qty_description`;
 
-~===== Add unit column to supplier services
++~===== Add unit column to supplier services
 ALTER TABLE `supplier_services`
 ADD `unit` varchar(100) NULL AFTER `daily_charge`,
 CHANGE `updated_at` `updated_at` timestamp NULL AFTER `created_at`;
 
-~===== Add requisition item id to lpo items table
++~===== Add requisition item id to lpo items table
 ALTER TABLE `lpo_items`
 ADD `requisition_item_id` int NULL AFTER `no_of_days`,
 CHANGE `updated_at` `updated_at` timestamp NULL DEFAULT current_timestamp() AFTER `created_at`;
 
-~===== Add requisition to mobile payments
++~===== Add requisition to mobile payments
 ALTER TABLE `mobile_payments`
 ADD `requisition_id` int NULL AFTER `program_activity_id`,
 CHANGE `updated_at` `updated_at` timestamp NULL DEFAULT current_timestamp() AFTER `created_at`;
 
-~===== Add objectives to requisition allocations
++~===== Add objectives to requisition allocations
 ALTER TABLE `requisition_allocations`
 ADD `objective_id` int(11) NULL AFTER `account_id`;
 
-~===== Requisition documents table
++~===== Requisition documents table
 CREATE TABLE `requisition_documents` (
   `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `title` text NULL,
@@ -1737,7 +1737,7 @@ CREATE TABLE `requisition_documents` (
   `uploaded_by_id` int NULL
 );
 
-~===== Add requisition id fields to transactions
++~===== Add requisition id fields to transactions
 ALTER TABLE `claims`
 ADD `requisition_id` int NULL AFTER `reporting_objective_id`,
 CHANGE `updated_at` `updated_at` timestamp NOT NULL DEFAULT current_timestamp() AFTER `created_at`;
@@ -1750,14 +1750,14 @@ ALTER TABLE `invoices`
 ADD `requisition_id` int NULL AFTER `program_activity_id`,
 CHANGE `updated_at` `updated_at` timestamp NOT NULL DEFAULT current_timestamp() AFTER `created_at`;
 
-~===== Add county id to requisition items
++~===== Add county id to requisition items
 ALTER TABLE `requisition_items`
 ADD `county_id` int NULL AFTER `airfare_doc`;
 
-~===== Change requisition item status
++~===== Change requisition item status
 UPDATE `requisition_item_statuses` SET `status` = 'Item ordered' WHERE `id` = '2';
 
-~===== Add transaction type and module to requisition item
++~===== Add transaction type and module to requisition item
 ALTER TABLE `requisition_items`
 ADD `transaction_type` varchar(20) NULL AFTER `county_id`;
 
@@ -1766,14 +1766,14 @@ ADD `module` varchar(20) COLLATE 'latin1_swedish_ci' NULL AFTER `transaction_typ
 ALTER TABLE `lpos`
 ADD `module` varchar(20) NULL AFTER `requisition_id`;
 
-~===== Add more statuses to requisition items
++~===== Add more statuses to requisition items
 INSERT INTO `requisition_item_statuses` (`status`, `default`)
 VALUES ('Mobile payment created', NULL);
 
 INSERT INTO `requisition_item_statuses` (`status`, `default`)
 VALUES ('Claim created', NULL);
 
-~===== Create tables for meeting attendance
++~===== Create tables for meeting attendance
 CREATE TABLE `meeting_attendees` (
   `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `name` text NULL,
@@ -1837,7 +1837,7 @@ ALTER TABLE `meeting_attendee_registers`
 CHANGE `updated_at` `updated_at` timestamp NULL AFTER `created_at`,
 RENAME TO `meeting_attendance_registers`;
 
-~===== Change some stuff
++~===== Change some stuff
 ALTER TABLE `meeting_attendees`
 CHANGE `updated_at` `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP AFTER `created_at`;
 
@@ -1845,41 +1845,42 @@ ALTER TABLE `meeting_attendees`
 CHANGE `fp_template_1` `fp_template_1` blob NULL AFTER `kra_pin`,
 CHANGE `updated_at` `updated_at` timestamp NULL AFTER `created_at`;
 
-~===== Add requisitioned by field in lpos
++~===== Add requisitioned by field in lpos
 ALTER TABLE `lpos`
 ADD `requisitioned_by_id` int NULL AFTER `module`;
 
-~===== Alter fp_template_1 field in meeting attendees
++~===== Alter fp_template_1 field in meeting attendees
 ALTER TABLE `meeting_attendees`
 CHANGE `fp_template_1` `fp_template_1` varchar(1) NULL AFTER `kra_pin`;
 
-~===== Add email field to meeting attendees
++~===== Add email field to meeting attendees
 ALTER TABLE `meeting_attendees`
 ADD `email` text COLLATE 'latin1_swedish_ci' NULL AFTER `kra_pin`;
 
-~===== Add physical address to meeting attendee table
++~===== Add physical address to meeting attendee table
 ALTER TABLE `meeting_attendees`
 ADD `physical_address` text COLLATE 'latin1_swedish_ci' NULL AFTER `email`;
 
-~===== Add in_assets field to deliveries
++~===== Add in_assets field to deliveries
 ALTER TABLE `delivery_items`
 ADD `in_assets` varchar(5) COLLATE 'latin1_swedish_ci' NULL AFTER `qty_description`;
 
-~===== Add filename field in requisition documents
++~===== Add filename field in requisition documents
 ALTER TABLE `requisition_documents`
 ADD `filename` varchar(255) NULL;
 
-~===== Generate requisition document entries
++~===== Generate requisition document entries
+-- Only on test
 php artisan generate:requisition-docs
 
-~===== Add assets from deliveries
++~===== Add assets from deliveries
 ALTER TABLE `delivery_items`
 ADD `asset_id` int NULL AFTER `in_assets`;
 
 ALTER TABLE `assets`
 ADD `delivery_item_id` int NULL AFTER `previous_status_id`;
 
-~===== Add approver id to advances, invoices, claims, mobile payments and lpos
++~===== Add approver id to advances, invoices, claims, mobile payments and lpos
 ALTER TABLE `advances`
 ADD `approver_id` int(11) NULL AFTER `reporting_objective_id`,
 CHANGE `updated_at` `updated_at` timestamp NOT NULL DEFAULT current_timestamp() AFTER `created_at`;
@@ -1890,39 +1891,40 @@ ADD `approver_id` int(11) NULL AFTER `requisition_id`;
 ALTER TABLE `lpos`
 ADD `approver_id` int(11) NULL AFTER `requisitioned_by_id`;
 
-ALTER TABLE `invoices`
-ADD `approver_id` int(11) NULL AFTER `requisition_id`;
+-- Duplicate entry approver id 
+-- ALTER TABLE `invoices`
+-- ADD `approver_id` int(11) NULL AFTER `requisition_id`;
 
 ALTER TABLE `mobile_payments`
 ADD `approver_id` int(11) NULL AFTER `requisition_id`;
 
-~===== Change approval descriptions
++~===== Change approval descriptions
 UPDATE `approval_levels` SET `approval_level` = 'PM Verification' WHERE `id` = '2';
 UPDATE `approval_levels` SET `approval_level` = 'Management Authorisation' WHERE `id` = '4';
 
-~===== Add LPO id to mobile payment table
++~===== Add LPO id to mobile payment table
 ALTER TABLE `mobile_payments`
 ADD `lpo_id` int NULL AFTER `approver_id`;
 
-~===== Add organiser email to meetings
++~===== Add organiser email to meetings
 ALTER TABLE `meetings`
 ADD `organiser_email` text COLLATE 'latin1_swedish_ci' NULL AFTER `invite_url`;
 
-~==== Add quotation reference field to lpos table
++~==== Add quotation reference field to lpos table
 ALTER TABLE `lpos`
 ADD `quotation_ref` text NULL AFTER `approver_id`;
 
-~===== Add account id field to requisition items
++~===== Add account id field to requisition items
 ALTER TABLE `requisition_items`
 ADD `account_id` int NULL AFTER `module`;
 
-~===== Delete or project balances not being used
++~===== Delete or project balances not being used
 truncate bank_project_balances
 
-~===== Drop cities table
++~===== Drop cities table
 DROP TABLE `cities`;
 
-~===== Add accruals and cash received fields in bank balances
++~===== Add accruals and cash received fields in bank balances
 ALTER TABLE `bank_project_balances`
 ADD `accruals` double NULL AFTER `invoice`,
 CHANGE `updated_at` `updated_at` timestamp NOT NULL DEFAULT current_timestamp() AFTER `created_at`;
@@ -1930,11 +1932,11 @@ CHANGE `updated_at` `updated_at` timestamp NOT NULL DEFAULT current_timestamp() 
 ALTER TABLE `bank_project_balances`
 ADD `cash_received` double NULL AFTER `accruals`;
 
-~===== Add notes to requisition items
++~===== Add notes to requisition items
 ALTER TABLE `requisition_items`
 ADD `notes` text NULL AFTER `account_id`;
 
-~===== Create activity notifications table
++~===== Create activity notifications table
 CREATE TABLE `activity_notifications` (
   `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `data` text NULL,
@@ -1954,7 +1956,7 @@ CHANGE `updated_at` `updated_at` timestamp NULL AFTER `created_at`;
 ALTER TABLE `activity_notifications`
 ADD `show_admins` text COLLATE 'latin1_swedish_ci' NULL AFTER `type`;
 
-~===== Add supply category column on LPO terms table
++~===== Add supply category column on LPO terms table
 ALTER TABLE `lpo_default_terms`
 ADD `supply_category_id` int NULL AFTER `terms`,
 CHANGE `updated_at` `updated_at` timestamp NOT NULL DEFAULT current_timestamp() AFTER `created_at`;
