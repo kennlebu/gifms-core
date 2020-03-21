@@ -73,7 +73,7 @@ class Dashboard extends Controller
         $paid_invoices = [];
         $batches = PaymentBatch::whereBetween('created_at', [$start_date, $end_date])->pluck('id')->toArray();
         if(!empty($batches)){
-            $invoice_ids = Payment::where('payable_type', 'invoices')->wherein('id', $batches)->pluck('payable_id')->toArray();
+            $invoice_ids = Payment::where('payable_type', 'invoices')->wherein('payment_batch_id', $batches)->pluck('payable_id')->toArray();
             if(!empty($invoice_ids)){
                 $paid_invoices = Invoice::whereIn('id', $invoice_ids)->get();
             }            
@@ -107,7 +107,7 @@ class Dashboard extends Controller
         $paid_claims = [];
         $batches = PaymentBatch::whereBetween('created_at', [$start_date, $end_date])->pluck('id')->toArray();
         if(!empty($batches)){
-            $claim_ids = Payment::where('payable_type', 'claims')->wherein('id', $batches)->pluck('payable_id')->toArray();
+            $claim_ids = Payment::where('payable_type', 'claims')->wherein('payment_batch_id', $batches)->pluck('payable_id')->toArray();
             if(!empty($claims_ids)){
                 $paid_claims = Claim::whereIn('id', $claim_ids)->get();
             }            
@@ -138,9 +138,7 @@ class Dashboard extends Controller
         }
 
         // Paid mobile payments
-        $paid_mps = MobilePayment::whereHas('voucher_number', function($query) use ($start_date, $end_date){
-            $query->whereBetween('created_at', [$start_date, $end_date]);  
-        })->get();
+        $paid_mps = MobilePayment::whereMonth('management_approval_at', '=', date('m'))->whereYear('management_approval_at', '=', date('Y'))->get();
 
         foreach($paid_mps as $paid_mp){
             if($paid_mp->currency_id == 1) {

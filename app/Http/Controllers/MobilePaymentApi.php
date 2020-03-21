@@ -224,7 +224,7 @@ class MobilePaymentApi extends Controller
                 $mobile_payment->save();
                 
                 // Add activity notification
-                $this->addActivityNotification('Mobile payment '.$mobile_payment->ref.' created', null, $this->current_user()->id, $mobile_payment->requested_by_id, 'info', 'mobile_payments', true);
+                $this->addActivityNotification('Mobile payment '.$mobile_payment->ref.' created', null, $this->current_user()->id, $mobile_payment->requested_by_id, 'info', 'mobile_payments', false);
 
                 return Response()->json(array('msg' => 'Success: mobile payment added','mobile_payment' => $mobile_payment), 200);
             }
@@ -411,25 +411,6 @@ class MobilePaymentApi extends Controller
             $mobile_payment->disableLogging(); //! Do not log the update
             if($mobile_payment->save()) {
 
-                // $mobile_payment   = MobilePayment::with(
-                //                     'requested_by',
-                //                     'requested_action_by',
-                //                     'project',
-                //                     'account',
-                //                     'mobile_payment_type',
-                //                     'invoice',
-                //                     'status',
-                //                     'project_manager',
-                //                     'region',
-                //                     'county',
-                //                     'currency',
-                //                     'rejected_by',
-                //                     'payees_upload_mode',
-                //                     'payees',
-                //                     'approvals',
-                //                     'allocations'
-                //                 )->findOrFail($mobile_payment_id);
-
                 $approval = new Approval;
                 $approval->approvable_id            =   (int)   $mobile_payment->id;
                 $approval->approvable_type          =   "mobile_payments";
@@ -446,8 +427,7 @@ class MobilePaymentApi extends Controller
                     $mgt_approval_time = new \DateTime();
 
                     // Only create a payment voucher if it's management approval
-                    $v = DB::select('call generate_voucher_no(?,?)',array($mobile_payment->id,"mobile_payments"));
-                    $v_result = $v[0];
+                    DB::select('call generate_voucher_no(?,?)',array($mobile_payment->id,"mobile_payments"));
 
                     /* Send Email */
                     Mail::queue(new NotifyMobilePayment($mobile_payment));
@@ -466,7 +446,7 @@ class MobilePaymentApi extends Controller
                    ->log('Approved');
                    
                 // Add activity notification
-                $this->addActivityNotification('Mobile payment '.$mobile_payment->ref.' approved', null, $this->current_user()->id, $mobile_payment->requested_by_id, 'success', 'mobile_payments', true);
+                $this->addActivityNotification('Mobile payment '.$mobile_payment->ref.' approved', null, $this->current_user()->id, $mobile_payment->requested_by_id, 'success', 'mobile_payments', false);
 
                 if($several!=true)
                 return Response()->json(array('result' => 'Success: mobile payment approved','mobile_payment' => $mobile_payment), 200);
@@ -511,16 +491,6 @@ class MobilePaymentApi extends Controller
                 // Add the data to the csv_data array
                 $csv_data[] = $data;
             }
-
-            /* Get PDF data */                    
-            // $deputy_director = Staff::findOrFail((int) Config::get('app.director_id'));
-            // $director = Staff::findOrFail(37); //TODO: Pick this from config
-            // $pdf_data = array('mobile_payment' => $mobile_payment,
-            //     'addressee'=>'Maureen Adega',
-            //     'deputy_director'=>$deputy_director,
-            //     'director'=>$director
-            //     // 'our_ref'=>$voucher_number
-            // );
 
             /* Send Email */
             Mail::queue(new MobilePaymentInstructBank($mobile_payment, $csv_data, null));
@@ -689,7 +659,7 @@ class MobilePaymentApi extends Controller
                     ->log('Returned');
                     
                 // Add activity notification
-                $this->addActivityNotification('Mobile payment '.$mobile_payment->ref.' returned', null, $this->current_user()->id, $mobile_payment->requested_by_id, 'danger', 'mobile_payments', true);
+                $this->addActivityNotification('Mobile payment '.$mobile_payment->ref.' returned', null, $this->current_user()->id, $mobile_payment->requested_by_id, 'danger', 'mobile_payments', false);
 
                 Mail::queue(new NotifyMobilePayment($mobile_payment));
 
@@ -1069,7 +1039,7 @@ class MobilePaymentApi extends Controller
                    ->log('Submitted for approval');
                    
                 // Add activity notification
-                $this->addActivityNotification('Mobile payment '.$mobile_payment->ref.' submitted', null, $this->current_user()->id, $mobile_payment->requested_by_id, 'info', 'mobile_payments', true);
+                $this->addActivityNotification('Mobile payment '.$mobile_payment->ref.' submitted', null, $this->current_user()->id, $mobile_payment->requested_by_id, 'info', 'mobile_payments', false);
                    
                 Mail::queue(new NotifyMobilePayment($mobile_payment));
 
@@ -1233,7 +1203,7 @@ class MobilePaymentApi extends Controller
             ->log('Recalled');
             
         // Add activity notification
-        $this->addActivityNotification('Mobile payment '.$mobile_payment->ref.' recalled', null, $this->current_user()->id, $mobile_payment->requested_by_id, 'danger', 'mobile_payments', true);
+        $this->addActivityNotification('Mobile payment '.$mobile_payment->ref.' recalled', null, $this->current_user()->id, $mobile_payment->requested_by_id, 'danger', 'mobile_payments', false);
 
         $mobile_payment->disableLogging(); //! Do not log the update
         
