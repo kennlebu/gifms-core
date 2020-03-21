@@ -284,7 +284,7 @@ class InvoiceApi extends Controller
                             ->log('Logged');
                             
                         // Add activity notification
-                        $this->addActivityNotification('Invoice <strong>'.$invoice->external_ref.'('+ $invoice->supplier->supplier_name ?? 'no supplier' +')</strong> logged', null, $this->current_user()->id, $invoice->requested_by_id, 'info', 'invoices', false);
+                        $this->addActivityNotification('Invoice <strong>'.$invoice->external_ref.' ('. ($invoice->supplier->supplier_name ?? 'no supplier') .')</strong> logged', null, $this->current_user()->id, $invoice->requested_by_id, 'info', 'invoices', false);
                     }
 
                 }
@@ -304,10 +304,8 @@ class InvoiceApi extends Controller
                         ->withProperties(['detail' => 'Uploaded invoice '.$invoice->ref])
                         ->log('Uploaded');
 
-                    // Add activity notification
-                    // $this->addActivityNotification('Invoice '.$invoice->external_ref.' uploaded', null, $this->current_user()->id, $invoice->requested_by_id, 'info', 'invoices', false);
-
-                }else if($form['submission_type']=='log'){
+                }
+                else if($form['submission_type']=='log'){
                     $invoice->save();
                     Mail::queue(new NotifyInvoice($invoice));
                 }
@@ -647,7 +645,7 @@ class InvoiceApi extends Controller
                    ->log($approval->approval_level->approval_level);
                    
                 // Add activity notification
-                $this->addActivityNotification('Invoice <strong>'.$invoice->external_ref.'('+ $invoice->supplier->supplier_name ?? 'no supplier' +')</strong> approved', null, $this->current_user()->id, $invoice->requested_by_id, 'success', 'invoices', false);
+                $this->addActivityNotification('Invoice <strong>'.$invoice->external_ref.' ('. ($invoice->supplier->supplier_name ?? 'no supplier') .')</strong> approved', null, $this->current_user()->id, $invoice->requested_by_id, 'success', 'invoices', false);
 
                 Mail::queue(new NotifyInvoice($invoice));
 
@@ -716,7 +714,7 @@ class InvoiceApi extends Controller
                    ->log('Returned');
                    
                 // Add activity notification
-                $this->addActivityNotification('Invoice <strong>'.$invoice->external_ref.'('+ $invoice->supplier->supplier_name ?? 'no supplier' +')</strong> returned', null, $this->current_user()->id, $invoice->requested_by_id, 'danger', 'invoices', false);
+                $this->addActivityNotification('Invoice <strong>'.$invoice->external_ref.' ('. ($invoice->supplier->supplier_name ?? 'no supplier') .')</strong> returned', null, $this->current_user()->id, $invoice->requested_by_id, 'danger', 'invoices', false);
 
                 return Response()->json(array('msg' => 'Success: invoice approved','invoice' => $invoice), 200);
             }
@@ -1419,7 +1417,7 @@ class InvoiceApi extends Controller
                    ->log('recalled');
                    
             // Add activity notification
-            $this->addActivityNotification('Invoice <strong>'.$invoice->external_ref.'('+ $invoice->supplier->supplier_name ?? 'no supplier' +')</strong> recalled', null, $this->current_user()->id, $invoice->requested_by_id, 'danger', 'invoices', false);
+            $this->addActivityNotification('Invoice <strong>'.$invoice->external_ref.' ('. ($invoice->supplier->supplier_name ?? 'no supplier') .')</strong> recalled', null, $this->current_user()->id, $invoice->requested_by_id, 'danger', 'invoices', false);
 
             return response()->json(['msg'=>"invoice recalled"], 200,array(),JSON_PRETTY_PRINT);
         }else{
@@ -1456,7 +1454,7 @@ class InvoiceApi extends Controller
             if($new_invoice->save()){
                 
                 // Add activity notification
-                $this->addActivityNotification('Invoice <strong>'.$invoice->external_ref.'('+ $invoice->supplier->supplier_name ?? 'no supplier' +')</strong> created', null, $this->current_user()->id, $invoice->requested_by_id, 'info', 'invoices', false);
+                $this->addActivityNotification('Invoice <strong>'.$invoice->external_ref.' ('. ($invoice->supplier->supplier_name ?? 'no supplier') .')</strong> created', null, $this->current_user()->id, $invoice->requested_by_id, 'info', 'invoices', false);
 
                 //TODO: Change invoice ref to match the requisition format
                 $new_invoice->ref = "CHAI/INV/#$new_invoice->id/".date_format($new_invoice->created_at,"Y/m/d");

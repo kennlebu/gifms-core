@@ -25,6 +25,10 @@ class Dashboard extends Controller
         if($this->current_user()->hasRole(['accountant', 'assistant-accountant','financial-controller','director', 'associate-director'])){
             $metrics[] = $this->getBankBalance();
         }
+
+        if($this->current_user()->hasRole(['financial-controller'])){
+            $metrics[] = $this->getUnbatchedPayments();
+        }
         
         $metrics[] = $this->getUnapproved();
 
@@ -212,5 +216,30 @@ class Dashboard extends Controller
         $total += ($invoices + $lpos + $claims + $mobile_payments + $requisitions + $others);
 
         return ['type'=>'approvals', 'invoices'=>$invoices, 'lpos'=>$lpos, 'claims'=>$claims, 'mobile_payments'=>$mobile_payments, 'requisitions'=>$requisitions, 'others'=>$others, 'total'=>$total];
+    }
+
+    private function getUnbatchedPayments(){
+        $payments = Payment::where('status_id',1)->get();
+        $total_kes = 0;
+        $total_usd = 0;
+        $invoices = 0;
+        $claims = 0;
+        foreach($payments as $payment){
+            if($payment->currency_id == 1){
+                $total_kes += $payment->amount;
+            }
+            elseif($payment->currency_id == 2){
+                $total_usd += $payment->amount;
+            }
+
+            if($payment->payable_type == 'invoices'){
+                $invoices++;
+            }
+            elseif($payment->payable_type == 'claims'){
+                $claims++;
+            }
+        }
+
+        return ['type'=>'batches', 'total_kes'=>$total_kes, 'total_usd'=>$total_usd, 'number'=>count($payments), 'invoices'=>$invoices, 'claims'=>$claims];
     }
 }
