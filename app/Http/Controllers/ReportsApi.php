@@ -53,7 +53,6 @@ class ReportsApi extends Controller
             'end_date',
             'currency',
             'operation',
-            'is_pm',
             'user_id',
             'programs',
             'objectives',
@@ -64,7 +63,6 @@ class ReportsApi extends Controller
         $fromDate = $form['start_date']." 00:00:00";
         $toDate = $form['end_date']." 23:59:59";
         $operation = $form['operation'];
-        $is_pm = $form['is_pm'];
         $user_id = $form['user_id'];
         $currency = 0;
         if($form['currency'] == 'kes') $currency = 1;
@@ -101,45 +99,23 @@ class ReportsApi extends Controller
             $res = array();
             $batch_date = PaymentBatch::find($payment->payment_batch_id);
             if($payment->payable_type=='advances'){
-                if($is_pm == 'true'){
-                    $advance = Advance::where('project_manager_id', $user_id)
-                                ->where('id', $payment->payable_id)
-                                ->first();
-                }
-                else $advance = Advance::find($payment->payable_id);
+                $advance = Advance::find($payment->payable_id);
                 $res = ['payable_type'=>$payment->payable_type, 'payment'=>$payment, 'payable'=>$advance, 'payment_date'=>$batch_date->created_at];
             }
             elseif($payment->payable_type=='claims'){
-                if($is_pm == 'true'){
-                    $claim = Claim::where('project_manager_id', $user_id)
-                                ->where('id', $payment->payable_id)
-                                ->first();
-                }
-                else $claim = Claim::find($payment->payable_id);
+                $claim = Claim::find($payment->payable_id);
                 $res = ['payable_type'=>$payment->payable_type, 'payment'=>$payment, 'payable'=>$claim, 'payment_date'=>$batch_date->created_at];
             }
             elseif($payment->payable_type=='invoices'){
-                if($is_pm == 'true'){
-                    $invoice = Invoice::where('project_manager_id', $user_id)
-                                    ->where('id', $payment->payable_id)
-                                    ->first();
-                }
-                else $invoice = Invoice::find($payment->payable_id);
+                $invoice = Invoice::find($payment->payable_id);
                 $res = ['payable_type'=>$payment->payable_type, 'payment'=>$payment, 'payable'=>$invoice, 'payment_date'=>$batch_date->created_at];
             }
             $payables[] = $res;
         }
 
-        if($is_pm == 'true'){
-            $mobile_payments = MobilePayment::whereHas('voucher_number', function($query) use ($fromDate, $toDate){
-                $query->whereBetween('created_at', [$fromDate, $toDate]);  
-            })->where('currency_id', $currency)->where('project_manager_id', $user_id)->get();
-        }
-        else{
-            $mobile_payments = MobilePayment::whereHas('voucher_number', function($query) use ($fromDate, $toDate){
-                $query->whereBetween('created_at', [$fromDate, $toDate]);  
-            })->where('currency_id', $currency)->get();
-        }
+        $mobile_payments = MobilePayment::whereHas('voucher_number', function($query) use ($fromDate, $toDate){
+            $query->whereBetween('created_at', [$fromDate, $toDate]);  
+        })->where('currency_id', $currency)->get();
 
         foreach($mobile_payments as $mobile_payment){
             $res = array();
@@ -204,7 +180,7 @@ class ReportsApi extends Controller
                     }
     
                     if($row['payable_type'] == 'mobile_payments'){
-                        $mpesa_payee = Staff::find($row['payable']['requested_by_id'])->full_name;
+                        $mpesa_payee = Staff::find($row['payable']['requested_by_id'])->full_name ?? '-';
     
                         $my_result['vendor_name'] = 'MOH OFFICIALS';
                         $my_result['general_jr'] = 'MOH OFFICIALS c/o '.$mpesa_payee.': '.$row['payable']['expense_desc'].'; '.$row['payable']['expense_purpose'];
