@@ -64,7 +64,7 @@ class Dashboard extends Controller
         $unpaid_invoices = Invoice::whereIn('status_id', [1,2,3,4,10,11,12])->get();
         foreach($unpaid_invoices as $invoice){
             if($invoice->currency_id == 1) {
-                $rate = ExchangeRate::whereMonth('active_date', date('m'))->orderBy('active_date', 'DESC')->first();
+                $rate = ExchangeRate::whereYear('active_date', date('Y'))->whereMonth('active_date', date('m'))->orderBy('active_date', 'DESC')->first();
                 if(!empty($rate)) $rate = $rate->exchange_rate;
                 else $rate = 101.70;
 
@@ -84,7 +84,7 @@ class Dashboard extends Controller
         }
         foreach($paid_invoices as $paid_invoice){
             if($paid_invoice->currency_id == 1) {
-                $rate = ExchangeRate::whereMonth('active_date', date('m'))->orderBy('active_date', 'DESC')->first();
+                $rate = ExchangeRate::whereYear('active_date', date('Y'))->whereMonth('active_date', date('m'))->orderBy('active_date', 'DESC')->first();
                 if(!empty($rate)) $rate = $rate->exchange_rate;
                 else $rate = 101.70;
 
@@ -98,7 +98,7 @@ class Dashboard extends Controller
         $unpaid_claim = Claim::whereIn('status_id', [1,2,3,4,5,10])->get();
         foreach($unpaid_claim as $claim){
             if($claim->currency_id == 1) {
-                $rate = ExchangeRate::whereMonth('active_date', date('m'))->orderBy('active_date', 'DESC')->first();
+                $rate = ExchangeRate::whereYear('active_date', date('Y'))->whereMonth('active_date', date('m'))->orderBy('active_date', 'DESC')->first();
                 if(!empty($rate)) $rate = $rate->exchange_rate;
                 else $rate = 101.70;
 
@@ -118,7 +118,7 @@ class Dashboard extends Controller
         }
         foreach($paid_claims as $paid_claim){
             if($paid_claim->currency_id == 1) {
-                $rate = ExchangeRate::whereMonth('active_date', date('m'))->orderBy('active_date', 'DESC')->first();
+                $rate = ExchangeRate::whereYear('active_date', date('Y'))->whereMonth('active_date', date('m'))->orderBy('active_date', 'DESC')->first();
                 if(!empty($rate)) $rate = $rate->exchange_rate;
                 else $rate = 101.70;
 
@@ -132,7 +132,7 @@ class Dashboard extends Controller
         $unpaid_mp = MobilePayment::whereIn('status_id', [1,2,3,8,9,15,16])->get();
         foreach($unpaid_mp as $mp){
             if($mp->currency_id == 1) {
-                $rate = ExchangeRate::whereMonth('active_date', date('m'))->orderBy('active_date', 'DESC')->first();
+                $rate = ExchangeRate::whereYear('active_date', date('Y'))->whereMonth('active_date', date('m'))->orderBy('active_date', 'DESC')->first();
                 if(!empty($rate)) $rate = $rate->exchange_rate;
                 else $rate = 101.70;
 
@@ -146,7 +146,7 @@ class Dashboard extends Controller
 
         foreach($paid_mps as $paid_mp){
             if($paid_mp->currency_id == 1) {
-                $rate = ExchangeRate::whereMonth('active_date', date('m'))->orderBy('active_date', 'DESC')->first();
+                $rate = ExchangeRate::whereYear('active_date', date('Y'))->whereMonth('active_date', date('m'))->orderBy('active_date', 'DESC')->first();
                 if(!empty($rate)) $rate = $rate->exchange_rate;
                 else $rate = 101.70;
 

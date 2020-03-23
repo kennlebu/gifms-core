@@ -2,12 +2,19 @@
 
 namespace App\Models\FinanceModels;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\BaseModels\BaseModel;
 
 class ExchangeRate extends BaseModel
 {
-    //
     use SoftDeletes;
+    protected $appends = ['month'];
+
+    public function added_by()
+    {
+        return $this->belongsTo('App\Models\StaffModels\Staff','added_by_id');
+    }
+    public function getmonthAttribute(){
+        return date('M Y',  strtotime($this->active_date));
+    }
 }

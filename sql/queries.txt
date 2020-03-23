@@ -1971,3 +1971,8 @@ CREATE TABLE `cash_received` (
   `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
   `deleted_at` timestamp NULL
 );
+
++~===== Add added by to exchange rates
+ALTER TABLE `exchange_rates`
+CHANGE `migration_id` `added_by_id` int(11) NULL AFTER `end_date`,
+CHANGE `updated_at` `updated_at` timestamp NOT NULL DEFAULT current_timestamp() AFTER `created_at`;

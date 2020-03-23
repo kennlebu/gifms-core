@@ -5151,6 +5151,12 @@ Route::GET('/reports/2016', 'ReportsApi@get2016Report')->middleware('jwt.auth');
 Route::POST('/reports/pm-journal', 'ReportsApi@PmJournal')->middleware('jwt.auth');
 Route::POST('/reports/expense-report', 'ReportsApi@expenseReport')->middleware('jwt.auth');
 
+// USD Rates
+Route::get('exchange-rates', 'ReportsApi@getRates')->middleware('jwt.auth');
+Route::POST('exchange-rate', 'ReportsApi@addExchangeRate')->middleware('jwt.auth');
+Route::PUT('exchange-rate', 'ReportsApi@updateRate')->middleware('jwt.auth');
+Route::DELETE('exchange-rate/{id}', 'ReportsApi@deleteRate')->middleware('jwt.auth');
+
 /**
  * GET getReportingCategories
  * Summary: Get reporting categories

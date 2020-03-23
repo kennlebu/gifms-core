@@ -34,6 +34,7 @@ use App\Models\ReportModels\ReportingObjective;
 use App\Models\ActivityModels\ActivityObjective;
 use App\Models\BankingModels\BankTransaction;
 use App\Models\FinanceModels\Budget;
+use App\Models\FinanceModels\ExchangeRate;
 use Illuminate\Http\Request as HttpRequest;
 
 class ReportsApi extends Controller
@@ -1146,6 +1147,64 @@ class ReportsApi extends Controller
         }
         else{
             return $data;
+        }
+    }
+
+
+
+    // EXCHANGE RATES
+    /**
+     * Add USD Rates
+     */
+    public function addExchangeRate(HttpRequest $request){
+        try{
+            $rate = new ExchangeRate();
+            $rate->exchange_rate = $request->exchange_rate;
+            $rate->active_date = $request->active_date;
+            $rate->added_by_id = $this->current_user()->id;
+            $rate->save();
+
+            // Add activity notification
+            $this->addActivityNotification('Added USD rate for <strong>'.date('M Y', strtotime($rate->active_date)). '</strong>', null, $this->current_user()->id, $this->current_user()->id, 'success', 'exchange_rates', false);
+
+            return Response()->json(['msg'=>'Success'], 200);
+        }
+        catch(\Exception $e){
+            return response()->json(['error'=>'Something went wrong', 'msg'=>$e->getMessage()], 500);
+        }
+    }
+
+    public function updateRate(HttpRequest $request){
+        try{
+            $rate = ExchangeRate::findOrFail($request->id);
+            $rate->exchange_rate = $request->exchange_rate;
+            $rate->active_date = $request->active_date;
+            $rate->save();
+
+            return Response()->json(['msg'=>'Success'], 200);
+        }
+        catch(\Exception $e){
+            return response()->json(['error'=>"Something went wrong",'msg'=>$e->getMessage()], 500);
+        }
+    }
+
+    public function deleteRate($id){
+        try{
+            ExchangeRate::destroy($id);
+            return response()->json(['msg'=>"Success"], 200);
+        }
+        catch(\Exception $e){
+            return response()->json(['error'=>"Something went wrong", 'msg'=>$e->getMessage()], 500);
+        }
+    }
+
+    public function getRates(){
+        try{
+            $rates = ExchangeRate::with('added_by')->orderBy('active_date')->get();
+            return response()->json($rates, 200);
+        }
+        catch(\Exception $e){
+            return response()->json(['error'=>"Something went wrong", 'msg'=>$e->getMessage()], 500);
         }
     }
 }

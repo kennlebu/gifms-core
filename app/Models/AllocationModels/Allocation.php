@@ -57,7 +57,7 @@ class Allocation extends BaseModel
             $allocatable = Advance::find($this->allocatable_id);
         }
 
-        $rate = ExchangeRate::whereMonth('active_date', date('m'))->orderBy('active_date', 'DESC')->first();
+        $rate = ExchangeRate::whereYear('active_date', date('Y', strtotime($this->created_at)))->whereMonth('active_date', date('m', strtotime($this->created_at)))->orderBy('active_date', 'DESC')->first();
         if(!empty($rate)) $rate = $rate->exchange_rate;
         else $rate = 101.72;
         if($allocatable && $allocatable->currency_id == 1){
@@ -78,7 +78,7 @@ class Allocation extends BaseModel
             $allocatable = Advance::has('payments')->find($this->allocatable_id);
         }
 
-        $rate = ExchangeRate::whereMonth('active_date', date('m'))->orderBy('active_date', 'DESC')->first();
+        $rate = ExchangeRate::whereMonth('active_date', date('Y'), strtotime($this->created_at))->whereMonth('active_date', date('m'), strtotime($this->created_at))->orderBy('active_date', 'DESC')->first();
         if(!empty($rate)) $rate = $rate->exchange_rate;
         else $rate = 101.72;
         if($allocatable && $allocatable->currency_id == 1){

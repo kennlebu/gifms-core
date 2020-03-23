@@ -140,7 +140,7 @@ class RequisitionApi extends Controller
             $response = $requisitions->get();
         }
     
-        return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+        return response()->json($response, 200,[],JSON_PRETTY_PRINT);
     }
 
     /**
@@ -371,60 +371,8 @@ class RequisitionApi extends Controller
                 }
             }
 
-            // Files
-            // $no_of_files = (int) $request->no_of_files;
-            // $files = [];
-            // $titles = [];
-            // for($i = 0; $i < $no_of_files; $i++) {
-            //     $name = 'file'.$i;
-            //     $file_title = 'file'.$i.'_title';
-            //     $files[] = $request->$name;
-            //     $titles[] = $request->$file_title;
-            // }
-
-            // file_put_contents ( "C://Users//kennl//Documents//debug.txt" , PHP_EOL.$no_of_files , FILE_APPEND);
-            // file_put_contents ( "C://Users//kennl//Documents//debug.txt" , PHP_EOL.json_encode($titles) , FILE_APPEND);
-
-            // $documents = $request->documents;
-            // $counter = 0;
-            // foreach($documents as $document) {
-            //     if(!empty($document['id'])){
-            //         continue;
-            //     }
-            //     file_put_contents ( "C://Users//kennl//Documents//debug.txt" , PHP_EOL.json_encode($request->all()) , FILE_APPEND);
-            //     $file = $document['doc'][0];
-            //     $requisition_doc = new RequisitionDocument();
-            //     $requisition_doc->title = $document['title'];
-            //     $requisition_doc->requisition_id = $requisition->id;
-            //     $requisition_doc->uploaded_by_id = $this->current_user()->id;
-            //     $requisition_doc->filename = $requisition->ref.'doc_'.$counter;
-            //     $requisition_doc->type = $file->getClientOriginalExtension();
-            //     $requisition_doc->save();
-                
-            //     FTP::connection()->makeDir('/requisitions');
-            //     FTP::connection()->makeDir('/requisitions/'.$requisition->ref);
-            //     FTP::connection()->uploadFile($file->getPathname(), '/requisitions/'.$requisition->ref.'/'.$requisition_doc->filename.'.'.$requisition_doc->type);
-            //     $counter += 1;
-            // }
-
-            // // Airfare document
-            // $airfare_doc = $request->airfare_doc;
-            // if($airfare_doc != 0){
-            //     $requisition_doc = new RequisitionDocument();
-            //     $requisition_doc->title = "Airfare support document";
-            //     $requisition_doc->requisition_id = $requisition->id;
-            //     $requisition_doc->uploaded_by_id = $this->current_user()->id;
-            //     // $requisition_doc->filename = $requisition->ref.'doc_'.$counter;
-            //     $requisition_doc->type = $airfare_doc->getClientOriginalExtension();
-            //     $requisition_doc->save();
-
-            //     FTP::connection()->makeDir('/requisitions');
-            //     FTP::connection()->makeDir('/requisitions/'.$requisition->ref);
-            //     FTP::connection()->uploadFile($airfare_doc->getPathname(), '/requisitions/'.$requisition->ref.'/'.$requisition_doc->filename.'.'.$requisition_doc->type);
-            // }
-
             // Logging
-            $activity = activity()
+            activity()
                 ->performedOn($requisition)
                 ->causedBy($this->current_user())
                 ->log('Updated');
@@ -432,7 +380,7 @@ class RequisitionApi extends Controller
             return Response()->json(array('msg' => 'Success: requisition updated','requisition' => $requisition), 200);
         }
         catch(Exception $e){
-            return response()->json(['error'=>"Something went wrong",'msg'=>$e->getMessage(),'trace'=>$e->getTraceAsString()], 500,array(),JSON_PRETTY_PRINT);
+            return response()->json(['error'=>"Something went wrong",'msg'=>$e->getMessage()], 500);
         }
     }
 
@@ -451,10 +399,10 @@ class RequisitionApi extends Controller
                 RequisitionAllocation::where('requisition_id',$id)->delete();
                 RequisitionDocument::where('requisition_id',$id)->delete();
             }
-            return response()->json(['msg'=>"Requisition removed"], 200,array(),JSON_PRETTY_PRINT);
+            return response()->json(['msg'=>"Requisition removed"], 200);
         }
         catch(Exception $e){
-            return response()->json(['error'=>"Something went wrong", 'msg'=>$e->getMessage(), 'stack'=>$e->getTraceAsString()], 500,array(),JSON_PRETTY_PRINT);
+            return response()->json(['error'=>"Something went wrong", 'msg'=>$e->getMessage()], 500);
         }
     }
 
