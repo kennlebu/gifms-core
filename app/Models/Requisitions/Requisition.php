@@ -117,26 +117,24 @@ class Requisition extends BaseModel
         $last = Requisition::whereNotNull('ref')->orderBy('id', 'desc')->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->first();
 
         // Get current year and month
-        $year = date('y', strtotime($this->created_at));
-        $month = date('m', strtotime($this->created_at));
-        $combination = $year.$month;
+        $combination = date('ym', strtotime($this->created_at));
 
         // Get last year and month
-        $last_year = date('y', strtotime($last->created_at));
-        $last_month = date('m', strtotime($last->created_at));
-        $last_combination = $last_year.$last_month;
+        $last_combination = date('ym', strtotime($last->created_at));
 
         // Use current combination if it isn't the same as the previous
         $month_year = $last_combination;
+        $new_number = '001';
         if($combination != $last_combination){
             $month_year = $combination;
+            
         }
-
-        // Get requisition number in month 
-        $last_number = explode('-', $last->ref)[1] ?? 0;
-        $new_number = $this->pad(3, ($last_number + 1));
+        else {
+            // Get requisition number in month 
+            $last_number = explode('-', $last->ref)[1] ?? 0;
+            $new_number = $this->pad(3, ($last_number + 1));
+        }        
 
         return 'KE'.$month_year.'-'.$new_number;
-        // return 'DUMMY';
     }
 }

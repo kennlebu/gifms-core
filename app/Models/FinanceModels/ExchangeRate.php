@@ -17,4 +17,8 @@ class ExchangeRate extends BaseModel
     public function getmonthAttribute(){
         return date('M Y',  strtotime($this->active_date));
     }
+    public function exchange_rate(){
+        if(empty($this->exchange_rate))
+            return 101.70;
+    }
 }
