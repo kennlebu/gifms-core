@@ -133,7 +133,7 @@ class LPOApi extends Controller
             if(!empty($form['approver_id']))
             $lpo->approver_id = $form['approver_id'] ?? null;
             if(!empty($form['quotation_ref']))
-            $lpo->approver_id = $form['quotation_ref'] ?? null;
+            $lpo->quotation_ref = $form['quotation_ref'] ?? null;
 
             $user = JWTAuth::parseToken()->authenticate();
             $lpo->request_action_by_id = (int) $user->id;
@@ -321,7 +321,7 @@ class LPOApi extends Controller
         if(!empty($form['approver_id']))
         $lpo->approver_id = $form['approver_id'] ?? null;
         if(!empty($form['quotation_ref']))
-        $lpo->approver_id = $form['quotation_ref'] ?? null;
+        $lpo->quotation_ref = $form['quotation_ref'] ?? null;
 
         if($lpo->save()) {
             return Response()->json(array('msg' => 'Success: lpo updated','lpo' => $lpo), 200);
@@ -386,17 +386,17 @@ class LPOApi extends Controller
                     $requisition_item->save();
                 }
 
-                // Logging item recall
+                // Logging delete
                 activity()
                     ->performedOn(Requisition::find($lpo->requisition_id))
                     ->causedBy($this->current_user())
-                    // ->withProperties(['detail'=>'LPO '.$lpo->ref.' has been deleted'])
                     ->log('LPO deleted');
                     
                 // Add activity notification
-                $this->addActivityNotification('Deleted '. $lpo->lpo_type=='lso'?'LSO':'LSO' .' '.$lpo->ref, null, $this->current_user()->id, $lpo->requisitioned_by_id ?? $lpo->requested_by_id, 'danger', 'lpos', false);
+                $this->addActivityNotification('Deleted '. ($lpo->lpo_type=='lso'?'LSO':'LSO') .' '.$lpo->ref, null, $this->current_user()->id, $lpo->requisitioned_by_id ?? $lpo->requested_by_id, 'danger', 'lpos', false);
             }
 
+            $lpo->disableLogging();
             $lpo->delete();
 
             // Delete the items too
@@ -404,10 +404,10 @@ class LPOApi extends Controller
             // Delete the allocations too
             Allocation::where('allocatable_id', $lpo_id)->where('allocatable_type', 'lpos')->delete();
 
-            return response()->json(['msg'=>"lpo deleted"], 200,array(),JSON_PRETTY_PRINT);
+            return response()->json(['msg'=>"lpo deleted"], 200);
         }
         catch(Exception $e) {
-            return response()->json(['error'=>"Something went wrong", 'msg'=>$e->getMessage()], 500,array(),JSON_PRETTY_PRINT);
+            return response()->json(['error'=>"Something went wrong", 'msg'=>$e->getMessage()], 500);
         }
 
     }
@@ -453,7 +453,7 @@ class LPOApi extends Controller
                 ->log($lpo->lpo_type=='lso'?'LSO':'LPO'.' recalled');
             
             // Add activity notification
-            $this->addActivityNotification('Recalled '.$lpo->lpo_type=='lso'?'LSO':'LPO'.' '. $lpo->ref , null, $this->current_user()->id, $lpo->requisitioned_by_id ?? $lpo->requested_by_id, 'danger', 'lpos', false);
+            $this->addActivityNotification('Recalled '.($lpo->lpo_type=='lso'?'LSO':'LPO').' '. $lpo->ref , null, $this->current_user()->id, $lpo->requisitioned_by_id ?? $lpo->requested_by_id, 'danger', 'lpos', false);
 
             if(!empty($lpo->requisition_id)){
                 foreach($lpo->items as $item){
@@ -513,7 +513,7 @@ class LPOApi extends Controller
             ->log($lpo->lpo_type=='lso'?'LSO':'LPO'.' canceled');
             
         // Add activity notification
-        $this->addActivityNotification('Cancelled '.$lpo->lpo_type=='lso'?'LSO':'LPO'.' '. $lpo->ref, null, $this->current_user()->id, $lpo->requisitioned_by_id ?? $lpo->requested_by_id, 'danger', 'lpos', true);
+        $this->addActivityNotification('Cancelled '.($lpo->lpo_type=='lso'?'LSO':'LPO').' '. $lpo->ref, null, $this->current_user()->id, $lpo->requisitioned_by_id ?? $lpo->requested_by_id, 'danger', 'lpos', true);
 
         $lpo->disableLogging(); //! Do not log the update
         
@@ -600,7 +600,7 @@ class LPOApi extends Controller
                    ->log($approval->approval_level->approval_level);
                 
                 // Add activity notification
-                $this->addActivityNotification('Approved '.$lpo->lpo_type == 'lso'?'LSO ':'LPO '. $lpo->ref, null, $this->current_user()->id, $lpo->requisitioned_by_id ?? $lpo->requested_by_id, 'success', 'lpos', false);
+                $this->addActivityNotification('Approved '.($lpo->lpo_type == 'lso'?'LSO ':'LPO '). $lpo->ref, null, $this->current_user()->id, $lpo->requisitioned_by_id ?? $lpo->requested_by_id, 'success', 'lpos', false);
 
                 if($lpo->status_id!=7){
                     Mail::queue(new NotifyLpo($lpo));
@@ -680,7 +680,7 @@ class LPOApi extends Controller
                 ->log('Returned');
 
             // Add activity notification
-            $this->addActivityNotification('Returned '.$lpo->lpo_type=='lso'?'LSO':'LPO'.' '. $lpo->ref, null, $this->current_user()->id, $lpo->requisitioned_by_id ?? $lpo->requested_by_id, 'danger', 'lpos', false);
+            $this->addActivityNotification('Returned '.($lpo->lpo_type=='lso'?'LSO':'LPO').' '. $lpo->ref, null, $this->current_user()->id, $lpo->requisitioned_by_id ?? $lpo->requested_by_id, 'danger', 'lpos', false);
 
                 Mail::queue(new NotifyLpo($lpo));
 
@@ -778,7 +778,7 @@ class LPOApi extends Controller
             }
 
             // Add activity notification
-            $this->addActivityNotification('Submitted '.$lpo->lpo_type=='lso'?'LSO':'LPO'.' '. $lpo->ref, null, $this->current_user()->id, $lpo->requisitioned_by_id ?? $lpo->requested_by_id, 'info', 'lpos', false);
+            $this->addActivityNotification('Submitted '.($lpo->lpo_type=='lso'?'LSO':'LPO').' '. $lpo->ref, null, $this->current_user()->id, $lpo->requisitioned_by_id ?? $lpo->requested_by_id, 'info', 'lpos', false);
 
             $lpo->disableLogging(); //! Do not log the update
             if($lpo->save()) {
