@@ -5477,6 +5477,7 @@ Route::GET('requisition/document/{name}', 'RequisitionApi@getDocument')->middlew
 Route::GET('/requisition/{id}/get_document', 'RequisitionApi@getRequisitionDocument')->middleware('jwt.auth');
 Route::POST('requisition/add-document', 'RequisitionApi@addDocument')->middleware('jwt.auth');
 Route::DELETE('requisition/document/{id}', 'RequisitionApi@removeDocument')->middleware('jwt.auth');
+Route::GET('requisition-lpo-item/{id}', 'RequisitionApi@getRequisitionLpoItem')->middleware('jwt.auth');
 
 
 /* Meetings */

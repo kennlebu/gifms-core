@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Anchu\Ftp\Facades\Ftp;
 use App\Mail\NotifyRequisition;
 use App\Models\ApprovalsModels\Approval;
+use App\Models\LPOModels\LpoItem;
 use App\Models\Requisitions\RequisitionDocument;
 use App\Models\SuppliesModels\SupplierService;
 use Illuminate\Support\Facades\Request as IlluminateRequest;
@@ -260,7 +261,7 @@ class RequisitionApi extends Controller
                 ->log('Created');
 
             // Add activity notification
-            $this->addActivityNotification('Created requisition '.$requisition->ref, null, $this->current_user()->id, $requisition->requested_by_id, 'info', 'requisitions', true);
+            $this->addActivityNotification('Created requisition '.$requisition->ref, null, $this->current_user()->id, $requisition->requested_by_id, 'info', 'requisitions', false);
 
             return Response()->json(array('msg' => 'Success: requisition added','requisition' => $requisition), 200);
         }
@@ -426,7 +427,7 @@ class RequisitionApi extends Controller
                     ->log('Submitted for approval');
                     
                 // Add activity notification
-                $this->addActivityNotification('Submitted requisition '.$requisition->ref, null, $this->current_user()->id, $requisition->requested_by_id, 'info', 'requisitions', true);
+                $this->addActivityNotification('Submitted requisition '.$requisition->ref, null, $this->current_user()->id, $requisition->requested_by_id, 'info', 'requisitions', false);
 
                 Mail::queue(new NotifyRequisition($requisition->id));
 
@@ -460,7 +461,7 @@ class RequisitionApi extends Controller
                 ->log('Requisition approved');
                 
             // Add activity notification
-            $this->addActivityNotification('Requisition '.$requisition->ref.' approved', null, $this->current_user()->id, $requisition->requested_by_id, 'success', 'requisitions', true);
+            $this->addActivityNotification('Requisition '.$requisition->ref.' approved', null, $this->current_user()->id, $requisition->requested_by_id, 'success', 'requisitions', false);
 
             $approval = new Approval();
 
@@ -514,7 +515,7 @@ class RequisitionApi extends Controller
                 ->log('Requisition returned');
 
             // Add activity notification
-            $this->addActivityNotification('Requisition '.$requisition->ref.' returned', null, $this->current_user()->id, $requisition->requested_by_id, 'danger', 'requisitions', true);
+            $this->addActivityNotification('Requisition '.$requisition->ref.' returned', null, $this->current_user()->id, $requisition->requested_by_id, 'danger', 'requisitions', false);
         
             return Response()->json(array('msg' => 'Success: requisition returned','data' => $requisition), 200);
         }
@@ -617,10 +618,10 @@ class RequisitionApi extends Controller
             $requisition = Requisition::findOrFail($requisition_document->requisition_id);
             FTP::connection()->delete('/requisitions/'.$requisition->ref.'/'.$requisition_document->filename.'.'.$requisition_document->type);
             $requisition_document->delete();
-            return response()->json(['msg'=>"Attachment removed",'requisition'=>$requisition], 200,array(),JSON_PRETTY_PRINT);
+            return response()->json(['msg'=>"Attachment removed",'requisition'=>$requisition], 200);
         }
         catch(Exception $e){
-            return response()->json(['error'=>"Something went wrong", 'msg'=>$e->getMessage()], 500,array(),JSON_PRETTY_PRINT);
+            return response()->json(['error'=>"Something went wrong", 'msg'=>$e->getMessage()], 500);
         }
     }
 
@@ -667,5 +668,14 @@ class RequisitionApi extends Controller
         }
         
         return response()->json($statuses, 200,array(),JSON_PRETTY_PRINT);
+    }
+
+
+    /**
+     * Get Requisition LPO Item
+     */
+    public function getRequisitionLpoItem($requisition_item_id){
+        $lpo_item = LpoItem::with('lpo')->where('requisition_item_id', $requisition_item_id)->first();
+        return response()->json(['lpo_item'=>$lpo_item], 200);
     }
 }

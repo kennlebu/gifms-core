@@ -61,7 +61,7 @@ class Invoice extends BaseModel
 
     protected $appends = ['amount_allocated', 'bank_transaction', 'bank_transactions','calculated_withdrawal_charges','calculated_total'];
     protected $hidden = ['staff_advance','reconcilliation_date','comments','country_id','reporting_categories_id','reporting_objective_id',
-                        'approver_id','claim_id','advance_id','mpesa_id','bank_ref_no','shared_cost','recurring_period','recurr_end_date',
+                        'claim_id','advance_id','mpesa_id','bank_ref_no','shared_cost','recurring_period','recurr_end_date',
                         'excise_duty','catering_levy','zero_rated','exempt_supplies','other_levies','other_amounts','migration_supplier_id',
                         'migration_project_manager_id','migration_management_approval_id','migration_raised_by_id','migration_approver_id',
                         'migration_claim_id',' migration_lpo_id','migration_advance_id','migration_mpesa_id','migration_id','deleted_at'];

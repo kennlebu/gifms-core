@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class RequisitionItem extends BaseModel
 {
     use SoftDeletes;
-    protected $appends = ['transaction_status', 'dates', 'transaction', 'can_continue', 'qty_unit'];
+    protected $appends = ['transaction_status', 'dates', 'transaction', 'can_continue', 'qty_unit', 'action'];
 
     public function supplier_service()
     {
@@ -46,25 +46,19 @@ class RequisitionItem extends BaseModel
         }
         elseif($this->status_id == 4){
             $inv = Invoice::where('requisition_id', $this->requisition_id)->orderBy('id','desc')->first();
-            $status = 'Invoice '.$inv->status->invoice_status;
+            $status = 'Invoice '.($inv->status->invoice_status ?? 'N/A');
         }
         elseif($this->status_id == 6){
             $mb = MobilePayment::where('requisition_id', $this->requisition_id)->orderBy('id','desc')->first();
-            $status = 'Mobile Payment '.$mb->status->mobile_payment_status;
+            $status = 'Mobile Payment '.($mb->status->mobile_payment_status ?? 'N/A');
         }
         elseif($this->status_id == 3){
-            $grn = Delivery::where('requisition_id', $this->requisition_id)->orderBy('id','desc')->first();
+            // $grn = Delivery::where('requisition_id', $this->requisition_id)->orderBy('id','desc')->first();
             $status = $this->status->status;
         }
         elseif($this->status_id == 7){
-            // if($this->module == 'mobile_payment'){
-            //     $mb = MobilePayment::where('requisition_id', $this->requisition_id)->first();
-            //     $status = 'Mobile Payment '.$mb->status->mobile_payment_status;
-            // }
-            // if($this->module == 'claim'){
-                $claim = Claim::where('requisition_id', $this->requisition_id)->first();
-                $status = 'Claim '.$claim->status->claim_status;
-            // }
+            $claim = Claim::where('requisition_id', $this->requisition_id)->first();
+            $status = 'Claim '.$claim->status->claim_status;
         }
         return $status;
     }
@@ -127,6 +121,45 @@ class RequisitionItem extends BaseModel
             $unit = implode(' ' ,$arr);
         }
         return $unit;
+    }
+
+    public function getActionAttribute(){
+        $action = '';
+        $requisition = Requisition::find($this->requisition_id);
+        if($requisition && $requisition->status_id == 3){
+            if($this->status_id == 1){
+                $action = 'lpo';
+            }
+            elseif($this->status_id == 2){
+                $lpo_item = LpoItem::where('requisition_item_id', $this->id)->first();
+                if($lpo_item){
+                    $lpo = Lpo::find($lpo_item->lpo_id);
+                    if($lpo && $lpo->status_id == 7){
+                        if($this->module == 'mobile_payment') $action = 'mobile_payment';
+                        elseif($this->module == 'invoice' || $this->module == 'lpo'){
+                            if($lpo->preferred_supplier && $lpo->preferred_supplier->supply_category && 
+                                ($lpo->preferred_supplier->supply_category->service_type == 'goods' || $lpo->preferred_supplier->supply_category->service_type == 'consumables')
+                            ){
+                                $action = 'grn';
+                            }
+                            else {
+                                $action = 'invoice';
+                            }
+                        }
+                    }
+                }
+            }
+            elseif($this->status_id == 3){  // GRN Received
+                $lpo_item = LpoItem::where('requisition_item_id', $this->id)->first();
+                if($lpo_item){
+                    $lpo = Lpo::find($lpo_item->lpo_id);
+                    if($lpo && $lpo->status_id == 8 && $lpo->can_invoice){
+                        $action = 'invoice';
+                    }
+                }
+            }
+        }
+        return $action;
     }
 
 }

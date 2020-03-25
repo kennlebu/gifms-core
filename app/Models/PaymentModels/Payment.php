@@ -57,7 +57,7 @@ class Payment extends BaseModel
     }
 
     public function getBankTransactionAttribute(){
-        $voucher = VoucherNumber::find($this->attributes['voucher_no']);
+        $voucher = VoucherNumber::find($this->voucher_no);
         if(!empty($voucher))
             return BankTransaction::where('chai_ref', $voucher->voucher_number)->first();
         else
