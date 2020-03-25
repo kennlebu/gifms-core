@@ -101,9 +101,6 @@ class InvoiceApi extends Controller
                 $invoice_date = $dt->format('Y-m-d');
             }
 
-            // $exists = Invoice::where('external_ref', $form['external_ref'])
-            //             ->where('supplier_id', $form['supplier_id'])
-            //             ->first();
             if(Invoice::where('external_ref', $invoice->external_ref)->where('supplier_id', $form['supplier_id'])->exists() && $form['submission_type']!='upload_logged' && $form['submission_type']!='finish_allocations'){
                 return response()->json(['error'=>'Invoice with the same invoice number already exists'], 409);
             }
@@ -140,9 +137,6 @@ class InvoiceApi extends Controller
             }
             else if($form['submission_type']=='log'){
 
-                // if(empty($form['requisition_id']) || (int) $form['requisition_id'] == 0){
-                //     return response()->json(['error'=>'You cannot create an Invoice without a requisition'], 403);
-                // }
                 if($invoice->lpo_id){
                     $m_lpo = Lpo::find($invoice->lpo_id);
                     if($m_lpo->requisition && $m_lpo->requisition->status_id != 3){
@@ -161,7 +155,6 @@ class InvoiceApi extends Controller
                 $invoice->supplier_id                       =   (int)       $form['supplier_id'];
                 $invoice->payment_mode_id                  =   (int)       $form['payment_mode_id'];
                 $invoice->total                             =   (double)    $form['total'];
-                // $invoice->total                             =   (double)    $invoice->calculated_total;
                 $invoice->currency_id                       =   (int)       $form['currency_id'];
                 $invoice->received_at                       =   date('Y-m-d H:i:s');
                 if(!empty($form['lpo_variation_reason']))
@@ -259,6 +252,7 @@ class InvoiceApi extends Controller
                                     $item->disableLogging();
                                     $item->save();
                                 }
+                                $invoice->approver_id = $lpo->approver_id;
                             }
                             $invoice->requisition_id = $lpo->requisition_id;
                             $invoice_no = count($requisition->invoices);
@@ -467,18 +461,35 @@ class InvoiceApi extends Controller
      */
     public function deleteInvoice($invoice_id)
     {
-        try {                   
-            $deleted_allocation = Invoice::destroy($invoice_id);
-            if($deleted_allocation){
-                // Delete the allocations too
-                Allocation::where('allocatable_id', $invoice_id)->where('allocatable_type', 'invoices')->delete();
-                return response()->json(['msg'=>"Invoice deleted"], 200,array(),JSON_PRETTY_PRINT);
-            }else{
-                return response()->json(['error'=>"Invoice not found"], 404,array(),JSON_PRETTY_PRINT);
-            }    
+        try {     
+            $invoice = Invoice::findOrFail($invoice_id);      
+            if(!empty($invoice->lpo->requisition_id)){
+                foreach($invoice->lpo->items as $item){
+                    $requisition_item = RequisitionItem::findOrFail($item->requisition_item_id);
+                    $requisition_item->status_id = 2;
+                    $requisition_item->disableLogging();
+                    $requisition_item->save();
+                }
+
+                // Logging delete
+                activity()
+                    ->performedOn(Requisition::find($invoice->lpo->requisition_id))
+                    ->causedBy($this->current_user())
+                    ->withProperties(['detail'=>'Invoice '.$invoice->external_ref.' has been deleted'])
+                    ->log('Invoice deleted');
+                    
+                // Add activity notification
+                $this->addActivityNotification('Deleted invoice <strong>'.$invoice->external_ref.'</strong>', null, $this->current_user()->id, $invoice->requisitioned_by_id ?? $invoice->requested_by_id, 'danger', 'invoices', false);
+            }
+
+            $invoice->delete();
+
+            // Delete the allocations too
+            Allocation::where('allocatable_id', $invoice_id)->where('allocatable_type', 'invoices')->delete();
+            return response()->json(['msg'=>"Invoice deleted"], 200);
         }
-        catch (Exception $e) {
-                return response()->json(['error'=>"Something went wrong"], 500,array(),JSON_PRETTY_PRINT);            
+        catch (\Exception $e) {
+            return response()->json(['error'=>"Something went wrong"], 500);            
         }
     }
 

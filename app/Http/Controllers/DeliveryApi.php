@@ -97,7 +97,6 @@ class DeliveryApi extends Controller
                 FTP::connection()->uploadFile($file->getPathname(), '/deliveries/'.$delivery->id.'/'.$delivery->id.'.'.$file->getClientOriginalExtension());
 
                 $delivery->delivery_document = $delivery->id.'.'.$file->getClientOriginalExtension();
-                // $delivery->ref = "CHAI/DLV/#$delivery->id/".date_format($delivery->created_at,"Y/m/d");
                 $delivery->save();
 
                 $requisition = Requisition::find($lpo->requisition_id);
@@ -116,17 +115,17 @@ class DeliveryApi extends Controller
                 activity()
                     ->performedOn($delivery)
                     ->causedBy($this->current_user())
-                    ->withProperties(['detail' => 'Created delivery '.$delivery->ref])
-                    ->log('Delivery created');
+                    ->withProperties(['detail' => 'Received delivery '.$delivery->ref])
+                    ->log('Delivery received');
 
                 // Add activity notification
-                $this->addActivityNotification('Received delivery '.$delivery->ref, null, $this->current_user()->id, $delivery->received_for_id, 'info', 'deliveries', true);
+                $this->addActivityNotification('Received delivery <strong>'.$delivery->ref.'</strong>', null, $this->current_user()->id, $delivery->received_for_id, 'info', 'deliveries', false);
 
-                return Response()->json(array('msg' => 'Success: delivery added','delivery' => Delivery::find((int)$delivery->id)), 200);
+                return Response()->json(array('msg'=>'Success', 'delivery'=>$delivery), 200);
             }
 
-        }catch (JWTException $e){
-            return response()->json(['error'=>'something went wrong'], 500);
+        }catch (\Exception $e){
+            return response()->json(['error'=>'Something went wrong'], 500);
         }
     }
 
