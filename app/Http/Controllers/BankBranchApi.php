@@ -24,72 +24,36 @@ class BankBranchApi extends Controller
 {
     /**
      * Operation addBankBranch
-     *
      * Add a new bank_branch.
-     *
-     *
      * @return Http response
      */
     public function addBankBranch()
     {
-        $form = Request::only(
-            'branch_name',
-            'bank_id',
-            'branch_code'
-            );
-
+        $form = Request::all();
         $bank_branch = new BankBranch;
-        $bank_branch->branch_name                   =         $form['branch_name'];
-        $bank_branch->bank_id                       =  (int)  $form['bank_id'];
-        $bank_branch->branch_code                   =         $form['branch_code'];
-
+        $bank_branch->branch_name = $form['branch_name'];
+        $bank_branch->bank_id = $form['bank_id'];
+        $bank_branch->branch_code = $form['branch_code'];
         if($bank_branch->save()) {
             return Response()->json(array('msg' => 'Success: bank_branch added','bank_branch' => $bank_branch), 200);
         }
     }
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
 
     /**
      * Operation updateBankBranch
-     *
      * Update an existing bank_branch.
-     *
-     *
      * @return Http response
      */
     public function updateBankBranch()
     {
-        $form = Request::only(
-            'id',
-            'branch_name',
-            'bank_id',
-            'branch_code'
-            );
-
+        $form = Request::all();
         $bank_branch = BankBranch::find($form['id']);
-        $bank_branch->branch_name                   =         $form['branch_name'];
-        $bank_branch->bank_id                       =  (int)  $form['bank_id'];
-        $bank_branch->branch_code                   =         $form['branch_code'];
-
+        $bank_branch->branch_name = $form['branch_name'];
+        $bank_branch->bank_id = $form['bank_id'];
+        $bank_branch->branch_code  = $form['branch_code'];
         if($bank_branch->save()) {
             return Response()->json(array('msg' => 'Success: bank_branch updated','bank_branch' => $bank_branch), 200);
         }
@@ -97,59 +61,21 @@ class BankBranchApi extends Controller
     
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     /**
      * Operation deleteBankBranch
-     *
      * Deletes an bank_branch.
-     *
      * @param int $bank_branch_id bank_branch id to delete (required)
-     *
      * @return Http response
      */
     public function deleteBankBranch($bank_branch_id)
     {
         $deleted = BankBranch::destroy($bank_branch_id);
         if($deleted){
-            return response()->json(['msg'=>"bank_branch deleted"], 200,array(),JSON_PRETTY_PRINT);
+            return response()->json(['msg'=>"bank_branch deleted"], 200);
         }else{
-            return response()->json(['error'=>"bank_branch not found"], 404,array(),JSON_PRETTY_PRINT);
+            return response()->json(['error'=>"Something went wrong"], 500);
         }
     }
-    
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -157,116 +83,81 @@ class BankBranchApi extends Controller
     /**
 
      * Operation getBankBranchById
-     *
      * Find bank_branch by ID.
-     *
      * @param int $bank_branch_id ID of bank_branch to return object (required)
-     *
      * @return Http response
      */
     public function getBankBranchById($bank_branch_id)
     {
         try{
-            $response   = BankBranch::findOrFail($bank_branch_id);           
-            return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+            $response = BankBranch::findOrFail($bank_branch_id);           
+            return response()->json($response, 200);
 
         }catch(Exception $e){
-            $response =  ["error"=>"Something went wrong"];
-            return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
+            return response()->json(["error"=>"Something went wrong"], 500);
         }
     }
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
 
     /**
      * Operation bankBranchesGet
-     *
      * bank_branches List.
-     *
-     *
      * @return Http response
      */
     public function bankBranchesGet()
     {
         $input = Request::all();
         //query builder
-        $qb = DB::table('bank_branches');
+        $qb = BankBranch::query();
+        if(!array_key_exists('lean', $input)){
+            $qb = BankBranch::with('bank');
+        }
 
-        $qb->whereNull('bank_branches.deleted_at');
-
-        $response;
-        $response_dt;
-
-        $total_records          = $qb->count();
-        $records_filtered       = 0;
+        $total_records = $qb->count();
+        $records_filtered = 0;
 
         //searching
         if(array_key_exists('searchval', $input)){
-            $qb->where(function ($query) use ($input) {                
-                $query->orWhere('bank_branches.id','like', '\'%' . $input['searchval']. '%\'');
+            $qb = $qb->where(function ($query) use ($input) {                
                 $query->orWhere('bank_branches.branch_name','like', '\'%' . $input['searchval']. '%\'');
                 $query->orWhere('bank_branches.branch_code','like', '\'%' . $input['searchval']. '%\'');
             });
 
-            $sql = BankBranch::bind_presql($qb->toSql(),$qb->getBindings());
-            $sql = str_replace("*"," count(*) AS count ", $sql);
-            $dt = json_decode(json_encode(DB::select($sql)), true);
-
-            $records_filtered = (int) $dt[0]['count'];
+            $records_filtered = (int) $qb->count();
         }
 
         //ordering
         if(array_key_exists('order_by', $input)&&$input['order_by']!=''){
-            $order_direction     = "asc";
-            $order_column_name   = $input['order_by'];
+            $order_direction = "asc";
+            $order_column_name = $input['order_by'];
             if(array_key_exists('order_dir', $input)&&$input['order_dir']!=''){                
                 $order_direction = $input['order_dir'];
             }
-            $qb->orderBy($order_column_name, $order_direction);
+            $qb = $qb->orderBy($order_column_name, $order_direction);
         }
 
         //limit
         if(array_key_exists('limit', $input)){
-            $qb->limit($input['limit']);
+            $qb = $qb->limit($input['limit']);
         }
 
         //bank_id
         if(array_key_exists('bank_id', $input)){
-            $bank_id = (int) $input['bank_id'];
-            $qb->where('bank_id',$bank_id);
+            $qb = $qb->where('bank_id', $input['bank_id']);
         }
 
         if(array_key_exists('datatables', $input)){
             //searching
-            $qb->where(function ($query) use ($input) {                
-                $query->orWhere('bank_branches.id','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('bank_branches.branch_name','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('bank_branches.branch_code','like', '\'%' . $input['search']['value']. '%\'');
-            });
+            if(!empty($input['search']['value'])){
+                $qb = $qb->where(function ($query) use ($input) {
+                    $query->orWhere('bank_branches.branch_name','like', '\'%' . $input['search']['value']. '%\'');
+                    $query->orWhere('bank_branches.branch_code','like', '\'%' . $input['search']['value']. '%\'');
+                });
+            }
 
-            $sql = BankBranch::bind_presql($qb->toSql(),$qb->getBindings());
-            $sql = str_replace("*"," count(*) AS count ", $sql);
-            $dt = json_decode(json_encode(DB::select($sql)), true);
-
-            $records_filtered = (int) $dt[0]['count'];
+            $records_filtered = $qb->count();
 
             //ordering
             $order_column_id    = (int) $input['order'][0]['column'];
@@ -274,89 +165,26 @@ class BankBranchApi extends Controller
             $order_direction    = $input['order'][0]['dir'];
 
             if($order_column_name!=''){
-                $qb->orderBy($order_column_name, $order_direction);
+                $qb = $qb->orderBy($order_column_name, $order_direction);
             }
 
             //limit $ offset
             if((int)$input['start']!= 0 ){
-                $response_dt    =   $qb->limit($input['length'])->offset($input['start']);
+                $response_dt = $qb->limit($input['length'])->offset($input['start']);
             }else{
-                $qb->limit($input['length']);
+                $qb = $qb->limit($input['length']);
             }
-
-            $sql = BankBranch::bind_presql($qb->toSql(),$qb->getBindings());
-
-            $response_dt = DB::select($sql);
-            $response_dt = json_decode(json_encode($response_dt), true);
-            $response_dt    = $this->append_relationships_objects($response_dt);
-            $response_dt    = $this->append_relationships_nulls($response_dt);
-            $response       = BankBranch::arr_to_dt_response( 
-                $response_dt, $input['draw'],
+            $response = BankBranch::arr_to_dt_response( 
+                $qb->get(), $input['draw'],
                 $total_records,
                 $records_filtered
                 );
-        }else{
-
-            $sql            = BankBranch::bind_presql($qb->toSql(),$qb->getBindings());
-            $response       = json_decode(json_encode(DB::select($sql)), true);
-            if(!array_key_exists('lean', $input)){
-                $response       = $this->append_relationships_objects($response);
-                $response       = $this->append_relationships_nulls($response);
-            }
+        }
+        else {
+            $response = $qb->get();
         }
 
-        return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+        return response()->json($response, 200);
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    public function append_relationships_objects($data = array()){
-        foreach ($data as $key => $value) {
-            $bank_branches = BankBranch::find($data[$key]['id']);
-            $data[$key]['bank']                = $bank_branches->bank;
-        }
-
-        return $data;
-    }
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-    public function append_relationships_nulls($data = array()){
-
-        foreach ($data as $key => $value) {
-            if($data[$key]["bank"]==null){
-                $data[$key]["bank"] = array("bank_name"=>"N/A");
-            }
-        }
-
-        return $data;
-    }
+     
 }

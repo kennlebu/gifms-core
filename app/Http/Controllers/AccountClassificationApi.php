@@ -278,10 +278,6 @@ class AccountClassificationApi extends Controller
         }else{
             $sql            = AccountClassification::bind_presql($qb->toSql(),$qb->getBindings());
             $response       = json_decode(json_encode(DB::select($sql)), true);
-            if(!array_key_exists('lean', $input)){
-                $response       = $this->append_relationships_objects($response);
-                $response       = $this->append_relationships_nulls($response);
-            }
         }
 
         return response()->json($response, 200,array(),JSON_PRETTY_PRINT);

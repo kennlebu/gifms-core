@@ -120,7 +120,12 @@ class Requisition extends BaseModel
         $combination = date('ym', strtotime($this->created_at));
 
         // Get last year and month
-        $last_combination = date('ym', strtotime($last->created_at));
+        if(!empty($last)){
+            $last_combination = date('ym', strtotime($last->created_at));
+        }
+        else {
+            $last_combination = date('ym');
+        }
 
         // Use current combination if it isn't the same as the previous
         $month_year = $last_combination;

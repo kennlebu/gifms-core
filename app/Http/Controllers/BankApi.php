@@ -25,104 +25,45 @@ class BankApi extends Controller
 {
     /**
      * Operation addBank
-     *
      * Add a new bank.
-     *
-     *
      * @return Http response
      */
     public function addBank()
     {
-        $form = Request::only(
-            'bank_name',
-            'swift_code',
-            'bank_code'
-            );
-
+        $form = Request::all();
         $bank = new Bank;
-        $bank->bank_name                   =         $form['bank_name'];
-        $bank->swift_code                  =         $form['swift_code'];
-        $bank->bank_code                   =         $form['bank_code'];
-
+        $bank->bank_name = $form['bank_name'];
+        $bank->swift_code = $form['swift_code'];
+        $bank->bank_code = $form['bank_code'];
         if($bank->save()) {
             return Response()->json(array('msg' => 'Success: bank added','bank' => $bank), 200);
         }
     }
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     /**
      * Operation updateBank
-     *
      * Update an existing bank.
-     *
-     *
      * @return Http response
      */
     public function updateBank()
     {
-        $form = Request::only(
-            'id',
-            'bank_name',
-            'swift_code',
-            'bank_code'
-            );
-
+        $form = Request::all();
         $bank = Bank::find($form['id']);
-        $bank->bank_name                   =         $form['bank_name'];
-        $bank->swift_code                  =         $form['swift_code'];
-        $bank->bank_code                   =         $form['bank_code'];
-
+        $bank->bank_name = $form['bank_name'];
+        $bank->swift_code = $form['swift_code'];
+        $bank->bank_code = $form['bank_code'];
         if($bank->save()) {
             return Response()->json(array('msg' => 'Success: bank updated','bank' => $bank), 200);
         }
     }
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
     /**
      * Operation deleteBank
-     *
      * Deletes an bank.
-     *
      * @param int $bank_id bank id to delete (required)
-     *
      * @return Http response
      */
     public function deleteBank($bank_id)
@@ -134,35 +75,13 @@ class BankApi extends Controller
             return response()->json(['error'=>"bank not found"], 404,array(),JSON_PRETTY_PRINT);
         }
     }
-    
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
     /**
-
      * Operation getBankById
-     *
      * Find bank by ID.
-     *
      * @param int $bank_id ID of bank to return object (required)
-     *
      * @return Http response
      */
     public function getBankById($bank_id)
@@ -176,63 +95,31 @@ class BankApi extends Controller
             return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
         }
     }
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
     /**
      * Operation banksGet
-     *
      * banks List.
-     *
-     *
      * @return Http response
      */
     public function banksGet()
     {
         $input = Request::all();
         //query builder
-        $qb = DB::table('banks');
-
-        $qb->whereNull('banks.deleted_at');
-
-        $response;
-        $response_dt;
-
-        $total_records          = $qb->count();
-        $records_filtered       = 0;
+        $qb = Bank::query();
+        $total_records = $qb->count();
+        $records_filtered = 0;
 
         //searching
         if(array_key_exists('searchval', $input)){
-            $qb->where(function ($query) use ($input) {                
-                $query->orWhere('banks.id','like', '\'%' . $input['searchval']. '%\'');
-                $query->orWhere('banks.bank_name','like', '\'%' . $input['searchval']. '%\'');
-                $query->orWhere('banks.bank_code','like', '\'%' . $input['searchval']. '%\'');
-                $query->orWhere('banks.swift_code','like', '\'%' . $input['searchval']. '%\'');
+            $qb = $qb->where(function ($query) use ($input) {                
+                $query->orWhere('bank_name','like', '\'%' . $input['searchval']. '%\'');
+                $query->orWhere('bank_code','like', '\'%' . $input['searchval']. '%\'');
+                $query->orWhere('swift_code','like', '\'%' . $input['searchval']. '%\'');
             });
 
-            $sql = Bank::bind_presql($qb->toSql(),$qb->getBindings());
-            $sql = str_replace("*"," count(*) AS count ", $sql);
-            $dt = json_decode(json_encode(DB::select($sql)), true);
-
-            $records_filtered = (int) $dt[0]['count'];
+            $records_filtered = (int) $qb->count();
         }
 
         //ordering
@@ -242,28 +129,26 @@ class BankApi extends Controller
             if(array_key_exists('order_dir', $input)&&$input['order_dir']!=''){                
                 $order_direction = $input['order_dir'];
             }
-            $qb->orderBy($order_column_name, $order_direction);
+            $qb = $qb->orderBy($order_column_name, $order_direction);
         }
 
         //limit
         if(array_key_exists('limit', $input)){
-            $qb->limit($input['limit']);
+            $qb = $qb->limit($input['limit']);
         }
 
         if(array_key_exists('datatables', $input)){
             //searching
-            $qb->where(function ($query) use ($input) {                
-                $query->orWhere('banks.id','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('banks.bank_name','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('banks.bank_code','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('banks.swift_code','like', '\'%' . $input['searchval']. '%\'');
-            });
+            if(!empty($input['search']['value'])){
+                $qb = $qb->where(function ($query) use ($input) {                
+                    $query->orWhere('banks.id','like', '\'%' . $input['search']['value']. '%\'');
+                    $query->orWhere('banks.bank_name','like', '\'%' . $input['search']['value']. '%\'');
+                    $query->orWhere('banks.bank_code','like', '\'%' . $input['search']['value']. '%\'');
+                    $query->orWhere('banks.swift_code','like', '\'%' . $input['searchval']. '%\'');
+                });
+            }
 
-            $sql = Bank::bind_presql($qb->toSql(),$qb->getBindings());
-            $sql = str_replace("*"," count(*) AS count ", $sql);
-            $dt = json_decode(json_encode(DB::select($sql)), true);
-
-            $records_filtered = (int) $dt[0]['count'];
+            $records_filtered = (int) $qb->count();
 
             //ordering
             $order_column_id    = (int) $input['order'][0]['column'];
@@ -271,28 +156,23 @@ class BankApi extends Controller
             $order_direction    = $input['order'][0]['dir'];
 
             if($order_column_name!=''){
-                $qb->orderBy($order_column_name, $order_direction);
+                $qb = $qb->orderBy($order_column_name, $order_direction);
             }
 
             //limit $ offset
             if((int)$input['start']!= 0 ){
-                $response_dt    =   $qb->limit($input['length'])->offset($input['start']);
+                $qb = $qb->limit($input['length'])->offset($input['start']);
             }else{
-                $qb->limit($input['length']);
+                $qb = $qb->limit($input['length']);
             }
-
-            $sql = Bank::bind_presql($qb->toSql(),$qb->getBindings());
-            
-            $response_dt = DB::select($sql);
-            $response_dt = json_decode(json_encode($response_dt), true);
-            $response       = Bank::arr_to_dt_response( 
-                $response_dt, $input['draw'],
+            $response = Bank::arr_to_dt_response( 
+                $qb->get(), $input['draw'],
                 $total_records,
                 $records_filtered
                 );
-        }else{
-            $sql            = Bank::bind_presql($qb->toSql(),$qb->getBindings());
-            $response       = json_decode(json_encode(DB::select($sql)), true);
+        }
+        else{
+            $response = $qb->get();
         }
 
         return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
