@@ -490,17 +490,19 @@ class StaffApi extends Controller
 
         if(array_key_exists('datatables', $input)){
             //searching
-            $qb = $qb->where(function ($query) use ($input) {                
-                $query->orWhere('staff.id','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('staff.username','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('staff.email','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('staff.f_name','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('staff.l_name','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('staff.o_names','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('staff.official_post','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('staff.mobile_no','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('staff.mpesa_no','like', '\'%' . $input['search']['value']. '%\'');
-            });
+            if(!empty($input['search']['value'])){
+                $qb = $qb->where(function ($query) use ($input) {                
+                    $query->orWhere('staff.id','like', '\'%' . $input['search']['value']. '%\'');
+                    $query->orWhere('staff.username','like', '\'%' . $input['search']['value']. '%\'');
+                    $query->orWhere('staff.email','like', '\'%' . $input['search']['value']. '%\'');
+                    $query->orWhere('staff.f_name','like', '\'%' . $input['search']['value']. '%\'');
+                    $query->orWhere('staff.l_name','like', '\'%' . $input['search']['value']. '%\'');
+                    $query->orWhere('staff.o_names','like', '\'%' . $input['search']['value']. '%\'');
+                    $query->orWhere('staff.official_post','like', '\'%' . $input['search']['value']. '%\'');
+                    $query->orWhere('staff.mobile_no','like', '\'%' . $input['search']['value']. '%\'');
+                    $query->orWhere('staff.mpesa_no','like', '\'%' . $input['search']['value']. '%\'');
+                });
+            }
 
             // $sql = Staff::bind_presql($qb->toSql(),$qb->getBindings());
             // $sql = str_replace("*"," count(*) AS count ", $sql);
