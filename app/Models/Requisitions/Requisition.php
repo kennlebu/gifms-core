@@ -136,7 +136,12 @@ class Requisition extends BaseModel
         }
         else {
             // Get requisition number in month 
-            $last_number = explode('-', $last->ref)[1] ?? 0;
+            if(!empty($last)){
+                $last_number = explode('-', $last->ref)[1] ?? 0;
+            }
+            else {
+                $last_number = 0;
+            }
             $new_number = $this->pad(3, ($last_number + 1));
         }        
 
