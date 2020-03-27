@@ -42,6 +42,7 @@ use App\Models\Requisitions\Requisition;
 use App\Models\Requisitions\RequisitionItem;
 use Excel;
 use Illuminate\Http\Request as HttpRequest;
+use Illuminate\Support\Facades\Log;
 
 class LPOApi extends Controller
 {
@@ -1605,22 +1606,30 @@ class LPOApi extends Controller
 
     public function addLpoTerms(HttpRequest $request){
         try{
+            Log::debug("Enters the function");
             $lpo = Lpo::findOrFail($request->lpo_id);
             $lpo_terms = [];
+            Log::debug("Reaches here");
             if(!empty($lpo->preferred_supplier) && !empty($lpo->preferred_supplier->supply_category_id)){
+                Log::debug("Enters the condition");
                 $supply_category_terms = LpoDefaultTerm::where('supply_category_id', $lpo->preferred_supplier->supply_category_id)->get();
                 foreach($supply_category_terms as $term){
                     $lpo_terms[] = $term;
                 }
             }
+            Log::debug("Reaches defaults");
             $default_terms = LpoDefaultTerm::whereNull('supply_category_id')->get();
             foreach($default_terms as $term){
+                Log::debug("Default");
                 $lpo_terms[] = $term;
             }
 
             foreach($lpo_terms as $term){
+                Log::debug("Enters the foreach");
                 $check_term = LpoTerm::where('lpo_id', $request->lpo_id)->where('terms', $term->terms)->exists();
+                Log::debug("Here");
                 if(!$check_term){
+                    Log::debug("Inside");
                     $new_term = new LpoTerm();
                     $new_term->lpo_id = $request->lpo_id;
                     $new_term->terms = $term->terms;
@@ -1628,6 +1637,7 @@ class LPOApi extends Controller
                     $new_term->save();
                 }            
             }
+            Log::debug("Finit!");
 
             $saved_terms = LpoTerm::where('lpo_id', $request->lpo_id)->get();
             return response()->json($saved_terms, 200);
