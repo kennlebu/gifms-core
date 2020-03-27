@@ -177,12 +177,6 @@ class MobilePaymentApi extends Controller
                         $allocation->allocatable_type = 'mobile_payments';
                         $allocation->percentage_allocated = $alloc->percentage_allocated;
                         $allocation->amount_allocated = ($mobile_payment->totals * (float)$alloc->percentage_allocated/100);
-                        // if(!empty($requisition->lpo)){
-                        //     $allocation->amount_allocated = ($requisition->lpo->totals * (float)$alloc->percentage_allocated/100);
-                        //     $allocation->percentage_allocated = ($allocation->amount_allocated/$requisition->lpo->totals)*100;
-                        // }
-                        // else
-                        //     $allocation->percentage_allocated = $allocation->amount_allocated;
                         $allocation->allocation_purpose = $allocation_purpose;
                         $allocation->objective_id = $alloc->objective_id;
                         $allocation->allocated_by_id = $requisition->requested_by_id;
@@ -224,7 +218,7 @@ class MobilePaymentApi extends Controller
                 $mobile_payment->save();
                 
                 // Add activity notification
-                $this->addActivityNotification('Mobile payment '.$mobile_payment->ref.' created', null, $this->current_user()->id, $mobile_payment->requested_by_id, 'info', 'mobile_payments', false);
+                $this->addActivityNotification('Mobile payment <strong>'.$mobile_payment->ref.'</strong> created', null, $this->current_user()->id, $mobile_payment->requested_by_id, 'info', 'mobile_payments', false);
 
                 return Response()->json(array('msg' => 'Success: mobile payment added','mobile_payment' => $mobile_payment), 200);
             }
@@ -446,7 +440,7 @@ class MobilePaymentApi extends Controller
                    ->log('Approved');
                    
                 // Add activity notification
-                $this->addActivityNotification('Mobile payment '.$mobile_payment->ref.' approved', null, $this->current_user()->id, $mobile_payment->requested_by_id, 'success', 'mobile_payments', false);
+                $this->addActivityNotification('Mobile payment <strong>'.$mobile_payment->ref.'</strong> approved', null, $this->current_user()->id, $mobile_payment->requested_by_id, 'success', 'mobile_payments', false);
 
                 if($several!=true)
                 return Response()->json(array('result' => 'Success: mobile payment approved','mobile_payment' => $mobile_payment), 200);
@@ -659,7 +653,7 @@ class MobilePaymentApi extends Controller
                     ->log('Returned');
                     
                 // Add activity notification
-                $this->addActivityNotification('Mobile payment '.$mobile_payment->ref.' returned', null, $this->current_user()->id, $mobile_payment->requested_by_id, 'danger', 'mobile_payments', false);
+                $this->addActivityNotification('Mobile payment <strong>'.$mobile_payment->ref.'</strong> returned', null, $this->current_user()->id, $mobile_payment->requested_by_id, 'danger', 'mobile_payments', false);
 
                 Mail::queue(new NotifyMobilePayment($mobile_payment));
 
@@ -719,15 +713,12 @@ class MobilePaymentApi extends Controller
      */
     public function postPayees($mobile_payment_id)
     {
-        try{            
-            $user = JWTAuth::parseToken()->authenticate();
+        try{
             $form = Request::only('file');
 
             $file = $form['file'];
             $mobile_payment = MobilePayment::find($mobile_payment_id);
-            $data = Excel::load($file->getPathname(), function($reader) {
-
-            })->get()->toArray();
+            $data = Excel::load($file->getPathname(), function($reader) {})->get()->toArray();
 
             foreach ($data as $key => $value) {
                 if(strlen($value['phone'])==9 && substr($value['phone'],0,1)=='7'){
@@ -736,7 +727,6 @@ class MobilePaymentApi extends Controller
                     throw new Exception("Phone number for ".$value['name']." is not of the required format", 1);
                 }
             }
-
 
             $dt = new \DateTime();
             $invoice_date = $dt->format('Y-m-d');
@@ -758,7 +748,8 @@ class MobilePaymentApi extends Controller
 
             activity()
                 ->performedOn($mobile_payment)
-                ->causedBy($user)
+                ->causedBy($this->current_user())                
+                ->withProperties(['detail' => 'Uploaded '.count($data). ' payees'])
                 ->log('Uploaded payees');
 
             return Response()->json(array('msg' => 'Success: mobile_payment payees uploaded','mobile_payment' => $mobile_payment), 200);
@@ -960,7 +951,6 @@ class MobilePaymentApi extends Controller
                 activity()
                     ->performedOn(Requisition::find($lpo->requisition_id))
                     ->causedBy($this->current_user())
-                    // ->withProperties(['detail'=>'LPO '.$lpo->ref.' has been deleted'])
                     ->log('LPO deleted');
             }
 
@@ -1010,7 +1000,6 @@ class MobilePaymentApi extends Controller
     public function submitForApproval($mobile_payment_id)
     {
         $response = [];
-        $user = JWTAuth::parseToken()->authenticate();
 
         try{
             $mobile_payment = MobilePayment::findOrFail($mobile_payment_id);
@@ -1035,11 +1024,11 @@ class MobilePaymentApi extends Controller
                 // Logging submission
                 activity()
                    ->performedOn($mobile_payment)
-                   ->causedBy($user)
+                   ->causedBy($this->current_user())
                    ->log('Submitted for approval');
                    
                 // Add activity notification
-                $this->addActivityNotification('Mobile payment '.$mobile_payment->ref.' submitted', null, $this->current_user()->id, $mobile_payment->requested_by_id, 'info', 'mobile_payments', false);
+                $this->addActivityNotification('Mobile payment <strong>'.$mobile_payment->ref.'</strong> submitted', null, $this->current_user()->id, $mobile_payment->requested_by_id, 'info', 'mobile_payments', false);
                    
                 Mail::queue(new NotifyMobilePayment($mobile_payment));
 
@@ -1048,10 +1037,10 @@ class MobilePaymentApi extends Controller
 
         }catch(NotFullyAllocatedException $ae){
             $response =  ["error"=>"Mobile Payment not fully allocated"];
-            return response()->json($response, 403,array(),JSON_PRETTY_PRINT);
+            return response()->json($response, 403);
         }catch(Exception $e){
             $response =  ["error"=>"Something went wrong", "msg"=>$e->getMessage()];
-            return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
+            return response()->json($response, 500);
         }
     }
 
@@ -1203,7 +1192,7 @@ class MobilePaymentApi extends Controller
             ->log('Recalled');
             
         // Add activity notification
-        $this->addActivityNotification('Mobile payment '.$mobile_payment->ref.' recalled', null, $this->current_user()->id, $mobile_payment->requested_by_id, 'danger', 'mobile_payments', false);
+        $this->addActivityNotification('Mobile payment <strong>'.$mobile_payment->ref.'</strong> recalled', null, $this->current_user()->id, $mobile_payment->requested_by_id, 'danger', 'mobile_payments', false);
 
         $mobile_payment->disableLogging(); //! Do not log the update
         

@@ -331,7 +331,7 @@ class DeliveryApi extends Controller
     public function getDocumentById($delivery_id)
     {
         try{
-            $delivery          = Delivery::findOrFail($delivery_id);
+            $delivery       = Delivery::findOrFail($delivery_id);
             $path           = '/deliveries/'.$delivery->id.'/'.$delivery->delivery_document;
             $path_info      = pathinfo($path);
             $basename       = $path_info['basename'];

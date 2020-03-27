@@ -51,8 +51,16 @@ class MobilePaymentPayeeApi extends Controller
             $mobile_payment_payee->total                      =               $mobile_payment_payee->calculated_total;
             $mobile_payment_payee->disableLogging();
 
-            if($mobile_payment_payee->save()) {
+            if($mobile_payment_payee->save()) {                
                 $mobile_payment = MobilePayment::find($mobile_payment_payee->mobile_payment_id);
+
+                // Log upload
+                activity()
+                    ->performedOn($mobile_payment)
+                    ->causedBy($this->current_user())                
+                    ->withProperties(['detail' => 'Uploaded payee '.$mobile_payment_payee->registered_name])
+                    ->log('Uploaded payee');
+
                 if(!empty($mobile_payment) && !empty($mobile_payment->requisition_id)){
                     foreach($mobile_payment->allocations as $alloc){
                         $a = Allocation::find($alloc->id);

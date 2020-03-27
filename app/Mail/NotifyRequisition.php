@@ -24,7 +24,7 @@ class NotifyRequisition extends Mailable
     public function __construct($requisition_id)
     {
         $this->requisition = Requisition::with('status','allocations.objective','requested_by','program_manager','items.supplier_service','items.status',
-                                        'allocations.project','allocations.account','logs.causer','approvals.approver','lpos.status','items.county','returned_by')
+                                        'allocations.project','allocations.account','approvals.approver','lpos.status','items.county')
                                         ->find($requisition_id);
     }
 
