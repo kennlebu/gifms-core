@@ -1616,16 +1616,12 @@ class LPOApi extends Controller
             }
             $default_terms = LpoDefaultTerm::whereNull('supply_category_id')->get();
             foreach($default_terms as $term){
-                Log::debug("Default");
                 $lpo_terms[] = $term;
             }
 
             foreach($lpo_terms as $term){
-                Log::debug("Enters the foreach");
                 $check_term = LpoTerm::where('lpo_id', $request->lpo_id)->where('terms', $term->terms)->exists();
-                Log::debug("Here");
                 if(!$check_term){
-                    Log::debug("Inside");
                     $new_term = new LpoTerm();
                     $new_term->lpo_id = $request->lpo_id;
                     $new_term->terms = $term->terms;
@@ -1633,7 +1629,6 @@ class LPOApi extends Controller
                     $new_term->save();
                 }            
             }
-            Log::debug("Finit!");
 
             $saved_terms = LpoTerm::where('lpo_id', $request->lpo_id)->get();
             return response()->json($saved_terms, 200);
