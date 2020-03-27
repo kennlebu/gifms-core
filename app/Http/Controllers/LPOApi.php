@@ -35,7 +35,7 @@ use App\Exceptions\NoLpoItemsException;
 use App\Exceptions\LpoQuotationAmountMismatchException;
 use App\Exceptions\ApprovalException;
 use App\Models\AllocationModels\Allocation;
-use App\Models\LpoModels\LpoDefaultTerm;
+use App\Models\LPOModels\LpoDefaultTerm;
 use App\Models\LPOModels\LpoItem;
 use App\Models\LPOModels\LpoTerm;
 use App\Models\Requisitions\Requisition;
@@ -1606,18 +1606,14 @@ class LPOApi extends Controller
 
     public function addLpoTerms(HttpRequest $request){
         try{
-            Log::debug("Enters the function");
             $lpo = Lpo::findOrFail($request->lpo_id);
             $lpo_terms = [];
-            Log::debug("Reaches here");
             if(!empty($lpo->preferred_supplier) && !empty($lpo->preferred_supplier->supply_category_id)){
-                Log::debug("Enters the condition");
                 $supply_category_terms = LpoDefaultTerm::where('supply_category_id', $lpo->preferred_supplier->supply_category_id)->get();
                 foreach($supply_category_terms as $term){
                     $lpo_terms[] = $term;
                 }
             }
-            Log::debug("Reaches defaults");
             $default_terms = LpoDefaultTerm::whereNull('supply_category_id')->get();
             foreach($default_terms as $term){
                 Log::debug("Default");

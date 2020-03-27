@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\LpoModels;
+namespace App\Models\LPOModels;
 
 use Illuminate\Database\Eloquent\Model;
 
