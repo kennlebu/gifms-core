@@ -3,6 +3,7 @@
 namespace App\Mail;
 
 use App\Models\Requisitions\Requisition;
+use App\Models\StaffModels\Staff;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
@@ -63,7 +64,9 @@ class NotifyRequisition extends Mailable
             $ccs[] = $this->requisition->program_manager;
 
             // Add Admin Manager to cc
-            $admin_manager = User::withRole('admin-manager')->get();
+            $admin_manager = Staff::whereHas('roles', function($query){
+                $query->where('name', 'admin-manager');  
+            })->get();
             foreach($admin_manager as $am){
                 $ccs[] = $am;
             }
