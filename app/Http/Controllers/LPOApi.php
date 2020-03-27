@@ -1604,32 +1604,38 @@ class LPOApi extends Controller
 
 
     public function addLpoTerms(HttpRequest $request){
-        $lpo = Lpo::findOrFail($request->lpo_id);
-        $lpo_terms = [];
-        if(!empty($lpo->preferred_supplier) && !empty($lpo->preferred_supplier->supply_category_id)){
-            $supply_category_terms = LpoDefaultTerm::where('supply_category_id', $lpo->preferred_supplier->supply_category_id)->get();
-            foreach($supply_category_terms as $term){
+        try{
+            $lpo = Lpo::findOrFail($request->lpo_id);
+            $lpo_terms = [];
+            if(!empty($lpo->preferred_supplier) && !empty($lpo->preferred_supplier->supply_category_id)){
+                $supply_category_terms = LpoDefaultTerm::where('supply_category_id', $lpo->preferred_supplier->supply_category_id)->get();
+                foreach($supply_category_terms as $term){
+                    $lpo_terms[] = $term;
+                }
+            }
+            $default_terms = LpoDefaultTerm::whereNull('supply_category_id')->get();
+            foreach($default_terms as $term){
                 $lpo_terms[] = $term;
             }
-        }
-        $default_terms = LpoDefaultTerm::whereNull('supply_category_id')->get();
-        foreach($default_terms as $term){
-            $lpo_terms[] = $term;
-        }
 
-        foreach($lpo_terms as $term){
-            $check_term = LpoTerm::where('lpo_id', $request->lpo_id)->where('terms', $term->terms)->exists();
-            if(!$check_term){
-                $new_term = new LpoTerm();
-                $new_term->lpo_id = $request->lpo_id;
-                $new_term->terms = $term->terms;
-                $new_term->disableLogging();
-                $new_term->save();
-            }            
-        }
+            foreach($lpo_terms as $term){
+                $check_term = LpoTerm::where('lpo_id', $request->lpo_id)->where('terms', $term->terms)->exists();
+                if(!$check_term){
+                    $new_term = new LpoTerm();
+                    $new_term->lpo_id = $request->lpo_id;
+                    $new_term->terms = $term->terms;
+                    $new_term->disableLogging();
+                    $new_term->save();
+                }            
+            }
 
-        $saved_terms = LpoTerm::where('lpo_id', $request->lpo_id)->get();
-        return response()->json($saved_terms, 200, [], JSON_PRETTY_PRINT);
+            $saved_terms = LpoTerm::where('lpo_id', $request->lpo_id)->get();
+            return response()->json($saved_terms, 200);
+        }
+        catch(\Exception $e){
+            return response()->json(['error'=>'something went wrong', 'msg'=>$e->getMessage(),'stack'=>$e->getTraceAsString()], 200);
+        }
+        
 
     }
 
