@@ -1633,7 +1633,7 @@ class LPOApi extends Controller
             return response()->json($saved_terms, 200);
         }
         catch(\Exception $e){
-            return response()->json(['error'=>'something went wrong', 'msg'=>$e->getMessage(),'stack'=>$e->getTraceAsString()], 200);
+            return response()->json(['error'=>'Something went wrong', 'msg'=>$e->getMessage(),'stack'=>$e->getTraceAsString()], 500);
         }
         
 
