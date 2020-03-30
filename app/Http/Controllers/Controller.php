@@ -165,6 +165,7 @@ class Controller extends BaseController
 
         if($payment->save()) {
             $payment->ref                   = "CHAI/PYMT/#$payment->id/".date_format($payment->created_at,"Y/m/d");
+            $payment->disableLogging();
             $payment->save();
         }
     }
