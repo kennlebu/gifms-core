@@ -380,7 +380,7 @@ class MobilePaymentApi extends Controller
         $response = [];
         $user = JWTAuth::parseToken()->authenticate();
         try{
-            $mobile_payment   = MobilePayment::with(
+            $mobile_payment = MobilePayment::with(
                                     'requested_by',
                                     'requested_action_by',
                                     'project',

@@ -66,7 +66,7 @@ class Payment extends BaseModel
 
     public function getBankTransactionsAttribute(){
         $bank_trans = [];
-        $voucher = VoucherNumber::find($this->attributes['voucher_no']);
+        $voucher = VoucherNumber::find($this->voucher_no);
         if(!empty($voucher) && !empty($voucher->voucher_number)){
             $bank_trans = BankTransaction::where('chai_ref', $voucher->voucher_number)->groupBy('bank_ref')->get();
         }

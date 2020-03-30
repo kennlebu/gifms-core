@@ -26,10 +26,9 @@ class NotifyMobilePayment extends Mailable
     public function __construct(MobilePayment $mobile_payment)
     {
 
-        $this->mobile_payment   = MobilePayment::with(
+        $this->mobile_payment = MobilePayment::with(
                                 'requested_by',
                                 'requested_action_by',
-                                //'project',
                                 'account',
                                 'mobile_payment_type',
                                 'invoice',
@@ -61,7 +60,6 @@ class NotifyMobilePayment extends Mailable
         $this->view('emails/notify_mobile_payment')         
             ->replyTo([
                     'email' => Config::get('mail.reply_to')['address'],
-
                 ]);
                 
         if($this->mobile_payment->status_id == 9 || $this->mobile_payment->status_id == 12){
