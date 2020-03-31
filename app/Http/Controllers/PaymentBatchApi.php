@@ -31,11 +31,11 @@ use App\Mail\NotifyBatch;
 use App\Mail\NotifyPayment;
 use App\Models\MobilePaymentModels\MobilePayment;
 use App\Mail\RequestBankSigning;
+use Illuminate\Support\Facades\Log;
 
 class PaymentBatchApi extends Controller
 {
 
-    private $default_payment_status = '';
     /**
      * Constructor
      */
@@ -121,7 +121,7 @@ class PaymentBatchApi extends Controller
 
                 Mail::queue(new NotifyBatch($payment_batch->id));
 
-                return Response()->json(array('msg' => 'Success: Payment Batch added','payment_batch' => PaymentBatch::find((int)$payment_batch->id)), 200);
+                return Response()->json(['msg' => 'Success: Payment Batch added'], 200);
             }
 
         }catch (JWTException $e){
@@ -143,65 +143,68 @@ class PaymentBatchApi extends Controller
         $user = $this->current_user();
 
         try{
-            $payment_batch   = PaymentBatch::find($payment_batch_id);           
-            $payment_batch->status_id = (int) 2;
-            $payment_batch->upload_date = date('Y-m-d H:i:s');
-            $payment_batch->disableLogging();
-            $payment_batch->save();
+            $payment_batch = PaymentBatch::find($payment_batch_id);    
+            if($payment_batch->status_id == 1){
+                $payment_batch->status_id = 2;
+                $payment_batch->upload_date = date('Y-m-d H:i:s');
+                $payment_batch->disableLogging();
+                $payment_batch->save();
+            }
 
-            // Get the payments and move them to the next status            
-            $qb = DB::table('payments')
-               ->whereNull('deleted_at')
-               ->where('payment_batch_id', '=', ''.$payment_batch_id)
-               ->select('id')
-               ->get();
+            // Get the payments and move them to the next status
+            $payment_ids = Payment::where('payment_batch_id', $payment_batch_id)->pluck('id')->toArray();
 
-            foreach ($qb as $record) {
-                $payment                    = Payment::find($record['id']);
-                $payment->status_id         = (int) 3;
+            foreach ($payment_ids as $payment_id) {
+                $payment = Payment::find($payment_id);
+                $payment->status_id = 3;
                 $payment->disableLogging();
                 $payment->save();
 
                 // Now update the invoices, claims and advances
                 if($payment->payable_type == 'invoices'){
-                    $invoice                = Invoice::find($payment->payable_id);
-                    $invoice->status_id     = 7;
-                    $invoice->disableLogging();
-                    $invoice->save();
-                    activity()
+                    $invoice = Invoice::find($payment->payable_id);
+                    if($invoice->status_id == 5){
+                        $invoice->status_id = 7;
+                        $invoice->disableLogging();
+                        $invoice->save();
+                        activity()
                             ->performedOn($invoice)
                             ->causedBy($user)
-                            ->log('uploaded payment to bank');
-
+                            ->log('Uploaded payment to bank');
+                    }
                 }
                 elseif($payment->payable_type == 'advances'){
-                    $advance                = Advance::find($payment->payable_id);
-                    $advance->status_id     = 7;
-                    $advance->disableLogging();
-                    $advance->save();
-                    activity()
+                    $advance = Advance::find($payment->payable_id);
+                    if($advance->status_id == 5){
+                        $advance->status_id = 7;
+                        $advance->disableLogging();
+                        $advance->save();
+                        activity()
                             ->performedOn($advance)
                             ->causedBy($user)
-                            ->log('uploaded payment to bank');
+                            ->log('Uploaded payment to bank');
+                    }                    
                 }
                 elseif($payment->payable_type == 'claims'){
-                    $claim                = Claim::find($payment->payable_id);
-                    $claim->status_id     = 7;
-                    $claim->disableLogging();
-                    $claim->save();
-                    activity()
+                    $claim = Claim::find($payment->payable_id);
+                    if($claim->status_id == 6){
+                        $claim->status_id = 7;
+                        $claim->disableLogging();
+                        $claim->save();
+                        activity()
                             ->performedOn($claim)
                             ->causedBy($user)
-                            ->log('uploaded payment to bank');
+                            ->log('Uploaded payment to bank');
+                    }                    
                 }
             }
 
-            if($payment_batch->save()) {
-                return Response()->json(array('msg' => 'Success: batch uploaded','payment_batch' => $payment_batch), 200);
-            }
-        }catch(Exception $e){
-            $response =  ["error"=>"There was an error uploading the batch"];
-            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+            return Response()->json(['msg' => 'Success: batch uploaded'], 200);
+        }
+        catch(Exception $e){
+            Log::error($e->getMessage());
+            Log::error($e->getTraceAsString());
+            return response()->json(["error"=>"There was an error uploading the batch"], 500);
         }
     }
 
