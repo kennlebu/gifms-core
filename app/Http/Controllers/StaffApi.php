@@ -396,6 +396,9 @@ class StaffApi extends Controller
             }
             $qb = $qb->orderBy($order_column_name, $order_direction);
         }
+        else {
+            $qb = $qb->orderBy('f_name', 'asc');
+        }
 
         //limit
         if(array_key_exists('limit', $input)){

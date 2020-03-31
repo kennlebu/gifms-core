@@ -1976,3 +1976,11 @@ CREATE TABLE `cash_received` (
 ALTER TABLE `exchange_rates`
 CHANGE `migration_id` `added_by_id` int(11) NULL AFTER `end_date`,
 CHANGE `updated_at` `updated_at` timestamp NOT NULL DEFAULT current_timestamp() AFTER `created_at`;
+
++~===== Add is_default field to staff table
+ALTER TABLE `staff`
+ADD `is_default` varchar(5) COLLATE 'utf8_unicode_ci' NULL AFTER `gender`,
+CHANGE `updated_at` `updated_at` timestamp NOT NULL DEFAULT current_timestamp() AFTER `created_at`;
+
+ALTER TABLE `staff`
+CHANGE `is_default` `is_default` smallint NULL DEFAULT '0' AFTER `gender`;

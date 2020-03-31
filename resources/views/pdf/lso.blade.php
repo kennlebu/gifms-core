@@ -117,7 +117,8 @@
               Please carry out the services listed here below at place of delivery as advised by "the CHAI project Officer of 
               mobile number <a href="mailto:{{$lpo->requisitioned_by->mobile_no ?? $lpo->requested_by->mobile_no}}">{{$lpo->requisitioned_by->mobile_no ?? $lpo->requested_by->mobile_no}}</a> and/
               or email <a href="mailto:{{$lpo->requisitioned_by->email ?? $lpo->requested_by->email}}" target="_blank">{{str_replace("@","@ ",($lpo->requisitioned_by->email ?? $lpo->requested_by->email))}}</a>" 
-              or "CHAI's Authorised/ Designated oficer" vide mobile number …………………………. and/ or email address …………………………………………………. on terms and conditions stated in this order, 
+              or "CHAI's Authorised/ Designated Officer" vide mobile number <a href="mailto:{{$designated_officer->mobile_no}}">{{$designated_officer->mobile_no}}</a> and/ or email address <a href="mailto:{{$designated_officer->email}}">
+              {{str_replace("@","@ ",($designated_officer->email))}}</a>. on terms and conditions stated in this order, 
               on or before (date) .............................. and send the invoices immediately to CHAI. P.O. Box2011 - 00100, Nairobi			
           </td>
         </tr>

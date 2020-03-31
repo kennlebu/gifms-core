@@ -40,6 +40,7 @@ use App\Models\LPOModels\LpoItem;
 use App\Models\LPOModels\LpoTerm;
 use App\Models\Requisitions\Requisition;
 use App\Models\Requisitions\RequisitionItem;
+use App\Models\StaffModels\Staff;
 use Excel;
 use Illuminate\Http\Request as HttpRequest;
 use Illuminate\Support\Facades\Log;
@@ -964,13 +965,18 @@ class LPOApi extends Controller
             $lpo   = Lpo::with('requisition')->findOrFail($lpo_id);
             $unique_approvals = $this->unique_multidim_array($lpo->approvals, 'approver_id');
 
-            $data = array(
-                'lpo'   => $lpo,
+            $data = [
+                'lpo' => $lpo,
                 'unique_approvals' => $unique_approvals
-                );
+            ];
 
             $pdf = null;
             if($lpo->lpo_type == 'lso'){
+                $designated_officer = Staff::whereHas('roles', function($query){
+                    $query->where('role_id', 10);  
+                })->where('is_default', true)->first();
+
+                $data['designated_officer'] = $designated_officer ?? null;
                 $pdf = PDF::loadView('pdf/lso', $data);
             }
             else {
@@ -982,7 +988,7 @@ class LPOApi extends Controller
             return $response;
         }
         catch (Exception $e ){
-            $response       = Response::make("", 200);
+            $response = Response::make("", 500);
             $response->header('Content-Type', 'application/pdf');
             return $response;
         }
@@ -1611,12 +1617,22 @@ class LPOApi extends Controller
             if(!empty($lpo->preferred_supplier) && !empty($lpo->preferred_supplier->supply_category_id)){
                 $supply_category_terms = LpoDefaultTerm::where('supply_category_id', $lpo->preferred_supplier->supply_category_id)->get();
                 foreach($supply_category_terms as $term){
-                    $lpo_terms[] = $term;
+                    if($lpo->lpo_type == 'lso'){
+                        $lpo_terms[] = json_decode(str_replace('LPO', 'LSO', $term));
+                    }
+                    else {
+                        $lpo_terms[] = $term;
+                    }
                 }
             }
             $default_terms = LpoDefaultTerm::whereNull('supply_category_id')->get();
             foreach($default_terms as $term){
-                $lpo_terms[] = $term;
+                if($lpo->lpo_type == 'lso'){
+                    $lpo_terms[] = json_decode(str_replace('LPO', 'LSO', $term));
+                }
+                else {
+                    $lpo_terms[] = $term;
+                }
             }
 
             foreach($lpo_terms as $term){
