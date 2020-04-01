@@ -582,12 +582,19 @@ class RequisitionApi extends Controller
     public function addDocument(Request $request){
         try{
             $form = IlluminateRequest::all();
-            $requisition = Requisition::findOrFail($request->requisition_id);
-            if(empty($request->document_id)){
+            $requisition = Requisition::with('documents')->findOrFail($request->requisition_id);
+            if($request->is_airfare || empty($request->document_id)){
                 $file = $form['file'];
-                $requisition_document = new RequisitionDocument();
-                $requisition_document->requisition_id = $request->requisition_id;
-                $requisition_document->filename = $requisition->ref.'doc_'.(count($requisition->documents));
+                if($request->is_airfare){
+                    $requisition_document = RequisitionDocument::findOrFail($request->document_id);
+                    FTP::connection()->delete('/requisitions/'.$requisition->ref.'/'.$requisition_document->filename.'.'.$requisition_document->type);
+                }
+                else {
+                    $requisition_document = new RequisitionDocument();
+                    $requisition_document->filename = $requisition->ref.'doc_'.(count($requisition->documents));
+                    $requisition_document->requisition_id = $request->requisition_id;
+                }
+                
                 $requisition_document->type = $file->getClientOriginalExtension();
                 $requisition_document->title = $request->title;
                 $requisition_document->uploaded_by_id = $this->current_user()->id;

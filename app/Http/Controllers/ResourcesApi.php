@@ -32,7 +32,6 @@ class ResourcesApi extends Controller
             return $response;
 
         }catch (Exception $e ){
-            file_put_contents ( "C://Users//kennl//Documents//debug.txt" , PHP_EOL.$e->getMessage() , FILE_APPEND);
             $response       = Response::make("", 500);
             $response->header('Content-Type', 'application/vnd.ms-excel');
             return $response;
