@@ -33,16 +33,10 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\NotifyMobilePayment;
 use App\Mail\MobilePaymentInstructBank;
 use App\Models\ApprovalsModels\Approval;
-use App\Models\ApprovalsModels\ApprovalLevel;
 use App\Models\StaffModels\Staff;
-use App\Models\PaymentModels\PaymentMode;
-use App\Models\PaymentModels\PaymentBatch;
-use App\Models\LookupModels\Currency;
-use App\Models\BankingModels\BankBranch;
 use App\Exceptions\NotFullyAllocatedException;
 use App\Exceptions\ApprovalException;
 use App\Models\PaymentModels\VoucherNumber;
-use App\Models\ReportModels\ReportingObjective;
 use App\Mail\RequestMPBankSigning;
 use App\Models\AllocationModels\Allocation;
 use App\Models\LPOModels\Lpo;
@@ -1010,9 +1004,9 @@ class MobilePaymentApi extends Controller
                 }
             }
 
-           if (($mobile_payment->total - $mobile_payment->amount_allocated) > 1 ){ //allowance of 1
-             throw new NotFullyAllocatedException("This mobile payment has not been fully allocated");             
-           }
+            if (abs($mobile_payment->total - $mobile_payment->amount_allocated) > 1 ){ //allowance of 1
+                throw new NotFullyAllocatedException("This mobile payment has not been fully allocated");             
+            }
             if($mobile_payment->status_id == 15 || $mobile_payment->status_id == 16){
                 $mobile_payment->requested_at = date('Y-m-d H:i:s');
             }
@@ -1277,28 +1271,30 @@ class MobilePaymentApi extends Controller
     {
         $input = Request::all();
         //query builder
-        $qb = DB::table('mobile_payments');
-        $qb->whereNull('deleted_at');
+        $qb = MobilePayment::query();
+        if(!array_key_exists('lean', $input)){
+            $qb = MobilePayment::with(['requested_by','requested_action_by','mobile_payment_type',
+                                        'status','project_manager','county','currency','rejected_by',
+                                        'payees_upload_mode','payees','approvals','allocations','program_activity']);
+        }
 
-        $response;
-        $response_dt;
-        $total_records          = $qb->count();
-        $records_filtered       = 0;
+        $total_records = $qb->count();
+        $records_filtered = 0;
 
         // Sent to bank, awaiting reconciliation
         if(array_key_exists('bank_approvable', $input) && $input['bank_approvable']==true){
-            $qb->whereIn('status_id', ['4','13']);
-            $qb->orderBy('created_at', 'desc');
+            $qb = $qb->whereIn('status_id', ['4','13']);
+            $qb = $qb->orderBy('created_at', 'desc');
         }
 
         // Corrected, awaiting accountant approval
         if(array_key_exists('corrected_approvable', $input) && $input['corrected_approvable']==true){
-            $qb->where('status_id', '12');
+            $qb = $qb->where('status_id', '12');
         }
 
         // Approved, awaiting payment
         if(array_key_exists('awaiting_payment', $input) && $input['awaiting_payment']==true){
-            $qb->where('status_id', '17');
+            $qb = $qb->where('status_id', '17');
         }
 
         //if status is set
@@ -1306,14 +1302,14 @@ class MobilePaymentApi extends Controller
             $status_ = (int) $input['status'];
 
             if($status_ >-1){
-                $qb->where('status_id', $input['status']);
-                $qb->where('requested_by_id',$this->current_user()->id);
+                $qb = $qb->where('status_id', $input['status'])
+                        ->where('requested_by_id',$this->current_user()->id);
             }elseif ($status_==-1) {
-                $qb->where('requested_by_id',$this->current_user()->id);
+                $qb =  $qb->where('requested_by_id',$this->current_user()->id);
             }elseif ($status_==-2) {
                 
             }elseif ($status_==-3) {
-                $qb->where('project_manager_id',$this->current_user()->id);
+                $qb = $qb->where('project_manager_id',$this->current_user()->id);
             }
         }
 
@@ -1321,7 +1317,7 @@ class MobilePaymentApi extends Controller
         //if approvable is set
 
         if(array_key_exists('approvable', $input)){
-            $qb->where(function ($query) use ($app_stat) {                    
+            $qb = $qb->where(function ($query) use ($app_stat) {                    
                 foreach ($app_stat as $key => $value) {
                     $query->orWhere('status_id',$value['id']);
                 }
@@ -1340,7 +1336,7 @@ class MobilePaymentApi extends Controller
                 'accountant', 
                 'assistant-accountant']
             )){                   
-                $qb->where(function ($query) use ($app_stat,$current_user) {
+                $qb = $qb->where(function ($query) use ($app_stat,$current_user) {
                     foreach ($app_stat as $key => $value) {
                         $permission = 'APPROVE_MOBILE_PAYMENT_'.$value['id'];
                         if($current_user->can($permission)&&$value['id']==2){
@@ -1355,8 +1351,6 @@ class MobilePaymentApi extends Controller
                                     $query1->where('status_id',$value['id']);
                                     $query1->where('approver_id',$current_user->id);
                                 });
-                                // $query1->Where('status_id',$value['id']);
-                                // $query1->Where('project_manager_id',$current_user->id);
                             });
                         }
                         else if($current_user->can($permission)){
@@ -1365,25 +1359,18 @@ class MobilePaymentApi extends Controller
                     }
                 });
             }
-            else{
-                $qb->where('id',0);
-            }
         }
 
         //searching
         if(array_key_exists('searchval', $input)){
-            $qb->where(function ($query) use ($input) {                
+            $qb = $qb->where(function ($query) use ($input) {                
                 $query->orWhere('id','like', '\'%' . $input['searchval']. '%\'');
                 $query->orWhere('ref','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('expense_desc','like', '\'%' . $input['searchval']. '%\'');
                 $query->orWhere('expense_purpose','like', '\'%' . $input['searchval']. '%\'');
             });
 
-            $sql = MobilePayment::bind_presql($qb->toSql(),$qb->getBindings());
-            $sql = str_replace("*"," count(*) AS count ", $sql);
-            $dt = json_decode(json_encode(DB::select($sql)), true);
-
-            $records_filtered = (int) $dt[0]['count'];
+            $records_filtered = $qb->count();
         }
 
         //ordering
@@ -1393,28 +1380,29 @@ class MobilePaymentApi extends Controller
             if(array_key_exists('order_dir', $input)&&$input['order_dir']!=''){                
                 $order_direction = $input['order_dir'];
             }
-            $qb->orderBy($order_column_name, $order_direction);
+            $qb = $qb->orderBy($order_column_name, $order_direction);
         }
 
         //limit
         if(array_key_exists('limit', $input)){
-            $qb->limit($input['limit']);
+            $qb = $qb->limit($input['limit']);
         }
 
         if(array_key_exists('datatables', $input)){
             //searching
-            $qb->where(function ($query) use ($input) {                
-                $query->orWhere('id','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('ref','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('expense_desc','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('expense_purpose','like', '\'%' . $input['search']['value']. '%\'');
-            });
+            if(!empty($input['search']['value'])){
+                $qb = $qb->where(function ($query) use ($input) {                
+                    $query->where('ref','like', '%' . $input['search']['value']. '%')
+                        ->orWhere('expense_desc','like', '%' . $input['search']['value']. '%')
+                        ->orWhere('expense_purpose','like', '%' . $input['search']['value']. '%')
+                        ->orWhereHas('requested_by', function ($query) use ($input) {
+                            $query->where('f_name','like', '%' . $input['search']['value']. '%')
+                                ->orWhere('l_name','like', '%' . $input['search']['value']. '%');
+                        });
+                });
+            }
 
-            $sql = MobilePayment::bind_presql($qb->toSql(),$qb->getBindings());
-            $sql = str_replace("*"," count(*) AS count ", $sql);
-            $dt = json_decode(json_encode(DB::select($sql)), true);
-
-            $records_filtered = (int) $dt[0]['count'];
+            $records_filtered = $qb->count();
 
             //ordering
             $order_column_id    = (int) $input['order'][0]['column'];
@@ -1422,37 +1410,25 @@ class MobilePaymentApi extends Controller
             $order_direction    = $input['order'][0]['dir'];
 
             if($order_column_name!=''){
-                $qb->orderBy($order_column_name, $order_direction);
+                $qb = $qb->orderBy($order_column_name, $order_direction);
             }
             
             //limit $ offset
             if((int)$input['start']!= 0 ){
-                $response_dt    =   $qb->limit($input['length'])->offset($input['start']);
+                $qb = $qb->limit($input['length'])->offset($input['start']);
             }
             else{
-                $qb->limit($input['length']);
+                $qb = $qb->limit($input['length']);
             }
 
-            $sql = MobilePayment::bind_presql($qb->toSql(),$qb->getBindings());
-
-            $response_dt = DB::select($sql);
-            $response_dt = json_decode(json_encode($response_dt), true);
-            $response_dt    = $this->append_relationships_objects($response_dt);
-            $response_dt    = $this->append_relationships_nulls($response_dt);
-            $response_dt = $this->fill_projects_column($response_dt);
-            $response       = MobilePayment::arr_to_dt_response( 
-                $response_dt, $input['draw'],
+            $response = MobilePayment::arr_to_dt_response( 
+                $qb->get(), $input['draw'],
                 $total_records,
                 $records_filtered
                 );
         }
         else{
-            $sql            = MobilePayment::bind_presql($qb->toSql(),$qb->getBindings());
-            $response       = json_decode(json_encode(DB::select($sql)), true);
-            if(!array_key_exists('lean', $input)){
-                $response       = $this->append_relationships_objects($response);
-                $response       = $this->append_relationships_nulls($response);
-            }
+            $response = $qb->get();
         }
 
         return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
@@ -1522,218 +1498,6 @@ class MobilePaymentApi extends Controller
         catch (Exception $e){
             return response()->json(['error'=>$e->getMessage()], 500);
         }
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    public function append_relationships_objects($data = array()){
-
-        foreach ($data as $key => $value) {
-
-            $mobile_payment =MobilePayment::find($data[$key]['id']);
-
-            $data[$key]['requested_by']                = $mobile_payment->requested_by;
-            $data[$key]['requested_action_by']         = $mobile_payment->requested_action_by;
-            $data[$key]['project']                     = $mobile_payment->project;
-            $data[$key]['account']                     = $mobile_payment->account;
-            $data[$key]['mobile_payment_type']         = $mobile_payment->mobile_payment_type;
-            $data[$key]['invoice']                     = $mobile_payment->invoice;
-            $data[$key]['status']                      = $mobile_payment->status;
-            $data[$key]['project_manager']             = $mobile_payment->project_manager;
-            $data[$key]['region']                      = $mobile_payment->region;
-            $data[$key]['county']                      = $mobile_payment->county;
-            $data[$key]['currency']                    = $mobile_payment->currency;
-            $data[$key]['rejected_by']                 = $mobile_payment->rejected_by;
-            $data[$key]['payees_upload_mode']          = $mobile_payment->payees_upload_mode;
-            $data[$key]['payees']                      = $mobile_payment->payees;
-            $data[$key]['approvals']                   = $mobile_payment->approvals;
-            $data[$key]['allocations']                 = $mobile_payment->allocations;
-            $data[$key]['totals']                      = $mobile_payment->totals;
-            $data[$key]['program_activity']            = $mobile_payment->program_activity;
-
-            foreach ($mobile_payment->allocations as $key1 => $value1) {
-                $project = Project::find((int)$value1['project_id']);
-                $account = Account::find((int)$value1['account_id']);
-                $data[$key]['allocations'][$key1]['project']  =   $project;
-                $data[$key]['allocations'][$key1]['account']  =   $account;
-            }
-
-        }
-
-        return $data;
-
-
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-    public function append_relationships_nulls($data = array()){
-
-
-        foreach ($data as $key => $value) {
-
-
-            if($value["requested_by"]==null){
-                $data[$key]['requested_by'] = array("full_name"=>"N/A");
-                
-            }
-            if($value["requested_action_by"]==null){
-                $data[$key]['requested_action_by'] = array("full_name"=>"N/A");
-                
-            }
-            if($value["project"]==null){
-                $data[$key]['project'] = array("project_name"=>"N/A");
-                
-            }
-            if($value["account"]==null){
-                $data[$key]['account'] = array("account_name"=>"N/A");
-                
-            }
-            if($value["mobile_payment_type"]==null){
-                $data[$key]['mobile_payment_type'] = array("desc"=>"N/A");
-                
-            }
-            if($value["invoice"]==null){
-                $data[$key]['invoice'] = array("invoice_title"=>"N/A");
-                
-            }
-            if($value["status"]==null){
-                $data[$key]['status'] = array("mobile_payment_status"=>"N/A");
-                
-            }
-            if($value["project_manager"]==null){
-                $data[$key]['project_manager'] = array("full_name"=>"N/A");
-                
-            }
-            if($value["region"]==null){
-                $data[$key]['region'] = array("region_name"=>"N/A");
-                
-            }
-            if($value["county"]==null){
-                $data[$key]['county'] = array("county_name"=>"N/A");
-                
-            }
-            if($value["rejected_by"]==null){
-                $data[$key]['rejected_by'] = array("full_name"=>"N/A");
-                
-            }
-            if($value["payees_upload_mode"]==null){
-                $data[$key]['payees_upload_mode'] = array("desc"=>"N/A");
-                
-            }
-            if($data[$key]["currency"]==null){
-                $data[$key]["currency"] = array("currency_name"=>"N/A");
-            }
-            if($data[$key]["program_activity"]==null){
-                $data[$key]["program_activity"] = array("title"=>"N/A", "description"=>"N/A");
-            }
-        }
-
-        return $data;
-
-
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    public function fill_projects_column($data = array()){
-
-        foreach ($data as $key => $value) {
-            $id_holder = '';
-            $rpt = false;
-            
-            //query builder
-            $qb = DB::table('mobile_payments')
-            ->join('allocations', function ($join) use($value) {
-                $join->on('mobile_payments.id', '=', 'allocations.allocatable_id')
-                ->whereNull('mobile_payments.deleted_at')
-                ->where('allocations.allocatable_type', 'mobile_payments')
-                ->where('allocations.allocatable_id', $value["id"]);
-            })
-            ->join('projects', 'allocations.project_id', '=', 'projects.id')
-            ->select('projects.id', 'projects.project_code', 'projects.project_name')
-            ->get();
-
-            if(count($qb) > 0){
-                foreach($qb as $record){
-                if($id_holder != $record['id'] && $id_holder != '') $rpt = true;
-                $id_holder = $record['id'];
-
-                if($rpt){
-                    $data[$key]['project'] = array("project_name"=>'Multiple projects');
-                    
-                }
-                else if(!$rpt){
-                    $data[$key]['project'] = array("project_name"=>$record['project_name']);
-                }
-            }
-                
-            }
-                else if($value["project"]==null){
-                    $data[$key]['project'] = array("project_name"=>"N/A");
-                    
-                }
-            
-
-        }
-        return $data;
-
-
     }
 
 
