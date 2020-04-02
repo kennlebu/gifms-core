@@ -449,12 +449,6 @@ class StaffApi extends Controller
             // Get only directors for PMs and above if it's line managers required
             else if(array_key_exists('line_managers', $input)){
                 if($user->hasRole(['program-manager','financial-controller','admin-manager','director'])){
-                    // $qb->select(DB::raw('staff.*'))
-                    // ->leftJoin('user_roles', 'user_roles.user_id', '=', 'staff.id')
-                    // ->leftJoin('roles', 'roles.id', '=', 'user_roles.role_id')
-                    // ->where('roles.acronym', '=', "'dir'")
-                    // ->orWhere('roles.acronym', '=', "'a-dir'")
-                    // ->groupBy('staff.id');
 
                     $qb = $qb->whereHas('roles', function($query) use ($input){
                         $query->whereIn('acronym', '=', ['dir','a-dir']);  
@@ -473,12 +467,6 @@ class StaffApi extends Controller
 
             // Get all PMs for administrative staff
             else{
-                // $qb->select(DB::raw('staff.*'))
-                //  ->leftJoin('user_roles', 'user_roles.user_id', '=', 'staff.id')
-                //  ->leftJoin('roles', 'roles.id', '=', 'user_roles.role_id')
-                //  ->where('roles.acronym', '=', "'pm'")
-                //  ->groupBy('staff.id');
-
                 $qb = $qb->whereHas('roles', function($query) use ($input){
                     $query->where('acronym', '=', 'pm');  
                 }); 
@@ -495,15 +483,15 @@ class StaffApi extends Controller
             //searching
             if(!empty($input['search']['value'])){
                 $qb = $qb->where(function ($query) use ($input) {                
-                    $query->orWhere('staff.id','like', '\'%' . $input['search']['value']. '%\'');
-                    $query->orWhere('staff.username','like', '\'%' . $input['search']['value']. '%\'');
-                    $query->orWhere('staff.email','like', '\'%' . $input['search']['value']. '%\'');
-                    $query->orWhere('staff.f_name','like', '\'%' . $input['search']['value']. '%\'');
-                    $query->orWhere('staff.l_name','like', '\'%' . $input['search']['value']. '%\'');
-                    $query->orWhere('staff.o_names','like', '\'%' . $input['search']['value']. '%\'');
-                    $query->orWhere('staff.official_post','like', '\'%' . $input['search']['value']. '%\'');
-                    $query->orWhere('staff.mobile_no','like', '\'%' . $input['search']['value']. '%\'');
-                    $query->orWhere('staff.mpesa_no','like', '\'%' . $input['search']['value']. '%\'');
+                    $query->orWhere('staff.id','like', '%' . $input['search']['value']. '%');
+                    $query->orWhere('staff.username','like', '%' . $input['search']['value']. '%');
+                    $query->orWhere('staff.email','like', '%' . $input['search']['value']. '%');
+                    $query->orWhere('staff.f_name','like', '%' . $input['search']['value']. '%');
+                    $query->orWhere('staff.l_name','like', '%' . $input['search']['value']. '%');
+                    $query->orWhere('staff.o_names','like', '%' . $input['search']['value']. '%');
+                    $query->orWhere('staff.official_post','like', '%' . $input['search']['value']. '%');
+                    $query->orWhere('staff.mobile_no','like', '%' . $input['search']['value']. '%');
+                    $query->orWhere('staff.mpesa_no','like', '%' . $input['search']['value']. '%');
                 });
             }
 
