@@ -70,7 +70,7 @@ class NotifyRequisition extends Mailable
             foreach($admin_manager as $am){
                 $ccs[] = $am;
             }
-            $subject = 'Requisition approval';
+            $subject = 'Requisition approved';
 
             return $this->cc($ccs)
                         ->to($to)

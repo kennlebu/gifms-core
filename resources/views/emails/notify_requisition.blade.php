@@ -16,9 +16,9 @@
       @if ($requisition->status_id==2)
         The below detailed Requisition has been submitted and awaits your approval.
         @elseif ($requisition->status_id==3)
-          The below detailed LPO has been approved by {{$requisition->program_manager->f_name}} {{$requisition->program_manager->l_name}}
+          The below detailed Requisition has been approved by {{$requisition->program_manager->f_name}} {{$requisition->program_manager->l_name}}
       @elseif ($requisition->status_id==4)
-        The below detailed LPO has been returned by {{$requisition->returned_by->f_name}} {{$requisition->returned_by->l_name}}
+        The below detailed Requisition has been returned by {{$requisition->returned_by->f_name}} {{$requisition->returned_by->l_name}}
       @endif
       <br/>
 
