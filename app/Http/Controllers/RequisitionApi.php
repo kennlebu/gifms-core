@@ -261,7 +261,7 @@ class RequisitionApi extends Controller
                 ->log('Created');
 
             // Add activity notification
-            $this->addActivityNotification('Created requisition '.$requisition->ref, null, $this->current_user()->id, $requisition->requested_by_id, 'info', 'requisitions', false);
+            $this->addActivityNotification('Created requisition <strong>'.$requisition->ref.'</strong>', null, $this->current_user()->id, $requisition->requested_by_id, 'info', 'requisitions', false);
 
             return Response()->json(array('msg' => 'Success: requisition added','requisition' => $requisition), 200);
         }
@@ -427,7 +427,7 @@ class RequisitionApi extends Controller
                     ->log('Submitted for approval');
                     
                 // Add activity notification
-                $this->addActivityNotification('Submitted requisition '.$requisition->ref, null, $this->current_user()->id, $requisition->requested_by_id, 'info', 'requisitions', false);
+                $this->addActivityNotification('Submitted requisition <strong>'.$requisition->ref.'</strong>', null, $this->current_user()->id, $requisition->requested_by_id, 'info', 'requisitions', false);
 
                 Mail::queue(new NotifyRequisition($requisition->id));
 
@@ -461,7 +461,7 @@ class RequisitionApi extends Controller
                 ->log('Requisition approved');
                 
             // Add activity notification
-            $this->addActivityNotification('Requisition '.$requisition->ref.' approved', null, $this->current_user()->id, $requisition->requested_by_id, 'success', 'requisitions', false);
+            $this->addActivityNotification('Requisition <strong>'.$requisition->ref.'</strong> approved', null, $this->current_user()->id, $requisition->requested_by_id, 'success', 'requisitions', false);
 
             $approval = new Approval();
 
@@ -515,7 +515,7 @@ class RequisitionApi extends Controller
                 ->log('Requisition returned');
 
             // Add activity notification
-            $this->addActivityNotification('Requisition '.$requisition->ref.' returned', null, $this->current_user()->id, $requisition->requested_by_id, 'danger', 'requisitions', false);
+            $this->addActivityNotification('Requisition <strong>'.$requisition->ref.'</strong> returned', null, $this->current_user()->id, $requisition->requested_by_id, 'danger', 'requisitions', false);
         
             return Response()->json(array('msg' => 'Success: requisition returned','data' => $requisition), 200);
         }

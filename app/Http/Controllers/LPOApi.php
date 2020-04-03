@@ -348,7 +348,7 @@ class LPOApi extends Controller
             }
         }
         catch(\Exception $e){
-            return response()->json(['error'=>"Something went wrong", 'msg'=>$e->getMessage()], 500,array(),JSON_PRETTY_PRINT);
+            return response()->json(['error'=>"Something went wrong", 'msg'=>$e->getMessage()], 500);
         }
     }
 
@@ -441,7 +441,7 @@ class LPOApi extends Controller
 
             // Ensure LPO is in the recallable statuses
             if(!in_array($lpo->status_id, [13,3,4,5])){
-                return response()->json(['msg'=>"you do not have permission to do this"], 403, array(), JSON_PRETTY_PRINT);
+                return response()->json(['msg'=>"you do not have permission to do this"], 403);
             }
 
             $lpo->status_id = 11;
@@ -473,10 +473,10 @@ class LPOApi extends Controller
                     ->log('LPO recalled');
             }
         
-            return response()->json(['msg'=>"lpo recalled"], 200,array(),JSON_PRETTY_PRINT);
+            return response()->json(['msg'=>"lpo recalled"], 200);
         }
         catch(Exception $e){
-            return response()->json(['error'=>"could not recall lpo",'msg'=>$e->getMessage()], 404,array(),JSON_PRETTY_PRINT);
+            return response()->json(['error'=>"could not recall lpo",'msg'=>$e->getMessage()], 404);
         }
     }
 
@@ -500,7 +500,7 @@ class LPOApi extends Controller
 
         // Ensure LPO is in the cancelable status
         if($lpo->status_id != 7){
-            return response()->json(['msg'=>"you do not have permission to do this"], 403, array(), JSON_PRETTY_PRINT);
+            return response()->json(['msg'=>"you do not have permission to do this"], 403);
         }
 
         $lpo->status_id = 15;        
@@ -537,9 +537,9 @@ class LPOApi extends Controller
             }
 
             Mail::queue(new NotifyLpoCancellation($lpo));
-            return response()->json(['msg'=>"lpo cancelled"], 200,array(),JSON_PRETTY_PRINT);
+            return response()->json(['msg'=>"lpo cancelled"], 200);
         }else{
-            return response()->json(['error'=>"could not cancel lpo"], 404,array(),JSON_PRETTY_PRINT);
+            return response()->json(['error'=>"could not cancel lpo"], 404);
         }
     }
 
@@ -618,10 +618,10 @@ class LPOApi extends Controller
         }catch(ApprovalException $ae){
 
             $response =  ["error"=>"You do not have the permissions to perform this action at this point"];
-            return response()->json($response, 403,array(),JSON_PRETTY_PRINT);
+            return response()->json($response, 403);
         }catch(Exception $e){
             $response =  ["error"=>"Something went wrong", 'msg'=>$e->getMessage()];
-            return response()->json($response, 500, array(), JSON_PRETTY_PRINT);
+            return response()->json($response, 500);
         }
     }
 
@@ -692,11 +692,11 @@ class LPOApi extends Controller
         }
         catch(ApprovalException $ae){
             $response =  ["error"=>"You do not have the permissions to perform this action at this point"];
-            return response()->json($response, 403,array(),JSON_PRETTY_PRINT);
+            return response()->json($response, 403);
         }
         catch(Exception $e){
             $response =  ["error"=>"lpo could not be found", "msg"=>$e->getMessage()];
-            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+            return response()->json($response, 404);
         }
     }
 
@@ -903,18 +903,14 @@ class LPOApi extends Controller
         public function submitOrApprove($lpo_id)
         {
             try{
-                $response;
                 $lpo            = Lpo::findOrFail($lpo_id);
                 $lpo_status     = Lpo::findOrFail($lpo->status_id);
                 $next_status    = $lpo_status->next_status;
-                $lpo->status_id = $next_status;
-
-
-                return Response()->json(array('result' => 'Success','lpo' => $lpo), 200);
+                $lpo->status_id = $next_status;                
+                return response()->json(['result' => 'Success'], 200);
 
             }catch(Exception $e){
-                $response =  ["error"=>"Something went wrong"];
-                return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
+                return response()->json(["error"=>"Something went wrong"], 500);
             }            
         }
 
@@ -931,11 +927,10 @@ class LPOApi extends Controller
         public function getLpoExemptReasons(){
             try{
                 $response = LpoQuoteExemptReason::all();
-                return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+                return response()->json($response, 200);
             }
             catch (Exception $e){
-                $response = ['error'=>'Something went wrong'];
-                return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
+                return response()->json(['error'=>'Something went wrong'], 500);
             }
         }
 
@@ -1057,10 +1052,10 @@ class LPOApi extends Controller
                 $this->approveLpo($lpo_id, true);
             }
 
-            return response()->json(['lpos'=>$form['lpos']], 201,array(),JSON_PRETTY_PRINT);
+            return response()->json(['message'=>"Success"], 200);
             
         } catch (Exception $e) {
-             return response()->json(['error'=>"An rerror occured during processing"], 500,array(),JSON_PRETTY_PRINT);
+             return response()->json(['error'=>"An rerror occured during processing"], 500);
         }
     }
 
@@ -1089,24 +1084,25 @@ class LPOApi extends Controller
     {
         $input = Request::all();
         //query builder
-        $qb = DB::table('lpos');
-        $qb->select('lpos.*');
+        $qb = Lpo::query();
 
-        $qb->whereNull('lpos.deleted_at');
+        if(!array_key_exists('lean', $input)){
+            $qb = Lpo::with('requested_by','request_action_by','project','account','status','project_manager',
+                            'rejected_by','cancelled_by','received_by','supplier','currency',
+                            'quotations','preffered_quotation','items','terms','approvals','deliveries',
+                            'program_activity','requisition','requisitioned_by');
+        }
 
-        $response;
-        $response_dt;
-
-        $total_records          = $qb->count();
-        $records_filtered       = 0;
+        $total_records = $qb->count();
+        $records_filtered = 0;
 
         // if for delivery
         if(array_key_exists('for_delivery',$input)&&$input['for_delivery']==true){
-            $qb->where(function ($query){
-                $query->whereNull('lpos.delivery_made');
-                $query->orWhere('lpos.delivery_made', 'not like', '\'%full%\'');
+            $qb = $qb->where(function ($query){
+                $query->whereNull('delivery_made');
+                $query->orWhere('delivery_made', 'not like', '%full%');
             });
-            $qb->whereIn('lpos.status_id', [6,7,8,9,10,14]);
+            $qb = $qb->whereIn('status_id', [6,7,8,9,10,14]);
         }
 
         // if for invoice
@@ -1120,18 +1116,18 @@ class LPOApi extends Controller
                 'accountant', 
                 'assistant-accountant']
             )){
-                $qb->where('lpos.requested_by_id', $this->current_user()->id)->orWhere('lpos.requisitioned_by_id',$this->current_user()->id);
+                $qb = $qb->where('requested_by_id', $this->current_user()->id)->orWhere('requisitioned_by_id',$this->current_user()->id);
             }
-            $qb->where(function ($query){
-                $query->whereNull('lpos.invoice_paid');
-                $query->orWhere('lpos.invoice_paid', '!=', "'full'");
-            });
-            $qb->whereIn('lpos.status_id', [6,7,8,9,10,14]);
+            $qb = $qb->where(function ($query){
+                $query->whereNull('invoice_paid');
+                $query->orWhere('invoice_paid', '!=', "full");
+            })
+            ->whereIn('status_id', [6,7,8,9,10,14]);
         }
 
         // prenogotiated
         if(array_key_exists('lpo_type',$input) && $input['lpo_type']=='prenegotiated'){
-            $qb->where('lpos.lpo_type', '\'prenegotiated\'');
+            $qb = $qb->where('lpo_type', 'prenegotiated');
         }
 
         //if status is set
@@ -1139,12 +1135,17 @@ class LPOApi extends Controller
             $status_ = (int) $input['status'];
 
             if($status_ >-1){
-                $qb->where('lpos.status_id', $input['status']);
-                $qb->where('lpos.requested_by_id',$this->current_user()->id)->orWhere('lpos.requisitioned_by_id',$this->current_user()->id);
-            }elseif ($status_==-1) {
-                $qb->where('lpos.requested_by_id',$this->current_user()->id)->orWhere('lpos.requisitioned_by_id',$this->current_user()->id);
-            }elseif ($status_==-3) {
-                $qb->where('project_manager_id',$this->current_user()->id);
+                $qb = $qb->where('status_id', $input['status'])
+                        ->where(function ($query) {
+                            $query->where('requested_by_id',$this->current_user()->id)
+                                ->orWhere('requisitioned_by_id',$this->current_user()->id);
+                        });                        
+            }
+            elseif ($status_==-1) {
+                $qb = $qb->where('requested_by_id',$this->current_user()->id)->orWhere('requisitioned_by_id',$this->current_user()->id);
+            }
+            elseif ($status_==-3) {
+                $qb = $qb->where('project_manager_id',$this->current_user()->id);
             }
         }
 
@@ -1152,7 +1153,7 @@ class LPOApi extends Controller
         //if approvable is set
 
         if(array_key_exists('approvable', $input)){
-            $qb->where(function ($query) use ($app_stat) {                    
+            $qb = $qb->where(function ($query) use ($app_stat) {                    
                 foreach ($app_stat as $key => $value) {
                     $query->orWhere('status_id',$value['id']);
                 }
@@ -1171,23 +1172,21 @@ class LPOApi extends Controller
                 'accountant', 
                 'assistant-accountant']
             )){                   
-                $qb->where(function ($query) use ($app_stat,$current_user) {
+                $qb = $qb->where(function ($query) use ($app_stat,$current_user) {
                     foreach ($app_stat as $key => $value) {
                         $permission = 'APPROVE_LPO_'.$value['id'];
                         if($current_user->can($permission)&&$value['id']==3){
                             $query->orWhere(function ($query1) use ($value,$current_user) {
                                 
                                 $query1->where(function ($query1) use ($value,$current_user) {
-                                    $query1->where('status_id',$value['id']);
-                                    $query1->where('project_manager_id',$current_user->id)
+                                    $query1->where('status_id',$value['id'])
+                                            ->where('project_manager_id',$current_user->id)
                                             ->whereNull('approver_id');
                                 });
                                 $query1->orWhere(function ($query1) use ($value,$current_user) {
-                                    $query1->where('status_id',$value['id']);
-                                    $query1->where('approver_id',$current_user->id);
+                                    $query1->where('status_id',$value['id'])
+                                            ->where('approver_id',$current_user->id);
                                 });
-                                // $query1->where('project_manager_id',$current_user->id);
-                                // $query1->orWhere('approver_id', $current_user->id);
                             });
                         }
                         else if($current_user->can($permission)){
@@ -1196,51 +1195,40 @@ class LPOApi extends Controller
                     }
                 });
             }
-            else{
-                $qb->where('id',0);
-            }
         }
 
         //searching
         if(array_key_exists('searchval', $input)){
-            $qb->where(function ($query) use ($input) {                
-                $query->orWhere('lpos.id','like', '\'%' . $input['searchval']. '%\'');
-                $query->orWhere('lpos.ref','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('lpos.expense_desc','like', '\'%' . $input['searchval']. '%\'');
-                $query->orWhere('lpos.expense_purpose','like', '\'%' . $input['searchval']. '%\'');
+            $qb = $qb->where(function ($query) use ($input) {                
+                $query->orWhere('ref','like', '%' . $input['search']['value']. '%');
+                $query->orWhere('expense_desc','like', '%' . $input['searchval']. '%');
+                $query->orWhere('expense_purpose','like', '%' . $input['searchval']. '%');
             });
 
-            $sql = Lpo::bind_presql($qb->toSql(),$qb->getBindings());
-            $sql = str_replace("*"," count(*) AS count ", $sql);
-            $dt = json_decode(json_encode(DB::select($sql)), true);
-
-            $records_filtered = (int) $dt[0]['count'];
+            $records_filtered = (int) $qb->count();
         }
 
         //ordering
         if(array_key_exists('order_by', $input)&&$input['order_by']!=''){
-            $order_direction     = "asc";
-            $order_column_name   = $input['order_by'];
+            $order_direction = "asc";
+            $order_column_name = $input['order_by'];
             if(array_key_exists('order_dir', $input)&&$input['order_dir']!=''){                
                 $order_direction = $input['order_dir'];
             }
 
-            $qb->orderBy($order_column_name, $order_direction);
+            $qb = $qb->orderBy($order_column_name, $order_direction);
         }
 
         //limit
         if(array_key_exists('limit', $input)){
-            $qb->limit($input['limit']);
+            $qb = $qb->limit($input['limit']);
         }
 
         //with_no_deliveries
         if(array_key_exists('with_no_deliveries', $input)){
             $del = (int) $input['with_no_deliveries'];
             if($del==1){
-                $qb->leftJoin('deliveries', 'lpos.id', '=', 'deliveries.lpo_id');
-                $qb->whereNull('deliveries.lpo_id');
-                $qb->orderBy('lpos.id', 'desc');
-                $qb->select('lpos.*');
+                $qb = $qb->doesntHave('deliveries');
             }
         }
 
@@ -1248,10 +1236,7 @@ class LPOApi extends Controller
         if(array_key_exists('with_no_invoices', $input)){
             $inv = (int) $input['with_no_invoices'];
             if($inv==1){
-                $qb->leftJoin('invoices', 'lpos.id', '=', 'invoices.lpo_id');
-                $qb->whereNull('invoices.lpo_id');
-                $qb->orderBy('lpos.id', 'desc');
-                $qb->select('lpos.*');
+                $qb = $qb->doesntHave('invoices');
             }
         }
 
@@ -1263,33 +1248,32 @@ class LPOApi extends Controller
                 $sup = (int) $input['supplier_id'];
 
             if($sup>0){
-                $qb->leftJoin('lpo_quotations', 'lpos.id', '=', 'lpo_quotations.lpo_id');
-                $qb->leftJoin('suppliers', 'lpo_quotations.supplier_id', '=', 'suppliers.id');
-                $qb->where('lpo_quotations.supplier_id', $sup);
-                $qb->orWhere('lpos.supplier_id', $sup);
-                $qb->select('lpos.*');
-                $qb->whereIn('lpos.status_id', array(6,7,8));
-                $qb->orderBy('lpos.id','desc');
+                $qb = $qb->where('supplier_id', $sup)
+                        ->orWhereHas('preffered_quotation', function ($query) use ($sup) {
+                            $query->where('supplier_id', $sup);
+                        });
             }
         }
 
         if(array_key_exists('datatables', $input)){
             //searching
-            $qb->leftJoin('lpo_quotations', 'lpos.preffered_quotation_id', '=', 'lpo_quotations.id');
-            $qb->leftJoin('suppliers', 'lpo_quotations.supplier_id', '=', 'suppliers.id');
-            $qb->where(function ($query) use ($input) {                
-                $query->orWhere('lpos.id','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('lpos.ref','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('lpos.expense_desc','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('lpos.expense_purpose','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('suppliers.supplier_name','like','\'%' .$input['search']['value']. '%\'');
-            });
+            if(!empty($input['search']['value'])){
+                $qb = $qb->where(function ($query) use ($input) {
+                    $query->orWhere('ref','like', '%' . $input['search']['value']. '%')
+                        ->orWhere('expense_desc','like', '%' . $input['search']['value']. '%')
+                        ->orWhere('expense_purpose','like', '%' . $input['search']['value']. '%')
+                        ->orWhereHas('preffered_quotation', function ($query) use ($input) {
+                            $query->whereHas('supplier', function ($query) use ($input) {
+                                $query->where('supplier_name','like','%' .$input['search']['value']. '%');
+                            });
+                        })
+                        ->orWhereHas('supplier', function ($query) use ($input) {
+                            $query->where('supplier_name','like','%' .$input['search']['value']. '%');
+                        });
+                });
+            }
 
-            $sql = Lpo::bind_presql($qb->toSql(),$qb->getBindings());
-            $sql = str_replace("`lpos`.*"," count(*) AS count ", $sql);
-            $dt = json_decode(json_encode(DB::select($sql)), true);
-
-            $records_filtered = (int) $dt[0]['count'];
+            $records_filtered = (int) $qb->count();
 
             //ordering
             $order_column_id    = (int) $input['order'][0]['column'];
@@ -1297,169 +1281,27 @@ class LPOApi extends Controller
             $order_direction    = $input['order'][0]['dir'];
 
             if($order_column_name!=''){
-                $qb->orderBy('lpos.'.$order_column_name, $order_direction);
+                $qb = $qb->orderBy($order_column_name, $order_direction);
             }
 
             //limit $ offset
             if((int)$input['start']!= 0 ){
-                $response_dt    =   $qb->limit($input['length'])->offset($input['start']);
+                $qb = $qb->limit($input['length'])->offset($input['start']);
             }
             else{
-                $qb->limit($input['length']);
+                $qb = $qb->limit($input['length']);
             }
-
-            $sql = Lpo::bind_presql($qb->toSql(),$qb->getBindings());
-            $response_dt = DB::select($sql);
-            $response_dt = json_decode(json_encode($response_dt), true);
-
-            $response_dt    = $this->append_relationships_objects($response_dt);
-            $response_dt    = $this->append_relationships_nulls($response_dt);
-            $response       = Lpo::arr_to_dt_response( 
-                $response_dt, $input['draw'],
+            $response = Lpo::arr_to_dt_response( 
+                $qb->get(), $input['draw'],
                 $total_records,
                 $records_filtered
                 );
         }
         else{
-            $sql            = Lpo::bind_presql($qb->toSql(),$qb->getBindings());
-            $response       = json_decode(json_encode(DB::select($sql)), true);
-            if(!array_key_exists('lean', $input)){
-                $response       = $this->append_relationships_objects($response);
-                $response       = $this->append_relationships_nulls($response);
-            }
+            $response = $qb->get();
         }
 
-        return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    public function append_relationships_objects($data = array()){
-
-        foreach ($data as $key => $value) {
-
-            $lpo = Lpo::find($data[$key]['id']);
-
-            $data[$key]['requested_by']             = $lpo->requested_by;
-            $data[$key]['request_action_by']        = $lpo->request_action_by;
-            $data[$key]['project']                  = $lpo->project;
-            $data[$key]['account']                  = $lpo->account;
-            $data[$key]['invoice']                  = $lpo->invoice;
-            $data[$key]['status']                   = $lpo->status;
-            $data[$key]['project_manager']          = $lpo->project_manager;
-            $data[$key]['rejected_by']              = $lpo->rejected_by;
-            $data[$key]['cancelled_by']             = $lpo->cancelled_by;
-            $data[$key]['received_by']              = $lpo->received_by;
-            $data[$key]['supplier']                 = $lpo->supplier;
-            $data[$key]['currency']                 = $lpo->currency;
-            $data[$key]['quotations']               = $lpo->quotations;
-            $data[$key]['preffered_quotation']      = $lpo->preffered_quotation;
-            $data[$key]['items']                    = $lpo->items;
-            $data[$key]['terms']                    = $lpo->terms;
-            $data[$key]['approvals']                = $lpo->approvals;
-            $data[$key]['deliveries']               = $lpo->deliveries;
-            $data[$key]['totals']                   = $lpo->totals;
-            $data[$key]['program_activity']         = $lpo->program_activity;
-            $data[$key]['requisition']              = $lpo->requisition;
-            $data[$key]['lpo_requisition_items']    = $lpo->lpo_requisition_items;
-            $data[$key]['preferred_supplier']       = $lpo->preferred_supplier;
-            $data[$key]['preferred_supplier']['supply_category'] = $lpo->preferred_supplier->supply_category ?? '';
-            $data[$key]['requisition']              = $lpo->requisition;
-            $data[$key]['can_invoice']              = $lpo->can_invoice;
-            $data[$key]['invoices_total']           = $lpo->invoices_total;
-            $data[$key]['requisitioned_by']         = $lpo->requisitioned_by;
-
-            if(!empty($lpo->preffered_quotation_id) && !empty($lpo->preffered_quotation->supplier_id)){
-                if($lpo->preffered_quotation_id > 0 && $lpo->preffered_quotation->supplier_id > 0 ){
-                    $data[$key]['preffered_quotation']['supplier'] = $lpo->preffered_quotation->supplier;
-                }
-            }
-        }
-
-        return $data;
-    }
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-    public function append_relationships_nulls($data = array()){
-
-
-        foreach ($data as $key => $value) {
-
-
-            if($data[$key]["account"]==null){
-                $data[$key]["account"] = array("account_name"=>"N/A");
-            }
-
-            if($data[$key]["project_manager"]==null){
-                $data[$key]["project_manager"] = array("full_name"=>"N/A");
-            }
-
-            if($data[$key]["received_by"]==null){
-                $data[$key]["received_by"] = array("full_name"=>"N/A");
-            }
-
-            if($data[$key]["project"]==null){
-                $data[$key]["project"] = array("Project_name"=>"N/A");
-            }
-
-            if($data[$key]["requested_by"]==null){
-                $data[$key]["requested_by"] = array("full_name"=>"N/A");
-            }
-
-
-            if($data[$key]["cancelled_by"]==null){
-                $data[$key]["cancelled_by"] = array("full_name"=>"N/A");
-            }
-
-            if($data[$key]["supplier"]==null){
-                $data[$key]["supplier"] = array("supplier_name"=>"N/A");
-            }
-
-            if($data[$key]["status"]==null){
-                $data[$key]["status"] = array("lpo_status"=>"N/A");
-            }
-
-            if($data[$key]["currency"]==null){
-                $data[$key]["currency"] = array("currency_name"=>"N/A");
-            }
-            if($data[$key]["preffered_quotation"]==null){
-                $data[$key]["preffered_quotation"] = array("supplier"=>array("supplier_name"=>"N/A"));
-            }
-            if($data[$key]["program_activity"]==null){
-                $data[$key]["program_activity"] = array("program_activity"=>array("title"=>"N/A", "description"=>"N/A"));
-            }
-        }
-
-        return $data;
+        return response()->json($response, 200);
     }
 
 

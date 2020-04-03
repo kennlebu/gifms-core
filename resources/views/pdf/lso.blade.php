@@ -215,24 +215,6 @@
         </tr>
         @endforeach
         <tr colspan="10"><td>&nbsp;</td></tr>
-
-        <tr>
-          <td colspan="2"><strong>Signature:</strong></td>
-          <td colspan="4">
-            <img style="height:70px;width:200px;" alt="." src="{{asset('storage/signatures/signature'.$lpo->requested_by_id.'.png')}}">
-          </td>
-          <td colspan="4">&nbsp;</td>
-        </tr>
-        <tr>
-          <td colspan="2"><strong>Designation:</strong></td>
-          <td colspan="4">{{$lpo->requested_by->official_post ?? ''}}</td>
-          <td colspan="4">&nbsp;</td>
-        </tr>
-        <tr>
-          <td colspan="2"><strong>Date:</strong></td>
-          <td colspan="4">{{date('d F, Y')}}</td>
-          <td colspan="4">&nbsp;</td>
-        </tr>
         <tr>
             <td colspan="10">&nbsp;</td>
         </tr>
@@ -269,14 +251,14 @@
         </tr>
         <tr>
           <td colspan="6"></td>
-          <td colspan="4">__________________________________________________________ (Vendor name)</td>
+          <td colspan="4">______________________________________________ (Vendor name)</td>
         </tr>
         <tr>
           <td colspan="10">&nbsp;</td>
       </tr>
         <tr>
           <td colspan="6"></td>
-          <td colspan="4">__________________________________________________________ (Date)</td>
+          <td colspan="4">______________________________________________ (Date)</td>
         </tr>
         <tr>
             <td colspan="10">&nbsp;</td>

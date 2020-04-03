@@ -40,15 +40,17 @@ class LPOQuotationApi extends Controller
                 'uploaded_by_id',
                 'supplier_id',
                 'amount',
-                'file'
+                'file',
+                'external_ref'
                 );
 
             $file = $form['file'];
 
-            $lpo_quotation->uploaded_by_id                      =   (int)       $form['uploaded_by_id'];
-            $lpo_quotation->supplier_id                         =   (int)       $form['supplier_id'];
-            $lpo_quotation->amount                              =   (double)    $form['amount'];
-            $lpo_quotation->lpo_id                              =   (int)       $form['lpo_id'];
+            $lpo_quotation->uploaded_by_id = $form['uploaded_by_id'];
+            $lpo_quotation->supplier_id = $form['supplier_id'];
+            $lpo_quotation->amount = (double) $form['amount'];
+            $lpo_quotation->lpo_id = $form['lpo_id'];
+            $lpo_quotation->external_ref = $form['external_ref'];
 
             if($lpo_quotation->save()) {
                 FTP::connection()->makeDir('/lpos');
@@ -62,8 +64,9 @@ class LPOQuotationApi extends Controller
                 $lpo_quotation->save();                
 
                 $lpo = Lpo::with("preffered_quotation")->findOrFail($lpo_quotation->lpo_id);
-                if (is_null($lpo->preffered_quotation)) {
+                if(empty($lpo->preffered_quotation)) {
                     $lpo->preffered_quotation_id = $lpo_quotation->id;
+                    $lpo->quotation_ref = $lpo_quotation->external_ref;
 
                     activity()
                         ->performedOn($lpo)
@@ -132,9 +135,12 @@ class LPOQuotationApi extends Controller
             $form = Request::all();
             $quotation = LpoQuotation::findOrFail($form['id']);
             $file = $form['file'];
-            $quotation->supplier_id              =               $form['supplier_id'];
-            $quotation->amount                   =               $form['amount'];
+            $quotation->supplier_id = $form['supplier_id'];
+            $quotation->amount = $form['amount'];
+            $quotation->external_ref = $form['external_ref'];
             $quotation->disableLogging();
+
+            Lpo::where('id', $quotation->lpo_id)->update(['quotation_ref'=>$quotation->external_ref]);
 
             if($quotation->save()) {
                 if($file!=0){

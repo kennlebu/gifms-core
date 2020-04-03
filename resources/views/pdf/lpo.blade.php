@@ -70,7 +70,7 @@
           </tr>
           <tr>
             <td style="border: 1px solid #000000; border-bottom: 1px solid #c0c0c0; border-top: 1px solid #c0c0c0;" colspan="2"  ><strong>Your Ref</strong></td>
-            <td style="border-width: 1px; border-style: solid; border-color: #c0c0c0 #000000; border-image: initial; text-align: right;" colspan="4" ></td>
+            <td style="border-width: 1px; border-style: solid; border-color: #c0c0c0 #000000; border-image: initial; text-align: right;" colspan="4">{{$lpo->quotation_ref ?? ''}}</td>
             <td colspan="1" ></td>
             <td colspan="5" ></td>
           </tr>
