@@ -77,8 +77,8 @@
 </head>
 
 <body style="font-family:arial;">
-    @if(isset($bank_transactions) && !empty($bank_transactions))
-    <div class="stamp stamped-paid"></div>
+    @if(isset($bank_transactions) && count($bank_transactions) > 0)
+        <div class="stamp stamped-paid"></div>
     @endif
     <header>
         <div><img style="width: 100%;height:120px;" src="img/letter_head_top_1200x240.png"></div>

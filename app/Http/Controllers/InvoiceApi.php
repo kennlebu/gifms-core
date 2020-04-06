@@ -798,7 +798,7 @@ class InvoiceApi extends Controller
                 $voucher_date = $batch->created_at;
             }
 
-            $vendor = $invoice->supplier->supplier_name;
+            $vendor = $invoice->supplier->supplier_name ?? '';
 
             $unique_approvals = $this->unique_multidim_array($invoice->approvals, 'approval_level_id');
             $data = array(

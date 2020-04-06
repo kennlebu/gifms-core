@@ -15,7 +15,7 @@ class Requisition extends BaseModel
     use SoftDeletes;
 
     protected $dates = ['submitted_at'];
-    protected $appends = ['transactions','generated_ref'];
+    protected $appends = ['transactions'];
     protected $hidden = ['updated_at', 'deleted_at'];
     protected $guarded = [];
 
