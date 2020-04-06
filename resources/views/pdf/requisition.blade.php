@@ -48,17 +48,15 @@
             <td colspan="10"><strong>Allocations</strong></td>
           </tr>
           <tr>
-            <th colspan="3" style="border:1px solid black;">Project</th>
-            <th colspan="3" style="border:1px solid black;">Account</th>
-            <th colspan="2" style="border:1px solid black;">Objective</th>
+            <th colspan="5" style="border:1px solid black;">Project</th>
+            <th colspan="3" style="border:1px solid black;">Objective</th>
             <th colspan="1" style="border:1px solid black;">Rate %</th>
             <th>&nbsp;</th>
           </tr>
           @foreach ($requisition->allocations as $allocation)
           <tr>
-            <td colspan="3" style="border:1px solid black;">{{$allocation->project->project_code}} - {{$allocation->project->project_name}}</td>
-            <td colspan="3" style="border:1px solid black;">{{$allocation->account->account_name}}</td>
-            <td colspan="2" style="border:1px solid black;">{{$allocation->objective->objective ?? ''}}</td>
+            <td colspan="5" style="border:1px solid black;">{{$allocation->project->project_code}} - {{$allocation->project->project_name}}</td>
+            <td colspan="3" style="border:1px solid black;">{{$allocation->objective->objective ?? ''}}</td>
             <td colspan="1" style="border:1px solid black;">{{$allocation->percentage_allocated}}</td>
             <td>&nbsp;</td>
           </tr>

@@ -861,7 +861,7 @@ class LPOApi extends Controller
                                             'program_activity',
                                             'allocations.project',
                                             'allocations.account',
-                                            'requisition'
+                                            'requisition.documents'
                                 )->findOrFail($lpo_id);
            
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
