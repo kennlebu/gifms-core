@@ -40,12 +40,12 @@ class NotifyMobilePayment extends Mailable
                                 'rejected_by',
                                 'payees_upload_mode',
                                 'payees',
-                                'approvals',
+                                'approvals.approver',
                                 'allocations'
                             )->findOrFail($mobile_payment->id);
-        foreach ($this->mobile_payment->approvals as $key => $value) {
-            $this->mobile_payment->approvals[$key]['approver'] = Staff::find($this->mobile_payment->approvals[$key]['approver_id']);
-        }
+        // foreach ($this->mobile_payment->approvals as $key => $value) {
+        //     $this->mobile_payment->approvals[$key]['approver'] = Staff::find($this->mobile_payment->approvals[$key]['approver_id']);
+        // }
     }
 
     /**

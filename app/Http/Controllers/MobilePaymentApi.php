@@ -1004,7 +1004,7 @@ class MobilePaymentApi extends Controller
                 }
             }
 
-            if (abs($mobile_payment->total - $mobile_payment->amount_allocated) > 1 ){ //allowance of 1
+            if (abs($mobile_payment->totals - $mobile_payment->amount_allocated) > 1 ){ //allowance of 1
                 throw new NotFullyAllocatedException("This mobile payment has not been fully allocated");             
             }
             if($mobile_payment->status_id == 15 || $mobile_payment->status_id == 16){
@@ -1033,7 +1033,7 @@ class MobilePaymentApi extends Controller
             $response =  ["error"=>"Mobile Payment not fully allocated"];
             return response()->json($response, 403);
         }catch(Exception $e){
-            $response =  ["error"=>"Something went wrong", "msg"=>$e->getMessage()];
+            $response =  ["error"=>"Something went wrong", "msg"=>$e->getMessage(), "trace"=>$e->getTraceAsString()];
             return response()->json($response, 500);
         }
     }
