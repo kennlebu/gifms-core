@@ -15,6 +15,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\FinanceModels\TaxRate;
 use Illuminate\Support\Facades\Request;
 use App\Models\LPOModels\LpoItem;
 use App\Models\LPOModels\Lpo;
@@ -49,6 +50,10 @@ class LPOItemApi extends Controller
             $lpo_item->qty_description              =               $form['qty_description'];
             $lpo_item->unit_price                   =   (double)    $form['unit_price'];
             $lpo_item->vat_charge                   =   (int)       $form['vat_charge'];
+
+            $tax_rate = TaxRate::where('charge', 'VAT')->first();
+            $lpo_item->vat_rate = $tax_rate->rate ?? 16;
+
             if(array_key_exists('lpo_type', $form) && $form['lpo_type']=='prenegotiated'){
                 $lpo = Lpo::findOrFail($form['lpo_id']);
                 $lpo->supplier_id = $form['supplier_id'];

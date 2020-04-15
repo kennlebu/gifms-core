@@ -1984,3 +1984,10 @@ CHANGE `updated_at` `updated_at` timestamp NOT NULL DEFAULT current_timestamp() 
 
 ALTER TABLE `staff`
 CHANGE `is_default` `is_default` smallint NULL DEFAULT '0' AFTER `gender`;
+
++~===== Add vat rate to lpos and lpo items
+###ALTER TABLE `lpos`
+###CHANGE `attention` `vat_rate` double NULL AFTER `account_id`;
+
+ALTER TABLE `lpo_items`
+ADD `vat_rate` double NULL AFTER `requisition_item_id`;

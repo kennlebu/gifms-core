@@ -87,7 +87,7 @@
             <td colspan="5" ></td>
           </tr>
           <tr>
-            <td style="border: 1px solid #000000; border-bottom: 1px solid #c0c0c0; border-top: 1px solid #c0c0c0;" colspan="2"  ><strong>Email</strong></td>
+            <td style="border: 1px solid #000000; border-bottom: 1px solid #c0c0c0; border-top: 1px solid #c0c0c0;" colspan="2"><strong>Email</strong></td>
             <td style="border-width: 1px; border-style: solid; border-color: #c0c0c0 #000000; border-image: initial; text-align: right;" colspan="4" >
               @if(empty($lpo->lpo_type)||$lpo->lpo_type!='prenegotiated')
               <a href="mailto:{{$lpo->preffered_quotation->supplier->email}}" target="_blank">{{str_replace("@","@ ",$lpo->preffered_quotation->supplier->email)}}</a>
@@ -178,7 +178,7 @@
             <td ></td>
             <td colspan="1" >VAT RATE</td>
             <td ></td>
-            <td align="right">16%</td>
+            <td align="right">{{$lpo->vat_rate}}%</td>
           </tr>
           <tr>
             <td colspan="6">&nbsp;</td>
@@ -197,7 +197,7 @@
           <tr>
             <td colspan="6">&nbsp;</td>
             <td ></td>
-            <td colspan="1" ><strong>TOTALS</strong></td>
+            <td colspan="1"><strong>TOTALS</strong></td>
             <td >{{$lpo->currency->currency_name}}</td>
             <td align="right" bgcolor="#E4E8F3"><strong>{{number_format($lpo->totals,2)}}</strong></td>
           </tr>

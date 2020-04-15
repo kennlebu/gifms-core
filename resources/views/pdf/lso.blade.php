@@ -165,7 +165,7 @@
           <td></td>
           <td colspan="1" >VAT RATE</td>
           <td></td>
-          <td align="right">16%</td>
+          <td align="right">{{$lpo->vat_rate}}%</td>
         </tr>
         <tr>
           <td colspan="6">&nbsp;</td>
@@ -178,13 +178,13 @@
           <td colspan="6">&nbsp;</td>
           <td>&nbsp;</td>
           <td style="border-bottom: 3px double #000000;" colspan="1" ></td>
-          <td style="border-bottom: 3px double #000000;" ></td>
+          <td style="border-bottom: 3px double #000000;"></td>
           <td style="border-bottom: 3px double #000000;" align="right"></td>
         </tr>
         <tr>
           <td colspan="6">&nbsp;</td>
           <td></td>
-          <td colspan="1" ><strong>TOTALS</strong></td>
+          <td colspan="1"><strong>TOTALS</strong></td>
           <td>{{$lpo->currency->currency_name}}</td>
           <td align="right" bgcolor="#E4E8F3"><strong>{{number_format($lpo->totals,2)}}</strong></td>
         </tr>

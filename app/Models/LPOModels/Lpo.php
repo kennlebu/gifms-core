@@ -138,66 +138,26 @@ class Lpo extends BaseModel
         $items = $this->items;
         $total = 0;
 
-
         foreach ($items as $key => $value) {
-
-            $unit_price     = (float)   $value->unit_price;
-            $vat_charge     = (int)     $value->vat_charge;
-            $qty            = (int)     $value->qty;
-            $vat            = 0;
-            $sub_total      = 0;
-
-            if($vat_charge==0){
-                $vat = (16/100)*$unit_price*$qty;
-                $sub_total = $unit_price*$qty;
-            }
-
-
-            if($vat_charge==1){
-                $vat = (16/100)*$unit_price*$qty;
-                $sub_total = (84/100)*$unit_price*$qty;
-            }
-
-            if($vat_charge==2){
-                $vat = 0;
-                $sub_total = $unit_price*$qty;
-            }
-
-            $total += $sub_total+$vat;
-
+            $total += $value->calculated_total;
         }
-        
         return $total;
-
     }
 
 
     public function getVatsAttribute(){
-
-        $items  =   $this->items;
-        $vats   =   0;
+        $items = $this->items;
+        $vats = 0;
 
         foreach ($items as $key => $value) {
-            $vats   +=   (float)   $value->calculated_vat;
+            $vats += (float) $value->calculated_vat;
         }
 
         return $vats;
-
     }
 
     public function getSubTotalsAttribute(){
-
-        $items  =   $this->items;
-        $sub_totals   =   0;
-
-        foreach ($items as $key => $value) {
-            $sub_totals   +=   (float)   $value->calculated_sub_total;
-        }
-
-        return round($sub_totals, 3);
-
-
-
+        return round($this->amount - $this->vats, 3);
     }
 
     public function getTotalsAttribute(){
@@ -256,6 +216,14 @@ class Lpo extends BaseModel
         }
 
         return $total;
+    }
+
+    public function getVatRateAttribute(){
+        $rate = 16;
+        foreach($this->items as $item){
+            $rate = $item->vat_rate;
+        }
+        return $rate;
     }
 
 

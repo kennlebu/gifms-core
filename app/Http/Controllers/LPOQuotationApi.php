@@ -189,7 +189,7 @@ class LPOQuotationApi extends Controller
      */
     public function deleteLpoQuotation($lpo_quotation_id)
     {
-        $lpo_quotation = LpoQuotation::destroy($lpo_quotation_id);
+        $lpo_quotation = LpoQuotation::findOrFail($lpo_quotation_id);
         $lpo_quotation->delete();
         if($lpo_quotation){
             $lpo = Lpo::find($lpo_quotation->lpo_id);
