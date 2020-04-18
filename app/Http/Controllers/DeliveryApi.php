@@ -74,7 +74,7 @@ class DeliveryApi extends Controller
                     $lpo->date_delivered = date("Y-m-d H:i:s");
                     $lpo->delivery_Comment = $delivery->comment;
                     $lpo->delivery_made = $delivery->delivery_made;
-                    $lpo->status_id = $lpo->status->next_status_id;
+                    $lpo->status_id = 8;
                     $lpo->save();
                     
                     foreach($lpo->items as $lpo_item){ 
@@ -109,8 +109,9 @@ class DeliveryApi extends Controller
                         $item->save();
                     }
                 }
-                $delivery_no = count($requisition->deliveries);
-                $delivery->ref = $requisition->ref.'-GRN-'.$this->pad_with_zeros(2, $delivery_no);
+                // $delivery_no = count($requisition->deliveries);
+                $delivery->ref = $requisition->ref.'-GRN-'.$this->pad_with_zeros(2, $delivery->getNextRefNumber());
+                $delivery->save();
 
                 activity()
                     ->performedOn($delivery)
@@ -125,7 +126,7 @@ class DeliveryApi extends Controller
             }
 
         }catch (\Exception $e){
-            return response()->json(['error'=>'Something went wrong'], 500);
+            return response()->json(['error'=>'Something went wrong', 'msg'=>$e->getMessage(), 'trace'=>$e->getTraceAsString()], 500);
         }
     }
 

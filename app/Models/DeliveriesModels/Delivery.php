@@ -54,4 +54,16 @@ class Delivery extends BaseModel
         }
         return $in_assets;
     }
+
+    public function getNextRefNumber(){
+        $number = 1;
+        if(!empty($this->requisition_id)){
+            $delivery = Delivery::where('requisition_id', $this->requisition_id)->whereNotNull('ref')->orderBy('created_at', 'desc')->first();
+            if(!empty($delivery)){
+                $arr = explode('-', $delivery->ref);
+                $number = ((int) $arr[count($arr)-1] + 1);
+            }                      
+        }
+        return $number;
+    }
 }

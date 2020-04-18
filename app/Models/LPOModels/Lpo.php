@@ -226,5 +226,15 @@ class Lpo extends BaseModel
         return $rate;
     }
 
+    public function getNextRefNumber(){
+        $number = 1;
+        if(!empty($this->requisition_id)){
+            $lpo = Lpo::where('requisition_id', $this->requisition_id)->whereNotNull('ref')->orderBy('created_at', 'desc')->first();
+            $arr = explode('-', $lpo->ref);
+            $number = ((int) $arr[count($arr)-1] + 1);
+        }
+        return $number;
+    }
+
 
 }

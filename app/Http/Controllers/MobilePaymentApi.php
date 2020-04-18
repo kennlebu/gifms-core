@@ -197,9 +197,8 @@ class MobilePaymentApi extends Controller
                         ->log('Created');
                 }
                 else {
-                    // $requisition = Requisition::findOrFail($mobile_payment->requisition->id);
-                    $mobile_payment_no = count($requisition->transactions['mobile_payments']);
-                    $mobile_payment->ref = $requisition->ref.'-MPT-'.$this->pad_with_zeros(2, $mobile_payment_no);
+                    // $mobile_payment_no = count($requisition->transactions['mobile_payments']);
+                    $mobile_payment->ref = $requisition->ref.'-MPT-'.$this->pad_with_zeros(2, $mobile_payment->getNextRefNumber());
 
                     // Logging
                     activity()

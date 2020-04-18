@@ -255,8 +255,8 @@ class InvoiceApi extends Controller
                                 $invoice->approver_id = $lpo->approver_id;
                             }
                             $invoice->requisition_id = $lpo->requisition_id;
-                            $invoice_no = count($requisition->invoices);
-                            $invoice->ref = $requisition->ref.'-INV-'.$this->pad_with_zeros(2, $invoice_no);
+                            // $invoice_no = count($requisition->invoices);
+                            $invoice->ref = $requisition->ref.'-INV-'.$this->pad_with_zeros(2, $invoice->getNextRefNumber());
                             $invoice->save();
 
                             activity()

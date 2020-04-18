@@ -195,12 +195,17 @@ class MobilePayment extends BaseModel
         return $bank_trans;
     }
 
-    // public function getRequisitionedByAttribute(){
-    //     if($this->requisition){
-    //         return $this->requisition->requested_by;
-    //     }
-    //     return null;
-    // }
+    public function getNextRefNumber(){
+        $number = 1;
+        if(!empty($this->requisition_id)){
+            $mobile_payment = MobilePayment::where('requisition_id', $this->requisition_id)->whereNotNull('ref')->orderBy('created_at', 'desc')->first();
+            if(!empty($mobile_payment)){
+                $arr = explode('-', $mobile_payment->ref);
+                $number = ((int) $arr[count($arr)-1] + 1);
+            }
+        }
+        return $number;
+    }
 
 
 

@@ -213,11 +213,15 @@ class Invoice extends BaseModel
         return  $amount + (double)	$this->calculated_withdrawal_charges;
     }
 
-    // public function getRequisitionedByAttribute(){
-    //     $requisition = 'null';
-    //     // if($this->requisition_id){
-    //     //     $requisition =  Requisition::find($this->requisition_id);
-    //     // }
-    //     return $requisition;
-    // }
+    public function getNextRefNumber(){
+        $number = 1;
+        if(!empty($this->requisition_id)){
+            $invoice = Invoice::where('requisition_id', $this->requisition_id)->whereNotNull('ref')->orderBy('created_at', 'desc')->first();
+            if(!empty($invoice)){
+                $arr = explode('-', $invoice->ref);
+                $number = ((int) $arr[count($arr)-1] + 1);
+            }
+        }
+        return $number;
+    }
 }
