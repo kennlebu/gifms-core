@@ -382,10 +382,12 @@ class LPOApi extends Controller
 
             if(!empty($lpo->requisition_id)){
                 foreach($lpo->items as $item){
-                    $requisition_item = RequisitionItem::findOrFail($item->requisition_item_id);
-                    $requisition_item->status_id = 1;
-                    $requisition_item->disableLogging();
-                    $requisition_item->save();
+                    $requisition_item = RequisitionItem::find($item->requisition_item_id);
+                    if(!empty($requisition_item)){
+                        $requisition_item->status_id = 1;
+                        $requisition_item->disableLogging();
+                        $requisition_item->save();
+                    }                    
                 }
 
                 // Logging delete
