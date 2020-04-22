@@ -247,10 +247,12 @@ class InvoiceApi extends Controller
 
                             if(!empty($lpo->lpo_requisition_items)){
                                 foreach($lpo->lpo_requisition_items as $req_item){
-                                    $item = RequisitionItem::findOrFail($req_item->id);
-                                    $item->status_id = 4;
-                                    $item->disableLogging();
-                                    $item->save();
+                                    $item = RequisitionItem::find($req_item->id);
+                                    if(!empty($item)){
+                                        $item->status_id = 4;
+                                        $item->disableLogging();
+                                        $item->save();
+                                    }                                    
                                 }
                                 $invoice->approver_id = $lpo->approver_id;
                             }

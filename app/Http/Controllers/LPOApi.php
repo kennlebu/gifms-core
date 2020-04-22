@@ -394,6 +394,7 @@ class LPOApi extends Controller
                 activity()
                     ->performedOn(Requisition::find($lpo->requisition_id))
                     ->causedBy($this->current_user())
+                    ->withProperties(['detail'=>'LPO '.$lpo->ref.' has been deleted'])
                     ->log('LPO deleted');
                     
                 // Add activity notification

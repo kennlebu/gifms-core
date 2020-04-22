@@ -43,30 +43,42 @@ class NotifyLpoDispatch extends Mailable
     {
         $supplier_cc = [];
         if(empty($this->lpo->lpo_type)||$this->lpo->lpo_type!='prenegotiated'){
-            $supplier_to = array('name'=>$this->lpo->preffered_quotation->supplier->supplier_name,
-                'email'=>$this->lpo->preffered_quotation->supplier->email);
+            $supplier_to = ['name'=>$this->lpo->preffered_quotation->supplier->supplier_name,
+                'email'=>$this->lpo->preffered_quotation->supplier->email];
             // CC second supplier email if it exists
             if(!empty($this->lpo->preffered_quotation->supplier->contact_email_1)){
-                $supplier_cc = array('name'=>$this->lpo->preffered_quotation->supplier->supplier_name,
-                'email'=>$this->lpo->preffered_quotation->supplier->contact_email_1);
+                $supplier_cc[] = ['name'=>$this->lpo->preffered_quotation->supplier->contact_name_1,
+                'email'=>$this->lpo->preffered_quotation->supplier->contact_email_1];
+            }
+            if(!empty($this->lpo->preffered_quotation->supplier->contact_email_2)){
+                $supplier_cc[] = ['name'=>$this->lpo->preffered_quotation->supplier->contact_name_2,
+                'email'=>$this->lpo->preffered_quotation->supplier->contact_email_2];
             }
         }
         elseif(!empty($this->lpo->lpo_type)&&$this->lpo->lpo_type=='prenegotiated'){
-            $supplier_to = array('name'=>$this->supplier->supplier_name,
-                'email'=>$this->lpo->supplier->email);
+            $supplier_to = ['name'=>$this->supplier->supplier_name,
+                'email'=>$this->lpo->supplier->email];
             // CC second supplier email if it exists
             if(!empty($this->lpo->supplier->contact_email_1)){
-                $supplier_cc = array('name'=>$this->lpo->supplier->supplier_name,
-                'email'=>$this->lpo->supplier->contact_email_1);
+                $supplier_cc[] = ['name'=>$this->lpo->supplier->contact_name_1,
+                'email'=>$this->lpo->supplier->contact_email_1];
+            }
+            if(!empty($this->lpo->supplier->contact_email_2)){
+                $supplier_cc[] = ['name'=>$this->lpo->supplier->contact_name_2,
+                'email'=>$this->lpo->supplier->contact_email_2];
             }
         }
         else {
-            $supplier_to = array('name'=>$this->lpo->preffered_quotation->supplier->supplier_name,
-                'email'=>$this->lpo->preffered_quotation->supplier->email);
+            $supplier_to = ['name'=>$this->lpo->preffered_quotation->supplier->supplier_name,
+                'email'=>$this->lpo->preffered_quotation->supplier->email];
             // CC second supplier email if it exists
             if(!empty($this->lpo->preffered_quotation->supplier->contact_email_1)){
-                $supplier_cc = array('name'=>$this->lpo->preffered_quotation->supplier->supplier_name,
-                'email'=>$this->lpo->preffered_quotation->supplier->contact_email_1);
+                $supplier_cc[] = ['name'=>$this->lpo->preffered_quotation->supplier->contact_name_1,
+                'email'=>$this->lpo->preffered_quotation->supplier->contact_email_1];
+            }
+            if(!empty($this->lpo->preffered_quotation->supplier->contact_email_2)){
+                $supplier_cc[] = ['name'=>$this->lpo->preffered_quotation->supplier->contact_name_2,
+                'email'=>$this->lpo->preffered_quotation->supplier->contact_email_2];
             }
         }
 
@@ -108,8 +120,8 @@ class NotifyLpoDispatch extends Mailable
         }
 
         $ccs = [];
-        if(!empty($supplier_cc)){
-            $ccs[] = $supplier_cc['email'];
+        foreach($supplier_cc as $sup_cc){
+            $ccs[] = $sup_cc['email'];
         }
         foreach($chai_cc as $chai_cc){
             $ccs[] = $chai_cc['email'];
