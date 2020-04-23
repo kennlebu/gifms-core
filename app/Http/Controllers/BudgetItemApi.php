@@ -96,20 +96,41 @@ class BudgetItemApi extends Controller
      *
      * @return Http response
      */
-    public function updateBudgetItem()
+    public function updateBudgetItem(HttpRequest $httpRequest)
     {
-        $form = Request::all();
+        try{
+            $budget_objective = BudgetObjective::findOrFail($httpRequest->id);
+            $budget_objective->objective_id = $httpRequest->objective_id;
+            $budget_objective->disableLogging();
+            $budget_objective->save();
+    
+            $accounts = $httpRequest->accounts;
+            $new_accounts = [];
+            $old_accounts = BudgetAccount::where('budget_objective_id', $budget_objective->id)->pluck('id')->toArray();
+            foreach($accounts as $account){
+                if(empty($account['id'])) {
+                    $budget_account = new BudgetAccount();
+                }
+                else {
+                    $budget_account = BudgetAccount::find($account['id']);
+                }
+                $budget_account->budget_objective_id = $budget_objective->id;
+                $budget_account->account_id = $account['account_id'];
+                $budget_account->amount = $account['amount'];
+                $budget_account->disableLogging();
+                $budget_account->save();
+                $new_accounts[] = $budget_account->id;
+            }
+            foreach($old_accounts as $old_account){
+                if(!in_array($old_account, $new_accounts)){
+                    BudgetAccount::destroy($old_account);
+                }
+            }
 
-        $budget_item = BudgetItem::find($form['id']);
-        $budget_item->budget_id = (int) $form['budget_id'];
-        if(!empty($form['objective_id']))
-        $budget_item->objective_id = $form['objective_id'];
-        if(!empty($form['account_id']))
-        $budget_item->objective_id = $form['account_id'];
-        $budget_item->amount = (double) $form['amount'];
-
-        if($budget_item->save()) {
-            return Response()->json(array('msg' => 'Success: budget_item updated','budget_item' => $budget_item), 200);
+            return Response()->json(['msg' => 'Success','budget_objective' => $budget_objective], 200);
+        }
+        catch(Exception $e){
+            return Response()->json(['error' => 'Something went wrong','msg' => $e->getMessage()], 500);
         }
     }
     
@@ -144,13 +165,18 @@ class BudgetItemApi extends Controller
      *
      * @return Http response
      */
-    public function deleteBudgetItem($budget_item_id)
+    public function deleteBudgetItem($id)
     {
-        $deleted = BudgetItem::destroy($budget_item_id);
-        if($deleted){
-            return response()->json(['msg'=>"budget_item deleted"], 200,array(),JSON_PRETTY_PRINT);
-        }else{
-            return response()->json(['error'=>"budget_item not found"], 404,array(),JSON_PRETTY_PRINT);
+        try{
+            $budget_objective = BudgetObjective::findOrFail($id);
+            foreach($budget_objective->accounts as $account){
+                BudgetAccount::destroy($account->id);
+            }
+            $budget_objective->delete();
+            return response()->json(['msg'=>"budget objective deleted"], 200);
+        }        
+        catch(Exception $e){
+            return response()->json(['error'=>"Something went wrong"], 500);
         }
     }
     
