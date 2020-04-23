@@ -35,6 +35,7 @@ use App\Exceptions\NoLpoItemsException;
 use App\Exceptions\LpoQuotationAmountMismatchException;
 use App\Exceptions\ApprovalException;
 use App\Models\AllocationModels\Allocation;
+use App\Models\FinanceModels\TaxRate;
 use App\Models\LPOModels\LpoDefaultTerm;
 use App\Models\LPOModels\LpoItem;
 use App\Models\LPOModels\LpoTerm;
@@ -165,6 +166,10 @@ class LPOApi extends Controller
                         $lpo_item->qty = $item->qty;
                         $lpo_item->qty_description = $item->qty_description;
                         $lpo_item->requisition_item_id = $item->id;
+                        
+                        $tax_rate = TaxRate::where('charge', 'VAT')->first();
+                        $lpo_item->vat_rate = $tax_rate->rate ?? 16;
+                        
                         $lpo_item->disableLogging();
                         $lpo_item->save();
                         if($count < 1){
