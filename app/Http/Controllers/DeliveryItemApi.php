@@ -33,7 +33,7 @@ class DeliveryItemApi extends Controller
                 return Response()->json(array('msg' => 'Success: Item added','delivery_item' => $delivery_item), 200);
             }
         }catch (JWTException $e){
-            return response()->json(['error'=>'something went wrong'], 500);
+            return response()->json(['error'=>'Something went wrong'], 500);
         }
     }
 
@@ -48,8 +48,7 @@ class DeliveryItemApi extends Controller
     public function updateDeliveryItem()
     {
         $form = Request::all();
-
-        $delivery_item = DeliveryItem::find($form['delivery_id']);
+        $delivery_item = DeliveryItem::find($form['id']);
         $delivery_item->item = $form['item'];
         $delivery_item->item_description = $form['item_description'];
         $delivery_item->qty = (int) $form['qty'];
@@ -74,9 +73,9 @@ class DeliveryItemApi extends Controller
         $deleted = DeliveryItem::destroy($delivery_item_id);
 
         if($deleted){
-            return response()->json(['msg'=>"item deleted"], 200,array(),JSON_PRETTY_PRINT);
+            return response()->json(['msg'=>"item deleted"], 200);
         }else{
-            return response()->json(['error'=>"item not found"], 404,array(),JSON_PRETTY_PRINT);
+            return response()->json(['error'=>"Something went wrong"], 500);
         }
     }
 
@@ -91,14 +90,12 @@ class DeliveryItemApi extends Controller
      */
     public function getDeliveryItemById($delivery_item_id)
     {
-        $response = [];
-
         try{
             $response = DeliveryItem::with('delivery')->findOrFail($delivery_item_id);
-            return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
-        }catch(Exception $e){
-            $response =  ["error"=>$e->getMessage()];
-            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+            return response()->json($response, 200);
+        }
+        catch(Exception $e){
+            return response()->json(["error"=>$e->getMessage()], 500);
         }
     }
 
@@ -133,6 +130,6 @@ class DeliveryItemApi extends Controller
         }
 
         $response = $qb->get();
-        return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+        return response()->json($response, 200);
     }
 }
