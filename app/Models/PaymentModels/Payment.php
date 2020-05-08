@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\BaseModels\BaseModel;
 use App\Models\BankingModels\BankTransaction;
+use App\Models\FinanceModels\TaxRate;
 
 class Payment extends BaseModel
 {
@@ -82,7 +83,8 @@ class Payment extends BaseModel
             }
             
             if(!empty($this->vat_amount_withheld)){
-                $vat_withhold_amount = (($this->payable->vat_rate ?? 6)/16)*$this->vat_amount_withheld;
+                $tax_rate = TaxRate::where('charge', 'VAT')->first();
+                $vat_withhold_amount = (($this->payable->vat_rate ?? 6)/($tax_rate->rate ?? 16))*$this->vat_amount_withheld;
                 $net_amount -= ceil($vat_withhold_amount);
             }
         }

@@ -109,7 +109,6 @@ class DeliveryApi extends Controller
                         $item->save();
                     }
                 }
-                // $delivery_no = count($requisition->deliveries);
                 $delivery->ref = $requisition->ref.'-GRN-'.$this->pad_with_zeros(2, $delivery->getNextRefNumber());
                 $delivery->save();
 
@@ -337,8 +336,8 @@ class DeliveryApi extends Controller
             $path_info      = pathinfo($path);
             $basename       = $path_info['basename'];
             $file_contents  = FTP::connection()->readFile($path);
-            $file           = File::get($file_contents);
-            $response       = Response::make($file, 200);
+            // $file           = File::get($file_contents);
+            $response       = Response::make($file_contents, 200);
             $response->header('Content-Type', $this->get_mime_type($basename));
             return $response;  
         }catch (Exception $e ){
