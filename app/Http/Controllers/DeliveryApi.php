@@ -103,10 +103,12 @@ class DeliveryApi extends Controller
 
                 if(!empty($lpo->lpo_requisition_items)){
                     foreach($lpo->lpo_requisition_items as $req_item){
-                        $item = RequisitionItem::findOrFail($req_item->id);
-                        $item->status_id = 3;
-                        $item->disableLogging();
-                        $item->save();
+                        if(!empty($req_item->id)){
+                            $item = RequisitionItem::findOrFail($req_item->id);
+                            $item->status_id = 3;
+                            $item->disableLogging();
+                            $item->save();
+                        }
                     }
                 }
                 $delivery->ref = $requisition->ref.'-GRN-'.$this->pad_with_zeros(2, $delivery->getNextRefNumber());
