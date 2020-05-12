@@ -425,6 +425,8 @@ class DeliveryApi extends Controller
                 $qb->where('received_by_id',$this->current_user()->id);
             }elseif ($type_==2) {
                 $qb->where('received_for_id',$this->current_user()->id);
+            }elseif ($type_==-1) {
+                // Pass
             }
         }
 
