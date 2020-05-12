@@ -153,7 +153,7 @@ class InvoiceApi extends Controller
                 $invoice->invoice_date                      =               $invoice_date;              
                 $invoice->lpo_id                            =   (((int) $form['lpo_id'])>0)?$form['lpo_id']:null;
                 $invoice->supplier_id                       =   (int)       $form['supplier_id'];
-                $invoice->payment_mode_id                  =   (int)       $form['payment_mode_id'];
+                $invoice->payment_mode_id                   =   (int)       $form['payment_mode_id'];
                 $invoice->total                             =   (double)    $form['total'];
                 $invoice->currency_id                       =   (int)       $form['currency_id'];
                 $invoice->received_at                       =   date('Y-m-d H:i:s');
@@ -247,12 +247,14 @@ class InvoiceApi extends Controller
 
                             if(!empty($lpo->lpo_requisition_items)){
                                 foreach($lpo->lpo_requisition_items as $req_item){
-                                    $item = RequisitionItem::find($req_item->id);
-                                    if(!empty($item)){
-                                        $item->status_id = 4;
-                                        $item->disableLogging();
-                                        $item->save();
-                                    }                                    
+                                    if(!empty($req_item->id)){
+                                        $item = RequisitionItem::find($req_item->id);
+                                        if(!empty($item)){
+                                            $item->status_id = 4;
+                                            $item->disableLogging();
+                                            $item->save();
+                                        }
+                                    }                                                                        
                                 }
                                 $invoice->approver_id = $lpo->approver_id;
                             }
@@ -467,10 +469,12 @@ class InvoiceApi extends Controller
             $invoice = Invoice::findOrFail($invoice_id);      
             if(!empty($invoice->lpo->requisition_id)){
                 foreach($invoice->lpo->items as $item){
-                    $requisition_item = RequisitionItem::findOrFail($item->requisition_item_id);
-                    $requisition_item->status_id = 2;
-                    $requisition_item->disableLogging();
-                    $requisition_item->save();
+                    $requisition_item = RequisitionItem::find($item->requisition_item_id);
+                    if(!empty($requisition_item)){
+                        $requisition_item->status_id = 2;
+                        $requisition_item->disableLogging();
+                        $requisition_item->save();
+                    }                    
                 }
 
                 // Logging delete
