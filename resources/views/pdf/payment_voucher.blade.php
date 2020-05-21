@@ -136,9 +136,9 @@
                                     - {{$payable->currency->currency_name}} 
                                     @if(!empty($payable->withholding_tax) || !empty($payable->withholding_vat))
                                         @if(!empty($payable->withholding_vat) && !empty($payable->withholding_tax))
-                                            {{number_format(($payable->total-ceil((($payable->vat_rate)/16)*$payable->withholding_vat)-ceil($payable->withholding_tax)),2)}}
+                                            {{number_format(($payable->total-ceil((($payable->vat_rate)/$payable->vat_percentage)*$payable->withholding_vat)-ceil($payable->withholding_tax)),2)}}
                                         @elseif(!empty($payable->withholding_vat))
-                                            {{number_format(($payable->total-ceil((($payable->vat_rate)/16)*$payable->withholding_vat)),2)}}
+                                            {{number_format(($payable->total-ceil((($payable->vat_rate)/$payable->vat_percentage)*$payable->withholding_vat)),2)}}
                                         @elseif(!empty($payable->withholding_tax)) 
                                             {{number_format($payable->total-ceil($payable->withholding_tax))}}
                                         @endif
@@ -151,7 +151,7 @@
                             @if($payable_type=='Invoice')
                                 <br/><strong>KRA:</strong> 
                                 @if(!empty($payable->withholding_tax) || !empty($payable->withholding_vat))
-                                    @if(!empty($payable->withholding_vat)) {{$payable->currency->currency_name}} {{number_format(ceil((($payable->vat_rate)/16)*$payable->withholding_vat))}} (VAT) <br/> @endif
+                                    @if(!empty($payable->withholding_vat)) {{$payable->currency->currency_name}} {{number_format(ceil((($payable->vat_rate)/$payable->vat_percentage)*$payable->withholding_vat))}} (VAT) <br/> @endif
                                     @if(!empty($payable->withholding_tax)) {{$payable->currency->currency_name}} {{number_format($payable->withholding_tax)}} (Income tax) @endif
                                 @else
                                     0

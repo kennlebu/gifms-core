@@ -114,6 +114,10 @@ class MobilePayment extends BaseModel
     {
         return $this->belongsTo('App\Models\LPOModels\Lpo');
     }
+    public function getVatPercentageAttribute($value){
+        if(empty($value)) return 16;
+        return $value;
+    }
 
 
 

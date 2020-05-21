@@ -83,8 +83,7 @@ class Payment extends BaseModel
             }
             
             if(!empty($this->vat_amount_withheld)){
-                $tax_rate = TaxRate::where('charge', 'VAT')->first();
-                $vat_withhold_amount = (($this->payable->vat_rate ?? 6)/($tax_rate->rate ?? 16))*$this->vat_amount_withheld;
+                $vat_withhold_amount = (($this->payable->vat_rate ?? 6)/($this->payable->vat_percentage))*$this->vat_amount_withheld;
                 $net_amount -= ceil($vat_withhold_amount);
             }
         }

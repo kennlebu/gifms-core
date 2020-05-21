@@ -140,6 +140,10 @@ class Invoice extends BaseModel
         if(empty($value)) return 6;
         return $value;
     }
+    public function getVatPercentageAttribute($value){
+        if(empty($value)) return 16;
+        return $value;
+    }
        
     public function requisition()
     {

@@ -118,6 +118,10 @@ class Lpo extends BaseModel
     {
         return $this->belongsTo('App\Models\Requisitions\Requisition','requisition_id');
     }
+    public function getVatPercentageAttribute($value){
+        if(empty($value)) return 16;
+        return $value;
+    }
     public function getPreferredSupplierAttribute()
     {
         $supplier = null;

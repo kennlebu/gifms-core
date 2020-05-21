@@ -42,18 +42,6 @@ class RefractorBudgets extends Command
      */
     public function handle()
     {
-        // $projects = Project::all();
-        // foreach($projects as $project){
-        //     if(!empty($project->budget_id)){
-        //         $budget = Budget::find($project->budget_id);
-        //         if($budget) {
-        //             $budget->project_id = $project->id;
-        //             $budget->disableLogging();
-        //             $budget->save();
-        //         }
-        //     }
-        // }
-
         $budgets = Budget::all();
         foreach($budgets as $budget){
             $budget_objective = new BudgetObjective();

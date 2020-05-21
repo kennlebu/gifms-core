@@ -22,7 +22,8 @@ class Kernel extends ConsoleKernel
         Commands\CopyActivityObjectives::class,
         Commands\GenerateRequisitionDocuments::class,
         Commands\RefractorBudgets::class,
-        Commands\CreateBudgeetExpenditures::class
+        Commands\CreateBudgeetExpenditures::class,
+        Commands\PopuateVatPercentage::class
     ];
 
     /**
