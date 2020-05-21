@@ -34,6 +34,7 @@ use App\Models\PaymentModels\Payment;
 use App\Models\PaymentModels\PaymentBatch;
 use App\Exceptions\NotFullyAllocatedException;
 use App\Exceptions\ApprovalException;
+use App\Models\FinanceModels\TaxRate;
 use App\Models\FinanceModels\WithholdingVatRate;
 use App\Models\PaymentModels\VoucherNumber;
 use Excel;
@@ -137,6 +138,8 @@ class InvoiceApi extends Controller
             }
             else if($form['submission_type']=='log'){
 
+                $tax_rate = TaxRate::where('charge', 'VAT')->first();
+
                 if($invoice->lpo_id){
                     $m_lpo = Lpo::find($invoice->lpo_id);
                     if($m_lpo->requisition && $m_lpo->requisition->status_id != 3){
@@ -145,6 +148,10 @@ class InvoiceApi extends Controller
                     if($m_lpo->approver_id && $m_lpo->approver_id != 0){
                         $invoice->approver_id = $m_lpo->approver_id;
                     }
+                    $invoice->vat_percentage = $m_lpo->vat_percentage;
+                }
+                else {
+                    $invoice->vat_percentage = $tax_rate->rate ?? 16;
                 }
 
                 $invoice->received_by_id                    =   (int)       $form['received_by_id'];
@@ -259,7 +266,6 @@ class InvoiceApi extends Controller
                                 $invoice->approver_id = $lpo->approver_id;
                             }
                             $invoice->requisition_id = $lpo->requisition_id;
-                            // $invoice_no = count($requisition->invoices);
                             $invoice->ref = $requisition->ref.'-INV-'.$this->pad_with_zeros(2, $invoice->getNextRefNumber());
                             $invoice->save();
 

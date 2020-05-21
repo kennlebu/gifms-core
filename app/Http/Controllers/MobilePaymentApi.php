@@ -39,6 +39,7 @@ use App\Exceptions\ApprovalException;
 use App\Models\PaymentModels\VoucherNumber;
 use App\Mail\RequestMPBankSigning;
 use App\Models\AllocationModels\Allocation;
+use App\Models\FinanceModels\TaxRate;
 use App\Models\LPOModels\Lpo;
 use App\Models\Requisitions\Requisition;
 use App\Models\Requisitions\RequisitionItem;
@@ -135,6 +136,9 @@ class MobilePaymentApi extends Controller
             $user = JWTAuth::parseToken()->authenticate();
             $mobile_payment->request_action_by_id            =   (int)   $user->id;
             $mobile_payment->disableLogging();
+
+            $tax_rate = TaxRate::where('charge', 'VAT')->first();
+            $mobile_payment->vat_percentage = $tax_rate->rate ?? 16;
 
             if($mobile_payment->save()) {
 

@@ -148,6 +148,9 @@ class LPOApi extends Controller
             $lpo->disableLogging();
             if($lpo->save()) {
 
+                $tax_rate = TaxRate::where('charge', 'VAT')->first();
+                $lpo->vat_percentage = $tax_rate->rate ?? 16;
+
                 $requisition = null;
                 if(!empty($form['requisition_id']) && (int) $form['requisition_id'] != 0){
                     $lpo->requisition_id = $form['requisition_id'];
@@ -157,6 +160,7 @@ class LPOApi extends Controller
                     $count = 0;
                     $accounts = [];
     
+
                     foreach($form['requisition_items'] as $item){
                         $lpo_item = new LpoItem();
                         $item = RequisitionItem::findOrFail($item);
@@ -165,9 +169,7 @@ class LPOApi extends Controller
                         $lpo_item->no_of_days = $item->no_of_days;
                         $lpo_item->qty = $item->qty;
                         $lpo_item->qty_description = $item->qty_description;
-                        $lpo_item->requisition_item_id = $item->id;
-                        
-                        $tax_rate = TaxRate::where('charge', 'VAT')->first();
+                        $lpo_item->requisition_item_id = $item->id;                        
                         $lpo_item->vat_rate = $tax_rate->rate ?? 16;
                         
                         $lpo_item->disableLogging();
