@@ -16,11 +16,16 @@ class BankProjectBalances extends BaseModel
     }
 
     public function getTotalBalanceAttribute(){
-        return ($this->balance ?? 0) + ($this->accruals ?? 0) + ($this->total_cash_received);
+        return ($this->balance ?? 0) + ($this->total_cash_received);
     }
 
     public function getTotalCashReceivedAttribute(){
         $total = CashReceived::where('bank_balance_id', $this->id)->sum('amount');
         return $total ?? 0;
+    }
+
+    public function getAccrualsAttribute($value){
+        if(empty($value)) return 0;
+        return $value;
     }
 }

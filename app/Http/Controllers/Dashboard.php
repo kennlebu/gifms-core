@@ -58,16 +58,16 @@ class Dashboard extends Controller
         $end_date = new DateTime(date('Y-m-d'));
         $end_date = $end_date->format('Y-m-t')." 23:59:59";
         $start_date = date('Y-m').'-01 00:00:00';
+        
+        $rate = ExchangeRate::whereYear('active_date', date('Y'))->whereMonth('active_date', date('m'))->orderBy('active_date', 'DESC')->first();
+        if(!empty($rate)) $rate = $rate->exchange_rate;
+        else $rate = 101.70;
 
         /* INVOICES */
         // Unpaid invoices
         $unpaid_invoices = Invoice::whereIn('status_id', [1,2,3,4,10,11,12])->get();
         foreach($unpaid_invoices as $invoice){
             if($invoice->currency_id == 1) {
-                $rate = ExchangeRate::whereYear('active_date', date('Y'))->whereMonth('active_date', date('m'))->orderBy('active_date', 'DESC')->first();
-                if(!empty($rate)) $rate = $rate->exchange_rate;
-                else $rate = 101.70;
-
                 $unpaid_total += (float) ($invoice->total / $rate);
             }
             else $unpaid_total += (float) $invoice->total;
@@ -84,10 +84,6 @@ class Dashboard extends Controller
         }
         foreach($paid_invoices as $paid_invoice){
             if($paid_invoice->currency_id == 1) {
-                $rate = ExchangeRate::whereYear('active_date', date('Y'))->whereMonth('active_date', date('m'))->orderBy('active_date', 'DESC')->first();
-                if(!empty($rate)) $rate = $rate->exchange_rate;
-                else $rate = 101.70;
-
                 $paid_total += (float) ($paid_invoice->total / $rate);
             }
             else $paid_total += (float) $paid_invoice->total;
@@ -98,10 +94,6 @@ class Dashboard extends Controller
         $unpaid_claim = Claim::whereIn('status_id', [1,2,3,4,5,10])->get();
         foreach($unpaid_claim as $claim){
             if($claim->currency_id == 1) {
-                $rate = ExchangeRate::whereYear('active_date', date('Y'))->whereMonth('active_date', date('m'))->orderBy('active_date', 'DESC')->first();
-                if(!empty($rate)) $rate = $rate->exchange_rate;
-                else $rate = 101.70;
-
                 $unpaid_total += (float) ($claim->total / $rate);
             }
             else $unpaid_total += (float) $claim->total;
@@ -118,10 +110,6 @@ class Dashboard extends Controller
         }
         foreach($paid_claims as $paid_claim){
             if($paid_claim->currency_id == 1) {
-                $rate = ExchangeRate::whereYear('active_date', date('Y'))->whereMonth('active_date', date('m'))->orderBy('active_date', 'DESC')->first();
-                if(!empty($rate)) $rate = $rate->exchange_rate;
-                else $rate = 101.70;
-
                 $paid_total += (float) ($paid_claim->total / $rate);
             }
             else $paid_total += (float) $paid_claim->total;
@@ -132,10 +120,6 @@ class Dashboard extends Controller
         $unpaid_mp = MobilePayment::whereIn('status_id', [1,2,3,8,9,15,16])->get();
         foreach($unpaid_mp as $mp){
             if($mp->currency_id == 1) {
-                $rate = ExchangeRate::whereYear('active_date', date('Y'))->whereMonth('active_date', date('m'))->orderBy('active_date', 'DESC')->first();
-                if(!empty($rate)) $rate = $rate->exchange_rate;
-                else $rate = 101.70;
-
                 $unpaid_total += (float) ($mp->totals / $rate);
             }
             else $unpaid_total += (float) $mp->totals;
@@ -146,10 +130,6 @@ class Dashboard extends Controller
 
         foreach($paid_mps as $paid_mp){
             if($paid_mp->currency_id == 1) {
-                $rate = ExchangeRate::whereYear('active_date', date('Y'))->whereMonth('active_date', date('m'))->orderBy('active_date', 'DESC')->first();
-                if(!empty($rate)) $rate = $rate->exchange_rate;
-                else $rate = 101.70;
-
                 $paid_total += (float) ($paid_mp->totals / $rate);
             }
             else $paid_total += (float) $paid_mp->totals;
@@ -162,7 +142,7 @@ class Dashboard extends Controller
             return ['type'=>'bank_balance', 'title'=>'Cash available', 'total_balance'=>0, 'beginning_balance'=>0, 'accruals'=>0, 'unpaid'=>$unpaid_total, 'paid'=>$paid_total, 'action'=>'Add bank balance', 'current'=>$current];
         }
         else{
-            $current = $bank_balance->total_balance - $paid_total - $unpaid_total;
+            $current = $bank_balance->total_balance - $paid_total - $unpaid_total - $bank_balance->accruals;
             return ['type'=>'bank_balance', 'id'=>$bank_balance->id, 'title'=>'Cash available', 'total_balance'=>$bank_balance->total_balance, 'beginning_balance'=>$bank_balance->balance, 'accruals'=>$bank_balance->accruals ?? 0, 'unpaid'=>$unpaid_total, 'paid'=>$paid_total, 'current'=>$current, 'cash_received'=>$bank_balance->total_cash_received];
         }
     }
