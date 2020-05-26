@@ -5150,6 +5150,7 @@ Route::GET('/budget_items', 'BudgetItemApi@budgetItemsGet')->middleware('jwt.aut
 Route::GET('/reports/2016', 'ReportsApi@get2016Report')->middleware('jwt.auth');
 Route::POST('/reports/pm-journal', 'ReportsApi@PmJournal')->middleware('jwt.auth');
 Route::POST('/reports/expense-report', 'ReportsApi@expenseReport')->middleware('jwt.auth');
+Route::POST('/reports/transactions', 'ReportsApi@getTransactions')->middleware('jwt.auth');
 
 // USD Rates
 Route::get('exchange-rates', 'ReportsApi@getRates')->middleware('jwt.auth');

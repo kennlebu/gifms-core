@@ -90,5 +90,7 @@ class Advance extends BaseModel
 
 
     }
-//
+    public function getStatusAttribute(){
+        return $this->advance_status;
+    }
 }

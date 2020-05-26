@@ -997,6 +997,8 @@ class InvoiceApi extends Controller
         $qb->select('invoices.*');
 
         $qb->whereNull('invoices.deleted_at');
+        $qb->whereNotNull('invoices.raised_by_id');
+        $qb->where('archived', 1);
 
         $response;
         $response_dt;

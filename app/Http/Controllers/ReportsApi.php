@@ -1207,4 +1207,74 @@ class ReportsApi extends Controller
             return response()->json(['error'=>"Something went wrong", 'msg'=>$e->getMessage()], 500);
         }
     }
+
+    public function getTransactions(HttpRequest $request){
+        try{
+            $start_date = null;
+            $end_date = null;
+            if($request->start_date && $request->end_date){
+                $start_date = $request->start_date;
+                $end_date = $request->end_date;
+            }
+            
+            $transactions = [];
+    
+            // Invoices
+            $invoices = Invoice::with('raised_by','project_manager','status','currency')->whereNotNull('raised_by_id')->where(function($query){
+                $query->whereNull('archived')->orWhere('archived', '!=', 1);
+            });
+            if($start_date || $end_date){
+                $invoices = $invoices->whereBetween('created_at', [$start_date, $end_date]);
+            }
+            if($request->type == 'unpaid'){
+                $invoices = $invoices->whereIn('status_id', [1,2,3,4,10,11,12]);
+            }
+            
+            $transactions[] = ['name'=>'Invoices', 'entries'=>$invoices->get(), 'type'=>'invoices'];
+    
+            // Claims
+            $claims = Claim::with('requested_by','project_manager','status','currency')->where(function($query){
+                $query->whereNull('archived')->orWhere('archived', '!=', 1);
+            });
+            if($start_date || $end_date){
+                $claims = $claims->whereBetween('created_at', [$start_date, $end_date]);
+            }
+            if($request->type == 'unpaid'){
+                $claims = $claims->whereIn('status_id', [1,2,3,4,5,10]);
+            }
+            
+            $transactions[] = ['name'=>'Claims', 'entries'=>$claims->get(), 'type'=>'claims'];
+    
+            // Mobile payments
+            $mps = MobilePayment::with('requested_by','project_manager','status','currency')->where(function($query){
+                $query->whereNull('archived')->orWhere('archived', '!=', 1);
+            });
+            if($start_date || $end_date){
+                $mps = $mps->whereBetween('created_at', [$start_date, $end_date]);
+            }
+            if($request->type == 'unpaid'){
+                $mps = $mps->whereIn('status_id', [1,2,3,8,9,15,16]);
+            }
+            
+            $transactions[] = ['name'=>'Mobile payments', 'entries'=>$mps->get(), 'type'=>'mobile_payments'];
+    
+            // // Advances
+            // $advances = Advance::with('requested_by','project_manager','status','currency')->where(function($query){
+            //     $query->whereNull('archived')->orWhere('archived', '!=', 1);
+            // });
+            // if($start_date || $end_date){
+            //     $advances = $advances->whereBetween('created_at', [$start_date, $end_date]);
+            // }
+            // if($request->type == 'unpaid'){
+            //     $advances = $advances->whereIn('status_id', [1,2,3,4,11,12,13]);
+            // }
+            
+            // $transactions[] = ['name'=>'Advances', 'entries'=>$advances->get(), 'type'=>'advances'];
+
+            return response()->json($transactions, 200);
+        }
+        catch(\Exception $e){
+            return response()->json(['error'=>"Something went wrong", 'msg'=>$e->getMessage()], 500);
+        }        
+    }
 }

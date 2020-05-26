@@ -1275,6 +1275,7 @@ class MobilePaymentApi extends Controller
         $input = Request::all();
         //query builder
         $qb = MobilePayment::query();
+        $qb = $qb->where('archived', 1);
         if(!array_key_exists('lean', $input)){
             $qb = MobilePayment::with(['requested_by','requested_action_by','mobile_payment_type',
                                         'status','project_manager','county','currency','rejected_by',

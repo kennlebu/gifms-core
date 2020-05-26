@@ -1999,3 +1999,28 @@ ALTER TABLE `lpos`
 ADD `vat_percentage` double NULL AFTER `vat_rate`;
 ALTER TABLE `mobile_payments`
 ADD `vat_percentage` double NULL AFTER `lpo_id`;
+
+###===== Add archived status to transactions
+###INSERT INTO `advance_statuses` (`advance_status`, `next_status_id`, `short_name`, `status_security_level`, `order_priority`, `display_color`, `default_status`, `approval_level_id`, `approvable`, `migration_status_security_level`, `migration_id`, `created_at`, `updated_at`, `deleted_at`)
+###VALUES ('Archived', NULL, 'Archived', NULL, NULL, '#ff5555c2', NULL, NULL, NULL, NULL, NULL, 'now()', 'now()', NULL);
+
+###INSERT INTO `claim_statuses` (`claim_status`, `next_status_id`, `short_name`, `status_security_level`, `order_priority`, `display_color`, `default_status`, `approval_level_id`, `approvable`, `migration_status_security_level`, `migration_id`, `created_at`, `updated_at`, `deleted_at`)
+###VALUES ('Archived', NULL, 'Archived', NULL, NULL, '#ff5555c2', NULL, NULL, NULL, NULL, NULL, now(), now(), NULL);
+
+###INSERT INTO `lpo_statuses` (`lpo_status`, `next_status_id`, `short_name`, `status_security_level`, `order_priority`, `display_color`, `default_status`, `approval_level_id`, `approvable`, `migration_status_security_level`, `migration_id`, `created_at`, `updated_at`, `deleted_at`)
+###VALUES ('Archived', NULL, 'Archived', NULL, NULL, '#ff5555c2', NULL, NULL, NULL, NULL, NULL, now(), now(), NULL);
+
+###INSERT INTO `invoice_statuses` (`invoice_status`, `next_status_id`, `short_name`, `status_security_level`, `order_priority`, `display_color`, `default_status`, `default_log_status`, `approval_level_id`, `approvable`, `migration_status_security_level`, `migration_id`, `created_at`, `updated_at`, `deleted_at`)
+###VALUES ('Archived', NULL, 'Archived', NULL, NULL, '#ff5555c2', NULL, NULL, NULL, NULL, NULL, NULL, now(), now(), NULL);
+
+===== Add archived column to transactions
+ALTER TABLE `advances`
+ADD `archived` int(11) NULL AFTER `approver_id`;
+ALTER TABLE `claims`
+ADD `archived` int(11) NULL AFTER `approver_id`;
+ALTER TABLE `invoices`
+ADD `archived` int(11) NULL AFTER `requisition_id`;
+ALTER TABLE `lpos`
+ADD `archived` int(1) NULL AFTER `quotation_ref`;
+ALTER TABLE `mobile_payments`
+ADD `archived` int(1) NULL AFTER `vat_percentage`;

@@ -1095,6 +1095,7 @@ class LPOApi extends Controller
         $input = Request::all();
         //query builder
         $qb = Lpo::query();
+        $qb = $qb->where('archived', 1);
 
         if(!array_key_exists('lean', $input)){
             $qb = Lpo::with('requested_by','request_action_by','project','account','status','project_manager',
