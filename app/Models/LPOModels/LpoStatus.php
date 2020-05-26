@@ -13,7 +13,7 @@ class LpoStatus extends BaseModel
     //
     use SoftDeletes;
 
-    protected $appends = ['lpo_count'];
+    protected $appends = ['lpo_count','status'];
 
 
     public function getLpoCountAttribute()
@@ -30,5 +30,8 @@ class LpoStatus extends BaseModel
     public function approval_level()
     {
         return $this->belongsTo('App\Models\ApprovalsModels\ApprovalLevel','approval_level_id');
+    }
+    public function getStatusAttribute(){
+        return $this->lpo_status;
     }
 }

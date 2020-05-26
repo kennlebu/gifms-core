@@ -5,6 +5,8 @@ namespace App\Models\SuppliesModels;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\BaseModels\BaseModel;
+use App\Models\InvoicesModels\Invoice;
+use App\Models\LPOModels\Lpo;
 
 class Supplier extends BaseModel
 {
@@ -42,5 +44,24 @@ class Supplier extends BaseModel
     public function staff()
     {
         return $this->belongsTo('App\Models\StaffModels\Staff','staff_id');
+    }
+    public function documents()
+    {
+        return $this->hasMany('App\Models\SuppliesModels\SupplierDocument');
+    }
+
+    public function getTransactionsAttribute(){
+        $transacations = [];
+        $lpos = Lpo::with('requested_by','requisitioned_by','project_manager','status','invoices','currency','deliveries')
+                    ->orderBy('id', 'desc')->get()->where('preferred_supplier_id', $this->id)->toArray();
+        $invoices = Invoice::with('raised_by','project_manager','status')->where('supplier_id', $this->id)->orderBy('id', 'desc')->get();
+        $transacations[] = ['type'=>'lpos', 'entries'=>array_values($lpos), 'name'=>'LPOs/LSOs'];
+        $transacations[] = ['type'=>'invoices', 'entries'=>$invoices, 'name'=>'Invoices'];
+        return $transacations;
+    }
+
+    public function getDocumentsAttribute(){
+        $documents = [];
+        return $documents;
     }
 }

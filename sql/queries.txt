@@ -1992,7 +1992,38 @@ CHANGE `is_default` `is_default` smallint NULL DEFAULT '0' AFTER `gender`;
 ALTER TABLE `lpo_items`
 ADD `vat_rate` double NULL AFTER `requisition_item_id`;
 
-===== Add VAT percentage to transaction tables
++~===== Create supplier documents table
+CREATE TABLE `supplier_documents` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `title` text NULL,
+  `supplier_id` int(10) unsigned NULL,
+  `added_by_id` int NULL,
+  `type` varchar(20) NULL,
+  `filename` text NULL,
+  `created_at` timestamp NULL,
+  `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL,
+  FOREIGN KEY (`supplier_id`) REFERENCES `suppliers` (`id`)
+);
+
++~===== Add active column in suppliers table
+ALTER TABLE `suppliers`
+ADD `active` int(1) NULL AFTER `county_id`,
+CHANGE `updated_at` `updated_at` timestamp NOT NULL DEFAULT current_timestamp() AFTER `created_at`;
+
+ALTER TABLE `suppliers`
+CHANGE `migration_staff_id` `migration_staff_id` int NULL AFTER `active`,
+CHANGE `migration_bank_id` `migration_bank_id` int(11) NULL AFTER `migration_staff_id`,
+CHANGE `migration_bank_branch_id` `migration_bank_branch_id` int NULL AFTER `migration_bank_id`,
+CHANGE `migration_bank_branch_code` `migration_bank_branch_code` int(11) NULL AFTER `migration_bank_branch_id`,
+CHANGE `created_at` `created_at` timestamp NULL AFTER `migration_id`,
+CHANGE `updated_at` `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP AFTER `created_at`;
+
+ALTER TABLE `suppliers`
+CHANGE `active` `active` varchar(10) NULL AFTER `county_id`,
+CHANGE `updated_at` `updated_at` timestamp NULL AFTER `created_at`;
+
++~===== Add VAT percentage to transaction tables
 ALTER TABLE `invoices`
 ADD `vat_percentage` int(11) NULL AFTER `vat_rate`;
 ALTER TABLE `lpos`
@@ -2013,7 +2044,7 @@ ADD `vat_percentage` double NULL AFTER `lpo_id`;
 ###INSERT INTO `invoice_statuses` (`invoice_status`, `next_status_id`, `short_name`, `status_security_level`, `order_priority`, `display_color`, `default_status`, `default_log_status`, `approval_level_id`, `approvable`, `migration_status_security_level`, `migration_id`, `created_at`, `updated_at`, `deleted_at`)
 ###VALUES ('Archived', NULL, 'Archived', NULL, NULL, '#ff5555c2', NULL, NULL, NULL, NULL, NULL, NULL, now(), now(), NULL);
 
-===== Add archived column to transactions
++~===== Add archived column to transactions
 ALTER TABLE `advances`
 ADD `archived` int(11) NULL AFTER `approver_id`;
 ALTER TABLE `claims`

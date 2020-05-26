@@ -1497,6 +1497,11 @@ Route::GET('/suppliers/search', 'SupplierApi@suppliersSearch')->middleware('jwt.
 
 Route::POST('/suppliers/excel_upload', 'SupplierApi@uploadExcel')->middleware('jwt.auth');
 Route::get('/suppliers/download', 'SupplierApi@downloadExcel')->middleware('jwt.auth');
+Route::POST('/supplier/changeStatus', 'SupplierApi@changeActiveStatus')->middleware('jwt.auth');
+
+// Supplier documents
+Route::POST('/supplier/add-document', 'SupplierApi@addDocument')->middleware('jwt.auth');
+Route::DELETE('/supplier/document/{id}', 'SupplierApi@deleteDocument')->middleware('jwt.auth');
 
 
 

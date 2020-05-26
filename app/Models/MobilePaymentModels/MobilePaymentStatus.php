@@ -33,5 +33,8 @@ class MobilePaymentStatus extends BaseModel
     {
         return $this->belongsTo('App\Models\ApprovalsModels\ApprovalLevel','approval_level_id');
     }
+    public function getStatusAttribute(){
+        return $this->mobile_payment_status;
+    }
 
 }

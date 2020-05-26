@@ -134,6 +134,18 @@ class Lpo extends BaseModel
         }
         return $supplier;
     }
+    public function getPreferredSupplierIdAttribute()
+    {
+        $supplier_id = null;
+        if($this->lpo_type == 'prenegotiated' || $this->lpo_type == 'lso'){
+            $supplier_id = $this->supplier_id;
+        }
+        else {
+            if($this->preffered_quotation_id)
+            $supplier_id = $this->preffered_quotation->supplier_id;
+        }
+        return $supplier_id;
+    }
 
 
 

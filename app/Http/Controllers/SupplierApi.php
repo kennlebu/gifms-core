@@ -25,8 +25,12 @@ use App\Models\LookupModels\Currency;
 use App\Models\PaymentModels\PaymentMode;
 use App\Models\SuppliesModels\SupplyCategory;
 use App\Models\LookupModels\County;
+use App\Models\SuppliesModels\SupplierDocument;
 use Exception;
 use Excel;
+use Illuminate\Http\Request as HttpRequest;
+use Anchu\Ftp\Facades\Ftp;
+use App\Models\SuppliesModels\SupplierService;
 
 class SupplierApi extends Controller
 {
@@ -40,41 +44,7 @@ class SupplierApi extends Controller
      */
     public function addSupplier()
     {
-        $form = Request::only(
-            'bank_id',
-            'bank_branch_id',
-            'supplier_name',
-            'address',
-            'telephone',
-            'email',
-            'website',
-            'bank_account',
-            'mobile_payment_number',
-            'chaque_address',
-            'payment_mode_id',
-            'bank_code',
-            'swift_code',
-            'usd_account',
-            'alternative_email',
-            'currency_id',
-            'mobile_payment_name',
-            'city_id',
-            'qb',
-            'status_id',
-            'staff_id',
-            'password',
-            'quick_books',
-            'tax_pin',
-            'contact_name_1',
-            'contact_email_1',
-            'contact_phone_1',
-            'contact_name_2',
-            'contact_email_2',
-            'contact_phone_2',
-            'requires_lpo',
-            'supply_category_id',
-            'county_id'
-            );
+        $form = Request::all();
 
         $supplier = new Supplier;
         $supplier->bank_id                 =  (int)  $form['bank_id'];
@@ -89,17 +59,10 @@ class SupplierApi extends Controller
         $supplier->chaque_address          =         $form['chaque_address'];
         $supplier->payment_mode_id         =  (int)  $form['payment_mode_id'];
         $supplier->bank_code               =         $form['bank_code'];
-        $supplier->swift_code              =         $form['swift_code'];
+        // $supplier->swift_code              =         $form['swift_code'];
         $supplier->usd_account             =         $form['usd_account'];
         $supplier->alternative_email       =         $form['alternative_email'];
-        $supplier->currency_id             =  (int)  $form['currency_id'];
         $supplier->mobile_payment_name     =         $form['mobile_payment_name'];
-        $supplier->city_id                 =  (int)  $form['city_id'];
-        $supplier->qb                      =         $form['qb'];
-        $supplier->status_id               =  (int)  $form['status_id'];
-        $supplier->staff_id                =  (int)  $form['staff_id'];
-        $supplier->password                =         $form['password'];
-        $supplier->quick_books             =         $form['quick_books'];
         $supplier->tax_pin                 =         trim($form['tax_pin']);
         $supplier->contact_name_1          =         $form['contact_name_1'];
         $supplier->contact_email_1         =         $form['contact_email_1'];
@@ -112,10 +75,11 @@ class SupplierApi extends Controller
         $supplier->county_id = $form['county_id'];
 
         if(Supplier::where('tax_pin', $supplier->tax_pin)->exists()){
-            return response()->json(["error"=>"Supplier with the same tax pin already exists"], 409,array(),JSON_PRETTY_PRINT);
+            return response()->json(["error"=>"Supplier with the same tax pin already exists"], 409);
         }
 
         if($supplier->save()) {
+            $supplier = Supplier::with('bank','bank_branch','payment_mode','county','supply_category','documents.added_by')->find($supplier->id);
             return Response()->json(array('msg' => 'Success: supplier added','supplier' => $supplier), 200);
         }
     }
@@ -150,42 +114,7 @@ class SupplierApi extends Controller
      */
     public function updateSupplier()
     {
-        $form = Request::only(
-            'id',
-            'bank_id',
-            'bank_branch_id',
-            'supplier_name',
-            'address',
-            'telephone',
-            'email',
-            'website',
-            'bank_account',
-            'mobile_payment_number',
-            'chaque_address',
-            'payment_mode_id',
-            'bank_code',
-            'swift_code',
-            'usd_account',
-            'alternative_email',
-            'currency_id',
-            'mobile_payment_name',
-            'city_id',
-            'qb',
-            'status_id',
-            'staff_id',
-            'password',
-            'quick_books',
-            'tax_pin',
-            'contact_name_1',
-            'contact_email_1',
-            'contact_phone_1',
-            'contact_name_2',
-            'contact_email_2',
-            'contact_phone_2',
-            'requires_lpo',
-            'supply_category_id',
-            'county_id'
-            );
+        $form = Request::all();
 
         $supplier = Supplier::find($form['id']);
         $supplier->bank_id                 =  (int)  $form['bank_id'];
@@ -200,17 +129,10 @@ class SupplierApi extends Controller
         $supplier->chaque_address          =         $form['chaque_address'];
         $supplier->payment_mode_id         =  (int)  $form['payment_mode_id'];
         $supplier->bank_code               =         $form['bank_code'];
-        $supplier->swift_code              =         $form['swift_code'];
+        // $supplier->swift_code              =         $form['swift_code'];
         $supplier->usd_account             =         $form['usd_account'];
         $supplier->alternative_email       =         $form['alternative_email'];
-        $supplier->currency_id             =  (int)  $form['currency_id'];
         $supplier->mobile_payment_name     =         $form['mobile_payment_name'];
-        $supplier->city_id                 =  (int)  $form['city_id'];
-        $supplier->qb                      =         $form['qb'];
-        $supplier->status_id               =  (int)  $form['status_id'];
-        $supplier->staff_id                =  (int)  $form['staff_id'];
-        $supplier->password                =         $form['password'];
-        $supplier->quick_books             =         $form['quick_books'];
         $supplier->tax_pin                 =         trim($form['tax_pin']);
         $supplier->contact_name_1          =         $form['contact_name_1'];
         $supplier->contact_email_1         =         $form['contact_email_1'];
@@ -223,10 +145,11 @@ class SupplierApi extends Controller
         $supplier->county_id = $form['county_id'];
 
         if(!empty($form['tax_pin']) && Supplier::where('tax_pin', $supplier->tax_pin)->where('id', '!=', $form['id'])->exists()){
-            return response()->json(["error"=>"Supplier with the same tax pin already exists"], 409,array(),JSON_PRETTY_PRINT);
+            return response()->json(["error"=>"Supplier with the same tax pin already exists"], 409);
         }
 
         if($supplier->save()) {
+            $supplier = Supplier::with('bank','bank_branch','payment_mode','county','supply_category','documents.added_by')->find($supplier->id);
             return Response()->json(array('msg' => 'Success: supplier updated','supplier' => $supplier), 200);
         }
     }
@@ -264,9 +187,9 @@ class SupplierApi extends Controller
     {
         $deleted = Supplier::destroy($supplier_id);
         if($deleted){
-            return response()->json(['msg'=>"supplier deleted"], 200,array(),JSON_PRETTY_PRINT);
+            return response()->json(['msg'=>"supplier deleted"], 200);
         }else{
-            return response()->json(['error'=>"Something went wrong"], 500,array(),JSON_PRETTY_PRINT);
+            return response()->json(['error'=>"Something went wrong"], 500);
         }
     }
     
@@ -303,11 +226,16 @@ class SupplierApi extends Controller
     public function getSupplierById($supplier_id)
     {
         try{
-            $response   = Supplier::findOrFail($supplier_id);           
-            return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+            $input = Request::all();
+            $response = Supplier::with('bank','bank_branch','payment_mode','county','supply_category','documents.added_by')->findOrFail($supplier_id);  
+            if(array_key_exists('with_transactions', $input)){
+                $response['transactions'] = $response->getTransactionsAttribute();
+            }
+                     
+            return response()->json($response, 200);
         }catch(Exception $e){
-            $response =  ["error"=>"Something went wrong"];
-            return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
+            $response =  ["error"=>"Something went wrong" ,"msg"=>$e->getMessage()];
+            return response()->json($response, 500);
         }
     }
     
@@ -356,8 +284,7 @@ class SupplierApi extends Controller
 
         //searching
         if(array_key_exists('searchval', $input)){
-            $qb->where(function ($query) use ($input) {                
-                $query->orWhere('suppliers.id','like', '\'%' . $input['searchval']. '%\'');
+            $qb->where(function ($query) use ($input) {
                 $query->orWhere('suppliers.supplier_name','like', '\'%' . $input['searchval']. '%\'');
             });
 
@@ -397,7 +324,6 @@ class SupplierApi extends Controller
         if(array_key_exists('datatables', $input)){
             //searching
             $qb->where(function ($query) use ($input) {                
-                $query->orWhere('suppliers.id','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('suppliers.supplier_name','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('suppliers.address','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('suppliers.telephone','like', '\'%' . $input['search']['value']. '%\'');
@@ -462,7 +388,7 @@ class SupplierApi extends Controller
             }
         }
 
-        return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+        return response()->json($response, 200);
     }
 
 
@@ -556,7 +482,7 @@ class SupplierApi extends Controller
         }
 
         $results = $suppliers->get();
-        return response()->json($results, 200,array(),JSON_PRETTY_PRINT);
+        return response()->json($results, 200);
     }
 
 
@@ -667,14 +593,14 @@ class SupplierApi extends Controller
                 catch(\Exception $e){
                     $response =  ["error"=>'An error occurred during processing.',
                                     "msg"=>$e->getMessage()];
-                    return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+                    return response()->json($response, 500);
                 }
             }
 
-            return response()->json(['msg'=>'finished'], 200,array(),JSON_PRETTY_PRINT);
+            return response()->json(['msg'=>'finished'], 200);
         }
         catch(Exception $e){
-            return response()->json(['error'=>"An rerror occured during processing"], 500,array(),JSON_PRETTY_PRINT);
+            return response()->json(['error'=>"An rerror occured during processing"], 500);
         }
     }
 
@@ -808,5 +734,76 @@ class SupplierApi extends Controller
         // catch(\Exception $e){
         //     return response()->json(["error"=>"Something went wrong","msg"=>$e->getMessage(),"trace"=>$e->getTraceAsString()], 500,array(),JSON_PRETTY_PRINT);
         // }
+    }
+
+
+    public function addDocument(HttpRequest $request){
+        try{
+            if(empty($request->document_id)){
+                $document = new SupplierDocument();
+                $document->supplier_id = $request->supplier_id;
+                $document->filename = $this->current_user()->id.time();
+            }
+            else {
+                $document = SupplierDocument::find($request->document_id);
+            }            
+            $document->title = $request->title;            
+            $document->added_by_id = $this->current_user()->id;
+            
+            $file = $request->file;
+            if(!empty($file) && $file != 0){
+                $document->type = $file->getClientOriginalExtension();
+            }
+            $document->save();
+
+            if(!empty($file) && $file != 0){
+                Ftp::connection()->makeDir('/suppliers');
+                Ftp::connection()->makeDir('/suppliers/'.$document->supplier_id);
+                Ftp::connection()->uploadFile($file->getPathname(), '/suppliers/'.$document->supplier_id.'/'.$document->filename.'.'.$document->type);
+            }
+            
+
+            return response(['msg'=>'Success', 'document'=>SupplierDocument::with('added_by')->find($document->id)], 200);
+        }
+        catch(Exception $e){
+            return response(['error'=>'Something went wrong', 'msg'=>$e->getMessage(), 'trace'=>$e->getTraceAsString()], 500);
+        }
+    }
+
+    public function deleteDocument(HttpRequest $request){
+        try{
+            $document = SupplierDocument::findOrFail($request->id);
+            Ftp::connection()->delete('/suppliers/'.$document->supplier_id.'/'.$document->filename.'.'.$document->type);
+            $document->delete();
+            return response()->json(['msg'=>"Document removed"], 200);
+        }
+        catch(Exception $e){
+            return response()->json(['error'=>"Something went wrong", 'msg'=>$e->getMessage()], 500);
+        }
+    }
+
+    public function changeActiveStatus(HttpRequest $request){
+        try{
+            $supplier = Supplier::find($request->supplier_id);
+            if(empty($supplier->active) || $supplier->active == 'active'){
+                $supplier->active = 'disabled';
+            }
+            else {
+                $supplier->active = 'active';
+            }
+            $supplier->disableLogging();
+            $supplier->save();
+
+            // Logging
+            activity()
+                ->performedOn($supplier)
+                ->causedBy($this->current_user())
+                ->log('Changed status to '.$request->active);
+
+            return response()->json(['msg'=>"Success", 'active'=>$supplier->active], 200);
+        }
+        catch (Exception $e){
+            return response()->json(['error'=>"Something went wrong", 'msg'=>$e->getMessage()], 500);
+        }
     }
 }

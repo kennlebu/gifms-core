@@ -11,7 +11,7 @@ use App\Models\BaseModels\BaseModel;
 class InvoiceStatus extends BaseModel
 {
     use SoftDeletes;
-    protected $appends = ['invoices_count'];
+    protected $appends = ['invoices_count','status'];
 
     public function getInvoicesCountAttribute()
     {
@@ -39,5 +39,9 @@ class InvoiceStatus extends BaseModel
         $total = 0;
         $invoices = Invoice::where('status_id',$this->attributes['id'])->where('currency_id',1)->pluck('total')->toArray();
         return array_sum($invoices);
+    }
+
+    public function getStatusAttribute(){
+        return $this->invoice_status;
     }
 }
