@@ -755,7 +755,9 @@ class ClaimApi extends Controller
         $qb = DB::table('claims');
 
         $qb->whereNull('deleted_at');
-        $qb->where('archived', 1);
+        $qb->where(function($query){
+            $query->whereNull('archived')->orWhere('archived', '!=', 1);
+        });
 
         $response;
         $response_dt;

@@ -65,7 +65,9 @@ class Dashboard extends Controller
 
         /* INVOICES */
         // Unpaid invoices
-        $unpaid_invoices = Invoice::whereIn('status_id', [1,2,3,4,10,11,12])->whereNotNull('raised_by_id')->whereNull('archived')->orWhere('archived', '!=', 1)->get();
+        $unpaid_invoices = Invoice::whereIn('status_id', [1,2,3,4,10,11,12])->whereNotNull('raised_by_id')->where(function($query){
+            $query->whereNull('archived')->orWhere('archived', '!=', 1);
+        })->get();
         foreach($unpaid_invoices as $invoice){
             if($invoice->currency_id == 1) {
                 $unpaid_total += (float) ($invoice->total / $rate);
@@ -91,7 +93,9 @@ class Dashboard extends Controller
 
         /* CLAIMS */
         // Unpaid claims
-        $unpaid_claim = Claim::whereIn('status_id', [1,2,3,4,5,10])->whereNull('archived')->orWhere('archived', '!=', 1)->get();
+        $unpaid_claim = Claim::whereIn('status_id', [1,2,3,4,5,10])->where(function($query){
+            $query->whereNull('archived')->orWhere('archived', '!=', 1);
+        })->get();
         foreach($unpaid_claim as $claim){
             if($claim->currency_id == 1) {
                 $unpaid_total += (float) ($claim->total / $rate);
@@ -117,7 +121,9 @@ class Dashboard extends Controller
 
         /* MOBILE PAYMENTS */
         // Unpaid mobile payments
-        $unpaid_mp = MobilePayment::whereIn('status_id', [1,2,3,8,9,15,16])->whereNull('archived')->orWhere('archived', '!=', 1)->get();
+        $unpaid_mp = MobilePayment::whereIn('status_id', [1,2,3,8,9,15,16])->where(function($query){
+            $query->whereNull('archived')->orWhere('archived', '!=', 1);
+        })->get();
         foreach($unpaid_mp as $mp){
             if($mp->currency_id == 1) {
                 $unpaid_total += (float) ($mp->totals / $rate);
