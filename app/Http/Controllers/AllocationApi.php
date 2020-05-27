@@ -62,6 +62,7 @@ class AllocationApi extends Controller
 
             $user = JWTAuth::parseToken()->authenticate();
             $allocation->allocated_by_id            =   (int)   $user->id;
+            $allocation->disableLogging();
 
             if($allocation->save()) {
                 activity()
@@ -126,6 +127,7 @@ class AllocationApi extends Controller
 
             $user = JWTAuth::parseToken()->authenticate();
             $allocation->allocated_by_id            =   (int)   $user->id;
+            $allocation->disableLogging();
 
             if($allocation->save()) {
                 $user = JWTAuth::parseToken()->authenticate();
@@ -175,6 +177,7 @@ class AllocationApi extends Controller
     public function deleteAllocation($allocation_id)
     {
         $allocation = Allocation::findOrFail($allocation_id);
+        $allocation->disableLogging();
         $user = JWTAuth::parseToken()->authenticate();
         activity()
            ->performedOn($allocation->allocatable)
@@ -278,14 +281,21 @@ class AllocationApi extends Controller
             $data = Excel::load($file->getPathname(), function($reader) {
             })->get()->toArray();
 
-            $allocations_array = array();
+            $allocations_array = [];
             foreach ($data as $key => $value) {
                 $allocation = new Allocation();
 
                 if(!empty($value['pid'])){
                     try{
-                    $project = Project::where(DB::raw("TRIM(project_code)", trim($value['pid'])))->firstOrFail();
-                    $account = Account::where(DB::raw("TRIM(account_code)", trim($value['account_code'])))->firstOrFail();
+                        $project = Project::where(DB::raw("TRIM(project_code)", trim($value['pid'])))->first();
+                        $account = Account::where(DB::raw("TRIM(account_code)", trim($value['account_code'])))->first();
+
+                        if(empty($account)){
+                            return response()->json(["error"=>'Account '.trim($value['account_code']).' not found. Please use form to allocate.'], 404);
+                        }
+                        if(empty($project)){
+                            return response()->json(["error"=>'Project '.trim($value['pid']).' not found. Please use form to allocate.'], 404);
+                        }
     
                         $allocation->allocatable_id = $payable_id;
                         $allocation->allocatable_type = $payable_type;
@@ -294,7 +304,7 @@ class AllocationApi extends Controller
                         $allocation->percentage_allocated = (string) $this->getPercentage($value['amount_allocation'], $total);
                         $allocation->allocated_by_id =  (int) $user->id;
                         $allocation->account_id =  $account->id;
-                        array_push($allocations_array, $allocation);
+                        $allocations_array[] = $allocation;
     
                     }
                     catch(\Exception $e){
