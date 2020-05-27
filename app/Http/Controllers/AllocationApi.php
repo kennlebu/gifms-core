@@ -278,8 +278,7 @@ class AllocationApi extends Controller
                 $total = $payable->totals;
             }
 
-            $data = Excel::load($file->getPathname(), function($reader) {
-            })->get()->toArray();
+            $data = Excel::load($file->getPathname())->get()->toArray();
 
             $allocations_array = [];
             foreach ($data as $key => $value) {
@@ -287,8 +286,8 @@ class AllocationApi extends Controller
 
                 if(!empty($value['pid'])){
                     try{
-                        $project = Project::where(DB::raw("TRIM(project_code)", trim($value['pid'])))->first();
-                        $account = Account::where(DB::raw("TRIM(account_code)", trim($value['account_code'])))->first();
+                        $project = Project::whereRaw("TRIM(project_code) = '".trim($value['pid'])."'")->first();
+                        $account = Account::whereRaw("TRIM(account_code) = '".trim($value['account_code'])."'")->first();
 
                         if(empty($account)){
                             return response()->json(["error"=>'Account '.trim($value['account_code']).' not found. Please use form to allocate.'], 404);
