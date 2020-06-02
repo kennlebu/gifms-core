@@ -47,32 +47,31 @@ class SupplierApi extends Controller
         $form = Request::all();
 
         $supplier = new Supplier;
-        $supplier->bank_id                 =  (int)  $form['bank_id'];
-        $supplier->bank_branch_id          =  (int)  $form['bank_branch_id'];
-        $supplier->supplier_name           =         $form['supplier_name'];
-        $supplier->address                 =         $form['address'];
-        $supplier->telephone               =         $form['telephone'];
-        $supplier->email                   =         $form['email'];
-        $supplier->website                 =         $form['website'];
-        $supplier->bank_account            =         $form['bank_account'];
-        $supplier->mobile_payment_number   =         $form['mobile_payment_number'];
-        $supplier->chaque_address          =         $form['chaque_address'];
-        $supplier->payment_mode_id         =  (int)  $form['payment_mode_id'];
-        $supplier->bank_code               =         $form['bank_code'];
-        // $supplier->swift_code              =         $form['swift_code'];
-        $supplier->usd_account             =         $form['usd_account'];
-        $supplier->alternative_email       =         $form['alternative_email'];
-        $supplier->mobile_payment_name     =         $form['mobile_payment_name'];
-        $supplier->tax_pin                 =         trim($form['tax_pin']);
-        $supplier->contact_name_1          =         $form['contact_name_1'];
-        $supplier->contact_email_1         =         $form['contact_email_1'];
-        $supplier->contact_phone_1         =         $form['contact_phone_1'];
-        $supplier->contact_name_2          =         $form['contact_name_2'];
-        $supplier->contact_email_2         =         $form['contact_email_2'];
-        $supplier->contact_phone_2         =         $form['contact_phone_2'];
-        $supplier->requires_lpo            =         $form['requires_lpo'];
-        $supplier->supply_category_id = $form['supply_category_id'];
-        $supplier->county_id = $form['county_id'];
+        $supplier->bank_id                 = $form['bank_id'];
+        $supplier->bank_branch_id          = $form['bank_branch_id'];
+        $supplier->supplier_name           = $form['supplier_name'];
+        $supplier->address                 = $form['address'] ?? null;
+        $supplier->telephone               = $form['telephone'] ?? null;
+        $supplier->email                   = $form['email'] ?? null;
+        $supplier->website                 = $form['website'] ?? null;
+        $supplier->bank_account            = $form['bank_account'] ?? null;
+        $supplier->mobile_payment_number   = $form['mobile_payment_number'] ?? null;
+        $supplier->chaque_address          = $form['chaque_address'] ?? null;
+        $supplier->payment_mode_id         = $form['payment_mode_id'] ?? null;
+        $supplier->bank_code               = $form['bank_code'] ?? null;
+        $supplier->usd_account             = $form['usd_account'] ?? null;
+        $supplier->alternative_email       = $form['alternative_email'] ?? null;
+        $supplier->mobile_payment_name     = $form['mobile_payment_name'] ?? null;
+        $supplier->tax_pin                 = trim($form['tax_pin']);
+        $supplier->contact_name_1          = $form['contact_name_1'] ?? null;
+        $supplier->contact_email_1         = $form['contact_email_1'] ?? null;
+        $supplier->contact_phone_1         = $form['contact_phone_1'] ?? null;
+        $supplier->contact_name_2          = $form['contact_name_2'] ?? null;
+        $supplier->contact_email_2         = $form['contact_email_2'] ?? null;
+        $supplier->contact_phone_2         = $form['contact_phone_2'] ?? null;
+        $supplier->requires_lpo            = $form['requires_lpo'] ?? null;
+        $supplier->supply_category_id      = $form['supply_category_id'] ?? null;
+        $supplier->county_id               = $form['county_id'] ?? null;
 
         if(Supplier::where('tax_pin', $supplier->tax_pin)->exists()){
             return response()->json(["error"=>"Supplier with the same tax pin already exists"], 409);
@@ -270,34 +269,31 @@ class SupplierApi extends Controller
     public function suppliersGet()
     {
         $input = Request::all();
-        //query builder
-        $qb = DB::table('suppliers');
 
-        $qb->whereNull('suppliers.deleted_at');
-        $qb->where('status_id', '!=', '1');
+        $qb = Supplier::query();
+        if(!array_key_exists('lean', $input)){
+            $qb = Supplier::with('bank','bank_branch','payment_mode','county','supply_category');
+        }
 
-        $response;
-        $response_dt;
+        $qb = $qb->where(function($query){
+            $query->whereNull('status_id')->orWhere('status_id', '!=', '1');
+        });
 
-        $total_records          = $qb->count();
-        $records_filtered       = 0;
+        $total_records = $qb->count();
+        $records_filtered = 0;
 
         //searching
         if(array_key_exists('searchval', $input)){
-            $qb->where(function ($query) use ($input) {
-                $query->orWhere('suppliers.supplier_name','like', '\'%' . $input['searchval']. '%\'');
+            $qb = $qb->where(function ($query) use ($input) {
+                $query->orWhere('supplier_name','like', '%' . $input['searchval']. '%');
             });
 
-            $sql = Supplier::bind_presql($qb->toSql(),$qb->getBindings());
-            $sql = str_replace("*"," count(*) AS count ", $sql);
-            $dt = json_decode(json_encode(DB::select($sql)), true);
-
-            $records_filtered = (int) $dt[0]['count'];
+            $records_filtered = (int) $qb->count();
         }
 
         // Supply category
         if(array_key_exists('supply_category_id', $input) && !empty($input['supply_category_id'])){
-            $qb->where('supply_category_id', $input['supply_category_id']);
+            $qb = $qb->where('supply_category_id', $input['supply_category_id']);
         }
 
         //ordering
@@ -308,39 +304,35 @@ class SupplierApi extends Controller
                 $order_direction = $input['order_dir'];
             }
 
-            $qb->orderBy($order_column_name, $order_direction);
+            $qb = $qb->orderBy($order_column_name, $order_direction);
         }
 
         //limit
         if(array_key_exists('limit', $input)){
-            $qb->limit($input['limit']);
+            $qb = $qb->limit($input['limit']);
         }
 
         // Donation recepients
         if(array_key_exists('donation', $input)){
-            $qb->whereIn('supply_category_id', [21]);   // Government organisations
+            $qb = $qb->whereIn('supply_category_id', [21]);   // Government organisations
         }
 
         if(array_key_exists('datatables', $input)){
             //searching
-            $qb->where(function ($query) use ($input) {                
-                $query->orWhere('suppliers.supplier_name','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('suppliers.address','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('suppliers.telephone','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('suppliers.email','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('suppliers.website','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('suppliers.bank_account','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('suppliers.city_id','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('suppliers.contact_name_1','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('suppliers.contact_name_2','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('suppliers.tax_pin','like', '\'%' . $input['search']['value']. '%\'');
+            $qb = $qb->where(function ($query) use ($input) {                
+                $query->orWhere('supplier_name','like', '%' . $input['search']['value']. '%');
+                $query->orWhere('address','like', '%' . $input['search']['value']. '%');
+                $query->orWhere('telephone','like', '%' . $input['search']['value']. '%');
+                $query->orWhere('email','like', '%' . $input['search']['value']. '%');
+                $query->orWhere('website','like', '%' . $input['search']['value']. '%');
+                $query->orWhere('bank_account','like', '%' . $input['search']['value']. '%');
+                $query->orWhere('city_id','like', '%' . $input['search']['value']. '%');
+                $query->orWhere('contact_name_1','like', '%' . $input['search']['value']. '%');
+                $query->orWhere('contact_name_2','like', '%' . $input['search']['value']. '%');
+                $query->orWhere('tax_pin','like', '%' . $input['search']['value']. '%');
             });
 
-            $sql = Supplier::bind_presql($qb->toSql(),$qb->getBindings());
-            $sql = str_replace("*"," count(*) AS count ", $sql);
-            $dt = json_decode(json_encode(DB::select($sql)), true);
-
-            $records_filtered = (int) $dt[0]['count'];
+            $records_filtered = (int) $qb->count();
 
             //ordering
             $order_column_id    = (int) $input['order'][0]['column'];
@@ -348,118 +340,33 @@ class SupplierApi extends Controller
             $order_direction    = $input['order'][0]['dir'];
 
             if($order_column_name!=''){
-                $qb->orderBy($order_column_name, $order_direction);
+                $qb = $qb->orderBy($order_column_name, $order_direction);
             }
             else {
-                $qb->orderBy("supplier_name", "desc");
+                $qb = $qb->orderBy("supplier_name", "desc");
             }
 
             //limit $ offset
             if((int)$input['start']!= 0 ){
-                $response_dt    =   $qb->limit($input['length'])->offset($input['start']);
+                $qb = $qb->limit($input['length'])->offset($input['start']);
             }
             else {
-                $qb->limit($input['length']);
+                $qb = $qb->limit($input['length']);
             }
 
-            $sql = Supplier::bind_presql($qb->toSql(),$qb->getBindings());
-            $response_dt = DB::select($sql);
-
-            $response_dt = json_decode(json_encode($response_dt), true);
-
-            $response_dt    = $this->append_relationships_objects($response_dt);
-            $response_dt    = $this->append_relationships_nulls($response_dt);
-            $response       = Supplier::arr_to_dt_response( 
+            $response_dt = $qb->get();
+            $response = Supplier::arr_to_dt_response( 
                 $response_dt, $input['draw'],
                 $total_records,
                 $records_filtered
                 );
         }
         else {
-
-            $qb->orderBy("supplier_name", "asc");
-            $sql            = Supplier::bind_presql($qb->toSql(),$qb->getBindings());
-            $response       = json_decode(json_encode(DB::select($sql)), true);
-
-            //with_assigned_projects
-            if(array_key_exists('detailed', $input)&& $input['detailed'] = "true"){
-                $response       = $this->append_relationships_objects($response);
-                $response       = $this->append_relationships_nulls($response);
-            }
+            $qb = $qb->orderBy("supplier_name", "asc");
+            $response = $qb->get();;
         }
 
         return response()->json($response, 200);
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    public function append_relationships_objects($data = array()){
-        foreach ($data as $key => $value) {
-            $suppliers = Supplier::find($data[$key]['id']);
-            $data[$key]['bank']                = $suppliers->bank;
-            $data[$key]['bank_branch']         = $suppliers->bank_branch;
-            $data[$key]['payment_mode']        = $suppliers->payment_mode;
-            $data[$key]['currency']            = $suppliers->currency;
-            $data[$key]['city']                = $suppliers->city;
-            $data[$key]['staff']               = $suppliers->staff;
-        }
-
-        return $data;
-    }
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-    public function append_relationships_nulls($data = array()){
-        foreach ($data as $key => $value) {
-            if($data[$key]["bank"]==null){
-                $data[$key]["bank"] = array("bank_name"=>"N/A");
-            }
-            if($data[$key]["bank_branch"]==null){
-                $data[$key]["bank_branch"] = array("branch_name"=>"N/A");
-            }
-            if($data[$key]["payment_mode"]==null){
-                $data[$key]["payment_mode"] = array("payment_mode_description"=>"N/A");
-            }
-            if($data[$key]["currency"]==null){
-                $data[$key]["currency"] = array("currency_name"=>"N/A");
-            }
-            if($data[$key]["city"]==null){
-                $data[$key]["city"] = array("city_name"=>"N/A");
-            }
-            if($data[$key]["staff"]==null){
-                $data[$key]["staff"] = array("full_name"=>"N/A");
-            }
-        }
-
-        return $data;
     }
 
 
@@ -470,7 +377,9 @@ class SupplierApi extends Controller
         $category = $input['category'];
         $location = $input['location'];
 
-        $suppliers = Supplier::with(['county', 'supply_category', 'payment_mode'])->where('status_id', '!=', '1');
+        $suppliers = Supplier::with(['county', 'supply_category', 'payment_mode'])->where(function($query){
+            $query->whereNull('status_id')->orWhere('status_id', '!=', '1');
+        });
         if(!empty($search_term)){
             $suppliers->where('supplier_name', 'like', '%'.$search_term.'%');
         }

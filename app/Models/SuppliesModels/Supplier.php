@@ -12,7 +12,7 @@ class Supplier extends BaseModel
 {
     //
     use SoftDeletes;
-    protected $hidden = ['created_at', 'updated_at', 'deleted_at',
+    protected $hidden = ['created_at', 'updated_at', 'deleted_at', 'quick_books', 'password', 'qb', 'currency',
                         'migration_bank_branch_code', 'migration_bank_branch_id', 'migration_bank_id',
                         'migration_id', 'migration_staff_id'];
 
