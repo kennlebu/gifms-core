@@ -560,14 +560,15 @@ class InvoiceApi extends Controller
                                         'vouchers',
                                         'comments',
                                         'program_activity',
-                                        'requisition'
+                                        'requisition',
+                                        'documents'
                                     )->findOrFail($invoice_id);
 
-            return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+            return response()->json($response, 200);
         }
         catch(Exception $e){
             $response =  ["error"=>"Something went wrong"];
-            return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
+            return response()->json($response, 500);
         }
     }
 

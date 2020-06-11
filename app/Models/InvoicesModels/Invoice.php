@@ -135,6 +135,10 @@ class Invoice extends BaseModel
     {
         return $this->belongsTo('App\Models\ActivityModels\Activity','program_activity_id');
     }
+    public function documents()
+    {
+        return $this->morphMany('App\Models\LookupModels\Document', 'entity');
+    }
     public function getVatRateAttribute($value)   // return the default (6) if it
     {                                             // has not been set.
         if(empty($value)) return 6;

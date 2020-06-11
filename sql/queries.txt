@@ -2055,3 +2055,17 @@ ALTER TABLE `lpos`
 ADD `archived` int(1) NULL AFTER `quotation_ref`;
 ALTER TABLE `mobile_payments`
 ADD `archived` int(1) NULL AFTER `vat_percentage`;
+
++~===== Create documents table
+CREATE TABLE `documents` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `title` text NULL,
+  `type` varchar(10) NULL,
+  `uploaded_by_id` int NULL,
+  `filename` text NULL,
+  `entity_type` text NULL,
+  `entity_id` int NULL,
+  `created_at` timestamp NULL,
+  `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL
+);
