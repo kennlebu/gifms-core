@@ -323,7 +323,7 @@ class AllocationApi extends Controller
             activity()
                 ->performedOn($payable)
                 ->causedBy($user)
-                ->log('uploaded allocations');
+                ->log('Uploaded allocations');
             return Response()->json(array('success' => 'allocations added','payable' => $payable), 200);
 
         }

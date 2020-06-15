@@ -1125,7 +1125,7 @@ class ClaimApi extends Controller
             activity()
                 ->performedOn($payable)
                 ->causedBy($user)
-                ->withProperties(['detail' => 'Asset allocations uploaded using CSV/Excel'])
+                ->withProperties(['detail' => 'Claim allocations uploaded using CSV/Excel'])
                 ->log('Uploaded allocations');
             return Response()->json(array('success' => 'allocations added','payable' => $payable), 200);
 

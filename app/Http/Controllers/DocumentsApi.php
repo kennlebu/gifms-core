@@ -29,7 +29,9 @@ class DocumentsApi extends Controller
         $document->type = $file->getClientOriginalExtension();
         $document->save();
 
-        FTP::connection()->makeDir($path);
+        FTP::connection()->makeDir('/documents');
+        FTP::connection()->makeDir('/documents/'.$request->entity_type);
+        FTP::connection()->makeDir('/documents/'.$request->entity_type.'/'.$request->entity_id);
         FTP::connection()->uploadFile($file->getPathname(), $path.$filename.'.'.$file->getClientOriginalExtension());
 
         // Logging
