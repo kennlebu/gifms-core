@@ -157,7 +157,7 @@ class Lpo extends BaseModel
         foreach ($items as $key => $value) {
             $total += $value->calculated_total;
         }
-        return number_format((float)$total, 2, '.', '');
+        return (float) number_format((float)$total, 2, '.', '');
     }
 
 
