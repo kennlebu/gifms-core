@@ -80,9 +80,9 @@ class RequisitionApi extends Controller
 
         if(array_key_exists('searchval', $input)){
             $requisitions = $requisitions->where(function ($query) use ($input) {                
-                $query->orWhere('id','like', '\'%' . $input['searchval']. '%\'');
-                $query->orWhere('ref','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('purpose','like', '\'%' . $input['searchval']. '%\'');
+                $query->where('id','like', '%' . $input['searchval']. '%');
+                $query->orWhere('ref','like', '%' . $input['search']['value']. '%');
+                $query->orWhere('purpose','like', '%' . $input['searchval']. '%');
             });
             
             $records_filtered = $requisitions->count();
@@ -105,11 +105,37 @@ class RequisitionApi extends Controller
 
         if(array_key_exists('datatables', $input)){
             //searching
-            // $requisitions = $requisitions->where(function ($query) use ($input) {                
-            //     $query->orWhere('id','like', '\'%' . $input['search']['value']. '%\'');
-            //     $query->orWhere('ref','like', '\'%' . $input['search']['value']. '%\'');
-            //     $query->orWhere('purpose','like', '\'%' . $input['search']['value']. '%\'');
-            // });
+            if(!empty($input['search']['value'])){
+                $requisitions = $requisitions->where(function ($query) use ($input) {                
+                    $query->where('id','like', '%' . $input['search']['value']. '%');
+                    $query->orWhere('ref','like', '%' . $input['search']['value']. '%');
+                    $query->orWhere('purpose','like', '%' . $input['search']['value']. '%');
+                    $query->orWhereHas('requested_by', function ($query) use ($input) {
+                        $query->where('f_name','like','%' .$input['search']['value']. '%');
+                        $query->orWhere('l_name','like','%' .$input['search']['value']. '%');
+                    });
+                });
+            }
+
+            foreach($input['columns'] as $column){
+                if(!empty($column['search']['value'])){
+
+                    if($column['name'] == 'requested_by'){
+                        $requisitions = $requisitions->where(function ($query) use ($column) {                
+                            $query->whereHas('requested_by', function ($query) use ($column) {
+                                $query->where('f_name','like','%' .$column['search']['value']. '%');
+                                $query->orWhere('l_name','like','%' .$column['search']['value']. '%');
+                            });
+                        });
+                    }
+                    else {
+                        $requisitions = $requisitions->where(function ($query) use ($column) {                
+                            $query->where($column['name'],'like', '%' . $column['search']['value']. '%');
+                        });
+                    }
+                    
+                }
+            }
 
             $records_filtered = $requisitions->count();
 
