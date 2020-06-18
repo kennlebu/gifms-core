@@ -57,15 +57,13 @@ class PaymentBatchApi extends Controller
      */
     public function addPaymentBatch()
     {
-        $form = Request::only(
-            'payments'
-            );
+        $form = Request::only('payments');
 
         try{
             $payment_batch = new PaymentBatch;
             $user = JWTAuth::parseToken()->authenticate();
-            $payment_batch->processed_by_id              =   (int)   $user->id;
-            $payment_batch->status_id             =   (int)  1;
+            $payment_batch->processed_by_id = $user->id;
+            $payment_batch->status_id = 1;
 
             if($payment_batch->save()) {
                 $payment_batch->disableLogging();
@@ -73,11 +71,13 @@ class PaymentBatchApi extends Controller
                 $payment_batch->save();
 
                 foreach ($form['payments'] as $key => $value) {
-                    $payment                    = Payment::find($value);                    
-                    $payment->status_id         = $payment->status->next_status_id;
+                    $payment                    = Payment::find($value);    
+                    if($payment->status_id != 1){  
+                        return Response()->json(['error' => 'Payments not in batchable status'], 403);
+                    }              
+                    $payment->status_id         = 2;
                     $payment->payment_batch_id  = $payment_batch->id;
                     $payment->disableLogging();
-                    $payment->save();
 
                     $payment->ref = "CHAI/PYMT/#$payment->id/".date_format($payment->created_at,"Y/m/d");
                     $v = DB::select('call generate_voucher_no(?,?)',array($payment->id, $payment->payable_type));
@@ -86,7 +86,7 @@ class PaymentBatchApi extends Controller
                     // Now update the invoices, claims and advances
                     if($payment->payable_type == 'invoices'){
                         $invoice                = Invoice::find($payment->payable_id);
-                        $invoice->status_id     = $invoice->status->next_status_id;
+                        $invoice->status_id     = 5;
                         $invoice->disableLogging();
                         $invoice->save();
                         activity()
@@ -96,7 +96,7 @@ class PaymentBatchApi extends Controller
                     }
                     elseif($payment->payable_type == 'advances'){
                         $advance                = Advance::find($payment->payable_id);
-                        $advance->status_id     = $advance->status->next_status_id;
+                        $advance->status_id     = 5;
                         $advance->disableLogging();
                         $advance->save();
                         activity()
@@ -106,7 +106,7 @@ class PaymentBatchApi extends Controller
                     }
                     elseif($payment->payable_type == 'claims'){
                         $claim                = Claim::find($payment->payable_id);
-                        $claim->status_id     = $claim->status->next_status_id;
+                        $claim->status_id     = 6;
                         $claim->disableLogging();
                         $claim->save();
                         activity()
@@ -406,7 +406,7 @@ class PaymentBatchApi extends Controller
 
 
 
-/**
+    /**
      * Operation uploadBankFile
      * upload the bank file
      * @return Http response

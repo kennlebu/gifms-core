@@ -526,14 +526,14 @@ class PaymentApi extends Controller
                         $amount = !empty($payment->usd_rate) ? $amount * $payment->usd_rate : $amount;
                     }
                 }
-                $line = array(
+                $line = [
                         'vendor'=>$payment->paid_to_name,
                         'tax_pin'=>$payment->payable->supplier->tax_pin,
                         'invoice_no'=>$payment->payable->external_ref,
                         'invoice_date'=>date("Y-m-d", strtotime($payment->payable->invoice_date)),
                         'taxable_amount'=>$taxable_amount,
                         'amount'=>ceil($amount)
-                    );
+                    ];
 
                 $response_array[] = $line;
             }

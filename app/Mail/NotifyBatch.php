@@ -14,7 +14,6 @@ class NotifyBatch extends Mailable
 {
     use Queueable, SerializesModels;
 
-    protected $accountant;
     protected $batch_id;
     /**
      * Create a new message instance.
@@ -39,7 +38,6 @@ class NotifyBatch extends Mailable
         $this->view('emails/notify_batch')         
             ->replyTo([
                     'email' => Config::get('mail.reply_to')['address'],
-
                 ]);
 
         $to = Staff::whereHas('roles', function($query){
@@ -48,11 +46,10 @@ class NotifyBatch extends Mailable
         return $this->to($to)
                 ->with([
                         'payments' => $payments,
-                        // 'addressed_to' => $this->accountant,
                         'batch' => $payment_batch,
                         'js_url' => Config::get('app.js_url'),
                     ])
                 
-                ->subject("Payments Confirmed and Processed  ".$payment_batch->ref);
+                ->subject("[GIFMS] Payments Confirmed and Processed  ".$payment_batch->ref);
     }
 }
