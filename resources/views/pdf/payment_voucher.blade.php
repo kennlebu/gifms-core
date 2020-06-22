@@ -132,7 +132,7 @@
                         <td style="border: 1px solid #000000; border-top: 0px solid #c0c0c0;" colspan="7">
                             <span>
                                 <strong>{{$vendor}} </strong>
-                                @if($payable_type=='Invoice') - {{$payment->currency->currency_name}}
+                                @if($payable_type=='Invoice') - {{$payable->currency->currency_name ?? ''}}
                                     @if(!empty($payable->withholding_tax) || !empty($payable->withholding_vat))
                                         @if(!empty($payable->withholding_vat) && !empty($payable->withholding_tax))
                                             {{number_format(($payable->total-ceil((($payable->vat_rate)/$payable->vat_percentage)*$payable->withholding_vat)-ceil($payable->withholding_tax)),2)}}
