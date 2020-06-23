@@ -279,8 +279,6 @@ class AdvanceApi extends Controller
         try{
             $response   = Advance::with(
                                     'requested_by',
-                                    'request_action_by',
-                                    'project',
                                     'status',
                                     'project_manager',
                                     'payment_mode',
@@ -335,18 +333,7 @@ class AdvanceApi extends Controller
     public function approveAdvance($advance_id, $several=null)
     {
         try{
-            $advance   = Advance::with(
-                                    'requested_by',
-                                    'request_action_by',
-                                    'project',
-                                    'status',
-                                    'project_manager',
-                                    'payment_mode',
-                                    'currency',
-                                    'rejected_by',
-                                    'approvals',
-                                    'allocations'
-                                )->findOrFail($advance_id);
+            $advance = Advance::findOrFail($advance_id);
            
             if (!$this->current_user()->can("APPROVE_ADVANCE_".$advance->status_id)){
                 throw new ApprovalException("No approval permission");             
@@ -356,21 +343,7 @@ class AdvanceApi extends Controller
             $advance->disableLogging();
 
             if($advance->save()) {
-                $advance   = Advance::with(
-                                    'requested_by',
-                                    'request_action_by',
-                                    'project',
-                                    'status',
-                                    'project_manager',
-                                    'payment_mode',
-                                    'currency',
-                                    'rejected_by',
-                                    'approvals',
-                                    'allocations'
-                                )->findOrFail($advance_id);
-
                 $approval = new Approval;
-
                 $approval->approvable_id            =   (int)   $advance->id;
                 $approval->approvable_type          =   "advances";
                 $approval->approval_level_id        =   $approvable_status->approval_level_id;
@@ -380,7 +353,7 @@ class AdvanceApi extends Controller
 
                 if($approval->approval_level_id ==4){
 
-                    $payable    =   array(
+                    $payable    =   [
                         'payable_type'                  =>  'advances', 
                         'payable_id'                    =>  $advance->id, 
                         'debit_bank_account_id'         =>  $advance->currency_id, 
@@ -395,7 +368,7 @@ class AdvanceApi extends Controller
                         'amount'                        =>  $advance->total, 
                         'payment_batch_id'              =>  "", 
                         'bank_charges'                  =>  ""
-                    );
+                    ];
 
                     $this->generate_payable_payment($payable);
 
@@ -410,15 +383,13 @@ class AdvanceApi extends Controller
                 return Response()->json(array('msg' => 'Success: advance approved','advance' => $advance), 200);
             }
 
-
         }catch(ApprovalException $ae){
 
             $response =  ["error"=>"You do not have the permissions to perform this action at this point"];
-            return response()->json($response, 403,array(),JSON_PRETTY_PRINT);
+            return response()->json($response, 403);
         }catch(Exception $e){
-
-            $response =  ["error"=>"Advance could not be found"];
-            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+            $response =  ["error"=>"Something went wrong"];
+            return response()->json($response, 500);
         }
     }
 
@@ -448,26 +419,12 @@ class AdvanceApi extends Controller
      */
     public function rejectAdvance($advance_id)
     {
-        $form = Request::only(
-            'rejection_reason'
-            );
+        $form = Request::only('rejection_reason');
 
-        $user = JWTAuth::parseToken()->authenticate();
+        $user = $this->current_user();
 
         try{
-
-            $advance   = Advance::with(
-                                    'requested_by',
-                                    'request_action_by',
-                                    'project',
-                                    'status',
-                                    'project_manager',
-                                    'payment_mode',
-                                    'currency',
-                                    'rejected_by',
-                                    'approvals',
-                                    'allocations'
-                                )->findOrFail($advance_id);
+            $advance = Advance::findOrFail($advance_id);
            
             if (!$user->can("APPROVE_ADVANCE_".$advance->status_id)){
                 throw new ApprovalException("No approval permission");             
@@ -485,15 +442,12 @@ class AdvanceApi extends Controller
                 return Response()->json(array('msg' => 'Success: advance approved','advance' => $advance), 200);
             }
 
-
         }catch(ApprovalException $ae){
-
             $response =  ["error"=>"You do not have the permissions to perform this action at this point"];
-            return response()->json($response, 403,array(),JSON_PRETTY_PRINT);
+            return response()->json($response, 403);
         }catch(Exception $e){
-
             $response =  ["error"=>"Advance could not be found"];
-            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+            return response()->json($response, 500);
         }
     }
 
@@ -525,7 +479,7 @@ class AdvanceApi extends Controller
             if(!empty($payment->voucher_number)){
                 $voucher = VoucherNumber::where('payable_id', $payment->id)->first();
                 $voucher_no = $voucher->voucher_number;
-            } /*$voucher_no = $payment->voucher_number->voucher_number;*/
+            }
             else {
                 if(empty($advance->migration_id)) $voucher_no = '-';
                 else $voucher_no = 'CHAI'.$this->pad_with_zeros(5, $advance->migration_id);
@@ -538,14 +492,14 @@ class AdvanceApi extends Controller
 
             $vendor = $advance->requested_by->full_name;
             $unique_approvals = $this->unique_multidim_array($advance->approvals, 'approval_level_id');
-            $data = array(
+            $data = [
                     'payable'   => $advance,
                     'voucher_date' => $voucher_date,
                     'vendor'=>$vendor,
                     'voucher_no'=>$voucher_no,
                     'payable_type'=>'Advance',
                     'unique_approvals' => $unique_approvals
-                    );
+                ];
 
             $pdf            = PDF::loadView('pdf/payment_voucher', $data);
             $file_contents  = $pdf->stream();
@@ -590,18 +544,7 @@ class AdvanceApi extends Controller
     public function submitAdvanceForApproval($advance_id)
     {
         try{
-            $advance   = Advance::with(
-                                    'requested_by',
-                                    'request_action_by',
-                                    'project',
-                                    'status',
-                                    'project_manager',
-                                    'payment_mode',
-                                    'currency',
-                                    'rejected_by',
-                                    'approvals',
-                                    'allocations'
-                                )->findOrFail($advance_id);
+            $advance = Advance::findOrFail($advance_id);
            
             $advance->status_id = $advance->status->next_status_id;
             if($advance->status_id  != 11){ // Only set request time if its not after corrections
@@ -614,8 +557,8 @@ class AdvanceApi extends Controller
             }
         }
         catch(Exception $e){
-            $response =  ["error"=>"Advance could not be found"];
-            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+            $response =  ["error"=>"Something went wrong"];
+            return response()->json($response, 500);
         }
     }
 
@@ -652,10 +595,10 @@ class AdvanceApi extends Controller
                 $this->approveAdvance($advance_id, true);
             }
 
-            return response()->json(['advances'=>$form['advances']], 201,array(),JSON_PRETTY_PRINT);
+            return response()->json(['advances'=>$form['advances']], 201);
             
         } catch (Exception $e) {
-             return response()->json(['error'=>"An rerror occured during processing"], 500,array(),JSON_PRETTY_PRINT);
+            return response()->json(['error'=>"An rerror occured during processing"], 500);
             
         }
     }
@@ -691,43 +634,34 @@ class AdvanceApi extends Controller
     {
         $input = Request::all();
         //query builder
-        $qb = DB::table('advances');
+        $qb = Advance::query();
+        if(!array_key_exists('lean', $input)){
+            $qb = Advance::with('requested_by','status','project_manager','currency');
+        }
 
-        $qb->whereNull('deleted_at');
-        $qb->where(function($query){
+        $qb = $qb->where(function($query){
             $query->whereNull('archived')->orWhere('archived', '!=', 1);
         });
-
-        $response;
-        $response_dt;
 
         $total_records          = $qb->count();
         $records_filtered       = 0;
 
-        //if status is set
-
         if(array_key_exists('status', $input)){
-
             $status_ = (int) $input['status'];
-
             if($status_ >-1){
-                $qb->where('status_id', $input['status']);
-                $qb->where('requested_by_id',$this->current_user()->id);
+                $qb = $qb->where('status_id', $input['status'])->where('requested_by_id',$this->current_user()->id);
             }elseif ($status_==-1) {
-                $qb->where('requested_by_id',$this->current_user()->id);
-            }elseif ($status_==-2) {
-                
+                $qb = $qb->where('requested_by_id',$this->current_user()->id);
             }elseif ($status_==-3) {
-                $qb->where('project_manager_id',$this->current_user()->id);
+                $qb = $qb->where('project_manager_id',$this->current_user()->id);
             }
         }
 
 
         
-        $app_stat = $this->approvable_statuses ;
-        //if approvable is set
+        $app_stat = $this->approvable_statuses;
         if(array_key_exists('approvable', $input)){
-            $qb->where(function ($query) use ($app_stat) {
+            $qb = $qb->where(function ($query) use ($app_stat) {
                 foreach ($app_stat as $key => $value) {
                     $query->orWhere('status_id',$value['id']);
                 }
@@ -735,7 +669,7 @@ class AdvanceApi extends Controller
         }
 
         if(array_key_exists('my_approvables', $input)){
-            $current_user =  JWTAuth::parseToken()->authenticate();
+            $current_user =  $this->current_user();
             if($current_user->hasRole([
                 'super-admin',
                 'admin',
@@ -746,7 +680,7 @@ class AdvanceApi extends Controller
                 'accountant', 
                 'assistant-accountant']
             )){                   
-                $qb->where(function ($query) use ($app_stat,$current_user) {
+                $qb = $qb->where(function ($query) use ($app_stat,$current_user) {
                     foreach ($app_stat as $key => $value) {
                         $permission = 'APPROVE_ADVANCE_'.$value['id'];
                         if($current_user->can($permission)&&$value['id']==2){
@@ -762,25 +696,23 @@ class AdvanceApi extends Controller
 
                 });
             }
-            else{
-                $qb->where('id',0);
-            }
         }
 
         //searching
         if(array_key_exists('searchval', $input)){
-            $qb->where(function ($query) use ($input) {                
-                $query->orWhere('id','like', '\'%' . $input['searchval']. '%\'');
-                $query->orWhere('ref','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('expense_desc','like', '\'%' . $input['searchval']. '%\'');
-                $query->orWhere('expense_purpose','like', '\'%' . $input['searchval']. '%\'');
-            });
+            if(!empty($input['search']['value'])){
+                $qb = $qb->where(function ($query) use ($input) {
+                    $query->orWhere('ref','like', '%' . $input['search']['value']. '%');
+                    $query->orWhere('expense_desc','like', '%' . $input['searchval']. '%');
+                    $query->orWhere('expense_purpose','like', '%' . $input['searchval']. '%');
+                    $query->orWhereHas('requested_by', function ($query) use ($input) {
+                        $query->where('f_name','like','%' .$input['searchval']. '%');
+                        $query->orWhere('l_name','like','%' .$input['searchval']. '%');
+                    });
+                });
+            }
 
-            $sql = Advance::bind_presql($qb->toSql(),$qb->getBindings());
-            $sql = str_replace("*"," count(*) AS count ", $sql);
-            $dt = json_decode(json_encode(DB::select($sql)), true);
-
-            $records_filtered = (int) $dt[0]['count'];
+            $records_filtered = $qb->count();
         }
 
         //ordering
@@ -791,28 +723,48 @@ class AdvanceApi extends Controller
                 $order_direction = $input['order_dir'];
             }
 
-            $qb->orderBy($order_column_name, $order_direction);
+            $qb = $qb->orderBy($order_column_name, $order_direction);
         }
 
         //limit
         if(array_key_exists('limit', $input)){
-            $qb->limit($input['limit']);
+            $qb = $qb->limit($input['limit']);
         }
 
         if(array_key_exists('datatables', $input)){
             //searching
-            $qb->where(function ($query) use ($input) {                
-                $query->orWhere('id','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('ref','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('expense_desc','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('expense_purpose','like', '\'%' . $input['search']['value']. '%\'');
+            $qb = $qb->where(function ($query) use ($input) {                
+                $query->orWhere('ref','like', '%' . $input['search']['value']. '%');
+                $query->orWhere('expense_desc','like', '%' . $input['search']['value']. '%');
+                $query->orWhere('expense_purpose','like', '%' . $input['search']['value']. '%');
+                $query->orWhereHas('requested_by', function ($query) use ($input) {
+                    $query->where('f_name','like','%' .$input['search']['value']. '%');
+                    $query->orWhere('l_name','like','%' .$input['search']['value']. '%');
+                });
             });
 
-            $sql = Advance::bind_presql($qb->toSql(),$qb->getBindings());
-            $sql = str_replace("*"," count(*) AS count ", $sql);
-            $dt = json_decode(json_encode(DB::select($sql)), true);
+            foreach($input['columns'] as $column){
+                if(!empty($column['search']['value']) && !empty($column['name'])){
 
-            $records_filtered = (int) $dt[0]['count'];
+                    if($column['name'] == 'requested_by' || $column['name'] == 'project_manager'){
+                        $qb = $qb->where(function ($query) use ($column) {                
+                            $query->whereHas($column['name'], function ($query) use ($column) {
+                                $query->where('f_name','like','%' .$column['search']['value']. '%');
+                                $query->orWhere('l_name','like','%' .$column['search']['value']. '%');
+                            });
+                        });
+                    }
+                    else {
+                        $qb = $qb->where(function ($query) use ($column) {      
+                            $like = (!empty($column['filter']) && $column['filter'] == 'absolute') ? '' : '%';        
+                            $query->where($column['name'],'like', $like . $column['search']['value']. $like);
+                        });
+                    }
+                    
+                }
+            }
+
+            $records_filtered = $qb->count();
 
             //ordering
             $order_column_id    = (int) $input['order'][0]['column'];
@@ -820,39 +772,27 @@ class AdvanceApi extends Controller
             $order_direction    = $input['order'][0]['dir'];
 
             if($order_column_name!=''){
-                $qb->orderBy($order_column_name, $order_direction);
+                $qb = $qb->orderBy($order_column_name, $order_direction);
             }
 
             //limit offset
             if((int)$input['start']!= 0 ){
-                $response_dt    =   $qb->limit($input['length'])->offset($input['start']);
+                $qb = $qb->limit($input['length'])->offset($input['start']);
             }
             else{
-                $qb->limit($input['length']);
+                $qb = $qb->limit($input['length']);
             }
-
-            $sql = Advance::bind_presql($qb->toSql(),$qb->getBindings());
-
-            $response_dt = DB::select($sql);
-            $response_dt = json_decode(json_encode($response_dt), true);
-            $response_dt    = $this->append_relationships_objects($response_dt);
-            $response_dt    = $this->append_relationships_nulls($response_dt);
-            $response       = Advance::arr_to_dt_response( 
-                $response_dt, $input['draw'],
+            $response = Advance::arr_to_dt_response( 
+                $qb->get(), $input['draw'],
                 $total_records,
                 $records_filtered
                 );
         }
         else{
-            $sql            = Advance::bind_presql($qb->toSql(),$qb->getBindings());
-            $response       = json_decode(json_encode(DB::select($sql)), true);
-            if(!array_key_exists('lean', $input)){
-                $response       = $this->append_relationships_objects($response);
-                $response       = $this->append_relationships_nulls($response);
-            }
+            $response = $qb->get();
         }
 
-        return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+        return response()->json($response, 200);
     }
 
 
@@ -899,130 +839,10 @@ class AdvanceApi extends Controller
             return $response;  
         }
         catch (Exception $e ){
-            $response       = Response::make("", 200);
+            $response = Response::make("", 500);
             $response->header('Content-Type', 'application/pdf');
 
             return $response;
         }
     }
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-    public function append_relationships_objects($data = array()){
-
-        foreach ($data as $key => $value) {
-
-            $advance = Advance::find($data[$key]['id']);
-
-            $data[$key]['requested_by']                 = $advance->requested_by;
-            $data[$key]['request_action_by']            = $advance->requested_action_by;
-            $data[$key]['project']                      = $advance->project;
-            $data[$key]['status']                       = $advance->status;
-            $data[$key]['project_manager']              = $advance->project_manager;
-            $data[$key]['currency']                     = $advance->currency;
-            $data[$key]['rejected_by']                  = $advance->rejected_by;
-            $data[$key]['approvals']                    = $advance->approvals;
-            $data[$key]['allocations']                  = $advance->allocations;
-            
-
-            foreach ($advance->allocations as $key1 => $value1) {
-                $project = Project::find((int)$value1['project_id']);
-                $account = Account::find((int)$value1['account_id']);
-                $data[$key]['allocations'][$key1]['project']  =   $project;
-                $data[$key]['allocations'][$key1]['account']  =   $account;
-            }
-
-        }
-
-        return $data;
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-    public function append_relationships_nulls($data = array()){
-
-
-        foreach ($data as $key => $value) {
-
-
-            if($value["requested_by"]==null){
-                $data[$key]['requested_by'] = array("full_name"=>"N/A");
-                
-            }
-            if($value["request_action_by"]==null){
-                $data[$key]['request_action_by'] = array("full_name"=>"N/A");
-                
-            }
-            if($value["project"]==null){
-                $data[$key]['project'] = array("project_name"=>"N/A");
-                
-            }
-            if($value["status"]==null){
-                $data[$key]['status'] = array("advance_status"=>"N/A");
-                
-            }
-            if($value["project_manager"]==null){
-                $data[$key]['project_manager'] = array("full_name"=>"N/A");
-                
-            }
-            if($value["rejected_by"]==null){
-                $data[$key]['rejected_by'] = array("full_name"=>"N/A");
-                
-            }
-            if($data[$key]["currency"]==null){
-                $data[$key]["currency"] = array("currency_name"=>"N/A");
-            }
-        }
-
-        return $data;
-
-
-    }
-
-
-
-
-
-
-
-
-
-
 }

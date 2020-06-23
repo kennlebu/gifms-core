@@ -565,7 +565,7 @@ class ClaimApi extends Controller
 
             $vendor = $claim->requested_by->full_name;
             $unique_approvals = $this->unique_multidim_array($claim->approvals, 'approval_level_id');
-            $data = array(
+            $data = [
                     'payable'   => $claim,
                     'voucher_date' => $voucher_date,
                     'vendor'=>$vendor,
@@ -573,9 +573,7 @@ class ClaimApi extends Controller
                     'payable_type'=>'Claim',
                     'unique_approvals' => $unique_approvals,
                     'bank_transactions' => $claim->bank_transactions,
-                    'payment' => $payment,
-                    'bank_transaction' => $claim->bank_transaction
-                    );
+                ];
 
             $pdf            = PDF::loadView('pdf/payment_voucher', $data);
             $file_contents  = $pdf->stream();
@@ -752,15 +750,14 @@ class ClaimApi extends Controller
     {
         $input = Request::all();
         //query builder
-        $qb = DB::table('claims');
+        $qb = Claim::query();
+        if(!array_key_exists('lean', $input)){
+            $qb = Claim::with('requested_by','project','status','project_manager','currency');
+        }
 
-        $qb->whereNull('deleted_at');
-        $qb->where(function($query){
+        $qb = $qb->where(function($query){
             $query->whereNull('archived')->orWhere('archived', '!=', 1);
         });
-
-        $response;
-        $response_dt;
 
         $total_records          = $qb->count();
         $records_filtered       = 0;
@@ -769,20 +766,19 @@ class ClaimApi extends Controller
             $status_ = (int) $input['status'];
 
             if($status_ >-1){
-                $qb->where('status_id', $input['status']);
-                $qb->where('requested_by_id',$this->current_user()->id);
+                $qb =  $qb->where('status_id', $input['status'])->where('requested_by_id',$this->current_user()->id);
             }elseif ($status_==-1) {
-                $qb->where('requested_by_id',$this->current_user()->id);
+                $qb = $qb->where('requested_by_id',$this->current_user()->id);
             }elseif ($status_==-2) {
                 
             }elseif ($status_==-3) {
-                $qb->where('project_manager_id',$this->current_user()->id);
+                $qb = $qb->where('project_manager_id',$this->current_user()->id);
             }
         }
 
         $app_stat = $this->approvable_statuses ;
         if(array_key_exists('approvable', $input)){
-            $qb->where(function ($query) use ($app_stat) {                    
+            $qb = $qb->where(function ($query) use ($app_stat) {                    
                 foreach ($app_stat as $key => $value) {
                     $query->orWhere('status_id',$value['id']);
                 }
@@ -790,7 +786,7 @@ class ClaimApi extends Controller
         }
 
         if(array_key_exists('my_approvables', $input)){
-            $current_user =  JWTAuth::parseToken()->authenticate();
+            $current_user = $this->current_user();
             if($current_user->hasRole([
                 'super-admin',
                 'admin',
@@ -801,7 +797,7 @@ class ClaimApi extends Controller
                 'accountant', 
                 'assistant-accountant']
             )){                   
-                $qb->where(function ($query) use ($app_stat,$current_user) {
+                $qb = $qb->where(function ($query) use ($app_stat,$current_user) {
                     foreach ($app_stat as $key => $value) {
                         $permission = 'APPROVE_CLAIM_'.$value['id'];
                         if($current_user->can($permission)&&$value['id']==2){
@@ -817,23 +813,15 @@ class ClaimApi extends Controller
 
                 });
             }
-            else{
-                $qb->where('id',0);
-            }
         }
 
         if(array_key_exists('searchval', $input)){
-            $qb->where(function ($query) use ($input) {                
-                $query->orWhere('id','like', '\'%' . $input['searchval']. '%\'');
-                $query->orWhere('ref','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('expense_desc','like', '\'%' . $input['searchval']. '%\'');
-                $query->orWhere('expense_purpose','like', '\'%' . $input['searchval']. '%\'');
+            $qb = $qb->where(function ($query) use ($input) {
+                $query->orWhere('ref','like', '%' . $input['search']['value']. '%');
+                $query->orWhere('expense_desc','like', '%' . $input['searchval']. '%');
+                $query->orWhere('expense_purpose','like', '%' . $input['searchval']. '%');
             });
-
-            $sql = Claim::bind_presql($qb->toSql(),$qb->getBindings());
-            $sql = str_replace("*"," count(*) AS count ", $sql);
-            $dt = json_decode(json_encode(DB::select($sql)), true);
-            $records_filtered = (int) $dt[0]['count'];
+            $records_filtered = $qb->count();
         }
 
         if(array_key_exists('order_by', $input)&&$input['order_by']!=''){
@@ -843,28 +831,50 @@ class ClaimApi extends Controller
                 $order_direction = $input['order_dir'];
             }
 
-            $qb->orderBy($order_column_name, $order_direction);
+            $qb = $qb->orderBy($order_column_name, $order_direction);
         }
 
         //limit
         if(array_key_exists('limit', $input)){
-            $qb->limit($input['limit']);
+            $qb = $qb->limit($input['limit']);
         }
 
         if(array_key_exists('datatables', $input)){
             //searching
-            $qb->where(function ($query) use ($input) {                
-                $query->orWhere('id','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('ref','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('expense_desc','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('expense_purpose','like', '\'%' . $input['search']['value']. '%\'');
-            });
+            if(!empty($input['search']['value'])){
+                $qb = $qb->where(function ($query) use ($input) {
+                    $query->orWhere('ref','like', '%' . $input['search']['value']. '%');
+                    $query->orWhere('expense_desc','like', '%' . $input['search']['value']. '%');
+                    $query->orWhere('expense_purpose','like', '%' . $input['search']['value']. '%');
+                    $query->orWhereHas('requested_by', function ($query) use ($input) {
+                        $query->where('f_name','like','%' .$input['search']['value']. '%');
+                        $query->orWhere('l_name','like','%' .$input['search']['value']. '%');
+                    });
+                });
+            }
 
-            $sql = Claim::bind_presql($qb->toSql(),$qb->getBindings());
-            $sql = str_replace("*"," count(*) AS count ", $sql);
-            $dt = json_decode(json_encode(DB::select($sql)), true);
+            foreach($input['columns'] as $column){
+                if(!empty($column['search']['value']) && !empty($column['name'])){
 
-            $records_filtered = (int) $dt[0]['count'];
+                    if($column['name'] == 'requested_by' || $column['name'] == 'project_manager'){
+                        $qb = $qb->where(function ($query) use ($column) {                
+                            $query->whereHas($column['name'], function ($query) use ($column) {
+                                $query->where('f_name','like','%' .$column['search']['value']. '%');
+                                $query->orWhere('l_name','like','%' .$column['search']['value']. '%');
+                            });
+                        });
+                    }
+                    else {
+                        $qb = $qb->where(function ($query) use ($column) {                
+                            $like = (!empty($column['filter']) && $column['filter'] == 'absolute') ? '' : '%';        
+                            $query->where($column['name'],'like', $like . $column['search']['value']. $like);
+                        });
+                    }
+                    
+                }
+            }
+
+            $records_filtered = $qb->count();
 
             //ordering
             $order_column_id    = (int) $input['order'][0]['column'];
@@ -872,142 +882,28 @@ class ClaimApi extends Controller
             $order_direction    = $input['order'][0]['dir'];
 
             if($order_column_name!=''){
-                $qb->orderBy($order_column_name, $order_direction);
+                $qb = $qb->orderBy($order_column_name, $order_direction);
             }
 
             //limit $ offset
             if((int)$input['start']!= 0 ){
-                $response_dt    =   $qb->limit($input['length'])->offset($input['start']);
+                $qb = $qb->limit($input['length'])->offset($input['start']);
             }
             else{
-                $qb->limit($input['length']);
+                $qb = $qb->limit($input['length']);
             }
 
-            $sql = Claim::bind_presql($qb->toSql(),$qb->getBindings());
-
-            $response_dt = DB::select($sql);
-            $response_dt = json_decode(json_encode($response_dt), true);
-            $response_dt    = $this->append_relationships_objects($response_dt);
-            $response_dt    = $this->append_relationships_nulls($response_dt);
-            $response       = Claim::arr_to_dt_response( 
-                $response_dt, $input['draw'],
+            $response = Claim::arr_to_dt_response( 
+                $qb->get(), $input['draw'],
                 $total_records,
                 $records_filtered
                 );
         }
         else{
-            $sql            = Claim::bind_presql($qb->toSql(),$qb->getBindings());
-            $response       = json_decode(json_encode(DB::select($sql)), true);
-            if(!array_key_exists('lean', $input)){
-                $response       = $this->append_relationships_objects($response);
-                $response       = $this->append_relationships_nulls($response);
-            }
+            $response = $qb->get();
         }
 
-        return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    public function append_relationships_objects($data = array()){
-
-        foreach ($data as $key => $value) {
-
-            $claim = Claim::find($data[$key]['id']);
-
-            $data[$key]['requested_by']                 = $claim->requested_by;
-            $data[$key]['request_action_by']            = $claim->requested_action_by;
-            $data[$key]['project']                      = $claim->project;
-            $data[$key]['status']                       = $claim->status;
-            $data[$key]['project_manager']              = $claim->project_manager;
-            $data[$key]['payment_mode']                 = $claim->payment_mode;
-            $data[$key]['currency']                     = $claim->currency;
-            $data[$key]['rejected_by']                  = $claim->rejected_by;
-            $data[$key]['approvals']                    = $claim->approvals;
-            $data[$key]['allocations']                  = $claim->allocations;
-
-            foreach ($claim->allocations as $key1 => $value1) {
-                $project = Project::find((int)$value1['project_id']);
-                $account = Account::find((int)$value1['account_id']);
-                $data[$key]['allocations'][$key1]['project']  =   $project;
-                $data[$key]['allocations'][$key1]['account']  =   $account;
-            }
-
-        }
-        return $data;
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-    public function append_relationships_nulls($data = array()){
-
-        foreach ($data as $key => $value) {
-            if($value["requested_by"]==null){
-                $data[$key]['requested_by'] = array("full_name"=>"N/A");                
-            }
-            if($value["request_action_by"]==null){
-                $data[$key]['request_action_by'] = array("full_name"=>"N/A");                
-            }
-            if($value["project"]==null){
-                $data[$key]['project'] = array("project_name"=>"N/A");                
-            }
-            if($value["status"]==null){
-                $data[$key]['status'] = array("claim_status"=>"N/A");                
-            }
-            if($value["project_manager"]==null){
-                $data[$key]['project_manager'] = array("full_name"=>"N/A");                
-            }
-            if($value["rejected_by"]==null){
-                $data[$key]['rejected_by'] = array("full_name"=>"N/A");                
-            }
-            if($data[$key]["currency"]==null){
-                $data[$key]["currency"] = array("currency_name"=>"N/A");
-            }
-        }
-
-        return $data;
+        return response()->json($response, 200);
     }
 
 
@@ -1065,7 +961,7 @@ class ClaimApi extends Controller
     }
 
 
-        /**
+    /**
      * Operation uploadAllocations
      * CSV file with allocations
      * @return Http response
@@ -1141,7 +1037,7 @@ class ClaimApi extends Controller
 
 
 
-        /**
+    /**
      * Operation recallClaim
      * 
      * Recalls a claim.

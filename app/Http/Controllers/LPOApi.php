@@ -741,26 +741,7 @@ class LPOApi extends Controller
     {
         try{
 
-            $lpo   = LPO::with(
-                                            'requested_by',
-                                            'request_action_by',
-                                            'project',
-                                            'account',
-                                            'invoices',
-                                            'status',
-                                            'project_manager',
-                                            'rejected_by',
-                                            'cancelled_by',
-                                            'received_by',
-                                            'supplier',
-                                            'currency',
-                                            'quotations',
-                                            'preffered_quotation',
-                                            'items',
-                                            'terms',
-                                            'approvals',
-                                            'deliveries'
-                                )->findOrFail($lpo_id);
+            $lpo   = LPO::findOrFail($lpo_id);
 
             if ((empty($lpo->lpo_type) || $lpo->lpo_type!='prenegotiated') && $lpo->preffered_quotation && $lpo->preffered_quotation->amount != $lpo->totals ){
                 throw new LpoQuotationAmountMismatchException("Total amount does not match with quotation amount");             
@@ -1134,8 +1115,7 @@ class LPOApi extends Controller
             $qb = $qb->where(function ($query){
                 $query->whereNull('invoice_paid');
                 $query->orWhere('invoice_paid', '!=', "full");
-            })
-            ->whereIn('status_id', [6,7,8,9,10,14]);
+            })->whereIn('status_id', [6,7,8,9,10,14]);
         }
 
         // prenogotiated
@@ -1163,7 +1143,6 @@ class LPOApi extends Controller
         }
 
         $app_stat = $this->approvable_statuses ;
-        //if approvable is set
 
         if(array_key_exists('approvable', $input)){
             $qb = $qb->where(function ($query) use ($app_stat) {                    
@@ -1174,7 +1153,7 @@ class LPOApi extends Controller
         }
 
         if(array_key_exists('my_approvables', $input)){
-            $current_user = JWTAuth::parseToken()->authenticate();
+            $current_user = $this->current_user();
             if($current_user->hasRole([
                 'super-admin',
                 'admin',
@@ -1218,7 +1197,7 @@ class LPOApi extends Controller
                 $query->orWhere('expense_purpose','like', '%' . $input['searchval']. '%');
             });
 
-            $records_filtered = (int) $qb->count();
+            $records_filtered = $qb->count();
         }
 
         //ordering
@@ -1286,7 +1265,61 @@ class LPOApi extends Controller
                 });
             }
 
-            $records_filtered = (int) $qb->count();
+            foreach($input['columns'] as $column){
+                if(!empty($column['search']['value']) && !empty($column['name'])){
+
+                    if($column['name'] == 'requested_by' || $column['name'] == 'project_manager'){
+                        $qb = $qb->where(function ($query) use ($column) {                
+                            $query->whereHas($column['name'], function ($query) use ($column) {
+                                $query->where('f_name','like','%' .$column['search']['value']. '%');
+                                $query->orWhere('l_name','like','%' .$column['search']['value']. '%');
+                            });
+
+                            if($column['name'] == 'requested_by'){
+                                $query->orWhereHas('requisitioned_by', function ($query) use ($column) {
+                                    $query->where('f_name','like','%' .$column['search']['value']. '%');
+                                    $query->orWhere('l_name','like','%' .$column['search']['value']. '%');
+                                });
+                            }                            
+                        });
+                    }
+                    else if($column['name'] == 'amount'){
+                        $qb = $qb->where(function ($query) use ($column) {                
+                            $query->whereHas('quotations', function ($query) use ($column) {
+                                $query->where($column['name'],'like','%' .$column['search']['value']. '%');
+                            });
+
+                            if($column['name'] == 'requested_by'){
+                                $query->orWhereHas('requisitioned_by', function ($query) use ($column) {
+                                    $query->where('f_name','like','%' .$column['search']['value']. '%');
+                                    $query->orWhere('l_name','like','%' .$column['search']['value']. '%');
+                                });
+                            }                            
+                        });
+                    }
+                    else if($column['name'] == 'supplier_name'){
+                        $qb = $qb->where(function ($query) use ($column) { 
+                            $query->whereHas('preffered_quotation', function ($query) use ($column) {
+                                $query->whereHas('supplier', function ($query) use ($column) {
+                                    $query->where('supplier_name','like','%' .$column['search']['value']. '%');
+                                });
+                            });
+                            $query->orWhereHas('supplier', function ($query) use ($column) {
+                                $query->where('supplier_name','like','%' .$column['search']['value']. '%');
+                            });
+                        });
+                    }
+                    else {
+                        $qb = $qb->where(function ($query) use ($column) {      
+                            $like = (!empty($column['filter']) && $column['filter'] == 'absolute') ? '' : '%';        
+                            $query->where($column['name'],'like', $like . $column['search']['value']. $like);
+                        });
+                    }
+                    
+                }
+            }
+
+            $records_filtered = $qb->count();
 
             //ordering
             $order_column_id    = (int) $input['order'][0]['column'];

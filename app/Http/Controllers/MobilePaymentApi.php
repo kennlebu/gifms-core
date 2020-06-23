@@ -375,26 +375,9 @@ class MobilePaymentApi extends Controller
     public function approve($mobile_payment_id, $several=null)
     {
         $response = [];
-        $user = JWTAuth::parseToken()->authenticate();
+        $user = $this->current_user();
         try{
-            $mobile_payment = MobilePayment::with(
-                                    'requested_by',
-                                    'requested_action_by',
-                                    'project',
-                                    'account',
-                                    'mobile_payment_type',
-                                    'invoice',
-                                    'status',
-                                    'project_manager',
-                                    'region',
-                                    'county',
-                                    'currency',
-                                    'rejected_by',
-                                    'payees_upload_mode',
-                                    'payees',
-                                    'approvals',
-                                    'allocations'
-                                )->findOrFail($mobile_payment_id);
+            $mobile_payment = MobilePayment::findOrFail($mobile_payment_id);
            
             $approvable_status  = $mobile_payment->status;
             $mobile_payment->status_id = $mobile_payment->status->new_next_status_id;
@@ -600,32 +583,13 @@ class MobilePaymentApi extends Controller
     public function reject($mobile_payment_id)
     {
 
-        $form = Request::only(
-            'rejection_reason'
-            );
+        $form = Request::only('rejection_reason');
 
         $response = [];
-        $user = JWTAuth::parseToken()->authenticate();
+        $user = $this->current_user();
 
         try{
-            $mobile_payment   = MobilePayment::with(
-                                    'requested_by',
-                                    'requested_action_by',
-                                    'project',
-                                    'account',
-                                    'mobile_payment_type',
-                                    'invoice',
-                                    'status',
-                                    'project_manager',
-                                    'region',
-                                    'county',
-                                    'currency',
-                                    'rejected_by',
-                                    'payees_upload_mode',
-                                    'payees',
-                                    'approvals',
-                                    'allocations'
-                                )->findOrFail($mobile_payment_id);
+            $mobile_payment = MobilePayment::findOrFail($mobile_payment_id);
 
            // Set as rejected by bank if it was already approved by management
            // otherwise, set it as a normal rejection 
@@ -794,10 +758,8 @@ class MobilePaymentApi extends Controller
     public function getDocumentById($mobile_payment_id)
     {        
         try{
-            $mobile_payment   = MobilePayment::findOrFail($mobile_payment_id);
-            $data = array(
-                'mobile_payment'   => $mobile_payment
-                );
+            $mobile_payment = MobilePayment::findOrFail($mobile_payment_id);
+            $data = ['mobile_payment' => $mobile_payment];
 
             $pdf = PDF::loadView('pdf/mobile_payment', $data);
             $file_contents  = $pdf->stream();
@@ -881,13 +843,13 @@ class MobilePaymentApi extends Controller
             }
             $vendor = 'MOH OFFICIALS c/o '.Staff::find($mobile_payment->requested_by_id)->full_name;
             $unique_approvals = $this->unique_multidim_array($mobile_payment->approvals, 'approval_level_id');
-            $data = array(
+            $data = [
                 'mobile_payment'   => $mobile_payment,
                 'voucher_no' => $voucher_no,
                 'vendor' => $vendor,
                 'unique_approvals' => $unique_approvals,
                 'bank_transaction' => $mobile_payment->bank_transaction
-                );
+            ];
 
             $pdf = PDF::loadView('pdf/mobile_payment_payment_voucher', $data);
             $file_contents  = $pdf->stream();
@@ -955,10 +917,10 @@ class MobilePaymentApi extends Controller
 
             // Delete the allocations too
             Allocation::where('allocatable_id', $mobile_payment_id)->where('allocatable_type', 'mobile_payments')->delete();
-            return response()->json(['msg'=>"Mobile Payment deleted"], 200,array(),JSON_PRETTY_PRINT);
+            return response()->json(['msg'=>"Mobile Payment deleted"], 200);
         }
         catch(Exception $e) {
-            return response()->json(['error'=>"Something went wrong", 'msg'=>$e->getMessage()], 500,array(),JSON_PRETTY_PRINT);
+            return response()->json(['error'=>"Something went wrong", 'msg'=>$e->getMessage()], 500);
         }
 
     }
@@ -1092,10 +1054,10 @@ class MobilePaymentApi extends Controller
                 $this->approve($mobile_payment_id, true);
             }
 
-            return response()->json(['mobile_payments'=>$form['mobile_payments']], 201,array(),JSON_PRETTY_PRINT);
+            return response()->json(['mobile_payments'=>$form['mobile_payments']], 201);
             
         } catch (Exception $e) {
-             return response()->json(['error'=>"An rerror occured during processing"], 500,array(),JSON_PRETTY_PRINT);            
+             return response()->json(['error'=>"An rerror occured during processing"], 500);            
         }
     }
 
@@ -1150,10 +1112,10 @@ class MobilePaymentApi extends Controller
 
             /* Send Email */
             Mail::send(new MobilePaymentInstructBank($mobile_payment, $csv_data, $pdf_data, $voucher_number));
-            return response()->json(['msg'=>"Mobile Payment email resent"], 200,array(),JSON_PRETTY_PRINT);
+            return response()->json(['msg'=>"Mobile Payment email resent"], 200);
             
         } catch (Exception $e) {
-             return response()->json(['error'=>$e->getMessage()], 500,array(),JSON_PRETTY_PRINT);            
+             return response()->json(['error'=>$e->getMessage()], 500);            
         }
         
     }
@@ -1194,9 +1156,9 @@ class MobilePaymentApi extends Controller
         $mobile_payment->disableLogging(); //! Do not log the update
         
         if($mobile_payment->save()){
-            return response()->json(['msg'=>"mobile payment recalled"], 200,array(),JSON_PRETTY_PRINT);
+            return response()->json(['msg'=>"mobile payment recalled"], 200);
         }else{
-            return response()->json(['error'=>"could not recall mobile payment"], 500,array(),JSON_PRETTY_PRINT);
+            return response()->json(['error'=>"could not recall mobile payment"], 500);
         }
     }
 
@@ -1289,8 +1251,7 @@ class MobilePaymentApi extends Controller
 
         // Sent to bank, awaiting reconciliation
         if(array_key_exists('bank_approvable', $input) && $input['bank_approvable']==true){
-            $qb = $qb->whereIn('status_id', ['4','13']);
-            $qb = $qb->orderBy('created_at', 'desc');
+            $qb = $qb->whereIn('status_id', ['4','13'])->orderBy('created_at', 'desc');
         }
 
         // Corrected, awaiting accountant approval
@@ -1331,7 +1292,7 @@ class MobilePaymentApi extends Controller
         }
 
         if(array_key_exists('my_approvables', $input)){
-            $current_user =  JWTAuth::parseToken()->authenticate();
+            $current_user = $this->current_user();
             if($current_user->hasRole([
                 'super-admin',
                 'admin',
@@ -1370,10 +1331,9 @@ class MobilePaymentApi extends Controller
         //searching
         if(array_key_exists('searchval', $input)){
             $qb = $qb->where(function ($query) use ($input) {                
-                $query->orWhere('id','like', '\'%' . $input['searchval']. '%\'');
-                $query->orWhere('ref','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('expense_desc','like', '\'%' . $input['searchval']. '%\'');
-                $query->orWhere('expense_purpose','like', '\'%' . $input['searchval']. '%\'');
+                $query->orWhere('ref','like', '%' . $input['search']['value']. '%');
+                $query->orWhere('expense_desc','like', '%' . $input['searchval']. '%');
+                $query->orWhere('expense_purpose','like', '%' . $input['searchval']. '%');
             });
 
             $records_filtered = $qb->count();
@@ -1408,6 +1368,30 @@ class MobilePaymentApi extends Controller
                 });
             }
 
+            foreach($input['columns'] as $column){
+                if(!empty($column['search']['value']) && !empty($column['name'])){
+
+                    if($column['name'] == 'requested_by' || $column['name'] == 'project_manager'){
+                        $qb = $qb->where(function ($query) use ($column) {                
+                            $query->whereHas($column['name'], function ($query) use ($column) {
+                                $query->where('f_name','like','%' .$column['search']['value']. '%');
+                                $query->orWhere('l_name','like','%' .$column['search']['value']. '%');
+                            });
+                        });
+                    }
+                    else if($column['name'] == 'amount'){
+                        $qb = $qb->get()->where('totals', 'like', '%' .$column['search']['value']. '%');
+                    }
+                    else {
+                        $qb = $qb->where(function ($query) use ($column) {                
+                            $like = (!empty($column['filter']) && $column['filter'] == 'absolute') ? '' : '%';        
+                            $query->where($column['name'],'like', $like . $column['search']['value']. $like);
+                        });
+                    }
+                    
+                }
+            }
+
             $records_filtered = $qb->count();
 
             //ordering
@@ -1437,7 +1421,7 @@ class MobilePaymentApi extends Controller
             $response = $qb->get();
         }
 
-        return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+        return response()->json($response, 200);
     }
 
 

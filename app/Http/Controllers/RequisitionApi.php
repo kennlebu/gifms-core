@@ -130,7 +130,8 @@ class RequisitionApi extends Controller
                     }
                     else {
                         $requisitions = $requisitions->where(function ($query) use ($column) {                
-                            $query->where($column['name'],'like', '%' . $column['search']['value']. '%');
+                            $like = (!empty($column['filter']) && $column['filter'] == 'absolute') ? '' : '%';        
+                            $query->where($column['name'],'like', $like . $column['search']['value']. $like);
                         });
                     }
                     

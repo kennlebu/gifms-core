@@ -212,10 +212,10 @@ class Controller extends BaseController
 		$new_voucher->voucher_number = $voucher_no;
 
 		if($new_voucher->save()){
-			return array(
+			return [
 				'id' => $new_voucher->id,
 				'voucher' => $new_voucher->voucher_number
-			);
+            ];
 		}
 		
 

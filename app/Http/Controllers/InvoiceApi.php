@@ -633,7 +633,7 @@ class InvoiceApi extends Controller
 
                 if($approval->approval_level_id==4){
 
-                    $payable    =   array(
+                    $payable = [
                         'payable_type'                  =>  'invoices', 
                         'payable_id'                    =>  $invoice->id, 
                         'debit_bank_account_id'         =>  $invoice->currency_id, 
@@ -651,7 +651,7 @@ class InvoiceApi extends Controller
                         "withholding_tax"               =>  $invoice->withholding_tax,
                         "withholding_vat"               =>  $invoice->withholding_vat,
                         "usd_rate"                      =>  $invoice->usd_rate
-                    );
+                    ];
                     
                     // Pick USD account if currency is USD
                     if($invoice->currency_id == 2){
@@ -814,7 +814,7 @@ class InvoiceApi extends Controller
             $vendor = $invoice->supplier->supplier_name ?? '';
 
             $unique_approvals = $this->unique_multidim_array($invoice->approvals, 'approval_level_id');
-            $data = array(
+            $data = [
                     'payable'   => $invoice,
                     'voucher_date' => $voucher_date,
                     'vendor'=>$vendor,
@@ -822,9 +822,8 @@ class InvoiceApi extends Controller
                     'payable_type'=>'Invoice',
                     'unique_approvals' => $unique_approvals,
                     'bank_transactions' => $invoice->bank_transactions,
-                    'payment' => $payment,
-                    'bank_transaction' => $invoice->bank_transaction
-                    );
+                    'payment' => $payment
+                ];
 
             $pdf            = PDF::loadView('pdf/payment_voucher', $data);
             $file_contents  = $pdf->stream();
@@ -992,19 +991,16 @@ class InvoiceApi extends Controller
     public function getInvoices()
     {
         $input = Request::all();
-        //query builder
-        $qb = DB::table('invoices');
-        $qb->leftJoin('suppliers', 'invoices.supplier_id', '=', 'suppliers.id');
-        $qb->select('invoices.*');
 
-        $qb->whereNull('invoices.deleted_at');
-        $qb->whereNotNull('invoices.raised_by_id');
-        $qb->where(function($query){
-            $query->whereNull('invoices.archived')->orWhere('invoices.archived', '!=', 1);
+        $qb = Invoice::query();
+        if(!array_key_exists('lean', $input)){
+            $qb = Invoice::with('raised_by','received_by','status','project_manager','supplier','currency');
+        }
+
+        $qb = $qb->whereNotNull('raised_by_id');
+        $qb = $qb->where(function($query){
+            $query->whereNull('archived')->orWhere('archived', '!=', 1);
         });
-
-        $response;
-        $response_dt;
 
         $total_records          = $qb->count();
         $records_filtered       = 0;
@@ -1014,14 +1010,13 @@ class InvoiceApi extends Controller
             $status_ = (int) $input['status'];
 
             if($status_ >-1){
-                $qb->where('invoices.status_id', $input['status']);
-                $qb->where('invoices.raised_by_id',$this->current_user()->id);
+                $qb = $qb->where('status_id', $input['status'])->where('raised_by_id',$this->current_user()->id);
             }elseif ($status_==-1) {
-                $qb->where('invoices.raised_by_id',$this->current_user()->id);
+                $qb = $qb->where('raised_by_id',$this->current_user()->id);
             }elseif ($status_==-2) {
                 
             }elseif ($status_==-3) {
-                $qb->where('invoices.project_manager_id',$this->current_user()->id);
+                $qb = $qb->where('project_manager_id',$this->current_user()->id);
             }
         }
 
@@ -1029,15 +1024,15 @@ class InvoiceApi extends Controller
         //if approvable is set
 
         if(array_key_exists('approvable', $input)){
-            $qb->where(function ($query) use ($app_stat) {                    
+            $qb = $qb->where(function ($query) use ($app_stat) {                    
                 foreach ($app_stat as $key => $value) {
-                    $query->orWhere('invoices.status_id',$value['id']);
+                    $query->orWhere('status_id',$value['id']);
                 }
             });
         }
 
         if(array_key_exists('my_approvables', $input)){
-            $current_user =  JWTAuth::parseToken()->authenticate();
+            $current_user = $this->current_user();
             if($current_user->hasRole([
                 'super-admin',
                 'admin',
@@ -1048,58 +1043,49 @@ class InvoiceApi extends Controller
                 'accountant', 
                 'assistant-accountant']
             )){                   
-                $qb->where(function ($query) use ($app_stat,$current_user) {
+                $qb = $qb->where(function ($query) use ($app_stat,$current_user) {
                     foreach ($app_stat as $key => $value) {
                         $permission = 'APPROVE_INVOICE_'.$value['id'];
                         if($current_user->can($permission)&&$value['id']==1){
                             $query->orWhere(function ($query1) use ($value,$current_user) {
 
                                 $query1->where(function ($query1) use ($value,$current_user) {
-                                    $query1->where('invoices.status_id',$value['id']);
-                                    $query1->where('invoices.project_manager_id',$current_user->id)
-                                            ->whereNull('invoices.approver_id');
+                                    $query1->where('status_id',$value['id']);
+                                    $query1->where('project_manager_id',$current_user->id)
+                                            ->whereNull('approver_id');
                                 });
                                 $query1->orWhere(function ($query1) use ($value,$current_user) {
-                                    $query1->where('invoices.status_id',$value['id']);
-                                    $query1->where('invoices.approver_id',$current_user->id);
+                                    $query1->where('status_id',$value['id']);
+                                    $query1->where('approver_id',$current_user->id);
                                 });
-
-                                // $query1->Where('invoices.status_id',$value['id']);
-                                // $query1->Where('invoices.project_manager_id',$current_user->id);
                             });
                         }
                         else if($current_user->can($permission)){
-                            $query->orWhere('invoices.status_id',$value['id']); 
+                            $query->orWhere('status_id',$value['id']); 
                         }
                     }
                 });
             }
-            else{
-                $qb->where('invoices.id',0);
-            }
         }
 
         if(array_key_exists('for_supplier', $input)){
-            $qb->where('invoices.supplier_id', $input['supplier_id']);
+            $qb = $qb->where('supplier_id', $input['supplier_id']);
         }
 
         //searching
         if(array_key_exists('searchval', $input)){
-            $qb->where(function ($query) use ($input) {                
-                $query->orWhere('invoices.id','like', '\'%' . $input['searchval']. '%\'');
-                $query->orWhere('invoices.ref','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('invoices.external_ref','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('invoices.total','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('invoices.expense_desc','like', '\'%' . $input['searchval']. '%\'');
-                $query->orWhere('invoices.expense_purpose','like', '\'%' . $input['searchval']. '%\'');
-                $query->orWhere('suppliers.supplier_name','like', '\'%' . $input['search']['value']. '%\'');
+            $qb = $qb->where(function ($query) use ($input) {                
+                $query->orWhere('ref','like', '%' . $input['search']['value']. '%');
+                $query->orWhere('external_ref','like', '%' . $input['search']['value']. '%');
+                $query->orWhere('total','like', '%' . $input['search']['value']. '%');
+                $query->orWhere('expense_desc','like', '%' . $input['searchval']. '%');
+                $query->orWhere('expense_purpose','like', '%' . $input['searchval']. '%');
+                $query->orWhereHas('supplier', function ($query) use ($input) {
+                    $query->where('supplier_name','like','%' .$input['searchval']. '%');
+                });
             });
 
-            $sql = Invoice::bind_presql($qb->toSql(),$qb->getBindings());
-            $sql = str_replace("invoices.*"," count(*) AS count ", $sql);
-            $dt = json_decode(json_encode(DB::select($sql)), true);
-
-            $records_filtered = (int) $dt[0]['count'];
+            $records_filtered = $qb->count();
         }
 
         //ordering
@@ -1110,31 +1096,58 @@ class InvoiceApi extends Controller
                 $order_direction = $input['order_dir'];
             }
 
-            $qb->orderBy('invoices.'.$order_column_name, $order_direction);
+            $qb = $qb->orderBy($order_column_name, $order_direction);
         }
 
         //limit
         if(array_key_exists('limit', $input)){
-            $qb->limit($input['limit']);
+            $qb = $qb->limit($input['limit']);
         }
 
         if(array_key_exists('datatables', $input)){
             //searching
-            $qb->where(function ($query) use ($input) {                
-                $query->orWhere('invoices.id','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('invoices.ref','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('invoices.external_ref','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('invoices.total','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('invoices.expense_desc','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('invoices.expense_purpose','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('suppliers.supplier_name','like', '\'%' . $input['search']['value']. '%\'');
-            });
+            if(!empty($input['search']['value'])){
+                $qb = $qb->where(function ($query) use ($input) {                
+                    $query->orWhere('ref','like', '%' . $input['search']['value']. '%');
+                    $query->orWhere('external_ref','like', '%' . $input['search']['value']. '%');
+                    $query->orWhere('total','like', '%' . $input['search']['value']. '%');
+                    $query->orWhere('expense_desc','like', '%' . $input['search']['value']. '%');
+                    $query->orWhere('expense_purpose','like', '%' . $input['search']['value']. '%');
+                    $query->orWhereHas('supplier', function ($query) use ($input) {
+                        $query->where('supplier_name','like','%' .$input['search']['value']. '%');
+                    });
+                });
+            }
 
-            $sql = Invoice::bind_presql($qb->toSql(),$qb->getBindings());
-            $sql = str_replace("`invoices`.*"," count(*) AS count ", $sql);
-            $dt = json_decode(json_encode(DB::select($sql)), true);
+            foreach($input['columns'] as $column){
+                if(!empty($column['search']['value']) && !empty($column['name'])){
 
-            $records_filtered = (int) $dt[0]['count'];
+                    if($column['name'] == 'raised_by' || $column['name'] == 'project_manager'){
+                        $qb = $qb->where(function ($query) use ($column) {                
+                            $query->whereHas($column['name'], function ($query) use ($column) {
+                                $query->where('f_name','like','%' .$column['search']['value']. '%');
+                                $query->orWhere('l_name','like','%' .$column['search']['value']. '%');
+                            });
+                        });
+                    }
+                    else if ($column['name'] == 'supplier_name'){
+                        $qb = $qb->where(function ($query) use ($column) {                
+                            $query->whereHas('supplier', function ($query) use ($column) {
+                                $query->where('supplier_name','like','%' .$column['search']['value']. '%');
+                            });
+                        });
+                    }
+                    else {
+                        $qb = $qb->where(function ($query) use ($column) {                
+                            $like = (!empty($column['filter']) && $column['filter'] == 'absolute') ? '' : '%';        
+                            $query->where($column['name'],'like', $like . $column['search']['value']. $like);
+                        });
+                    }
+                    
+                }
+            }
+
+            $records_filtered = $qb->count();
 
             //ordering
             $order_column_id    = (int) $input['order'][0]['column'];
@@ -1142,41 +1155,28 @@ class InvoiceApi extends Controller
             $order_direction    = $input['order'][0]['dir'];
 
             if($order_column_name!=''){
-                $qb->orderBy('invoices.'.$order_column_name, $order_direction);
+                $qb = $qb->orderBy($order_column_name, $order_direction);
             }
 
             //limit $ offset
             if((int)$input['start']!= 0 ){
-                $response_dt    =   $qb->limit($input['length'])->offset($input['start']);
+                $qb = $qb->limit($input['length'])->offset($input['start']);
             }
             else{
-                $qb->limit($input['length']);
+                $qb = $qb->limit($input['length']);
             }
 
-            $qb->addSelect('suppliers.supplier_name');
-            $sql = Invoice::bind_presql($qb->toSql(),$qb->getBindings());
-
-            $response_dt = DB::select($sql);
-            $response_dt = json_decode(json_encode($response_dt), true);
-
-            $response_dt    = $this->append_relationships_objects($response_dt);
-            $response_dt    = $this->append_relationships_nulls($response_dt);
-            $response       = Invoice::arr_to_dt_response( 
-                $response_dt, $input['draw'],
+            $response = Invoice::arr_to_dt_response( 
+                $qb->get(), $input['draw'],
                 $total_records,
                 $records_filtered
                 );
         }
         else{
-            $sql            = Invoice::bind_presql($qb->toSql(),$qb->getBindings());
-            $response       = json_decode(json_encode(DB::select($sql)), true);
-            if(!array_key_exists('lean', $input)){
-                $response       = $this->append_relationships_objects($response);
-                $response       = $this->append_relationships_nulls($response);
-            }
+            $response = $qb->get();
         }
 
-        return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+        return response()->json($response, 200);
     }
 
 
@@ -1186,114 +1186,6 @@ class InvoiceApi extends Controller
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    public function append_relationships_objects($data = array()){
-
-        foreach ($data as $key => $value) {
-
-            $invoice = Invoice::with('payments.payment_mode','payments.currency','payments.payment_batch')->find($data[$key]['id']);
-
-            $data[$key]['raised_by']                    = $invoice->raised_by;
-            $data[$key]['received_by']                  = $invoice->received_by;
-            $data[$key]['raise_action_by']              = $invoice->raise_action_by;
-            $data[$key]['status']                       = $invoice->status;
-            $data[$key]['project_manager']              = $invoice->project_manager;
-            $data[$key]['supplier']                     = $invoice->supplier;
-            $data[$key]['payment_mode']                 = $invoice->payment_mode;
-            $data[$key]['currency']                     = $invoice->currency;
-            $data[$key]['lpo']                          = $invoice->lpo;
-            $data[$key]['rejected_by']                  = $invoice->rejected_by;
-            $data[$key]['approvals']                    = $invoice->approvals;
-            $data[$key]['allocations']                  = $invoice->allocations;
-            $data[$key]['logs']                         = $invoice->logs;
-            $data[$key]['vouchers']                     = $invoice->vouchers;
-            $data[$key]['comments']                     = $invoice->comments;
-            $data[$key]['program_activity']             = $invoice->program_activity;
-            $data[$key]['payments']                     = $invoice->payments;
-
-            foreach ($invoice->allocations as $key1 => $value1) {
-                $project = Project::find((int)$value1['project_id']);
-                $account = Account::find((int)$value1['account_id']);
-                $objective = ReportingObjective::find((int)$value1['objective_id']);
-                $data[$key]['allocations'][$key1]['project']  =   $project;
-                $data[$key]['allocations'][$key1]['account']  =   $account;
-                $data[$key]['allocations'][$key1]['objective']=   $objective;
-            }
-        }
-
-        return $data;
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-    public function append_relationships_nulls($data = array()){
-
-        foreach ($data as $key => $value) {
-            if($value["raised_by"]==null){
-                $data[$key]['raised_by'] = array("full_name"=>"N/A");                
-            }
-            if($value["received_by"]==null){
-                $data[$key]['received_by'] = array("full_name"=>"N/A");                
-            }
-            if($value["raise_action_by"]==null){
-                $data[$key]['raise_action_by'] = array("full_name"=>"N/A");                
-            }
-            if($value["status"]==null){
-                $data[$key]['status'] = array("invoice_status"=>"N/A");                
-            }
-            if($value["project_manager"]==null){
-                $data[$key]['project_manager'] = array("full_name"=>"N/A");                
-            }
-            if($value["supplier"]==null){
-                $data[$key]['supplier'] = array("supplier_name"=>"N/A");                
-            }
-            if($value["rejected_by"]==null){
-                $data[$key]['rejected_by'] = array("full_name"=>"N/A");                
-            }
-            if($data[$key]["currency"]==null){
-                $data[$key]["currency"] = array("currency_name"=>"N/A");
-            }
-            if($data[$key]["program_activity"]==null){
-                $data[$key]["program_activity"] = array("program_activity"=>array("title"=>"N/A", "description"=>"N/A"));
-            }
-        }
-
-        return $data;
-    }
 
     /**
      * Adds zeros at the beginning of string until the desired
