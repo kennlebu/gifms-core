@@ -151,7 +151,7 @@ class InvoiceApi extends Controller
                     $invoice->vat_percentage = $m_lpo->vat_percentage;
                 }
                 else {
-                    $invoice->vat_percentage = $tax_rate->rate ?? 16;
+                    $invoice->vat_percentage = $tax_rate->rate;
                 }
 
                 $invoice->received_by_id                    =   (int)       $form['received_by_id'];
