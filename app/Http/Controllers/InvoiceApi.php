@@ -679,11 +679,11 @@ class InvoiceApi extends Controller
         }
         catch(ApprovalException $ae){
             $response =  ["error"=>"You do not have the permissions to perform this action at this point"];
-            return response()->json($response, 403,array(),JSON_PRETTY_PRINT);
+            return response()->json($response, 403);
         }
         catch(Exception $e){
             $response =  ["error"=>"Something went wrong"];
-            return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
+            return response()->json($response, 500);
         }
     }
 
@@ -714,7 +714,7 @@ class InvoiceApi extends Controller
     public function rejectInvoice($invoice_id)
     {
         $form = Request::only('rejection_reason');
-        $user = JWTAuth::parseToken()->authenticate();
+        $user = $this->current_user();
         try{
             $invoice = Invoice::findOrFail($invoice_id);
            
@@ -746,11 +746,11 @@ class InvoiceApi extends Controller
         }catch(ApprovalException $ae){
 
             $response =  ["error"=>"You do not have the permissions to perform this action at this point"];
-            return response()->json($response, 403,array(),JSON_PRETTY_PRINT);
+            return response()->json($response, 403);
         }catch(Exception $e){
 
             $response =  ["error"=>"Something went wrong"];
-            return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
+            return response()->json($response, 500);
         }
     }
 
@@ -832,7 +832,7 @@ class InvoiceApi extends Controller
             return $response;
         }
         catch (Exception $e ){
-            $response       = Response::make("", 200);
+            $response       = Response::make("", 500);
             $response->header('Content-Type', 'application/pdf');
             return $response;  
         }
@@ -899,11 +899,11 @@ class InvoiceApi extends Controller
         }catch(NotFullyAllocatedException $ae){
 
             $response =  ["error"=>"Invoice not fully allocated"];
-            return response()->json($response, 403,array(),JSON_PRETTY_PRINT);
+            return response()->json($response, 403);
         }catch(Exception $e){
 
             $response =  ["error"=>"Something went wrong"];
-            return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
+            return response()->json($response, 500);
         }
     }
 
@@ -949,10 +949,10 @@ class InvoiceApi extends Controller
                 $this->approveInvoice($invoice_id, true);
             }
 
-            return response()->json(['invoices'=>$form['invoices']], 201,array(),JSON_PRETTY_PRINT);
+            return response()->json(['invoices'=>$form['invoices']], 201);
             
         } catch (Exception $e) {
-             return response()->json(['error'=>"An rerror occured during processing"], 500,array(),JSON_PRETTY_PRINT);
+             return response()->json(['error'=>"An rerror occured during processing"], 500);
             
         }
     }
@@ -1339,9 +1339,9 @@ class InvoiceApi extends Controller
             // Add activity notification
             $this->addActivityNotification('Invoice <strong>'.$invoice->external_ref.' ('. ($invoice->supplier->supplier_name ?? 'no supplier') .')</strong> recalled', null, $this->current_user()->id, $invoice->raised_by_id, 'danger', 'invoices', false);
 
-            return response()->json(['msg'=>"invoice recalled"], 200,array(),JSON_PRETTY_PRINT);
+            return response()->json(['msg'=>"invoice recalled"], 200);
         }else{
-            return response()->json(['error'=>"could not recall invoice"], 404,array(),JSON_PRETTY_PRINT);
+            return response()->json(['error'=>"Something went wrong"], 500);
         }
 
     }
@@ -1456,6 +1456,37 @@ class InvoiceApi extends Controller
                 
                 return Response()->json(array('success' => 'Taxes withheld'), 200);
             }
+        }
+        catch(Exception $e){
+            return response()->json(['error'=>'Something went wrong during processing', 'msg'=>$e->getMessage()], 500);
+        }
+    }
+
+
+    public function remove_tax(){
+        try{
+            $input = Request::all();
+            $invoice = Invoice::findOrFail($input['invoice_id']);
+            if(!empty($invoice)){
+                $invoice->disableLogging();
+                if($input['tax'] == 'vat'){
+                    $invoice->withholding_vat = null;
+                    $log_text = 'Removed VAT';
+                }
+                else if($input['tax'] == 'income'){
+                    $invoice->withholding_tax = null;
+                    $log_text = 'Removed income tax';
+                }
+                
+                if($invoice->save()){
+                    activity()
+                       ->performedOn($invoice)
+                       ->causedBy($this->current_user())
+                       ->log($log_text);
+                }
+                    
+                return Response()->json(array('success' => 'Taxes withheld', 'invoice'=>$invoice), 200);
+            }            
         }
         catch(Exception $e){
             return response()->json(['error'=>'Something went wrong during processing', 'msg'=>$e->getMessage()], 500);

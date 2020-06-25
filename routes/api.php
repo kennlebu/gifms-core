@@ -3148,6 +3148,7 @@ Route::PATCH('/invoice/{invoice_id}/recall', 'InvoiceApi@recallInvoice')->middle
 Route::PATCH('/invoice/{invoice_id}/copy', 'InvoiceApi@copyInvoice')->middleware('jwt.auth');
 
 Route::POST('/invoice/withhold_tax', 'InvoiceApi@withholdTax')->middleware('jwt.auth');
+Route::POST('/invoice/remove_tax', 'InvoiceApi@remove_tax')->middleware('jwt.auth');
 Route::POST('/invoice/mark_as_paid', 'InvoiceApi@markAsPaid')->middleware('jwt.auth');
 
 
