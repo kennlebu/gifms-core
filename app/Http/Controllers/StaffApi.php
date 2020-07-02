@@ -17,7 +17,6 @@ namespace App\Http\Controllers;
 
 use JWTAuth;
 use Illuminate\Support\Facades\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Exception;
 use App\Models\StaffModels\Staff;
@@ -226,7 +225,8 @@ class StaffApi extends Controller
         $deleted = Staff::destroy($staff_id);
         if($deleted){
             return response()->json(['msg'=>"staff deleted"], 200,array(),JSON_PRETTY_PRINT);
-        }else{
+        }
+        else{
             return response()->json(['error'=>"Something went wrong"], 500,array(),JSON_PRETTY_PRINT);
         }
     }
@@ -264,11 +264,12 @@ class StaffApi extends Controller
     public function getStaffById($staff_id)
     {
         try{
-            $response   = Staff::with("roles")->findOrFail($staff_id);           
-            return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
-        }catch(Exception $e){
+            $response = Staff::with("roles")->findOrFail($staff_id);           
+            return response()->json($response, 200);
+        }
+        catch(Exception $e){
             $response =  ["error"=>"Something went wrong"];
-            return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
+            return response()->json($response, 500);
         }
     }
 
@@ -307,20 +308,18 @@ class StaffApi extends Controller
      */
     public function updateStaffRoles($staff_id)
     {
-        $form = Request::only(
-            'roles'
-            );        
+        $form = Request::only('roles');        
 
         try{
-            $staff  =   Staff::findOrFail($staff_id);
+            $staff = Staff::findOrFail($staff_id);
             $staff->roles()->sync($form->roles);
-            $response   = Staff::with("roles")->findOrFail($staff_id);
+            $response = Staff::with("roles")->findOrFail($staff_id);
            
-            return response()->json(['msg'=>"Roles Updated", 'staff'=>$response], 200,array(),JSON_PRETTY_PRINT);
-
-        }catch(Exception $e){
+            return response()->json(['msg'=>"Roles Updated", 'staff'=>$response], 200);
+        }
+        catch(Exception $e){
             $response =  ["error"=>"Something went wrong"];
-            return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
+            return response()->json($response, 500);
         }
     }
     
@@ -360,9 +359,6 @@ class StaffApi extends Controller
         if(!array_key_exists('lean', $input)){
             $qb = Staff::with('roles','programs','department','payment_mode','bank','bank_branch');
         }
-
-        $response;
-        $response_dt;
 
         $total_records          = $qb->count();
         $records_filtered       = 0;
@@ -408,19 +404,13 @@ class StaffApi extends Controller
         if(array_key_exists('role_abr', $input)){
             $qb = $qb->whereHas('roles', function($query) use ($input){
                 $query->where('acronym', '=', "'".$input['role_abr']."'");  
-            });  
-
-            // $qb->select(DB::raw('staff.*'))
-            //      ->leftJoin('user_roles', 'user_roles.user_id', '=', 'staff.id')
-            //      ->leftJoin('roles', 'roles.id', '=', 'user_roles.role_id')
-            //      ->where('roles.acronym', '=', "'".$input['role_abr']."'")
-            //      ->groupBy('staff.id');
+            });
         }
 
         //PMs for a user OR line managers for leave requests
         if(array_key_exists('my_pms', $input) || array_key_exists('line_managers', $input)){
             //select the projects of the user
-            $user = JWTAuth::parseToken()->authenticate();
+            $user = $this->current_user();
             $admin_role = Staff::whereHas('roles', function($query) use ($input){
                 $arr = [1,2,3,4,5,6,8,9,10,11];
                 if(array_key_exists('line_managers', $input)){
@@ -483,21 +473,17 @@ class StaffApi extends Controller
             //searching
             if(!empty($input['search']['value'])){
                 $qb = $qb->where(function ($query) use ($input) {                
-                    $query->orWhere('staff.id','like', '%' . $input['search']['value']. '%');
-                    $query->orWhere('staff.username','like', '%' . $input['search']['value']. '%');
-                    $query->orWhere('staff.email','like', '%' . $input['search']['value']. '%');
-                    $query->orWhere('staff.f_name','like', '%' . $input['search']['value']. '%');
-                    $query->orWhere('staff.l_name','like', '%' . $input['search']['value']. '%');
-                    $query->orWhere('staff.o_names','like', '%' . $input['search']['value']. '%');
-                    $query->orWhere('staff.official_post','like', '%' . $input['search']['value']. '%');
-                    $query->orWhere('staff.mobile_no','like', '%' . $input['search']['value']. '%');
-                    $query->orWhere('staff.mpesa_no','like', '%' . $input['search']['value']. '%');
+                    $query->orWhere('id','like', '%' . $input['search']['value']. '%');
+                    $query->orWhere('username','like', '%' . $input['search']['value']. '%');
+                    $query->orWhere('email','like', '%' . $input['search']['value']. '%');
+                    $query->orWhere('f_name','like', '%' . $input['search']['value']. '%');
+                    $query->orWhere('l_name','like', '%' . $input['search']['value']. '%');
+                    $query->orWhere('o_names','like', '%' . $input['search']['value']. '%');
+                    $query->orWhere('official_post','like', '%' . $input['search']['value']. '%');
+                    $query->orWhere('mobile_no','like', '%' . $input['search']['value']. '%');
+                    $query->orWhere('mpesa_no','like', '%' . $input['search']['value']. '%');
                 });
             }
-
-            // $sql = Staff::bind_presql($qb->toSql(),$qb->getBindings());
-            // $sql = str_replace("*"," count(*) AS count ", $sql);
-            // $dt = json_decode(json_encode(DB::select($sql)), true);
 
             $records_filtered = $qb->count();
 
@@ -517,104 +503,20 @@ class StaffApi extends Controller
             else{
                 $qb = $qb->limit($input['length']);
             }
-
-            // $sql = Staff::bind_presql($qb->toSql(),$qb->getBindings());
-            $response_dt = $qb->get();
-            // $response_dt = json_decode(json_encode($response_dt), true);
-            // $response_dt    = $this->append_relationships_objects($response_dt);
-            // $response_dt    = $this->append_relationships_nulls($response_dt);
-            $response       = Staff::arr_to_dt_response( 
-                $response_dt, $input['draw'],
+            $response = Staff::arr_to_dt_response( 
+                $qb->get(), $input['draw'],
                 $total_records,
                 $records_filtered
                 );
         }
         else {
-            // $sql            = Staff::bind_presql($qb->toSql(),$qb->getBindings());
-            // $response       = json_decode(json_encode(DB::select($sql)), true);
             $response = $qb->get();
-            // if(!array_key_exists('lean', $input)){
-            //     $response       = $this->append_relationships_objects($response);
-            //     $response       = $this->append_relationships_nulls($response);
-            // }
         }
 
         return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    public function append_relationships_objects($data = array()){
-
-        $input = Request::all();
-        foreach ($data as $key => $value) {            
-            $staff = Staff::find($data[$key]['id']);
-
-            //with_assigned_projects
-            if(array_key_exists('detailed', $input)&& $input['detailed'] = "true"){
-                $data[$key]['detailed']        =   $staff->assigned_projects;
-                $data[$key]['roles']                    =   $staff->roles;
-                $data[$key]['programs']                 =   $staff->programs;
-            }
-
-            $data[$key]['department']               =   $staff->department;
-            $data[$key]['payment_mode']             =   $staff->payment_mode;
-            $data[$key]['bank']                     =   $staff->bank;
-            $data[$key]['bank_branch']              =   $staff->bank_branch;
-            $data[$key]['name']                     =   $staff->name;
-        }
-
-        return $data;
-    }
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-    public function append_relationships_nulls($data = array()){
-        foreach ($data as $key => $value) {
-            if($data[$key]["department"]==null){
-                $data[$key]["department"] = array("department_name"=>"N/A");
-            }
-            if($data[$key]["payment_mode"]==null){
-                $data[$key]["payment_mode"] = array("payment_mode_description"=>"N/A");
-            }
-            if($data[$key]["bank"]==null){
-                $data[$key]["bank"] = array("bank_name"=>"N/A");
-            }
-            if($data[$key]["bank_branch"]==null){
-                $data[$key]["bank_branch"] = array("branch_name"=>"N/A");
-            }
-        }
-
-        return $data;
-    }
 
 
     public function encrypt_password($password_str){

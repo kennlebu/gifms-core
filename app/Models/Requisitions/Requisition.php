@@ -84,17 +84,6 @@ class Requisition extends BaseModel
         return $this->hasMany('App\Models\Requisitions\RequisitionDocument','requisition_id');
     }
 
-    // public function getDocumentsAttribute(){
-    //     $sanitized_list = [];
-    //     $directory = '/requisitions/'.$this->ref.'/';
-    //     $listing = FTP::connection()->getDirListing($directory);
-    //     foreach($listing as $item){
-    //         $arr = explode('/',$item);
-    //         $sanitized_list[] = explode('.',$arr[count($arr)-1])[0];
-    //     }
-    //     return $sanitized_list;
-    // }
-
     public function getTransactionsAttribute(){
         $list = [];
         $lpos = Lpo::with('supplier','currency','status')->where('requisition_id', $this->id)->get();

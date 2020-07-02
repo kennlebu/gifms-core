@@ -23,7 +23,8 @@ class Kernel extends ConsoleKernel
         Commands\GenerateRequisitionDocuments::class,
         Commands\RefractorBudgets::class,
         Commands\CreateBudgeetExpenditures::class,
-        Commands\PopuateVatPercentage::class
+        Commands\PopuateVatPercentage::class,
+        Commands\RemoveVoucherDuplicates::class
     ];
 
     /**

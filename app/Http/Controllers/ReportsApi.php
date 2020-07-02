@@ -2,7 +2,7 @@
 
 /**
  * Grants Information Management System
- * Finance management sysytem
+ * Finance management system
  *
  * Contact: kennlebu@live.com
  *
@@ -209,7 +209,7 @@ class ReportsApi extends Controller
         
 
         if($operation == 'preview') {
-            return response()->json($report_data, 200,array(),JSON_PRETTY_PRINT);
+            return response()->json($report_data, 200);
         }
         elseif($operation == 'excel') {
             // Generate excel and return it

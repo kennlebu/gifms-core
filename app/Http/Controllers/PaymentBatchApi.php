@@ -71,60 +71,59 @@ class PaymentBatchApi extends Controller
                 $payment_batch->save();
 
                 foreach ($form['payments'] as $key => $value) {
-                    $payment                    = Payment::find($value);    
-                    if($payment->status_id != 1){  
-                        return Response()->json(['error' => 'Payments not in batchable status'], 403);
-                    }              
-                    $payment->status_id         = 2;
-                    $payment->payment_batch_id  = $payment_batch->id;
-                    $payment->disableLogging();
+                    $payment = Payment::find($value);    
+                    if($payment->status_id == 1){   // Only batch payments that have not been batched yet
+                        $payment->status_id         = 2;
+                        $payment->payment_batch_id  = $payment_batch->id;
+                        $payment->disableLogging();
 
-                    $payment->ref = "CHAI/PYMT/#$payment->id/".date_format($payment->created_at,"Y/m/d");
-                    $v = DB::select('call generate_voucher_no(?,?)',array($payment->id, $payment->payable_type));
-                    $payment->save();
+                        $payment->ref = "CHAI/PYMT/#$payment->id/".date_format($payment->created_at,"Y/m/d");
+                        $v = DB::select('call generate_voucher_no(?,?)',array($payment->id, $payment->payable_type));
+                        $payment->save();
 
-                    // Now update the invoices, claims and advances
-                    if($payment->payable_type == 'invoices'){
-                        $invoice                = Invoice::find($payment->payable_id);
-                        $invoice->status_id     = 5;
-                        $invoice->disableLogging();
-                        $invoice->save();
-                        activity()
-                            ->performedOn($invoice)
-                            ->causedBy($user)
-                            ->log('Confirmed & processed payments');
-                    }
-                    elseif($payment->payable_type == 'advances'){
-                        $advance                = Advance::find($payment->payable_id);
-                        $advance->status_id     = 5;
-                        $advance->disableLogging();
-                        $advance->save();
-                        activity()
-                            ->performedOn($advance)
-                            ->causedBy($user)
-                            ->log('Confirmed & processed payments');
-                    }
-                    elseif($payment->payable_type == 'claims'){
-                        $claim                = Claim::find($payment->payable_id);
-                        $claim->status_id     = 6;
-                        $claim->disableLogging();
-                        $claim->save();
-                        activity()
-                            ->performedOn($claim)
-                            ->causedBy($user)
-                            ->log('Confirmed & processed payments');
-                    }
-                }
-                
-                // Add activity notification
-                $this->addActivityNotification('Payments consolidated (batched)', null, $this->current_user()->id, $this->current_user()->id, 'success', 'payment_batches', true);
+                        // Now update the invoices, claims and advances
+                        if($payment->payable_type == 'invoices'){
+                            $invoice                = Invoice::find($payment->payable_id);
+                            $invoice->status_id     = 5;
+                            $invoice->disableLogging();
+                            $invoice->save();
+                            activity()
+                                ->performedOn($invoice)
+                                ->causedBy($user)
+                                ->log('Confirmed & processed payments');
+                        }
+                        elseif($payment->payable_type == 'advances'){
+                            $advance                = Advance::find($payment->payable_id);
+                            $advance->status_id     = 5;
+                            $advance->disableLogging();
+                            $advance->save();
+                            activity()
+                                ->performedOn($advance)
+                                ->causedBy($user)
+                                ->log('Confirmed & processed payments');
+                        }
+                        elseif($payment->payable_type == 'claims'){
+                            $claim                = Claim::find($payment->payable_id);
+                            $claim->status_id     = 6;
+                            $claim->disableLogging();
+                            $claim->save();
+                            activity()
+                                ->performedOn($claim)
+                                ->causedBy($user)
+                                ->log('Confirmed & processed payments');
+                        }
 
-                Mail::queue(new NotifyBatch($payment_batch->id));
+                        // Add activity notification
+                        $this->addActivityNotification('Payments consolidated (batched)', null, $this->current_user()->id, $this->current_user()->id, 'success', 'payment_batches', true);
+        
+                        Mail::queue(new NotifyBatch($payment_batch->id));
+                    }                    
+                }                
 
                 return Response()->json(['msg' => 'Success: Payment Batch added'], 200);
             }
-
-        }catch (JWTException $e){
+        }
+        catch (JWTException $e){
             return response()->json(['error'=>'something went wrong'], 500);
         }
     }
