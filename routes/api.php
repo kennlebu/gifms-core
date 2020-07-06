@@ -5430,6 +5430,8 @@ Route::GET('/asset/{id}/get_insurance_claim', 'AssetApi@getInsuranceclaim')->mid
 Route::POST('/assets/download', 'AssetApi@downloadAssets')->middleware('jwt.auth');
 Route::POST('/claim-asset', 'AssetApi@claimAsset')->middleware('jwt.auth');
 Route::POST('/report-lost-asset', 'AssetApi@reportStolen')->middleware('jwt.auth');
+Route::POST('/assets/upload-excel', 'AssetApi@uploadExcel')->middleware('jwt.auth');
+Route::get('/assets/download_template', 'AssetApi@download_template')->middleware('jwt.auth');
 // Types
 Route::POST('assets/types', 'AssetApi@addAssetType')->middleware('jwt.auth');
 Route::PUT('/assets/type', 'AssetApi@updateAssetType')->middleware('jwt.auth');

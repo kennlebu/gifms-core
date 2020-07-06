@@ -883,7 +883,7 @@ class ReportsApi extends Controller
         try{
             $input = Request::all();
 
-            $objectives = array();
+            $objectives = [];
             if(array_key_exists('lean', $input)){
                 $objectives = ReportingObjective::query();
             }
@@ -891,8 +891,6 @@ class ReportsApi extends Controller
                 $objectives = ReportingObjective::with('program');
             }
 
-            $response;
-            $response_dt;
             $total_records          = $objectives->count();
             $records_filtered       = 0;
 
@@ -917,17 +915,17 @@ class ReportsApi extends Controller
                 // If PM
                 if($this->current_user()->hasRole(['program-manager'])){
                     $programs = ProgramManager::where('program_manager_id', $this->current_user()->id)->get();
-                    $program_ids = array();
+                    $program_ids = [];
                     foreach($programs as $prog){
-                        array_push($program_ids, $prog->program_id);
+                        $program_ids[] = $prog->program_id;
                     }
                     $objectives = $objectives->whereIn('program_id', $program_ids);
                 }
                 else {
                     $program_teams = ProgramStaff::where('staff_id', $this->current_user()->id)->get();
-                    $program_ids = array();                    
+                    $program_ids = [];                    
                     foreach($program_teams as $team){
-                        array_push($program_ids, $team->program_id);
+                        $program_ids[] = $team->program_id;
                     }
                     $program_ids = array_unique($program_ids);
 
@@ -945,16 +943,15 @@ class ReportsApi extends Controller
             if(array_key_exists('datatables', $input)){
                 //limit $ offset
                 if((int)$input['start']!= 0 ){
-                    $response_dt = $objectives->limit($input['length'])->offset($input['start']);
+                    $objectives = $objectives->limit($input['length'])->offset($input['start']);
                 }else{
                     $objectives = $objectives->limit($input['length']);
                 }
 
-                $records_filtered = (int) $objectives->count();
-                $response_dt = $objectives->get();
+                $records_filtered = $objectives->count();
 
                 $response = ReportingObjective::arr_to_dt_response( 
-                    $response_dt, $input['draw'],
+                    $objectives->get(), $input['draw'],
                     $total_records,
                     $records_filtered
                     );
@@ -963,11 +960,11 @@ class ReportsApi extends Controller
                 $response = $objectives->get();
             }
 
-            return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+            return response()->json($response, 200);
         }
         catch(\Exception $e){
             $response =  ["error"=>"reporting_objective could not be found", "message"=>$e->getMessage()];
-            return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
+            return response()->json($response, 500);
         }
     }
 
@@ -985,12 +982,12 @@ class ReportsApi extends Controller
             $objective->disableLogging();
 
             if($objective->save()){
-                return Response()->json(array('msg' => 'Success: Objective created'), 200);
+                return Response()->json(['msg' => 'Success: Objective created'], 200);
             }
         }
         catch(\Exception $e){
             $response =  ["error"=>"An error occurred during processing", "message"=>$e->getMessage()];
-            return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
+            return response()->json($response, 500);
         }
     }
 
@@ -1008,12 +1005,12 @@ class ReportsApi extends Controller
             $objective->disableLogging();
 
             if($objective->save()){
-                return Response()->json(array('msg' => 'Success: Objective updated'), 200);
+                return Response()->json(['msg' => 'Success: Objective updated'], 200);
             }
         }
         catch(\Exception $e){
             $response =  ["error"=>"An error occurred during processing", "message"=>$e->getMessage()];
-            return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
+            return response()->json($response, 500);
         }
     }
 
@@ -1025,9 +1022,9 @@ class ReportsApi extends Controller
     {
         $deleted = ReportingObjective::destroy($objective_id);
         if($deleted){
-            return response()->json(['msg'=>"Objective removed"], 200,array(),JSON_PRETTY_PRINT);
+            return response()->json(['msg'=>"Objective removed"], 200);
         }else{
-            return response()->json(['error'=>"Something went wrong"], 500,array(),JSON_PRETTY_PRINT);
+            return response()->json(['error'=>"Something went wrong"], 500);
         }
 
     }
@@ -1038,8 +1035,7 @@ class ReportsApi extends Controller
      */
     public function getReportingObjectiveById($objective_id){
         try{
-            $objective = ReportingObjective::with('program')->find($objective_id);
-            return response()->json($objective, 200,array(),JSON_PRETTY_PRINT);
+            return response()->json(ReportingObjective::with('program')->find($objective_id), 200);
         }
         catch(\Exception $e){
             return response()->json(['error'=>'something went wrong', 'msg'=>$e->getMessage()], 500);
@@ -1058,13 +1054,8 @@ class ReportsApi extends Controller
      */
     public function setReportingCategoryObjective(){
         try{            
-            $user = JWTAuth::parseToken()->authenticate();
-            $form = Request::only(
-                'id',
-                'reporting_objective_id',
-                'reporting_categories_id',
-                'payable_type'
-                );
+            $user = $this->current_user();
+            $form = Request::all();
 
             if($form['payable_type'] == 'claims'){
                 $claim = Claim::find($form['id']);

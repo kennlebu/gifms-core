@@ -16,10 +16,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Request;
-use Illuminate\Support\Facades\DB;
 use App\Models\DeliveriesModels\Delivery;
 use Anchu\Ftp\Facades\Ftp;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Response;
 use App\Models\LPOModels\Lpo;
 use Illuminate\Support\Facades\Mail;
@@ -231,9 +229,9 @@ class DeliveryApi extends Controller
     {
         $deleted = Delivery::destroy($delivery_id);
         if($deleted){
-            return response()->json(['msg'=>"delivery deleted"], 200,array(),JSON_PRETTY_PRINT);
+            return response()->json(['msg'=>"delivery deleted"], 200);
         }else{
-            return response()->json(['error'=>"Something went wrong"], 500,array(),JSON_PRETTY_PRINT);
+            return response()->json(['error'=>"Something went wrong"], 500);
         }
     }
 
@@ -280,21 +278,15 @@ class DeliveryApi extends Controller
                                         'comments',
                                         'supplier',
                                         'lpo',
-                                        'logs',
+                                        'logs.causer',
                                         'requisition',
                                         'items'
                                     )->findOrFail($delivery_id);
 
-            foreach ($response->logs as $key => $value) {                
-                $response['logs'][$key]['causer'] = $value->causer;
-                $response['logs'][$key]['subject'] = $value->subject;
-            }
-
-            return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+            return response()->json($response, 200);
 
         }catch(Exception $e){
-            $response =  ["error"=>$e->getMessage()];
-            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+            return response()->json(["error"=>$e->getMessage()], 404);
         }
     }
 
@@ -338,12 +330,11 @@ class DeliveryApi extends Controller
             $path_info      = pathinfo($path);
             $basename       = $path_info['basename'];
             $file_contents  = FTP::connection()->readFile($path);
-            // $file           = File::get($file_contents);
             $response       = Response::make($file_contents, 200);
             $response->header('Content-Type', $this->get_mime_type($basename));
             return $response;  
         }catch (Exception $e ){
-            $response       = Response::make("", 200);
+            $response       = Response::make("", 500);
             $response->header('Content-Type', 'application/pdf');
             return $response;  
         }
@@ -364,7 +355,7 @@ class DeliveryApi extends Controller
 
             return $response;
         }catch (Exception $e){
-            $response = Response::make("", 200);
+            $response = Response::make("", 500);
             $response->header('Content-Type', 'application/pdf');
 
             return $response;  
@@ -407,13 +398,11 @@ class DeliveryApi extends Controller
     public function getDeliveries()
     {
         $input = Request::all();
-        //query builder
-        $qb = DB::table('deliveries');
 
-        $qb->whereNull('deleted_at');
-
-        $response;
-        $response_dt;
+        $qb = Delivery::query();
+        if(!array_key_exists('lean', $input)){
+            $qb = Delivery::with('lpo','received_by','received_for','supplier','requisition');
+        }
 
         $total_records          = $qb->count();
         $records_filtered       = 0;
@@ -422,9 +411,9 @@ class DeliveryApi extends Controller
             $type_ = (int) $input['type'];
 
             if($type_==1){
-                $qb->where('received_by_id',$this->current_user()->id);
+                $qb = $qb->where('received_by_id',$this->current_user()->id);
             }elseif ($type_==2) {
-                $qb->where('received_for_id',$this->current_user()->id);
+                $qb = $qb->where('received_for_id',$this->current_user()->id);
             }elseif ($type_==-1) {
                 // Pass
             }
@@ -432,16 +421,11 @@ class DeliveryApi extends Controller
 
         //searching
         if(array_key_exists('searchval', $input)){
-            $qb->where(function ($query) use ($input) {                
-                $query->orWhere('id','like', '\'%' . $input['searchval']. '%\'');
-                $query->orWhere('ref','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('external_ref','like', '\'%' . $input['search']['value']. '%\'');
+            $qb = $qb->where(function ($query) use ($input) {                
+                $query->orWhere('ref','like', '%' . $input['search']['value']. '%');
+                $query->orWhere('external_ref','like', '%' . $input['search']['value']. '%');
             });
-
-            $sql = Delivery::bind_presql($qb->toSql(),$qb->getBindings());
-            $sql = str_replace("*"," count(*) AS count ", $sql);
-            $dt = json_decode(json_encode(DB::select($sql)), true);
-            $records_filtered = (int) $dt[0]['count'];
+            $records_filtered = $qb->count();
         }
 
         //ordering
@@ -452,27 +436,22 @@ class DeliveryApi extends Controller
                 $order_direction = $input['order_dir'];
             }
 
-            $qb->orderBy($order_column_name, $order_direction);
+            $qb = $qb->orderBy($order_column_name, $order_direction);
         }
 
         //limit
         if(array_key_exists('limit', $input)){
-            $qb->limit($input['limit']);
+            $qb = $qb->limit($input['limit']);
         }
 
         if(array_key_exists('datatables', $input)){
             //searching
-            $qb->where(function ($query) use ($input) {                
-                $query->orWhere('id','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('ref','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('external_ref','like', '\'%' . $input['search']['value']. '%\'');
+            $qb = $qb->where(function ($query) use ($input) {
+                $query->orWhere('ref','like', '%' . $input['search']['value']. '%');
+                $query->orWhere('external_ref','like', '%' . $input['search']['value']. '%');
             });
 
-            $sql = Delivery::bind_presql($qb->toSql(),$qb->getBindings());
-            $sql = str_replace("*"," count(*) AS count ", $sql);
-            $dt = json_decode(json_encode(DB::select($sql)), true);
-
-            $records_filtered = (int) $dt[0]['count'];
+            $records_filtered = $qb->count();
 
             //ordering
             $order_column_id    = (int) $input['order'][0]['column'];
@@ -480,144 +459,27 @@ class DeliveryApi extends Controller
             $order_direction    = $input['order'][0]['dir'];
 
             if($order_column_name!=''){
-                $qb->orderBy($order_column_name, $order_direction);
+                $qb = $qb->orderBy($order_column_name, $order_direction);
             }
 
             //limit $ offset
             if((int)$input['start']!= 0 ){
-                $response_dt    =   $qb->limit($input['length'])->offset($input['start']);
+                $qb = $qb->limit($input['length'])->offset($input['start']);
             }
             else{
-                $qb->limit($input['length']);
+                $qb = $qb->limit($input['length']);
             }
 
-            $sql = Delivery::bind_presql($qb->toSql(),$qb->getBindings());
-
-            $response_dt = DB::select($sql);
-            $response_dt = json_decode(json_encode($response_dt), true);
-            $response_dt    = $this->append_relationships_objects($response_dt);
-            $response_dt    = $this->append_relationships_nulls($response_dt);
-            $response       = Delivery::arr_to_dt_response( 
-                $response_dt, $input['draw'],
+            $response = Delivery::arr_to_dt_response( 
+                $qb->get(), $input['draw'],
                 $total_records,
                 $records_filtered
                 );
         }
         else{
-            $sql            = Delivery::bind_presql($qb->toSql(),$qb->getBindings());
-            $response       = json_decode(json_encode(DB::select($sql)), true);
-            if(!array_key_exists('lean', $input)){
-                $response       = $this->append_relationships_objects($response);
-                $response       = $this->append_relationships_nulls($response);
-            }
+            $response = $qb->get();
         }
 
-        return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    public function append_relationships_objects($data = array()){
-
-        foreach ($data as $key => $value) {
-            $delivery = Delivery::with('supplier')->find($data[$key]['id']);
-
-            $data[$key]['lpo']                      = $delivery->lpo;
-            $data[$key]['received_by']              = $delivery->received_by;
-            $data[$key]['received_for']             = $delivery->received_for;
-            $data[$key]['supplier']                 = $delivery->supplier;
-            $data[$key]['requisition']              = $delivery->requisition;
-        }
-
-        return $data;
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-    public function append_relationships_nulls($data = array()){
-        foreach ($data as $key => $value) {
-            if($value["lpo"]==null){
-                $data[$key]['lpo'] = array("expense_desc"=>"N/A");                
-            }
-            if($value["received_by"]==null){
-                $data[$key]['received_by'] = array("full_name"=>"N/A");                
-            }
-        }
-
-        return $data;
+        return response()->json($response, 200);
     }
 }

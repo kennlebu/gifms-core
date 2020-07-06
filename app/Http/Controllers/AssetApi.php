@@ -20,7 +20,11 @@ use Illuminate\Support\Facades\Response;
 use Anchu\Ftp\Facades\Ftp;
 use App\Models\Assets\AssetLoss;
 use App\Models\DeliveriesModels\DeliveryItem;
+use App\Models\InvoicesModels\Invoice;
+use App\Models\StaffModels\Staff;
+use App\Models\SuppliesModels\Supplier;
 use Excel;
+use Illuminate\Support\Facades\Storage;
 
 class AssetApi extends Controller
 {
@@ -1681,5 +1685,149 @@ class AssetApi extends Controller
         }else{
             return response()->json(['error'=>"Something went wrong"], 500, array(), JSON_PRETTY_PRINT);
         }
+    }
+
+
+
+    public function uploadExcel(){
+        try{
+            $form = Request::only("file");
+            $file = $form['file'];
+
+            $data = Excel::load($file->getPathname(), function($reader) {
+            })->get()->toArray();
+
+            foreach ($data as $key => $value) {
+                try{                    
+                    $asset = new Asset();
+                    if(!empty(trim($value['asset_type']))){
+                        $asset_type = AssetType::where('type', 'like', '%' .trim($value['asset_type']). '%')->first();
+                        if(!empty($asset_type))
+                            $asset->type_id = $asset_type->id;
+                        else{
+                            $asset_type = AssetType::create([
+                                'type' => $value['asset_type']
+                            ]);
+                            $asset->type_id = $asset_type->id;
+                        }
+                    }
+                    if(!empty(trim($value['asset_name']))){
+                        $asset_name = AssetName::where('name', 'like', '%' .trim($value['asset_name']). '%')->first();
+                        if(!empty($asset_name))
+                            $asset->asset_name_id = $asset_name->id;
+                        else{
+                            $asset_name = AssetName::create([
+                                'name' => $value['asset_name']
+                            ]);
+                            $asset->asset_name_id = $asset_name->id;
+                        }
+                    }
+                    
+                    $asset->model = trim($value['model']);
+                    $asset->description = trim($value['description']);
+                    $asset->serial_no = trim($value['serial_no']);
+                    $asset->tag = trim($value['tag_no']);
+                    $asset->added_by_id = $this->current_user()->id;
+                    $asset->last_updated_by = $this->current_user()->id;
+                    $asset->date_of_purchase = trim($value['datepurchased']);
+                    $asset->cost = trim($value['assetcost']);
+                    
+                    if(!empty(trim($value['location']))){
+                        $location = AssetLocation::where('location', 'like', '%' .trim($value['location']). '%')->first();
+                        if(!empty($location))
+                            $asset->location_id = $location->id;
+                        else{
+                            $location = AssetLocation::create([
+                                'location' => $value['location']
+                            ]);
+                            $asset->location_id = $location->id;
+                        }
+                    }
+
+                    if(!empty($value['userallocated'])){
+                        $names = explode(" ", $value['userallocated']);
+                        $staff = Staff::query();
+                        if(!empty($names[0])){
+                            $staff = $staff->where('f_name', 'like', '%' .$names[0]. '%');
+                            if(!empty($names[1])){
+                                $staff = $staff->where('l_name', 'like', '%' .$names[1]. '%');
+                            }
+                            $staff = $staff->first();
+                            if(!empty($staff)){
+                                $asset->assigned_to_id = $staff->id;
+                                $asset->assignee_type = 'individual';
+                            }
+                        }
+                    }
+
+                    if(!empty($value['staff_responsible'])){
+                        $names = explode(" ", $value['staff_responsible']);
+                        $staff = Staff::query();
+                        if(!empty($names[0])){
+                            $staff = $staff->where('f_name', 'like', '%' .$names[0]. '%');
+                            if(!empty($names[1])){
+                                $staff = $staff->where('l_name', 'like', '%' .$names[1]. '%');
+                            }
+                            $staff = $staff->first();
+                            if(!empty($staff)){
+                                $asset->staff_responsible_id = $staff->id;
+                            }
+                        }
+                    }
+                    
+                    if(!empty(trim($value['suppliername']))){
+                        $supplier = Supplier::where('supplier_name', 'like', '%' .trim($value['suppliername']). '%')->first();
+                        if(!empty($supplier))
+                            $asset->supplier_id = $supplier->id;
+                    }
+                    
+                    if(!empty(trim($value['status']))){
+                        $status = AssetStatus::where('status', 'like', '%' .trim($value['status']). '%')->first();
+                        if(!empty($status))
+                            $asset->status_id = $status->id;
+                    }
+                    
+                    if(!empty(trim($value['insuranceclass']))){
+                        $class = AssetClass::where('name', 'like', '%' .trim($value['insuranceclass']). '%')->first();
+                        if(!empty($class))
+                            $asset->class_id = $class->id;
+                        else{
+                            $class = AssetClass::create([
+                                'name' => $value['insuranceclass']
+                            ]);
+                            $asset->class_id = $class->id;
+                        }
+                    }
+
+                    if(!empty(trim($value['invoice_number']))){
+                        $invoice = Invoice::where('external_ref', trim($value['invoice_number']))->first();
+                        if(!empty($invoice)){
+                            $asset->invoice_id = $invoice->id;
+                            $asset->requisition_id = $invoice->requisition_id;
+                            $asset->lpo_id = $invoice->lpo_id;
+                        }
+                    }
+
+                    $asset->save();
+                }
+                catch(\Exception $e){
+                    return response()->json(["error"=>'An error occurred during processing.', "msg"=>$e->getMessage()], 500);
+                }
+            }
+
+            return response()->json(['msg'=>'finished'], 200);
+        }
+        catch(Exception $e){
+            return response()->json(['error'=>"An rerror occured during processing"], 500);
+        }
+    }
+
+
+    public function download_template(){
+        $path           = '/templates/assets_template.xlsx';
+        $file_contents  = Storage::get($path);
+        $response       = Response::make($file_contents, 200);
+        $response->header('Content-Type', 'application/vnd.ms-excel');
+        return $response;
     }
 }

@@ -215,7 +215,7 @@ class PaymentApi extends Controller
                     }
                     else{
                         foreach($pv_nos as $record){
-                            $row = array();
+                            $row = [];
                             if($record->payable_type == 'invoices'){
                                 $payment = Payment::find($record->payable_id);
                                 $invoice = Invoice::with('supplier')->where('id', $payment->payable_id);
@@ -248,7 +248,7 @@ class PaymentApi extends Controller
                                 if(!empty($invoice)){
                                     $row['payable_type'] = $record->payable_type;
                                     $row['payable'] = $invoice;
-                                    array_push($result, $row);
+                                    $result[] = $row;
                                 } 
                             }
                             elseif($record->payable_type == 'claims' && empty($supplier_id)){
@@ -278,7 +278,7 @@ class PaymentApi extends Controller
                                 if(!empty($claim)){
                                     $row['payable_type'] = $record->payable_type;
                                     $row['payable'] = $claim;
-                                    array_push($result, $row);
+                                    $result[] = $row;
                                 }                         
                             }
                             elseif($record->payable_type == 'advances' && empty($supplier_id)){
@@ -308,7 +308,7 @@ class PaymentApi extends Controller
                                 if(!empty($advance)){
                                     $row['payable'] = $advance;
                                     $row['payable_type'] = $record->payable_type;
-                                    array_push($result, $row);
+                                    $result[] = $row;
                                 } 
                             }
                             elseif($record->payable_type == 'mobile_payments' && empty($supplier_id)){
@@ -337,7 +337,7 @@ class PaymentApi extends Controller
                                 if(!empty($mobile_payment)){
                                     $row['payable'] = $mobile_payment;
                                     $row['payable_type'] = $record->payable_type;
-                                    array_push($result, $row);
+                                    $result[] = $row;
                                 }
                             }
                         }
@@ -347,7 +347,7 @@ class PaymentApi extends Controller
 
             // No voucher number
             elseif(empty($voucher_no)){
-                $row = array();
+                $row = [];
 
                 // Invoice
                 $invoice = Invoice::with('status','supplier');
@@ -381,7 +381,7 @@ class PaymentApi extends Controller
                 foreach($invoice as $record){
                     $row['payable_type'] = 'invoices';
                     $row['payable'] = $record;
-                    array_push($result, $row);
+                    $result[] = $row;
                 }
 
                 // Search claims, advances, mobile payments only if supplier is not selected
@@ -414,7 +414,7 @@ class PaymentApi extends Controller
                     foreach($claim as $record){
                         $row['payable_type'] = 'claims';
                         $row['payable'] = $record;
-                        array_push($result, $row);
+                        $result[] = $row;
                     }
 
                     // Advance
@@ -445,7 +445,7 @@ class PaymentApi extends Controller
                     foreach($advance as $record){
                         $row['payable_type'] = 'advances';
                         $row['payable'] = $record;
-                        array_push($result, $row);
+                        $result[] = $row;
                     }
 
                     // Mobile Payment
@@ -476,7 +476,7 @@ class PaymentApi extends Controller
                     foreach($mobile_payment as $record){
                         $row['payable_type'] = 'mobile_payments';
                         $row['payable'] = $record;
-                        array_push($result, $row);
+                        $result[] = $row;
                     }
                 }
             }
