@@ -70,9 +70,9 @@ class BankApi extends Controller
     {
         $deleted = Bank::destroy($bank_id);
         if($deleted){
-            return response()->json(['msg'=>"bank deleted"], 200,array(),JSON_PRETTY_PRINT);
+            return response()->json(['msg'=>"bank deleted"], 200);
         }else{
-            return response()->json(['error'=>"bank not found"], 404,array(),JSON_PRETTY_PRINT);
+            return response()->json(['error'=>"bank not found"], 500);
         }
     }
 
@@ -88,11 +88,11 @@ class BankApi extends Controller
     {
         try{
             $response   = Bank::findOrFail($bank_id);           
-            return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+            return response()->json($response, 200);
 
         }catch(Exception $e){
             $response =  ["error"=>"Something went wrong"];
-            return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
+            return response()->json($response, 500);
         }
     }
 
@@ -114,9 +114,9 @@ class BankApi extends Controller
         //searching
         if(array_key_exists('searchval', $input)){
             $qb = $qb->where(function ($query) use ($input) {                
-                $query->orWhere('bank_name','like', '\'%' . $input['searchval']. '%\'');
-                $query->orWhere('bank_code','like', '\'%' . $input['searchval']. '%\'');
-                $query->orWhere('swift_code','like', '\'%' . $input['searchval']. '%\'');
+                $query->orWhere('bank_name','like', '%' . $input['searchval']. '%');
+                $query->orWhere('bank_code','like', '%' . $input['searchval']. '%');
+                $query->orWhere('swift_code','like', '%' . $input['searchval']. '%');
             });
 
             $records_filtered = (int) $qb->count();
@@ -141,10 +141,10 @@ class BankApi extends Controller
             //searching
             if(!empty($input['search']['value'])){
                 $qb = $qb->where(function ($query) use ($input) {                
-                    $query->orWhere('banks.id','like', '\'%' . $input['search']['value']. '%\'');
-                    $query->orWhere('banks.bank_name','like', '\'%' . $input['search']['value']. '%\'');
-                    $query->orWhere('banks.bank_code','like', '\'%' . $input['search']['value']. '%\'');
-                    $query->orWhere('banks.swift_code','like', '\'%' . $input['searchval']. '%\'');
+                    $query->orWhere('id','like', '%' . $input['search']['value']. '%');
+                    $query->orWhere('bank_name','like', '%' . $input['search']['value']. '%');
+                    $query->orWhere('bank_code','like', '%' . $input['search']['value']. '%');
+                    $query->orWhere('swift_code','like', '%' . $input['search']['value']. '%');
                 });
             }
 

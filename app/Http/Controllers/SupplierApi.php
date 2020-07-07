@@ -31,6 +31,7 @@ use Excel;
 use Illuminate\Http\Request as HttpRequest;
 use Anchu\Ftp\Facades\Ftp;
 use App\Models\SuppliesModels\SupplierService;
+use App\Models\SuppliesModels\SupplierSupplyCategory;
 
 class SupplierApi extends Controller
 {
@@ -78,7 +79,14 @@ class SupplierApi extends Controller
         }
 
         if($supplier->save()) {
-            $supplier = Supplier::with('bank','bank_branch','payment_mode','county','supply_category','documents.added_by')->find($supplier->id);
+            foreach($form['supply_categories'] as $s_cat){
+                SupplierSupplyCategory::create([
+                    'supplier_id' => $supplier->id,
+                    'supply_category_id' => $s_cat['id']
+                ]);
+            }
+
+            $supplier = Supplier::with('bank','bank_branch','payment_mode','county','supply_category','documents.added_by','supply_categories')->find($supplier->id);
             return Response()->json(array('msg' => 'Success: supplier added','supplier' => $supplier), 200);
         }
     }
@@ -116,8 +124,8 @@ class SupplierApi extends Controller
         $form = Request::all();
 
         $supplier = Supplier::find($form['id']);
-        $supplier->bank_id                 =  (int)  $form['bank_id'];
-        $supplier->bank_branch_id          =  (int)  $form['bank_branch_id'];
+        $supplier->bank_id                 =         $form['bank_id'];
+        $supplier->bank_branch_id          =         $form['bank_branch_id'];
         $supplier->supplier_name           =         $form['supplier_name'];
         $supplier->address                 =         $form['address'];
         $supplier->telephone               =         $form['telephone'];
@@ -126,9 +134,8 @@ class SupplierApi extends Controller
         $supplier->bank_account            =         $form['bank_account'];
         $supplier->mobile_payment_number   =         $form['mobile_payment_number'];
         $supplier->chaque_address          =         $form['chaque_address'];
-        $supplier->payment_mode_id         =  (int)  $form['payment_mode_id'];
+        $supplier->payment_mode_id         =         $form['payment_mode_id'];
         $supplier->bank_code               =         $form['bank_code'];
-        // $supplier->swift_code              =         $form['swift_code'];
         $supplier->usd_account             =         $form['usd_account'];
         $supplier->alternative_email       =         $form['alternative_email'];
         $supplier->mobile_payment_name     =         $form['mobile_payment_name'];
@@ -142,13 +149,24 @@ class SupplierApi extends Controller
         $supplier->requires_lpo            =         $form['requires_lpo'];
         $supplier->supply_category_id = $form['supply_category_id'];
         $supplier->county_id = $form['county_id'];
+        
+        foreach($supplier->supply_categories as $old_cat){
+            SupplierSupplyCategory::where('supplier_id', $supplier->id)->where('supply_category_id',  $old_cat->id)->delete();
+        }
+
+        foreach($form['supply_categories'] as $new_cat){
+            SupplierSupplyCategory::create([
+                'supplier_id' => $supplier->id,
+                'supply_category_id' => $new_cat['id']
+            ]);
+        }
 
         if(!empty($form['tax_pin']) && Supplier::where('tax_pin', $supplier->tax_pin)->where('id', '!=', $form['id'])->exists()){
             return response()->json(["error"=>"Supplier with the same tax pin already exists"], 409);
         }
 
         if($supplier->save()) {
-            $supplier = Supplier::with('bank','bank_branch','payment_mode','county','supply_category','documents.added_by')->find($supplier->id);
+            $supplier = Supplier::with('bank','bank_branch','payment_mode','county','supply_category','documents.added_by','supply_categories')->find($supplier->id);
             return Response()->json(array('msg' => 'Success: supplier updated','supplier' => $supplier), 200);
         }
     }
@@ -226,7 +244,8 @@ class SupplierApi extends Controller
     {
         try{
             $input = Request::all();
-            $response = Supplier::with('bank','bank_branch','payment_mode','county','supply_category','documents.added_by')->findOrFail($supplier_id);  
+            $response = Supplier::with('bank','bank_branch','payment_mode','county','supply_category','documents.added_by',
+                        'supply_categories')->findOrFail($supplier_id);  
             if(array_key_exists('with_transactions', $input)){
                 $response['transactions'] = $response->getTransactionsAttribute();
             }

@@ -2069,3 +2069,20 @@ CREATE TABLE `documents` (
   `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
   `deleted_at` timestamp NULL
 );
+
+~===== Supplier supply category table
+CREATE TABLE `supplier_supply_categories` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `supplier_id` int NULL,
+  `supply_category_id` int NULL
+);
+
+ALTER TABLE `supplier_supply_categories`
+ADD `created_at` timestamp NULL,
+ADD `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP AFTER `created_at`;
+
+ALTER TABLE `supplier_supply_categories`
+CHANGE `updated_at` `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP AFTER `created_at`,
+ADD `deleted_at` timestamp NULL;
+
+php artisan refractor:supply_categories

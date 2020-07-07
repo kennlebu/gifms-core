@@ -10,7 +10,6 @@ use App\Models\LPOModels\Lpo;
 
 class Supplier extends BaseModel
 {
-    //
     use SoftDeletes;
     protected $hidden = ['created_at', 'updated_at', 'deleted_at', 'quick_books', 'password', 'qb', 'currency',
                         'migration_bank_branch_code', 'migration_bank_branch_id', 'migration_bank_id',
@@ -48,6 +47,10 @@ class Supplier extends BaseModel
     public function documents()
     {
         return $this->hasMany('App\Models\SuppliesModels\SupplierDocument');
+    }
+    public function supply_categories()
+    {
+        return $this->belongsToMany('App\Models\SuppliesModels\SupplyCategory','supplier_supply_categories','supplier_id', 'supply_category_id');
     }
 
     public function getTransactionsAttribute(){
