@@ -154,11 +154,13 @@ class SupplierApi extends Controller
             SupplierSupplyCategory::where('supplier_id', $supplier->id)->where('supply_category_id',  $old_cat->id)->delete();
         }
 
-        foreach($form['supply_categories'] as $new_cat){
-            SupplierSupplyCategory::create([
-                'supplier_id' => $supplier->id,
-                'supply_category_id' => $new_cat['id']
-            ]);
+        if(!empty($form['supply_categories'])){
+            foreach($form['supply_categories'] as $new_cat){
+                SupplierSupplyCategory::create([
+                    'supplier_id' => $supplier->id,
+                    'supply_category_id' => $new_cat['id']
+                ]);
+            }
         }
 
         if(!empty($form['tax_pin']) && Supplier::where('tax_pin', $supplier->tax_pin)->where('id', '!=', $form['id'])->exists()){

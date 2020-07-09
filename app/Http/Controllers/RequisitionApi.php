@@ -32,7 +32,6 @@ class RequisitionApi extends Controller
         $requisitions = Requisition::with('items.supplier_service','items.county','allocations','requested_by','status','program_manager');
         $user = $this->current_user();
 
-        $response_dt;
         $total_records = $requisitions->count();
         $records_filtered = 0;
 
@@ -62,6 +61,11 @@ class RequisitionApi extends Controller
             }
             elseif($status == -2){
                 $requisitions = $requisitions->where('program_manager_id',$user->id);
+            }
+            elseif($status == -4){
+                $requisitions = $requisitions->whereHas('items', function($query) {
+                    $query->where('status_id', 1);
+                });
             }
         }
         if(array_key_exists('my_approvables',$input)){
@@ -157,9 +161,8 @@ class RequisitionApi extends Controller
                 $requisitions = $requisitions->limit($input['length']);
             }
 
-            $response_dt = $requisitions->get();
             $response = Requisition::arr_to_dt_response( 
-                $response_dt, $input['draw'],
+                $requisitions->get(), $input['draw'],
                 $total_records,
                 $records_filtered
                 );
@@ -698,10 +701,21 @@ class RequisitionApi extends Controller
                     'display_color'=>'#075b23a1',
                     'count'=>Requisition::count()
                 ];
+
+                $pending_ordering = [
+                    'id'=>-4,
+                    'status'=>'Requisitions pending ordering',
+                    'display_color'=>'#64547a6e',
+                    'count'=>Requisition::whereHas('items', function($query) {
+                        $query->where('status_id', 1);
+                    })->count()
+                ];
+
+                $statuses = $this->insert_into_array($statuses, 0, 1, $pending_ordering, true, true);
             }
         }
         
-        return response()->json($statuses, 200,array(),JSON_PRETTY_PRINT);
+        return response()->json($statuses, 200);
     }
 
 
@@ -711,5 +725,34 @@ class RequisitionApi extends Controller
     public function getRequisitionLpoItem($requisition_item_id){
         $lpo_item = LpoItem::with('lpo')->where('requisition_item_id', $requisition_item_id)->first();
         return response()->json(['lpo_item'=>$lpo_item], 200);
+    }
+
+    function insert_into_array( $array, $search_key, $insert_key, $insert_value, $insert_after_founded_key = true, $append_if_not_found = false ) {
+
+        $new_array = array();
+
+        foreach( $array as $key => $value ){
+
+            // INSERT BEFORE THE CURRENT KEY? 
+            // ONLY IF CURRENT KEY IS THE KEY WE ARE SEARCHING FOR, AND WE WANT TO INSERT BEFORE THAT FOUNDED KEY
+            if( $key === $search_key && ! $insert_after_founded_key )
+                $new_array[ $insert_key ] = $insert_value;
+
+            // COPY THE CURRENT KEY/VALUE FROM OLD ARRAY TO A NEW ARRAY
+            $new_array[ $key ] = $value;
+
+            // INSERT AFTER THE CURRENT KEY? 
+            // ONLY IF CURRENT KEY IS THE KEY WE ARE SEARCHING FOR, AND WE WANT TO INSERT AFTER THAT FOUNDED KEY
+            if( $key === $search_key && $insert_after_founded_key )
+                $new_array[ $insert_key ] = $insert_value;
+
+        }
+
+        // APPEND IF KEY ISNT FOUNDED
+        if( $append_if_not_found && count( $array ) == count( $new_array ) )
+            $new_array[ $insert_key ] = $insert_value;
+
+        return $new_array;
+
     }
 }

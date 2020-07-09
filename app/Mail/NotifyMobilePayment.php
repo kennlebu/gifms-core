@@ -43,9 +43,6 @@ class NotifyMobilePayment extends Mailable
                                 'approvals.approver',
                                 'allocations'
                             )->findOrFail($mobile_payment->id);
-        // foreach ($this->mobile_payment->approvals as $key => $value) {
-        //     $this->mobile_payment->approvals[$key]['approver'] = Staff::find($this->mobile_payment->approvals[$key]['approver_id']);
-        // }
     }
 
     /**
@@ -121,18 +118,6 @@ class NotifyMobilePayment extends Mailable
                         ])
                     ->subject("Mobile Payment Rejected ".$this->mobile_payment->ref);
         }
-
-        // else if($this->mobile_payment->status_id == 11){
-
-        //     return $this->to($this->accountant)
-        //             ->with([
-        //                     'mobile_payment' => $this->mobile_payment,
-        //                     'addressed_to' => $this->accountant,
-        //                     'js_url' => Config::get('app.js_url'),
-        //                 ])
-        //             // ->cc($ccs)
-        //             ->subject("Corrected Mobile Payment Approval Request ".$this->mobile_payment->ref);
-        // }
 
     }
 }
