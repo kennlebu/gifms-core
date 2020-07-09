@@ -33,7 +33,7 @@
                             ID no.:
                         </div>
                         <div class="col-10">
-                            <input id="id_no" name="id_no" value="{{$id_no}}" required class="form-control form-control-md" placeholder="ID No." type="text"><br/>
+                            <input id="id_no" name="id_no" value="{{$id_no}}" required class="form-control form-control-md" placeholder="ID No." type="number" maxlength="8"><br/>
                         </div>
                     </div>
                     <div class="row">
@@ -49,7 +49,7 @@
                             Email:
                         </div>
                         <div class="col-10">
-                            <input id="email" name="email" required class="form-control form-control-md" placeholder="Email" type="text"><br/>
+                            <input id="email" name="email" required class="form-control form-control-md" placeholder="Email" type="email"><br/>
                         </div>
                     </div>
                     <div class="row">
@@ -81,7 +81,7 @@
                             Phone:
                         </div>
                         <div class="col-10">
-                            <input id="phone" name="phone" required class="form-control form-control-md" placeholder="Phone" type="text"><br/>
+                            <input id="phone" name="phone" required class="form-control form-control-md" placeholder="Phone (starts with 07 or 01)" maxlength="10" type="number"><br/>
                         </div>
                     </div>
                     <div class="row">
@@ -113,7 +113,7 @@
                             KRA PIN:
                         </div>
                         <div class="col-10">
-                            <input id="kra_pin" name="kra_pin" required class="form-control form-control-md" placeholder="KRA PIN" type="text"><br/>
+                            <input id="kra_pin" name="kra_pin" required class="form-control form-control-md" placeholder="KRA PIN" type="text" maxlength="11"><br/>
                         </div>
                     </div>
                     <input type="hidden" name="url" value="{{$meeting_url}}" />
