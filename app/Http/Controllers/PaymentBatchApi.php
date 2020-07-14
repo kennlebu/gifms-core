@@ -424,7 +424,7 @@ class PaymentBatchApi extends Controller
                 if ($header) {
                     $header = false;
                 } else {
-                    $csv_row = array();
+                    $csv_row = [];
                     $csv_row['bank_ref'] = $csvLine[0];
                     $csv_row['chai_ref'] = $csvLine[1];
                     $csv_row['inputter'] = $csvLine[2];

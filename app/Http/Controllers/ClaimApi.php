@@ -573,6 +573,7 @@ class ClaimApi extends Controller
                     'payable_type'=>'Claim',
                     'unique_approvals' => $unique_approvals,
                     'bank_transactions' => $claim->bank_transactions,
+                    'payment' => $payment
                 ];
 
             $pdf            = PDF::loadView('pdf/payment_voucher', $data);
