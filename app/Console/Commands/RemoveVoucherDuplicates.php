@@ -38,7 +38,6 @@ class RemoveVoucherDuplicates extends Command
      */
     public function handle()
     {
-        // $this->argument('payable_id')
         $this->info('Running...');
 
         $tobedeleted = [];
