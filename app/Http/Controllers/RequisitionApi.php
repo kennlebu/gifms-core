@@ -329,7 +329,12 @@ class RequisitionApi extends Controller
     public function update(Request $request, $id)
     {
         try {
-            $requisition = Requisition::findOrFail($id);
+            $requisition = Requisition::findOrFail($id);            
+
+            if(count($requisition->items) < 1){
+                return response()->json(['error'=>"This requisition has no items"], 403);
+            }
+
             $requisition->purpose = $request->purpose;
             $requisition->program_manager_id = $request->program_manager_id;
             $requisition->objective_id = $request->objective_id ?? null;
@@ -445,6 +450,10 @@ class RequisitionApi extends Controller
             $requisition = Requisition::findOrFail($id);
             $user = $this->current_user();
 
+            if(count($requisition->items) < 1){
+                return response()->json(['error'=>"This requisition has no items"], 403);
+            }
+
             if($requisition->status_id == 1){
                 $requisition->status_id = 2;
                 $requisition->disableLogging();
@@ -465,7 +474,7 @@ class RequisitionApi extends Controller
             }
         }
         catch(Exception $e){
-            return response()->json(['error'=>"Something went wrong"], 500,array(),JSON_PRETTY_PRINT);
+            return response()->json(['error'=>"Something went wrong"], 500);
         }
     }
 
@@ -555,10 +564,12 @@ class RequisitionApi extends Controller
         $allocation = RequisitionAllocation::findOrFail($id);
         if($allocation->delete()){
             $requisition = Requisition::find($allocation->requisition_id);
-            return response()->json(['msg'=>"Requisition removed",'requisition'=>$requisition], 200,array(),JSON_PRETTY_PRINT);
+            return response()->json(['msg'=>"Requisition removed",'requisition'=>$requisition], 200);
         }
         else {
-            return response()->json(['error'=>"Something went wrong"], 500,array(),JSON_PRETTY_PRINT);
+            return response()->json(['error'=>"Something went wrong"], 500);
+        }
+    }
         }
     }
 

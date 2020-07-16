@@ -20,8 +20,6 @@ use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\InvoicesModels\Invoice;
 use App\Models\InvoicesModels\InvoiceStatus;
-use App\Models\ProjectsModels\Project;
-use App\Models\AccountingModels\Account;
 use App\Models\LPOModels\Lpo;
 use Anchu\Ftp\Facades\Ftp;
 use PDF;
@@ -38,7 +36,6 @@ use App\Models\FinanceModels\TaxRate;
 use App\Models\FinanceModels\WithholdingVatRate;
 use App\Models\PaymentModels\VoucherNumber;
 use Excel;
-use App\Models\ReportModels\ReportingObjective;
 use App\Models\Requisitions\Requisition;
 use App\Models\Requisitions\RequisitionItem;
 
@@ -553,7 +550,7 @@ class InvoiceApi extends Controller
                                         'lpo.requisition',
                                         'rejected_by',
                                         'approvals.approver', 'approvals.approval_level',
-                                        'payments.payment_mode','payments.currency','payments.payment_batch','payments.paid_to_bank_branch',
+                                        'payments.payment_mode','payments.currency','payments.payment_batch','payments.paid_to_bank_branch','payments.voucher_number',
                                         'payment_mode',
                                         'allocations.project','allocations.account','allocations.objective',
                                         'logs.causer',

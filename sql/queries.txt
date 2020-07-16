@@ -2086,3 +2086,7 @@ CHANGE `updated_at` `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP AFTE
 ADD `deleted_at` timestamp NULL;
 
 php artisan refractor:supply_categories
+
++~===== Add cancel status to requisition items
+INSERT INTO `requisition_item_statuses` (`status`, `default`)
+VALUES ('Cancelled', NULL);
