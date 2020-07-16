@@ -7,7 +7,6 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use App\Models\LPOModels\Lpo;
 use App\Models\StaffModels\Staff;
-use App\Models\StaffModels\User;
 use Config;
 use PDF;
 
@@ -27,11 +26,17 @@ class NotifyLpoDispatch extends Mailable
     public function __construct(Lpo $lpo)
     {
         $this->lpo = $lpo;
-        $this->requester = Staff::findOrFail($lpo->requested_by_id);
         $this->lpo_PM = Staff::findOrFail($lpo->project_manager_id);
         $this->m_director = Staff::whereHas('roles', function($query){
                                 $query->whereIn('role_id', [3]);  
                             })->where('official_post', 'Deputy Country Director')->first();
+
+        if($lpo->requisitioned_by_id){
+            $this->requester = Staff::findOrFail($lpo->requisitioned_by_id);
+        }
+        else{
+            $this->requester = Staff::findOrFail($lpo->requested_by_id);
+        }
     }
 
     /**
@@ -83,17 +88,17 @@ class NotifyLpoDispatch extends Mailable
         }
 
         // CHAI cc
-        $chai_cc = array(
-            array('first_name'=>$this->requester->f_name, 'last_name'=>$this->requester->l_name, 'email'=>$this->requester->email),
-            array('first_name'=>$this->lpo_PM->f_name, 'last_name'=>$this->lpo_PM->l_name, 'email'=>$this->lpo_PM->email)
-        );
+        $chai_cc = [
+            ['first_name'=>$this->requester->f_name, 'last_name'=>$this->requester->l_name, 'email'=>$this->requester->email],
+            ['first_name'=>$this->lpo_PM->f_name, 'last_name'=>$this->lpo_PM->l_name, 'email'=>$this->lpo_PM->email]
+        ];
 
         // Add financial controllers to cc
         $fm = Staff::whereHas('roles', function($query){
             $query->where('role_id', 5);  
         })->get();
         foreach($fm as $f){
-            $chai_cc[] = array('first_name'=>$f->f_name, 'last_name'=>$f->l_name, 'email'=>$f->email);
+            $chai_cc[] = ['first_name'=>$f->f_name, 'last_name'=>$f->l_name, 'email'=>$f->email];
         }
 
         // Add Accountants to cc
@@ -101,14 +106,14 @@ class NotifyLpoDispatch extends Mailable
             $query->where('role_id', 8);  
         })->get();
         foreach($accountant as $am){
-            $chai_cc[] = array('first_name'=>$am->f_name, 'last_name'=>$am->l_name, 'email'=>$am->email);
+            $chai_cc[] = ['first_name'=>$am->f_name, 'last_name'=>$am->l_name, 'email'=>$am->email];
         }
         // Add directors to cc
         $director = Staff::whereHas('roles', function($query){
             $query->whereIn('role_id', [3,4]);  
         })->get();
         foreach($director as $am){
-            $chai_cc[] = array('first_name'=>$am->f_name, 'last_name'=>$am->l_name, 'email'=>$am->email);
+            $chai_cc[] = ['first_name'=>$am->f_name, 'last_name'=>$am->l_name, 'email'=>$am->email];
         }
 
         // Add Admin Manager to cc
@@ -116,7 +121,7 @@ class NotifyLpoDispatch extends Mailable
             $query->where('role_id', 10);  
         })->get();
         foreach($admin_manager as $am){
-            $chai_cc[] = array('first_name'=>$am->f_name, 'last_name'=>$am->l_name, 'email'=>$am->email);
+            $chai_cc[] = ['first_name'=>$am->f_name, 'last_name'=>$am->l_name, 'email'=>$am->email];
         }
 
         $ccs = [];

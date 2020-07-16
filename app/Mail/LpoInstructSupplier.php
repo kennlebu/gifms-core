@@ -6,7 +6,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use App\Models\LPOModels\Lpo;
-use App\Models\StaffModels\User;
+use App\Models\StaffModels\Staff;
 use Config;
 
 class LpoInstructSupplier extends Mailable
