@@ -33,7 +33,7 @@ class SupplierServiceApi extends Controller
             $service->unit = $input['unit'];
 
             if($service->save()){
-                return response()->json(['msg'=>"service added"], 200,array(),JSON_PRETTY_PRINT);
+                return response()->json(['msg'=>"service added"], 200);
             }
         }
         catch(\Exception $e){
@@ -52,7 +52,7 @@ class SupplierServiceApi extends Controller
             $service->unit = $input['unit'];
     
             if($service->save()){
-                return response()->json(['msg'=>"service updated"], 200,array(),JSON_PRETTY_PRINT);
+                return response()->json(['msg'=>"service updated"], 200);
             }
         }
         catch(\Exception $e){
@@ -65,9 +65,9 @@ class SupplierServiceApi extends Controller
     {
         $deleted = SupplierService::destroy($supplier_service_id);
         if($deleted){
-            return response()->json(['msg'=>"supplier service deleted"], 200,array(),JSON_PRETTY_PRINT);
+            return response()->json(['msg'=>"supplier service deleted"], 200);
         }else{
-            return response()->json(['error'=>"Something went wrong"], 500,array(),JSON_PRETTY_PRINT);
+            return response()->json(['error'=>"Something went wrong"], 500);
         }
     }
 
@@ -76,11 +76,11 @@ class SupplierServiceApi extends Controller
     {
         try{
             $response = SupplierService::findOrFail($supplier_service_id);           
-            return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+            return response()->json($response, 200);
 
         }catch(\Exception $e){
             $response =  ["error"=>"Something went wrong"];
-            return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
+            return response()->json($response, 500);
         }
     }
 
@@ -89,28 +89,18 @@ class SupplierServiceApi extends Controller
     {
         $input = Request::all();
         //query builder
-        $qb = DB::table('supplier_services');
-
-        $qb->whereNull('supplier_services.deleted_at');
-
-        $response;
-        $response_dt;
+        $qb = SupplierService::with('supply_category');
 
         $total_records          = $qb->count();
         $records_filtered       = 0;
 
         //searching
         if(array_key_exists('searchval', $input)){
-            $qb->where(function ($query) use ($input) {                
-                $query->orWhere('supplier_services.id','like', '\'%' . $input['searchval']. '%\'');
-                $query->orWhere('supplier_services.service_name','like', '\'%' . $input['searchval']. '%\'');
+            $qb = $qb->where(function ($query) use ($input) {
+                $query->orWhere('service_name','like', '%' . $input['searchval']. '%');
             });
 
-            $sql = SupplierService::bind_presql($qb->toSql(),$qb->getBindings());
-            $sql = str_replace("*"," count(*) AS count ", $sql);
-            $dt = json_decode(json_encode(DB::select($sql)), true);
-
-            $records_filtered = (int) $dt[0]['count'];
+            $records_filtered = $qb->count();
         }
 
         //ordering
@@ -121,31 +111,26 @@ class SupplierServiceApi extends Controller
                 $order_direction = $input['order_dir'];
             }
 
-            $qb->orderBy($order_column_name, $order_direction);
+            $qb = $qb->orderBy($order_column_name, $order_direction);
         }
 
         // Supply category
         if(array_key_exists('supply_category_id', $input) && !empty($input['supply_category_id'])){
-            $qb->where('supply_category_id', $input['supply_category_id']);
+            $qb = $qb->where('supply_category_id', $input['supply_category_id']);
         }
 
         //limit
         if(array_key_exists('limit', $input)){
-            $qb->limit($input['limit']);
+            $qb = $qb->limit($input['limit']);
         }
 
         if(array_key_exists('datatables', $input)){
             //searching
-            $qb->where(function ($query) use ($input) {                
-                $query->orWhere('supplier_services.id','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('supplier_services.service_name','like', '\'%' . $input['search']['value']. '%\'');
+            $qb = $qb->where(function ($query) use ($input) {
+                $query->orWhere('service_name','like', '%' . $input['search']['value']. '%');
             });
 
-            $sql = SupplierService::bind_presql($qb->toSql(),$qb->getBindings());
-            $sql = str_replace("*"," count(*) AS count ", $sql);
-            $dt = json_decode(json_encode(DB::select($sql)), true);
-
-            $records_filtered = (int) $dt[0]['count'];
+            $records_filtered = $qb->count();
 
             //ordering
             $order_column_id    = (int) $input['order'][0]['column'];
@@ -153,46 +138,25 @@ class SupplierServiceApi extends Controller
             $order_direction    = $input['order'][0]['dir'];
 
             if($order_column_name!=''){
-                $qb->orderBy($order_column_name, $order_direction);
+                $qb = $qb->orderBy($order_column_name, $order_direction);
             }
 
             //limit $ offset
             if((int)$input['start']!= 0 ){
-                $response_dt    =   $qb->limit($input['length'])->offset($input['start']);
+                $qb = $qb->limit($input['length'])->offset($input['start']);
             }else{
-                $qb->limit($input['length']);
+                $qb = $qb->limit($input['length']);
             }
-
-            $sql = SupplierService::bind_presql($qb->toSql(),$qb->getBindings());
-
-            $response_dt = DB::select($sql);
-            $response_dt = json_decode(json_encode($response_dt), true);
-            $response_dt    = $this->append_relationships_objects($response_dt);
-            $response       = SupplierService::arr_to_dt_response( 
-                $response_dt, $input['draw'],
+            $response = SupplierService::arr_to_dt_response( 
+                $qb->get(), $input['draw'],
                 $total_records,
                 $records_filtered
                 );
         }
         else{
-            $sql            = SupplierService::bind_presql($qb->toSql(),$qb->getBindings());
-            $response       = json_decode(json_encode(DB::select($sql)), true);
+            $response = $qb->get();
         }
 
-        return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
-    }
-
-
-    public function append_relationships_objects($data = array()){
-
-        foreach ($data as $key => $value) {
-            $supplier_service = SupplierService::with('supply_category')->find($data[$key]['id']);
-
-            $data[$key]['supply_category'] = $supplier_service->supply_category;
-            if($data[$key]["supply_category"]==null){
-                $data[$key]["supply_category"] = array("supply_category_name"=>"N/A");
-            }
-        }
-        return $data;
+        return response()->json($response, 200);
     }
 }

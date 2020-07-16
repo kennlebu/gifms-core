@@ -2070,7 +2070,7 @@ CREATE TABLE `documents` (
   `deleted_at` timestamp NULL
 );
 
-~===== Supplier supply category table
++~===== Supplier supply category table
 CREATE TABLE `supplier_supply_categories` (
   `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `supplier_id` int NULL,

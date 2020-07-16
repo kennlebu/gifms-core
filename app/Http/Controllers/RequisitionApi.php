@@ -15,6 +15,7 @@ use App\Models\ApprovalsModels\Approval;
 use App\Models\LPOModels\LpoItem;
 use App\Models\Requisitions\RequisitionDocument;
 use App\Models\SuppliesModels\SupplierService;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Request as IlluminateRequest;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Mail;
@@ -570,6 +571,26 @@ class RequisitionApi extends Controller
             return response()->json(['error'=>"Something went wrong"], 500);
         }
     }
+
+    public function cancelItem(Request $request){
+        try{
+            $item = RequisitionItem::findOrFail($request->id);
+            $item->status_id = 8;   // Cancelled
+            $item->disableLogging();
+            $item->save();
+
+            // Logging
+            activity()
+                ->performedOn($item->requisition)
+                ->causedBy($this->current_user())
+                ->withProperties(['detail' => 'Requisition item "'.$item->service.'" has been cancelled.', 'summary'=> false])
+                ->log('Item cancelled');
+
+            return response()->json(['msg'=>"Success", 'item'=>$item], 200);
+        }
+        catch(Exception $e){
+            Log::error($e);
+            return response()->json(['error'=>"Something went wrong"], 500);
         }
     }
 
