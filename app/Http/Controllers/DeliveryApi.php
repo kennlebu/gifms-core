@@ -408,14 +408,12 @@ class DeliveryApi extends Controller
         $records_filtered       = 0;
 
         if(array_key_exists('type', $input)){
-            $type_ = (int) $input['type'];
+            $type_ = $input['type'];
 
             if($type_==1){
                 $qb = $qb->where('received_by_id',$this->current_user()->id);
             }elseif ($type_==2) {
                 $qb = $qb->where('received_for_id',$this->current_user()->id);
-            }elseif ($type_==-1) {
-                // Pass
             }
         }
 

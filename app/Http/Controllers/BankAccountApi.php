@@ -124,9 +124,9 @@ class BankAccountApi extends Controller
     {
         $deleted = BankAccount::destroy($bank_account_id);
         if($deleted){
-            return response()->json(['msg'=>"bank_account deleted"], 200,array(),JSON_PRETTY_PRINT);
+            return response()->json(['msg'=>"bank_account deleted"], 200);
         }else{
-            return response()->json(['error'=>"Something went wrong"], 500,array(),JSON_PRETTY_PRINT);
+            return response()->json(['error'=>"Something went wrong"], 500);
         }
     }
     
@@ -164,11 +164,11 @@ class BankAccountApi extends Controller
     {
         try{
             $response   = BankAccount::findOrFail($bank_account_id);           
-            return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+            return response()->json($response, 200);
 
         }catch(Exception $e){
-            $response =  ["error"=>"bank_account could not be found"];
-            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+            $response =  ["error"=>"Something went wrong"];
+            return response()->json($response, 500);
         }
     }
     
@@ -213,10 +213,9 @@ class BankAccountApi extends Controller
 
         //searching
         if(array_key_exists('searchval', $input)){
-            $qb = $qb->where(function ($query) use ($input) {                
-                $query->orWhere('bank_accounts.id','like', '\'%' . $input['searchval']. '%\'');
-                $query->orWhere('bank_accounts.account_number','like', '\'%' . $input['searchval']. '%\'');
-                $query->orWhere('bank_accounts.title','like', '\'%' . $input['searchval']. '%\'');
+            $qb = $qb->where(function ($query) use ($input) {
+                $query->orWhere('account_number','like', '%' . $input['searchval']. '%');
+                $query->orWhere('title','like', '%' . $input['searchval']. '%');
             });
             $records_filtered = (int) $qb->count;
         }
@@ -239,10 +238,9 @@ class BankAccountApi extends Controller
         if(array_key_exists('datatables', $input)){
             //searching
             if(!empty($input['search']['value'])){
-                $qb = $qb->where(function ($query) use ($input) {                
-                    $query->orWhere('bank_accounts.id','like', '\'%' . $input['search']['value']. '%\'');
-                    $query->orWhere('bank_accounts.account_number','like', '\'%' . $input['search']['value']. '%\'');
-                    $query->orWhere('bank_accounts.title','like', '\'%' . $input['search']['value']. '%\'');
+                $qb = $qb->where(function ($query) use ($input) {
+                    $query->orWhere('account_number','like', '%' . $input['search']['value']. '%');
+                    $query->orWhere('title','like', '%' . $input['search']['value']. '%');
                 });
             }
             $records_filtered = (int) $qb->count();
@@ -258,7 +256,7 @@ class BankAccountApi extends Controller
 
             //limit $ offset
             if((int)$input['start']!= 0 ){
-                $response_dt = $qb->limit($input['length'])->offset($input['start']);
+                $qb = $qb->limit($input['length'])->offset($input['start']);
             }else{
                 $qb = $qb->limit($input['length']);
             }
@@ -273,7 +271,7 @@ class BankAccountApi extends Controller
             $response = $qb->get();
         }
 
-        return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+        return response()->json($response, 200);
     }
 
 
@@ -295,31 +293,33 @@ class BankAccountApi extends Controller
             return response()->json(['msg' => 'Bank balance added','bank_account' => $bank_balance], 200);
         }
         catch (Exception $e){
-            return response()->json(['error'=>'Something went wrong', 'msg'=>$e->getTraceAsString()], 500,[],JSON_PRETTY_PRINT);
+            return response()->json(['error'=>'Something went wrong', 'msg'=>$e->getTraceAsString()], 500);
         }
     }
 
     public function updateBankBalance(HttpRequest $request){
         try{
             $bank_balance = BankProjectBalances::find($request->id);
-            $bank_balance->balance = $request->balance;
+            if(!empty($request->balance)){
+                $bank_balance->balance = $request->balance;
+            }
             $bank_balance->accruals = $request->accruals;
             $bank_balance->disableLogging();
             $bank_balance->save();
             return response()->json(['msg' => 'Bank balance updated','bank_account' => $bank_balance], 200);
         }
         catch (Exception $e){
-            return response()->json(['error'=>'Something went wrong', 'msg'=>$e->getTraceAsString()], 500,[],JSON_PRETTY_PRINT);
+            return response()->json(['error'=>'Something went wrong', 'msg'=>$e->getTraceAsString()], 500);
         }
     }
 
     public function getBankBalance($id){
         try{
             $bank_balance = BankProjectBalances::find($id);
-            return response()->json($bank_balance, 200,array(),JSON_PRETTY_PRINT);
+            return response()->json($bank_balance, 200);
         }
         catch (Exception $e){
-            return response()->json(['error'=>'Something went wrong', 'msg'=>$e->getTraceAsString()], 500,[],JSON_PRETTY_PRINT);
+            return response()->json(['error'=>'Something went wrong', 'msg'=>$e->getTraceAsString()], 500);
         }
     }
 
@@ -344,20 +344,20 @@ class BankAccountApi extends Controller
             }
 
             $bank_balances = $bank_balances->get();
-            return response()->json($bank_balances, 200,array(),JSON_PRETTY_PRINT);
+            return response()->json($bank_balances, 200);
         }
         catch (Exception $e){
-            return response()->json(['error'=>'Something went wrong', 'msg'=>$e->getTraceAsString()], 500,[],JSON_PRETTY_PRINT);
+            return response()->json(['error'=>'Something went wrong', 'msg'=>$e->getTraceAsString()], 500);
         }
     }
 
     public function deleteBankBalance($id){
         try{
             BankProjectBalances::destroy($id);
-            return response()->json(['msg'=>"Bank balance removed"], 200,array(),JSON_PRETTY_PRINT);
+            return response()->json(['msg'=>"Bank balance removed"], 200);
         }
         catch (Exception $e){
-            return response()->json(['error'=>'Something went wrong', 'msg'=>$e->getTraceAsString()], 500,[],JSON_PRETTY_PRINT);
+            return response()->json(['error'=>'Something went wrong', 'msg'=>$e->getTraceAsString()], 500);
         }
     }
 
@@ -370,7 +370,7 @@ class BankAccountApi extends Controller
             return response()->json(['msg' => 'Cash received added','bank_balance' => $bank_balance], 200);
         }
         catch (Exception $e){
-            return response()->json(['error'=>'Something went wrong', 'msg'=>$e->getTraceAsString()], 500,[],JSON_PRETTY_PRINT);
+            return response()->json(['error'=>'Something went wrong', 'msg'=>$e->getTraceAsString()], 500);
         }
     }
 }

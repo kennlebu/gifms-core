@@ -1151,7 +1151,12 @@ class ReportsApi extends Controller
         try{
             $rate = new ExchangeRate();
             $rate->exchange_rate = $request->exchange_rate;
-            $rate->active_date = $request->active_date;
+            if(empty($request->active_date)){
+                $rate->active_date = date('Y-m-t');
+            }
+            else {
+                $rate->active_date = $request->active_date;
+            }            
             $rate->added_by_id = $this->current_user()->id;
             $rate->save();
 

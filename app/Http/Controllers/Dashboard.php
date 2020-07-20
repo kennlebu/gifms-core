@@ -32,7 +32,7 @@ class Dashboard extends Controller
         
         $metrics[] = $this->getUnapproved();
 
-        return response()->json($metrics, 200,array(),JSON_PRETTY_PRINT);
+        return response()->json($metrics, 200);
     }
 
 
@@ -48,7 +48,7 @@ class Dashboard extends Controller
         $activity = $activity->orderBy('created_at', 'DESC')->limit(15)->get();
 
 
-        return response()->json($activity, 200,array(),JSON_PRETTY_PRINT);
+        return response()->json($activity, 200);
     }
 
     private function getBankBalance(){
@@ -61,93 +61,104 @@ class Dashboard extends Controller
         
         $rate = ExchangeRate::whereYear('active_date', date('Y'))->whereMonth('active_date', date('m'))->orderBy('active_date', 'DESC')->first();
         if(!empty($rate)) $rate = $rate->exchange_rate;
-        else $rate = 101.70;
+        else $rate = 'no_rate';
 
+        // Only calculate the unpaid transactions if USD rate for current month
+        // has been set.
         /* INVOICES */
         // Unpaid invoices
-        $unpaid_invoices = Invoice::whereIn('status_id', [1,2,3,4,10,11,12])->whereNotNull('raised_by_id')->where(function($query){
-            $query->whereNull('archived')->orWhere('archived', '!=', 1);
-        })->get();
-        foreach($unpaid_invoices as $invoice){
-            if($invoice->currency_id == 1) {
-                $unpaid_total += (float) ($invoice->total / $rate);
+        if($rate != 'no_rate'){
+            $unpaid_invoices = Invoice::whereIn('status_id', [1,2,3,4,10,11,12])->whereNotNull('raised_by_id')->where(function($query){
+                $query->whereNull('archived')->orWhere('archived', '!=', 1);
+            })->get();
+            foreach($unpaid_invoices as $invoice){
+                if($invoice->currency_id == 1) {
+                    $unpaid_total += (float) ($invoice->total / $rate);
+                }
+                else $unpaid_total += (float) $invoice->total;
             }
-            else $unpaid_total += (float) $invoice->total;
+    
+            // Paid invoices
+            $paid_invoices = [];
+            $batches = PaymentBatch::whereBetween('created_at', [$start_date, $end_date])->pluck('id')->toArray();
+            if(!empty($batches)){
+                $invoice_ids = Payment::where('payable_type', 'invoices')->wherein('payment_batch_id', $batches)->pluck('payable_id')->toArray();
+                if(!empty($invoice_ids)){
+                    $paid_invoices = Invoice::whereIn('id', $invoice_ids)->get();
+                }            
+            }
+            foreach($paid_invoices as $paid_invoice){
+                if($paid_invoice->currency_id == 1) {
+                    $paid_total += (float) ($paid_invoice->total / $rate);
+                }
+                else $paid_total += (float) $paid_invoice->total;
+            }
+    
+            /* CLAIMS */
+            // Unpaid claims
+            $unpaid_claim = Claim::whereIn('status_id', [1,2,3,4,5,10])->where(function($query){
+                $query->whereNull('archived')->orWhere('archived', '!=', 1);
+            })->get();
+            foreach($unpaid_claim as $claim){
+                if($claim->currency_id == 1) {
+                    $unpaid_total += (float) ($claim->total / $rate);
+                }
+                else $unpaid_total += (float) $claim->total;
+            }
+    
+            // Paid claims
+            $paid_claims = [];
+            $batches = PaymentBatch::whereBetween('created_at', [$start_date, $end_date])->pluck('id')->toArray();
+            if(!empty($batches)){
+                $claim_ids = Payment::where('payable_type', 'claims')->wherein('payment_batch_id', $batches)->pluck('payable_id')->toArray();
+                if(!empty($claims_ids)){
+                    $paid_claims = Claim::whereIn('id', $claim_ids)->get();
+                }            
+            }
+            foreach($paid_claims as $paid_claim){
+                if($paid_claim->currency_id == 1) {
+                    $paid_total += (float) ($paid_claim->total / $rate);
+                }
+                else $paid_total += (float) $paid_claim->total;
+            }
+    
+            /* MOBILE PAYMENTS */
+            // Unpaid mobile payments
+            $unpaid_mp = MobilePayment::whereIn('status_id', [1,2,3,8,9,15,16])->where(function($query){
+                $query->whereNull('archived')->orWhere('archived', '!=', 1);
+            })->get();
+            foreach($unpaid_mp as $mp){
+                if($mp->currency_id == 1) {
+                    $unpaid_total += (float) ($mp->totals / $rate);
+                }
+                else $unpaid_total += (float) $mp->totals;
+            }
+            
+            // Paid mobile payments
+            $paid_mps = MobilePayment::whereMonth('management_approval_at', '=', date('m'))->whereYear('management_approval_at', '=', date('Y'))->get();
+
+            foreach($paid_mps as $paid_mp){
+                if($paid_mp->currency_id == 1) {
+                    $paid_total += (float) ($paid_mp->totals / $rate);
+                }
+                else $paid_total += (float) $paid_mp->totals;
+            }
         }
 
-        // Paid invoices
-        $paid_invoices = [];
-        $batches = PaymentBatch::whereBetween('created_at', [$start_date, $end_date])->pluck('id')->toArray();
-        if(!empty($batches)){
-            $invoice_ids = Payment::where('payable_type', 'invoices')->wherein('payment_batch_id', $batches)->pluck('payable_id')->toArray();
-            if(!empty($invoice_ids)){
-                $paid_invoices = Invoice::whereIn('id', $invoice_ids)->get();
-            }            
-        }
-        foreach($paid_invoices as $paid_invoice){
-            if($paid_invoice->currency_id == 1) {
-                $paid_total += (float) ($paid_invoice->total / $rate);
-            }
-            else $paid_total += (float) $paid_invoice->total;
-        }
-
-        /* CLAIMS */
-        // Unpaid claims
-        $unpaid_claim = Claim::whereIn('status_id', [1,2,3,4,5,10])->where(function($query){
-            $query->whereNull('archived')->orWhere('archived', '!=', 1);
-        })->get();
-        foreach($unpaid_claim as $claim){
-            if($claim->currency_id == 1) {
-                $unpaid_total += (float) ($claim->total / $rate);
-            }
-            else $unpaid_total += (float) $claim->total;
-        }
-
-        // Paid claims
-        $paid_claims = [];
-        $batches = PaymentBatch::whereBetween('created_at', [$start_date, $end_date])->pluck('id')->toArray();
-        if(!empty($batches)){
-            $claim_ids = Payment::where('payable_type', 'claims')->wherein('payment_batch_id', $batches)->pluck('payable_id')->toArray();
-            if(!empty($claims_ids)){
-                $paid_claims = Claim::whereIn('id', $claim_ids)->get();
-            }            
-        }
-        foreach($paid_claims as $paid_claim){
-            if($paid_claim->currency_id == 1) {
-                $paid_total += (float) ($paid_claim->total / $rate);
-            }
-            else $paid_total += (float) $paid_claim->total;
-        }
-
-        /* MOBILE PAYMENTS */
-        // Unpaid mobile payments
-        $unpaid_mp = MobilePayment::whereIn('status_id', [1,2,3,8,9,15,16])->where(function($query){
-            $query->whereNull('archived')->orWhere('archived', '!=', 1);
-        })->get();
-        foreach($unpaid_mp as $mp){
-            if($mp->currency_id == 1) {
-                $unpaid_total += (float) ($mp->totals / $rate);
-            }
-            else $unpaid_total += (float) $mp->totals;
-        }
-
-        // Paid mobile payments
-        $paid_mps = MobilePayment::whereMonth('management_approval_at', '=', date('m'))->whereYear('management_approval_at', '=', date('Y'))->get();
-
-        foreach($paid_mps as $paid_mp){
-            if($paid_mp->currency_id == 1) {
-                $paid_total += (float) ($paid_mp->totals / $rate);
-            }
-            else $paid_total += (float) $paid_mp->totals;
-        }
         
         $bank_balance = BankProjectBalances::whereMonth('balance_date', date('m'))->whereYear('balance_date', date('Y'))->first();
         
         if(empty($bank_balance) || $bank_balance->balance == 0){
+            if($rate == 'no_rate'){
+                return ['type'=>'bank_balance', 'title'=>'Cash available', 'total_balance'=>0, 'beginning_balance'=>0, 'accruals'=>0, 'rate'=>$rate, 'action'=>'Add bank balance'];
+            }
             $current = 0 - $paid_total - $unpaid_total;
             return ['type'=>'bank_balance', 'title'=>'Cash available', 'total_balance'=>0, 'beginning_balance'=>0, 'accruals'=>0, 'unpaid'=>$unpaid_total, 'paid'=>$paid_total, 'action'=>'Add bank balance', 'current'=>$current];
         }
         else{
+            if($rate == 'no_rate'){
+                return ['type'=>'bank_balance', 'id'=>$bank_balance->id, 'title'=>'Cash available', 'total_balance'=>$bank_balance->total_balance, 'beginning_balance'=>$bank_balance->balance, 'accruals'=>$bank_balance->accruals ?? 0, 'rate'=>$rate, 'cash_received'=>$bank_balance->total_cash_received];
+            }
             $current = $bank_balance->total_balance - $paid_total - $unpaid_total - $bank_balance->accruals;
             return ['type'=>'bank_balance', 'id'=>$bank_balance->id, 'title'=>'Cash available', 'total_balance'=>$bank_balance->total_balance, 'beginning_balance'=>$bank_balance->balance, 'accruals'=>$bank_balance->accruals ?? 0, 'unpaid'=>$unpaid_total, 'paid'=>$paid_total, 'current'=>$current, 'cash_received'=>$bank_balance->total_cash_received];
         }
