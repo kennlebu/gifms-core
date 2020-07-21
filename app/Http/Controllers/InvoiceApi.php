@@ -539,7 +539,7 @@ class InvoiceApi extends Controller
         $response = [];
 
         try{
-            $response   = Invoice::with( 
+            $response = Invoice::with( 
                                         'raised_by',
                                         'received_by',
                                         'raise_action_by',
@@ -557,15 +557,14 @@ class InvoiceApi extends Controller
                                         'vouchers',
                                         'comments',
                                         'program_activity',
-                                        'requisition',
+                                        'requisition.documents',
                                         'documents'
                                     )->findOrFail($invoice_id);
 
             return response()->json($response, 200);
         }
-        catch(Exception $e){
-            $response =  ["error"=>"Something went wrong"];
-            return response()->json($response, 500);
+        catch(Exception $e){;
+            return response()->json(["error"=>"Something went wrong"], 500);
         }
     }
 

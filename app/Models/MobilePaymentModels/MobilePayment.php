@@ -114,6 +114,10 @@ class MobilePayment extends BaseModel
     {
         return $this->belongsTo('App\Models\LPOModels\Lpo');
     }
+    public function documents()
+    {
+        return $this->morphMany('App\Models\LookupModels\Document', 'entity');
+    }
     public function getVatPercentageAttribute($value){
         if(empty($value)) return 16;
         return $value;

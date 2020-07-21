@@ -333,7 +333,8 @@ class MobilePaymentApi extends Controller
                                     'payments.payment_mode','payments.currency','payments.payment_batch','payments.paid_to_bank_branch',
                                     'allocations.project','allocations.account','allocations.objective',
                                     'program_activity',
-                                    'lpo'
+                                    'lpo',
+                                    'documents'
                                 )->findOrFail($mobile_payment_id);
 
             return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
