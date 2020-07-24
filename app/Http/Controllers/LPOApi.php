@@ -608,7 +608,7 @@ class LPOApi extends Controller
                 activity()
                    ->performedOn($approval->approvable)
                    ->causedBy($user)
-                   ->withProperties(['detail' => $lpo->lpo_type == 'lso'?'LSO':'LPO'. $lpo->ref .' approved', 'summary'=> true])
+                   ->withProperties(['detail' => ($lpo->lpo_type == 'lso'?'LSO':'LPO'). $lpo->ref .' approved', 'summary'=> true])
                    ->log($approval->approval_level->approval_level);
                 
                 // Add activity notification

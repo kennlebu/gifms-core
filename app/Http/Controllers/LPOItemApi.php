@@ -152,7 +152,7 @@ class LPOItemApi extends Controller
                 activity()
                    ->performedOn($lpo)
                    ->causedBy($this->current_user())
-                   ->withProperties(['detail'=>'LPO item '.$item->item.' has been edited'])
+                   ->withProperties(['detail'=>'Item "'.$item->item.'" has been edited'])
                    ->log('Item updated');
 
                 return Response()->json(array('success' => 'Item updated','lpo_item' => $item), 200);
@@ -202,9 +202,9 @@ class LPOItemApi extends Controller
     {
         $deleted_lpo_item = LpoItem::destroy($lpo_item_id);
         if($deleted_lpo_item){
-            return response()->json(['msg'=>"lpo item deleted"], 200,array(),JSON_PRETTY_PRINT);
+            return response()->json(['msg'=>"lpo item deleted"], 200);
         }else{
-            return response()->json(['error'=>"Something went wrong"], 500,array(),JSON_PRETTY_PRINT);
+            return response()->json(['error'=>"Something went wrong"], 500);
         }
     }
 
@@ -248,11 +248,10 @@ class LPOItemApi extends Controller
     {
        try{
             $response = LpoItem::with('lpo')->findOrFail($lpo_item_id);
-            return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+            return response()->json($response, 200);
 
         }catch(Exception $e){
-            $response =  ["error"=>"Something went wrong"];
-            return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
+            return response()->json(["error"=>"Something went wrong"], 500);
         }
     }
 
@@ -294,7 +293,6 @@ class LPOItemApi extends Controller
     public function lpoItemsGet()
     {
         $input = Request::all();
-        $response;
 
         if(array_key_exists('lpo_id', $input)){
             $response = LpoItem::where("deleted_at",null)
@@ -304,6 +302,6 @@ class LPOItemApi extends Controller
             $response = LpoItem::all();
         }
 
-        return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+        return response()->json($response, 200);
     }    
 }

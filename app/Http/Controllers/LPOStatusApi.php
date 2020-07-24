@@ -36,15 +36,7 @@ class LpoStatusApi extends Controller
      */
     public function addLpoStatus()
     {
-        $form = Request::only(
-            'lpo_status',
-            'next_status_id',
-            'status_security_level',
-            'order_priority',
-            'display_color',
-            'default_status',
-            'approval_level_id'
-            );
+        $form = Request::all();
 
         $lpo_status = new LpoStatus;
         $lpo_status->lpo_status                 =         $form['lpo_status'];
@@ -90,16 +82,7 @@ class LpoStatusApi extends Controller
      */
     public function updateLpoStatus()
     {
-        $form = Request::only(
-            'id',
-            'lpo_status',
-            'next_status_id',
-            'status_security_level',
-            'order_priority',
-            'display_color',
-            'default_status',
-            'approval_level_id'
-            );
+        $form = Request::all();
 
         $lpo_status = LpoStatus::find($form['id']);
         $lpo_status->lpo_status                     =         $form['lpo_status'];
@@ -148,9 +131,9 @@ class LpoStatusApi extends Controller
     {
         $deleted = LpoStatus::destroy($lpo_status_id);
         if($deleted){
-            return response()->json(['msg'=>"lpo_status deleted"], 200,array(),JSON_PRETTY_PRINT);
+            return response()->json(['msg'=>"lpo_status deleted"], 200);
         }else{
-            return response()->json(['error'=>"Something went wrong"], 500,array(),JSON_PRETTY_PRINT);
+            return response()->json(['error'=>"Something went wrong"], 500);
         }
     }
     
@@ -188,11 +171,11 @@ class LpoStatusApi extends Controller
     {
         try{
             $response   = LpoStatus::findOrFail($lpo_status_id);           
-            return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+            return response()->json($response, 200);
 
         }catch(Exception $e){
             $response =  ["error"=>"Something went wrong"];
-            return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
+            return response()->json($response, 500);
         }
     }
     
@@ -228,33 +211,27 @@ class LpoStatusApi extends Controller
     {
         $input = Request::all();
         //query builder
-        $qb = DB::table('lpo_statuses');
+        $qb = LpoStatus::query();
 
-        $qb->whereNull('lpo_statuses.deleted_at');
-
-        $response;
-        $response_dt;
+        if(!array_key_exists('lean', $input)){
+            $qb = LpoStatus::with('next_status', 'approval_level');
+        }
 
         $total_records          = $qb->count();
         $records_filtered       = 0;
-        $user = JWTAuth::parseToken()->authenticate();
+        $user = $this->current_user();
         if(array_key_exists('displayable_only',$input)){
-            $qb->whereIn('lpo_statuses.id', [1,2,11,12,15]);
+            $qb = $qb->whereIn('id', [1,2,11,12,15]);
         }
 
         //searching
         if(array_key_exists('searchval', $input)){
-            $qb->where(function ($query) use ($input) {                
-                $query->orWhere('lpo_statuses.id','like', '\'%' . $input['searchval']. '%\'');
-                $query->orWhere('lpo_statuses.lpo_status','like', '\'%' . $input['searchval']. '%\'');
-                $query->orWhere('lpo_statuses.display_color','like', '\'%' . $input['searchval']. '%\'');
+            $qb = $qb->where(function ($query) use ($input) {
+                $query->orWhere('lpo_status','like', '%' . $input['searchval']. '%');
+                $query->orWhere('display_color','like', '%' . $input['searchval']. '%');
             });
 
-            $sql = LpoStatus::bind_presql($qb->toSql(),$qb->getBindings());
-            $sql = str_replace("*"," count(*) AS count ", $sql);
-            $dt = json_decode(json_encode(DB::select($sql)), true);
-
-            $records_filtered = (int) $dt[0]['count'];
+            $records_filtered = $qb->count();
         }
 
         //ordering
@@ -264,27 +241,22 @@ class LpoStatusApi extends Controller
             if(array_key_exists('order_dir', $input)&&$input['order_dir']!=''){                
                 $order_direction = $input['order_dir'];
             }
-            $qb->orderBy($order_column_name, $order_direction);
+            $qb = $qb->orderBy($order_column_name, $order_direction);
         }
 
         //limit
         if(array_key_exists('limit', $input)){
-            $qb->limit($input['limit']);
+            $qb = $qb->limit($input['limit']);
         }
 
         if(array_key_exists('datatables', $input)){
             //searching
-            $qb->where(function ($query) use ($input) {                
-                $query->orWhere('lpo_statuses.id','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('lpo_statuses.lpo_status','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('lpo_statuses.display_color','like', '\'%' . $input['search']['value']. '%\'');
+            $qb = $qb->where(function ($query) use ($input) {
+                $query->orWhere('lpo_status','like', '%' . $input['search']['value']. '%');
+                $query->orWhere('display_color','like', '%' . $input['search']['value']. '%');
             });
 
-            $sql = LpoStatus::bind_presql($qb->toSql(),$qb->getBindings());
-            $sql = str_replace("*"," count(*) AS count ", $sql);
-            $dt = json_decode(json_encode(DB::select($sql)), true);
-
-            $records_filtered = (int) $dt[0]['count'];
+            $records_filtered = $qb->count();
 
             //ordering
             $order_column_id    = (int) $input['order'][0]['column'];
@@ -292,37 +264,25 @@ class LpoStatusApi extends Controller
             $order_direction    = $input['order'][0]['dir'];
 
             if($order_column_name!=''){
-                $qb->orderBy($order_column_name, $order_direction);
+                $qb = $qb->orderBy($order_column_name, $order_direction);
             }
 
             //limit $ offset
             if((int)$input['start']!= 0 ){
-                $response_dt    =   $qb->limit($input['length'])->offset($input['start']);
+                $qb = $qb->limit($input['length'])->offset($input['start']);
             }else{
-                $qb->limit($input['length']);
+                $qb = $qb->limit($input['length']);
             }
-
-            $sql = LpoStatus::bind_presql($qb->toSql(),$qb->getBindings());
-
-            $response_dt = DB::select($sql);
-            $response_dt = json_decode(json_encode($response_dt), true);
-            $response_dt    = $this->append_relationships_objects($response_dt);
-            $response_dt    = $this->append_relationships_nulls($response_dt);
-            $response       = LpoStatus::arr_to_dt_response( 
-                $response_dt, $input['draw'],
+            
+            $response = LpoStatus::arr_to_dt_response( 
+                $qb->get(), $input['draw'],
                 $total_records,
                 $records_filtered
                 );
         }
         else{            
-            $qb->orderBy("order_priority", "asc");
-
-            $sql            = LpoStatus::bind_presql($qb->toSql(),$qb->getBindings());
-            $response       = json_decode(json_encode(DB::select($sql)), true);
-            if(!array_key_exists('lean', $input)){
-                $response       = $this->append_relationships_objects($response);
-                $response       = $this->append_relationships_nulls($response);
-            }
+            $qb = $qb->orderBy("order_priority", "asc");
+            $response = $qb->get();
 
             foreach ($response as $key => $value) {
                 $response[$key]['lpos_count'] = Lpo::where('requested_by_id',$this->current_user()->id)
@@ -374,62 +334,6 @@ class LpoStatusApi extends Controller
             }
         }
 
-        return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    public function append_relationships_objects($data = array()){
-        foreach ($data as $key => $value) {
-            $lpo_statuses = LpoStatus::find($data[$key]['id']);
-            $data[$key]['next_status']                = $lpo_statuses->next_status;
-            $data[$key]['approval_level']             = $lpo_statuses->approval_level;
-        }
-
-        return $data;
-    }
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-    public function append_relationships_nulls($data = array()){
-
-        foreach ($data as $key => $value) {
-            if($data[$key]["next_status"]==null){
-                $data[$key]["next_status"] = array("lpo_status"=>"N/A");
-            }
-            if($data[$key]["approval_level"]==null){
-                $data[$key]["approval_level"] = array("approval_level"=>"N/A");
-            }
-        }
-
-        return $data;
+        return response()->json($response, 200);
     }
 }

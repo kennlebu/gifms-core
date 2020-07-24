@@ -80,7 +80,7 @@ class Invoice extends BaseModel
     }
     public function status()
     {
-        return $this->belongsTo('App\Models\InvoicesModels\InvoiceStatus');
+        return $this->belongsTo('App\Models\InvoicesModels\InvoiceStatus')->withTrashed();
     }
     public function project_manager()
     {

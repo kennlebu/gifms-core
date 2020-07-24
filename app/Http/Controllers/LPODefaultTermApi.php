@@ -31,6 +31,6 @@ class LPODefaultTermApi extends Controller
     public function lpoDefaultTermsGet()
     {
         $response = LpoDefaultTerm::all();
-        return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+        return response()->json($response, 200);
     }
 }
