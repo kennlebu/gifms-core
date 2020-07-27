@@ -18,6 +18,13 @@ class Meeting extends BaseModel
     {
         return $this->belongsTo('App\Models\StaffModels\Staff','created_by_id');
     }
+    public function attendees()
+    {
+        // $logs = MeetingAttendanceLog::where('meeting_id', $this->id)->pluck('attendee_id')->toArray();
+        $logs = MeetingAttendanceRegister::where('meeting_id', $this->id)->pluck('attendee_id')->toArray();
+        $attendees = MeetingAttendee::whereIn('id', $logs)->get();
+        return $attendees;
+    }
 
     public function getFullInviteUrlAttribute(){
         return config('app.url').'/event/register/'.$this->invite_url;

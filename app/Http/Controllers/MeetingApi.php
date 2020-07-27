@@ -25,20 +25,18 @@ class MeetingApi extends Controller
         $input = IlluminateRequest::all();
         $meetings = Meeting::with('county', 'created_by');
 
-        $response_dt;
         $total_records = $meetings->count();
         $records_filtered = 0;
 
         if(array_key_exists('searchval', $input)){
-            $meetings = $meetings->where(function ($query) use ($input) {                
-                $query->orWhere('id','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('title','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('county_id','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('starts_on','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('ends_on','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('created_by_id','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('invite_url','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('organiser_email','like', '\'%' . $input['search']['value']. '%\'');
+            $meetings = $meetings->where(function ($query) use ($input) {
+                $query->where('title','like', '%' . $input['search']['value']. '%');
+                $query->orWhere('county_id','like', '%' . $input['search']['value']. '%');
+                $query->orWhere('starts_on','like', '%' . $input['search']['value']. '%');
+                $query->orWhere('ends_on','like', '%' . $input['search']['value']. '%');
+                $query->orWhere('created_by_id','like', '%' . $input['search']['value']. '%');
+                $query->orWhere('invite_url','like', '%' . $input['search']['value']. '%');
+                $query->orWhere('organiser_email','like', '%' . $input['search']['value']. '%');
             });
             
             $records_filtered = $meetings->count();
@@ -74,15 +72,15 @@ class MeetingApi extends Controller
 
             //limit $ offset
             if((int)$input['start']!= 0 ){
-                $response_dt = $meetings->limit($input['length'])->offset($input['start']);
+                $meetings = $meetings->limit($input['length'])->offset($input['start']);
             }
             else{
                 $meetings = $meetings->limit($input['length']);
             }
 
-            $response_dt = $meetings->get();
+            $meetings = $meetings->get();
             $response = Meeting::arr_to_dt_response( 
-                $response_dt, $input['draw'],
+                $meetings->get(), $input['draw'],
                 $total_records,
                 $records_filtered
                 );
@@ -91,7 +89,7 @@ class MeetingApi extends Controller
             $response = $meetings->get();
         }
     
-        return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+        return response()->json($response, 200);
     }
 
     /**
@@ -115,10 +113,11 @@ class MeetingApi extends Controller
         try {
             $meeting = new Meeting();
             $meeting->title = $request->title;
-            $meeting->county_id = $request->county_id;
+            $meeting->county_id = $request->county_id ?? null;
             $meeting->starts_on = $request->starts_on;
             $meeting->ends_on = $request->ends_on;
             $meeting->organiser_email = $request->organiser_email;
+            $meeting->confirmation_mode = $request->confirmation_mode;
             $meeting->created_by_id = $this->current_user()->id;
             $meeting->save();
             $meeting->disableLogging();
@@ -128,7 +127,7 @@ class MeetingApi extends Controller
             return Response()->json(array('msg' => 'Success: meeting added','meeting' => $meeting), 200);
         }
         catch(Exception $e){
-            return response()->json(['error'=>"Something went wrong",'msg'=>$e->getMessage(),'trace'=>$e->getTraceAsString()], 500,array(),JSON_PRETTY_PRINT);
+            return response()->json(['error'=>"Something went wrong",'msg'=>$e->getMessage(),'trace'=>$e->getTraceAsString()], 500);
         }
     }
 
@@ -138,14 +137,20 @@ class MeetingApi extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request, $id)
     {
         try{
-            $meeting = Meeting::with('county','created_by')->find($id);
-            return response()->json($meeting, 200,array(),JSON_PRETTY_PRINT);
+            $meeting = Meeting::with('county','created_by');
+            $meeting = $meeting->find($id);
+
+            if($request->with_attendees){
+                $meeting['attendees'] = $meeting->attendees();
+            }
+
+            return response()->json($meeting, 200);
         }
         catch(Exception $e){
-            return response()->json(['error'=>"Something went wrong",'msg'=>$e->getMessage(),'trace'=>$e->getTraceAsString()], 500,array(),JSON_PRETTY_PRINT);
+            return response()->json(['error'=>"Something went wrong",'msg'=>$e->getMessage(),'trace'=>$e->getTraceAsString()], 500);
         }
     }
 
@@ -176,6 +181,7 @@ class MeetingApi extends Controller
             $meeting->starts_on = $request->starts_on;
             $meeting->ends_on = $request->ends_on;
             $meeting->organiser_email = $request->organiser_email;
+            $meeting->confirmation_mode = $request->confirmation_mode;
             $meeting->created_by_id = $request->created_by_id;
             $meeting->save();
             $meeting->disableLogging();
@@ -188,10 +194,10 @@ class MeetingApi extends Controller
             //     ->log('Updated');
 
 
-            return Response()->json(array('msg' => 'Success: requisition updated','requisition' => $meeting), 200);
+            return Response()->json(['msg' => 'Success: requisition updated','requisition' => $meeting], 200);
         }
         catch(Exception $e){
-            return response()->json(['error'=>"Something went wrong",'msg'=>$e->getMessage(),'trace'=>$e->getTraceAsString()], 500,array(),JSON_PRETTY_PRINT);
+            return response()->json(['error'=>"Something went wrong",'msg'=>$e->getMessage(),'trace'=>$e->getTraceAsString()], 500);
         }
     }
 
@@ -205,10 +211,10 @@ class MeetingApi extends Controller
     {
         try{
             Meeting::destroy($id);
-            return response()->json(['msg'=>"Meeting removed"], 200,array(),JSON_PRETTY_PRINT);
+            return response()->json(['msg'=>"Meeting removed"], 200);
         }
         catch(Exception $e){
-            return response()->json(['error'=>"Something went wrong", 'msg'=>$e->getMessage(), 'stack'=>$e->getTraceAsString()], 500,array(),JSON_PRETTY_PRINT);
+            return response()->json(['error'=>"Something went wrong", 'msg'=>$e->getMessage(), 'stack'=>$e->getTraceAsString()], 500);
         }
     }
 
@@ -259,14 +265,14 @@ class MeetingApi extends Controller
             $attendee->name = $request->name;
             $attendee->id_no = $request->id_no;
             $attendee->email = $request->email;
-            $attendee->physical_address = $request->physical_address;
-            $attendee->organisation = $request->organisation;
-            $attendee->designation = $request->designation;
+            $attendee->physical_address = $request->physical_address ?? null;
+            $attendee->organisation = $request->organisation ?? null;
+            $attendee->designation = $request->designation ?? null;
             $attendee->phone = $request->phone;
-            $attendee->bank_name = $request->bank_name;
-            $attendee->bank_branch_name = $request->bank_branch_name;
-            $attendee->bank_account = $request->bank_account;
-            $attendee->kra_pin = $request->kra_pin;
+            $attendee->bank_name = $request->bank_name ?? null;
+            $attendee->bank_branch_name = $request->bank_branch_name ?? null;
+            $attendee->bank_account = $request->bank_account ?? null;
+            $attendee->kra_pin = $request->kra_pin ?? null;
             $attendee->disableLogging();
             $attendee->save();
 
@@ -353,7 +359,7 @@ class MeetingApi extends Controller
             // return Response()->json(array('attendee' => $attendee), 200);
         }
         catch(Exception $e){
-            return response()->json(['error'=>"Something went wrong",'msg'=>$e->getMessage(),'trace'=>$e->getTraceAsString()], 500,array(),JSON_PRETTY_PRINT);
+            return response()->json(['error'=>"Something went wrong",'msg'=>$e->getMessage(),'trace'=>$e->getTraceAsString()], 500);
         }
     }
 
@@ -420,21 +426,44 @@ class MeetingApi extends Controller
 
 
     public function getAttendee(Request $request){
-         try{
+        try{
             $attendee = MeetingAttendee::where('id_no', $request->id_no);
             return Response()->json(['attendee' => $attendee], 200);
-         }
-         catch(Exception $e){
-            return response()->json(['error'=>"Something went wrong",'msg'=>$e->getMessage(),'trace'=>$e->getTraceAsString()], 500,array(),JSON_PRETTY_PRINT);
-         }
+        }
+            catch(Exception $e){
+            return response()->json(['error'=>"Something went wrong",'msg'=>$e->getMessage()], 500);
+        }
+    }
+
+    public function getAttendees(Request $request){
+        try{
+            if($request->type == 'registered'){
+                $attended = MeetingAttendanceLog::where('meeting_id', $request->meeting_id)->pluck('attendee_id')->toArray();
+            }
+            else{
+                $attended = MeetingAttendanceRegister::where('meeting_id', $request->meeting_id)->pluck('attendee_id')->toArray();
+            }
+            
+            $attendees = MeetingAttendee::whereIn('id', $attended);
+            return Response()->json($attendees, 200);
+        }
+            catch(Exception $e){
+            return response()->json(['error'=>"Something went wrong",'msg'=>$e->getMessage(),'trace'=>$e->getTraceAsString()], 500);
+        }
     }
 
 
 
     public function downloadAttendanceSheet(Request $request){
         try{
-            $logs = MeetingAttendanceLog::with('attendee')->where('meeting_id', $request->meeting_id)->groupBy('attendee_id')->get();  
             $meeting = Meeting::find($request->meeting_id);
+            if($meeting->confirmation_mode == 'biometric'){
+                $logs = MeetingAttendanceLog::where('meeting_id', $request->meeting_id)->pluck('attendee_id')->toArray();
+            }
+            else {
+                $logs = MeetingAttendanceRegister::where('meeting_id', $request->meeting_id)->pluck('attendee_id')->toArray();
+            }
+            $attendees = MeetingAttendee::whereIn('id', $logs)->get();
 
             // Record user action
             activity()
@@ -444,17 +473,17 @@ class MeetingApi extends Controller
                 
             // Generate excel and return it    
             $excel_data = [];
-            foreach($logs as $log){
+            foreach($attendees as $attendee){
                 $excel_row = [];
-                $excel_row['name'] = $log->attendee->name;
-                $excel_row['phone'] = $log->attendee->phone;
-                $excel_row['id'] = $log->attendee->id_no;
-                $excel_row['pin'] = $log->attendee->kra_pin;
-                $excel_row['email'] = $log->attendee->email;
-                $excel_row['physical_address'] = $log->attendee->physical_address;
-                $excel_row['organisation'] = $log->attendee->organisation;
-                $excel_row['designation'] = $log->attendee->designation;
-                $excel_row['amount'] = $log->attendee->amount;
+                $excel_row['name'] = $attendee->name;
+                $excel_row['phone'] = $attendee->phone;
+                $excel_row['id'] = $attendee->id_no;
+                $excel_row['pin'] = $attendee->kra_pin;
+                $excel_row['email'] = $attendee->email;
+                $excel_row['physical_address'] = $attendee->physical_address;
+                $excel_row['organisation'] = $attendee->organisation;
+                $excel_row['designation'] = $attendee->designation;
+                $excel_row['amount'] = $attendee->amount;
                 
                 $excel_data[] = $excel_row;
             }

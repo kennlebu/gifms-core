@@ -5328,15 +5328,6 @@ Route::GET('/activity_statuses', 'ActivityStatusApi@getActivityStatuses')->middl
 /**
  * Fixed assets routes
  */
-// Route::POST('/asset', 'FixedAssetsApi@addAsset')->middleware('jwt.auth');
-// Route::GET('/assets', 'FixedAssetsApi@assetsGet')->middleware('jwt.auth');
-// Route::GET('/asset/{id}', 'FixedAssetsApi@getAssetById')->middleware('jwt.auth');
-// Route::DELETE('/asset/{id}', 'FixedAssetsApi@deleteAsset')->middleware('jwt.auth');
-// Route::PUT('/asset', 'FixedAssetsApi@updateAsset')->middleware('jwt.auth');
-// Route::POST('/lost-asset', 'FixedAssetsApi@reportLost')->middleware('jwt.auth');
-// Route::POST('/claim-asset', 'FixedAssetsApi@claimAsset')->middleware('jwt.auth');
-// Route::PATCH('/assets/return', 'FixedAssetsApi@returnAssets')->middleware('jwt.auth');
-// Route::POST('/assets/csv_upload', 'FixedAssetsApi@uploadAssetList')->middleware('jwt.auth');
 // Locations
 Route::POST('/asset-location', 'FixedAssetsApi@addAssetLocation')->middleware('jwt.auth');
 Route::GET('/asset-locations', 'FixedAssetsApi@assetLocationsGet')->middleware('jwt.auth');
@@ -5496,6 +5487,7 @@ Route::PUT('event/{id}', 'MeetingApi@update')->middleware('jwt.auth');
 Route::GET('events', 'MeetingApi@index')->middleware('jwt.auth');
 Route::GET('event/{id}', 'MeetingApi@show')->middleware('jwt.auth');
 Route::DELETE('event/{id}', 'MeetingApi@destroy')->middleware('jwt.auth');
+Route::GET('event/attendees', 'MeetingApi@getAttendees')->middleware('jwt.auth');
 
 Route::POST('log-attendance', 'MeetingApi@logAttendance')->middleware('jwt.auth');
 Route::POST('enroll-attendee', 'MeetingApi@enrollAttendee')->middleware('jwt.auth');
