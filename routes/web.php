@@ -159,5 +159,6 @@ Route::get('test/email_lpo', function () {
 });
 
 Route::get('/event/register/{url}', 'MeetingApi@registerIndex');
+Route::get('/event/register/{url}/b', 'MeetingApi@registerIndexBanking');
 Route::post('/event/register', 'MeetingApi@register')->name('register');
 Route::post('/event/register-attendee', 'MeetingApi@registerAttendee')->name('register-attendee');

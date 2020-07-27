@@ -93,16 +93,6 @@ class MeetingApi extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -152,17 +142,6 @@ class MeetingApi extends Controller
         catch(Exception $e){
             return response()->json(['error'=>"Something went wrong",'msg'=>$e->getMessage(),'trace'=>$e->getTraceAsString()], 500);
         }
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
     }
 
     /**
@@ -228,6 +207,13 @@ class MeetingApi extends Controller
                 ->with('url', $url)
                 ->with('meeting', $meeting);
     }
+    public function registerIndexBanking($url){
+        $meeting = Meeting::where('invite_url', $url)->first();
+        return view('meeting_register')
+                ->with('url', $url)
+                ->with('meeting', $meeting)
+                ->with('banking', true);
+    }
 
 
     public function register(Request $request){
@@ -242,7 +228,8 @@ class MeetingApi extends Controller
             ->with('info','Please complete your registration first')
             ->with('id_no', $request->id_no)
             ->with('meeting_url', $url)
-            ->with('meeting', $meeting);
+            ->with('meeting', $meeting)
+            ->with('banking', $request->banking ?? null);
         }
 
         if(MeetingAttendanceRegister::where('meeting_id', $meeting->id)->where('attendee_id', $attendee->id)->exists()){
@@ -457,7 +444,8 @@ class MeetingApi extends Controller
     public function downloadAttendanceSheet(Request $request){
         try{
             $meeting = Meeting::find($request->meeting_id);
-            if($meeting->confirmation_mode == 'biometric'){
+            $type = $request->type ?? null;
+            if($type == 'attended' || (empty($type) && $meeting->confirmation_code == 'biometric')){
                 $logs = MeetingAttendanceLog::where('meeting_id', $request->meeting_id)->pluck('attendee_id')->toArray();
             }
             else {

@@ -21,7 +21,7 @@
     @include('flash')
     <div class="header-strip"></div>  
     <div class="content">
-        <div>
+        <div class="my-2">
             <h2 style="text-align:center;">
                 Fill in all details to complete your registration.
             </h2>
@@ -52,6 +52,7 @@
                             <input id="email" name="email" required class="form-control form-control-md" placeholder="Email" type="email"><br/>
                         </div>
                     </div>
+                    @if ($banking)
                     <div class="row">
                         <div class="col-2">
                             Physical Address:
@@ -60,6 +61,8 @@
                             <input id="physical_address" name="physical_address" required class="form-control form-control-md" placeholder="Physical Address" type="text"><br/>
                         </div>
                     </div>
+                    @endif
+                    
                     <div class="row">
                         <div class="col-2">
                             Organisation:
@@ -84,6 +87,8 @@
                             <input id="phone" name="phone" required class="form-control form-control-md" placeholder="Phone (starts with 07 or 01)" maxlength="10" type="number"><br/>
                         </div>
                     </div>
+
+                    @if ($banking)
                     <div class="row">
                         <div class="col-2">
                             Bank:
@@ -116,6 +121,8 @@
                             <input id="kra_pin" name="kra_pin" required class="form-control form-control-md" placeholder="KRA PIN" type="text" maxlength="11"><br/>
                         </div>
                     </div>
+                    @endif
+                    
                     <input type="hidden" name="url" value="{{$meeting_url}}" />
                     <div class="row">
                         <div class="col-2"></div>

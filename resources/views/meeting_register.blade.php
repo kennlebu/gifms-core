@@ -18,7 +18,7 @@
     @include('flash')
     <div class="header-strip"></div>  
     <div class="content">
-        <h2>
+        <h2 class="mt-2">
             <span><strong>{{$meeting->title}}</strong></span><br/>
         </h2>
         <h5>
@@ -33,6 +33,10 @@
                         {{ csrf_field() }}
                         <input id="id_no" name="id_no" required class="form-control form-control-md" placeholder="ID No." type="text"><br/><br/>
                         <input type="hidden" name="url" value="{{$url}}" />
+                        @if (isset($banking))
+                        <input type="hidden" name="banking" value="{{$banking}}" /> 
+                        @endif
+                        
                         <button type="submit" class="btn btn-primary">Register</button>
                     </form>
                 </p>
