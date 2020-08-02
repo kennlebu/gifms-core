@@ -112,10 +112,10 @@ class PaymentBatchApi extends Controller
                                 ->causedBy($user)
                                 ->log('Confirmed & processed payments');
                         }
-        
-                        Mail::queue(new NotifyBatch($payment_batch->id));
                     }                    
                 }
+                
+                Mail::queue(new NotifyBatch($payment_batch->id));
                 
                 // Add activity notification
                 $this->addActivityNotification('Payments consolidated (batched)', null, $this->current_user()->id, $this->current_user()->id, 'success', 'payment_batches', true);              

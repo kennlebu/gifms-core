@@ -471,6 +471,9 @@ class MeetingApi extends Controller
                 $excel_row['physical_address'] = $attendee->physical_address;
                 $excel_row['organisation'] = $attendee->organisation;
                 $excel_row['designation'] = $attendee->designation;
+                $excel_row['account_no'] = $attendee->bank_account;
+                $excel_row['bank'] = $attendee->bank_name;
+                $excel_row['branch'] = $attendee->bank_branch_name;
                 $excel_row['amount'] = $attendee->amount;
                 
                 $excel_data[] = $excel_row;
@@ -492,7 +495,7 @@ class MeetingApi extends Controller
 
                 $excel->setDescription('Attendance sheet for '.$meeting->title ?? '[No name]');
 
-                $headings = array('Name', 'Phone#', 'ID', 'KRA', 'Email', 'Physical Address', 'Organisation', 'Designation', 'Amount');
+                $headings = array('Name', 'Phone#', 'ID', 'KRA', 'Email', 'Physical Address', 'Organisation', 'Designation', 'Account No.', 'Bank', 'Branch', 'Amount');
 
                 $excel->sheet("Attendance sheet", function ($sheet) use ($excel_data, $headings) {
                     $sheet->setStyle([
@@ -529,7 +532,10 @@ class MeetingApi extends Controller
                         'F' => 35,
                         'G' => 50,
                         'H' => 50,
-                        'I' => 50
+                        'I' => 50,
+                        'J' => 50,
+                        'K' => 50,
+                        'L' => 50
                     ));
 
                     $sheet->setFreeze('B2');
