@@ -20,8 +20,6 @@ use Illuminate\Support\Facades\DB;
 use App\Models\MobilePaymentModels\MobilePayment;
 use App\Models\MobilePaymentModels\MobilePaymentStatus;
 use App\Models\MobilePaymentModels\MobilePaymentPayee;
-use App\Models\ProjectsModels\Project;
-use App\Models\AccountingModels\Account;
 use Exception;
 use PDF;
 use Excel;
@@ -43,6 +41,7 @@ use App\Models\FinanceModels\TaxRate;
 use App\Models\LPOModels\Lpo;
 use App\Models\Requisitions\Requisition;
 use App\Models\Requisitions\RequisitionItem;
+use Illuminate\Support\Facades\Storage;
 
 class MobilePaymentApi extends Controller
 {
@@ -683,7 +682,7 @@ class MobilePaymentApi extends Controller
             $data = Excel::load($file->getPathname(), function($reader) {})->get()->toArray();
 
             foreach ($data as $key => $value) {
-                if(strlen($value['phone'])==9 && substr($value['phone'],0,1)=='7'){
+                if(strlen($value['phone'])==9 && (substr($value['phone'],0,1)=='7' ||  substr($value['phone'],0,1)=='1')){
                     
                 }else{
                     throw new Exception("Phone number for ".$value['name']." is not of the required format", 1);
@@ -1197,12 +1196,10 @@ class MobilePaymentApi extends Controller
     {
         try{
             $path           = '/templates/MPESA_TEMPLATE.xlsx';
-            $path_info      = pathinfo($path);
-            $basename       = $path_info['basename'];
-            $file_contents  = FTP::connection()->readFile($path);
+            $file_contents  = Storage::get($path);
             $response       = Response::make($file_contents, 200);
-            $response->header('Content-Type', $this->get_mime_type($basename));
-            return $response;  
+            $response->header('Content-Type', 'application/vnd.ms-excel');
+            return $response;
         }
         catch (Exception $e ){
             $response       = Response::make("", 500);
