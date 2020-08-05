@@ -148,38 +148,38 @@ class MobilePaymentApi extends Controller
                         $mobile_payment->approver_id = $mobile_payment->lpo->approver_id;
                     }
                     $mobile_payment->save();
-                    $requisition = Requisition::findOrFail($form['requisition_id']);
-                    $allocation_purpose = '';
-                    $count = 0;
+                    // $requisition = Requisition::findOrFail($form['requisition_id']);
+                    // $allocation_purpose = '';
+                    // $count = 0;
     
-                    foreach(json_decode($form['requisition_items']) as $item){
-                        $item = RequisitionItem::findOrFail($item);;
-                        if($count < 1){
-                            $allocation_purpose = $item->service;
-                        }
-                        else {
-                            $allocation_purpose = '; '.$item->service;
-                        }
-                        $count += 1;
-                        $item->status_id = 6;
-                        $item->disableLogging();
-                        $item->save();
-                    }
+                    // foreach(json_decode($form['requisition_items']) as $item){
+                    //     $item = RequisitionItem::findOrFail($item);
+                    //     if($count < 1){
+                    //         $allocation_purpose = $item->service;
+                    //     }
+                    //     else {
+                    //         $allocation_purpose = '; '.$item->service;
+                    //     }
+                    //     $count += 1;
+                    //     $item->status_id = 6;
+                    //     $item->disableLogging();
+                    //     $item->save();
+                    // }
 
-                    foreach($requisition->allocations as $alloc){
-                        $allocation = new Allocation();
-                        $allocation->account_id = $alloc->account_id;
-                        $allocation->project_id = $alloc->project_id;
-                        $allocation->allocatable_id = $mobile_payment->id;
-                        $allocation->allocatable_type = 'mobile_payments';
-                        $allocation->percentage_allocated = $alloc->percentage_allocated;
-                        $allocation->amount_allocated = ($mobile_payment->totals * (float)$alloc->percentage_allocated/100);
-                        $allocation->allocation_purpose = $allocation_purpose;
-                        $allocation->objective_id = $alloc->objective_id;
-                        $allocation->allocated_by_id = $requisition->requested_by_id;
-                        $allocation->disableLogging();
-                        $allocation->save();
-                    }                   
+                    // foreach($requisition->allocations as $alloc){
+                    //     $allocation = new Allocation();
+                    //     $allocation->account_id = $alloc->account_id;
+                    //     $allocation->project_id = $alloc->project_id;
+                    //     $allocation->allocatable_id = $mobile_payment->id;
+                    //     $allocation->allocatable_type = 'mobile_payments';
+                    //     $allocation->percentage_allocated = $alloc->percentage_allocated;
+                    //     $allocation->amount_allocated = ($mobile_payment->totals * (float)$alloc->percentage_allocated/100);
+                    //     $allocation->allocation_purpose = $allocation_purpose;
+                    //     $allocation->objective_id = $alloc->objective_id;
+                    //     $allocation->allocated_by_id = $requisition->requested_by_id;
+                    //     $allocation->disableLogging();
+                    //     $allocation->save();
+                    // }
                 }
 
                 FTP::connection()->makeDir('/mobile_payments');
@@ -201,7 +201,7 @@ class MobilePaymentApi extends Controller
                 }
                 else {
                     // $mobile_payment_no = count($requisition->transactions['mobile_payments']);
-                    $mobile_payment->ref = $requisition->ref.'-MPT-'.$this->pad_with_zeros(2, $mobile_payment->getNextRefNumber());
+                    $mobile_payment->ref = $mobile_payment->requisition->ref.'-MPT-'.$this->pad_with_zeros(2, $mobile_payment->getNextRefNumber());
 
                     // Logging
                     activity()

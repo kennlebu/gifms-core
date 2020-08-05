@@ -16,6 +16,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\AllocationModels\Allocation;
+use App\Models\MobilePaymentModels\MobilePayment;
+use App\Models\Requisitions\RequisitionItem;
+use Illuminate\Http\Request;
 
 class MobilePaymentAllocationApi extends Controller
 {
@@ -47,5 +50,41 @@ class MobilePaymentAllocationApi extends Controller
             $response =  ["error"=>"Mobile Payment Allocation could not be found"];
             return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
         }
+    }
+
+
+
+    public function createAllocationsFromRequisition(Request $request){
+        $mobile_payment_id = $request->mobile_payment_id;
+        $mobile_payment = MobilePayment::findOrFail($mobile_payment_id);
+        if(!empty($mobile_payment->lpo)){
+            $items = $mobile_payment->lpo->lpo_requisition_items;
+            if(!empty($items)){
+                foreach($items as $item){
+                    $item = RequisitionItem::findOrFail($item->id);
+                    $item->status_id = 6;
+                    $item->disableLogging();
+                    $item->save();
+                }    
+            }            
+
+            $allocations = $mobile_payment->lpo->allocations;
+            foreach($allocations as $alloc){
+                $allocation = new Allocation();
+                $allocation->account_id = $alloc->account_id;
+                $allocation->project_id = $alloc->project_id;
+                $allocation->allocatable_id = $mobile_payment->id;
+                $allocation->allocatable_type = 'mobile_payments';
+                $allocation->percentage_allocated = $alloc->percentage_allocated;
+                $allocation->amount_allocated = ($mobile_payment->totals * (float)$alloc->percentage_allocated/100);
+                $allocation->allocation_purpose = $mobile_payment->expense_desc. ';' .$mobile_payment->expense_purpose;
+                $allocation->objective_id = $alloc->objective_id;
+                $allocation->allocated_by_id = $mobile_payment->requested_by_id;
+                $allocation->disableLogging();
+                $allocation->save();
+            }
+        }
+
+        return response()->json(['msg'=>'success'], 200);
     }
 }
