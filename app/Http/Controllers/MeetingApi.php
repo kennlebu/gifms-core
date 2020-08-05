@@ -108,6 +108,7 @@ class MeetingApi extends Controller
             $meeting->ends_on = $request->ends_on;
             $meeting->organiser_email = $request->organiser_email;
             $meeting->confirmation_mode = $request->confirmation_mode;
+            $meeting->allow_over_threshold_amount = $request->allow_over_threshold_amount;
             $meeting->created_by_id = $this->current_user()->id;
             $meeting->save();
             $meeting->disableLogging();
@@ -161,6 +162,7 @@ class MeetingApi extends Controller
             $meeting->ends_on = $request->ends_on;
             $meeting->organiser_email = $request->organiser_email;
             $meeting->confirmation_mode = $request->confirmation_mode;
+            $meeting->allow_over_threshold_amount = $request->allow_over_threshold_amount;
             $meeting->created_by_id = $request->created_by_id;
             $meeting->save();
             $meeting->disableLogging();

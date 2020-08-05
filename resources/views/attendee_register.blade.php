@@ -33,7 +33,7 @@
                             ID no.:
                         </div>
                         <div class="col-10">
-                            <input id="id_no" name="id_no" value="{{$id_no}}" required class="form-control form-control-md" placeholder="ID No." type="number" maxlength="8"><br/>
+                            <input id="id_no" name="id_no" value="{{$id_no}}" required class="form-control form-control-md" placeholder="ID No." type="number" maxlength="8" readonly><br/>
                         </div>
                     </div>
                     <div class="row">
@@ -49,7 +49,8 @@
                             Email:
                         </div>
                         <div class="col-10">
-                            <input id="email" name="email" required class="form-control form-control-md" placeholder="Email" type="email"><br/>
+                            <input id="email" name="email" required class="form-control form-control-md" placeholder="Email" type="email"
+                            pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"><br/>
                         </div>
                     </div>
                     @if ($banking)
@@ -84,7 +85,8 @@
                             Phone:
                         </div>
                         <div class="col-10">
-                            <input id="phone" name="phone" required class="form-control form-control-md" placeholder="Phone (starts with 07 or 01)" maxlength="10" type="number"><br/>
+                            <input id="phone" name="phone" required class="form-control form-control-md" placeholder="Phone (starts with 07 or 01)" maxlength="10" type="text" 
+                            oninput="numberOnly(this);"><br/>
                         </div>
                     </div>
 
@@ -135,6 +137,13 @@
         </div>
     </div>
 </div>
+
+<script>
+    function numberOnly(element) {
+        var regex = /[^0-9]/gi;
+        element.value = element.value.replace(regex, "");
+    }
+</script>
 
 
     </body>

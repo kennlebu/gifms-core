@@ -2090,3 +2090,12 @@ php artisan refractor:supply_categories
 +~===== Add cancel status to requisition items
 INSERT INTO `requisition_item_statuses` (`status`, `default`)
 VALUES ('Cancelled', NULL);
+
++~===== Recalled mobile payment should go to accountant
+UPDATE `mobile_payment_statuses` SET `new_next_status_id` = '9' WHERE `id` = '14';
+
++~===== Confirmation mode and Allow over threshold amounts for meetings
+ALTER TABLE `meetings`
+ADD `confirmation_mode` varchar(3) COLLATE 'latin1_swedish_ci' NULL AFTER `organiser_email`;
+ALTER TABLE `meetings`
+ADD `allow_over_threshold_amount` varchar(3) COLLATE 'latin1_swedish_ci' NULL AFTER `confirmation_mode`;

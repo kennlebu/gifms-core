@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Meeting extends BaseModel
 {
     use SoftDeletes;
-    protected $appends = ['full_invite_url'];
+    protected $appends = ['full_invite_url', 'full_invite_url_banking'];
 
     public function county()
     {
@@ -28,5 +28,9 @@ class Meeting extends BaseModel
 
     public function getFullInviteUrlAttribute(){
         return config('app.url').'/event/register/'.$this->invite_url;
+    }
+
+    public function getFullInviteUrlBankingAttribute(){
+        return config('app.url').'/event/register/'.$this->invite_url.'/b';
     }
 }
