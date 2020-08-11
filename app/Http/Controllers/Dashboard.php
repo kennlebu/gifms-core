@@ -59,7 +59,7 @@ class Dashboard extends Controller
         $end_date = $end_date->format('Y-m-t')." 23:59:59";
         $start_date = date('Y-m').'-01 00:00:00';
         
-        $rate = ExchangeRate::whereYear('active_date', date('Y'))->whereMonth('active_date', date('m'))->orderBy('active_date', 'DESC')->first();
+        $rate = ExchangeRate::whereYear('active_date', date('Y'))->whereMonth('active_date', date('m', strtotime("first day of previous month")))->orderBy('active_date', 'DESC')->first();
         if(!empty($rate)) $rate = $rate->exchange_rate;
         else $rate = 'no_rate';
 

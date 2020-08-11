@@ -2099,3 +2099,10 @@ ALTER TABLE `meetings`
 ADD `confirmation_mode` varchar(3) COLLATE 'latin1_swedish_ci' NULL AFTER `organiser_email`;
 ALTER TABLE `meetings`
 ADD `allow_over_threshold_amount` varchar(3) COLLATE 'latin1_swedish_ci' NULL AFTER `confirmation_mode`;
+
++~===== Add international transfer to payment modes
+INSERT INTO `payment_modes` (`payment_mode_description`, `abrv`, `migration_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('International Transfer', 'INT', NULL, now(), now(), NULL);
+
+INSERT INTO `counties` (`county_name`, `migration_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('International', NULL, now(), now(), NULL);
