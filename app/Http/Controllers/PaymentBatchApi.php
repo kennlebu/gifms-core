@@ -231,8 +231,8 @@ class PaymentBatchApi extends Controller
         $currency = $input['currency'];
 
         try{
-            // EFT
-            if($payment_mode=='1'){
+            // EFT & INT
+            if($payment_mode=='1' || $payment_mode == '6'){
                 $eft_result = [];
                 
                 $payments = Payment::with(['currency','paid_to_bank','paid_to_bank_branch'])
@@ -669,42 +669,27 @@ class PaymentBatchApi extends Controller
     {
         $input = Request::all();
         //query builder
-        $qb = DB::table('payment_batches');
-
-        $qb->whereNull('deleted_at');
-
-        $response;
-        $response_dt;
+        $qb = PaymentBatch::with('payment_modes');
 
         $total_records          = $qb->count();
         $records_filtered       = 0;
 
         //searching
         if(array_key_exists('searchval', $input)){
-            $qb->where(function ($query) use ($input) {                
-                $query->orWhere('id','like', '\'%' . $input['searchval']. '%\'');
-                $query->orWhere('ref','like', '\'%' . $input['search']['value']. '%\'');
+            $qb = $qb->where(function ($query) use ($input) {
+                $query->orWhere('ref','like', '%' . $input['search']['value']. '%');
             });
 
-            $sql = PaymentBatch::bind_presql($qb->toSql(),$qb->getBindings());
-            $sql = str_replace("*"," count(*) AS count ", $sql);
-            $dt = json_decode(json_encode(DB::select($sql)), true);
-
-            $records_filtered = (int) $dt[0]['count'];
+            $records_filtered = $qb->count();
         }
 
         if(array_key_exists('datatables', $input)){
             //searching
-            $qb->where(function ($query) use ($input) {                
-                $query->orWhere('id','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('ref','like', '\'%' . $input['search']['value']. '%\'');
+            $qb = $qb->where(function ($query) use ($input) {
+                $query->orWhere('ref','like', '%' . $input['search']['value']. '%');
             });
 
-            $sql = PaymentBatch::bind_presql($qb->toSql(),$qb->getBindings());
-            $sql = str_replace("*"," count(*) AS count ", $sql);
-            $dt = json_decode(json_encode(DB::select($sql)), true);
-
-            $records_filtered = (int) $dt[0]['count'];
+            $records_filtered = $qb->count();
 
             //ordering
             $order_column_id    = (int) $input['order'][0]['column'];
@@ -712,33 +697,27 @@ class PaymentBatchApi extends Controller
             $order_direction    = $input['order'][0]['dir'];
 
             if($order_column_name!=''){
-                $qb->orderBy($order_column_name, $order_direction);
+                $qb = $qb->orderBy($order_column_name, $order_direction);
             }
 
             //limit $ offset
             if((int)$input['start']!= 0 ){
-                $response_dt    =   $qb->limit($input['length'])->offset($input['start']);
+                $qb = $qb->limit($input['length'])->offset($input['start']);
             }else{
-                $qb->limit($input['length']);
+                $qb = $qb->limit($input['length']);
             }
 
-            $sql = PaymentBatch::bind_presql($qb->toSql(),$qb->getBindings());
-
-            $response_dt = DB::select($sql);
-            $response_dt = json_decode(json_encode($response_dt), true);
-            $response_dt    = $this->append_relationships_objects($response_dt);
-            $response       = PaymentBatch::arr_to_dt_response( 
-                $response_dt, $input['draw'],
+            $response = PaymentBatch::arr_to_dt_response( 
+                $qb->get(), $input['draw'],
                 $total_records,
                 $records_filtered
                 );
         }
         else{
-            $sql            = PaymentBatch::bind_presql($qb->toSql(),$qb->getBindings());
-            $response       = json_decode(json_encode(DB::select($sql)), true);
+            $response = $qb->get();
         }
 
-        return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+        return response()->json($response, 200);
     }
 
 
@@ -746,31 +725,6 @@ class PaymentBatchApi extends Controller
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    public function append_relationships_objects($data = array()){
-        foreach ($data as $key => $value) {
-            $mobile_payment = PaymentBatch::find($data[$key]['id']);         
-            $data[$key]['payment_modes'] = $mobile_payment->payment_modes;
-        }
-
-        return $data;
-    }
 
 
     public function pad_zeros($desired_length, $data){
