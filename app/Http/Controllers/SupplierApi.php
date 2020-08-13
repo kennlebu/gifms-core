@@ -736,4 +736,16 @@ class SupplierApi extends Controller
             return response()->json(['error'=>"Something went wrong", 'msg'=>$e->getMessage()], 500);
         }
     }
+
+    public function getSupplierTransactions($supplier_id){
+        try{
+            $supplier = Supplier::findOrFail($supplier_id);
+            $response = $supplier->getTransactionsAttribute();
+                     
+            return response()->json($response, 200);
+        }catch(Exception $e){
+            $response =  ["error"=>"Something went wrong" ,"msg"=>$e->getMessage()];
+            return response()->json($response, 500);
+        }
+    }
 }
