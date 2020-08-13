@@ -300,6 +300,15 @@ class SupplierApi extends Controller
             $query->whereNull('status_id')->orWhere('status_id', '!=', '1');
         });
 
+        if(array_key_exists('with_disabled', $input)){
+            // do nothing
+        }
+        else{            
+            $qb = $qb->where(function($query){
+                $query->whereNull('active')->orWhere('active', '!=', 'disabled');
+            });
+        }
+
         $total_records = $qb->count();
         $records_filtered = 0;
 
