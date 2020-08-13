@@ -669,7 +669,7 @@ class PaymentBatchApi extends Controller
     {
         $input = Request::all();
         //query builder
-        $qb = PaymentBatch::with('payment_modes');
+        $qb = PaymentBatch::query();
 
         $total_records          = $qb->count();
         $records_filtered       = 0;
