@@ -239,4 +239,92 @@ class Dashboard extends Controller
 
         return ['type'=>'batches', 'total_kes'=>$total_kes, 'total_usd'=>$total_usd, 'number'=>count($payments), 'invoices'=>$invoices, 'claims'=>$claims];
     }
+
+    public function getLastThreeMonthsSpend(Request $request){
+        $start_date = new DateTime();
+        if(!empty($request->date)){
+            $start_date = new DateTime($request->date);
+        }
+        
+        $d = clone $start_date;
+        $first_date = $d->format('Y-m-d');
+        $d = clone $start_date;
+        $second_date = $d->modify('first day of -1 month')->format('Y-m-d');
+        $d = clone $start_date;
+        $third_date = $d->modify('first day of -2 months')->format('Y-m-d');
+
+        $labels = [];
+        $data = [];
+
+        // 1 month
+        $first_batch = PaymentBatch::whereMonth('created_at', date('m', strtotime($first_date)))
+                        ->whereYear('created_at', date('Y', strtotime($first_date)))
+                        ->pluck('id')->toArray();
+        $first_batch_total = $this->getBatchAmount($first_batch, $first_date);
+        $labels[] = date('F', strtotime($first_date));
+        $data[] = $first_batch_total;
+
+        // 2 months
+        $batch = PaymentBatch::whereMonth('created_at', date('m', strtotime($second_date)))
+                        ->whereYear('created_at', date('Y', strtotime($second_date)))
+                        ->pluck('id')->toArray();
+        $second_batch_total = $this->getBatchAmount($batch, $second_date);
+        $labels[] = date('F', strtotime($second_date));
+        $data[] = $second_batch_total;
+
+        // 3 months
+        $batch = PaymentBatch::whereMonth('created_at', date('m', strtotime($third_date)))
+                        ->whereYear('created_at', date('Y', strtotime($third_date)))
+                        ->pluck('id')->toArray();
+        $third_batch_total = $this->getBatchAmount($batch, $third_date);
+        $labels[] = date('F', strtotime($third_date));
+        $data[] = $third_batch_total;
+
+        return response()->json(['labels'=>$labels, 'data'=>$data], 200);
+    }
+
+    private function getBatchAmount($batch_ids, $date){
+        $total = 0;
+        $prev = new DateTime($date);
+        $prev_month_date = $prev->modify('first day of previous month')->format('Y-m-d');
+        $rate = ExchangeRate::whereYear('active_date', date('Y'))->whereMonth('active_date', date('m', strtotime($prev_month_date)))->orderBy('active_date', 'DESC')->first();
+        if(!empty($rate)) $rate = $rate->exchange_rate;
+        else $rate = 'no_rate';
+
+        if($rate !== 'no_rate'){
+            if(!empty($batch_ids)){
+                $invoice_ids = Payment::where('payable_type', 'invoices')->wherein('payment_batch_id', $batch_ids)->pluck('payable_id')->toArray();
+                if(!empty($invoice_ids)){
+                    $paid_invoices = Invoice::whereIn('id', $invoice_ids)->get();
+                    foreach($paid_invoices as $paid_invoice){
+                        if($paid_invoice->currency_id == 1) {
+                            $total += (float) ($paid_invoice->total / $rate);
+                        }
+                        else $total += (float) $paid_invoice->total;
+                    }
+                }
+                
+                $claim_ids = Payment::where('payable_type', 'claims')->wherein('payment_batch_id', $batch_ids)->pluck('payable_id')->toArray();
+                if(!empty($claims_ids)){
+                    $paid_claims = Claim::whereIn('id', $claim_ids)->get();
+                    foreach($paid_claims as $paid_claim){
+                        if($paid_claim->currency_id == 1) {
+                            $total += (float) ($paid_claim->total / $rate);
+                        }
+                        else $total += (float) $paid_claim->total;
+                    }
+                }
+
+                $paid_mps = MobilePayment::whereMonth('management_approval_at', '=', date('m'))->whereYear('management_approval_at', '=', date('Y'))->get();
+                foreach($paid_mps as $paid_mp){
+                    if($paid_mp->currency_id == 1) {
+                        $total += (float) ($paid_mp->totals / $rate);
+                    }
+                    else $total += (float) $paid_mp->totals;
+                }
+            }
+        }
+        
+        return round($total, 2);
+    }
 }

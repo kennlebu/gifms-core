@@ -5503,6 +5503,7 @@ Route::GET('download-attendance', 'MeetingApi@downloadAttendanceSheet')->middlew
 Route::POST('month_bank_balance', 'NotificationsApi@checkMonthBalance')->middleware('jwt.auth');
 Route::get('metrics', 'Dashboard@getMetrics')->middleware('jwt.auth');
 Route::get('recent-activity', 'Dashboard@getRecentActivity')->middleware('jwt.auth');
+Route::post('last-3-months-expenditure', 'Dashboard@getLastThreeMonthsSpend')->middleware('jwt.auth');
 
 
 /* Documents */
