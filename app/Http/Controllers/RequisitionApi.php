@@ -455,7 +455,7 @@ class RequisitionApi extends Controller
                 return response()->json(['error'=>"This requisition has no items"], 403);
             }
 
-            if($requisition->status_id == 1){
+            if($requisition->status_id == 1 || $requisition->status_id == 4){
                 $requisition->status_id = 2;
                 $requisition->disableLogging();
                 $requisition->save();
@@ -471,7 +471,7 @@ class RequisitionApi extends Controller
 
                 Mail::queue(new NotifyRequisition($requisition->id));
 
-            return Response()->json(array('msg' => 'Success: requisition submitted for approval','data' => $requisition), 200);
+                return Response()->json(array('msg' => 'Success: requisition submitted for approval','data' => $requisition), 200);
             }
         }
         catch(Exception $e){
