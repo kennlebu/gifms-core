@@ -333,6 +333,7 @@ class MobilePaymentApi extends Controller
                                     'allocations.project','allocations.account','allocations.objective',
                                     'program_activity',
                                     'lpo',
+                                    'requisition.documents',
                                     'documents'
                                 )->findOrFail($mobile_payment_id);
 

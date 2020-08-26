@@ -706,7 +706,7 @@ class RequisitionApi extends Controller
             $statuses = $statuses->whereIn('id',[1,4]);
         }
 
-        $statuses = $statuses->get();
+        $statuses = $statuses->get()->toArray();
         // Attach the other statuses
         if(array_key_exists('displayable_only',$input)){
             $user = $this->current_user();
@@ -743,7 +743,7 @@ class RequisitionApi extends Controller
                     })->count()
                 ];
 
-                $statuses = $this->insert_into_array($statuses, 0, 1, $pending_ordering, true, true);
+                $statuses = $this->insertItemAtPosition($statuses, $pending_ordering, 1);
             }
         }
         
@@ -759,32 +759,19 @@ class RequisitionApi extends Controller
         return response()->json(['lpo_item'=>$lpo_item], 200);
     }
 
-    function insert_into_array( $array, $search_key, $insert_key, $insert_value, $insert_after_founded_key = true, $append_if_not_found = false ) {
-
-        $new_array = array();
-
-        foreach( $array as $key => $value ){
-
-            // INSERT BEFORE THE CURRENT KEY? 
-            // ONLY IF CURRENT KEY IS THE KEY WE ARE SEARCHING FOR, AND WE WANT TO INSERT BEFORE THAT FOUNDED KEY
-            if( $key === $search_key && ! $insert_after_founded_key )
-                $new_array[ $insert_key ] = $insert_value;
-
-            // COPY THE CURRENT KEY/VALUE FROM OLD ARRAY TO A NEW ARRAY
-            $new_array[ $key ] = $value;
-
-            // INSERT AFTER THE CURRENT KEY? 
-            // ONLY IF CURRENT KEY IS THE KEY WE ARE SEARCHING FOR, AND WE WANT TO INSERT AFTER THAT FOUNDED KEY
-            if( $key === $search_key && $insert_after_founded_key )
-                $new_array[ $insert_key ] = $insert_value;
-
+    function insertItemAtPosition( &$array, $insert, $position ) {
+        /*
+        $array : The initial array i want to modify
+        $insert : the new array i want to add, eg array('key' => 'value') or array('value')
+        $position : the position where the new array will be inserted into. Please mind that arrays start at 0
+        */
+        $copy = $array;
+        $len = count($array);
+        $array[$position] = $insert;
+        for($i = $position; $i < $len; $i++){
+            $array[$i+1] = $copy[$i];
         }
 
-        // APPEND IF KEY ISNT FOUNDED
-        if( $append_if_not_found && count( $array ) == count( $new_array ) )
-            $new_array[ $insert_key ] = $insert_value;
-
-        return $new_array;
-
+        return $array;
     }
 }
