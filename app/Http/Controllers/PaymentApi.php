@@ -494,6 +494,7 @@ class PaymentApi extends Controller
         try{
             $input = Request::all();
             $month = $input['month'];
+            $year = $input['year'];
             $operation = $input['operation'];
             $type = $input['type'];
 
@@ -501,8 +502,8 @@ class PaymentApi extends Controller
             elseif($type == 'income') $column = 'income_tax_amount_withheld';
             else $column = $type;
 
-            $payments = Payment::whereHas('payment_batch', function($query) use ($month){
-                $query->whereMonth('created_at', $month);  
+            $payments = Payment::whereHas('payment_batch', function($query) use ($month, $year){
+                $query->whereMonth('created_at', $month)->whereYear('created_at', $year);  
             })->whereNotNull($column)->get();
 
             $response_array = [];
