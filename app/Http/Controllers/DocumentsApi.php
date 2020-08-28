@@ -103,9 +103,13 @@ class DocumentsApi extends Controller
             $file = $request->file;
             if(!empty($file) && $file != 0){
                 $path = '/documents/'.$doc->entity_type.'/'.$doc->entity_id.'/';
-                Ftp::connection()->makeDir($path);
-                Ftp::connection()->uploadFile($file->getPathname(), $path.$doc->filename.'.'.$file->getClientOriginalExtension());
-                
+                $filename = str_replace(' ', '', $doc->title).$doc->id;
+
+                FTP::connection()->makeDir('/documents');
+                FTP::connection()->makeDir('/documents/'.$doc->entity_type);
+                FTP::connection()->makeDir('/documents/'.$doc->entity_type.'/'.$doc->entity_id);
+                FTP::connection()->uploadFile($file->getPathname(), $path.$filename.'.'.$file->getClientOriginalExtension());
+
                 $doc->type = $file->getClientOriginalExtension();
                 $doc->save();
 
