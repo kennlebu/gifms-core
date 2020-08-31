@@ -15,6 +15,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\completeBatchUpload;
 use JWTAuth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\DB;
@@ -139,7 +140,7 @@ class PaymentBatchApi extends Controller
      */
     public function completePaymentBatchUpload($payment_batch_id)
     {
-        $user = $this->current_user();
+        // $user = $this->current_user();
 
         try{
             $payment_batch = PaymentBatch::find($payment_batch_id);    
@@ -152,51 +153,7 @@ class PaymentBatchApi extends Controller
 
             // Get the payments and move them to the next status
             $payment_ids = Payment::where('payment_batch_id', $payment_batch_id)->pluck('id')->toArray();
-
-            foreach ($payment_ids as $payment_id) {
-                $payment = Payment::find($payment_id);
-                $payment->status_id = 3;
-                $payment->disableLogging();
-                $payment->save();
-
-                // Now update the invoices, claims and advances
-                if($payment->payable_type == 'invoices'){
-                    $invoice = Invoice::find($payment->payable_id);
-                    if($invoice->status_id == 5){
-                        $invoice->status_id = 7;
-                        $invoice->disableLogging();
-                        $invoice->save();
-                        activity()
-                            ->performedOn($invoice)
-                            ->causedBy($user)
-                            ->log('Uploaded payment to bank');
-                    }
-                }
-                elseif($payment->payable_type == 'advances'){
-                    $advance = Advance::find($payment->payable_id);
-                    if($advance->status_id == 5){
-                        $advance->status_id = 7;
-                        $advance->disableLogging();
-                        $advance->save();
-                        activity()
-                            ->performedOn($advance)
-                            ->causedBy($user)
-                            ->log('Uploaded payment to bank');
-                    }                    
-                }
-                elseif($payment->payable_type == 'claims'){
-                    $claim = Claim::find($payment->payable_id);
-                    if($claim->status_id == 6){
-                        $claim->status_id = 7;
-                        $claim->disableLogging();
-                        $claim->save();
-                        activity()
-                            ->performedOn($claim)
-                            ->causedBy($user)
-                            ->log('Uploaded payment to bank');
-                    }                    
-                }
-            }
+            dispatch(new completeBatchUpload($payment_ids, $this->current_user()));
 
             return Response()->json(['msg' => 'Success: batch uploaded'], 200);
         }
