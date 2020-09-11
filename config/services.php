@@ -35,4 +35,9 @@ return [
         'secret' => env('STRIPE_SECRET'),
     ],
 
+    'smtp2go' => [
+        'api_key' => env('SMTP2GO_KEY'),
+        'domain' => env('SMTP2GO_DOMAIN', 'https://api.smtp2go.com/v3'),
+    ],
+
 ];

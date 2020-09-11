@@ -37,9 +37,6 @@ class NotifyActivityCreation extends Mailable
      */
     public function build()
     {
-
-        $ccs = $this->staffs;
-
         return $this->view('emails/notify_activity_creation')         
             ->replyTo([
                     'email' => Config::get('mail.reply_to')['address'],

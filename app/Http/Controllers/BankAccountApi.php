@@ -337,6 +337,10 @@ class BankAccountApi extends Controller
                 }
                 $bank_balances = $bank_balances->orderBy($order_column_name, $order_direction);
             }
+            else {
+                // Order by balance date by default
+                $bank_balances = $bank_balances->orderBy('balance_date');
+            }
 
             //limit
             if(array_key_exists('limit', $input)){

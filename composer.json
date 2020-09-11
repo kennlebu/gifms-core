@@ -9,6 +9,7 @@
         "anchu/ftp": "^2.0",
         "barryvdh/laravel-dompdf": "^0.8.0",
         "doctrine/dbal": "^2.5",
+        "guzzlehttp/guzzle": "^6.5",
         "laravel/framework": "5.4.*",
         "maatwebsite/excel": "^2.1.0",
         "niklasravnsborg/laravel-pdf": "^2.0",

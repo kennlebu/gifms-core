@@ -2,6 +2,9 @@
 
 use Anchu\Ftp\Facades\Ftp;
 use App\Http\Controllers\Controller;
+use App\Mail\NotifyActivityCreation;
+use App\Models\ActivityModels\Activity;
+use Illuminate\Support\Facades\Mail;
 
 /*
 |--------------------------------------------------------------------------
@@ -156,6 +159,29 @@ Route::get('test/email_lpo', function () {
         );
 
     return view('emails/notify_lpo',$data);
+});
+
+Route::get('test/email', function () {
+    $data = [
+        'title' => 'TEST TITLE',
+        'paragraphs' => ['Hello','How are you?'],
+        'signature' => 'Ken Lebu',
+        'js_url' => 'http://localhost:4200'
+    ];
+    Mail::send('emails.generic', $data, function ($message) {
+        $message->from('kefinance@clintonhealthaccess.org', 'KEFINANCE');
+        $message->sender('kefinance@clintonhealthaccess.org', 'KEFINANCE');
+        $message->to('kenlebu@gmail.com', 'John Doe');
+        $message->cc('kennlebu@live.com', 'John Doe');
+        $message->bcc('bkennville@yahoo.com', 'John Doe');
+        $message->replyTo('kenlebu@gmail.com', 'John Doe');
+        $message->subject('TEST GIFMS EMAIL');
+        $message->priority(3);
+    });;
+});
+Route::get('test/NotifyActivity', function () {
+    $act = Activity::with('program','program_manager')->find('44');
+    Mail::queue(new NotifyActivityCreation($act));
 });
 
 Route::get('/event/register/{url}', 'MeetingApi@registerIndex');
