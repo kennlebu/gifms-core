@@ -50,13 +50,14 @@ class Smtp2goTransport extends Transport{
 
             $options = [
                 'api_key' => $this->key,
-                'sender' => $fromAddress,
-                'to' => $to_email,
-                'subject' => $message->getSubject(),
-                'html_body'  => $message->getBody()
+                'mime_email' => base64_encode($message->toString())
+                // 'sender' => $fromAddress,
+                // 'to' => $to_email,
+                // 'subject' => $message->getSubject(),
+                // 'html_body'  => $message->getBody()
             ];
 
-            $response = $this->client->post('https://api.smtp2go.com/v3/email/send', 
+            $response = $this->client->post('https://api.smtp2go.com/v3/email/mime', 
                 [RequestOptions::JSON => $options]
             );
             return $response;

@@ -3,7 +3,9 @@
 use Anchu\Ftp\Facades\Ftp;
 use App\Http\Controllers\Controller;
 use App\Mail\NotifyActivityCreation;
+use App\Mail\NotifyLpoDispatch;
 use App\Models\ActivityModels\Activity;
+use App\Models\LPOModels\Lpo;
 use Illuminate\Support\Facades\Mail;
 
 /*
@@ -180,8 +182,13 @@ Route::get('test/email', function () {
     });;
 });
 Route::get('test/NotifyActivity', function () {
-    $act = Activity::with('program','program_manager')->find('44');
+    $act = Activity::with('program','program_manager')->find('0');
     Mail::queue(new NotifyActivityCreation($act));
+});
+Route::get('test/NotifyLpoDispatch', function () {
+    $lpo = Lpo::with('preffered_quotation.supplier','supplier')->find('0');
+    // file_put_contents ( "E://Users//kennl//Documents//debug.txt" , PHP_EOL.json_encode($lpo) , FILE_APPEND);
+    Mail::queue(new NotifyLpoDispatch($lpo));
 });
 
 Route::get('/event/register/{url}', 'MeetingApi@registerIndex');
