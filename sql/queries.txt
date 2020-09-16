@@ -2116,3 +2116,17 @@ VALUES ('View banking information', 'View banking information', NULL, NULL, NULL
 INSERT INTO `role_permissions` (`permission_id`, `role_id`)
 VALUES ('258', '1'),('258', '2'),('258', '3'),('258', '4'),('258', '5'),('258', '8'),('258', '9'),('258', '10'),
 ('259', '1'),('259', '2'),('259', '3'),('259', '4'),('259', '5'),('259', '8'),('259', '9'),('259', '10');
+
++~===== Create quote requests table
+CREATE TABLE `quote_requests` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `supplier_id` int NULL,
+  `to` text NULL,
+  `cc` text NULL,
+  `bcc` text NULL,
+  `body` text NULL,
+  `requested_by_id` int NULL,
+  `created_at` timestamp NULL,
+  `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL
+);

@@ -330,5 +330,14 @@ class Controller extends BaseController
 			}
 		}
 		return $RESULTS;
-	}
+    }
+    
+    /**
+     * Explodes text based on a range of delimiters
+     */
+    function multiexplode ($delimiters,$string) {   
+        $ready = str_replace($delimiters, $delimiters[0], $string);
+        $launch = explode($delimiters[0], $ready);
+        return  $launch;
+    }
 }

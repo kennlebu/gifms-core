@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>GIFMS Email Notification</title>
+<title>GIFMS Email</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 </head>
 <body style="margin: 0; padding: 0;">
@@ -12,7 +12,7 @@
 				<table cellpadding="0" cellspacing="0" width="600" style="border: 1px solid #cccccc; border-collapse: collapse; margin: 0 auto;">
 					<tr>
 						<td style="background-color:#ffffff;  padding: 0 30px; color: #153643; font-size: 28px; font-weight: bold; font-family: Arial, sans-serif;">
-							<img src="{{ $message->embed('img/banner-top.png') }}" alt="Clinton Health Access Initiative logo" style="display: block; margin: 0 auto; width: 100%" />
+							<img src="{{ $message->embed(public_path().'/img/banner-top.png') }}" alt="Clinton Health Access Initiative logo" style="display: block; margin: 0 auto; width: 100%" />
 						</td>
 					</tr>
 					<tr>

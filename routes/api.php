@@ -1499,6 +1499,7 @@ Route::POST('/suppliers/excel_upload', 'SupplierApi@uploadExcel')->middleware('j
 Route::get('/suppliers/download', 'SupplierApi@downloadExcel')->middleware('jwt.auth');
 Route::POST('/supplier/changeStatus', 'SupplierApi@changeActiveStatus')->middleware('jwt.auth');
 Route::GET('/supplier-transactions/{supplier_id}', 'SupplierApi@getSupplierTransactions')->middleware('jwt.auth');
+Route::POST('/supplier/request-quote', 'SupplierApi@requestQuote')->middleware('jwt.auth');
 
 // Supplier documents
 Route::POST('/supplier/add-document', 'SupplierApi@addDocument')->middleware('jwt.auth');

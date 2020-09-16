@@ -45,7 +45,7 @@ class SupplierRateApi extends Controller
             $rate->unit = $input['unit'];
 
             if($rate->save()){
-                return response()->json(['msg'=>"rate added"], 200,array(),JSON_PRETTY_PRINT);
+                return response()->json(['msg'=>"rate added"], 200);
             }
         }
         catch(\Exception $e){
@@ -78,7 +78,7 @@ class SupplierRateApi extends Controller
             $rate->unit = $input['unit'];
     
             if($rate->save()){
-                return response()->json(['msg'=>"rate updated"], 200,array(),JSON_PRETTY_PRINT);
+                return response()->json(['msg'=>"rate updated"], 200);
             }
         }
         catch(\Exception $e){
@@ -103,9 +103,9 @@ class SupplierRateApi extends Controller
     {
         $deleted = SupplierRate::destroy($supplier_rate_id);
         if($deleted){
-            return response()->json(['msg'=>"supplier rate deleted"], 200,array(),JSON_PRETTY_PRINT);
+            return response()->json(['msg'=>"supplier rate deleted"], 200);
         }else{
-            return response()->json(['error'=>"Something went wrong"], 500,array(),JSON_PRETTY_PRINT);
+            return response()->json(['error'=>"Something went wrong"], 500);
         }
     }
 
@@ -126,11 +126,11 @@ class SupplierRateApi extends Controller
     {
         try{
             $response   = SupplierRate::with('terms')->findOrFail($supplier_rate_id);           
-            return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+            return response()->json($response, 200);
 
         }catch(\Exception $e){
             $response =  ["error"=>"Something went wrong"];
-            return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
+            return response()->json($response, 500);
         }
     }
 
@@ -175,6 +175,11 @@ class SupplierRateApi extends Controller
         if(array_key_exists('service_id', $input) && !empty($input['service_id'])){
             $qb->where('supplier_rates.service_id', $input['service_id']);
         }
+
+        // For supplier
+        if(array_key_exists('supplier_id', $input) && !empty($input['supplier_id'])){
+            $qb->where('supplier_rates.supplier_id', $input['supplier_id']);
+        }
         
         //searching
         if(array_key_exists('searchval', $input)){
@@ -208,8 +213,7 @@ class SupplierRateApi extends Controller
 
         if(array_key_exists('datatables', $input)){
             //searching
-            $qb->where(function ($query) use ($input) {                
-                $query->orWhere('supplier_rates.id','like', '\'%' . $input['search']['value']. '%\'');
+            $qb->where(function ($query) use ($input) {
                 $query->orWhere('supplier_rates.rate','like', '\'%' . $input['search']['value']. '%\'');
                 $query->orWhere('suppliers.supplier_name','like', '\'%' . $input['search']['value']. '%\'');
             });

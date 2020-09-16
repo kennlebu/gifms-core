@@ -30,8 +30,11 @@ use Exception;
 use Excel;
 use Illuminate\Http\Request as HttpRequest;
 use Anchu\Ftp\Facades\Ftp;
+use App\Mail\Generic;
+use App\Models\SuppliesModels\QuoteRequest;
 use App\Models\SuppliesModels\SupplierService;
 use App\Models\SuppliesModels\SupplierSupplyCategory;
+use Illuminate\Support\Facades\Mail;
 
 class SupplierApi extends Controller
 {
@@ -753,6 +756,37 @@ class SupplierApi extends Controller
                      
             return response()->json($response, 200);
         }catch(Exception $e){
+            $response =  ["error"=>"Something went wrong" ,"msg"=>$e->getMessage()];
+            return response()->json($response, 500);
+        }
+    }
+
+    public function requestQuote(HttpRequest $request){
+        try{
+            $to = $this->multiexplode([',',';'], $request->to);
+            $cc = [];
+            if(!empty($request->cc)){
+                $cc = $this->multiexplode([',',';'], $request->cc);
+            }
+            $cc[] = $this->current_user()->email;
+
+            $quote_request = new QuoteRequest();
+            $quote_request->supplier_id = $request->supplier_id;
+            $quote_request->to = $request->to;
+            $quote_request->cc = $request->cc;
+            $quote_request->bcc = $request->bcc;
+            $quote_request->body = $request->body;
+            $quote_request->requested_by_id = $this->current_user()->id;
+            $quote_request->save();
+
+            Mail::queue(new Generic(
+                $to, $cc, 'Request for quote', 'Request for quote', [$request->body],
+                null, false
+            ));
+
+            return response()->json(['msg'=>'Success'], 200);
+        }
+        catch(Exception $e){
             $response =  ["error"=>"Something went wrong" ,"msg"=>$e->getMessage()];
             return response()->json($response, 500);
         }
