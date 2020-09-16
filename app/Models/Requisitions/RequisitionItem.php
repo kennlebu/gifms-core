@@ -143,7 +143,7 @@ class RequisitionItem extends BaseModel
                         if($this->module == 'mobile_payment') $action = 'mobile_payment';
                         elseif($this->module == 'invoice' || $this->module == 'lpo'){
                             if($lpo->preferred_supplier && $lpo->preferred_supplier->supply_category && 
-                                ($lpo->preferred_supplier->supply_category->service_type == 'goods' || $lpo->preferred_supplier->supply_category->service_type == 'consumables')
+                                ($lpo->preferred_supplier->supply_category->service_type == 'goods')
                             ){
                                 $action = 'grn';
                             }
