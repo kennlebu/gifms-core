@@ -129,4 +129,18 @@ class DocumentsApi extends Controller
             return response()->json(['error'=>'Something went wrong', 'msg'=>$e->getMessage()], 500);
         }
     }
+
+
+    public function delete($document_id){
+        try {
+            $doc = Document::findOrFail($document_id);
+            FTP::connection()->delete('/documents/'.$doc->entity_type.'/'.$doc->entity_id.'/'.$doc->filename.$doc->type);
+            $doc->delete();
+
+            return response()->json(['msg'=>'success'], 200);
+        }
+        catch(Exception $e){
+            return response()->json(['error'=>'Something went wrong', 'msg'=>$e->getMessage()], 500);
+        }
+    }
 }

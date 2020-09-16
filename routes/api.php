@@ -5510,3 +5510,4 @@ Route::post('last-3-months-expenditure', 'Dashboard@getLastThreeMonthsSpend')->m
 Route::post('document', 'DocumentsApi@store')->middleware('jwt.auth');
 Route::get('document/{entity}/{filename}', 'DocumentsApi@getDocument')->middleware('jwt.auth');
 Route::post('document/update', 'DocumentsApi@update')->middleware('jwt.auth');
+Route::DELETE('document/{id}', 'DocumentsApi@delete')->middleware('jwt.auth');
