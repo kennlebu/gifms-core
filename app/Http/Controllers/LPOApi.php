@@ -1546,7 +1546,23 @@ class LPOApi extends Controller
 
 
 
+    public function NotifyLpoDispatch(HttpRequest $request){
+        $lpo = Lpo::findOrFail($request->id);
 
+        if($lpo->status_id==7 && $lpo->lpo_type != 'lso'){
+            Mail::queue(new NotifyLpoDispatch($lpo));
+        }
+        else {
+            $msg = "LPO not in 'pending delivery' status";
+            if($lpo->lpo_type == 'lso'){
+                $msg = "Cannot not send vendor email for LSO";
+            }
+            $response = ["error"=>$msg];
+            return response()->json($response, 403);
+        }
+
+        return response()->json(['msg' => 'Success: email sent'], 200);
+    }
 
 
     public function next_status(){
