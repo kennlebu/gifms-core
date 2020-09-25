@@ -26,18 +26,18 @@
 								<tr>
 									<td style="padding: 20px 0 0 0; color: #153643; font-family: Arial, sans-serif; font-size: 16px; line-height: 20px;">
 										@foreach ($paragraphs as $item)
-                                            {{$item}}
+                                            <p>{!! $item !!}</p>
                                         @endforeach
 									</td>
                                 </tr>
                                 @if (isset($signature) && !empty($signature))
                                 <tr>
 									<td style="padding: 20px 0 0 0; color: #153643; font-family: Arial, sans-serif; font-size: 16px; line-height: 20px;">
-										{{$signature}}
+										{!! $signature !!}
 									</td>
 								</tr>
                                 @endif	
-                                @if ($js_url)
+                                @if (isset($js_url) && !empty($js_url))
                                 <tr>
 									<td style="padding: 20px 0 0 0; color: #153643; font-family: Arial, sans-serif; font-size: 16px; line-height: 20px;">
 										Login <a href="{{$js_url}}">here</a> to proceed

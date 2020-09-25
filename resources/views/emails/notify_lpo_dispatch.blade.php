@@ -20,7 +20,7 @@
 3rd flr, Timau Plaza, Arwings Kodhek Road,<br/>
 P O Box 2011-00100 Nairobi, Kenya<br/>
 (t) : 254 20 514 3100/5<br/>
-(e) : <a href="mailto:jayuma@clintonhealthaccess.org">jayuma@clintonhealthaccess.org<a/><br/>
+(e) : <a href="mailto:jayuma@clintonhealthaccess.org">jayuma@clintonhealthaccess.org</a><br/>
 <a href="https://www.clintonhealthaccess.org">www.clintonhealthaccess.org</a>
 </p><br/>
 Best regards,<br/><br/>

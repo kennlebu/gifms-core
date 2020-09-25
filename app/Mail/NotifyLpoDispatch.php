@@ -155,7 +155,7 @@ class NotifyLpoDispatch extends Mailable
         else
         $subject = "LPO ".$lpo_no." ".$this->lpo->preffered_quotation->supplier->supplier_name;
 
-        $this->view('emails/notify_lpo_dispatch')         
+        $this->view('emails.generic')         
             ->replyTo([
                     'email' => Config::get('mail.reply_to')['address']
                 ])           
@@ -165,13 +165,34 @@ class NotifyLpoDispatch extends Mailable
         elseif(!empty($this->lpo->lpo_type)&&$this->lpo->lpo_type=='prenegotiated')
         $this->attachData($pdf_file, 'LPO_'.$lpo_no.'_'.$this->lpo->supplier->supplier_name.'.pdf');  
         else
-        $this->attachData($pdf_file, 'LPO_'.$lpo_no.'_'.$this->lpo->preffered_quotation->supplier->supplier_name.'.pdf');   
+        $this->attachData($pdf_file, 'LPO_'.$lpo_no.'_'.$this->lpo->preffered_quotation->supplier->supplier_name.'.pdf');
+        
+        $title = "LPO ".$lpo_no." has been processed";
+        $paragraphs = [];
+
+        if(empty($this->lpo->lpo_type)||$this->lpo->lpo_type!='prenegotiated')
+        $paragraphs[] = 'Dear '.($this->lpo->preffered_quotation->supplier->contact_name_1 ?? "");
+        elseif(!empty($this->lpo->lpo_type)&&$this->lpo->lpo_type=='prenegotiated')
+        $paragraphs[] = "Dear ".($this->lpo->supplier->contact_name_1 ?? '');
+
+        $paragraphs[] = "Your Local Purchase Order(LPO) No.: ".$lpo_no." - ".$this->lpo->expense_desc." of value ".$this->lpo->currency->currency_name." ".number_format($this->lpo->totals,2)." has been successfully processed.";
+        $paragraphs[] = "Please find a copy attached for you to download and process accordingly.";
+        $paragraphs[] = "Please note all payments are made via electronic transfer so kindly submit your Bank Details to our offices.";
+        $paragraphs[] = "Should you have any questions, or queries on the above, please do not hesitate to get in touch with us via:".
+        "<br/><br/>
+        3rd flr, Timau Plaza, Arwings Kodhek Road,<br/>
+        P O Box 2011-00100 Nairobi, Kenya<br/>
+        (t) : 254 20 514 3100/5<br/>
+        (e) : <a href='mailto:jayuma@clintonhealthaccess.org'>jayuma@clintonhealthaccess.org</a><br/>
+        <a href='https://www.clintonhealthaccess.org'>www.clintonhealthaccess.org</a>";
+
+        $signature = "Best regards,<br/><br/> <em>Clinton Health Access Initiative (Kenya) - Finance Team</em>";
 
         return $this->to($supplier_to['email'])
             ->with([
-                    'lpo' => $this->lpo,
-                    'lpo_no' => $lpo_no,
-                    'js_url' => Config::get('app.js_url')
+                    'title' => $title,
+                    'paragraphs' => $paragraphs,
+                    'signature' => $signature
                 ])
             ->subject($subject);
     }
