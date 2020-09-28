@@ -36,6 +36,11 @@ class RequisitionItem extends BaseModel
         return $this->belongsTo('App\Models\Requisitions\Requisition','requisition_id');
     }
 
+    public function account()
+    {
+        return $this->belongsTo('App\Models\AccountingModels\Account','account_id');
+    }
+
     public function getTransactionStatusAttribute(){
         $status = $this->status->status;
         $prefix = '';
