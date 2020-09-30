@@ -37,13 +37,13 @@ class RequestBankSigning extends Mailable
         $directors = Staff::whereHas('roles', function($query){
             $query->whereIn('role_id', [3,4]);  
         })->get();
-        $rosemary = Staff::find(42); //TODO: Make this dynamic
+        // $rosemary = Staff::find(42); //TODO: Make this dynamic
         $to = [];
         $ccs = [];
         foreach($directors as $dir){
             $to[] = $dir->email;
         }
-        $to[] = $rosemary->email;
+        // $to[] = $rosemary->email;
 
         $finance = Staff::whereHas('roles', function($query){
             $query->where('role_id', 5);  

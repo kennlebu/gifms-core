@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\Models\ApprovalsModels\Approval;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
@@ -27,10 +28,14 @@ class NotifyLpoDispatch extends Mailable
     {
         $this->lpo = $lpo;
         $this->lpo_PM = Staff::findOrFail($lpo->project_manager_id);
-        $this->m_director = Staff::whereHas('roles', function($query){
-                                $query->whereIn('role_id', [3]);  
-                            })->where('official_post', 'Deputy Country Director')->first();
-
+        // $this->m_director = Staff::whereHas('roles', function($query){
+        //                         $query->whereIn('role_id', [3]);  
+        //                     })->where('official_post', 'Deputy Country Director')->first();
+        $director_approver = Approval::select('approver_id')->where('approvable_type', 'lpos')->where('approval_level_id', 4)
+                            ->where('approvable_id', $lpo->id)->first();
+                            
+        $this->m_director = Staff::where('id', $director_approver->approver_id)->first();
+        
         if($lpo->requisitioned_by_id){
             $this->requester = Staff::findOrFail($lpo->requisitioned_by_id);
         }
@@ -132,7 +137,8 @@ class NotifyLpoDispatch extends Mailable
             $ccs[] = $chai_cc['email'];
         }
 
-        $lpo_no = $this->pad_zeros(5,$this->lpo->id);
+        // $lpo_no = $this->pad_zeros(5,$this->lpo->id);
+        $lpo_no = $this->lpo->ref;
 
         /* Generate PDF */
         $subtotals = [];
