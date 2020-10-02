@@ -375,13 +375,12 @@ class MobilePaymentApi extends Controller
      */
     public function approve($mobile_payment_id, $several=null)
     {
-        $response = [];
         $user = $this->current_user();
         try{
             $mobile_payment = MobilePayment::findOrFail($mobile_payment_id);
            
             $approvable_status  = $mobile_payment->status;
-            $mobile_payment->status_id = $mobile_payment->status->new_next_status_id;
+            $mobile_payment->status_id = $this->getNextStatusId($mobile_payment->status_id);
 
             $mobile_payment->disableLogging(); //! Do not log the update
             if($mobile_payment->save()) {
@@ -437,7 +436,54 @@ class MobilePaymentApi extends Controller
     }
 
 
+    public function getNextStatusId($current_status_id){
+        $current_status = MobilePaymentStatus::find($current_status_id);
 
+        if($current_status->new_next_status->skippable == 1){
+            if($current_status->new_next_status_id == 3){    // FM
+                $fm_exists = Staff::whereHas('roles', function($query){
+                    $query->where('role_id', 5);  
+                })->exists();
+
+                if(!$fm_exists){
+                    return $this->getNextStatusId($current_status->new_next_status_id);
+                }
+                else {
+                    return $current_status->new_next_status_id;
+                }
+            }
+            elseif($current_status->new_next_status_id == 9){    // Accountant
+                $acc_exists = Staff::whereHas('roles', function($query){
+                    $query->where('role_id', 8);  
+                })->exists();
+
+                if(!$acc_exists){
+                    return $this->getNextStatusId($current_status->new_next_status_id);
+                }
+                else {
+                    return $current_status->new_next_status_id;
+                }
+            }
+            elseif($current_status->new_next_status_id == 18){    // FR
+                $acc_exists = Staff::whereHas('roles', function($query){
+                    $query->where('role_id', 13);  
+                })->exists();
+
+                if(!$acc_exists){
+                    return $this->getNextStatusId($current_status->new_next_status_id);
+                }
+                else {
+                    return $current_status->new_next_status_id;
+                }
+            }
+            else {
+                return $current_status->new_next_status_id;
+            }
+        }
+        else {
+            return $current_status->new_next_status_id;
+        }
+    }
 
 
 
@@ -959,8 +1005,6 @@ class MobilePaymentApi extends Controller
      */
     public function submitForApproval($mobile_payment_id)
     {
-        $response = [];
-
         try{
             $mobile_payment = MobilePayment::findOrFail($mobile_payment_id);
             
@@ -979,7 +1023,7 @@ class MobilePaymentApi extends Controller
 
             $mobile_payment->disableLogging(); //! Do not log the update
             
-            $mobile_payment->status_id = $mobile_payment->status->new_next_status_id;
+            $mobile_payment->status_id = $this->getNextStatusId($mobile_payment->status_id);
             if($mobile_payment->save()) {
                 // Logging submission
                 activity()
@@ -1139,7 +1183,7 @@ class MobilePaymentApi extends Controller
         $mobile_payment = MobilePayment::find($mobile_payment_id);        
 
         // Ensure Mobile Payment is in the recallable statuses
-        if(!in_array($mobile_payment->status_id, [9,2,3,8])){
+        if(!in_array($mobile_payment->status_id, [9,2,3,8,18])){
             return response()->json(['msg'=>"you do not have permission to do this"], 403, array(), JSON_PRETTY_PRINT);
         }
 

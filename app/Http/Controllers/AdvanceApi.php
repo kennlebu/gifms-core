@@ -20,8 +20,6 @@ use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\AdvancesModels\Advance;
 use App\Models\AdvancesModels\AdvanceStatus;
-use App\Models\ProjectsModels\Project;
-use App\Models\AccountingModels\Account;
 use Anchu\Ftp\Facades\Ftp;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Mail;

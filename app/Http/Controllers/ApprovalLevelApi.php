@@ -33,12 +33,11 @@ class ApprovalLevelApi extends Controller
      */
     public function addApprovalLevel()
     {
-        $form = Request::only(
-            'approval_level_name'
-            );
+        $form = Request::all();
 
         $approval_level = new ApprovalLevel;
         $approval_level->approval_level                   =         $form['approval_level'];
+        $approval_level->approval_level                   =         $form['order_priority'];
 
         if($approval_level->save()) {
             return Response()->json(array('msg' => 'Success: approval_level added','approval_level' => $approval_level), 200);
@@ -75,13 +74,11 @@ class ApprovalLevelApi extends Controller
      */
     public function updateApprovalLevel()
     {
-        $form = Request::only(
-            'id',
-            'approval_level'
-            );
+        $form = Request::all();
 
         $approval_level = ApprovalLevel::find($form['id']);
         $approval_level->approval_level                   =         $form['approval_level'];
+        $approval_level->approval_level                   =         $form['order_priority'];
 
         if($approval_level->save()) {
             return Response()->json(array('msg' => 'Success: approval_level updated','approval_level' => $approval_level), 200);

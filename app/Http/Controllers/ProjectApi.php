@@ -348,7 +348,7 @@ class ProjectApi extends Controller
         }
         
         //my_assigned
-        if((array_key_exists('my_assigned', $input)&& $input['my_assigned'] = "true")&&($current_user->hasRole(['accountant','assistant-accountant','financial-controller','admin-manager']))){
+        if((array_key_exists('my_assigned', $input)&& $input['my_assigned'] = "true")&&($current_user->can(['See all projects']))){
             $qb->select(DB::raw('projects.*'))
             ->whereNotNull('project_code');
         }

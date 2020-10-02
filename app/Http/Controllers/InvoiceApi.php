@@ -38,6 +38,7 @@ use App\Models\PaymentModels\VoucherNumber;
 use Excel;
 use App\Models\Requisitions\Requisition;
 use App\Models\Requisitions\RequisitionItem;
+use App\Models\StaffModels\Staff;
 
 class InvoiceApi extends Controller
 {
@@ -612,7 +613,7 @@ class InvoiceApi extends Controller
             }
 
             $approvable_status  = $invoice->status;
-            $invoice->status_id = $invoice->status->next_status_id;
+            $invoice->status_id = $this->getNextStatusId($invoice->status_id);
             
             $invoice->disableLogging();
             if($invoice->save()) {
@@ -685,7 +686,54 @@ class InvoiceApi extends Controller
 
 
 
+    public function getNextStatusId($current_status_id){
+        $current_status = InvoiceStatus::find($current_status_id);
 
+        if($current_status->next_status->skippable == 1){
+            if($current_status->next_status_id == 2){    // FM
+                $fm_exists = Staff::whereHas('roles', function($query){
+                    $query->where('role_id', 5);  
+                })->exists();
+
+                if(!$fm_exists){
+                    return $this->getNextStatusId($current_status->next_status_id);
+                }
+                else {
+                    return $current_status->next_status_id;
+                }
+            }
+            elseif($current_status->next_status_id == 12){    // Accountant
+                $acc_exists = Staff::whereHas('roles', function($query){
+                    $query->where('role_id', 8);  
+                })->exists();
+
+                if(!$acc_exists){
+                    return $this->getNextStatusId($current_status->next_status_id);
+                }
+                else {
+                    return $current_status->next_status_id;
+                }
+            }
+            elseif($current_status->next_status_id == 14){    // FR
+                $acc_exists = Staff::whereHas('roles', function($query){
+                    $query->where('role_id', 13);  
+                })->exists();
+
+                if(!$acc_exists){
+                    return $this->getNextStatusId($current_status->next_status_id);
+                }
+                else {
+                    return $current_status->next_status_id;
+                }
+            }
+            else {
+                return $current_status->next_status_id;
+            }
+        }
+        else {
+            return $current_status->next_status_id;
+        }
+    }
 
 
 
@@ -872,7 +920,7 @@ class InvoiceApi extends Controller
                 throw new NotFullyAllocatedException("This invoice has not been fully allocated");             
             }
 
-            $invoice->status_id = $invoice->status->next_status_id;
+            $invoice->status_id = $this->getNextStatusId($invoice->status_id);
             if($invoice->status_id  != 9){ // Only set request time if its not after corrections
                 $invoice->raised_at = date('Y-m-d H:i:s');
             }
@@ -1319,7 +1367,7 @@ class InvoiceApi extends Controller
         $user = $this->current_user();       
 
         // Ensure Invoice is in the recallable statuses
-        if(!in_array($invoice->status_id, [1,2,3,12])){
+        if(!in_array($invoice->status_id, [1,2,3,12,14])){
             return response()->json(['msg'=>"you do not have permission to do this"], 403, array(), JSON_PRETTY_PRINT);
         }
 

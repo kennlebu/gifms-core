@@ -2130,3 +2130,153 @@ CREATE TABLE `quote_requests` (
   `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
   `deleted_at` timestamp NULL
 );
+
+===== Changes in approval levels
+INSERT INTO `approval_levels` (`approval_level`, `migration_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Finance Review', NULL, now(), now(), NULL);
+
+ALTER TABLE `approval_levels`
+ADD `order_priority` int NULL AFTER `approval_level`,
+CHANGE `updated_at` `updated_at` timestamp NOT NULL DEFAULT current_timestamp() AFTER `created_at`;
+UPDATE `approval_levels` SET `order_priority` = '1' WHERE `id` = '1';
+UPDATE `approval_levels` SET `order_priority` = '3' WHERE `id` = '2';
+UPDATE `approval_levels` SET `order_priority` = '4' WHERE `id` = '3';
+UPDATE `approval_levels` SET `order_priority` = '5' WHERE `id` = '4';
+UPDATE `approval_levels` SET `order_priority` = '2' WHERE `id` = '5';
+
+#Advances
+INSERT INTO `advance_statuses` (`advance_status`, `next_status_id`, `short_name`, `status_security_level`, `order_priority`, `display_color`, `default_status`, `approval_level_id`, `approvable`, `migration_status_security_level`, `migration_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Pending Finance Review', '2', 'Finance', NULL, '3', NULL, NULL, '5', '1', NULL, NULL, now(), now(), NULL);
+UPDATE `advance_statuses` SET `order_priority` = '4' WHERE `id` = '2';
+UPDATE `advance_statuses` SET `order_priority` = '5' WHERE `id` = '3';
+UPDATE `advance_statuses` SET `order_priority` = '6' WHERE `id` = '4';
+UPDATE `advance_statuses` SET `order_priority` = '8' WHERE `id` = '5';
+UPDATE `advance_statuses` SET `order_priority` = '10' WHERE `id` = '6';
+UPDATE `advance_statuses` SET `order_priority` = '9' WHERE `id` = '7';
+UPDATE `advance_statuses` SET `order_priority` = '7' WHERE `id` = '8';
+UPDATE `advance_statuses` SET `order_priority` = '11' WHERE `id` = '9';
+UPDATE `advance_statuses` SET `order_priority` = '12' WHERE `id` = '10';
+UPDATE `advance_statuses` SET `order_priority` = '13' WHERE `id` = '11';
+UPDATE `advance_statuses` SET `next_status_id` = '14' WHERE `id` = '13';
+
+#Claims
+INSERT INTO `claim_statuses` (`claim_status`, `next_status_id`, `short_name`, `status_security_level`, `order_priority`, `display_color`, `default_status`, `approval_level_id`, `approvable`, `migration_status_security_level`, `migration_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Pending Finance Review', '2', 'Finance', NULL, '3', NULL, NULL, '5', '1', NULL, NULL, now(), now(), NULL);
+UPDATE `claim_statuses` SET `order_priority` = '4' WHERE `id` = '2';
+UPDATE `claim_statuses` SET `order_priority` = '5' WHERE `id` = '3';
+UPDATE `claim_statuses` SET `order_priority` = '6' WHERE `id` = '4';
+UPDATE `claim_statuses` SET `order_priority` = '7' WHERE `id` = '5';
+UPDATE `claim_statuses` SET `order_priority` = '8' WHERE `id` = '6';
+UPDATE `claim_statuses` SET `order_priority` = '9' WHERE `id` = '7';
+UPDATE `claim_statuses` SET `order_priority` = '10' WHERE `id` = '8';
+UPDATE `claim_statuses` SET `order_priority` = '11' WHERE `id` = '9';
+UPDATE `claim_statuses` SET `next_status_id` = '12' WHERE `id` = '10';
+UPDATE `claim_statuses` SET `order_priority` = '12' WHERE `id` = '11';
+
+#Invoices
+INSERT INTO `invoice_statuses` (`invoice_status`, `next_status_id`, `short_name`, `status_security_level`, `order_priority`, `display_color`, `default_status`, `default_log_status`, `approval_level_id`, `approvable`, `migration_status_security_level`, `migration_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Pending Finance Review', '1', 'Finance', NULL, '4', NULL, NULL, NULL, '5', '1', NULL, NULL, now(), now(), NULL);
+UPDATE `invoice_statuses` SET `order_priority` = '5' WHERE `id` = '1';
+UPDATE `invoice_statuses` SET `order_priority` = '6' WHERE `id` = '2';
+UPDATE `invoice_statuses` SET `order_priority` = '7' WHERE `id` = '3';
+UPDATE `invoice_statuses` SET `order_priority` = '8' WHERE `id` = '4';
+UPDATE `invoice_statuses` SET `order_priority` = '9' WHERE `id` = '5';
+UPDATE `invoice_statuses` SET `order_priority` = '10' WHERE `id` = '6';
+UPDATE `invoice_statuses` SET `order_priority` = '11' WHERE `id` = '7';
+UPDATE `invoice_statuses` SET `order_priority` = '12' WHERE `id` = '8';
+UPDATE `invoice_statuses` SET `order_priority` = '13' WHERE `id` = '9';
+UPDATE `invoice_statuses` SET `next_status_id` = '14' WHERE `id` = '12';
+UPDATE `invoice_statuses` SET `order_priority` = '14' WHERE `id` = '13';
+
+#LPOs
+INSERT INTO `lpo_statuses` (`lpo_status`, `next_status_id`, `short_name`, `status_security_level`, `order_priority`, `display_color`, `default_status`, `approval_level_id`, `approvable`, `migration_status_security_level`, `migration_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Pending Finance Review', '3', 'Finance', NULL, '3', NULL, NULL, '5', '1', NULL, NULL, now(), now(), NULL);
+UPDATE `lpo_statuses` SET `order_priority` = '4' WHERE `id` = '3';
+UPDATE `lpo_statuses` SET `order_priority` = '5' WHERE `id` = '4';
+UPDATE `lpo_statuses` SET `order_priority` = '6' WHERE `id` = '5';
+UPDATE `lpo_statuses` SET `order_priority` = '7' WHERE `id` = '7';
+UPDATE `lpo_statuses` SET `order_priority` = '8' WHERE `id` = '8';
+UPDATE `lpo_statuses` SET `order_priority` = '9' WHERE `id` = '9';
+UPDATE `lpo_statuses` SET `order_priority` = '10' WHERE `id` = '11';
+UPDATE `lpo_statuses` SET `order_priority` = '11' WHERE `id` = '12';
+UPDATE `lpo_statuses` SET `next_status_id` = '16' WHERE `id` = '13';
+UPDATE `lpo_statuses` SET `order_priority` = '12' WHERE `id` = '15';
+
+#Mobile payments
+INSERT INTO `mobile_payment_statuses` (`mobile_payment_status`, `next_status_id`, `new_next_status_id`, `short_name`, `status_security_level`, `order_priority`, `new_order_priority`, `display_color`, `default_status`, `approval_level_id`, `approvable`, `migration_status_security_level`, `migration_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Pending Finance Review', NULL, '2', 'Finance', NULL, NULL, '6', NULL, NULL, '5', '1', NULL, NULL, now(), now(), NULL);
+UPDATE `mobile_payment_statuses` SET `new_order_priority` = '7' WHERE `id` = '2';
+UPDATE `mobile_payment_statuses` SET `new_order_priority` = '8' WHERE `id` = '3';
+UPDATE `mobile_payment_statuses` SET `new_order_priority` = '11' WHERE `id` = '5';
+UPDATE `mobile_payment_statuses` SET `new_order_priority` = '12' WHERE `id` = '7';
+UPDATE `mobile_payment_statuses` SET `new_order_priority` = '9' WHERE `id` = '8';
+UPDATE `mobile_payment_statuses` SET `new_next_status_id` = '18' WHERE `id` = '9';
+UPDATE `mobile_payment_statuses` SET `new_order_priority` = '13' WHERE `id` = '14';
+UPDATE `mobile_payment_statuses` SET `new_order_priority` = '10' WHERE `id` = '17';
+
++===== Permissions and roles for financial reviewer
+INSERT INTO `permissions` (`name`, `display_name`, `description`, `entity`, `operation_type`, `at_status_id`, `approval_level_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('APPROVE_MOBILE_PAYMENT_18', 'Mobile Payment Approval (Finance Review)', NULL, 'MobilePayment', 'Approval', '18', '5', now(), now(), NULL);
+INSERT INTO `permissions` (`name`, `display_name`, `description`, `entity`, `operation_type`, `at_status_id`, `approval_level_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('APPROVE_LPO_16', 'Approve LPO (Finance Review)', NULL, 'Lpo', 'Approval', '16', '5', now(), now(), NULL);
+INSERT INTO `permissions` (`name`, `display_name`, `description`, `entity`, `operation_type`, `at_status_id`, `approval_level_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('APPROVE_INVOICE_14', 'Approve Invoice (Finance Review)', NULL, 'Invoice', 'Approval', '14', '5', now(), now(), NULL);
+INSERT INTO `permissions` (`name`, `display_name`, `description`, `entity`, `operation_type`, `at_status_id`, `approval_level_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('APPROVE_CLAIM_12', 'Approve Claim (Finance Review)', NULL, 'Claim', 'Approval', '21', '5', now(), now(), NULL);
+INSERT INTO `permissions` (`name`, `display_name`, `description`, `entity`, `operation_type`, `at_status_id`, `approval_level_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('APPROVE_ADVANCE_14', 'Approve Advance (Finance Review)', NULL, 'Advance', 'Approval', '14', '5', now(), now(), NULL);
+INSERT INTO `permissions` (`name`, `display_name`, `description`, `entity`, `operation_type`, `at_status_id`, `approval_level_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Batch Payments', 'Batch/Consolidate Payments', NULL, 'lookup', 'Processing', NULL, NULL, now(), now(), NULL);
+
+INSERT INTO `role_permissions` (`permission_id`, `role_id`)
+VALUES ('265', '5');
+
+INSERT INTO `roles` (`name`, `acronym`, `display_name`, `description`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('financial-reviewer', 'fr', 'Financial Reviewer', NULL, now(), now(), NULL);
+
+INSERT INTO `role_permissions` (`permission_id`, `role_id`)
+VALUES ('265', '13'), ('264', '13'), ('263', '13'), ('262', '13'), ('261', '13'), ('260', '13'), ('259', '13'), ('258', '13'), ('2', '13'), ('56', '13'), ('104', '13'), ('146', '13'), ('197', '13');
+
+=====
+INSERT INTO `permissions` (`name`, `display_name`, `description`, `entity`, `operation_type`, `at_status_id`, `approval_level_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Consolidate funds', 'Consolidate funds', NULL, 'lookup', 'Processing', NULL, NULL, now(), now(), NULL);
+
+INSERT INTO `role_permissions` (`permission_id`, `role_id`)
+VALUES ('266', '13'), ('266', '5');
+
+INSERT INTO `permissions` (`name`, `display_name`, `description`, `entity`, `operation_type`, `at_status_id`, `approval_level_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('See all projects', 'See all projects', NULL, 'lookup', 'Read', NULL, NULL, now(), now(), NULL);
+
+INSERT INTO `role_permissions` (`permission_id`, `role_id`)
+VALUES ('267', '1'), ('267', '2'), ('267', '3'), ('267', '4'), ('267', '5'), ('267', '8'), ('267', '9'), ('267', '10'),
+('267', '11'), ('267', '12'), ('267', '13');
+
+
+===== Add skippable statuses
+ALTER TABLE `mobile_payment_statuses`
+ADD `skippable` int(1) NULL AFTER `approvable`,
+CHANGE `updated_at` `updated_at` timestamp NOT NULL DEFAULT current_timestamp() AFTER `created_at`;
+UPDATE `mobile_payment_statuses` SET `skippable` = '1' WHERE `id` = '3';
+UPDATE `mobile_payment_statuses` SET `skippable` = '1' WHERE `id` = '9';
+UPDATE `mobile_payment_statuses` SET `skippable` = '1' WHERE `id` = '18';
+
+ALTER TABLE `claim_statuses`
+ADD `skippable` int(1) NULL AFTER `approvable`,
+CHANGE `updated_at` `updated_at` timestamp NOT NULL DEFAULT current_timestamp() AFTER `created_at`;
+UPDATE `claim_statuses` SET `skippable` = '1' WHERE `id` = '3';
+UPDATE `claim_statuses` SET `skippable` = '1' WHERE `id` = '10';
+UPDATE `claim_statuses` SET `skippable` = '1' WHERE `id` = '12';
+
+ALTER TABLE `invoice_statuses`
+ADD `skippable` int(1) NULL AFTER `approvable`,
+CHANGE `updated_at` `updated_at` timestamp NOT NULL DEFAULT current_timestamp() AFTER `created_at`;
+UPDATE `invoice_statuses` SET `skippable` = '1' WHERE `id` = '2';
+UPDATE `invoice_statuses` SET `skippable` = '1' WHERE `id` = '12';
+UPDATE `invoice_statuses` SET `skippable` = '1' WHERE `id` = '14';
+
+ALTER TABLE `lpo_statuses`
+ADD `skippable` int(1) NULL AFTER `approvable`,
+CHANGE `updated_at` `updated_at` timestamp NOT NULL DEFAULT current_timestamp() AFTER `created_at`;
+UPDATE `lpo_statuses` SET `skippable` = '1' WHERE `id` = '4';
+UPDATE `lpo_statuses` SET `skippable` = '1' WHERE `id` = '13';
+UPDATE `lpo_statuses` SET `skippable` = '1' WHERE `id` = '16';

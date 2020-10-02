@@ -32,10 +32,9 @@ use App\Models\PaymentModels\PaymentBatch;
 use App\Exceptions\NotFullyAllocatedException;
 use App\Exceptions\ApprovalException;
 use PDF;
-use App\Models\ReportModels\ReportingObjective;
-use App\Models\ActivityModels\Activity;
 use App\Models\AllocationModels\Allocation;
 use App\Models\PaymentModels\VoucherNumber;
+use App\Models\StaffModels\Staff;
 use Excel;
 
 class ClaimApi extends Controller
@@ -307,7 +306,7 @@ class ClaimApi extends Controller
                 throw new ApprovalException("No approval permission");             
             }
             $approvable_status  = $claim->status;
-            $claim->status_id = $claim->status->next_status_id;
+            $claim->status_id = $this->getNextStatusId($claim->status_id);
 
             $claim->disableLogging();
             if($claim->save()) {
@@ -388,7 +387,54 @@ class ClaimApi extends Controller
 
 
 
+    public function getNextStatusId($current_status_id){
+        $current_status = ClaimStatus::find($current_status_id);
 
+        if($current_status->next_status->skippable == 1){
+            if($current_status->next_status_id == 3){    // FM
+                $fm_exists = Staff::whereHas('roles', function($query){
+                    $query->where('role_id', 5);  
+                })->exists();
+
+                if(!$fm_exists){
+                    return $this->getNextStatusId($current_status->next_status_id);
+                }
+                else {
+                    return $current_status->next_status_id;
+                }
+            }
+            elseif($current_status->next_status_id == 10){    // Accountant
+                $acc_exists = Staff::whereHas('roles', function($query){
+                    $query->where('role_id', 8);  
+                })->exists();
+
+                if(!$acc_exists){
+                    return $this->getNextStatusId($current_status->next_status_id);
+                }
+                else {
+                    return $current_status->next_status_id;
+                }
+            }
+            elseif($current_status->next_status_id == 12){    // FR
+                $acc_exists = Staff::whereHas('roles', function($query){
+                    $query->where('role_id', 13);  
+                })->exists();
+
+                if(!$acc_exists){
+                    return $this->getNextStatusId($current_status->next_status_id);
+                }
+                else {
+                    return $current_status->next_status_id;
+                }
+            }
+            else {
+                return $current_status->next_status_id;
+            }
+        }
+        else {
+            return $current_status->next_status_id;
+        }
+    }
 
 
 
@@ -658,7 +704,7 @@ class ClaimApi extends Controller
                    ->causedBy($user)
                    ->log('Re-submitted for approval');
             }
-            $claim->status_id = $claim->status->next_status_id;
+            $claim->status_id = $this->getNextStatusId($claim->status_id);
             $claim->disableLogging(); //! Do not log the update
 
             if($claim->save()) {
@@ -1052,7 +1098,7 @@ class ClaimApi extends Controller
         $claim = Claim::find($claim_id);        
 
         // Ensure claim is in the recallable statuses
-        if(!in_array($claim->status_id, [2,3,4,10])){
+        if(!in_array($claim->status_id, [2,3,4,10,12])){
             return response()->json(['msg'=>"you do not have permission to do this"], 403, array(), JSON_PRETTY_PRINT);
         }
 

@@ -29,6 +29,10 @@ class MobilePaymentStatus extends BaseModel
     {
         return $this->belongsTo('App\Models\MobilePaymentModels\MobilePaymentStatus','next_status_id');
     }
+    public function new_next_status()
+    {
+        return $this->belongsTo('App\Models\MobilePaymentModels\MobilePaymentStatus','new_next_status_id');
+    }
     public function approval_level()
     {
         return $this->belongsTo('App\Models\ApprovalsModels\ApprovalLevel','approval_level_id');

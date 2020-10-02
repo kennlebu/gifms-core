@@ -8,7 +8,6 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use App\Models\MobilePaymentModels\MobilePayment;
 use App\Models\StaffModels\Staff;
-use App\Models\StaffModels\User;
 use Config;
 
 class MobilePaymentInstructBank extends Mailable

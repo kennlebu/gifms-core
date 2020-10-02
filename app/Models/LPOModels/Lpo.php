@@ -100,7 +100,7 @@ class Lpo extends BaseModel
     }
     public function approvals()
     {
-        return $this->morphMany('App\Models\ApprovalsModels\Approval', 'approvable');
+        return $this->morphMany('App\Models\ApprovalsModels\Approval', 'approvable')->orderBy('created_at', 'asc');
     }
     public function logs()
     {

@@ -249,6 +249,8 @@
                       Approved by:
                   @elseif($approval->approval_level_id == 4)
                       Authorised by:
+                  @elseif($approval->approval_level_id == 5)
+                      Reviewed by:
                   @endif                  
                   <br/>
                   <img style="height:70px;width:200px;" alt="." src="{{asset('storage/signatures/signature'.$approval->approver_id.'.png')}}"><br/>

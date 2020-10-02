@@ -266,6 +266,29 @@
 
                     @foreach ($unique_approvals as $key => $approval)
                         @isset($approval->approver_id)
+                        @if($approval->approval_level_id == 5)
+                        <tr style="    height: 55px; ">
+                            <td colspan="2">
+                                <strong>REVIEW<br/><small>(Finance)</small></strong>                          
+                            </td>
+                            <td style="border-top: 1px solid #C0C0C0; border-bottom: 1px solid #C0C0C0; border-left: 1px solid #000000; border-right: 1px solid #000000;   vertical-align: top;  background-color: #f7f8fb;"  colspan="2">
+                                <strong><small>Initials</small></strong><br/><br/>
+                                @isset($approval->approver_id)
+                                    <strong>{{$approval->approver->full_name}}</strong>
+                                @endisset
+                            </td>
+                            <td style="border-top: 1px solid #C0C0C0; border-bottom: 1px solid #C0C0C0; border-left: 1px solid #000000; border-right: 1px solid #000000;  vertical-align: top;" colspan="3" >
+                                <small> Signed:</small><br/>
+                                <img  style="height:50px;width:148px;" alt="." src="{{asset('storage/signatures/signature'.$approval->approver_id.'.png')}}"></img>
+                            </td>
+                            <td style="border-top: 1px solid #C0C0C0; border-bottom: 1px solid #C0C0C0; border-left: 1px solid #000000; border-right: 1px solid #000000;   vertical-align: top;  background-color: #f7f8fb;"  colspan="2" >                  
+                                    <small>Date</small><br/><br/><br/>          
+                                <strong style="float: left;">
+                                    <span>{{date('d F, Y', strtotime($approval->created_at)) }}</span>
+                                </strong>
+                            </td>
+                        </tr>
+                        @endif
                         @if($approval->approval_level_id == 2)
                         <tr style="    height: 55px; ">
                             <td colspan="2">

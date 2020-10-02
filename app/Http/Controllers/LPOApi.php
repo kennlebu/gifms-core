@@ -450,7 +450,7 @@ class LPOApi extends Controller
             $lpo = Lpo::find($lpo_id);
 
             // Ensure LPO is in the recallable statuses
-            if(!in_array($lpo->status_id, [13,3,4,5])){
+            if(!in_array($lpo->status_id, [13,3,4,5,16])){
                 return response()->json(['msg'=>"you do not have permission to do this"], 403);
             }
 
@@ -589,7 +589,7 @@ class LPOApi extends Controller
             }
            
             $approvable_status  = $lpo->status;
-            $lpo->status_id = $lpo->status->next_status_id;
+            $lpo->status_id = $this->getNextStatusId($lpo->status_id);
 
             $lpo->disableLogging(); //! Do not log the update
             if($lpo->save()) {
@@ -637,7 +637,54 @@ class LPOApi extends Controller
 
 
 
+    public function getNextStatusId($current_status_id){
+        $current_status = LpoStatus::find($current_status_id);
 
+        if($current_status->next_status->skippable == 1){
+            if($current_status->next_status_id == 4){    // FM
+                $fm_exists = Staff::whereHas('roles', function($query){
+                    $query->where('role_id', 5);  
+                })->exists();
+
+                if(!$fm_exists){
+                    return $this->getNextStatusId($current_status->next_status_id);
+                }
+                else {
+                    return $current_status->next_status_id;
+                }
+            }
+            elseif($current_status->next_status_id == 13){    // Accountant
+                $acc_exists = Staff::whereHas('roles', function($query){
+                    $query->where('role_id', 8);  
+                })->exists();
+
+                if(!$acc_exists){
+                    return $this->getNextStatusId($current_status->next_status_id);
+                }
+                else {
+                    return $current_status->next_status_id;
+                }
+            }
+            elseif($current_status->next_status_id == 16){    // FR
+                $acc_exists = Staff::whereHas('roles', function($query){
+                    $query->where('role_id', 13);  
+                })->exists();
+
+                if(!$acc_exists){
+                    return $this->getNextStatusId($current_status->next_status_id);
+                }
+                else {
+                    return $current_status->next_status_id;
+                }
+            }
+            else {
+                return $current_status->next_status_id;
+            }
+        }
+        else {
+            return $current_status->next_status_id;
+        }
+    }
 
 
 
@@ -751,7 +798,7 @@ class LPOApi extends Controller
                 throw new NoLpoItemsException("This lpo has no items");             
             }
            
-            $lpo->status_id = $lpo->status->next_status_id;
+            $lpo->status_id = $this->getNextStatusId($lpo->status_id);
             // Set request time only if it's going to accountant
             if($lpo->status_id == 2) {
                 $lpo->requested_at = date('Y-m-d H:i:s');
