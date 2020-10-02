@@ -1210,7 +1210,8 @@ class LPOApi extends Controller
                 'financial-controller',
                 'program-manager', 
                 'accountant', 
-                'assistant-accountant']
+                'assistant-accountant',
+                'financial-reviewer']
             )){                   
                 $qb = $qb->where(function ($query) use ($app_stat,$current_user) {
                     foreach ($app_stat as $key => $value) {
