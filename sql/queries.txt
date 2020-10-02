@@ -2131,7 +2131,7 @@ CREATE TABLE `quote_requests` (
   `deleted_at` timestamp NULL
 );
 
-===== Changes in approval levels
+~===== Changes in approval levels
 INSERT INTO `approval_levels` (`approval_level`, `migration_id`, `created_at`, `updated_at`, `deleted_at`)
 VALUES ('Finance Review', NULL, now(), now(), NULL);
 
@@ -2214,7 +2214,7 @@ UPDATE `mobile_payment_statuses` SET `new_next_status_id` = '18' WHERE `id` = '9
 UPDATE `mobile_payment_statuses` SET `new_order_priority` = '13' WHERE `id` = '14';
 UPDATE `mobile_payment_statuses` SET `new_order_priority` = '10' WHERE `id` = '17';
 
-+===== Permissions and roles for financial reviewer
++~===== Permissions and roles for financial reviewer
 INSERT INTO `permissions` (`name`, `display_name`, `description`, `entity`, `operation_type`, `at_status_id`, `approval_level_id`, `created_at`, `updated_at`, `deleted_at`)
 VALUES ('APPROVE_MOBILE_PAYMENT_18', 'Mobile Payment Approval (Finance Review)', NULL, 'MobilePayment', 'Approval', '18', '5', now(), now(), NULL);
 INSERT INTO `permissions` (`name`, `display_name`, `description`, `entity`, `operation_type`, `at_status_id`, `approval_level_id`, `created_at`, `updated_at`, `deleted_at`)
@@ -2237,7 +2237,7 @@ VALUES ('financial-reviewer', 'fr', 'Financial Reviewer', NULL, now(), now(), NU
 INSERT INTO `role_permissions` (`permission_id`, `role_id`)
 VALUES ('265', '13'), ('264', '13'), ('263', '13'), ('262', '13'), ('261', '13'), ('260', '13'), ('259', '13'), ('258', '13'), ('2', '13'), ('56', '13'), ('104', '13'), ('146', '13'), ('197', '13');
 
-=====
+~=====
 INSERT INTO `permissions` (`name`, `display_name`, `description`, `entity`, `operation_type`, `at_status_id`, `approval_level_id`, `created_at`, `updated_at`, `deleted_at`)
 VALUES ('Consolidate funds', 'Consolidate funds', NULL, 'lookup', 'Processing', NULL, NULL, now(), now(), NULL);
 
@@ -2252,7 +2252,7 @@ VALUES ('267', '1'), ('267', '2'), ('267', '3'), ('267', '4'), ('267', '5'), ('2
 ('267', '11'), ('267', '12'), ('267', '13');
 
 
-===== Add skippable statuses
+~===== Add skippable statuses
 ALTER TABLE `mobile_payment_statuses`
 ADD `skippable` int(1) NULL AFTER `approvable`,
 CHANGE `updated_at` `updated_at` timestamp NOT NULL DEFAULT current_timestamp() AFTER `created_at`;
