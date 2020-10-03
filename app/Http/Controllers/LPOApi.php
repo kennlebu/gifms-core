@@ -1155,7 +1155,8 @@ class LPOApi extends Controller
                 'associate-director',
                 'financial-controller',
                 'accountant', 
-                'assistant-accountant']
+                'assistant-accountant',
+                'financial-reviewer']
             )){
                 $qb = $qb->where('requested_by_id', $this->current_user()->id)->orWhere('requisitioned_by_id',$this->current_user()->id);
             }
@@ -1209,7 +1210,8 @@ class LPOApi extends Controller
                 'financial-controller',
                 'program-manager', 
                 'accountant', 
-                'assistant-accountant']
+                'assistant-accountant',
+                'financial-reviewer']
             )){                   
                 $qb = $qb->where(function ($query) use ($app_stat,$current_user) {
                     foreach ($app_stat as $key => $value) {
