@@ -403,7 +403,7 @@ class StaffApi extends Controller
         //roles
         if(array_key_exists('role_abr', $input)){
             $qb = $qb->whereHas('roles', function($query) use ($input){
-                $query->where('acronym', '=', "'".$input['role_abr']."'");  
+                $query->where('acronym', $input['role_abr']);  
             });
         }
 
@@ -412,9 +412,9 @@ class StaffApi extends Controller
             //select the projects of the user
             $user = $this->current_user();
             $admin_role = Staff::whereHas('roles', function($query) use ($input){
-                $arr = [1,2,3,4,5,6,8,9,10,11];
+                $arr = [1,2,3,4,5,6,8,9,10,11,13];
                 if(array_key_exists('line_managers', $input)){
-                    $arr = [1,2,3,4,5,6,10,11];
+                    $arr = [1,2,3,4,5,6,10,11,13];
                 }
                 $query->whereIn('role_id', $arr);
             })->where('id', $user->id)->get();
@@ -438,7 +438,7 @@ class StaffApi extends Controller
 
             // Get only directors for PMs and above if it's line managers required
             else if(array_key_exists('line_managers', $input)){
-                if($user->hasRole(['program-manager','financial-controller','admin-manager','director'])){
+                if($user->hasRole(['program-manager','financial-controller','admin-manager','director','financial-reviewer'])){
 
                     $qb = $qb->whereHas('roles', function($query) use ($input){
                         $query->whereIn('acronym', '=', ['dir','a-dir']);  
