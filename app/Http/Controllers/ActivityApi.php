@@ -183,7 +183,7 @@ class ActivityApi extends Controller
         }
         
         //my program activities
-        if (array_key_exists('my_assigned', $input)&& $input['my_assigned'] = "true"||(!$current_user->hasRole(['accountant','assistant-accountant','financial-controller','admin-manager']))) {
+        if (array_key_exists('my_assigned', $input)&& $input['my_assigned'] = "true"||(!$current_user->hasRole(['accountant','assistant-accountant','financial-controller','admin-manager','financial-reviewer']))) {
 
             if($current_user->hasRole('program-manager')){
                 $activities = $activities->where('program_manager_id', $current_user->id);

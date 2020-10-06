@@ -1127,7 +1127,7 @@ class LeaveManagementApi extends Controller
                           );
                 }
 
-                if ($this->current_user()->hasRole(['accountant','admin','director','financial-controller','admin-manager'])){
+                if ($this->current_user()->hasRole(['accountant','admin','director','financial-controller','admin-manager','financial-reviewer'])){
 
                     //-1
                     $response[]=array(

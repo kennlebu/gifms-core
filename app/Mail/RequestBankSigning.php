@@ -52,6 +52,13 @@ class RequestBankSigning extends Mailable
             $ccs[] = $fin->email;
         }
 
+        $fr = Staff::whereHas('roles', function($query){
+            $query->where('role_id', 13);  
+        })->get();
+        foreach($fr as $finr){
+            $ccs[] = $finr->email;
+        }
+
         $accountant = Staff::whereHas('roles', function($query){
             $query->where('role_id', 8);  
         })->get();

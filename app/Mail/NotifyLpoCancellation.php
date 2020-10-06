@@ -72,6 +72,14 @@ class NotifyLpoCancellation extends Mailable
             array_push($chai_cc, array('first_name'=>$f->f_name, 'last_name'=>$f->l_name, 'email'=>$f->email));
         }
 
+        // Add financial reviewers to cc
+        $fr = Staff::whereHas('roles', function($query){
+            $query->where('role_id', 13);  
+        })->get();
+        foreach($fr as $f){
+            array_push($chai_cc, array('first_name'=>$f->f_name, 'last_name'=>$f->l_name, 'email'=>$f->email));
+        }
+
         // Add Accountants to cc
         $accountant = Staff::whereHas('roles', function($query){
             $query->where('role_id', 8);  

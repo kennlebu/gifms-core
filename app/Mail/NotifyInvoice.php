@@ -91,6 +91,17 @@ class NotifyInvoice extends Mailable
                             'js_url' => Config::get('app.js_url'),
                         ])
                     ->subject("Invoice Approval Request ".$this->invoice->external_ref);
+        }else if($this->invoice->status_id == 14){
+
+            $to = Staff::whereHas('roles', function($query){
+                $query->where('role_id', 13);  
+            })->get();
+            return $this->to($to)
+                    ->with([
+                            'invoice' => $this->invoice,
+                            'js_url' => Config::get('app.js_url'),
+                        ])
+                    ->subject("Invoice Approval Request ".$this->invoice->external_ref);
         }else if($this->invoice->status_id == 2){
 
             $to = Staff::whereHas('roles', function($query){

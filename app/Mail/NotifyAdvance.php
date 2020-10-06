@@ -68,6 +68,18 @@ class NotifyAdvance extends Mailable
                         ])
                     ->cc($ccs)
                     ->subject("Advance Approval Request ".$this->advance->ref);
+        }else if($this->advance->status_id == 14){
+
+            $to = Staff::whereHas('roles', function($query){
+                $query->where('role_id', 13);  
+            })->get();
+            return $this->to($to)
+                    ->with([
+                            'advance' => $this->advance,
+                            // 'addressed_to' => $this->financial_controller,
+                            'js_url' => Config::get('app.js_url'),
+                        ])
+                    ->subject("Advance Approval Request ".$this->advance->ref);
         }else if($this->advance->status_id == 2){
 
             return $this->to($this->advance->project_manager)

@@ -236,7 +236,8 @@ class ActivityStatusApi extends Controller
                     'associate-director',
                     'financial-controller',
                     'accountant', 
-                    'assistant-accountant'])){
+                    'assistant-accountant'.
+                    'financial-reveiwer'])){
                 $response[]=array(
                         "id"=> -2,
                         "status"=> "All Activities",

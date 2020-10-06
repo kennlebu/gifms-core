@@ -73,6 +73,18 @@ class NotifyMobilePayment extends Mailable
                         ])
                     ->cc($ccs)
                     ->subject("Mobile Payment Approval Request ".$this->mobile_payment->ref);
+        }else if($this->mobile_payment->status_id == 18){
+            $to = Staff::whereHas('roles', function($query){
+                $query->where('role_id', 13);  
+            })->get();
+
+            return $this->to($to)
+                    ->with([
+                            'mobile_payment' => $this->mobile_payment,
+                            // 'addressed_to' => $to,
+                            'js_url' => Config::get('app.js_url'),
+                        ])
+                    ->subject("Mobile Payment Approval Request ".$this->mobile_payment->ref);
         }else if($this->mobile_payment->status_id == 2){
 
             return $this->to($this->mobile_payment->project_manager)

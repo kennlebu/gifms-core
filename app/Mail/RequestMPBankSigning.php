@@ -51,6 +51,13 @@ class RequestMPBankSigning extends Mailable
             $ccs[] = $acc->email;
         }
 
+        $fr = Staff::whereHas('roles', function($query){
+            $query->where('role_id', 13);  
+        })->get();
+        foreach($fr as $finr){
+            $ccs[] = $finr->email;
+        }
+
         $finance = Staff::whereHas('roles', function($query){
             $query->where('role_id', 5);  
         })->get();

@@ -77,6 +77,18 @@ class NotifyLpo extends Mailable
                         ])
                     ->cc($ccs)
                     ->subject("LPO Approval Request ".$this->lpo->ref);
+        }else if($this->lpo->status_id == 16){
+
+            $to = Staff::whereHas('roles', function($query){
+                $query->where('role_id', 13);  
+            })->get();
+            return $this->to($to)
+                    ->with([
+                            'lpo' => $this->lpo,
+                            // 'addressed_to' => $this->financial_controller,
+                            'js_url' => Config::get('app.js_url'),
+                        ])
+                    ->subject("LPO Approval Request ".$this->lpo->ref);
         }else if($this->lpo->status_id == 3){
 
             return $this->to($this->lpo->project_manager)

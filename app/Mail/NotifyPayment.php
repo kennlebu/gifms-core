@@ -44,9 +44,9 @@ class NotifyPayment extends Mailable
     {
         $ccs = [] ;
 
-        // Add accountants to cc
+        // Add accountants and financial-reviewers to cc
         $ccs = Staff::whereHas('roles', function($query){
-            $query->where('role_id', 8);  
+            $query->whereIn('role_id', [8,13]);  
         })->get();
 
         $this->view('emails/notify_payment')         

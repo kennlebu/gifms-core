@@ -43,6 +43,14 @@ class LpoInstructSupplier extends Mailable
             $ccs[] = array('first_name'=>$f->f_name, 'last_name'=>$f->l_name, 'email'=>$f->email);
         }
 
+        // Add financial reviewers to cc
+        $fm = Staff::whereHas('roles', function($query){
+            $query->where('role_id', 13);  
+        })->get();
+        foreach($fm as $f){
+            $ccs[] = array('first_name'=>$f->f_name, 'last_name'=>$f->l_name, 'email'=>$f->email);
+        }
+
         // Add Accountants to cc
         $accountant = Staff::whereHas('roles', function($query){
             $query->where('role_id', 8);  
@@ -74,6 +82,18 @@ class LpoInstructSupplier extends Mailable
                     ->with([
                             'lpo' => $this->lpo,
                             // 'addressed_to' => $this->accountant,
+                            'js_url' => Config::get('app.js_url'),
+                        ])
+                    ->subject("LPO Approval Request ".$this->lpo->ref);
+        }else if($this->lpo->status_id == 16){
+
+            $fr = Staff::whereHas('roles', function($query){
+                $query->where('role_id', 13);  
+            })->get();
+            return $this->to($fr)
+                    ->with([
+                            'lpo' => $this->lpo,
+                            'addressed_to' => $fr,
                             'js_url' => Config::get('app.js_url'),
                         ])
                     ->subject("LPO Approval Request ".$this->lpo->ref);

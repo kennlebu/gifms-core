@@ -22,7 +22,7 @@ class Dashboard extends Controller
     public function getMetrics(){
         $metrics = [];
 
-        if($this->current_user()->hasRole(['accountant', 'assistant-accountant','financial-controller','director', 'associate-director'])){
+        if($this->current_user()->hasRole(['accountant', 'assistant-accountant','financial-controller','director', 'associate-director', 'financial-reviewer'])){
             $metrics[] = $this->getBankBalance();
         }
 
@@ -41,7 +41,7 @@ class Dashboard extends Controller
         $activity = ActivityNotification::with('action_by', 'user')->where('user_id', $user->id)->orWhere('action_by_id', $user->id);
 
         // Show all the relevant activity to the admins
-        if($user->hasRole(['super-admin', 'admin', 'director', 'associate-director', 'financial-controller', 'accountant', 'assistant-accountant', 'admin-manager'])){
+        if($user->hasRole(['super-admin', 'admin', 'director', 'associate-director', 'financial-controller', 'accountant', 'assistant-accountant', 'admin-manager','financial-reviewer'])){
             $activity = $activity->orWhere('show_admins', true);
         }
 
@@ -182,7 +182,16 @@ class Dashboard extends Controller
             $mobile_payments += MobilePayment::where('status_id', 9)->count();
         }
 
-        // Finance
+        // FR
+        if($user->hasRole(['financial-reviewer'])){
+            $invoices += Invoice::where('status_id', 14)->count();
+            $lpos += Lpo::where('status_id', 16)->count();
+            $claims += Claim::where('status_id', 12)->count();
+            $mobile_payments += MobilePayment::where('status_id', 18)->count();
+            $others += FundsRequest::where('status_id', 2)->count();
+        }
+
+        // FM
         if($user->hasRole(['financial-controller'])){
             $invoices += Invoice::where('status_id', 2)->count();
             $lpos += Lpo::where('status_id', 4)->count();

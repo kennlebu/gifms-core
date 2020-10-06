@@ -68,6 +68,18 @@ class NotifyClaim extends Mailable
                         ])
                     ->cc($ccs)
                     ->subject("Claim Approval Request ".$this->claim->ref);
+        }else if($this->claim->status_id == 12){
+
+            $to = Staff::whereHas('roles', function($query){
+                $query->where('role_id', 13);  
+            })->get();
+            return $this->to($to)
+                    ->with([
+                            'claim' => $this->claim,
+                            // 'addressed_to' => $this->financial_controller,
+                            'js_url' => Config::get('app.js_url'),
+                        ])
+                    ->subject("Claim Approval Request ".$this->claim->ref);
         }else if($this->claim->status_id == 2){
 
             return $this->to($this->claim->project_manager)

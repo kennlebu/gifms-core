@@ -2280,3 +2280,10 @@ CHANGE `updated_at` `updated_at` timestamp NOT NULL DEFAULT current_timestamp() 
 UPDATE `lpo_statuses` SET `skippable` = '1' WHERE `id` = '4';
 UPDATE `lpo_statuses` SET `skippable` = '1' WHERE `id` = '13';
 UPDATE `lpo_statuses` SET `skippable` = '1' WHERE `id` = '16';
+
++~===== Permissions
+INSERT INTO `permissions` (`name`, `display_name`, `description`, `entity`, `operation_type`, `at_status_id`, `approval_level_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Withhold Taxes', 'Withhold Taxes', NULL, 'Invoice', 'Processing', NULL, NULL, now(), now(), NULL);
+
+INSERT INTO `role_permissions` (`permission_id`, `role_id`)
+VALUES ('268', '8'), ('268', '9'), ('268', '13'), ('268', '5');

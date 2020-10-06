@@ -275,7 +275,7 @@ class AccountApi extends Controller
         $records_filtered       = 0;
         
         //my_assigned
-        if((array_key_exists('my_assigned', $input)&& $input['my_assigned'] = "true")&&($current_user->hasRole(['accountant','assistant-accountant','financial-controller']))){
+        if((array_key_exists('my_assigned', $input)&& $input['my_assigned'] = "true")&&($current_user->hasRole(['accountant','assistant-accountant','financial-controller','financial-reviewer']))){
             $qb->whereNotNull('account_code');
         }elseif (array_key_exists('my_assigned', $input)&& $input['my_assigned'] = "true") {
             $qb->select(DB::raw('accounts.*'))

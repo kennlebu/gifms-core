@@ -268,7 +268,7 @@ class ApiAuthController extends Controller{
             }
 
             // If they are an approver
-            if ($user->hasRole(array("program-manager","director","financial-controller","accountant", "assistant-accountant"))) {
+            if ($user->hasRole(array("program-manager","director","financial-controller","accountant", "assistant-accountant", "financial-reviewer"))) {
                 $can_transfer = true;
             }
 
