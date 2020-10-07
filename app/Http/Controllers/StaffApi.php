@@ -427,10 +427,10 @@ class StaffApi extends Controller
                 }
                 $program_teams = ProgramStaff::with('program.managers')->where('staff_id', $uid)->get();
 
-                $program_managers = array();
+                $program_managers = [];
                 
                 foreach($program_teams as $team){
-                    array_push($program_managers, $team->program->managers->program_manager_id);
+                    $program_managers[] = $team->program->managers->program_manager_id;
                 }
 
                 $qb = $qb->whereIn('id',$program_managers)->groupBy('id');
@@ -441,7 +441,7 @@ class StaffApi extends Controller
                 if($user->hasRole(['program-manager','financial-controller','admin-manager','director'])){
 
                     $qb = $qb->whereHas('roles', function($query) use ($input){
-                        $query->whereIn('acronym', '=', ['dir','a-dir']);  
+                        $query->whereIn('acronym', ['dir','a-dir']);  
                     });  
                 }
                 else{
