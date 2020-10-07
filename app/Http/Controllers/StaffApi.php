@@ -438,7 +438,7 @@ class StaffApi extends Controller
 
             // Get only directors for PMs and above if it's line managers required
             else if(array_key_exists('line_managers', $input)){
-                if($user->hasRole(['program-manager','financial-controller','admin-manager','director','financial-reviewer'])){
+                if($user->hasRole(['program-manager','financial-controller','admin-manager','director'])){
 
                     $qb = $qb->whereHas('roles', function($query) use ($input){
                         $query->whereIn('acronym', '=', ['dir','a-dir']);  
