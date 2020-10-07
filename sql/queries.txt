@@ -2287,3 +2287,7 @@ VALUES ('Withhold Taxes', 'Withhold Taxes', NULL, 'Invoice', 'Processing', NULL,
 
 INSERT INTO `role_permissions` (`permission_id`, `role_id`)
 VALUES ('268', '8'), ('268', '9'), ('268', '13'), ('268', '5');
+
++~===== Add station field to meeting attendance
+ALTER TABLE `meeting_attendees`
+ADD `station` text COLLATE 'latin1_swedish_ci' NULL AFTER `organisation`;

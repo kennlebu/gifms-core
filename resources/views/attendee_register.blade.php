@@ -66,12 +66,21 @@
                     
                     <div class="row">
                         <div class="col-2">
-                            Organisation:
+                            County/ Organisation:
                         </div>
                         <div class="col-10">
-                            <input id="organisation" name="organisation" required class="form-control form-control-md" placeholder="Organistion." type="text"><br/>
+                            <input id="organisation" name="organisation" required class="form-control form-control-md" placeholder="County/Organistion" type="text"><br/>
+                        </div>
+                    </div>                    
+                    <div class="row">
+                        <div class="col-2">
+                            Subounty/ Station:
+                        </div>
+                        <div class="col-10">
+                            <input id="station" name="station" required class="form-control form-control-md" placeholder="Subcounty/Station" type="text"><br/>
                         </div>
                     </div>
+
                     <div class="row">
                         <div class="col-2">
                             Designation:
@@ -82,10 +91,10 @@
                     </div>
                     <div class="row">
                         <div class="col-2">
-                            Phone:
+                            Phone number:
                         </div>
                         <div class="col-10">
-                            <input id="phone" name="phone" required class="form-control form-control-md" placeholder="Phone (starts with 07 or 01)" maxlength="10" type="text" 
+                            <input id="phone" name="phone" required class="form-control form-control-md" placeholder="Phone number (starts with 07 or 01)" maxlength="10" type="text" 
                             oninput="numberOnly(this);"><br/>
                         </div>
                     </div>

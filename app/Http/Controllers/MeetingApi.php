@@ -256,6 +256,7 @@ class MeetingApi extends Controller
             $attendee->email = $request->email;
             $attendee->physical_address = $request->physical_address ?? null;
             $attendee->organisation = $request->organisation ?? null;
+            $attendee->station = $request->station ?? null;
             $attendee->designation = $request->designation ?? null;
             $attendee->phone = $request->phone;
             $attendee->bank_name = $request->bank_name ?? null;
@@ -397,6 +398,7 @@ class MeetingApi extends Controller
             $attendee->email = $request->email;
             $attendee->physical_address = $request->physical_address;
             $attendee->organisation = $request->organisation;
+            $attendee->station = $request->station;
             $attendee->designation = $request->designation;
             $attendee->phone = $request->phone;
             $attendee->bank_name = $request->bank_name;
