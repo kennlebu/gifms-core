@@ -199,6 +199,10 @@ class LPOApi extends Controller
                     $allocation_purpose = $allocation_purpose.'; '.$requisition->purpose;
 
                     if(!empty($accounts)){
+                        $auto_calc = false;
+                        if(count($accounts) == 1){
+                            $auto_calc = true;
+                        }
                         foreach($accounts as $account){
                             foreach($requisition->allocations as $alloc){
                                 $allocation = new Allocation();
@@ -206,7 +210,12 @@ class LPOApi extends Controller
                                 $allocation->project_id = $alloc->project_id;
                                 $allocation->allocatable_id = $lpo->id;
                                 $allocation->allocatable_type = 'lpos';
-                                $allocation->percentage_allocated = $alloc->percentage_allocated / count($accounts);
+                                if($auto_calc){
+                                    $allocation->percentage_allocated = $alloc->percentage_allocated;
+                                }
+                                else {
+                                    $allocation->percentage_allocated = 0;
+                                }
                                 $allocation->allocation_purpose = $allocation_purpose;
                                 $allocation->objective_id = $alloc->objective_id;
                                 $allocation->allocated_by_id = $requisition->requested_by_id;
