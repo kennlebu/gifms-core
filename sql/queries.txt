@@ -2291,3 +2291,15 @@ VALUES ('268', '8'), ('268', '9'), ('268', '13'), ('268', '5');
 +~===== Add station field to meeting attendance
 ALTER TABLE `meeting_attendees`
 ADD `station` text COLLATE 'latin1_swedish_ci' NULL AFTER `organisation`;
+
++~===== Add permissions for ordering a requisition
+INSERT INTO `permissions` (`name`, `display_name`, `description`, `entity`, `operation_type`, `at_status_id`, `approval_level_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Order Requisition', 'Order Requisition', NULL, 'Requisition', 'Processing', NULL, NULL, now(), now(), NULL);
+INSERT INTO `permissions` (`name`, `display_name`, `description`, `entity`, `operation_type`, `at_status_id`, `approval_level_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('See all requisitions', 'See all requisitions', NULL, 'Requisition', 'Read', NULL, NULL, now(), now(), NULL);
+
+INSERT INTO `role_permissions` (`permission_id`, `role_id`)
+VALUES ('269', '8'), ('269', '9'), ('269', '13'), ('269', '10');
+INSERT INTO `role_permissions` (`permission_id`, `role_id`)
+VALUES ('270', '1'), ('270', '2'), ('270', ' 3'), ('270', '4'), 
+('270', '5'), ('270', '8'), ('270', '9'), ('270', '10'), ('270', '12'), ('270', '13');

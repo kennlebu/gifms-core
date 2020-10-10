@@ -726,7 +726,7 @@ class RequisitionApi extends Controller
                 ];
             }
 
-            if ($user->hasRole(['admin','super-admin','accountant','assistant-accountant','director','associate-director','admin-manager','financial-reviewer'])){
+            if ($user->can(['See all requisitions'])){
                 $statuses[] = [
                     'id'=>-3,
                     'status'=>'All requisitions',

@@ -26,11 +26,13 @@ class Dashboard extends Controller
             $metrics[] = $this->getBankBalance();
         }
 
-        if($this->current_user()->hasRole(['financial-controller'])){
+        if($this->current_user()->can(['Batch Payments'])){
             $metrics[] = $this->getUnbatchedPayments();
         }
         
-        $metrics[] = $this->getUnapproved();
+        if($this->current_user()->hasRole(['accountant','financial-controller','director', 'associate-director', 'financial-reviewer','program-manager'])){
+            $metrics[] = $this->getUnapproved();
+        }
 
         return response()->json($metrics, 200);
     }
@@ -175,7 +177,7 @@ class Dashboard extends Controller
         $user = $this->current_user();
 
         // Accountants
-        if($user->hasRole(['accountant', 'assistant-accountant'])){
+        if($user->hasRole(['accountant'])){
             $invoices += Invoice::where('status_id', 12)->count();
             $lpos += Lpo::where('status_id', 13)->count();
             $claims += Claim::where('status_id', 10)->count();
