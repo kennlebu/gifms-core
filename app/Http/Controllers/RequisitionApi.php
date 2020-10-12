@@ -184,6 +184,26 @@ class RequisitionApi extends Controller
     public function store(Request $request)
     {
         try {
+            // Files
+            $no_of_files = (int) $request->no_of_files;
+            $files = [];
+            for($i = 0; $i < $no_of_files; $i++) {
+                $name = 'file'.$i;
+                $file_title = 'file'.$i.'_title';
+                $files[] = $request->$name;
+                $titles[] = $request->$file_title;
+            }
+            $counter = 0;
+            for($f = 0; $f < count($files); $f++) {
+                if($files[$f] == 0){
+                    continue;
+                }
+                if($files[$f]->getClientOriginalExtension() != 'pdf'){
+                    return response()->json(['error'=>"Only PDF files accepted"], 415);
+                }
+                $counter += 1;
+            }
+
             $requisition = new Requisition();
             $requisition->requested_by_id = $request->requested_by_id;
             $requisition->purpose = $request->purpose;
@@ -294,10 +314,10 @@ class RequisitionApi extends Controller
             // Add activity notification
             $this->addActivityNotification('Created requisition <strong>'.$requisition->ref.'</strong>', null, $this->current_user()->id, $requisition->requested_by_id, 'info', 'requisitions', false);
 
-            return Response()->json(array('msg' => 'Success: requisition added','requisition' => $requisition), 200);
+            return Response()->json(['msg' => 'Success: requisition added','requisition' => $requisition], 200);
         }
         catch(Exception $e){
-            return response()->json(['error'=>"Something went wrong",'msg'=>$e->getMessage(),'trace'=>$e->getTraceAsString()], 500,array(),JSON_PRETTY_PRINT);
+            return response()->json(['error'=>"Something went wrong",'msg'=>$e->getMessage(),'trace'=>$e->getTraceAsString()], 500);
         }
     }
 
