@@ -319,7 +319,7 @@ class LpoStatusApi extends Controller
                           );
                 }
 
-                if ($user->can('READ_ADVANCE_-2')){
+                if ($user->can('READ_LPO_-2') || $user->can('View all LPOs')){
 
                     //-1
                     $response[]=array(

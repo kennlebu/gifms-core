@@ -353,7 +353,7 @@ class ClaimStatusApi extends Controller
                             "claims_count"=> Claim::where('project_manager_id',$this->current_user()->id)->count()
                           );
                 }
-                if ($user->can('READ_CLAIM_-2')){
+                if ($user->can('READ_CLAIM_-2') || $user->can('View all claims')){
 
                     //-1
                     $response[]=array(

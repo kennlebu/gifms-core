@@ -336,7 +336,7 @@ class MobilePaymentStatusApi extends Controller
                           );
                 }
 
-                if ($user->can('READ_ADVANCE_-2')){
+                if ($user->can('READ_MOBILE_PAYMENT_-2') || $user->can('View all Mobile Payments')){
 
                     //-1
                     $response[]=array(

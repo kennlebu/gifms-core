@@ -2303,3 +2303,7 @@ VALUES ('269', '8'), ('269', '9'), ('269', '13'), ('269', '10');
 INSERT INTO `role_permissions` (`permission_id`, `role_id`)
 VALUES ('270', '1'), ('270', '2'), ('270', ' 3'), ('270', '4'), 
 ('270', '5'), ('270', '8'), ('270', '9'), ('270', '10'), ('270', '12'), ('270', '13');
+
++~===== Add permission to see all invoices to PMs
+INSERT INTO `role_permissions` (`permission_id`, `role_id`)
+VALUES ('56', '6'), ('104', '6'), ('197', '6'), ('2', '6'), ('146', '6');
