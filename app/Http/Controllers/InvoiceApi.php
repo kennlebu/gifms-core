@@ -39,6 +39,7 @@ use Excel;
 use App\Models\Requisitions\Requisition;
 use App\Models\Requisitions\RequisitionItem;
 use App\Models\StaffModels\Staff;
+use Illuminate\Http\Request as HttpRequest;
 use Illuminate\Support\Facades\Log;
 
 class InvoiceApi extends Controller
@@ -68,7 +69,7 @@ class InvoiceApi extends Controller
      *
      * @return Http response
      */
-    public function addInvoice()
+    public function addInvoice(HttpRequest $request)
     {
         $invoice = new Invoice;
         try{
@@ -102,12 +103,11 @@ class InvoiceApi extends Controller
             }
 
             $existing = Invoice::where('external_ref', $form['external_ref'])->where('supplier_id', $form['supplier_id'])->whereNull('deleted_at')->first();
-            
             if($form['submission_type'] != 'upload_logged' && 
                 $form['submission_type'] != 'finish_allocations' && 
                 !empty($existing))
             {
-                Log::debug($form['submission_type']);
+                Log::debug(json_encode($form));
                 Log::debug(!empty($existing));
                 return response()->json(['error'=>'Invoice with the same invoice number already exists'], 409);
             }
