@@ -169,7 +169,7 @@ class Invoice extends BaseModel
     }
 
     public function getBankTransactionAttribute(){
-        $payment = Payment::where('payable_id', $this->attributes['id'])
+        $payment = Payment::where('payable_id', $this->id)
                     ->where('payable_type', 'invoices')
                     ->first();
                 
@@ -180,7 +180,7 @@ class Invoice extends BaseModel
     }
 
     public function getBankTransactionsAttribute(){
-        $payment = Payment::where('payable_id', $this->attributes['id'])
+        $payment = Payment::where('payable_id', $this->id)
                     ->where('payable_type', 'invoices')
                     ->first();
                 
@@ -198,7 +198,7 @@ class Invoice extends BaseModel
 
     public function getCalculatedWithdrawalChargesAttribute(){
 
-    	$amount = (double) $this->attributes['total'];
+    	$amount = (double) $this->total;
         $withdrawal_charges = 0 ;
 
         if(!empty($this->payment_mode_id) && $this->payment_mode_id == 2){
@@ -217,7 +217,7 @@ class Invoice extends BaseModel
     }
 
     public function getCalculatedTotalAttribute(){
-    	$amount = (double) $this->attributes['total'];
+    	$amount = (double) $this->total;
         return  $amount + (double)	$this->calculated_withdrawal_charges;
     }
 
