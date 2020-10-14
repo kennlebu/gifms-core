@@ -100,9 +100,9 @@ class InvoiceApi extends Controller
                 $invoice_date = $dt->format('Y-m-d');
             }
 
-            if(Invoice::where('external_ref', $invoice->external_ref)->where('supplier_id', $form['supplier_id'])->whereNull('deleted_at')->exists() && $form['submission_type']!='upload_logged' && $form['submission_type']!='finish_allocations'){
-                return response()->json(['error'=>'Invoice with the same invoice number already exists'], 409);
-            }
+            // if(Invoice::where('external_ref', $invoice->external_ref)->where('supplier_id', $form['supplier_id'])->whereNull('deleted_at')->exists() && $form['submission_type']!='upload_logged' && $form['submission_type']!='finish_allocations'){
+            //     return response()->json(['error'=>'Invoice with the same invoice number already exists'], 409);
+            // }
 
             if($form['submission_type']=='full'){
 
@@ -172,7 +172,7 @@ class InvoiceApi extends Controller
                 $invoice->status_id                         =   $this->default_log_status;
 
                 if(Invoice::where('external_ref', $invoice->external_ref)->where('supplier_id', $form['supplier_id'])->exists()){
-                    return response()->json(["error"=>"Invoice with the same invoice number already exists"], 409,array(),JSON_PRETTY_PRINT);
+                    return response()->json(["error"=>"Invoice with the same invoice number already exists"], 409);
                 }
 
                 if(!empty($invoice->lpo_id)){
