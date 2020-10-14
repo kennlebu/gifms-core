@@ -39,6 +39,7 @@ use Excel;
 use App\Models\Requisitions\Requisition;
 use App\Models\Requisitions\RequisitionItem;
 use App\Models\StaffModels\Staff;
+use Illuminate\Support\Facades\Log;
 
 class InvoiceApi extends Controller
 {
@@ -187,6 +188,7 @@ class InvoiceApi extends Controller
             }else if($form['submission_type']=='upload_logged'){
 
                 $invoice = Invoice::find((int) $form['id']);
+                Log::debug(json_encode($invoice));
 
                 $invoice->raised_by_id                      =   (int)       $form['raised_by_id'];
                 $invoice->external_ref                      =               trim($form['external_ref']);
