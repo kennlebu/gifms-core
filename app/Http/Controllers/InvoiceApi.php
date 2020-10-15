@@ -107,8 +107,6 @@ class InvoiceApi extends Controller
                 $form['submission_type'] != 'finish_allocations' && 
                 !empty($existing))
             {
-                Log::debug(json_encode($form));
-                Log::debug(!empty($existing));
                 return response()->json(['error'=>'Invoice with the same invoice number already exists'], 409);
             }
 

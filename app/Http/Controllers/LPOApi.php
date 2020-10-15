@@ -799,7 +799,7 @@ class LPOApi extends Controller
 
             $lpo   = LPO::findOrFail($lpo_id);
 
-            if ((empty($lpo->lpo_type) || $lpo->lpo_type!='prenegotiated') && $lpo->preffered_quotation && $lpo->preffered_quotation->amount != $lpo->totals ){
+            if ((empty($lpo->lpo_type) || $lpo->lpo_type!='prenegotiated') && $lpo->preffered_quotation && abs($lpo->preffered_quotation->amount - $lpo->totals) > 0.05 ){
                 throw new LpoQuotationAmountMismatchException("Total amount does not match with quotation amount");             
             }
 
