@@ -471,7 +471,7 @@ class LPOApi extends Controller
             activity()
                 ->performedOn($lpo)
                 ->causedBy($this->current_user())
-                ->log($lpo->lpo_type=='lso'?'LSO':'LPO'.' recalled');
+                ->log(($lpo->lpo_type=='lso'?'LSO':'LPO').' recalled');
             
             // Add activity notification
             $this->addActivityNotification('Recalled '.($lpo->lpo_type=='lso'?'LSO':'LPO').' <strong>'. $lpo->ref.'</strong>' , null, $this->current_user()->id, $lpo->requisitioned_by_id ?? $lpo->requested_by_id, 'danger', 'lpos', false);
