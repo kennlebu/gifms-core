@@ -73,7 +73,7 @@ class DocumentsApi extends Controller
         try{
             $doc = Document::where('entity_type', $entity_type)->where('filename', $filename)->firstOrFail();
             $path = '/documents/'.$doc->entity_type.'/'.$doc->entity_id.'/'.$doc->filename.'.'.$doc->type;
-            
+            $file_contents = FTP::connection()->readFile($path);
             $response = Response::make($file_contents, 200);
             $response->header('Content-Type', 'application/pdf');
             return $response;  
