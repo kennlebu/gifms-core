@@ -908,14 +908,15 @@ class LPOApi extends Controller
                                             'program_activity',
                                             'allocations.project',
                                             'allocations.account',
-                                            'requisition.documents'
+                                            'requisition.documents',
+                                            'documents'
                                 )->findOrFail($lpo_id);
            
-            return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+            return response()->json($response, 200);
 
         }catch(Exception $e){
             $response =  ["error"=>"Something went wrong",'msg'=>$e->getMessage(),'trace'=>$e->getTraceAsString()];
-            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+            return response()->json($response, 500);
         }
     }
 
