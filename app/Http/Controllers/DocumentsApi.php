@@ -74,7 +74,6 @@ class DocumentsApi extends Controller
             $doc = Document::where('entity_type', $entity_type)->where('filename', $filename)->firstOrFail();
             $path = '/documents/'.$doc->entity_type.'/'.$doc->entity_id.'/'.$doc->filename.'.'.$doc->type;
             
-            file_put_contents ( "E://Users//kennl//Documents//debug.txt" , PHP_EOL.$path , FILE_APPEND);$file_contents = FTP::connection()->readFile($path);
             $response = Response::make($file_contents, 200);
             $response->header('Content-Type', 'application/pdf');
             return $response;  
