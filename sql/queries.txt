@@ -2307,3 +2307,7 @@ VALUES ('270', '1'), ('270', '2'), ('270', ' 3'), ('270', '4'),
 +~===== Add permission to see all invoices to PMs
 INSERT INTO `role_permissions` (`permission_id`, `role_id`)
 VALUES ('56', '6'), ('104', '6'), ('197', '6'), ('2', '6'), ('146', '6');
+
+===== Add trading name column to suppliers
+ALTER TABLE `suppliers`
+ADD `trading_name` text COLLATE 'utf8_unicode_ci' NULL AFTER `active`;

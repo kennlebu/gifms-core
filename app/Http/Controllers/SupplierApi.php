@@ -54,6 +54,7 @@ class SupplierApi extends Controller
         $supplier->bank_id                 = $form['bank_id'];
         $supplier->bank_branch_id          = $form['bank_branch_id'];
         $supplier->supplier_name           = $form['supplier_name'];
+        $supplier->trading_name            = $form['trading_name'];
         $supplier->address                 = $form['address'] ?? null;
         $supplier->telephone               = $form['telephone'] ?? null;
         $supplier->email                   = $form['email'] ?? null;
@@ -130,6 +131,7 @@ class SupplierApi extends Controller
         $supplier->bank_id                 =         $form['bank_id'];
         $supplier->bank_branch_id          =         $form['bank_branch_id'];
         $supplier->supplier_name           =         $form['supplier_name'];
+        $supplier->trading_name            =         $form['trading_name'];
         $supplier->address                 =         $form['address'];
         $supplier->telephone               =         $form['telephone'];
         $supplier->email                   =         $form['email'];
@@ -354,6 +356,7 @@ class SupplierApi extends Controller
             //searching
             $qb = $qb->where(function ($query) use ($input) {                
                 $query->orWhere('supplier_name','like', '%' . $input['search']['value']. '%');
+                $query->orWhere('trading_name','like', '%' . $input['search']['value']. '%');
                 $query->orWhere('address','like', '%' . $input['search']['value']. '%');
                 $query->orWhere('telephone','like', '%' . $input['search']['value']. '%');
                 $query->orWhere('email','like', '%' . $input['search']['value']. '%');
@@ -443,6 +446,7 @@ class SupplierApi extends Controller
                 try{                    
                     $supplier = new Supplier;
                     $supplier->supplier_name = trim($value['supplier_name']);
+                    $supplier->trading_name = trim($value['trading_name']);
                     $supplier->email = trim($value['email']);
                     $supplier->status_id = 0;
 
@@ -559,6 +563,7 @@ class SupplierApi extends Controller
                 $excel_row = [];
                 $excel_row['id'] = $row->id;
                 $excel_row['supplier_name'] = $row->supplier_name;
+                $excel_row['trading_name'] = $row->trading_name;
                 $excel_row['address'] = $row->address;
                 $excel_row['telephone'] = " ".$row->telephone;
                 $excel_row['email'] = $row->email;
@@ -605,7 +610,7 @@ class SupplierApi extends Controller
     
                 $excel->setDescription('A list of vendors in the GIFMS system as of '.$date);
     
-                $headings = ['ID', 'Supplier Name', 'Address', 'Telephone', 'Email', 'Website', 'Bank name', 'Bank branch', 'Cheque address', 'Bank account', 'USD Account', 
+                $headings = ['ID', 'Supplier Name', 'Trading Name', 'Address', 'Telephone', 'Email', 'Website', 'Bank name', 'Bank branch', 'Cheque address', 'Bank account', 'USD Account', 
                             'Bank code', 'Swift code', 'Tax PIN', 'Mobile Payment number', 'Mobile Payment name', 'Payment mode', 'Currency', 'Contact Name 1', 'Contact Email 1',
                             'Contact Phone 1', 'Contact Name 2', 'Contact Email 2', 'Contact Phone 2', 'Requires LPO', 'Supply Category', 'Location'];
     
@@ -641,30 +646,31 @@ class SupplierApi extends Controller
                         'A' => 10,
                         'B' => 50,
                         'C' => 50,
-                        'D' => 30,
-                        'E' => 50,
-                        'F' => 35,
+                        'D' => 50,
+                        'E' => 30,
+                        'F' => 50,
                         'G' => 35,
                         'H' => 35,
-                        'I' => 50,
-                        'J' => 35,
+                        'I' => 35,
+                        'J' => 50,
                         'K' => 35,
-                        'L' => 15,
-                        'M' => 20,
+                        'L' => 35,
+                        'M' => 15,
                         'N' => 20,
-                        'O' => 35,
-                        'P' => 50,
-                        'Q' => 15,
+                        'O' => 20,
+                        'P' => 35,
+                        'Q' => 50,
                         'R' => 15,
-                        'S' => 50,
-                        'T' => 35,
+                        'S' => 15,
+                        'T' => 50,
                         'U' => 35,
-                        'V' => 50,
-                        'W' => 35,
+                        'V' => 35,
+                        'W' => 50,
                         'X' => 35,
-                        'Y' => 15,
-                        'Z' => 50,
-                        'AA' => 15
+                        'Y' => 35,
+                        'Z' => 15,
+                        'AA' => 50,
+                        'AB' => 15
                     ]);
 
                     $sheet->setFreeze('A2');
