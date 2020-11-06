@@ -460,7 +460,7 @@ class LPOApi extends Controller
 
             // Ensure LPO is in the recallable statuses
             if(!in_array($lpo->status_id, [13,3,4,5,16])){
-                return response()->json(['msg'=>"you do not have permission to do this"], 403);
+                return response()->json(['msg'=>"You do not have permission to do this"], 403);
             }
 
             $lpo->status_id = 11;
@@ -477,12 +477,12 @@ class LPOApi extends Controller
             $this->addActivityNotification('Recalled '.($lpo->lpo_type=='lso'?'LSO':'LPO').' <strong>'. $lpo->ref.'</strong>' , null, $this->current_user()->id, $lpo->requisitioned_by_id ?? $lpo->requested_by_id, 'danger', 'lpos', false);
 
             if(!empty($lpo->requisition_id)){
-                foreach($lpo->items as $item){
-                    $requisition_item = RequisitionItem::findOrFail($item->requisition_item_id);
-                    $requisition_item->status_id = 1;
-                    $requisition_item->disableLogging();
-                    $requisition_item->save();
-                }
+                // foreach($lpo->items as $item){
+                //     $requisition_item = RequisitionItem::findOrFail($item->requisition_item_id);
+                //     $requisition_item->status_id = 1;
+                //     $requisition_item->disableLogging();
+                //     $requisition_item->save();
+                // }
 
                 // Logging item recall
                 activity()
