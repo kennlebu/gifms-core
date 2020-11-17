@@ -2308,6 +2308,12 @@ VALUES ('270', '1'), ('270', '2'), ('270', ' 3'), ('270', '4'),
 INSERT INTO `role_permissions` (`permission_id`, `role_id`)
 VALUES ('56', '6'), ('104', '6'), ('197', '6'), ('2', '6'), ('146', '6');
 
-===== Add trading name column to suppliers
++~===== Add trading name column to suppliers
 ALTER TABLE `suppliers`
 ADD `trading_name` text COLLATE 'utf8_unicode_ci' NULL AFTER `active`;
+
++~===== Mobile payment approval permissions
+UPDATE `permissions` SET `display_name` = 'Approve Mobile Payment (Management Approval)' WHERE `name` LIKE '%APPROVE_MOBILE_PAYMENT%' AND `id` = '182';
+UPDATE `permissions` SET `display_name` = 'Approve Mobile Payment (Finance Approval)' WHERE `name` LIKE '%APPROVE_MOBILE_PAYMENT%' AND `id` = '181';
+UPDATE `permissions` SET `display_name` = 'Approve Mobile Payment (Accountant Review)' WHERE `name` LIKE '%APPROVE_MOBILE_PAYMENT%' AND `id` = '180';
+UPDATE `permissions` SET `display_name` = 'Approve Mobile Payment (PM Approval)' WHERE `name` LIKE '%APPROVE_MOBILE_PAYMENT%' AND `id` = '179';
