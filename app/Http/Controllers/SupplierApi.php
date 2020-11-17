@@ -65,6 +65,7 @@ class SupplierApi extends Controller
         $supplier->payment_mode_id         = $form['payment_mode_id'] ?? null;
         $supplier->bank_code               = $form['bank_code'] ?? null;
         $supplier->usd_account             = $form['usd_account'] ?? null;
+        $supplier->swift_code              = $form['swift_code'] ?? null;
         $supplier->alternative_email       = $form['alternative_email'] ?? null;
         $supplier->mobile_payment_name     = $form['mobile_payment_name'] ?? null;
         $supplier->tax_pin                 = trim($form['tax_pin']);
@@ -142,6 +143,7 @@ class SupplierApi extends Controller
         $supplier->payment_mode_id         =         $form['payment_mode_id'];
         $supplier->bank_code               =         $form['bank_code'];
         $supplier->usd_account             =         $form['usd_account'];
+        $supplier->swift_code              =         $form['swift_code'];
         $supplier->alternative_email       =         $form['alternative_email'];
         $supplier->mobile_payment_name     =         $form['mobile_payment_name'];
         $supplier->tax_pin                 =         trim($form['tax_pin']);
