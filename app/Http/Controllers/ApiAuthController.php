@@ -34,7 +34,7 @@ class ApiAuthController extends Controller{
 
 
     public function authenticateSecondUser(){
-// $credentials = request()->only('email');
+        // $credentials = request()->only('email');
         try{
             $token = JWTAuth::attempt($credentials);
             if(!$token){
@@ -192,16 +192,12 @@ class ApiAuthController extends Controller{
         try{
             $token = JWTAuth::attempt($credentials);
             if(!$token){
-                return response()->json(['error'=>'invalid credentials'], 401);
-            }else{
-
-
+                return response()->json(['error'=>'Invalid credentials'], 401);
+            }
+            else {
                 $staff = Staff::find($user->id);
-
-                $staff->password             =               bcrypt($req['new_password']);
-
-                if($staff->save()) {
-                    
+                $staff->password = bcrypt($req['new_password']);
+                if($staff->save()) {                    
                     return response()->json(['status'=>true,'user'=>$staff], 200);
                 }
             }

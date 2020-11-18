@@ -32,6 +32,7 @@ use App\Models\PaymentModels\Payment;
 use App\Models\PaymentModels\PaymentBatch;
 use App\Exceptions\NotFullyAllocatedException;
 use App\Exceptions\ApprovalException;
+use App\Mail\NotifyPayment;
 use App\Models\FinanceModels\TaxRate;
 use App\Models\FinanceModels\WithholdingVatRate;
 use App\Models\PaymentModels\VoucherNumber;
@@ -120,7 +121,7 @@ class InvoiceApi extends Controller
                 $invoice->invoice_date                      =               $invoice_date;
                 $invoice->lpo_id                            =   (((int) $form['lpo_id'])>0)?$form['lpo_id']:null;
                 $invoice->supplier_id                       =   (int)       $form['supplier_id'];
-                $invoice->payment_mode_id                     =   (int)       $form['payment_mode_id'];
+                $invoice->payment_mode_id                   =   (int)       $form['payment_mode_id'];
                 $invoice->project_manager_id                =   (int)       $form['project_manager_id'];
                 $invoice->total                             =   (double)    $form['total'];
                 $invoice->currency_id                       =   (int)       $form['currency_id'];
@@ -1588,11 +1589,15 @@ class InvoiceApi extends Controller
                     ->performedOn($invoice)
                     ->causedBy($this->current_user())
                     ->log('Paid');
+
+                if(!empty($input['notify_vendor']) && $input['notify_vendor'] == 1) {
+                    Mail::queue(new NotifyPayment($invoice, $payment));
+                }
                     
-                return Response()->json(array('success' => 'Invoice already marked as paid'), 200);
+                return Response()->json(['success' => 'Invoice marked as paid'], 200);
             }
             
-            return Response()->json(array('success' => 'Invoice marked as paid'), 200);
+            return Response()->json(['success' => 'Invoice already marked as paid'], 200);
         }
         catch(Exception $e){
             return response()->json(['error'=>'Something went wrong during processing', 'msg'=>$e->getMessage()], 500);
