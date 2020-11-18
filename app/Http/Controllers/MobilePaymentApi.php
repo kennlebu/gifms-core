@@ -378,6 +378,10 @@ class MobilePaymentApi extends Controller
         $user = $this->current_user();
         try{
             $mobile_payment = MobilePayment::findOrFail($mobile_payment_id);
+
+            if (!$user->can("APPROVE_MOBILE_PAYMENT_".$mobile_payment->status_id)){
+                throw new ApprovalException("No approval permission");             
+            }
            
             $approvable_status  = $mobile_payment->status;
             $mobile_payment->status_id = $this->getNextStatusId($mobile_payment->status_id);
@@ -428,10 +432,10 @@ class MobilePaymentApi extends Controller
 
         }catch(ApprovalException $ae){
             $response =  ["error"=>"You do not have the permissions to perform this action at this point"];
-            return response()->json($response, 403,array(),JSON_PRETTY_PRINT);
+            return response()->json($response, 403);
         }catch(Exception $e){
             $response =  ["error"=>$e->getMessage(), 'trace'=>$e->getTraceAsString()];
-            return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
+            return response()->json($response, 500);
         }
     }
 
@@ -638,6 +642,10 @@ class MobilePaymentApi extends Controller
         try{
             $mobile_payment = MobilePayment::findOrFail($mobile_payment_id);
 
+            if (!$user->can("APPROVE_MOBILE_PAYMENT_".$mobile_payment->status_id)){
+                throw new ApprovalException("No approval permission");             
+            }
+
            // Set as rejected by bank if it was already approved by management
            // otherwise, set it as a normal rejection 
            if($mobile_payment->status_id==4||$mobile_payment->status_id==12||$mobile_payment->status_id==13) {
@@ -670,10 +678,10 @@ class MobilePaymentApi extends Controller
 
         }catch(ApprovalException $ae){
             $response =  ["error"=>"You do not have the permissions to perform this action at this point"];
-            return response()->json($response, 403,array(),JSON_PRETTY_PRINT);
+            return response()->json($response, 403);
         }catch(Exception $e){
             $response =  ["error"=>"Something went wrong"];
-            return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
+            return response()->json($response, 500);
         }
     }
 

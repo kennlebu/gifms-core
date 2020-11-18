@@ -518,11 +518,10 @@ class ClaimApi extends Controller
         }catch(ApprovalException $ae){
 
             $response =  ["error"=>"You do not have the permissions to perform this action at this point"];
-            return response()->json($response, 403,array(),JSON_PRETTY_PRINT);
+            return response()->json($response, 403);
         }catch(Exception $e){
-
-            $response =  ["error"=>"Claim could not be found"];
-            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+            $response =  ["error"=>"Something went wrong"];
+            return response()->json($response, 500);
         }
     }
 
