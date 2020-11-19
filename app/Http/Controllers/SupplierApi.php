@@ -558,7 +558,11 @@ class SupplierApi extends Controller
 
     public function downloadExcel(){
         // try {
-            $suppliers = Supplier::with('bank','bank_branch','payment_mode','currency','county','supply_category')->where('status_id', '!=', '1')->get();
+            $suppliers = Supplier::with('bank','bank_branch','payment_mode','currency','county','supply_category')
+                        ->where(function ($query) {
+                            $query->where('status_id', '!=', '1')
+                                ->orWhereNotNull('status_id');
+                        })->get();
             $excel_data = [];
 
             foreach($suppliers as $row){
