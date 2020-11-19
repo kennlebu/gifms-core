@@ -561,7 +561,7 @@ class SupplierApi extends Controller
             $suppliers = Supplier::with('bank','bank_branch','payment_mode','currency','county','supply_category')
                         ->where(function ($query) {
                             $query->where('status_id', '!=', '1')
-                                ->orWhereNotNull('status_id');
+                                ->orWhereNull('status_id');
                         })->get();
             $excel_data = [];
 
