@@ -1569,7 +1569,7 @@ class InvoiceApi extends Controller
             }
             if(!$already_saved){
                 // Save transaction details
-                $bank_transaction = array();
+                $bank_transaction = [];
                 $bank_transaction['bank_ref'] = trim($input['bank_ref']);
                 $bank_transaction['chai_ref'] = $voucher_no;
                 $bank_transaction['inputter'] = $this->current_user()->name;
@@ -1591,7 +1591,7 @@ class InvoiceApi extends Controller
                     ->log('Paid');
 
                 if(!empty($input['notify_vendor']) && $input['notify_vendor'] == 1) {
-                    Mail::queue(new NotifyPayment($invoice, $payment));
+                    Mail::queue(new NotifyPayment($invoice, $payment, trim($input['amount'])));
                 }
                     
                 return Response()->json(['success' => 'Invoice marked as paid'], 200);

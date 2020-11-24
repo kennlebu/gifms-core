@@ -464,6 +464,7 @@ class PaymentBatchApi extends Controller
         try{
             $input = Request::all();
             foreach($input as $row){
+                $amount = preg_replace("/[^0-9.]/", "", $row['amount']);
                 $already_saved = false;
                 if($row['payable_type'] != 'mobile_payments'){
                     $payment = Payment::find($row['payment']['id']);
@@ -502,7 +503,7 @@ class PaymentBatchApi extends Controller
 
                             // Send email
                             if($row['notify_vendor'])
-                            Mail::queue(new NotifyPayment($invoice, $payment));
+                            Mail::queue(new NotifyPayment($invoice, $payment, $amount));
                         }
                         // Change advance status
                         if($payment->payable_type=='advances'){
@@ -522,7 +523,7 @@ class PaymentBatchApi extends Controller
 
                             // Send email
                             if($row['notify_vendor'])
-                            Mail::queue(new NotifyPayment($advance, $payment));
+                            Mail::queue(new NotifyPayment($advance, $payment, $amount));
                         }
                         // Change claim status
                         if($payment->payable_type=='claims'){
@@ -542,7 +543,7 @@ class PaymentBatchApi extends Controller
 
                             // Send email
                             if($row['notify_vendor'])
-                            Mail::queue(new NotifyPayment($claim, $payment));
+                            Mail::queue(new NotifyPayment($claim, $payment, $amount));
                         }
                     }
 
@@ -566,7 +567,7 @@ class PaymentBatchApi extends Controller
 
                         // Send email
                         if($row['notify_vendor'])
-                        Mail::queue(new NotifyPayment($mobile_payment, $row['payable_type'], 'text'));
+                        Mail::queue(new NotifyPayment($mobile_payment, $row['payable_type'], $amount, 'text'));
                     }
                 }
 
