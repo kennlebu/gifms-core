@@ -212,7 +212,10 @@ class InvoiceApi extends Controller
                 if(!empty($form['lpo_variation_reason']))
                 $invoice->lpo_variation_reason = $form['lpo_variation_reason'];
                 if(!empty($form['approver_id']))
-                $invoice->approver_id = $form['approver_id'];
+                $invoice->approver_id = $form['approver_id'];                
+                if(!empty($form['requisition_id'])) {
+                    $invoice->requisition_id = $form['requisition_id'];
+                }
 
                 if(!empty($invoice->lpo) && $invoice->total - $invoice->lpo->totals != 0){
                     foreach($invoice->allocations as $alloc){

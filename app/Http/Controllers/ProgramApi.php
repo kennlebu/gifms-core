@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\DB;
 
 use App\Models\ProgramModels\Program;
 use App\Models\ProgramModels\ProgramManager;
+use App\Models\ProgramModels\ProgramStaff;
 use Exception;
 
 class ProgramApi extends Controller
@@ -36,22 +37,25 @@ class ProgramApi extends Controller
      */
     public function addProgram()
     {
-        $form = Request::only(
-            'program_name',
-            'program_desc',
-            'pm_id'
-            );
+        $form = Request::all();
 
         $program = new Program;
         $program->program_name                   =         $form['program_name'];
         $program->program_desc                   =         $form['program_desc'];
 
         if($program->save()) {
-            $pm = new ProgramManager;
-            $pm->program_id = $program->id;
-            $pm->program_manager_id = $form['pm_id'];
-            $pm->default_approver = 1;
-            $pm->save();
+            foreach($form['program_managers'] as $pm){
+                ProgramManager::create([
+                    'program_id' => $program->id,
+                    'program_manager_id' => $pm['id']
+                ]);
+            }
+
+            // $pm = new ProgramManager;
+            // $pm->program_id = $program->id;
+            // $pm->program_manager_id = $form['pm_id'];
+            // $pm->default_approver = 1;
+            // $pm->save();
 
             return Response()->json(array('msg' => 'Success: program added','program' => $program), 200);
         }
@@ -87,29 +91,52 @@ class ProgramApi extends Controller
      */
     public function updateProgram()
     {
-        $form = Request::only(
-            'id',
-            'program_name',
-            'program_desc',
-            'pm_id'
-            );
+        $form = Request::all();
 
         $program = Program::find($form['id']);
         $program->program_name                   =         $form['program_name'];
         $program->program_desc                   =         $form['program_desc'];
 
         if($program->save()) {
-            $pm = ProgramManager::where('program_id', $form['id'])->first();
-            if(!empty($pm)){
-                $pm->program_manager_id = $form['pm_id'];
+            $current_pms = ProgramManager::where('program_id', $program->id)->pluck('program_manager_id')->toArray();
+            $incoming_pms = [];
+            foreach($form['program_managers'] as $i_pms) {
+                $incoming_pms[] = $i_pms['id'];
             }
-            else {
-                $pm = new ProgramManager;
-                $pm->program_id = $form['id'];
-                $pm->program_manager_id = $form['pm_id'];
-                $pm->default_approver = 1;
+            $to_be_inserted = [];
+            $to_be_removed = [];
+            foreach ($current_pms as $current) {
+                if(!in_array($current, $incoming_pms)) {
+                    $to_be_removed[] = $current;
+                }
             }
-            $pm->save();
+            foreach($incoming_pms as $incoming) {
+                if(!in_array($incoming, $current_pms)) {
+                    $to_be_inserted[] = $incoming;
+                }
+            }
+
+            foreach($to_be_removed as $rem){
+                ProgramManager::where(['program_id'=>$program->id, 'program_manager_id'=>$rem])->delete();
+            }
+            foreach($to_be_inserted as $ins) {
+                ProgramManager::create([
+                    'program_id' => $program->id,
+                    'program_manager_id' => $ins
+                ]);
+            }
+
+            // $pm = ProgramManager::where('program_id', $form['id'])->first();
+            // if(!empty($pm)){
+            //     $pm->program_manager_id = $form['pm_id'];
+            // }
+            // else {
+            //     $pm = new ProgramManager;
+            //     $pm->program_id = $form['id'];
+            //     $pm->program_manager_id = $form['pm_id'];
+            //     $pm->default_approver = 1;
+            // }
+            // $pm->save();
 
             return Response()->json(array('msg' => 'Success: program updated','program' => $program), 200);
         }
@@ -152,9 +179,9 @@ class ProgramApi extends Controller
 
         $deleted = Program::destroy($program_id);
         if($deleted){
-            return response()->json(['msg'=>"program deleted"], 200,array(),JSON_PRETTY_PRINT);
+            return response()->json(['msg'=>"program deleted"], 200);
         }else{
-            return response()->json(['error'=>"Something went wrong"], 500,array(),JSON_PRETTY_PRINT);
+            return response()->json(['error'=>"Something went wrong"], 500);
         }
     }
     
@@ -192,10 +219,10 @@ class ProgramApi extends Controller
     {
         try{
             $response   = Program::with("managers", "staffs")->findOrFail($program_id);           
-            return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+            return response()->json($response, 200);
         }catch(Exception $e){
             $response =  ["error"=>"Something went wrong"];
-            return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
+            return response()->json($response, 500);
         }
     }
 
@@ -243,7 +270,7 @@ class ProgramApi extends Controller
             return response()->json(['msg'=>"Managers Updated", 'managers'=>$response], 200,array(),JSON_PRETTY_PRINT);
         }catch(Exception $e){
             $response =  ["error"=>"Something went wrong"];
-            return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
+            return response()->json($response, 500);
         }
     }
     
@@ -279,13 +306,13 @@ class ProgramApi extends Controller
     {
         $input = Request::all();
         //query builder
-        $qb = DB::table('programs');
+        $qb = Program::query();
+        if (!array_key_exists('lean', $input)) {
+            $qb = Program::with('managers', 'staffs');
+        }
+        
 
-        $qb->whereNull('programs.deleted_at');
         $current_user = JWTAuth::parseToken()->authenticate();
-
-        $response;
-        $response_dt;
 
         $total_records          = $qb->count();
         $records_filtered       = 0;
@@ -293,47 +320,45 @@ class ProgramApi extends Controller
         //my_pm_assigned
         if(array_key_exists('my_pm_assigned', $input)&& $input['my_pm_assigned'] = "true"){
 
-
-            $qb->select(DB::raw('programs.*'))
-                 ->rightJoin('program_managers', 'program_managers.program_id', '=', 'programs.id')
-                 ->rightJoin('staff', 'staff.id', '=', 'program_managers.program_manager_id')
-                 ->where('staff.id', '=', $current_user->id)
-                 ->whereNotNull('programs.id')
-                 ->groupBy('programs.id')
-                 ->orderBy('programs.program_name', 'asc');
+            $qb = $qb->whereHas('managers', function ($query) use ($current_user) {
+                $query->where('program_manager_id', $current_user->id);
+            });
+            // $qb->select(DB::raw('programs.*'))
+            //      ->rightJoin('program_managers', 'program_managers.program_id', '=', 'programs.id')
+            //      ->rightJoin('staff', 'staff.id', '=', 'program_managers.program_manager_id')
+            //      ->where('staff.id', '=', $current_user->id)
+            //      ->whereNotNull('programs.id')
+            //      ->groupBy('programs.id')
+            //      ->orderBy('programs.program_name', 'asc');
         }
 
         // my assigned
         if (array_key_exists('my_assigned', $input)&& $input['my_assigned'] = "true") {
             if($current_user->hasRole(['program-manager'])){
                 $program_ids = ProgramManager::where('program_manager_id', $current_user->id)->pluck('program_id')->toArray();
-                $qb->whereIn('id', $program_ids);
+                $qb = $qb->whereIn('id', $program_ids);
             }
             else{
-                $qb->select(DB::raw('programs.*'))
-                ->rightJoin('program_teams', 'program_teams.program_id', '=', 'programs.id')
-                ->rightJoin('staff', 'staff.id', '=', 'program_teams.staff_id')
-                ->where('staff.id', '=', $current_user->id)
-                ->whereNotNull('programs.id')
-                ->groupBy('programs.id');
+                $program_ids = ProgramStaff::where('staff_id', $current_user->id)->pluck('program_id')->toArray();
+                $qb = $qb->whereIn('id', $program_ids);
+                // $qb->select(DB::raw('programs.*'))
+                // ->rightJoin('program_teams', 'program_teams.program_id', '=', 'programs.id')
+                // ->rightJoin('staff', 'staff.id', '=', 'program_teams.staff_id')
+                // ->where('staff.id', '=', $current_user->id)
+                // ->whereNotNull('programs.id')
+                // ->groupBy('programs.id');
             }            
         }
 
         //searching
         if(array_key_exists('searchval', $input)){
-            $qb->where(function ($query) use ($input) {
-                
-                $query->orWhere('programs.id','like', '\'%' . $input['searchval']. '%\'');
-                $query->orWhere('programs.program_name','like', '\'%' . $input['searchval']. '%\'');
-                $query->orWhere('programs.program_desc','like', '\'%' . $input['searchval']. '%\'');
+            $qb = $qb->where(function ($query) use ($input) {                
+                $query->where('program_name','like', '%' . $input['searchval']. '%');
+                $query->orWhere('program_desc','like', '%' . $input['searchval']. '%');
 
             });
 
-            $sql = Program::bind_presql($qb->toSql(),$qb->getBindings());
-            $sql = str_replace("*"," count(*) AS count ", $sql);
-            $dt = json_decode(json_encode(DB::select($sql)), true);
-
-            $records_filtered = (int) $dt[0]['count'];
+            $records_filtered = $qb->count();
         }
 
         //ordering
@@ -343,27 +368,22 @@ class ProgramApi extends Controller
             if(array_key_exists('order_dir', $input)&&$input['order_dir']!=''){                
                 $order_direction = $input['order_dir'];
             }
-            $qb->orderBy($order_column_name, $order_direction);
+            $qb = $qb->orderBy($order_column_name, $order_direction);
         }
 
         //limit
         if(array_key_exists('limit', $input)){
-            $qb->limit($input['limit']);
+            $qb = $qb->limit($input['limit']);
         }
 
         if(array_key_exists('datatables', $input)){
             //searching
-            $qb->where(function ($query) use ($input) {                
-                $query->orWhere('programs.id','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('programs.program_name','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('programs.program_desc','like', '\'%' . $input['search']['value']. '%\'');
+            $qb = $qb->where(function ($query) use ($input) {
+                $query->where('program_name','like', '%' . $input['search']['value']. '%');
+                $query->orWhere('program_desc','like', '%' . $input['search']['value']. '%');
             });
 
-            $sql = Program::bind_presql($qb->toSql(),$qb->getBindings());
-            $sql = str_replace("*"," count(*) AS count ", $sql);
-            $dt = json_decode(json_encode(DB::select($sql)), true);
-
-            $records_filtered = (int) $dt[0]['count'];
+            $records_filtered = $qb->count();
 
             //ordering
             $order_column_id    = (int) $input['order'][0]['column'];
@@ -371,36 +391,27 @@ class ProgramApi extends Controller
             $order_direction    = $input['order'][0]['dir'];
 
             if($order_column_name!=''){
-                $qb->orderBy($order_column_name, $order_direction);
+                $qb = $qb->orderBy($order_column_name, $order_direction);
             }
 
             //limit $ offset
             if((int)$input['start']!= 0 ){
-                $response_dt = $qb->limit($input['length'])->offset($input['start']);
+                $qb = $qb->limit($input['length'])->offset($input['start']);
             }else{
-                $qb->limit($input['length']);
+                $qb = $qb->limit($input['length']);
             }
 
-            $sql = Program::bind_presql($qb->toSql(),$qb->getBindings());
-
-            $response_dt = DB::select($sql);
-            $response_dt = json_decode(json_encode($response_dt), true);
-            $response_dt    = $this->append_relationships_objects($response_dt);
             $response       = Program::arr_to_dt_response( 
-                $response_dt, $input['draw'],
+                $qb->get(), $input['draw'],
                 $total_records,
                 $records_filtered
                 );
         }
         else{
-            $sql            = Program::bind_presql($qb->toSql(),$qb->getBindings());
-            $response       = json_decode(json_encode(DB::select($sql)), true);
-            if(!array_key_exists('lean', $input)){
-                $response       = $this->append_relationships_objects($response);
-            }
+            $response = $qb->get();
         }
 
-        return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+        return response()->json($response, 200);
     }
     
 

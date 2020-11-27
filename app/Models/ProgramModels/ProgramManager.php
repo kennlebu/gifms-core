@@ -8,8 +8,8 @@ use App\Models\BaseModels\BaseModel;
 
 class ProgramManager extends BaseModel
 {
-    //
     use SoftDeletes;
+    protected $guarded = ['id'];
 
     public function program_manager()
     {

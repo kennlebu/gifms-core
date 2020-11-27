@@ -22,6 +22,7 @@ use Exception;
 use App\Models\StaffModels\Staff;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\NotifyNewStaff;
+use App\Models\ProgramModels\ProgramManager;
 use App\Models\ProgramModels\ProgramStaff;
 
 class StaffApi extends Controller
@@ -425,15 +426,17 @@ class StaffApi extends Controller
                 if(array_key_exists('for_requester', $input)){
                     $uid = $input['for_requester'];
                 }
-                $program_teams = ProgramStaff::with('program.managers')->where('staff_id', $uid)->get();
+                // $program_teams = ProgramStaff::with('program')->where('staff_id', $uid)->get();
+                $staff_programs = ProgramStaff::where('staff_id', $uid)->pluck('program_id')->toArray();
+                $staff_pms = ProgramManager::whereIn('program_id', $staff_programs)->pluck('program_manager_id')->toArray();
 
-                $program_managers = [];
+                // $program_managers = [];
                 
-                foreach($program_teams as $team){
-                    $program_managers[] = $team->program->managers->program_manager_id;
-                }
+                // foreach($program_teams as $team){
+                //     $program_managers[] = $team->program_managers->id;
+                // }
 
-                $qb = $qb->whereIn('id',$program_managers)->groupBy('id');
+                $qb = $qb->whereIn('id',$staff_pms)->groupBy('id');
             }
 
             // Get only directors for PMs and above if it's line managers required
