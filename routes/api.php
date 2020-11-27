@@ -5512,3 +5512,19 @@ Route::post('document', 'DocumentsApi@store')->middleware('jwt.auth');
 Route::get('document/{entity}/{filename}', 'DocumentsApi@getDocument')->middleware('jwt.auth');
 Route::post('document/update', 'DocumentsApi@update')->middleware('jwt.auth');
 Route::DELETE('document/{id}', 'DocumentsApi@delete')->middleware('jwt.auth');
+
+
+/* Inventory */
+Route::GET('inventory-statuses', 'InventoryApi@getStatuses')->middleware('jwt.auth');
+Route::GET('inventory-categories', 'InventoryApi@getCategories')->middleware('jwt.auth');
+Route::GET('inventory-descriptions', 'InventoryApi@getDescriptions')->middleware('jwt.auth');
+Route::GET('inventory-names', 'InventoryApi@getNames')->middleware('jwt.auth');
+Route::GET('inventories', 'InventoryApi@getInventory')->middleware('jwt.auth');
+Route::POST('inventory', 'InventoryApi@addInventory')->middleware('jwt.auth');
+Route::POST('inventory/category', 'InventoryApi@addCategory')->middleware('jwt.auth');
+Route::POST('inventory/name', 'InventoryApi@addInventoryName')->middleware('jwt.auth');
+Route::POST('inventory/description', 'InventoryApi@addDescription')->middleware('jwt.auth');
+Route::PATCH('inventory/{id}', 'InventoryApi@updateInventory')->middleware('jwt.auth');
+Route::DELETE('inventory/{id}', 'InventoryApi@deleteInventory')->middleware('jwt.auth');
+Route::GET('inventory/{id}', 'InventoryApi@getOneInventory')->middleware('jwt.auth');
+Route::POST('inventory/issue', 'InventoryApi@issueInventory')->middleware('jwt.auth');

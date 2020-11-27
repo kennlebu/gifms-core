@@ -2317,3 +2317,91 @@ UPDATE `permissions` SET `display_name` = 'Approve Mobile Payment (Management Ap
 UPDATE `permissions` SET `display_name` = 'Approve Mobile Payment (Finance Approval)' WHERE `name` LIKE '%APPROVE_MOBILE_PAYMENT%' AND `id` = '181';
 UPDATE `permissions` SET `display_name` = 'Approve Mobile Payment (Accountant Review)' WHERE `name` LIKE '%APPROVE_MOBILE_PAYMENT%' AND `id` = '180';
 UPDATE `permissions` SET `display_name` = 'Approve Mobile Payment (PM Approval)' WHERE `name` LIKE '%APPROVE_MOBILE_PAYMENT%' AND `id` = '179';
+
+===== Inventory tables
+CREATE TABLE `inventory` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `inventory_name_id` int NULL,
+  `inventory_category_id` int NULL,
+  `description` text NULL,
+  `quantity` int NULL,
+  `lpo_id` int NULL,
+  `added_by_id` int NULL,
+  `created_at` timestamp NULL,
+  `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL
+);
+CREATE TABLE `inventory_movements` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `inventory_id` int NULL,
+  `from` text NULL,
+  `to` text NULL,
+  `initiated_by_id` int NULL,
+  `quantity` int NULL,
+  `type` int NULL,
+  `created_at` timestamp NULL,
+  `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
+  `de` int NOT NULL
+);
+ALTER TABLE `inventory_movements`
+CHANGE `updated_at` `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP AFTER `created_at`,
+CHANGE `de` `deleted_at` timestamp NULL AFTER `updated_at`;
+
+CREATE TABLE `inventory_categories` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `category` text NULL
+);
+INSERT INTO `inventory_categories` (`category`)
+VALUES ('Stationery');
+INSERT INTO `inventory_categories` (`category`)
+VALUES ('Kitchen Supplies');
+INSERT INTO `inventory_categories` (`category`)
+VALUES ('Other Supplies');
+
+CREATE TABLE `inventory_descriptions` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `description` text NULL,
+  `created_at` timestamp NULL,
+  `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL
+);
+
+CREATE TABLE `inventory_statuses` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `status` text NULL
+);
+INSERT INTO `inventory_statuses` (`status`) VALUES ('In store');
+INSERT INTO `inventory_statuses` (`status`) VALUES ('Issued');
+INSERT INTO `inventory_statuses` (`status`) VALUES ('Loss');
+
+ALTER TABLE `inventory`
+ADD `status_id` int(11) NULL AFTER `added_by_id`,
+CHANGE `updated_at` `updated_at` timestamp NULL AFTER `created_at`;
+
+CREATE TABLE `inventory_names` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `name` text NULL,
+  `created_at` timestamp NULL,
+  `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL
+);
+
+ALTER TABLE `inventory`
+CHANGE `description` `description_id` int(11) NULL AFTER `inventory_category_id`;
+
+INSERT INTO `permissions` (`name`, `display_name`, `description`, `entity`, `operation_type`, `at_status_id`, `approval_level_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Manage Inventory', 'Manage Inventory', NULL, 'Inventory', 'Processing', NULL, NULL, now(), now(), NULL);
+
+INSERT INTO `role_permissions` (`permission_id`, `role_id`)
+VALUES ('271', '1'), ('271', '2'), ('271', '5'), ('271', '8'), ('271', '9'), ('271', '10'), ('271', '12'), ('271', '13');
+
+ALTER TABLE `inventory_descriptions`
+ADD `inventory_name_id` int(4) NULL AFTER `description`,
+CHANGE `updated_at` `updated_at` timestamp NULL AFTER `created_at`;
+
+ALTER TABLE `inventory_movements`
+ADD `inventory_name_id` int NULL AFTER `inventory_id`,
+CHANGE `updated_at` `updated_at` timestamp NULL AFTER `created_at`;
+
+ALTER TABLE `inventory_movements`
+CHANGE `type` `to_type` varchar(15) NULL AFTER `quantity`;
