@@ -24,25 +24,30 @@ class InventoryApi extends Controller
     }
 
     public function addInventory(Request $request) {
-        $inventory = new Inventory();
-        $inventory->inventory_name_id = $request->inventory_name_id;
-        $inventory->inventory_category_id = $request->inventory_category_id;
-        $inventory->description_id = $request->description_id;
-        $inventory->quantity = $request->quantity;
-        $inventory->lpo_id = $request->lpo_id;
-        $inventory->added_by_id = $this->current_user()->id;
-        $inventory->status_id = $request->status_id;
-        $inventory->save();
 
-        $movement = new InventoryMovement();
-        $movement->inventory_id = $inventory->id;
-        $movement->inventory_name_id = $inventory->inventory_name_id;
-        // $movement->from = 'addition';
-        $movement->to = 'Store';
-        $movement->initiated_by_id = $this->current_user()->id;
-        $movement->quantity = $inventory->quantity;
-        $movement->to_type = 'Store';
-        $movement->save();
+        $descriptions_array = json_decode($request->descriptions);
+        foreach($descriptions_array as $da) {
+            $inventory = new Inventory();
+            $inventory->inventory_name_id = $request->inventory_name_id;
+            $inventory->inventory_category_id = $request->inventory_category_id;
+            $inventory->description_id = $da->description_id;
+            $inventory->quantity = $da->quantity;
+            $inventory->lpo_id = $request->lpo_id;
+            $inventory->added_by_id = $this->current_user()->id;
+            $inventory->status_id = $request->status_id;
+            $inventory->save();
+
+            $movement = new InventoryMovement();
+            $movement->inventory_id = $inventory->id;
+            $movement->inventory_name_id = $request->inventory_name_id;
+            $inventory->description_id = $da->description_id;
+            // $movement->from = 'addition';
+            $movement->to = 'Store';
+            $movement->initiated_by_id = $this->current_user()->id;
+            $movement->quantity = $da->quantity;
+            $movement->to_type = 'Store';
+            $movement->save();
+        }        
 
         return response()->json(['msg'=>'Success'], 200);
     }
@@ -60,33 +65,38 @@ class InventoryApi extends Controller
     }
 
     public function getOneInventory(Request $request, $id) {
-        $inventory = Inventory::with('name', 'description', 'category', 'movement', 'status', 'lpo', 'added_by')->findOrFail($id);
+        $inventory = Inventory::with('name', 'description', 'category', 'movements', 'status', 'lpo', 'added_by')->findOrFail($id);
+        $multiple = Inventory::with('description')->where('inventory_name_id', $inventory->inventory_name_id)->groupBy('description_id')->get();
+        $inventory['descriptions_array'] = $multiple;
 
         return response()->json($inventory, 200);
     }
 
     public function deleteInventory($id) {
-        $inventory = Inventory::findOrFail($id);
+        $inventory = Inventory::where('inventory_name_id', $id)->get();
 
-        $movement = new InventoryMovement();
-        $movement->inventory_id = $inventory->id;
-        $movement->inventory_name_id = $inventory->inventory_name_id;
-        $movement->from = 'Store';
-        $movement->to = 'Deleted';
-        $movement->initiated_by_id = $this->current_user()->id;
-        $movement->quantity = 0 - (int)$inventory->totals;
-        $movement->to_type = 'Delete';
-        $movement->save();
+        foreach($inventory as $item) {
+            $movement = new InventoryMovement();
+            $movement->inventory_id = $item->id;
+            $movement->inventory_name_id = $item->inventory_name_id;
+            $movement->description_id = $item->description_id;
+            $movement->from = 'Store';
+            $movement->to = 'Deleted';
+            $movement->initiated_by_id = $this->current_user()->id;
+            $movement->quantity = 0 - (int)$item->quantity;
+            $movement->to_type = 'Delete';
+            $movement->save();
 
-        Inventory::where('inventory_name_id', $inventory->inventory_name_id)->delete();
-
+            $inventory->delete();
+        }
 
         return response()->json(['msg'=>'Success'], 200);
     }
 
     public function issueInventory(Request $request) {
         $movement = new InventoryMovement();
-        $movement->inventory_name_id = $request->inventory_name_id;        
+        $movement->inventory_name_id = $request->inventory_name_id;
+        $movement->description_id = $request->description_id;
         $movement->from = 'Store';
         if($request->to_type === 'Staff') {
             $movement->to = $request->staff_id;

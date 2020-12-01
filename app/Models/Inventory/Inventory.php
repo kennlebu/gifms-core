@@ -9,7 +9,7 @@ class Inventory extends Model
 {
     use SoftDeletes;
     protected $table = 'inventory';
-    protected $appends = ['totals', 'description_text'];
+    protected $appends = ['totals', 'description_text', 'description_totals'];
 
     public function status()
     {
@@ -31,7 +31,7 @@ class Inventory extends Model
         return $this->belongsTo('App\Models\Inventory\InventoryName','inventory_name_id');
     }
 
-    public function movement()
+    public function movements()
     {
         return $this->hasMany('App\Models\Inventory\InventoryMovement','inventory_id');
     }
@@ -66,5 +66,11 @@ class Inventory extends Model
             $count++;
         }
         return $text;
+    }
+
+    public function getDescriptionTotalsAttribute() {
+        $total = 0;
+        $total = InventoryMovement::where('inventory_name_id', $this->inventory_name_id)->where('description_id', $this->description_id)->sum('quantity');
+        return $total;        
     }
 }

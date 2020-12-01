@@ -2318,7 +2318,7 @@ UPDATE `permissions` SET `display_name` = 'Approve Mobile Payment (Finance Appro
 UPDATE `permissions` SET `display_name` = 'Approve Mobile Payment (Accountant Review)' WHERE `name` LIKE '%APPROVE_MOBILE_PAYMENT%' AND `id` = '180';
 UPDATE `permissions` SET `display_name` = 'Approve Mobile Payment (PM Approval)' WHERE `name` LIKE '%APPROVE_MOBILE_PAYMENT%' AND `id` = '179';
 
-===== Inventory tables
++~===== Inventory tables
 CREATE TABLE `inventory` (
   `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `inventory_name_id` int NULL,
@@ -2405,3 +2405,6 @@ CHANGE `updated_at` `updated_at` timestamp NULL AFTER `created_at`;
 
 ALTER TABLE `inventory_movements`
 CHANGE `type` `to_type` varchar(15) NULL AFTER `quantity`;
+
+ALTER TABLE `inventory_movements`
+ADD `description_id` int(11) NULL AFTER `inventory_name_id`;
