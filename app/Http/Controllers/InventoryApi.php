@@ -35,6 +35,7 @@ class InventoryApi extends Controller
             $inventory->lpo_id = $request->lpo_id;
             $inventory->added_by_id = $this->current_user()->id;
             $inventory->status_id = $request->status_id;
+            $inventory->delivery_item_id = $request->delivery_item_id ?? null;
             $inventory->save();
 
             $movement = new InventoryMovement();
