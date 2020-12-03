@@ -41,7 +41,7 @@ class InventoryApi extends Controller
             $movement = new InventoryMovement();
             $movement->inventory_id = $inventory->id;
             $movement->inventory_name_id = $request->inventory_name_id;
-            $inventory->description_id = $da->description_id;
+            $movement->description_id = $da->description_id;
             // $movement->from = 'addition';
             $movement->to = 'Store';
             $movement->initiated_by_id = $this->current_user()->id;
