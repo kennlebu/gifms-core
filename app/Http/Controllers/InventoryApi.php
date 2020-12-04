@@ -48,7 +48,7 @@ class InventoryApi extends Controller
             $movement->quantity = $da->quantity;
             $movement->to_type = 'Store';
             $movement->save();
-        }        
+        }
 
         return response()->json(['msg'=>'Success'], 200);
     }
@@ -66,7 +66,7 @@ class InventoryApi extends Controller
     }
 
     public function getOneInventory(Request $request, $id) {
-        $inventory = Inventory::with('name', 'description', 'category', 'movements', 'status', 'lpo', 'added_by')->findOrFail($id);
+        $inventory = Inventory::with('name.descriptions', 'description', 'category', 'movements', 'status', 'lpo', 'added_by')->findOrFail($id);
         $multiple = Inventory::with('description')->where('inventory_name_id', $inventory->inventory_name_id)->groupBy('description_id')->get();
         $inventory['descriptions_array'] = $multiple;
 
@@ -95,20 +95,26 @@ class InventoryApi extends Controller
     }
 
     public function issueInventory(Request $request) {
-        $movement = new InventoryMovement();
-        $movement->inventory_name_id = $request->inventory_name_id;
-        $movement->description_id = $request->description_id;
-        $movement->from = 'Store';
-        if($request->to_type === 'Staff') {
-            $movement->to = $request->staff_id;
+
+        $descriptions_array = json_decode($request->descriptions);
+        foreach($descriptions_array as $da) {
+
+            $movement = new InventoryMovement();
+            // $movement->inventory_id = $inventory->id;
+            $movement->inventory_name_id = $request->inventory_name_id;
+            $movement->description_id = $da->description_id;
+            $movement->from = 'Store';
+            if($request->to_type === 'Staff') {
+                $movement->to = $request->staff_id;
+            }
+            else {
+                $movement->to = $request->to_type;            
+            }
+            $movement->initiated_by_id = $this->current_user()->id;
+            $movement->quantity = 0 - (int)$da->quantity;
+            $movement->to_type = $request->to_type;
+            $movement->save();
         }
-        else {
-            $movement->to = $request->to_type;            
-        }
-        $movement->initiated_by_id = $this->current_user()->id;
-        $movement->quantity = 0 - (int)$request->quantity;
-        $movement->to_type = $request->to_type;
-        $movement->save();
 
         return response()->json(['msg'=>'Success'], 200);
     }
