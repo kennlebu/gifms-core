@@ -5528,3 +5528,4 @@ Route::PATCH('inventory/{id}', 'InventoryApi@updateInventory')->middleware('jwt.
 Route::DELETE('inventory/{id}', 'InventoryApi@deleteInventory')->middleware('jwt.auth');
 Route::GET('inventory/{id}', 'InventoryApi@getOneInventory')->middleware('jwt.auth');
 Route::POST('inventory/issue', 'InventoryApi@issueInventory')->middleware('jwt.auth');
+Route::POST('inventory/report-loss', 'InventoryApi@reportLoss')->middleware('jwt.auth');

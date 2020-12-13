@@ -2419,3 +2419,7 @@ VALUES ('272', '1'), ('272', '2'), ('272', '5'), ('272', '8'), ('272', '9'), ('2
 +~===== Changes to inventory
 ALTER TABLE `inventory`
 ADD `delivery_item_id` int(11) NULL AFTER `lpo_id`;
+
+===== Add remarks column to inventory movements table
+ALTER TABLE `inventory_movements`
+ADD `remarks` text COLLATE 'latin1_swedish_ci' NULL AFTER `to_type`;

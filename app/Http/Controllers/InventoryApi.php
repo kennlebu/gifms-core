@@ -119,6 +119,25 @@ class InventoryApi extends Controller
         return response()->json(['msg'=>'Success'], 200);
     }
 
+    public function reportLoss(Request $request) {
+        $descriptions_array = json_decode($request->descriptions);
+        foreach($descriptions_array as $da) {
+
+            $movement = new InventoryMovement();
+            // $movement->inventory_id = $inventory->id;
+            $movement->inventory_name_id = $request->inventory_name_id;
+            $movement->description_id = $da->description_id;
+            $movement->from = 'Store';
+            $movement->to = 'Loss';
+            $movement->initiated_by_id = $this->current_user()->id;
+            $movement->quantity = 0 - (int)$da->quantity;
+            $movement->remarks = $request->remarks;
+            $movement->save();
+        }
+
+        return response()->json(['msg'=>'Success'], 200);
+    }
+
     public function getStatuses() {
         $statuses = InventoryStatus::all();
         return response()->json($statuses, 200);
