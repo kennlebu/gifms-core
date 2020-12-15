@@ -254,7 +254,7 @@ class SupplierApi extends Controller
         try{
             $input = Request::all();
             $response = Supplier::with('bank','bank_branch','payment_mode','county','supply_category','documents.added_by',
-                        'supply_categories')->findOrFail($supplier_id);  
+                        'supply_categories.service_types')->findOrFail($supplier_id);  
             if(array_key_exists('with_transactions', $input)){
                 $response['transactions'] = $response->getTransactionsAttribute();
             }

@@ -2438,3 +2438,31 @@ CREATE TABLE `asset_depriciation_classes` (
 ALTER TABLE `asset_types`
 ADD `depriciation_class_id` int NULL AFTER `type`,
 CHANGE `updated_at` `updated_at` timestamp NULL AFTER `created_at`;
+
+===== Supply category services
+CREATE TABLE `supply_category_services` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `supply_category_id` int NULL,
+  `supplier_service_type_id` int NULL
+);
+
+CREATE TABLE `supplier_service_types` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `service_type` text NULL
+);
+
+ALTER TABLE `supplier_service_types`
+ADD `display_value` text COLLATE 'latin1_swedish_ci' NULL;
+
+INSERT INTO `supplier_service_types` (`service_type`, `display_value`)
+VALUES ('service', 'Service');
+INSERT INTO `supplier_service_types` (`service_type`, `display_value`)
+VALUES ('goods', 'Goods (assets)');
+INSERT INTO `supplier_service_types` (`service_type`, `display_value`)
+VALUES ('consumables', 'Consumables/Inventory');
+INSERT INTO `supplier_service_types` (`service_type`, `display_value`)
+VALUES ('statutory', 'Statutory payments');
+INSERT INTO `supplier_service_types` (`service_type`, `display_value`)
+VALUES ('jobs', 'Service Jobs');
+
+php artisan refractor:supplier-services

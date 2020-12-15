@@ -17,6 +17,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Request;
 use App\Models\SuppliesModels\SupplierService;
+use App\Models\SuppliesModels\SupplierServiceType;
 use Illuminate\Support\Facades\DB;
 
 class SupplierServiceApi extends Controller
@@ -158,5 +159,10 @@ class SupplierServiceApi extends Controller
         }
 
         return response()->json($response, 200);
+    }
+
+    public function supplierServiceTypesGet() {
+        $service_types = SupplierServiceType::all();
+        return response()->json($service_types, 200);
     }
 }

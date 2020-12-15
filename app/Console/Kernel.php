@@ -26,7 +26,8 @@ class Kernel extends ConsoleKernel
         Commands\PopuateVatPercentage::class,
         Commands\RefractorSupplyCategories::class,
         Commands\RemoveVoucherDuplicates::class,
-        Commands\RestoreVoucherNumbers::class
+        Commands\RestoreVoucherNumbers::class,
+        Commands\RefractorSupplierServices::class
     ];
 
     /**

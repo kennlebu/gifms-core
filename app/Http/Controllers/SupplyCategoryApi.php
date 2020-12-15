@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\DB;
 
 use App\Models\SuppliesModels\SupplyCategory;
+use App\Models\SuppliesModels\SupplyCategoryService;
 use Exception;
 
 class SupplyCategoryApi extends Controller
@@ -37,11 +38,15 @@ class SupplyCategoryApi extends Controller
 
         $supply_category = new SupplyCategory;
         $supply_category->supply_category_name = $form['supply_category_name'];
-        $supply_category->service_type = $form['service_type'];
+        // $supply_category->service_type = $form['service_type'];
+        $supply_category->save();
 
-        if($supply_category->save()) {
-            return Response()->json(array('msg' => 'Success: supply_category added','supply_category' => $supply_category), 200);
+        $service_types = json_decode($form['service_types']);
+        foreach($service_types as $st) {
+            SupplyCategoryService::create(['supply_category_id' => $supply_category->id, 'supplier_service_type_id' => $st->id]);
         }
+
+        return Response()->json(['msg' => 'Success'], 200);
     }
     
 
@@ -75,14 +80,20 @@ class SupplyCategoryApi extends Controller
     public function updateSupplyCategory()
     {
         $form = Request::all();
-
         $supply_category = SupplyCategory::find($form['id']);
         $supply_category->supply_category_name = $form['supply_category_name'];
-        $supply_category->service_type = $form['service_type'];
+        // $supply_category->service_type = $form['service_type'];
+        $supply_category->save();
 
-        if($supply_category->save()) {
-            return Response()->json(array('msg' => 'Success: supply_category updated','supply_category' => $supply_category), 200);
+        $service_types = json_decode($form['service_types']);
+        // Delete the previous ones
+        SupplyCategoryService::where('supply_category_id', $form['id'])->delete();
+        // Add the new ones
+        foreach($service_types as $st) {
+            SupplyCategoryService::create(['supply_category_id' => $supply_category->id, 'supplier_service_type_id' => $st->id]);
         }
+
+        return Response()->json(['msg' => 'Success'], 200);
     }
     
 
@@ -118,9 +129,9 @@ class SupplyCategoryApi extends Controller
     {
         $deleted = SupplyCategory::destroy($supply_category_id);
         if($deleted){
-            return response()->json(['msg'=>"supply_category deleted"], 200,array(),JSON_PRETTY_PRINT);
+            return response()->json(['msg'=>"supply_category deleted"], 200);
         }else{
-            return response()->json(['error'=>"Something went wrong"], 500,array(),JSON_PRETTY_PRINT);
+            return response()->json(['error'=>"Something went wrong"], 500);
         }
     }
     
@@ -158,11 +169,11 @@ class SupplyCategoryApi extends Controller
     {
         try{
             $response   = SupplyCategory::findOrFail($supply_category_id);           
-            return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+            return response()->json($response, 200);
 
         }catch(Exception $e){
             $response =  ["error"=>"Something went wrong"];
-            return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
+            return response()->json($response, 500);
         }
     }
     
@@ -198,28 +209,18 @@ class SupplyCategoryApi extends Controller
     {
         $input = Request::all();
         //query builder
-        $qb = DB::table('supply_categories');
-
-        $qb->whereNull('supply_categories.deleted_at');
-
-        $response;
-        $response_dt;
+        $qb = SupplyCategory::with('service_types');
 
         $total_records          = $qb->count();
         $records_filtered       = 0;
 
         //searching
         if(array_key_exists('searchval', $input)){
-            $qb->where(function ($query) use ($input) {                
-                $query->orWhere('supply_categories.id','like', '\'%' . $input['searchval']. '%\'');
-                $query->orWhere('supply_categories.supply_category_name','like', '\'%' . $input['searchval']. '%\'');
+            $qb = $qb->where(function ($query) use ($input) {
+                $query->orWhere('supply_category_name','like', '%' . $input['searchval']. '%');
             });
 
-            $sql = SupplyCategory::bind_presql($qb->toSql(),$qb->getBindings());
-            $sql = str_replace("*"," count(*) AS count ", $sql);
-            $dt = json_decode(json_encode(DB::select($sql)), true);
-
-            $records_filtered = (int) $dt[0]['count'];
+            $records_filtered = $qb->count();
         }
 
         //ordering
@@ -230,28 +231,23 @@ class SupplyCategoryApi extends Controller
                 $order_direction = $input['order_dir'];
             }
 
-            $qb->orderBy($order_column_name, $order_direction);
+            $qb = $qb->orderBy($order_column_name, $order_direction);
         }else{
-            $qb->orderBy("supply_category_name", "asc");
+            $qb = $qb->orderBy("supply_category_name", "asc");
         }
 
         //limit
         if(array_key_exists('limit', $input)){
-            $qb->limit($input['limit']);
+            $qb = $qb->limit($input['limit']);
         }
 
         if(array_key_exists('datatables', $input)){
             //searching
-            $qb->where(function ($query) use ($input) {                
-                $query->orWhere('supply_categories.id','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('supply_categories.supply_category_name','like', '\'%' . $input['search']['value']. '%\'');
+            $qb = $qb->where(function ($query) use ($input) {
+                $query->orWhere('supply_category_name','like', '%' . $input['search']['value']. '%');
             });
 
-            $sql = SupplyCategory::bind_presql($qb->toSql(),$qb->getBindings());
-            $sql = str_replace("*"," count(*) AS count ", $sql);
-            $dt = json_decode(json_encode(DB::select($sql)), true);
-
-            $records_filtered = (int) $dt[0]['count'];
+            $records_filtered = $qb->count();
 
             //ordering
             $order_column_id    = (int) $input['order'][0]['column'];
@@ -259,31 +255,26 @@ class SupplyCategoryApi extends Controller
             $order_direction    = $input['order'][0]['dir'];
 
             if($order_column_name!=''){
-                $qb->orderBy($order_column_name, $order_direction);
+                $qb = $qb->orderBy($order_column_name, $order_direction);
             }
 
             //limit $ offset
             if((int)$input['start']!= 0 ){
-                $response_dt    =   $qb->limit($input['length'])->offset($input['start']);
+                $qb = $qb->limit($input['length'])->offset($input['start']);
             }else{
-                $qb->limit($input['length']);
+                $qb = $qb->limit($input['length']);
             }
 
-            $sql = SupplyCategory::bind_presql($qb->toSql(),$qb->getBindings());
-
-            $response_dt = DB::select($sql);
-            $response_dt = json_decode(json_encode($response_dt), true);
-            $response       = SupplyCategory::arr_to_dt_response( 
-                $response_dt, $input['draw'],
+            $response = SupplyCategory::arr_to_dt_response( 
+                $qb->get(), $input['draw'],
                 $total_records,
                 $records_filtered
                 );
         }
         else{
-            $sql            = SupplyCategory::bind_presql($qb->toSql(),$qb->getBindings());
-            $response       = json_decode(json_encode(DB::select($sql)), true);
+            $response = $qb->get();
         }
 
-        return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+        return response()->json($response, 200);
     }
 }

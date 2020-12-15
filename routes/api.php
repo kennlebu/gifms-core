@@ -1587,6 +1587,7 @@ Route::PUT('/supplier-services', 'SupplierServiceApi@updateSupplierService')->mi
 Route::DELETE('/supplier-services/{supplier_service_id}', 'SupplierServiceApi@deleteSupplierService')->middleware('jwt.auth');
 Route::GET('/supplier-services/{supplier_service_id}', 'SupplierServiceApi@getSupplierServiceById')->middleware('jwt.auth');
 Route::GET('/supplier-services', 'SupplierServiceApi@supplierServicesGet')->middleware('jwt.auth');
+Route::GET('/supplier-service-types', 'SupplierServiceApi@supplierServiceTypesGet')->middleware('jwt.auth');
 
 
 
@@ -1645,7 +1646,7 @@ Route::POST('/supply_category', 'SupplyCategoryApi@addSupplyCategory')->middlewa
  * Notes: 
  * Output-Formats: [application/json, application/xml]
  */
-Route::PUT('/supply_category', 'SupplyCategoryApi@updateSupplyCategory')->middleware('jwt.auth');
+Route::POST('/supply_category/edit', 'SupplyCategoryApi@updateSupplyCategory')->middleware('jwt.auth');
 /**
  * DELETE deleteSupplyCategory
  * Summary: Deletes an supply_category
