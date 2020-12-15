@@ -5432,6 +5432,12 @@ Route::PUT('/assets/type', 'AssetApi@updateAssetType')->middleware('jwt.auth');
 Route::GET('/assets/types', 'AssetApi@getAssetTypes')->middleware('jwt.auth');
 Route::GET('/assets/type/{id}', 'AssetApi@getAssetType')->middleware('jwt.auth');
 Route::DELETE('/assets/type/{id}', 'AssetApi@deleteAssetType')->middleware('jwt.auth');
+// Depriciation classes
+Route::POST('assets/depriciation-class', 'AssetApi@addDepriciationClass')->middleware('jwt.auth');
+Route::PUT('/assets/depriciation-class', 'AssetApi@updateDepriciationClass')->middleware('jwt.auth');
+Route::GET('/assets/depriciation-classes', 'AssetApi@getDepriciationClasses')->middleware('jwt.auth');
+Route::GET('/assets/depriciation-class/{id}', 'AssetApi@getDepriciationClass')->middleware('jwt.auth');
+Route::DELETE('/assets/depriciation-class/{id}', 'AssetApi@deleteDepriciationClass')->middleware('jwt.auth');
 // Names
 Route::POST('assets/names', 'AssetApi@addAssetName')->middleware('jwt.auth');
 Route::PUT('/assets/name', 'AssetApi@updateAssetName')->middleware('jwt.auth');

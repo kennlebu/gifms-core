@@ -18,6 +18,7 @@ use PDF;
 use JWTAuth;
 use Illuminate\Support\Facades\Response;
 use Anchu\Ftp\Facades\Ftp;
+use App\Models\Assets\AssetDepriciationClass;
 use App\Models\Assets\AssetLoss;
 use App\Models\DeliveriesModels\DeliveryItem;
 use App\Models\InvoicesModels\Invoice;
@@ -111,7 +112,7 @@ class AssetApi extends Controller
 
     public function getAsset($id){
         $asset = Asset::with(['class','assigned_to','insurance_type','location','staff_responsible',
-                            'status','supplier','type','logs.causer','lpo', 'asset_name'])
+                            'status','supplier','type.depriciation_class','logs.causer','lpo', 'asset_name'])
                         ->where('id', $id)
                         ->firstOrFail();           
         return response()->json($asset, 200, array(), JSON_PRETTY_PRINT);
@@ -1124,7 +1125,7 @@ class AssetApi extends Controller
 
                     //searching
                     $assets = $assets->where(function ($query) use ($input) {                
-                        $query->where('name','like', '\'%' . $input['search']['value']. '%\'');
+                        $query->where('name','like', '%' . $input['search']['value']. '%');
                     });
 
                     $records_filtered = $assets->count();
@@ -1201,13 +1202,13 @@ class AssetApi extends Controller
     public function getAssetTypes(){
         try{
             $input = Request::all();
-            $assets = AssetType::query();
+            $assets = AssetType::with('depriciation_class');
             if(array_key_exists('datatables', $input)){             // Datatables
                     $total_records = $assets->count();
 
                     //searching
                     $assets = $assets->where(function ($query) use ($input) {                
-                        $query->where('type','like', '\'%' . $input['search']['value']. '%\'');
+                        $query->where('type','like', '%' . $input['search']['value']. '%');
                     });
 
                     $records_filtered = $assets->count();
@@ -1260,6 +1261,89 @@ class AssetApi extends Controller
 
 
     /**
+     * Asset wear & tear classes
+     */   
+    
+    public function addDepriciationClass(){
+        $input = Request::all();
+        $asset = AssetDepriciationClass::create($input);
+        return Response()->json(array('msg' => 'Success: Depriciation class added','data' => $asset), 200);
+    }
+
+    public function updateDepriciationClass(){
+        $input = Request::all();
+        $asset = AssetDepriciationClass::findOrFail($input['id']);
+        $asset = $asset->update(['class' => $input['class'], 'percentage' => $input['percentage']]);
+        return Response()->json(array('msg' => 'Success: depriciation class updated','data' => $asset), 200);
+    }
+
+    public function getDepriciationClass($id){
+        $asset = AssetDepriciationClass::findOrFail($id);           
+        return response()->json($asset, 200);
+    }
+
+    public function getDepriciationClasses(){
+        try{
+            $input = Request::all();
+            $assets = AssetDepriciationClass::query();
+            if(array_key_exists('datatables', $input)){             // Datatables
+                    $total_records = $assets->count();
+
+                    //searching
+                    $assets = $assets->where(function ($query) use ($input) {                
+                        $query->where('class','like', '%' . $input['search']['value']. '%');
+                    });
+
+                    $records_filtered = $assets->count();
+        
+                    //ordering
+                    $order_column_id    = (int) $input['order'][0]['column'];
+                    $order_column_name  = $input['columns'][$order_column_id]['order_by'];
+                    $order_direction    = $input['order'][0]['dir'];
+        
+                    if($order_column_name!=''){
+                        $assets = $assets->orderBy($order_column_name, $order_direction);
+                    }
+        
+                    //limit offset
+                    if((int)$input['start']!= 0 ){
+                        $assets = $assets->limit($input['length'])->offset($input['start']);
+                    }
+                    else{
+                        $assets = $assets->limit($input['length']);
+                    }
+        
+                    $assets = $assets->get();
+        
+                    $assets = AssetType::arr_to_dt_response( 
+                        $assets, $input['draw'],
+                        $total_records,
+                        $records_filtered
+                        );
+            }
+            else{
+                $assets = $assets->get();
+            }
+
+            return response()->json($assets, 200); 
+        }
+        catch(\Exception $e){
+            return response()->json(['error'=>'something went wrong', 'msg'=>$e->getMessage()], 500);
+        }       
+    }
+
+    public function deleteDepriciationClass($id){
+        $deleted = AssetDepriciationClass::destroy($id);
+        if($deleted){
+            return response()->json(['msg'=>"Asset type removed"], 200);
+        }else{
+            return response()->json(['error'=>"Something went wrong"], 500);
+        }
+    }
+
+
+
+    /**
      * Asset statuses
      */   
     
@@ -1290,7 +1374,7 @@ class AssetApi extends Controller
 
                     //searching
                     $assets = $assets->where(function ($query) use ($input) {                
-                        $query->where('status','like', '\'%' . $input['search']['value']. '%\'');
+                        $query->where('status','like', '%' . $input['search']['value']. '%');
                     });
 
                     $records_filtered = $assets->count();
@@ -1349,9 +1433,9 @@ class AssetApi extends Controller
     public function deleteAssetStatus($id){
         $deleted = AssetStatus::destroy($id);
         if($deleted){
-            return response()->json(['msg'=>"Asset status removed"], 200,array(),JSON_PRETTY_PRINT);
+            return response()->json(['msg'=>"Asset status removed"], 200);
         }else{
-            return response()->json(['error'=>"Something went wrong"], 500, array(), JSON_PRETTY_PRINT);
+            return response()->json(['error'=>"Something went wrong"], 500);
         }
     }
 
@@ -1376,7 +1460,7 @@ class AssetApi extends Controller
 
     public function getAssetClass($id){
         $asset = AssetClass::findOrFail($id);           
-        return response()->json($asset, 200, array(), JSON_PRETTY_PRINT);
+        return response()->json($asset, 200);
     }
 
     public function getAssetClasses(){
@@ -1388,7 +1472,7 @@ class AssetApi extends Controller
 
                     //searching
                     $assets = $assets->where(function ($query) use ($input) {                
-                        $query->where('name','like', '\'%' . $input['search']['value']. '%\'');
+                        $query->where('name','like', '%' . $input['search']['value']. '%');
                     });
 
                     $records_filtered = $assets->count();
@@ -1432,9 +1516,9 @@ class AssetApi extends Controller
     public function deleteAssetClass($id){
         $deleted = AssetClass::destroy($id);
         if($deleted){
-            return response()->json(['msg'=>"Asset class removed"], 200,array(),JSON_PRETTY_PRINT);
+            return response()->json(['msg'=>"Asset class removed"], 200);
         }else{
-            return response()->json(['error'=>"Something went wrong"], 500, array(), JSON_PRETTY_PRINT);
+            return response()->json(['error'=>"Something went wrong"], 500);
         }
     }
 
@@ -1459,7 +1543,7 @@ class AssetApi extends Controller
 
     public function getAssetGroup($id){
         $asset = AssetGroup::findOrFail($id);           
-        return response()->json($asset, 200, array(), JSON_PRETTY_PRINT);
+        return response()->json($asset, 200);
     }
 
     public function getAssetGroups(){
@@ -1471,7 +1555,7 @@ class AssetApi extends Controller
 
                     //searching
                     $assets = $assets->where(function ($query) use ($input) {                
-                        $query->where('title','like', '\'%' . $input['search']['value']. '%\'');
+                        $query->where('title','like', '%' . $input['search']['value']. '%');
                     });
 
                     $records_filtered = $assets->count();
@@ -1515,9 +1599,9 @@ class AssetApi extends Controller
     public function deleteAssetGroup($id){
         $deleted = AssetGroup::destroy($id);
         if($deleted){
-            return response()->json(['msg'=>"Asset group removed"], 200,array(),JSON_PRETTY_PRINT);
+            return response()->json(['msg'=>"Asset group removed"], 200);
         }else{
-            return response()->json(['error'=>"Something went wrong"], 500, array(), JSON_PRETTY_PRINT);
+            return response()->json(['error'=>"Something went wrong"], 500);
         }
     }
 
@@ -1542,7 +1626,7 @@ class AssetApi extends Controller
 
     public function getAssetLocation($id){
         $asset = AssetLocation::findOrFail($id);           
-        return response()->json($asset, 200, array(), JSON_PRETTY_PRINT);
+        return response()->json($asset, 200);
     }
 
     public function getAssetLocations(){
@@ -1554,7 +1638,7 @@ class AssetApi extends Controller
 
                     //searching
                     $assets = $assets->where(function ($query) use ($input) {                
-                        $query->where('location','like', '\'%' . $input['search']['value']. '%\'');
+                        $query->where('location','like', '%' . $input['search']['value']. '%');
                     });
 
                     $records_filtered = $assets->count();
@@ -1598,9 +1682,9 @@ class AssetApi extends Controller
     public function deleteAssetLocation($id){
         $deleted = AssetLocation::destroy($id);
         if($deleted){
-            return response()->json(['msg'=>"Asset location removed"], 200,array(),JSON_PRETTY_PRINT);
+            return response()->json(['msg'=>"Asset location removed"], 200);
         }else{
-            return response()->json(['error'=>"Something went wrong"], 500, array(), JSON_PRETTY_PRINT);
+            return response()->json(['error'=>"Something went wrong"], 500);
         }
     }
 
@@ -1637,7 +1721,7 @@ class AssetApi extends Controller
 
                     //searching
                     $assets = $assets->where(function ($query) use ($input) {                
-                        $query->where('type','like', '\'%' . $input['search']['value']. '%\'');
+                        $query->where('type','like', '%' . $input['search']['value']. '%');
                     });
 
                     $records_filtered = $assets->count();
@@ -1681,9 +1765,9 @@ class AssetApi extends Controller
     public function deleteInsuranceType($id){
         $deleted = AssetInsuranceType::destroy($id);
         if($deleted){
-            return response()->json(['msg'=>"Insurance type removed"], 200,array(),JSON_PRETTY_PRINT);
+            return response()->json(['msg'=>"Insurance type removed"], 200);
         }else{
-            return response()->json(['error'=>"Something went wrong"], 500, array(), JSON_PRETTY_PRINT);
+            return response()->json(['error'=>"Something went wrong"], 500);
         }
     }
 

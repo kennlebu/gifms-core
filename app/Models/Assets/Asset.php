@@ -12,7 +12,7 @@ class Asset extends BaseModel
     use SoftDeletes;
     protected $guarded = ['id','created_at','updated_at','deleted_at'];
     protected static $logOnlyDirty = true;
-    protected $appends = ['assignee'];
+    protected $appends = ['assignee', 'wt_to_date'];
 
     public function type()
     {
@@ -126,5 +126,26 @@ class Asset extends BaseModel
             $assignee = Supplier::find($this->assigned_to_id);
         }
         return $assignee;
+    }
+
+    public function getWtToDateAttribute() {
+        $wt_to_date = 0;
+        $class = $this->type->depriciation_class;
+
+        if(!empty($class)) {
+            $purchase_date = strtotime($this->date_of_purchase);
+            $todaymonthnumber = date("Y") * 12 + (date("m") - 1);
+            //calculate the month number for today as YEAR*12 + (months-1) - number of months since January year 0
+            $purchasemonthnumber = date("Y", $purchase_date) * 12 + (date("m", $purchase_date) - 1);
+            //purchase date calculated similarly
+            $diff_months = $todaymonthnumber - $purchasemonthnumber;
+            $wt_to_date = (float) $this->cost * (($class->percentage/100) / 12) * $diff_months;
+            // $current_value = $this->cost - $wt_value;
+            // if($current_value < 0) {
+            //     $current_value = 0;
+            // }
+        }
+
+        return $wt_to_date;
     }
 }

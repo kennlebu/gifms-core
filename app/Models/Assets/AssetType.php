@@ -9,4 +9,9 @@ class AssetType extends BaseModel
 {
     use SoftDeletes;
     protected $guarded = ['id','created_at','updated_at','deleted_at'];
+
+    public function depriciation_class()
+    {
+        return $this->belongsTo('App\Models\Assets\AssetDepriciationClass', 'depriciation_class_id');
+    }
 }
