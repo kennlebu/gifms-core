@@ -5,12 +5,13 @@ namespace App\Models\DeliveriesModels;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\BaseModels\BaseModel;
+use App\Models\Inventory\Inventory;
 use App\Models\SuppliesModels\Supplier;
 
 class Delivery extends BaseModel
 {
     use SoftDeletes;
-    protected $appends = ['in_assets'];
+    protected $appends = ['in_assets', 'in_inventory'];
     
     public function comments()
     {
@@ -65,5 +66,17 @@ class Delivery extends BaseModel
             }                      
         }
         return $number;
+    }
+
+    public function getInInventoryAttribute(){
+        $in_inventory = true;
+        foreach($this->items as $item){
+            $inventory = Inventory::where('delivery_item_id', $item->id)->exists();
+            if(!$inventory){
+                $in_inventory = false;
+            }
+        }
+
+        return $in_inventory;
     }
 }

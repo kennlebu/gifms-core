@@ -628,13 +628,11 @@ class InvoiceApi extends Controller
             $invoice->disableLogging();
             if($invoice->save()) {
 
-                $invoice   = Invoice::findOrFail($invoice_id);
-
                 $approval = new Approval;
-                $approval->approvable_id            =   (int)   $invoice->id;
+                $approval->approvable_id            =   $invoice->id;
                 $approval->approvable_type          =   "invoices";
                 $approval->approval_level_id        =   $approvable_status->approval_level_id;
-                $approval->approver_id              =   (int)   $user->id;
+                $approval->approver_id              =   $user->id;
                 $approval->disableLogging();
                 $approval->save();
 

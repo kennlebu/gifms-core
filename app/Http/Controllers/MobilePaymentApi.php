@@ -41,6 +41,7 @@ use App\Models\FinanceModels\TaxRate;
 use App\Models\LPOModels\Lpo;
 use App\Models\Requisitions\Requisition;
 use App\Models\Requisitions\RequisitionItem;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class MobilePaymentApi extends Controller
@@ -337,11 +338,11 @@ class MobilePaymentApi extends Controller
                                     'documents'
                                 )->findOrFail($mobile_payment_id);
 
-            return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+            return response()->json($response, 200);
 
         }catch(Exception $e){
-            $response =  ["error"=>"Mobile Payment could not be found"];
-            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+            $response =  ["error"=>"Something went wrong"];
+            return response()->json($response, 500);
         }
     }
 
@@ -912,7 +913,8 @@ class MobilePaymentApi extends Controller
             $response->header('Content-Type', 'application/pdf');
             return $response;
         }
-        catch (Exception $e ){  
+        catch (Exception $e){
+            Log::debug($e);
             $response = Response::make("", 500);
             $response->header('Content-Type', 'application/pdf');
             return $response;  

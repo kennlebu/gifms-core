@@ -132,7 +132,7 @@ class SupplierApi extends Controller
         $supplier->bank_id                 =         $form['bank_id'];
         $supplier->bank_branch_id          =         $form['bank_branch_id'];
         $supplier->supplier_name           =         $form['supplier_name'];
-        $supplier->trading_name            =         $form['trading_name'];
+        $supplier->trading_name            =         $form['trading_name'] ?? null;
         $supplier->address                 =         $form['address'];
         $supplier->telephone               =         $form['telephone'];
         $supplier->email                   =         $form['email'];

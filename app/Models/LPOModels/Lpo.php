@@ -18,7 +18,7 @@ class Lpo extends BaseModel
 
     protected $dates = ['created_at','updated_at','deleted_at'];
 
-    protected $appends = ['amount','vats','sub_totals','totals','preferred_supplier','lpo_requisition_items','can_invoice','invoices_total'];
+    protected $appends = ['amount','vats','sub_totals','totals','preferred_supplier','lpo_requisition_items','can_invoice','invoices_total', 'next_action'];
  
 
 
@@ -134,7 +134,7 @@ class Lpo extends BaseModel
         }
         else {
             if($this->preffered_quotation_id)
-            $supplier = Supplier::with('supply_category')->find($this->preffered_quotation->supplier_id);
+            $supplier = Supplier::with('supply_category.service_types')->find($this->preffered_quotation->supplier_id);
         }
         return $supplier;
     }
@@ -219,7 +219,7 @@ class Lpo extends BaseModel
         }
         else {
             foreach($deliveries as $delivery){
-                if(!$delivery->in_assets){
+                if(!$delivery->in_assets && !$delivery->in_inventory){
                     $can_invoice = false;
                 }
             }
@@ -256,6 +256,39 @@ class Lpo extends BaseModel
             }
         }
         return $number;
+    }
+
+    public function getNextActionAttribute(){
+        $next_action = '';
+        $service = 0;
+        $goods = 0;
+        $consumables = 0;
+        $statutory = 0;
+        $jobs = 0;
+
+        $preferred_supplier = $this->preferred_supplier;
+        if(!empty($preferred_supplier->supply_category)){
+            foreach($preferred_supplier->supply_category->service_types as $service_type){
+                if($service_type->service_type == 'service') $service++;
+                if($service_type->service_type == 'goods') $goods++;
+                if($service_type->service_type == 'consumables') $consumables++;
+                if($service_type->service_type == 'statutory') $statutory++;
+                if($service_type->service_type == 'jobs') $jobs++;
+            }
+        }
+
+        if($service >= 1 || $statutory >= 1) {
+            $next_action = 'inv';
+            if($goods >= 1 || $consumables >= 1 || $jobs >= 1) $next_action = 'invdel';
+        }
+        elseif($jobs >= 1) {
+            $next_action = 'invdel';
+        }
+        elseif($goods >= 1 || $consumables >= 1) {
+            $next_action = 'del';
+        }
+
+        return $next_action;
     }
 
 
