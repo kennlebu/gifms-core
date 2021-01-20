@@ -101,7 +101,7 @@ class LPOApi extends Controller
     *
     * @return Http response
     */
-    public function add()
+    public function add(HttpRequest $request)
     {
         $form = Request::all();
 
@@ -109,39 +109,39 @@ class LPOApi extends Controller
             $lpo_type = 'LPO';
 
             $lpo = new Lpo;
-            $lpo->requested_by_id = (int) $form['requested_by_id'];
-            $lpo->expense_desc = $form['expense_desc'];
-            $lpo->expense_purpose = $form['expense_purpose'];
-            if(!empty($form['currency_id'])) 
-            $lpo->currency_id = (int) $form['currency_id'];
-            $lpo->project_manager_id = (int) $form['project_manager_id'];
+            $lpo->requested_by_id = (int) $request->requested_by_id;
+            $lpo->expense_desc = $request->expense_desc;
+            $lpo->expense_purpose = $request->expense_purpose;
+            if(!empty($request->currency_id)) 
+            $lpo->currency_id = (int) $request->currency_id;
+            $lpo->project_manager_id = (int) $request->project_manager_id;
             $lpo->status_id = $this->default_status;
-            if(!empty($form['quote_exempt_explanation']))
-            $lpo->quote_exempt_explanation = $form['quote_exempt_explanation'];
-            if(!empty($form['quote_exempt_details']))
-            $lpo->quote_exempt_details = $form['quote_exempt_details'];
-            if(!empty($form['expensive_quotation_reason']))
-            $lpo->expensive_quotation_reason = $form['expensive_quotation_reason'] ?? null;
-            if(!empty($form['lpo_type'])){
-                $lpo->lpo_type = $form['lpo_type'];
+            if(!empty($request->quote_exempt_explanation))
+            $lpo->quote_exempt_explanation = $request->quote_exempt_explanation;
+            if(!empty($request->quote_exempt_details))
+            $lpo->quote_exempt_details = $request->quote_exempt_details;
+            if(!empty($request->expensive_quotation_reason))
+            $lpo->expensive_quotation_reason = $request->expensive_quotation_reason;
+            if(!empty($request->lpo_type)){
+                $lpo->lpo_type = $request->lpo_type;
             }
-            if(!empty($form['program_activity_id'])) 
-            $lpo->program_activity_id = $form['program_activity_id'];
-            if(!empty($form['module']))
-            $lpo->module = $form['module'];
-            if(!empty($form['requisitioned_by_id']))
-            $lpo->requisitioned_by_id = $form['requisitioned_by_id'] ?? null;
-            if(!empty($form['supplier_id']))
-            $lpo->supplier_id = $form['supplier_id'] ?? null;
-            if(!empty($form['approver_id']))
-            $lpo->approver_id = $form['approver_id'] ?? null;
-            if(!empty($form['quotation_ref']))
-            $lpo->quotation_ref = $form['quotation_ref'] ?? null;
+            if(!empty($request->program_activity_id)) 
+            $lpo->program_activity_id = $request->program_activity_id;
+            if(!empty($request->module))
+            $lpo->module = $request->module;
+            if(!empty($request->requisitioned_by_id))
+            $lpo->requisitioned_by_id = $request->requisitioned_by_id;
+            if(!empty($request->supplier_id))
+            $lpo->supplier_id = $request->supplier_id;
+            if(!empty($request->approver_id))
+            $lpo->approver_id = $request->approver_id;
+            if(!empty($request->quotation_ref))
+            $lpo->quotation_ref = $request->quotation_ref;
 
             $user = JWTAuth::parseToken()->authenticate();
             $lpo->request_action_by_id = (int) $user->id;
 
-            if(empty($form['requisition_id']) || (int) $form['requisition_id'] == 0){
+            if(empty($request->requisition_id) || (int) $request->requisition_id == 0){
                 return response()->json(['error'=>'You cannot create an LPO without a requisition'], 403);
             }
 
@@ -152,16 +152,16 @@ class LPOApi extends Controller
                 $lpo->vat_percentage = $tax_rate->rate ?? 16;
 
                 $requisition = null;
-                if(!empty($form['requisition_id']) && (int) $form['requisition_id'] != 0){
-                    $lpo->requisition_id = $form['requisition_id'];
+                if(!empty($request->requisition_id) && (int) $request->requisition_id != 0){
+                    $lpo->requisition_id = $request->requisition_id;
                     $lpo->save();
-                    $requisition = Requisition::findOrFail($form['requisition_id']);
+                    $requisition = Requisition::findOrFail($request->requisition_id);
                     $allocation_purpose = '';
                     $count = 0;
                     $accounts = [];
     
 
-                    foreach($form['requisition_items'] as $item){
+                    foreach($request->requisition_items as $item){
                         $lpo_item = new LpoItem();
                         $item = RequisitionItem::findOrFail($item);
                         $lpo_item->lpo_id = $lpo->id;
@@ -266,8 +266,10 @@ class LPOApi extends Controller
                 return Response()->json(array('msg' => 'Success: lpo added','lpo' => $lpo), 200);
             }
 
-        }catch (JWTException $e){
-            return response()->json(['error'=>'something went wrong'], 500);
+        }catch (Exception $e){
+            Log::error($e->getMessage());
+            Log::error($e->getTraceAsString());
+            return response()->json(['error'=>'something went wrong', 'msg'=>$e->getMessage()], 500);
         }
 
     }
@@ -312,10 +314,10 @@ class LPOApi extends Controller
     *
     * @return Http response
     */
-    public function updateLpo()
+    public function updateLpo(HttpRequest $request)
     {
         $form = Request::all();
-        $lpo = Lpo::find($form['id']);
+        $lpo = Lpo::find($request->id);
         $lpo->requested_by_id                   =   (int)   $form['requested_by_id'];
         $lpo->expense_desc                      =           $form['expense_desc'];
         $lpo->expense_purpose                   =           $form['expense_purpose'];
