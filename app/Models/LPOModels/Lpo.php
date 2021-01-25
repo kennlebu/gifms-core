@@ -18,7 +18,7 @@ class Lpo extends BaseModel
 
     protected $dates = ['created_at','updated_at','deleted_at'];
 
-    protected $appends = ['amount','vats','sub_totals','totals','preferred_supplier','lpo_requisition_items','can_invoice','invoices_total', 'next_action'];
+    protected $appends = ['amount','vats','sub_totals','totals','preferred_supplier','lpo_requisition_items','can_invoice','invoices_total', 'next_action', 'can_action'];
  
 
 
@@ -133,7 +133,7 @@ class Lpo extends BaseModel
             $supplier = Supplier::with('supply_category')->find($this->supplier_id);
         }
         else {
-            if($this->preffered_quotation_id)
+            if($this->preffered_quotation)
             $supplier = Supplier::with('supply_category.service_types')->find($this->preffered_quotation->supplier_id);
         }
         return $supplier;
@@ -145,7 +145,7 @@ class Lpo extends BaseModel
             $supplier_id = $this->supplier_id;
         }
         else {
-            if($this->preffered_quotation_id)
+            if($this->preffered_quotation)
             $supplier_id = $this->preffered_quotation->supplier_id;
         }
         return $supplier_id;
@@ -289,6 +289,23 @@ class Lpo extends BaseModel
         }
 
         return $next_action;
+    }
+
+    public function getCanActionAttribute() {
+        $can_action = true;
+        if(
+            empty($this->expense_desc) || 
+            empty($this->expense_purpose) || 
+            empty($this->requested_by_id) || 
+            empty($this->status_id) || 
+            empty($this->currency_id) || 
+            empty($this->preferred_supplier) || 
+            empty($this->requisition_id)
+        ) {
+            $can_action = false;
+        }
+
+        return $can_action;
     }
 
 
