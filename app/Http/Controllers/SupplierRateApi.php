@@ -149,51 +149,52 @@ class SupplierRateApi extends Controller
     {
         $input = Request::all();
         //query builder
-        $qb = DB::table('supplier_rates');
-        $qb->leftJoin('suppliers', 'supplier_rates.supplier_id', '=', 'suppliers.id');
-        $qb->select('supplier_rates.*');
-
-        $qb->whereNull('supplier_rates.deleted_at');
-
-        $response;
-        $response_dt;
+        $qb = SupplierRate::query();
+        if(!array_key_exists('lean', $input)){
+            $qb = SupplierRate::with('service','supplier','currency','terms');
+        }
 
         $total_records          = $qb->count();
         $records_filtered       = 0;
 
         // For county
         if(array_key_exists('county_id', $input) && !empty($input['county_id'])){
-            $qb->where('suppliers.county_id', $input['county_id']);
+            if($input['county_id'] != '~'){
+                $qb = $qb->whereHas('supplier', function($query) use ($input){
+                    $query->where('county_id', $input['county_id']);
+                });
+            }            
         }
 
         // For supply category
         if(array_key_exists('supply_category_id', $input) && !empty($input['supply_category_id'])){
-            $qb->where('suppliers.supply_category_id', $input['supply_category_id']);
+            if($input['supply_category_id'] != '~'){
+                $qb = $qb->whereHas('supplier', function($query) use ($input){
+                    $query->where('supply_category_id', $input['supply_category_id']);
+                });
+            }            
         }
 
         // For service
         if(array_key_exists('service_id', $input) && !empty($input['service_id'])){
-            $qb->where('supplier_rates.service_id', $input['service_id']);
+            $qb = $qb->where('service_id', $input['service_id']);
         }
 
         // For supplier
         if(array_key_exists('supplier_id', $input) && !empty($input['supplier_id'])){
-            $qb->where('supplier_rates.supplier_id', $input['supplier_id']);
+            $qb = $qb->where('supplier_id', $input['supplier_id']);
         }
         
         //searching
         if(array_key_exists('searchval', $input)){
-            $qb->where(function ($query) use ($input) {                
-                $query->orWhere('supplier_rates.id','like', '\'%' . $input['searchval']. '%\'');
-                $query->orWhere('supplier_rates.rate','like', '\'%' . $input['searchval']. '%\'');
-                $query->orWhere('suppliers.supplier_name','like', '\'%' . $input['searchval']. '%\'');
+            $qb = $qb->where(function ($query) use ($input) {
+                $query->orWhere('rate', 'like', '%' . $input['searchval']. '%');
+                $query->orWhereHas('supplier', function($query) use ($input){
+                    $query->where('supplier_name', 'like', '%' . $input['searchval']. '%');
+                });
             });
 
-            $sql = SupplierRate::bind_presql($qb->toSql(),$qb->getBindings());
-            $sql = str_replace("supplier_rates.*"," count(*) AS count ", $sql);
-            $dt = json_decode(json_encode(DB::select($sql)), true);
-
-            $records_filtered = (int) $dt[0]['count'];
+            $records_filtered = $qb->count();
         }
 
         //ordering
@@ -203,26 +204,24 @@ class SupplierRateApi extends Controller
             if(array_key_exists('order_dir', $input)&&$input['order_dir']!=''){                
                 $order_direction = $input['order_dir'];
             }
-            $qb->orderBy($order_column_name, $order_direction);
+            $qb = $qb->orderBy($order_column_name, $order_direction);
         }
 
         //limit
         if(array_key_exists('limit', $input)){
-            $qb->limit($input['limit']);
+            $qb = $qb->limit($input['limit']);
         }
 
         if(array_key_exists('datatables', $input)){
             //searching
-            $qb->where(function ($query) use ($input) {
-                $query->orWhere('supplier_rates.rate','like', '\'%' . $input['search']['value']. '%\'');
-                $query->orWhere('suppliers.supplier_name','like', '\'%' . $input['search']['value']. '%\'');
+            $qb = $qb->where(function ($query) use ($input) {
+                $query->orWhere('supplier_rates.rate','like', '%' . $input['search']['value']. '%');
+                $query->orWhereHas('supplier', function($query) use ($input){
+                    $query->where('supplier_name', 'like', '%' . $input['search']['value']. '%');
+                });
             });
 
-            $sql = SupplierRate::bind_presql($qb->toSql(),$qb->getBindings());
-            $sql = str_replace("`supplier_rates`.*"," count(*) AS count ", $sql);
-            $dt = json_decode(json_encode(DB::select($sql)), true);
-
-            $records_filtered = (int) $dt[0]['count'];
+            $records_filtered = $qb->count();
 
             //ordering
             $order_column_id    = (int) $input['order'][0]['column'];
@@ -230,38 +229,75 @@ class SupplierRateApi extends Controller
             $order_direction    = $input['order'][0]['dir'];
 
             if($order_column_name!=''){
-                $qb->orderBy($order_column_name, $order_direction);
+                $qb = $qb->orderBy($order_column_name, $order_direction);
             }
 
             //limit $ offset
             if((int)$input['start']!= 0 ){
-                $response_dt    =   $qb->limit($input['length'])->offset($input['start']);
+                $qb = $qb->limit($input['length'])->offset($input['start']);
             }else{
-                $qb->limit($input['length']);
+                $qb = $qb->limit($input['length']);
             }
-
-            $sql = SupplierRate::bind_presql($qb->toSql(),$qb->getBindings());
-
-            $response_dt = DB::select($sql);
-            $response_dt = json_decode(json_encode($response_dt), true);
-            $response_dt    = $this->append_relationships_objects($response_dt);
-            $response_dt    = $this->append_relationships_nulls($response_dt);
-            $response       = SupplierRate::arr_to_dt_response( 
-                $response_dt, $input['draw'],
+            
+            $response = SupplierRate::arr_to_dt_response( 
+                $qb->get(), $input['draw'],
                 $total_records,
                 $records_filtered
                 );
         }
         else{
-            $sql            = SupplierRate::bind_presql($qb->toSql(),$qb->getBindings());
-            $response       = json_decode(json_encode(DB::select($sql)), true);
-            if(!array_key_exists('lean', $input)){
-                $response       = $this->append_relationships_objects($response);
-                $response       = $this->append_relationships_nulls($response);
-            }
+            $response = $qb->get();
         }
 
-        return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+        return response()->json($response, 200);
+    }
+
+    public function getRatesForTable(){
+        $input = Request::all();
+        $qb = SupplierRate::query();
+
+        // For county
+        if(array_key_exists('county_id', $input) && !empty($input['county_id'])){
+            if($input['county_id'] != '~'){
+                $qb = $qb->whereHas('supplier', function($query) use ($input){
+                    $query->where('county_id', $input['county_id']);
+                });
+            }            
+        }
+
+        // For supply category
+        if(array_key_exists('supply_category_id', $input) && !empty($input['supply_category_id'])){
+            if($input['supply_category_id'] != '~'){
+                $qb = $qb->whereHas('supplier', function($query) use ($input){
+                    $query->where('supply_category_id', $input['supply_category_id']);
+                });
+            }            
+        }
+
+        // For service
+        if(array_key_exists('service_id', $input) && !empty($input['service_id'])){
+            $qb = $qb->where('service_id', $input['service_id']);
+        }
+
+        // For supplier
+        if(array_key_exists('supplier_id', $input) && !empty($input['supplier_id'])){
+            $qb = $qb->where('supplier_id', $input['supplier_id']);
+        }
+
+        $results = $qb->get();
+        $services = [];
+        $suppliers = [];
+        $rates = [];
+        $response = [];
+
+        foreach($results as $res) {
+            // $services[$res->service->service_name][] = $res;
+            $services[] = $res->service->service_name;
+            $suppliers[] = $res->supplier->supplier_name;
+            $rates[$res->service->service_name][$res->supplier->supplier_name][] = $res->rate;
+        }
+
+        return response()->json(['services' => array_unique($services), 'suppliers' => array_unique($suppliers), 'rates' => $rates], 200);
     }
 
     private function append_relationships_objects($data = array()){

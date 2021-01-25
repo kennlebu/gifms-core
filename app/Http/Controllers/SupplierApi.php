@@ -32,6 +32,7 @@ use Illuminate\Http\Request as HttpRequest;
 use Anchu\Ftp\Facades\Ftp;
 use App\Mail\Generic;
 use App\Models\SuppliesModels\QuoteRequest;
+use App\Models\SuppliesModels\SupplierRate;
 use App\Models\SuppliesModels\SupplierService;
 use App\Models\SuppliesModels\SupplierSupplyCategory;
 use Illuminate\Support\Facades\Mail;
@@ -331,6 +332,24 @@ class SupplierApi extends Controller
         // Supply category
         if(array_key_exists('supply_category_id', $input) && !empty($input['supply_category_id'])){
             $qb = $qb->where('supply_category_id', $input['supply_category_id']);
+        }
+
+        // Filter
+        if(array_key_exists('filter', $input)){
+            $filter_model = json_decode($input['filter']);
+            
+            if(count($filter_model->supply_categories) >= 1) {
+                $qb = $qb->whereIn('supply_category_id', $filter_model->supply_categories);
+            }
+            
+            if(count($filter_model->counties) >= 1) {
+                $qb = $qb->whereIn('county_id', $filter_model->counties);
+            }
+            
+            if(count($filter_model->supplier_services) >= 1) {
+                $rate_suppliers = SupplierRate::whereIn('id', $filter_model->supplier_services)->pluck('supplier_id')->toArray();
+                $qb = $qb->whereIn('id', $rate_suppliers);
+            }
         }
 
         //ordering
