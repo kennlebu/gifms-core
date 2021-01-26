@@ -2439,7 +2439,7 @@ ALTER TABLE `asset_types`
 ADD `depriciation_class_id` int NULL AFTER `type`,
 CHANGE `updated_at` `updated_at` timestamp NULL AFTER `created_at`;
 
-===== Supply category services
+~===== Supply category services
 CREATE TABLE `supply_category_services` (
   `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `supply_category_id` int NULL,

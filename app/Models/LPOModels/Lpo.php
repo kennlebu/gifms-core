@@ -130,11 +130,11 @@ class Lpo extends BaseModel
     {
         $supplier = null;
         if($this->lpo_type == 'prenegotiated' || $this->lpo_type == 'lso'){
-            $supplier = Supplier::with('supply_category')->find($this->supplier_id);
+            $supplier = Supplier::with('supply_category', 'supply_categories.service_types')->find($this->supplier_id);
         }
         else {
             if($this->preffered_quotation)
-            $supplier = Supplier::with('supply_category.service_types')->find($this->preffered_quotation->supplier_id);
+            $supplier = Supplier::with('supply_category.service_types', 'supply_categories.service_types')->find($this->preffered_quotation->supplier_id);
         }
         return $supplier;
     }
@@ -267,14 +267,16 @@ class Lpo extends BaseModel
         $jobs = 0;
 
         $preferred_supplier = $this->preferred_supplier;
-        if(!empty($preferred_supplier->supply_category)){
-            foreach($preferred_supplier->supply_category->service_types as $service_type){
-                if($service_type->service_type == 'service') $service++;
-                if($service_type->service_type == 'goods') $goods++;
-                if($service_type->service_type == 'consumables') $consumables++;
-                if($service_type->service_type == 'statutory') $statutory++;
-                if($service_type->service_type == 'jobs') $jobs++;
-            }
+        if(!empty($preferred_supplier->supply_categories)){
+            foreach($preferred_supplier->supply_categories as $category){
+                foreach($category->service_types as $service_type){
+                    if($service_type->service_type == 'service') $service++;
+                    if($service_type->service_type == 'goods') $goods++;
+                    if($service_type->service_type == 'consumables') $consumables++;
+                    if($service_type->service_type == 'statutory') $statutory++;
+                    if($service_type->service_type == 'jobs') $jobs++;
+                }
+            }            
         }
 
         if($service >= 1 || $statutory >= 1) {
