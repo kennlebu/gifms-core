@@ -97,6 +97,7 @@ class DeliveryApi extends Controller
                 $delivery->delivery_document = $delivery->id.'.'.$file->getClientOriginalExtension();
                 $delivery->save();
 
+                $lpo = Lpo::find($delivery->lpo_id);
                 $requisition = Requisition::find($lpo->requisition_id);
 
                 if(!empty($lpo->lpo_requisition_items)){
