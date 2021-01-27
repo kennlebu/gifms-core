@@ -286,7 +286,7 @@ class Lpo extends BaseModel
         elseif($jobs >= 1) {
             $next_action = 'invdel';
         }
-        elseif($goods >= 1 || $consumables >= 1) {
+        elseif($goods >= 1/* || $consumables >= 1*/) {
             $next_action = 'del';
         }
 
