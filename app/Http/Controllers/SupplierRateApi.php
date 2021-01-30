@@ -170,9 +170,11 @@ class SupplierRateApi extends Controller
         if(array_key_exists('supply_category_id', $input) && !empty($input['supply_category_id'])){
             if($input['supply_category_id'] != '~'){
                 $qb = $qb->whereHas('supplier', function($query) use ($input){
-                    $query->where('supply_category_id', $input['supply_category_id']);
+                    $query->whereHas('supply_categories', function($q) use ($input){
+                        $q->where('supply_category_id', $input['supply_category_id']);
+                    });
                 });
-            }            
+            }
         }
 
         // For service
@@ -269,7 +271,9 @@ class SupplierRateApi extends Controller
         if(array_key_exists('supply_category_id', $input) && !empty($input['supply_category_id'])){
             if($input['supply_category_id'] != '~'){
                 $qb = $qb->whereHas('supplier', function($query) use ($input){
-                    $query->where('supply_category_id', $input['supply_category_id']);
+                    $query->whereHas('supply_categories', function($q) use ($input){
+                        $q->where('supply_category_id', $input['supply_category_id']);
+                    });
                 });
             }            
         }

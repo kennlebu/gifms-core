@@ -98,6 +98,12 @@ class InventoryApi extends Controller
 
         $descriptions_array = json_decode($request->descriptions);
         foreach($descriptions_array as $da) {
+            // Checking available quantity
+            $inv_desc = InventoryDescription::find($da->id);
+            
+            if(!empty($inv_desc) && $inv_desc->total < (int)$da->quantity) {
+                return response()->json(['error'=>'You can not issue more inventory than available'], 403);
+            }
 
             $movement = new InventoryMovement();
             // $movement->inventory_id = $inventory->id;

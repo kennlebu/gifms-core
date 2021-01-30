@@ -339,7 +339,9 @@ class SupplierApi extends Controller
             $filter_model = json_decode($input['filter']);
             
             if(count($filter_model->supply_categories) >= 1) {
-                $qb = $qb->whereIn('supply_category_id', $filter_model->supply_categories);
+                $qb = $qb->whereHas('supply_categories', function($q) use ($filter_model){
+                    $q->whereIn('supply_category_id', $filter_model->supply_categories);
+                });
             }
             
             if(count($filter_model->counties) >= 1) {
@@ -434,14 +436,16 @@ class SupplierApi extends Controller
         $category = $input['category'];
         $location = $input['location'];
 
-        $suppliers = Supplier::with(['county', 'supply_category', 'payment_mode'])->where(function($query){
+        $suppliers = Supplier::with(['county', 'supply_categories', 'payment_mode'])->where(function($query){
             $query->whereNull('status_id')->orWhere('status_id', '!=', '1');
         });
         if(!empty($search_term)){
             $suppliers->where('supplier_name', 'like', '%'.$search_term.'%');
         }
         if(!empty($category)){
-            $suppliers->where('supply_category_id', $category);
+            $suppliers->whereHas('supply_categories', function($q) use ($input){
+                $q->where('supply_category_id', $input['supply_category_id']);
+            });
         }
         if(!empty($location)){
             $suppliers->where('county_id', $location);

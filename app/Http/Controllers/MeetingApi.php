@@ -253,6 +253,9 @@ class MeetingApi extends Controller
             $attendee = new MeetingAttendee();
             $attendee->name = $request->name;
             $attendee->id_no = $request->id_no;
+            if(empty(trim($attendee->id_no))){
+                return back()->with('error','ID Number cannot be blank.');
+            }
             $attendee->email = $request->email;
             $attendee->physical_address = $request->physical_address ?? null;
             $attendee->organisation = $request->organisation ?? null;
@@ -263,12 +266,21 @@ class MeetingApi extends Controller
             $attendee->bank_branch_name = $request->bank_branch_name ?? null;
             $attendee->bank_account = $request->bank_account ?? null;
             $attendee->kra_pin = $request->kra_pin ?? null;
+
+            $attendee_exists = MeetingAttendee::where('id_no', $attendee->id_no)->where('phone', $attendee->phone)->first();
+            if($attendee_exists) {
+                return back()->with('error','You are already registered.');
+            }
+
             $attendee->disableLogging();
             $attendee->save();
 
             if(!empty($request->url)){
-                $register = new MeetingAttendanceRegister();
                 $meeting = Meeting::where('invite_url', $request->url)->first();
+                if(MeetingAttendanceRegister::where('meeting_id', $meeting->id)->where('attendee_id', $attendee->id)->exists()){
+                    return back()->with('error','You have already registered for this event');
+                }
+                $register = new MeetingAttendanceRegister();
                 $register->meeting_id = $meeting->id;
                 $register->attendee_id = $attendee->id;
                 $register->disableLogging();
