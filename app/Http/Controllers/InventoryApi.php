@@ -66,7 +66,7 @@ class InventoryApi extends Controller
     }
 
     public function getOneInventory(Request $request, $id) {
-        $inventory = Inventory::with('name.descriptions', 'description', 'category', 'movements', 'status', 'lpo', 'added_by')->findOrFail($id);
+        $inventory = Inventory::with('name.descriptions', 'description', 'category', 'movements', 'status', 'lpo.deliveries', 'added_by')->findOrFail($id);
         $multiple = Inventory::with('description')->where('inventory_name_id', $inventory->inventory_name_id)->groupBy('description_id')->get();
         $inventory['descriptions_array'] = $multiple;
 
@@ -191,5 +191,14 @@ class InventoryApi extends Controller
     public function getNames() {
         $names = InventoryName::all();
         return response()->json($names, 200);
+    }
+
+    public function getMovement(Request $request) {
+        $movement = InventoryMovement::with('inventory', 'name', 'description', 'initiated_by');
+        if(!empty($request->inventory_name_id)) {
+            $movement = $movement->where('inventory_name_id', $request->inventory_name_id);
+        }
+
+        return response()->json($movement->get(), 200);
     }
 }

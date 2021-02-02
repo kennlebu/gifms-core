@@ -5527,6 +5527,7 @@ Route::GET('inventory-statuses', 'InventoryApi@getStatuses')->middleware('jwt.au
 Route::GET('inventory-categories', 'InventoryApi@getCategories')->middleware('jwt.auth');
 Route::GET('inventory-descriptions', 'InventoryApi@getDescriptions')->middleware('jwt.auth');
 Route::GET('inventory-names', 'InventoryApi@getNames')->middleware('jwt.auth');
+Route::GET('inventory-movement', 'InventoryApi@getMovement')->middleware('jwt.auth');
 Route::GET('inventories', 'InventoryApi@getInventory')->middleware('jwt.auth');
 Route::POST('inventory', 'InventoryApi@addInventory')->middleware('jwt.auth');
 Route::POST('inventory/category', 'InventoryApi@addCategory')->middleware('jwt.auth');

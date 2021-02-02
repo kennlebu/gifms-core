@@ -11,7 +11,7 @@ use App\Models\SuppliesModels\Supplier;
 class DeliveryItem extends BaseModel
 {
     use SoftDeletes;
-    protected $zppends = ['in_inventory'];
+    protected $appends = ['in_inventory', 'next_action'];
     
     public function delivery()
     {
@@ -34,5 +34,34 @@ class DeliveryItem extends BaseModel
         }
 
         return $in_inventory;
+    }
+
+    public function getNextActionAttribute(){
+        $next_action = '';
+        $goods = 0;
+        $consumables = 0;
+
+        $delivery = Delivery::with('lpo')->find($this->delivery_id);
+        $preferred_supplier = $delivery->lpo->preferred_supplier;
+        if(!empty($preferred_supplier->supply_categories)){
+            foreach($preferred_supplier->supply_categories as $category){
+                foreach($category->service_types as $service_type){
+                    if($service_type->service_type == 'goods') $goods++;
+                    if($service_type->service_type == 'consumables') $consumables++;
+                }
+            }            
+        }
+
+        if($goods >= 1 && $consumables >= 1) {
+            $next_action = 'assinv';
+        }
+        elseif($consumables >= 1) {
+            $next_action = 'inventory';
+        }
+        elseif($goods >= 1) {
+            $next_action = 'assets';
+        }
+
+        return $next_action;
     }
 }
