@@ -99,7 +99,7 @@ class InventoryApi extends Controller
         $descriptions_array = json_decode($request->descriptions);
         foreach($descriptions_array as $da) {
             // Checking available quantity
-            $inv_desc = InventoryDescription::find($da->id);
+            $inv_desc = InventoryDescription::find($da->description_id);
             
             if(!empty($inv_desc) && $inv_desc->total < (int)$da->quantity) {
                 return response()->json(['error'=>'You can not issue more inventory than available'], 403);
@@ -118,6 +118,46 @@ class InventoryApi extends Controller
             }
             $movement->initiated_by_id = $this->current_user()->id;
             $movement->quantity = 0 - (int)$da->quantity;
+            $movement->to_type = $request->to_type;
+            $movement->save();
+        }
+
+        return response()->json(['msg'=>'Success'], 200);
+    }
+
+    public function issueMultipleInventory(Request $request) {
+
+        $items_array = json_decode($request->items);
+
+        foreach($items_array as $i) {
+            // Checking available quantity
+            $inv_desc = InventoryDescription::find($i->description_id);
+            
+            if(!empty($inv_desc) && $inv_desc->total < (int)$i->quantity) {
+                return response()->json(['error'=>'You cannot issue more '. $inv_desc->description .' than available'], 403);
+            }
+        }
+
+        foreach($items_array as $item) {
+            // Checking available quantity
+            $inv_desc = InventoryDescription::find($item->description_id);
+            
+            if(!empty($inv_desc) && $inv_desc->total < (int)$item->quantity) {
+                return response()->json(['error'=>'You cannot issue more '. $inv_desc->description .' than available'], 403);
+            }
+
+            $movement = new InventoryMovement();
+            $movement->inventory_name_id = $item->inventory_name_id;
+            $movement->description_id = $item->description_id;
+            $movement->from = 'Store';
+            if($request->to_type === 'Staff') {
+                $movement->to = $request->staff_id;
+            }
+            else {
+                $movement->to = $request->to_type;            
+            }
+            $movement->initiated_by_id = $this->current_user()->id;
+            $movement->quantity = 0 - (int)$item->quantity;
             $movement->to_type = $request->to_type;
             $movement->save();
         }
@@ -194,7 +234,7 @@ class InventoryApi extends Controller
     }
 
     public function getMovement(Request $request) {
-        $movement = InventoryMovement::with('inventory', 'name', 'description', 'initiated_by');
+        $movement = InventoryMovement::with('inventory', 'name', 'description', 'initiated_by', 'staff_to');
         if(!empty($request->inventory_name_id)) {
             $movement = $movement->where('inventory_name_id', $request->inventory_name_id);
         }
