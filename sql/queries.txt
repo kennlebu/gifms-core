@@ -2466,3 +2466,8 @@ INSERT INTO `supplier_service_types` (`service_type`, `display_value`)
 VALUES ('jobs', 'Service Jobs');
 
 php artisan refractor:supplier-services
+
++~===== Add request_type to quote_requests
+ALTER TABLE `quote_requests`
+ADD `request_type` varchar(20) NULL AFTER `requested_by_id`,
+CHANGE `updated_at` `updated_at` timestamp NULL AFTER `created_at`;

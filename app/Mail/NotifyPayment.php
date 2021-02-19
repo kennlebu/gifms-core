@@ -126,13 +126,13 @@ class NotifyPayment extends Mailable
 
             $taxes = '';
             if (!empty($this->payable->withholding_tax) && !empty($this->payable->withholding_vat)) {
-                $taxes = 'This payment has been subject to VAT and withholding Income Tax.';
+                $taxes = 'This payment has been subject to Income Tax Withholding and Withholding VAT.';
             }
             elseif (!empty($this->payable->withholding_tax)) {
-                $taxes = 'This payment has been subject to withholding Income Tax.';
+                $taxes = 'This payment has been subject to Income Tax Withholding.';
             }
             elseif (!empty($this->payable->withholding_vat)) {
-                $taxes = 'This payment has been subject to VAT.';
+                $taxes = 'This payment has been subject to Withholding VAT.';
             }
 
             if(!empty($taxes)) {
