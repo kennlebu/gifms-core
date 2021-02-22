@@ -317,7 +317,7 @@ class AssetApi extends Controller
             }
             if($input['op'] == 'request') {
                 $asset->donation_to_id = $input['recepient'];
-                $asset->donation_recepient_type = 'government';
+                $asset->donation_recepient_type = $input['recepient_type'];
                 $asset->program_manager_id = $input['program_manager_id'];
                 $property_detail = 'Approval requested for asset donation to '. $asset->donation_to->supplier_name .'. '.
                                     'REASON: '. $input['reason'];
@@ -327,7 +327,7 @@ class AssetApi extends Controller
                 $transfered_by_id = $asset->assigned_to_id;
                 $asset->assigned_to_id = $asset->donation_to_id;
                 $asset->staff_responsible_id = null;
-                $asset->assignee_type = 'government';
+                $asset->assignee_type = $input['recepient_type'];
                 $property_detail = 'Asset donation approved by PM';
                 $batch = new AssetTransferBatch;
                 $batch->created_by_id = $this->current_user()->id;
