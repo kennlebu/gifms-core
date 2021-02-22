@@ -108,7 +108,7 @@ class InvoiceApi extends Controller
                 $form['submission_type'] != 'finish_allocations' && 
                 !empty($existing))
             {
-                return response()->json(['error'=>'Invoice with the same invoice number already exists'], 409);
+                return response()->json(['error'=>'Invoice with the same invoice number already exists 1'], 409);
             }
 
             if($form['submission_type']=='full'){
@@ -137,7 +137,7 @@ class InvoiceApi extends Controller
                 $invoice->status_id                         =   $this->default_status;
 
                 if(Invoice::where('external_ref', $invoice->external_ref)->where('supplier_id', $form['supplier_id'])->exists()){
-                    return response()->json(["error"=>"Invoice with the same invoice number already exists"], 409,array(),JSON_PRETTY_PRINT);
+                    return response()->json(["error"=>"Invoice with the same invoice number already exists 2"], 409);
                 }
 
             }
@@ -170,7 +170,7 @@ class InvoiceApi extends Controller
                 $invoice->currency_id                       =   (int)       $form['currency_id'];
                 $invoice->received_at                       =   date('Y-m-d H:i:s');
                 if(!empty($form['lpo_variation_reason']))
-                $invoice->lpo_variation_reason = $form['lpo_variation_reason'];
+                $invoice->lpo_variation_reason = $form['lpo_variation_reason'] ?? null;
                 if(!empty($form['program_activity_id']))
                 $invoice->program_activity_id = $form['program_activity_id'];
                 if(!empty($form['requisition_id']))
@@ -921,6 +921,40 @@ class InvoiceApi extends Controller
             if(!empty($invoice->lpo) && !empty($invoice->lpo->requisition)){
                 if($invoice->lpo->requisition->status_id != 3){
                     return response()->json(['error'=>'Requisition must be approved before you can submit this invoice'], 403);
+                }
+            }
+
+            if(!empty($invoice->lpo_id)){
+                $m_lpo = Lpo::with('deliveries.items', 'requisition')->find($invoice->lpo_id);
+
+                if(!empty($m_lpo)){
+                    $consumables = 0;
+                    $no_of_service_types = 0;
+                    foreach($m_lpo->preferred_supplier->supply_categories as $cat) {
+                        foreach($cat->service_types as $service) {
+                            $no_of_service_types++;
+                            if($service->service_type === 'consumables') {
+                                $consumables++;
+                            }
+                        }
+                    }
+                    if ($consumables === $no_of_service_types) {
+                        if(count($m_lpo->deliveries) < 1) {
+                            return response()->json([
+                                'error'=>'Delivery has not been received for this LPO.',
+                                'type'=>'no delivery',
+                                'lpo'=>$m_lpo
+                            ], 403);
+                        }
+
+                        foreach($m_lpo->deliveries as $del) {
+                            foreach($del->items as $item) {
+                                if(!$item->in_inventory) {
+                                    return response()->json(['error'=>'Delivered items ('. $del->ref .') need to be added to inventory before you can submit this invoice'], 403);
+                                }
+                            }
+                        }
+                    }
                 }
             }
 
