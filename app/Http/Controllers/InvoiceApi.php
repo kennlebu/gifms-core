@@ -938,7 +938,7 @@ class InvoiceApi extends Controller
                             }
                         }
                     }
-                    if ($consumables === $no_of_service_types) {
+                    if ($consumables === $no_of_service_types && $consumables !== 0) {
                         if(count($m_lpo->deliveries) < 1) {
                             return response()->json([
                                 'error'=>'Delivery has not been received for this LPO.',
