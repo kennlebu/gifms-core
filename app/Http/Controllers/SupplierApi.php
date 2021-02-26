@@ -36,6 +36,7 @@ use App\Models\SuppliesModels\SupplierRate;
 use App\Models\SuppliesModels\SupplierService;
 use App\Models\SuppliesModels\SupplierSupplyCategory;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 
 class SupplierApi extends Controller
 {
@@ -806,6 +807,7 @@ class SupplierApi extends Controller
             $cc[] = $this->current_user()->email;
 
             $quote_request = new QuoteRequest();
+            $quote_request->request_type = $request->request_type;
             $quote_request->supplier_id = $request->supplier_id;
             $quote_request->to = $request->to;
             $quote_request->cc = $request->cc;
@@ -814,9 +816,19 @@ class SupplierApi extends Controller
             $quote_request->requested_by_id = $this->current_user()->id;
             $quote_request->save();
 
+            $file = $request->file;
+            $attachment = null;
+            $filename = null;
+
+            if(!empty($file) && $file != 0) {
+                $attachment = $quote_request->id.'/'.$file->getClientOriginalName();
+                $filename = $file->getClientOriginalName();
+                $file->storeAs('/email_attachments/'.$quote_request->id, $filename);
+            }
+
             Mail::queue(new Generic(
-                $to, $cc, 'Request for quote', 'Request for quote', [$request->body],
-                null, false
+                $to, $cc, 'Request for '.$request->request_type, 'Request for '.$request->request_type, [$request->body],
+                null, false, $attachment, $filename
             ));
 
             return response()->json(['msg'=>'Success'], 200);
