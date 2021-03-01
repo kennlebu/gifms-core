@@ -182,6 +182,7 @@ Route::POST('/lpos_not_selected', 'LPOApi@addVendorsNotSelected')->middleware('j
 Route::GET('/lpos_not_selected', 'LPOApi@getVendorsNotSelected')->middleware('jwt.auth');
 Route::POST('/add-lpo-terms', 'LPOApi@addLpoTerms')->middleware('jwt.auth');
 Route::POST('/lpo-notify-vendor', 'LPOApi@NotifyLpoDispatch')->middleware('jwt.auth');
+Route::POST('/change-to-quotations', 'LPOApi@convertToQuotations')->middleware('jwt.auth');
 
 
 

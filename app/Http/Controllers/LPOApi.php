@@ -1629,4 +1629,12 @@ class LPOApi extends Controller
     public function next_status(){
         
     }
+
+    public function convertToQuotations(HttpRequest $request){
+        $lpo = Lpo::findOrFail($request->lpo_id);
+        $lpo->lpo_type = null;
+        $lpo->save();
+
+        return response()->json(['msg' => 'success'], 200);
+    }
 }
