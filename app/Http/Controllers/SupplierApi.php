@@ -158,12 +158,12 @@ class SupplierApi extends Controller
         $supplier->requires_lpo            =         $form['requires_lpo'];
         $supplier->supply_category_id = $form['supply_category_id'];
         $supplier->county_id = $form['county_id'];
-        
-        foreach($supplier->supply_categories as $old_cat){
-            SupplierSupplyCategory::where('supplier_id', $supplier->id)->where('supply_category_id',  $old_cat->id)->delete();
-        }
 
-        if(!empty($form['supply_categories'])){
+        if(!empty($form['supply_categories'])){        
+            foreach($supplier->supply_categories as $old_cat){
+                SupplierSupplyCategory::where('supplier_id', $supplier->id)->where('supply_category_id',  $old_cat->id)->delete();
+            }
+
             foreach($form['supply_categories'] as $new_cat){
                 SupplierSupplyCategory::create([
                     'supplier_id' => $supplier->id,
@@ -332,7 +332,9 @@ class SupplierApi extends Controller
 
         // Supply category
         if(array_key_exists('supply_category_id', $input) && !empty($input['supply_category_id'])){
-            $qb = $qb->where('supply_category_id', $input['supply_category_id']);
+            $qb = $qb->whereHas('supply_categories', function($q) use ($input){
+                $q->whereIn('supply_category_id', $input['supply_category_id']);
+            });
         }
 
         // Filter
@@ -346,7 +348,7 @@ class SupplierApi extends Controller
             }
             
             if(count($filter_model->counties) >= 1) {
-                $qb = $qb->whereIn('county_id', $filter_model->counties);
+                $qb = $qb->whereIn('county_id', $filter_model->counties)->orWhere('supply_category_id', '49');
             }
             
             if(count($filter_model->supplier_services) >= 1) {
@@ -373,7 +375,9 @@ class SupplierApi extends Controller
 
         // Donation recepients
         if(array_key_exists('donation', $input)){
-            $qb = $qb->whereIn('supply_category_id', [21]);   // Government organisations
+            $qb = $qb->whereHas('supply_categories', function($q){
+                $q->whereIn('supply_category_id', [21]);    // Government organisations
+            });
         }
 
         if(array_key_exists('datatables', $input)){
@@ -449,7 +453,7 @@ class SupplierApi extends Controller
             });
         }
         if(!empty($location)){
-            $suppliers->where('county_id', $location);
+            $suppliers->where('county_id', $location)->orWhere('supply_category_id', '49');
         }
 
         $results = $suppliers->get();

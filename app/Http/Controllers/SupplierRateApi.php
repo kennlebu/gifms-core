@@ -161,7 +161,7 @@ class SupplierRateApi extends Controller
         if(array_key_exists('county_id', $input) && !empty($input['county_id'])){
             if($input['county_id'] != '~'){
                 $qb = $qb->whereHas('supplier', function($query) use ($input){
-                    $query->where('county_id', $input['county_id']);
+                    $query->where('county_id', $input['county_id'])->orWhere('county_id', '49');
                 });
             }            
         }
@@ -395,9 +395,6 @@ class SupplierRateApi extends Controller
         //query builder
         $qb = SupplierRate::with('supplier.county','currency','terms', 'service');
 
-        $response;
-        $response_dt;
-
         // Services
         $service_id_count;
         if(array_key_exists('services', $input) && !empty($input['services'])){
@@ -411,11 +408,9 @@ class SupplierRateApi extends Controller
             $service_id_count = count($service_ids);
             if(!empty($county_ids)){
                 $qb = $qb->whereHas('supplier', function($query) use ($county_ids){
-                    $query->where('county_id', $county_ids[0]);
+                    $query->whereIn('county_id', $county_ids);
                     $query->orWhere('county_id', 49);   //National
                 });
-                
-                // where('suppliers.county_id', $county_ids[0]);
             } 
             $qb = $qb->whereIn('service_id', $service_ids);            
         }
@@ -508,6 +503,6 @@ class SupplierRateApi extends Controller
             }
         }
         
-        return response()->json($real_final_response, 200,array(),JSON_PRETTY_PRINT);
+        return response()->json($real_final_response, 200);
     }   
 }
