@@ -248,8 +248,8 @@ class RequisitionApi extends Controller
                 }
                 $item->qty = $i->qty;
                 $item->no_of_days = $i->no_of_days ?? null;
-                $item->start_date = date('Y-m-d', strtotime($i->dates[0]));
-                $item->end_date = date('Y-m-d', strtotime($i->dates[1]));
+                $item->start_date = date('Y-m-d', strtotime($i->dates[0])) ?? null;
+                $item->end_date = date('Y-m-d', strtotime($i->dates[1])) ?? null;
                 $item->status_id = 1;
                 $item->disableLogging();
                 $item->save();
