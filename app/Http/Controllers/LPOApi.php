@@ -131,8 +131,12 @@ class LPOApi extends Controller
             $lpo->module = $request->module;
             if(!empty($request->requisitioned_by_id))
             $lpo->requisitioned_by_id = $request->requisitioned_by_id;
-            if(!empty($request->supplier_id))
-            $lpo->supplier_id = $request->supplier_id;
+            if(!empty($request->supplier_id)) {
+                if(!$this->checkVendor($request->supplier_id)) {
+                    return response()->json(['error'=>'Supplier is disabled'], 403);
+                }
+                $lpo->supplier_id = $request->supplier_id;
+            }
             if(!empty($request->approver_id))
             $lpo->approver_id = $request->approver_id;
             if(!empty($request->quotation_ref))
@@ -318,6 +322,9 @@ class LPOApi extends Controller
     {
         $form = Request::all();
         $lpo = Lpo::find($request->id);
+        if(!$this->checkVendor($lpo->preferred_supplier->id)) {
+            return response()->json(['error'=>'Supplier is disabled'], 403);
+        }
         $lpo->requested_by_id                   =   (int)   $form['requested_by_id'];
         $lpo->expense_desc                      =           $form['expense_desc'];
         $lpo->expense_purpose                   =           $form['expense_purpose'];
@@ -359,6 +366,9 @@ class LPOApi extends Controller
             $input = Request::all();
             $rate = SupplierRate::findOrFail($input['rate_id']);
             $lpo = Lpo::findOrFail($input['lpo_id']);
+            if(!$this->checkVendor($lpo->preferred_supplier->id)) {
+                return response()->json(['error'=>'Supplier is disabled'], 403);
+            }
             $lpo->supplier_id = $rate->supplier_id;            
             
             if($lpo->save()){
@@ -460,6 +470,10 @@ class LPOApi extends Controller
         try{
             $lpo = Lpo::find($lpo_id);
 
+            if(!$this->checkVendor($lpo->preferred_supplier->id)) {
+                return response()->json(['error'=>'Supplier is disabled'], 403);
+            }
+
             // Ensure LPO is in the recallable statuses
             if(!in_array($lpo->status_id, [13,3,4,5,16])){
                 return response()->json(['msg'=>"You do not have permission to do this"], 403);
@@ -517,7 +531,11 @@ class LPOApi extends Controller
     {
         $input = Request::all();
         
-        $lpo = Lpo::find($lpo_id);        
+        $lpo = Lpo::find($lpo_id);  
+        
+        if(!$this->checkVendor($lpo->preferred_supplier->id)) {
+            return response()->json(['error'=>'Supplier is disabled'], 403);
+        }
 
         // Ensure LPO is in the cancelable status
         if($lpo->status_id != 7){
@@ -594,6 +612,10 @@ class LPOApi extends Controller
 
         try{
             $lpo   = LPO::findOrFail($lpo_id);
+
+            if(!$this->checkVendor($lpo->preferred_supplier->id)) {
+                return response()->json(['error'=>'Supplier is disabled'], 403);
+            }
            
             if (!$user->can("APPROVE_LPO_".$lpo->status_id)){
                 throw new ApprovalException("No approval permission");             
@@ -729,7 +751,11 @@ class LPOApi extends Controller
         $user = JWTAuth::parseToken()->authenticate();
 
         try{
-            $lpo   = LPO::findOrFail($lpo_id);           
+            $lpo   = LPO::findOrFail($lpo_id);
+
+            if(!$this->checkVendor($lpo->preferred_supplier->id)) {
+                return response()->json(['error'=>'Supplier is disabled'], 403);
+            }
            
             if (!$user->can("APPROVE_LPO_".$lpo->status_id)){
                 throw new ApprovalException("No approval permission");             
@@ -799,7 +825,11 @@ class LPOApi extends Controller
     {
         try{
 
-            $lpo   = LPO::findOrFail($lpo_id);
+            $lpo = LPO::findOrFail($lpo_id);
+
+            if(!$this->checkVendor($lpo->preferred_supplier->id)) {
+                return response()->json(['error'=>'Supplier is disabled'], 403);
+            }
 
             if ((empty($lpo->lpo_type) || $lpo->lpo_type!='prenegotiated') && $lpo->preffered_quotation && abs($lpo->preffered_quotation->amount - $lpo->totals) > 0.05 ){
                 throw new LpoQuotationAmountMismatchException("Total amount does not match with quotation amount");             
@@ -954,6 +984,9 @@ class LPOApi extends Controller
         {
             try{
                 $lpo            = Lpo::findOrFail($lpo_id);
+                if(!$this->checkVendor($lpo->preferred_supplier->id)) {
+                    return response()->json(['error'=>'Supplier is disabled'], 403);
+                }
                 $lpo_status     = Lpo::findOrFail($lpo->status_id);
                 $next_status    = $lpo_status->next_status;
                 $lpo->status_id = $next_status;                
@@ -1099,7 +1132,11 @@ class LPOApi extends Controller
             $lpo_ids = $form['lpos'];
 
             foreach ($lpo_ids as $key => $lpo_id) {
-                $this->approveLpo($lpo_id, true);
+                $lpo = Lpo::find($lpo_id);
+                if($this->checkVendor($lpo->preferred_supplier->id)) {
+                    $this->approveLpo($lpo_id, true);
+                }
+                
             }
 
             return response()->json(['message'=>"Success"], 200);
@@ -1562,6 +1599,9 @@ class LPOApi extends Controller
     public function addLpoTerms(HttpRequest $request){
         try{
             $lpo = Lpo::findOrFail($request->lpo_id);
+            if(!$this->checkVendor($lpo->preferred_supplier->id)) {
+                return response()->json(['error'=>'Supplier is disabled'], 403);
+            }
             $lpo_terms = [];
             if(!empty($lpo->preferred_supplier) && !empty($lpo->preferred_supplier->supply_category_id)){
                 $supply_category_terms = LpoDefaultTerm::where('supply_category_id', $lpo->preferred_supplier->supply_category_id)->get();
@@ -1632,6 +1672,9 @@ class LPOApi extends Controller
 
     public function convertToQuotations(HttpRequest $request){
         $lpo = Lpo::findOrFail($request->lpo_id);
+        if(!$this->checkVendor($lpo->preferred_supplier->id)) {
+            return response()->json(['error'=>'Supplier is disabled'], 403);
+        }
         $lpo->lpo_type = null;
         $lpo->save();
 

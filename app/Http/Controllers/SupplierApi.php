@@ -130,6 +130,10 @@ class SupplierApi extends Controller
     {
         $form = Request::all();
 
+        if(!$this->checkVendor($form['id'])) {
+            return response()->json(['error'=>'Supplier is disabled'], 403);
+        }
+
         $supplier = Supplier::find($form['id']);
         $supplier->bank_id                 =         $form['bank_id'];
         $supplier->bank_branch_id          =         $form['bank_branch_id'];
@@ -721,6 +725,10 @@ class SupplierApi extends Controller
 
     public function addDocument(HttpRequest $request){
         try{
+            if(!$this->checkVendor($request->supplier_id)) {
+                return response()->json(['error'=>'Supplier is disabled'], 403);
+            }
+
             if(empty($request->document_id)){
                 $document = new SupplierDocument();
                 $document->supplier_id = $request->supplier_id;
@@ -803,6 +811,10 @@ class SupplierApi extends Controller
 
     public function requestQuote(HttpRequest $request){
         try{
+            if(!$this->checkVendor($request->supplier_id)) {
+                return response()->json(['error'=>'Supplier is disabled'], 403);
+            }
+
             $to = $this->multiexplode([',',';'], $request->to);
             $cc = [];
             if(!empty($request->cc)){
