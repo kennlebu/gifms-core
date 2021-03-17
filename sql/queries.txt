@@ -2472,6 +2472,38 @@ ALTER TABLE `quote_requests`
 ADD `request_type` varchar(20) NULL AFTER `requested_by_id`,
 CHANGE `updated_at` `updated_at` timestamp NULL AFTER `created_at`;
 
-===== Add inventory_item field to supplier services
++~===== Add inventory_item field to supplier services
 ALTER TABLE `supplier_services`
 ADD `inventory_item` varchar(1) COLLATE 'latin1_swedish_ci' NULL AFTER `unit`;
+
++~===== Drop unused tables
+SET foreign_key_checks = 0;
+DROP TABLE `advance_allocations`, `advance_approvals`, `approval_email_types`, `approval_types`, `bank_csvs`, `claim_allocations`, `claim_approvals`, `claim_project_account_allocations`, `clusters`, `import_classes`, `import_vendors`, `inflows`, `invoices_logs`, `invoice_allocations`, `invoice_allocation_types`, `invoice_apportionment_rates`, `invoice_approvals`, `invoice_project_account_allocations`, `lpo_approvals`, `menus`, `menu_rights`, `mobile_payment_allocations`, `mobile_payment_approvals`, `mobile_payment_project_account_allocations`, `purpose_brevities`, `restriction_levels`, `revisions`, `strategic_groups`, `unpayment_reasons`;
+
++~===== Create office cost allocations table
+CREATE TABLE `office_cost_allocations` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `date` varchar(15) NULL,
+  `created_at` timestamp NULL,
+  `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL
+);
+
+CREATE TABLE `office_cost_allocation_items` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `office_cost_allocation_id` int(11) NULL,
+  `percentage` varchar(10) NULL,
+  `created_at` timestamp NULL,
+  `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` timestamp NULL,
+  FOREIGN KEY (`office_cost_allocation_id`) REFERENCES `office_cost_allocations` (`id`)
+);
+
+ALTER TABLE `office_cost_allocation_items`
+ADD `account_id` int NULL AFTER `percentage`,
+ADD `project_id` int NULL AFTER `account_id`,
+CHANGE `updated_at` `updated_at` timestamp NULL AFTER `created_at`;
+
+ALTER TABLE `office_cost_allocations`
+ADD `created_by_id` int NULL AFTER `date`,
+CHANGE `updated_at` `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP AFTER `created_at`;

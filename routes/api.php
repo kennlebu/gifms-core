@@ -3809,6 +3809,13 @@ Route::GET('/allocations', 'AllocationApi@getAllocations')->middleware('jwt.auth
  */
 Route::POST('/allocation/csv_upload', 'AllocationApi@uploadAllocations')->middleware('jwt.auth');
 
+Route::POST('/allocation/apply-office-cost-share', 'AllocationApi@applyOfficeCostShare')->middleware('jwt.auth');
+Route::POST('/allocation/add-office-cost-share', 'AllocationApi@addOfficeCostAllocations')->middleware('jwt.auth');
+Route::GET('/office-cost-allocations', 'AllocationApi@getOfficeCostAllocations')->middleware('jwt.auth');
+Route::DELETE('/office-cost-allocations/{allocation_id}', 'AllocationApi@deleteOfficeCostAllocation')->middleware('jwt.auth');
+Route::GET('/office-cost-allocations/{allocation_id}', 'AllocationApi@getOfficeCostAllocationById')->middleware('jwt.auth');
+Route::POST('/office-cost-allocations/update', 'AllocationApi@updateOfficeCostAllocation')->middleware('jwt.auth');
+
 
 
 
