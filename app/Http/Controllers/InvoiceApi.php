@@ -940,6 +940,14 @@ class InvoiceApi extends Controller
                 }
             }
 
+            if (($invoice->total - $invoice->amount_allocated) > 1 ){ //allowance of 1
+                throw new NotFullyAllocatedException("This invoice has not been fully allocated");             
+            }
+
+            if($invoice->status_id != 10) {  // If invoice is not in submitable status.
+                return response()->json(['error'=>'Invoice already submitted.'], 403);
+            }
+
             if(!empty($invoice->lpo_id)){
                 $m_lpo = Lpo::with('deliveries.items', 'requisition')->find($invoice->lpo_id);
 
@@ -972,10 +980,6 @@ class InvoiceApi extends Controller
                         }
                     }
                 }
-            }
-
-            if (($invoice->total - $invoice->amount_allocated) > 1 ){ //allowance of 1
-                throw new NotFullyAllocatedException("This invoice has not been fully allocated");             
             }
 
             $invoice->status_id = $this->getNextStatusId($invoice->status_id);
