@@ -183,12 +183,14 @@ class MobilePaymentApi extends Controller
                     // }
                 }
 
-                FTP::connection()->makeDir('/mobile_payments');
-                FTP::connection()->makeDir('/mobile_payments/'.$mobile_payment->id);
-                FTP::connection()->makeDir('/mobile_payments/'.$mobile_payment->id.'/signsheet');
-                FTP::connection()->uploadFile($file->getPathname(), '/mobile_payments/'.$mobile_payment->id.'/signsheet/'.$mobile_payment->id.'.'.$file->getClientOriginalExtension());
+                if($file!=0){
+                    FTP::connection()->makeDir('/mobile_payments');
+                    FTP::connection()->makeDir('/mobile_payments/'.$mobile_payment->id);
+                    FTP::connection()->makeDir('/mobile_payments/'.$mobile_payment->id.'/signsheet');
+                    FTP::connection()->uploadFile($file->getPathname(), '/mobile_payments/'.$mobile_payment->id.'/signsheet/'.$mobile_payment->id.'.'.$file->getClientOriginalExtension());
 
-                $mobile_payment->attendance_sheet =  $mobile_payment->id.'.'.$file->getClientOriginalExtension();
+                    $mobile_payment->attendance_sheet =  $mobile_payment->id.'.'.$file->getClientOriginalExtension();
+                }
                 
                 if(empty($mobile_payment->requisition)){
                     $mobile_payment->ref = "CHAI/MPYMT/#$mobile_payment->id/".date_format($mobile_payment->created_at,"Y/m/d");
@@ -220,7 +222,7 @@ class MobilePaymentApi extends Controller
                 return Response()->json(array('msg' => 'Success: mobile payment added','mobile_payment' => $mobile_payment), 200);
             }
 
-        }catch (JWTException $e){
+        }catch (Exception $e){
             return response()->json(['error'=>'something went wrong'], 500);
         }
     }
@@ -1795,5 +1797,40 @@ class MobilePaymentApi extends Controller
             });
 
         })->download('xlsx', $headers);        
+    }
+
+    public function uploadSignsheet() {
+        try {
+            $form = Request::only(
+                'mobile_payment_id',
+                'file'
+                );
+            $file = $form['file'];
+            $mobile_payment = MobilePayment::findOrFail($form['mobile_payment_id']);
+
+            if($file!=0){
+                FTP::connection()->makeDir('/mobile_payments');
+                FTP::connection()->makeDir('/mobile_payments/'.$mobile_payment->id);
+                FTP::connection()->makeDir('/mobile_payments/'.$mobile_payment->id.'/signsheet');
+                FTP::connection()->uploadFile($file->getPathname(), '/mobile_payments/'.$mobile_payment->id.'/signsheet/'.$mobile_payment->id.'.'.$file->getClientOriginalExtension());
+
+                $mobile_payment->attendance_sheet =  $mobile_payment->id.'.'.$file->getClientOriginalExtension();
+                $mobile_payment->disableLogging();
+                $mobile_payment->save();
+
+                // Logging
+                activity()
+                    ->performedOn($mobile_payment)
+                    ->causedBy($this->current_user())
+                    ->log('Uploaded signsheet');
+
+                return Response()->json(array('msg' => 'Success: mobile payment added','mobile_payment' => $mobile_payment), 200);
+            }
+
+            return response()->json(['error'=>'Could not upload signsheet'], 500);
+        }
+        catch (Exception $e){
+            return response()->json(['error'=>'something went wrong', 'msg'=>$e->getMessage()], 500);
+        }
     }
 }

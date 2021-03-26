@@ -1851,6 +1851,7 @@ Route::POST('/mobile-payment/request_signitories/{mobile_payment_id}', 'MobilePa
 Route::POST('/mobile-payment/mark_as_paid', 'MobilePaymentApi@markAsPaid')->middleware('jwt.auth');
 Route::GET('/mobile-payment/download_dump', 'MobilePaymentApi@downloadDump')->middleware('jwt.auth');
 Route::POST('/mobile-payment/allocations-from-requisition', 'MobilePaymentAllocationApi@createAllocationsFromRequisition')->middleware('jwt.auth');
+Route::POST('/mobile_payment/upload-signsheet', 'MobilePaymentApi@uploadSignsheet')->middleware('jwt.auth');
 /**
  * POST postPayees
  * Summary: post mobile_payment payees in acsv by ID
