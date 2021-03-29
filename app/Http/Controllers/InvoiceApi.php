@@ -95,7 +95,7 @@ class InvoiceApi extends Controller
                 'requisition_id'
                 );
 
-            if(!$this->checkVendor($form['supplier_id'])) {
+            if(!empty($form['supplier_id']) && !$this->checkVendor($form['supplier_id'])) {
                 return response()->json(['error'=>'Supplier is disabled'], 403);
             }
 
