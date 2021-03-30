@@ -944,7 +944,7 @@ class InvoiceApi extends Controller
                 throw new NotFullyAllocatedException("This invoice has not been fully allocated");             
             }
 
-            if($invoice->status_id != 10) {  // If invoice is not in submitable status.
+            if($invoice->status_id != 9 || $invoice->status_id != 10 || $invoice->status_id != 13) {  // If invoice is not in submitable status.
                 return response()->json(['error'=>'Invoice already submitted.'], 403);
             }
 
