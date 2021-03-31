@@ -140,7 +140,7 @@ class Controller extends BaseController
         $default_status = $status->id;
 
         $check = Payment::where('payable_type', $payable['payable_type'])->where('payable_id', $payable['payable_id'])->exists();
-        if($check) { return; }
+        if($check) { return 0; }
 
 
         $payment = new Payment;

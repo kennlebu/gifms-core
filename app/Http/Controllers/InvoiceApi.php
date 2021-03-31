@@ -644,7 +644,7 @@ class InvoiceApi extends Controller
                 $approval->disableLogging();
                 $approval->save();
 
-                if($approval->approval_level_id==4){
+                if($approval->approval_level_id==4 && $invoice->status_id == 4){
 
                     $payable = [
                         'payable_type'                  =>  'invoices', 
