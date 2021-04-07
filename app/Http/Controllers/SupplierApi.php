@@ -31,12 +31,15 @@ use Excel;
 use Illuminate\Http\Request as HttpRequest;
 use Anchu\Ftp\Facades\Ftp;
 use App\Mail\Generic;
+use App\Models\InvoicesModels\Invoice;
 use App\Models\SuppliesModels\QuoteRequest;
 use App\Models\SuppliesModels\SupplierRate;
 use App\Models\SuppliesModels\SupplierService;
 use App\Models\SuppliesModels\SupplierSupplyCategory;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Storage;
+use PDF;
 
 class SupplierApi extends Controller
 {
@@ -853,5 +856,26 @@ class SupplierApi extends Controller
             $response =  ["error"=>"Something went wrong" ,"msg"=>$e->getMessage()];
             return response()->json($response, 500);
         }
+    }
+
+    public function getStatement(HttpRequest $request) {
+        $supplier = Supplier::findOrFail($request->supplier_id);
+
+        // Invoices
+        $invoices = Invoice::with('payments')->where('supplier_id', $request->supplier_id)->whereBetween('created_at', [$request->from, $request->to])->get();
+
+        $data = [
+            'from_date' => $request->from,
+            'to_date' => $request->to,
+            'invoices' => $invoices,
+            'supplier' => $supplier
+        ];
+
+        $pdf = PDF::loadView('pdf/supplier_statement', $data);
+        $file_contents  = $pdf->stream();
+        $response = Response::make($file_contents, 200);
+        $response->header('Content-Type', 'application/pdf');
+        return $response;
+        
     }
 }
