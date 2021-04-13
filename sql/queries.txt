@@ -2507,3 +2507,63 @@ CHANGE `updated_at` `updated_at` timestamp NULL AFTER `created_at`;
 ALTER TABLE `office_cost_allocations`
 ADD `created_by_id` int NULL AFTER `date`,
 CHANGE `updated_at` `updated_at` timestamp NULL ON UPDATE CURRENT_TIMESTAMP AFTER `created_at`;
+
++~===== Transaction viewing permissions
+INSERT INTO `permissions` (`name`, `display_name`, `description`, `entity`, `operation_type`, `at_status_id`, `approval_level_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('READ_INVOICE_13', 'View Invoices - Recalled', NULL, 'Invoice', 'Read', '13', NULL, now(), now(), NULL);
+INSERT INTO `permissions` (`name`, `display_name`, `description`, `entity`, `operation_type`, `at_status_id`, `approval_level_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('READ_INVOICE_14', 'View Invoices - Pending Finance Review', NULL, 'Invoice', 'Read', '14', NULL, now(), now(), NULL);
+
+UPDATE `permissions` SET `display_name` = 'View invoices - Pending PM Approval' WHERE `id` = '57';
+UPDATE `permissions` SET `display_name` = 'View invoices - Pending Finance Approval' WHERE `id` = '58';
+UPDATE `permissions` SET `display_name` = 'View invoices - Pending Director\'s Approval' WHERE `id` = '59';
+UPDATE `permissions` SET `display_name` = 'View invoices - Pending Finance CSV Creation (Batching)' WHERE `id` = '60';
+UPDATE `permissions` SET `display_name` = 'View invoices - CSV Generated for Upload' WHERE `id` = '61';
+UPDATE `permissions` SET `display_name` = 'View invoices - CSV At Office Admin/Accounts for Upload' WHERE `id` = '62';
+UPDATE `permissions` SET `display_name` = 'View invoices - CSV Uploaded to Bank' WHERE `id` = '63';
+UPDATE `permissions` SET `display_name` = 'View invoices - Paid' WHERE `id` = '64';
+UPDATE `permissions` SET `display_name` = 'View invoices - Rejected' WHERE `id` = '65';
+UPDATE `permissions` SET `display_name` = 'View invoices - Received pending submission' WHERE `id` = '66';
+UPDATE `permissions` SET `display_name` = 'View invoices - Logged pending upload' WHERE `id` = '67';
+UPDATE `permissions` SET `display_name` = 'View invoices - Pending Accountant Review' WHERE `id` = '68';
+
+INSERT INTO `permissions` (`name`, `display_name`, `description`, `entity`, `operation_type`, `at_status_id`, `approval_level_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('READ_CLAIM_11', 'View claim - Recalled', NULL, 'Claim', 'Read', '11', NULL, now(), now(), NULL);
+INSERT INTO `permissions` (`name`, `display_name`, `description`, `entity`, `operation_type`, `at_status_id`, `approval_level_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('READ_CLAIM_12', 'View claim - Pending Finance Review', NULL, 'Claim', 'Read', '12', NULL, now(), now(), NULL);
+
+UPDATE `permissions` SET `display_name` = 'View claims - Compiled Pending Submission' WHERE `id` = '105';
+UPDATE `permissions` SET `display_name` = 'View claims - Pending PM Approval' WHERE `id` = '106';
+UPDATE `permissions` SET `display_name` = 'View claims - Pending Finance Approval' WHERE `id` = '107';
+UPDATE `permissions` SET `display_name` = 'View claims - Pending Director\'s Approval' WHERE `id` = '108';
+UPDATE `permissions` SET `display_name` = 'View claims - Pending Finance CSV Creation (Batching)    ' WHERE `id` = '109';
+UPDATE `permissions` SET `display_name` = 'View claims - CSV Generated for Payment' WHERE `id` = '110';
+UPDATE `permissions` SET `display_name` = 'View claims - CSV Uploaded to Bank Awaiting Reconciliation' WHERE `id` = '111';
+UPDATE `permissions` SET `display_name` = 'View claims - Paid' WHERE `id` = '112';
+UPDATE `permissions` SET `display_name` = 'View claims - Returned' WHERE `id` = '113';
+UPDATE `permissions` SET `display_name` = 'View claims - Pending Accountant Approval' WHERE `id` = '114';
+
+UPDATE `permissions` SET `display_name` = 'View Mobile Payments - Request Uploaded Pending Submission to Bank' WHERE `id` = '147';
+UPDATE `permissions` SET `display_name` = 'View Mobile Payments - Pending PM Approval' WHERE `id` = '148';
+UPDATE `permissions` SET `display_name` = 'View Mobile Payments - Pending Finance Approval' WHERE `id` = '149';
+UPDATE `permissions` SET `display_name` = 'View Mobile Payments - Sent To Bank Awaiting Reconciliation' WHERE `id` = '150';
+UPDATE `permissions` SET `display_name` = 'View Mobile Payments - Paid' WHERE `id` = '151';
+UPDATE `permissions` SET `display_name` = 'View Mobile Payments - Verified, Documented and Archived' WHERE `id` = '152';
+UPDATE `permissions` SET `display_name` = 'View Mobile Payments - Returned' WHERE `id` = '153';
+UPDATE `permissions` SET `display_name` = 'View Mobile Payments - Pending Director\'s Approval' WHERE `id` = '154';
+UPDATE `permissions` SET `display_name` = 'View Mobile Payments - Pending Accountant Review' WHERE `id` = '155';
+UPDATE `permissions` SET `display_name` = 'View Mobile Payments - Rejected by bank Awaiting Accountant Confirmation' WHERE `id` = '156';
+UPDATE `permissions` SET `display_name` = 'View Mobile Payments - Rejected By Bank Awaiting Corrections' WHERE `id` = '157';
+UPDATE `permissions` SET `display_name` = 'View Mobile Payments - Corrected Awaiting Accountant Approval' WHERE `id` = '158';
+UPDATE `permissions` SET `display_name` = 'View Mobile Payments - Corrected And Resent to Bank' WHERE `id` = '159';
+
+INSERT INTO `permissions` (`name`, `display_name`, `description`, `entity`, `operation_type`, `at_status_id`, `approval_level_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('READ_MOBILE_PAYMENT_14', 'View Mobile Payments - Recalled', NULL, 'MobilePayment', 'Read', '14', NULL, now(), now(), NULL);
+INSERT INTO `permissions` (`name`, `display_name`, `description`, `entity`, `operation_type`, `at_status_id`, `approval_level_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('READ_MOBILE_PAYMENT_15', 'View Mobile Payments - Sent to Bank Awaiting Verification', NULL, 'MobilePayment', 'Read', '15', NULL, now(), now(), NULL);
+INSERT INTO `permissions` (`name`, `display_name`, `description`, `entity`, `operation_type`, `at_status_id`, `approval_level_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('READ_MOBILE_PAYMENT_16', 'View Mobile Payments - Resent to Bank Awaiting Verification', NULL, 'MobilePayment', 'Read', '16', NULL, now(), now(), NULL);
+INSERT INTO `permissions` (`name`, `display_name`, `description`, `entity`, `operation_type`, `at_status_id`, `approval_level_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('READ_MOBILE_PAYMENT_17', 'View Mobile Payments - Approved by Director Pending Payment', NULL, 'MobilePayment', 'Read', '17', NULL, now(), now(), NULL);
+INSERT INTO `permissions` (`name`, `display_name`, `description`, `entity`, `operation_type`, `at_status_id`, `approval_level_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('READ_MOBILE_PAYMENT_18', 'View Mobile Payments - Pending Finance Review', NULL, 'MobilePayment', 'Read', '18', NULL, now(), now(), NULL);
