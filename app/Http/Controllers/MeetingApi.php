@@ -224,6 +224,11 @@ class MeetingApi extends Controller
         if(empty($meeting)){
             return back()->with('error','This event does not exist');
         }
+        // Check the dates
+        if(Meeting::whereDate('ends_on', '>', date('Y-m-d'))->where('invite_url', $url)->exists()){
+            return back()->with('error','This event has already ended.');
+        }
+
         $attendee = MeetingAttendee::where('id_no', $request->id_no)->first();
         if(empty($attendee)){
             return view('attendee_register')
@@ -326,19 +331,19 @@ class MeetingApi extends Controller
             $final_log = null;
             $attendee = MeetingAttendee::where('id_no', $request->id_no)->first();
             if(empty($attendee)){
-                return response()->json(['error'=>"Attendee does not exist"], 404, array(), JSON_PRETTY_PRINT);
+                return response()->json(['error'=>"Attendee does not exist"], 404);
             }
             if(empty($attendee->fp_template_1)){
-                return response()->json(['error'=>"Attendee not enrolled", 'attendee'=>$attendee], 404, array(), JSON_PRETTY_PRINT);
+                return response()->json(['error'=>"Attendee not enrolled", 'attendee'=>$attendee], 404);
             }
 
             $previous_log = MeetingAttendanceLog::where('date', date('Y-m-d'))
                                                 ->where('attendee_id', $attendee->id)
                                                 ->where('meeting_id', $request->meeting_id)
-                                                ->orderBy('id', 'desc')->first();
+                                                ->whereDate('date', '=', date('Y-m-d'))->first();
 
             if(!empty($previous_log->time_out)){
-                return response()->json(['error'=>"Attendee already clocked out", 'attendee'=>$attendee], 409, array(), JSON_PRETTY_PRINT);
+                return response()->json(['error'=>"Attendee already clocked out", 'attendee'=>$attendee], 409);
             }
             
             if(!empty($previous_log)){
