@@ -2567,3 +2567,53 @@ INSERT INTO `permissions` (`name`, `display_name`, `description`, `entity`, `ope
 VALUES ('READ_MOBILE_PAYMENT_17', 'View Mobile Payments - Approved by Director Pending Payment', NULL, 'MobilePayment', 'Read', '17', NULL, now(), now(), NULL);
 INSERT INTO `permissions` (`name`, `display_name`, `description`, `entity`, `operation_type`, `at_status_id`, `approval_level_id`, `created_at`, `updated_at`, `deleted_at`)
 VALUES ('READ_MOBILE_PAYMENT_18', 'View Mobile Payments - Pending Finance Review', NULL, 'MobilePayment', 'Read', '18', NULL, now(), now(), NULL);
+
++~===== Menu permissions
+INSERT INTO `permissions` (`name`, `display_name`, `description`, `entity`, `operation_type`, `at_status_id`, `approval_level_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('See Home', 'See Home', 'See home menu item', 'Menu', 'Read', NULL, NULL, now(), now(), NULL);
+INSERT INTO `permissions` (`name`, `display_name`, `description`, `entity`, `operation_type`, `at_status_id`, `approval_level_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('See Approvals', 'See approvals', 'See approvals menu item', 'Menu', 'Read', NULL, NULL, now(), now(), NULL);
+INSERT INTO `permissions` (`name`, `display_name`, `description`, `entity`, `operation_type`, `at_status_id`, `approval_level_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('See Payments', 'See Payments', 'See payments menu item', 'Menu', 'Read', NULL, NULL, now(), now(), NULL);
+INSERT INTO `permissions` (`name`, `display_name`, `description`, `entity`, `operation_type`, `at_status_id`, `approval_level_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('See Requisitions', 'See Requisitions', 'See requisitions menu item', 'Menu', 'Read', NULL, NULL, now(), now(), NULL);
+INSERT INTO `permissions` (`name`, `display_name`, `description`, `entity`, `operation_type`, `at_status_id`, `approval_level_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('See LPOs', 'See LPOs/LSOs', 'See LPOs/LSOs menu item', 'Menu', 'Read', NULL, NULL, now(), now(), NULL);
+INSERT INTO `permissions` (`name`, `display_name`, `description`, `entity`, `operation_type`, `at_status_id`, `approval_level_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('See Invoices', 'See Invoices', 'See invoices menu item', 'Menu', 'Read', NULL, NULL, now(), now(), NULL);
+INSERT INTO `permissions` (`name`, `display_name`, `description`, `entity`, `operation_type`, `at_status_id`, `approval_level_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('See Deliveries', 'See Deliveries', 'See deliveries menu item', 'Menu', 'Read', NULL, NULL, now(), now(), NULL);
+INSERT INTO `permissions` (`name`, `display_name`, `description`, `entity`, `operation_type`, `at_status_id`, `approval_level_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('See Mobile Payments', 'See Mobile Payments', 'See mobile payments menu item', 'Menu', 'Read', NULL, NULL, now(), now(), NULL);
+INSERT INTO `permissions` (`name`, `display_name`, `description`, `entity`, `operation_type`, `at_status_id`, `approval_level_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('See Claims', 'See Claims', 'See claims menu item', 'Menu', 'Read', NULL, NULL, now(), now(), NULL);
+INSERT INTO `permissions` (`name`, `display_name`, `description`, `entity`, `operation_type`, `at_status_id`, `approval_level_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('See Advances', 'See Advances', 'See advances menu item', 'Menu', 'Read', NULL, NULL, now(), now(), NULL);
+INSERT INTO `permissions` (`name`, `display_name`, `description`, `entity`, `operation_type`, `at_status_id`, `approval_level_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('See Audit', 'See Audit', 'See audit menu item', 'Menu', 'Read', NULL, NULL, now(), now(), NULL);
+INSERT INTO `permissions` (`name`, `display_name`, `description`, `entity`, `operation_type`, `at_status_id`, `approval_level_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('See Suppliers & Services', 'See Suppliers & Services', 'See suppliers & services menu item', 'Menu', 'Read', NULL, NULL, now(), now(), NULL);
+INSERT INTO `permissions` (`name`, `display_name`, `description`, `entity`, `operation_type`, `at_status_id`, `approval_level_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('See Attendance Register', 'See Attendance Register', 'See attendance register menu item', 'Menu', 'Read', NULL, NULL, now(), now(), NULL);
+INSERT INTO `permissions` (`name`, `display_name`, `description`, `entity`, `operation_type`, `at_status_id`, `approval_level_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('See Meeting/Boardrooms', 'See Meeting/Boardrooms', 'See meeting/boardrooms menu item', 'Menu', 'Read', NULL, NULL, now(), now(), NULL);
+INSERT INTO `permissions` (`name`, `display_name`, `description`, `entity`, `operation_type`, `at_status_id`, `approval_level_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('See Reports (2016 Format)', 'See Reports (2016 Format)', 'See reports (2016 format) menu item', 'Menu', 'Read', NULL, NULL, now(), now(), NULL);
+INSERT INTO `permissions` (`name`, `display_name`, `description`, `entity`, `operation_type`, `at_status_id`, `approval_level_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('See Reports (Agresso Format)', 'See Reports (Agresso Format)', 'See reports (agresso format) menu item', 'Menu', 'Read', NULL, NULL, now(), now(), NULL);
+INSERT INTO `permissions` (`name`, `display_name`, `description`, `entity`, `operation_type`, `at_status_id`, `approval_level_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('See Reports (Expense Reports)', 'See Reports (Expense Reports)', 'See reports (expense reports) menu item', 'Menu', 'Read', NULL, NULL, now(), now(), NULL);
+INSERT INTO `permissions` (`name`, `display_name`, `description`, `entity`, `operation_type`, `at_status_id`, `approval_level_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('See Reports (USD Rates)', 'See Reports (USD Rates)', 'See reports (USD rates) menu item', 'Menu', 'Read', NULL, NULL, now(), now(), NULL);
+INSERT INTO `permissions` (`name`, `display_name`, `description`, `entity`, `operation_type`, `at_status_id`, `approval_level_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('See Assets', 'See Assets', 'See assets menu item', 'Menu', 'Read', NULL, NULL, now(), now(), NULL);
+INSERT INTO `permissions` (`name`, `display_name`, `description`, `entity`, `operation_type`, `at_status_id`, `approval_level_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('See Inventory', 'See Inventory', 'See inventory menu item', 'Menu', 'Read', NULL, NULL, now(), now(), NULL);
+INSERT INTO `permissions` (`name`, `display_name`, `description`, `entity`, `operation_type`, `at_status_id`, `approval_level_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('See Funds Requests', 'See Funds Requests', 'See funds requests menu item', 'Menu', 'Read', NULL, NULL, now(), now(), NULL);
+INSERT INTO `permissions` (`name`, `display_name`, `description`, `entity`, `operation_type`, `at_status_id`, `approval_level_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('See Reports (PM Journal)', 'See Reports (PM Journal)', 'See reports (PM journal) menu item', 'Menu', 'Read', NULL, NULL, now(), now(), NULL);
+INSERT INTO `permissions` (`name`, `display_name`, `description`, `entity`, `operation_type`, `at_status_id`, `approval_level_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('See Help', 'See Help & Resources', 'See help & resources menu item', 'Menu', 'Read', NULL, NULL, now(), now(), NULL);
+INSERT INTO `permissions` (`name`, `display_name`, `description`, `entity`, `operation_type`, `at_status_id`, `approval_level_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('See Leave Management', 'See Leave Management', 'See leave management menu item', 'Menu', 'Read', NULL, NULL, now(), now(), NULL);

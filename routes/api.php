@@ -816,7 +816,7 @@ Route::GET('/permission/{permission_id}', 'PermissionApi@getPermissionById')->mi
 
  */
 Route::GET('/permissions', 'PermissionApi@permissionsGet')->middleware('jwt.auth');
-
+Route::POST('/get-user-permissions', 'PermissionApi@getUserPermissions')->middleware('jwt.auth');
 
 
 
