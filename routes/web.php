@@ -5,7 +5,9 @@ use App\Http\Controllers\Controller;
 use App\Mail\NotifyActivityCreation;
 use App\Mail\NotifyLpoDispatch;
 use App\Models\ActivityModels\Activity;
+use App\Models\InvoicesModels\Invoice;
 use App\Models\LPOModels\Lpo;
+use App\Models\SuppliesModels\Supplier;
 use Illuminate\Support\Facades\Mail;
 
 /*
@@ -161,6 +163,24 @@ Route::get('test/email_lpo', function () {
         );
 
     return view('emails/notify_lpo',$data);
+});
+
+Route::get('test/pdf_supplier_statement', function () {
+
+    $supplier_id = '28';
+    $supplier = Supplier::findOrFail($supplier_id);
+
+    // Invoices
+    $invoices = Invoice::with('payments')->where('supplier_id', $supplier_id)->whereBetween('created_at', ['2020-04-01', '2021-03-30'])->get();
+
+    $data = [
+        'from_date' => '2020-04-01',
+        'to_date' => '2021-03-30',
+        'invoices' => $invoices,
+        'supplier' => $supplier
+    ];
+
+    return view('pdf/supplier_statement',$data);
 });
 
 Route::get('test/email', function () {

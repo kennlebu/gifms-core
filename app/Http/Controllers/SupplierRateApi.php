@@ -34,6 +34,11 @@ class SupplierRateApi extends Controller
     {
         try{
             $input = Request::all();
+
+            if(!$this->checkVendor($input['supplier_id'])) {
+                return response()->json(['error'=>'Supplier is disabled'], 403);
+            }
+
             $rate = new SupplierRate;
             $rate->service_id = (int) $input['service_id'];
             $rate->supplier_id = (int) $input['supplier_id'];
@@ -67,6 +72,9 @@ class SupplierRateApi extends Controller
     {
         try{
             $input = Request::all();
+            if(!$this->checkVendor($input['supplier_id'])) {
+                return response()->json(['error'=>'Supplier is disabled'], 403);
+            }
             $rate =  SupplierRate::findOrFail($input['id']);
             $rate->service_id = (int) $input['service_id'];
             $rate->supplier_id = (int) $input['supplier_id'];
@@ -161,7 +169,7 @@ class SupplierRateApi extends Controller
         if(array_key_exists('county_id', $input) && !empty($input['county_id'])){
             if($input['county_id'] != '~'){
                 $qb = $qb->whereHas('supplier', function($query) use ($input){
-                    $query->where('county_id', $input['county_id']);
+                    $query->where('county_id', $input['county_id'])->orWhere('county_id', '49');
                 });
             }            
         }
@@ -304,35 +312,6 @@ class SupplierRateApi extends Controller
         return response()->json(['services' => array_unique($services), 'suppliers' => array_unique($suppliers), 'rates' => $rates], 200);
     }
 
-    private function append_relationships_objects($data = array()){
-        foreach ($data as $key => $value) {
-            $supplier_rate = SupplierRate::find($data[$key]['id']);
-            $data[$key]['service'] = $supplier_rate->service;
-            $data[$key]['supplier'] = $supplier_rate->supplier;
-            $data[$key]['currency'] = $supplier_rate->currency;            
-            $data[$key]['terms'] = $supplier_rate->terms;
-        }
-        return $data;
-    }
-
-    private function append_relationships_nulls($data = array()){
-        foreach ($data as $key => $value) {
-            if($data[$key]["service"]==null){
-                $data[$key]["service"] = array("service_name"=>"N/A");
-            }
-            if($data[$key]["supplier"]==null){
-                $data[$key]["supplier"] = array("supplier_name"=>"N/A");
-            }
-            if($data[$key]["currency"]==null){
-                $data[$key]["currency"] = array("currency_name"=>"N/A");
-            }
-            if($data[$key]["terms"]==null){
-                $data[$key]["terms"] = array("terms"=>"N/A");
-            }
-        }
-        return $data;
-    }
-
 
     /**
      * Add Supplier Rate terms
@@ -395,9 +374,6 @@ class SupplierRateApi extends Controller
         //query builder
         $qb = SupplierRate::with('supplier.county','currency','terms', 'service');
 
-        $response;
-        $response_dt;
-
         // Services
         $service_id_count;
         if(array_key_exists('services', $input) && !empty($input['services'])){
@@ -411,11 +387,9 @@ class SupplierRateApi extends Controller
             $service_id_count = count($service_ids);
             if(!empty($county_ids)){
                 $qb = $qb->whereHas('supplier', function($query) use ($county_ids){
-                    $query->where('county_id', $county_ids[0]);
+                    $query->whereIn('county_id', $county_ids);
                     $query->orWhere('county_id', 49);   //National
                 });
-                
-                // where('suppliers.county_id', $county_ids[0]);
             } 
             $qb = $qb->whereIn('service_id', $service_ids);            
         }
@@ -508,6 +482,6 @@ class SupplierRateApi extends Controller
             }
         }
         
-        return response()->json($real_final_response, 200,array(),JSON_PRETTY_PRINT);
+        return response()->json($real_final_response, 200);
     }   
 }

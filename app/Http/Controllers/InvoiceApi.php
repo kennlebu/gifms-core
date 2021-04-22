@@ -95,6 +95,10 @@ class InvoiceApi extends Controller
                 'requisition_id'
                 );
 
+            if(!empty($form['supplier_id']) && !$this->checkVendor($form['supplier_id'])) {
+                return response()->json(['error'=>'Supplier is disabled'], 403);
+            }
+
             $file = $form['file'];
 
             if($form['submission_type']=='full' || $form['submission_type']=='log'){
@@ -616,10 +620,14 @@ class InvoiceApi extends Controller
         $invoice = [];
         $user = JWTAuth::parseToken()->authenticate();
         try{
-            $invoice   = Invoice::findOrFail($invoice_id);
+            $invoice = Invoice::findOrFail($invoice_id);
            
             if (!$user->can("APPROVE_INVOICE_".$invoice->status_id)){
                 throw new ApprovalException("No approval permission");             
+            }
+
+            if(!$this->checkVendor($invoice->supplier_id)) {
+                return response()->json(['error'=>'Supplier is disabled'], 403);
             }
 
             $approvable_status  = $invoice->status;
@@ -636,7 +644,7 @@ class InvoiceApi extends Controller
                 $approval->disableLogging();
                 $approval->save();
 
-                if($approval->approval_level_id==4){
+                if($approval->approval_level_id==4 && $invoice->status_id == 4){
 
                     $payable = [
                         'payable_type'                  =>  'invoices', 
@@ -679,7 +687,7 @@ class InvoiceApi extends Controller
                 Mail::queue(new NotifyInvoice($invoice));
 
                 if($several!=true)
-                return Response()->json(array('msg' => 'Success: invoice approved','invoice' => $invoice), 200);
+                return Response()->json(['msg' => 'Success: invoice approved','invoice' => $invoice], 200);
             }
         }
         catch(ApprovalException $ae){
@@ -772,6 +780,10 @@ class InvoiceApi extends Controller
            
             if (!$user->can("APPROVE_INVOICE_".$invoice->status_id)){
                 throw new ApprovalException("No approval permission");             
+            }
+
+            if(!$this->checkVendor($invoice->supplier_id)) {
+                return response()->json(['error'=>'Supplier is disabled'], 403);
             }
 
             $invoice->status_id = 9;
@@ -918,10 +930,22 @@ class InvoiceApi extends Controller
         try{
             $invoice = Invoice::findOrFail($invoice_id);
 
+            if(!$this->checkVendor($invoice->supplier_id)) {
+                return response()->json(['error'=>'Supplier is disabled'], 403);
+            }
+
             if(!empty($invoice->lpo) && !empty($invoice->lpo->requisition)){
                 if($invoice->lpo->requisition->status_id != 3){
                     return response()->json(['error'=>'Requisition must be approved before you can submit this invoice'], 403);
                 }
+            }
+
+            if (($invoice->total - $invoice->amount_allocated) > 1 ){ //allowance of 1
+                throw new NotFullyAllocatedException("This invoice has not been fully allocated");             
+            }
+
+            if($invoice->status_id != 9 && $invoice->status_id != 10 && $invoice->status_id != 13) {  // If invoice is not in submitable status.
+                return response()->json(['error'=>'Invoice already submitted.'], 403);
             }
 
             if(!empty($invoice->lpo_id)){
@@ -956,10 +980,6 @@ class InvoiceApi extends Controller
                         }
                     }
                 }
-            }
-
-            if (($invoice->total - $invoice->amount_allocated) > 1 ){ //allowance of 1
-                throw new NotFullyAllocatedException("This invoice has not been fully allocated");             
             }
 
             $invoice->status_id = $this->getNextStatusId($invoice->status_id);
@@ -1032,7 +1052,10 @@ class InvoiceApi extends Controller
             $invoice_ids = $form['invoices'];
 
             foreach ($invoice_ids as $key => $invoice_id) {
-                $this->approveInvoice($invoice_id, true);
+                $invoice = Invoice::find($invoice_id);
+                if($this->checkVendor($invoice->supplier_id)) {
+                    $this->approveInvoice($invoice_id, true);
+                }
             }
 
             return response()->json(['invoices'=>$form['invoices']], 201);
@@ -1406,7 +1429,11 @@ class InvoiceApi extends Controller
      */
     public function recallInvoice($invoice_id)
     {
-        $invoice = Invoice::find($invoice_id); 
+        $invoice = Invoice::find($invoice_id);
+        if(!$this->checkVendor($invoice->supplier_id)) {
+            return response()->json(['error'=>'Supplier is disabled'], 403);
+        }
+
         $user = $this->current_user();       
 
         // Ensure Invoice is in the recallable statuses
@@ -1439,6 +1466,11 @@ class InvoiceApi extends Controller
     public function copyInvoice($invoice_id){
         try{
             $invoice = Invoice::find($invoice_id);
+
+            if(!$this->checkVendor($invoice->supplier_id)) {
+                return response()->json(['error'=>'Supplier is disabled'], 403);
+            }
+
             $new_invoice = new Invoice;
             $new_invoice->status_id = 11;   // Logged, pending upload
             $new_invoice->external_ref = $invoice->external_ref.'_copy';
@@ -1511,6 +1543,11 @@ class InvoiceApi extends Controller
             }
 
             $invoice = Invoice::findOrFail($input['invoice_id']);
+
+            if(!$this->checkVendor($invoice->supplier_id)) {
+                return response()->json(['error'=>'Supplier is disabled'], 403);
+            }
+
             $invoice->disableLogging();
             $log_text = '';
             if(!empty($input['withholding_tax'])){
@@ -1554,6 +1591,9 @@ class InvoiceApi extends Controller
         try{
             $input = Request::all();
             $invoice = Invoice::findOrFail($input['invoice_id']);
+            if(!$this->checkVendor($invoice->supplier_id)) {
+                return response()->json(['error'=>'Supplier is disabled'], 403);
+            }
             if(!empty($invoice)){
                 $invoice->disableLogging();
                 if($input['tax'] == 'vat'){
@@ -1591,6 +1631,9 @@ class InvoiceApi extends Controller
             }
 
             $invoice = Invoice::findOrFail($input['invoice_id']);
+            if(!$this->checkVendor($invoice->supplier_id)) {
+                return response()->json(['error'=>'Supplier is disabled'], 403);
+            }
             $payment = Payment::where('payable_type', 'invoices')->where('payable_id',$invoice->id)->firstOrFail();
             $payment->disableLogging();
             $payment->status_id = 4;

@@ -32,6 +32,7 @@ class SupplierServiceApi extends Controller
             $service->supply_category_id = (int) $input['supply_category_id'];
             $service->daily_charge = (int) $input['daily_charge'];
             $service->unit = $input['unit'];
+            $service->inventory_item = $input['inventory_item'] ?? null;
 
             if($service->save()){
                 return response()->json(['msg'=>"service added"], 200);
@@ -51,6 +52,7 @@ class SupplierServiceApi extends Controller
             $service->supply_category_id = (int) $input['supply_category_id'];
             $service->daily_charge = (int) $input['daily_charge'];
             $service->unit = $input['unit'];
+            $service->inventory_item = $input['inventory_item'];
     
             if($service->save()){
                 return response()->json(['msg'=>"service updated"], 200);

@@ -11,6 +11,7 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use App\Models\PaymentModels\PaymentStatus;
 use App\Models\PaymentModels\Payment;
 use App\Models\PaymentModels\VoucherNumber;
+use App\Models\SuppliesModels\Supplier;
 
 class Controller extends BaseController
 {
@@ -137,6 +138,9 @@ class Controller extends BaseController
 
         $status = PaymentStatus::where('default_status','1')->first();
         $default_status = $status->id;
+
+        $check = Payment::where('payable_type', $payable['payable_type'])->where('payable_id', $payable['payable_id'])->exists();
+        if($check) { return 0; }
 
 
         $payment = new Payment;
@@ -338,6 +342,20 @@ class Controller extends BaseController
     function multiexplode ($delimiters,$string) {   
         $ready = str_replace($delimiters, $delimiters[0], $string);
         $launch = explode($delimiters[0], $ready);
-        return  $launch;
+        return $launch;
+    }
+
+    /**
+     * Checks whether a vendor is enabled
+     */
+    function checkVendor($id) {
+        $result = false;
+        $supplier = Supplier::find($id);
+        if(!empty($supplier)) {
+            if(empty($supplier->active) || $supplier->active != 'disabled') {
+                $result = true;
+            }
+        }
+        return $result;
     }
 }

@@ -25,6 +25,7 @@ use App\Models\ClaimsModels\Claim;
 use App\Models\FinanceModels\TaxRate;
 use App\Models\FinanceModels\WithholdingVatRate;
 use App\Models\InvoicesModels\Invoice;
+use App\Models\StaffModels\Permission;
 
 class PaymentApi extends Controller
 {    
@@ -351,6 +352,15 @@ class PaymentApi extends Controller
 
                 // Invoice
                 $invoice = Invoice::with('status','supplier');
+
+                // Permitted statuses
+                $invoice_statuses = $this->getViewableStatuses('Invoice');
+                if(!empty($invoice_statuses)) {
+                    if(!in_array('-2', $invoice_statuses)){ // Only filter if no permission to view all
+                        $invoice = $invoice->whereIn('status_id', $invoice_statuses);
+                    }                   
+                }
+
                 if(!empty($start_date) && !empty($end_date)){
                     $invoice = $invoice->whereBetween('created_at', [$start_date, $end_date]);
                 }
@@ -388,6 +398,15 @@ class PaymentApi extends Controller
                 if(empty($supplier_id)){
                     // Claim
                     $claim = Claim::with('status','requested_by');
+                    
+                    // Permitted statuses
+                    $claim_statuses = $this->getViewableStatuses('Claim');
+                    if(!empty($claim_statuses)) {
+                        if(!in_array('-2', $claim_statuses)){ // Only filter if no permission to view all
+                            $claim = $claim->whereIn('status_id', $claim_statuses);
+                        }
+                    }
+
                     if(!empty($start_date) && !empty($end_date)){
                         $claim = $claim->whereBetween('created_at', [$start_date, $end_date]);
                     }
@@ -419,6 +438,15 @@ class PaymentApi extends Controller
 
                     // Advance
                     $advance = Advance::with('status','requested_by');
+                    
+                    // Permitted statuses
+                    $advance_statuses = $this->getViewableStatuses('Advance');
+                    if(!empty($advance_statuses)) {
+                        if(!in_array('-2', $advance_statuses)){ // Only filter if no permission to view all
+                            $advance = $advance->whereIn('status_id', $advance_statuses);
+                        }
+                    }
+
                     if(!empty($start_date) && !empty($end_date)){
                         $advance = $advance->whereBetween('created_at', [$start_date, $end_date]);
                     }
@@ -450,6 +478,15 @@ class PaymentApi extends Controller
 
                     // Mobile Payment
                     $mobile_payment = MobilePayment::with('status','requested_by');
+                    
+                    // Permitted statuses
+                    $mobile_payment_statuses = $this->getViewableStatuses('MobilePayment');
+                    if(!empty($mobile_payment_statuses)) {
+                        if(!in_array('-2', $mobile_payment_statuses)){ // Only filter if no permission to view all
+                            $mobile_payment = $mobile_payment->whereIn('status_id', $mobile_payment_statuses);
+                        }
+                    }
+
                     if(!empty($start_date) && !empty($end_date)){
                         $mobile_payment = $mobile_payment->whereBetween('created_at', [$start_date, $end_date]);
                     }
@@ -543,5 +580,21 @@ class PaymentApi extends Controller
         catch(Exception $e){
             return response()->json(['msg'=>"Something went wrong", 'error'=>$e->getMessage()], 500);
         }
+    }
+
+    private function getViewableStatuses($entity){
+        $statuses = [];
+        $permission_ids = [];
+        $roles = $this->current_user()->roles;
+        if(!empty($roles)) {
+            foreach($roles as $role) {
+                $qb = DB::table('role_permissions')->select('permission_id')->where('role_id', $role->id)->pluck('permission_id')->toArray();
+                $permission_ids = array_merge($permission_ids, $qb);
+            }
+            $permission_ids = array_unique($permission_ids);
+
+            $statuses = Permission::whereIn('id', $permission_ids)->where('entity', $entity)->where('operation_type', 'Read')->pluck('at_status_id')->toArray();
+        }
+        return $statuses;
     }
 }

@@ -182,6 +182,7 @@ Route::POST('/lpos_not_selected', 'LPOApi@addVendorsNotSelected')->middleware('j
 Route::GET('/lpos_not_selected', 'LPOApi@getVendorsNotSelected')->middleware('jwt.auth');
 Route::POST('/add-lpo-terms', 'LPOApi@addLpoTerms')->middleware('jwt.auth');
 Route::POST('/lpo-notify-vendor', 'LPOApi@NotifyLpoDispatch')->middleware('jwt.auth');
+Route::POST('/change-to-quotations', 'LPOApi@convertToQuotations')->middleware('jwt.auth');
 
 
 
@@ -815,7 +816,7 @@ Route::GET('/permission/{permission_id}', 'PermissionApi@getPermissionById')->mi
 
  */
 Route::GET('/permissions', 'PermissionApi@permissionsGet')->middleware('jwt.auth');
-
+Route::POST('/get-user-permissions', 'PermissionApi@getUserPermissions')->middleware('jwt.auth');
 
 
 
@@ -1500,6 +1501,7 @@ Route::get('/suppliers/download', 'SupplierApi@downloadExcel')->middleware('jwt.
 Route::POST('/supplier/changeStatus', 'SupplierApi@changeActiveStatus')->middleware('jwt.auth');
 Route::GET('/supplier-transactions/{supplier_id}', 'SupplierApi@getSupplierTransactions')->middleware('jwt.auth');
 Route::POST('/supplier/request-quote', 'SupplierApi@requestQuote')->middleware('jwt.auth');
+Route::POST('/supplier/supplier-statement', 'SupplierApi@getStatement')->middleware('jwt.auth');
 
 // Supplier documents
 Route::POST('/supplier/add-document', 'SupplierApi@addDocument')->middleware('jwt.auth');
@@ -1850,6 +1852,7 @@ Route::POST('/mobile-payment/request_signitories/{mobile_payment_id}', 'MobilePa
 Route::POST('/mobile-payment/mark_as_paid', 'MobilePaymentApi@markAsPaid')->middleware('jwt.auth');
 Route::GET('/mobile-payment/download_dump', 'MobilePaymentApi@downloadDump')->middleware('jwt.auth');
 Route::POST('/mobile-payment/allocations-from-requisition', 'MobilePaymentAllocationApi@createAllocationsFromRequisition')->middleware('jwt.auth');
+Route::POST('/mobile_payment/upload-signsheet', 'MobilePaymentApi@uploadSignsheet')->middleware('jwt.auth');
 /**
  * POST postPayees
  * Summary: post mobile_payment payees in acsv by ID
@@ -3807,6 +3810,13 @@ Route::GET('/allocations', 'AllocationApi@getAllocations')->middleware('jwt.auth
  * Output-Formats: [application/json, application/xml]
  */
 Route::POST('/allocation/csv_upload', 'AllocationApi@uploadAllocations')->middleware('jwt.auth');
+
+Route::POST('/allocation/apply-office-cost-share', 'AllocationApi@applyOfficeCostShare')->middleware('jwt.auth');
+Route::POST('/allocation/add-office-cost-share', 'AllocationApi@addOfficeCostAllocations')->middleware('jwt.auth');
+Route::GET('/office-cost-allocations', 'AllocationApi@getOfficeCostAllocations')->middleware('jwt.auth');
+Route::DELETE('/office-cost-allocations/{allocation_id}', 'AllocationApi@deleteOfficeCostAllocation')->middleware('jwt.auth');
+Route::GET('/office-cost-allocations/{allocation_id}', 'AllocationApi@getOfficeCostAllocationById')->middleware('jwt.auth');
+Route::POST('/office-cost-allocations/update', 'AllocationApi@updateOfficeCostAllocation')->middleware('jwt.auth');
 
 
 

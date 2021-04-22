@@ -282,6 +282,9 @@ class MeetingApi extends Controller
 
             if(!empty($request->url)){
                 $meeting = Meeting::where('invite_url', $request->url)->first();
+                if($meeting->expired){
+                    return back()->with('error','This event has already ended');
+                }
                 if(MeetingAttendanceRegister::where('meeting_id', $meeting->id)->where('attendee_id', $attendee->id)->exists()){
                     return back()->with('error','You have already registered for this event');
                 }

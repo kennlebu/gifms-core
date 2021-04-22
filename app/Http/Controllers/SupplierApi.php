@@ -31,12 +31,15 @@ use Excel;
 use Illuminate\Http\Request as HttpRequest;
 use Anchu\Ftp\Facades\Ftp;
 use App\Mail\Generic;
+use App\Models\InvoicesModels\Invoice;
 use App\Models\SuppliesModels\QuoteRequest;
 use App\Models\SuppliesModels\SupplierRate;
 use App\Models\SuppliesModels\SupplierService;
 use App\Models\SuppliesModels\SupplierSupplyCategory;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Storage;
+use PDF;
 
 class SupplierApi extends Controller
 {
@@ -130,6 +133,10 @@ class SupplierApi extends Controller
     {
         $form = Request::all();
 
+        if(!$this->checkVendor($form['id'])) {
+            return response()->json(['error'=>'Supplier is disabled'], 403);
+        }
+
         $supplier = Supplier::find($form['id']);
         $supplier->bank_id                 =         $form['bank_id'];
         $supplier->bank_branch_id          =         $form['bank_branch_id'];
@@ -158,12 +165,12 @@ class SupplierApi extends Controller
         $supplier->requires_lpo            =         $form['requires_lpo'];
         $supplier->supply_category_id = $form['supply_category_id'];
         $supplier->county_id = $form['county_id'];
-        
-        foreach($supplier->supply_categories as $old_cat){
-            SupplierSupplyCategory::where('supplier_id', $supplier->id)->where('supply_category_id',  $old_cat->id)->delete();
-        }
 
-        if(!empty($form['supply_categories'])){
+        if(!empty($form['supply_categories'])){        
+            foreach($supplier->supply_categories as $old_cat){
+                SupplierSupplyCategory::where('supplier_id', $supplier->id)->where('supply_category_id',  $old_cat->id)->delete();
+            }
+
             foreach($form['supply_categories'] as $new_cat){
                 SupplierSupplyCategory::create([
                     'supplier_id' => $supplier->id,
@@ -332,7 +339,9 @@ class SupplierApi extends Controller
 
         // Supply category
         if(array_key_exists('supply_category_id', $input) && !empty($input['supply_category_id'])){
-            $qb = $qb->where('supply_category_id', $input['supply_category_id']);
+            $qb = $qb->whereHas('supply_categories', function($q) use ($input){
+                $q->whereIn('supply_category_id', $input['supply_category_id']);
+            });
         }
 
         // Filter
@@ -346,7 +355,7 @@ class SupplierApi extends Controller
             }
             
             if(count($filter_model->counties) >= 1) {
-                $qb = $qb->whereIn('county_id', $filter_model->counties);
+                $qb = $qb->whereIn('county_id', $filter_model->counties)->orWhere('supply_category_id', '49');
             }
             
             if(count($filter_model->supplier_services) >= 1) {
@@ -373,7 +382,9 @@ class SupplierApi extends Controller
 
         // Donation recepients
         if(array_key_exists('donation', $input)){
-            $qb = $qb->whereIn('supply_category_id', [21]);   // Government organisations
+            $qb = $qb->whereHas('supply_categories', function($q){
+                $q->whereIn('supply_category_id', [21]);    // Government organisations
+            });
         }
 
         if(array_key_exists('datatables', $input)){
@@ -449,7 +460,7 @@ class SupplierApi extends Controller
             });
         }
         if(!empty($location)){
-            $suppliers->where('county_id', $location);
+            $suppliers->where('county_id', $location)->orWhere('supply_category_id', '49');
         }
 
         $results = $suppliers->get();
@@ -717,6 +728,10 @@ class SupplierApi extends Controller
 
     public function addDocument(HttpRequest $request){
         try{
+            if(!$this->checkVendor($request->supplier_id)) {
+                return response()->json(['error'=>'Supplier is disabled'], 403);
+            }
+
             if(empty($request->document_id)){
                 $document = new SupplierDocument();
                 $document->supplier_id = $request->supplier_id;
@@ -799,6 +814,10 @@ class SupplierApi extends Controller
 
     public function requestQuote(HttpRequest $request){
         try{
+            if(!$this->checkVendor($request->supplier_id)) {
+                return response()->json(['error'=>'Supplier is disabled'], 403);
+            }
+
             $to = $this->multiexplode([',',';'], $request->to);
             $cc = [];
             if(!empty($request->cc)){
@@ -837,5 +856,26 @@ class SupplierApi extends Controller
             $response =  ["error"=>"Something went wrong" ,"msg"=>$e->getMessage()];
             return response()->json($response, 500);
         }
+    }
+
+    public function getStatement(HttpRequest $request) {
+        $supplier = Supplier::findOrFail($request->supplier_id);
+
+        // Invoices
+        $invoices = Invoice::with('payments')->where('supplier_id', $request->supplier_id)->whereBetween('created_at', [$request->from, $request->to])->get();
+
+        $data = [
+            'from_date' => $request->from,
+            'to_date' => $request->to,
+            'invoices' => $invoices,
+            'supplier' => $supplier
+        ];
+
+        $pdf = PDF::loadView('pdf/supplier_statement', $data);
+        $file_contents  = $pdf->stream();
+        $response = Response::make($file_contents, 200);
+        $response->header('Content-Type', 'application/pdf');
+        return $response;
+        
     }
 }

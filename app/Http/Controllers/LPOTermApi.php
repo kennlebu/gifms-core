@@ -38,6 +38,9 @@ class LPOTermApi extends Controller
                                 ->first();
             if(array_key_exists('for_hotel', $form) && empty($term_exists)){
                 $lpo = LPO::find($form['lpo_id']);
+                if(!$this->checkVendor($lpo->preferred_supplier->id)) {
+                    return response()->json(['error'=>'Supplier is disabled'], 403);
+                }
                 if($lpo->lpo_type == 'prenegotiated'){
                     if($lpo->supplier->supply_category_id == 1 || $lpo->supplier->supply_category_id == 2){    //Conferences (incl Accomodation), Accomodation Only
                         $is_hotel = true;
@@ -120,12 +123,16 @@ class LPOTermApi extends Controller
         try{
             $form = Request::all();
 
+            $lpo = LPO::find($form['lpo_id']);
+            if(!$this->checkVendor($lpo->preferred_supplier->id)) {
+                return response()->json(['error'=>'Supplier is disabled'], 403);
+            }
+
             $term = LpoTerm::findOrFail($form['id']);
             $term->lpo_id              =               $form['lpo_id'];
             $term->terms               =               $form['terms'];
 
             if($term->save()) {
-                $lpo = LPO::find($term->lpo_id);
                 activity()
                    ->performedOn($lpo)
                    ->causedBy($this->current_user())

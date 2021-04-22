@@ -44,6 +44,10 @@ class LPOQuotationApi extends Controller
                 'external_ref'
                 );
 
+            if(!$this->checkVendor($form['supplier_id'])) {
+                return response()->json(['error'=>'Supplier is disabled'], 403);
+            }
+
             $file = $form['file'];
 
             $lpo_quotation->uploaded_by_id = $form['uploaded_by_id'];
@@ -133,6 +137,9 @@ class LPOQuotationApi extends Controller
     {
         try{
             $form = Request::all();
+            if(!$this->checkVendor($form['supplier_id'])) {
+                return response()->json(['error'=>'Supplier is disabled'], 403);
+            }
             $quotation = LpoQuotation::findOrFail($form['id']);
             $file = $form['file'];
             $quotation->supplier_id = $form['supplier_id'];

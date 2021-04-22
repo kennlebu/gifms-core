@@ -19,8 +19,10 @@ use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\DB;
 
 use App\Models\StaffModels\Permission;
+use App\Models\StaffModels\Role;
 use App\Models\StaffModels\Staff;
 use Exception;
+use Illuminate\Http\Request as HttpRequest;
 
 class PermissionApi extends Controller
 {
@@ -186,10 +188,9 @@ class PermissionApi extends Controller
     {
         try{
             $response   = Permission::findOrFail($permission_id);           
-            return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+            return response()->json($response, 200);
         }catch(Exception $e){
-            $response =  ["error"=>"Something went wrong"];
-            return response()->json($response, 500,array(),JSON_PRETTY_PRINT);
+            return response()->json(["error"=>"Something went wrong"], 500);
         }
     }
     
@@ -318,7 +319,7 @@ class PermissionApi extends Controller
             }
         }
 
-        return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+        return response()->json($response, 200);
     }
 
 
@@ -371,4 +372,48 @@ class PermissionApi extends Controller
 
         return $data;
     }
+
+    public function getUserPermissions(HttpRequest $request) {
+        try {
+            $permission_ids = [];
+            $roles = $this->current_user()->roles;
+            if(!empty($roles)) {
+                foreach($roles as $role) {
+                    $qb = DB::table('role_permissions')->select('permission_id')->where('role_id', $role->id)->pluck('permission_id')->toArray();
+                    $permission_ids = array_merge($permission_ids, $qb);
+                }
+                $permission_ids = array_unique($permission_ids);
+            }
+
+            $permissions = Permission::whereIn('id', $permission_ids);
+            if(!empty($request->entity)) {
+                $permissions = $permissions->where('entity', $request->entity);
+            }
+            $permissions = $permissions->pluck('name')->toArray();
+            return response()->json($permissions, 200);
+        }
+        catch(Exception $e) {
+            return response()->json(['error' => 'Something went wrong'], 500);
+        }
+    }
+
+     public function getUserMenus() {
+        try {
+            $permission_ids = [];
+            $roles = $this->current_user()->roles;
+            if(!empty($roles)) {
+                foreach($roles as $role) {
+                    $qb = DB::table('role_permissions')->select('permission_id')->where(['role_id' => $role->id, 'entity' => 'Menu'])->pluck('permission_id')->toArray();
+                    $permission_ids = array_merge($permission_ids, $qb);
+                }
+                $permission_ids = array_unique($permission_ids);
+            }
+
+            $permissions = Permission::whereIn('id', $permission_ids)->pluck('name')->toArray();
+            return response()->json($permissions, 200);
+        }
+        catch(Exception $e) {
+            return response()->json(['error' => 'Something went wrong'], 500);
+        }
+     }
 }

@@ -22,8 +22,11 @@ use App\Models\ClaimsModels\Claim;
 use App\Models\InvoicesModels\Invoice;
 use App\Models\MobilePaymentModels\MobilePayment;
 use App\Models\AccountingModels\Account;
+use App\Models\AllocationModels\OfficeCostAllocation;
+use App\Models\AllocationModels\OfficeCostAllocationItem;
 use App\Models\ProjectsModels\Project;
 use Excel;
+use Illuminate\Http\Request as HttpRequest;
 use Illuminate\Support\Facades\DB;
 
 class AllocationApi extends Controller
@@ -187,9 +190,9 @@ class AllocationApi extends Controller
         $deleted_allocation = Allocation::destroy($allocation_id);
 
         if($deleted_allocation){
-            return response()->json(['msg'=>"Allocation deleted"], 200,array(),JSON_PRETTY_PRINT);
+            return response()->json(['msg'=>"Allocation deleted"], 200);
         }else{
-            return response()->json(['error'=>"Something went wrong"], 500,array(),JSON_PRETTY_PRINT);
+            return response()->json(['error'=>"Something went wrong"], 500);
         }
     }
 
@@ -233,11 +236,11 @@ class AllocationApi extends Controller
                                         'objective'
                                     )->findOrFail($allocation_id);
 
-            return response()->json($response, 200,array(),JSON_PRETTY_PRINT);
+            return response()->json($response, 200);
 
         }catch(Exception $e){
             $response =  ["error"=>"Allocation could not be found"];
-            return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+            return response()->json($response, 404);
         }
     }
 
@@ -309,7 +312,7 @@ class AllocationApi extends Controller
                     catch(\Exception $e){
                         $response =  ["error"=>'Account or Project not found. Please use form to allocate.',
                                         "msg"=>$e->getMessage()];
-                        return response()->json($response, 404,array(),JSON_PRETTY_PRINT);
+                        return response()->json($response, 404);
                     }
                         $allocation->project_id = $project->id;
                 }
@@ -324,7 +327,7 @@ class AllocationApi extends Controller
                 ->performedOn($payable)
                 ->causedBy($user)
                 ->log('Uploaded allocations');
-            return Response()->json(array('success' => 'allocations added','payable' => $payable), 200);
+            return Response()->json(['success' => 'allocations added','payable' => $payable], 200);
 
         }
         catch(\Exception $e){
@@ -334,5 +337,177 @@ class AllocationApi extends Controller
 
     public function getPercentage($amount, $total){
         return ($amount / $total) * 100;
+    }
+
+    public function applyOfficeCostShare(HttpRequest $request) {
+        $cost_allocations = OfficeCostAllocation::with('items')->whereYear('date', date('Y'))->whereMonth('date', date('m'))->first();
+        if(empty($cost_allocations)) {
+            return response()->json(['error'=>'There are no office allocations for this month'], 403);
+        }
+
+        $allocation_purpose = '';
+        if($request->allocatable_type == 'invoices') {
+            $allocatable = Invoice::find($request->allocatable_id);
+            $allocation_purpose = $allocatable->expense_desc.'; '.$allocatable->expense_purpose;
+        }
+        else if($request->allocatable_type == 'claims') {
+            $allocatable = Claim::find($request->allocatable_id);
+            $allocation_purpose = $allocatable->expense_desc.'; '.$allocatable->expense_purpose;
+        }
+        else if($request->allocatable_type == 'mobile_paymetns') {
+            $allocatable = MobilePayment::find($request->allocatable_id);
+            $allocation_purpose = $allocatable->expense_desc.'; '.$allocatable->expense_purpose;
+        }
+
+        foreach($cost_allocations->items as $percentage) {
+            $allocation = new Allocation();
+            $allocation->account_id = $percentage->account_id;
+            $allocation->allocatable_id = $request->allocatable_id;
+            $allocation->allocatable_type = $request->allocatable_type;
+            $allocation->amount_allocated = round(($request->amount * $percentage->percentage) / 100, 2);
+            $allocation->percentage_allocated = $percentage->percentage;
+            $allocation->project_id = $percentage->project_id;
+            $allocation->allocation_purpose = $allocation_purpose;
+
+            $allocation->allocated_by_id = $this->current_user()->id;
+            $allocation->disableLogging();
+            $allocation->save();
+        }
+
+        activity()
+            ->performedOn($allocation->allocatable)
+            ->causedBy($this->current_user())
+            ->log('Applied office cost allocations');
+
+        return response()->json(['success' => 'Office cost allocations applied'], 200);
+    }
+
+    public function getOfficeCostAllocations(HttpRequest $request) {
+        try{
+            $input = Request::all();
+
+            $allocations = OfficeCostAllocation::with('items.project', 'items.account','created_by');
+
+            if(array_key_exists('month', $input)){                            // Month
+                $allocations = $allocations->whereMonth('date', date('m', strtotime($input['month'])))
+                                            ->whereYear('date', date('Y', strtotime($input['month'])));
+            }
+
+            if(!empty(array_key_exists('datatables', $input))){             // Datatables
+                    $total_records = $allocations->count();
+
+                    $records_filtered = $allocations->count();
+        
+                    //ordering
+                    $order_column_id    = (int) $input['order'][0]['column'];
+                    $order_column_name  = $input['columns'][$order_column_id]['order_by'];
+                    $order_direction    = $input['order'][0]['dir'];
+        
+                    if($order_column_name!=''){
+                        $allocations = $allocations->orderBy($order_column_name, $order_direction);
+                    }
+        
+                    //limit offset
+                    if((int)$input['start']!= 0 ){
+                        $allocations = $allocations->limit($input['length'])->offset($input['start']);
+                    }
+                    else{
+                        $allocations = $allocations->limit($input['length']);
+                    }
+        
+                    $allocations = $allocations->get();
+        
+                    $allocations = OfficeCostAllocation::arr_to_dt_response( 
+                        $allocations, $input['draw'],
+                        $total_records,
+                        $records_filtered
+                        );
+            }
+            else{
+                $allocations = $allocations->get();
+            }
+
+            return response()->json($allocations, 200); 
+        }
+        catch(\Exception $e){
+            return response()->json(['error'=>'something went wrong', 'msg'=>$e->getMessage()], 500);
+        }   
+    }
+
+    public function addOfficeCostAllocations(HttpRequest $request) {
+        try {
+            $exists = OfficeCostAllocation::whereYear('date', date('Y'))->whereMonth('date', date('m'))->exists();
+            if($exists) {
+                return response()->json(['error'=>'There is already an allocation for this month'], 403);
+            }
+
+            $allocation = new OfficeCostAllocation();
+            $allocation->date = $request->date;
+            $allocation->created_by_id = $this->current_user()->id;
+            $allocation->disableLogging();
+            $allocation->save();
+
+            $allocation_items = json_decode($request->allocations);
+            foreach($allocation_items as $item) {
+                OfficeCostAllocationItem::create([
+                    'office_cost_allocation_id' => $allocation->id,
+                    'percentage' => $item->percentage,
+                    'account_id' => $item->account_id,
+                    'project_id' => $item->project_id
+                ]);
+            }
+
+            return response()->json(['msg' => 'success'], 200);
+        }
+        catch(\Exception $e){
+            return response()->json(['error'=>'something went wrong', 'msg'=>$e->getMessage()], 500);
+        }
+    }
+
+    public function deleteOfficeCostAllocation($id) {
+        $allocation = OfficeCostAllocation::with('items')->find($id);
+        $allocation->delete();
+
+        foreach($allocation->items as $item) {
+            $cost_item = OfficeCostAllocationItem::find($item->id);
+            $cost_item->disableLogging();
+            $cost_item->delete();
+        }
+
+        return response()->json(['msg' => 'success'], 200);
+    }
+
+    public function getOfficeCostAllocationById($id) {
+        try {
+            $allocation = OfficeCostAllocation::with('items.account', 'items.project')->find($id);
+            return response()->json($allocation, 200);
+        }
+        catch(\Exception $e){
+            return response()->json(['error'=>'something went wrong', 'msg'=>$e->getMessage()], 500);
+        }
+    }
+
+    public function updateOfficeCostAllocation(HttpRequest $request) {
+        try {
+            $allocation = OfficeCostAllocation::findOrFail($request->id);
+            $allocation->date = date('Y-m-d', strtotime($request->date));
+            $allocation->disableLogging();
+            $allocation->save();
+
+            $allocation_items = json_decode($request->allocations);
+            foreach($allocation_items as $item) {
+                $allocation_item = OfficeCostAllocationItem::find($item->id);
+                $allocation_item->percentage = $item->percentage;
+                $allocation_item->account_id = $item->account_id;
+                $allocation_item->project_id = $item->project_id;
+                $allocation_item->disableLogging();
+                $allocation_item->save();
+            }
+
+            return response()->json(['msg' => 'success'], 200);
+        }
+        catch(\Exception $e){
+            return response()->json(['error'=>'something went wrong', 'msg'=>$e->getMessage()], 500);
+        }
     }
 }

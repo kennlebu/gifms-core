@@ -323,7 +323,7 @@
                     @php $tot_perc=$allocation->percentage_allocated+$tot_perc @endphp @php $tot=$allocation->amount_allocated+$tot @endphp @php $f = new NumberFormatter("en", NumberFormatter::SPELLOUT); $tot_words = ucwords($f->format($tot)); @endphp @endforeach
 
 
-                    <tr bgcolor="#F8F8F8" style="height:70px;">
+                    <tr style="height:70px; background-color: #F8F8F8">
                         <td style="vertical-align:middle;: 1px solid #000000; border-bottom: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000;" colspan="2">
                             <strong>TOTAL</strong>
                         </td>
