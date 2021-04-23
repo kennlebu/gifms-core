@@ -1672,7 +1672,7 @@ class LPOApi extends Controller
 
     public function convertToQuotations(HttpRequest $request){
         $lpo = Lpo::findOrFail($request->lpo_id);
-        if(!$this->checkVendor($lpo->preferred_supplier->id)) {
+        if($lpo->preferred_supplier && !$this->checkVendor($lpo->preferred_supplier->id)) {
             return response()->json(['error'=>'Supplier is disabled'], 403);
         }
         $lpo->lpo_type = null;

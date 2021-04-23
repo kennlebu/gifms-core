@@ -50,6 +50,8 @@ class MeetingApi extends Controller
             }
 
             $meetings = $meetings->orderBy($order_column_name, $order_direction);
+        } else {
+            $meetings = $meetings->orderBy('created_at', 'desc');
         }
     
         //limit
@@ -282,9 +284,9 @@ class MeetingApi extends Controller
 
             if(!empty($request->url)){
                 $meeting = Meeting::where('invite_url', $request->url)->first();
-                if($meeting->expired){
-                    return back()->with('error','This event has already ended');
-                }
+                // if($meeting->expired){
+                //     return back()->with('error','This event has already ended');
+                // }
                 if(MeetingAttendanceRegister::where('meeting_id', $meeting->id)->where('attendee_id', $attendee->id)->exists()){
                     return back()->with('error','You have already registered for this event');
                 }
@@ -431,7 +433,7 @@ class MeetingApi extends Controller
             return Response()->json(array('msg' => 'Attendee registered','attendee' => $attendee), 200);
         }
         catch(Exception $e){
-            return response()->json(['error'=>"Something went wrong",'msg'=>$e->getMessage(),'trace'=>$e->getTraceAsString()], 500,array(),JSON_PRETTY_PRINT);
+            return response()->json(['error'=>"Something went wrong",'msg'=>$e->getMessage(),'trace'=>$e->getTraceAsString()], 500);
         }
     }
 
