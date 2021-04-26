@@ -227,9 +227,9 @@ class MeetingApi extends Controller
             return back()->with('error','This event does not exist');
         }
         // Check the dates
-        if(Meeting::whereDate('ends_on', '>', date('Y-m-d'))->where('invite_url', $url)->exists()){
-            return back()->with('error','This event has already ended.');
-        }
+        // if(Meeting::whereDate('ends_on', '>', date('Y-m-d'))->where('invite_url', $url)->exists()){
+        //     return back()->with('error','This event has already ended.');
+        // }
 
         $attendee = MeetingAttendee::where('id_no', $request->id_no)->first();
         if(empty($attendee)){
