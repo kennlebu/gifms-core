@@ -2617,3 +2617,19 @@ INSERT INTO `permissions` (`name`, `display_name`, `description`, `entity`, `ope
 VALUES ('See Help', 'See Help & Resources', 'See help & resources menu item', 'Menu', 'Read', NULL, NULL, now(), now(), NULL);
 INSERT INTO `permissions` (`name`, `display_name`, `description`, `entity`, `operation_type`, `at_status_id`, `approval_level_id`, `created_at`, `updated_at`, `deleted_at`)
 VALUES ('See Leave Management', 'See Leave Management', 'See leave management menu item', 'Menu', 'Read', NULL, NULL, now(), now(), NULL);
+
++~===== Mobile payment update permissions
+DELETE FROM `permissions` WHERE `entity` = 'MobilePayment' AND ((`id` = '164') OR (`id` = '165'));
+UPDATE `permissions` SET `display_name` = 'Update Mobile Payment - Requested Pending Submission to Bank' WHERE `entity` = 'MobilePayment' AND `id` = '166';
+UPDATE `permissions` SET `display_name` = 'Update Mobile Payment - Pending PM Approval' WHERE `entity` = 'MobilePayment' AND `id` = '167';
+UPDATE `permissions` SET `display_name` = 'Update Mobile Payment - Pending Finance Approval' WHERE `entity` = 'MobilePayment' AND `id` = '168';
+UPDATE `permissions` SET `name` = 'UPDATE_MOBILE_PAYMENT_17', `display_name` = 'Update Mobile Payment - Approved by Director Pending Payment' WHERE `entity` = 'MobilePayment' AND `id` = '169';
+UPDATE `permissions` SET `display_name` = 'Update Mobile Payment - Paid' WHERE `entity` = 'MobilePayment' AND `id` = '170';
+UPDATE `permissions` SET `name` = 'UPDATE_MOBILE_PAYMENT_14', `display_name` = 'Update Mobile Payment - Recalled' WHERE `entity` = 'MobilePayment' AND `id` = '171';
+UPDATE `permissions` SET `display_name` = 'Update Mobile Payment - Returned' WHERE `entity` = 'MobilePayment' AND `id` = '172';
+UPDATE `permissions` SET `display_name` = 'Update Mobile Payment - Pending Director\'s Approval' WHERE `entity` = 'MobilePayment' AND `id` = '173';
+UPDATE `permissions` SET `display_name` = 'Update Mobile Payment - Pending Accountant Review' WHERE `entity` = 'MobilePayment' AND `id` = '174';
+UPDATE `permissions` SET `name` = 'UPDATE_MOBILE_PAYMENT_15', `display_name` = 'Update Mobile Payment - Sent to Bank, awaiting verification' WHERE `entity` = 'MobilePayment' AND `id` = '175';
+UPDATE `permissions` SET `name` = 'UPDATE_MOBILE_PAYMENT_16', `display_name` = 'Update Mobile Payment - Resent to Bank, awaiting verification' WHERE `entity` = 'MobilePayment' AND `id` = '176';
+UPDATE `permissions` SET `name` = 'UPDATE_MOBILE_PAYMENT_18', `display_name` = 'Update Mobile Payment - Pending Finance Review' WHERE `entity` = 'MobilePayment' AND `id` = '177';
+DELETE FROM `permissions` WHERE `entity` = 'MobilePayment' AND ((`id` = '178'));
