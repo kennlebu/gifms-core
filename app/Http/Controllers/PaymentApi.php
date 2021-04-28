@@ -25,6 +25,7 @@ use App\Models\ClaimsModels\Claim;
 use App\Models\FinanceModels\TaxRate;
 use App\Models\FinanceModels\WithholdingVatRate;
 use App\Models\InvoicesModels\Invoice;
+use App\Models\PaymentModels\VoucherNumberOld;
 use App\Models\StaffModels\Permission;
 
 class PaymentApi extends Controller
@@ -206,20 +207,34 @@ class PaymentApi extends Controller
 
             // For voucher nos
             if(!empty($voucher_no)){
+                // Test old PV nos.
+
                 $pv_nos = VoucherNumber::where('voucher_number', 'like', '%' . $voucher_no. '%')->orderBy('id', 'asc')->get();
-                if(count($pv_nos) > 0){
-                    $others = [];
-                    $others = VoucherNumber::where('payable_id', $pv_nos[0]->payable_id)->orderBy('id', 'asc')->get();
+                $old_pv_nos = VoucherNumberOld::where('voucher_number', 'like', '%' . $voucher_no. '%')->orderBy('id', 'asc')->get();
                 
+                if(count($pv_nos) > 0 || count($old_pv_nos) > 0){
+                    $others = [];
+                    $others = count($pv_nos) > 0 ? VoucherNumber::where('payable_id', $pv_nos[0]->payable_id)->orderBy('id', 'asc')->get() : [];
+
                     if(count($others) > 0 && $others[0]->id != $pv_nos[0]->id){
                         // Don't get these results. They are duplicate
                     }
                     else{
+                        foreach($old_pv_nos as $pv_no) {
+                            $pv_nos[] = $pv_no;
+                        }
                         foreach($pv_nos as $record){
                             $row = [];
                             if($record->payable_type == 'invoices'){
                                 $payment = Payment::find($record->payable_id);
-                                $invoice = Invoice::with('supplier')->where('id', $payment->payable_id);
+                                $invoice = Invoice::with('supplier');
+                                if(!empty($record->old)) {
+                                    $invoice = $invoice->where('id', $record->payable_id);
+                                }
+                                else {
+                                    $invoice = $invoice->where('id', $payment->payable_id);
+                                }
+
                                 if(!empty($start_date) && !empty($end_date)){
                                     $invoice = $invoice->whereBetween('created_at', [$start_date, $end_date]);
                                 }

@@ -1106,7 +1106,7 @@ class InvoiceApi extends Controller
             $qb = Invoice::with('raised_by','received_by','status','project_manager','supplier','currency');
         }
 
-        $qb = $qb->whereNotNull('raised_by_id');
+        // $qb = $qb->whereNotNull('raised_by_id');
         $qb = $qb->where(function($query){
             $query->whereNull('archived')->orWhere('archived', '!=', 1);
         });

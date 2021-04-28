@@ -2633,3 +2633,11 @@ UPDATE `permissions` SET `name` = 'UPDATE_MOBILE_PAYMENT_15', `display_name` = '
 UPDATE `permissions` SET `name` = 'UPDATE_MOBILE_PAYMENT_16', `display_name` = 'Update Mobile Payment - Resent to Bank, awaiting verification' WHERE `entity` = 'MobilePayment' AND `id` = '176';
 UPDATE `permissions` SET `name` = 'UPDATE_MOBILE_PAYMENT_18', `display_name` = 'Update Mobile Payment - Pending Finance Review' WHERE `entity` = 'MobilePayment' AND `id` = '177';
 DELETE FROM `permissions` WHERE `entity` = 'MobilePayment' AND ((`id` = '178'));
+
++~===== Old PVs table
+CREATE TABLE `voucher_numbers_old` (
+  `id` int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `voucher_number` text NULL,
+  `payable_type` text NULL,
+  `payable_id` int NULL
+);

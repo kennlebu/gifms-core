@@ -68,7 +68,7 @@ class DeliveryApi extends Controller
             if($delivery->save()) {
                 // Mark LPO as delivered if it's a full delivery
                 if($delivery->delivery_made == 'full'){
-                    $lpo = Lpo::find($delivery->lpo_id);
+                    $lpo = Lpo::with('received_by')->find($delivery->lpo_id);
                     $lpo->date_delivered = date("Y-m-d H:i:s");
                     $lpo->delivery_Comment = $delivery->comment;
                     $lpo->delivery_made = $delivery->delivery_made;

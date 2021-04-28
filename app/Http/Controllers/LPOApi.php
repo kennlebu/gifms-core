@@ -531,7 +531,7 @@ class LPOApi extends Controller
     {
         $input = Request::all();
         
-        $lpo = Lpo::find($lpo_id);  
+        $lpo = Lpo::with('cancelled_by')->find($lpo_id);  
         
         if(!$this->checkVendor($lpo->preferred_supplier->id)) {
             return response()->json(['error'=>'Supplier is disabled'], 403);

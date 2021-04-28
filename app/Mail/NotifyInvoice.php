@@ -14,7 +14,7 @@ class NotifyInvoice extends Mailable
 {
     use Queueable, SerializesModels;
 
-    protected $invoice;
+    public $invoice;
     /**
      * Create a new message instance.
      *

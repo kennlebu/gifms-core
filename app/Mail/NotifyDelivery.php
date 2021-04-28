@@ -35,15 +35,6 @@ class NotifyDelivery extends Mailable
 
         $this->delivery = $delivery;
         $this->lpo = $lpo;
-
-        $this->accountant           = Staff::findOrFail(    (int)   Config::get('app.accountant_id'));
-        $this->financial_controller = Staff::findOrFail(    (int)   Config::get('app.financial_controller_id'));
-        $this->director             = Staff::findOrFail(    (int)   Config::get('app.director_id'));
-
-        $this->supplier = Supplier::find($lpo->supplier_id);
-        $this->received_by = Staff::find($delivery->received_by_id);
-        $this->received_for = Staff::find($delivery->received_for_id);
-        $this->preferred_quotation = LpoQuotation::find($lpo->preffered_quotation_id);
     }
 
     /**

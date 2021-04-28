@@ -8,7 +8,7 @@
         <div>
             Attn. {{$delivery->received_for->f_name ?? ''}}
             <br/>
-            <br/> The below delivery has been made by {{$lpo->supplier->supplier_name}} and received by {{$delivery->received_by->f_name}}
+            <br/> The below delivery has been made by {{$lpo->preferred_supplier->supplier_name}} and received by {{$delivery->received_by->f_name}}
             <br/>
 
         </div>

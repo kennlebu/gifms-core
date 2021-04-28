@@ -27,7 +27,8 @@ class Kernel extends ConsoleKernel
         Commands\RefractorSupplyCategories::class,
         Commands\RemoveVoucherDuplicates::class,
         Commands\RestoreVoucherNumbers::class,
-        Commands\RefractorSupplierServices::class
+        Commands\RefractorSupplierServices::class,
+        Commands\GenerateOldPVs::class
     ];
 
     /**
