@@ -2641,3 +2641,7 @@ CREATE TABLE `voucher_numbers_old` (
   `payable_type` text NULL,
   `payable_id` int NULL
 );
+
++~===== Add is_asset column on delivery items
+ALTER TABLE `delivery_items`
+ADD `is_asset` varchar(10) COLLATE 'latin1_swedish_ci' NULL AFTER `qty_description`;
