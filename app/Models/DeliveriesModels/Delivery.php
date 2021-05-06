@@ -49,7 +49,7 @@ class Delivery extends BaseModel
     public function getInAssetsAttribute(){
         $in_assets = true;
         foreach($this->items as $item){
-            if(!$item->in_assets){
+            if((empty($item->is_asset) || $item->is_asset == 'asset') && !$item->in_assets){
                 $in_assets = false;
             }
         }
@@ -71,9 +71,11 @@ class Delivery extends BaseModel
     public function getInInventoryAttribute(){
         $in_inventory = true;
         foreach($this->items as $item){
-            $inventory = Inventory::where('delivery_item_id', $item->id)->exists();
-            if(!$inventory){
-                $in_inventory = false;
+            if(empty($item->is_asset) || $item->is_asset == 'inventory') {
+                $inventory = Inventory::where('delivery_item_id', $item->id)->exists();
+                if(!$inventory){
+                    $in_inventory = false;
+                }
             }
         }
 

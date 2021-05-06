@@ -25,12 +25,18 @@ class DeliveryItem extends BaseModel
     {
         return $this->belongsTo('App\Models\Assets\Asset','asset_id');
     }
+
+    public function getInAssetsAttribute($value) {
+        return (empty($this->is_asset) || $this->is_asset == 'asset') ? $value : 1;
+    }
     
     public function getInInventoryAttribute(){
         $in_inventory = true;
-        $inventory = Inventory::where('delivery_item_id', $this->id)->exists();
-        if(!$inventory){
-            $in_inventory = false;
+        if(empty($this->is_asset) || $this->is_asset == 'inventory') {
+            $inventory = Inventory::where('delivery_item_id', $this->id)->exists();
+            if(!$inventory){
+                $in_inventory = false;
+            }
         }
 
         return $in_inventory;
