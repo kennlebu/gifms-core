@@ -630,6 +630,10 @@ class InvoiceApi extends Controller
                 return response()->json(['error'=>'Supplier is disabled'], 403);
             }
 
+            if(!empty($invoice->restriction)) {     // Restricted invoice
+                return response()->json(['error'=>'This invoice has been restricted'], 403);
+            }
+
             $approvable_status  = $invoice->status;
             $invoice->status_id = $this->getNextStatusId($invoice->status_id);
             
@@ -934,6 +938,10 @@ class InvoiceApi extends Controller
                 return response()->json(['error'=>'Supplier is disabled'], 403);
             }
 
+            if(!empty($invoice->restriction)) {     // Restricted invoice
+                return response()->json(['error'=>'This invoice has been restricted'], 403);
+            }
+
             if(!empty($invoice->lpo) && !empty($invoice->lpo->requisition)){
                 if($invoice->lpo->requisition->status_id != 3){
                     return response()->json(['error'=>'Requisition must be approved before you can submit this invoice'], 403);
@@ -1053,7 +1061,7 @@ class InvoiceApi extends Controller
 
             foreach ($invoice_ids as $key => $invoice_id) {
                 $invoice = Invoice::find($invoice_id);
-                if($this->checkVendor($invoice->supplier_id)) {
+                if(empty($invoice->restriction) && $this->checkVendor($invoice->supplier_id)) {
                     $this->approveInvoice($invoice_id, true);
                 }
             }
