@@ -2641,3 +2641,11 @@ CREATE TABLE `voucher_numbers_old` (
   `payable_type` text NULL,
   `payable_id` int NULL
 );
+
++~===== Add restriction column to invoices and claims and add payment restriction permission
+ALTER TABLE `invoices`
+ADD `restriction` text NULL AFTER `archived`;
+ALTER TABLE `claims`
+ADD `restriction` text NULL AFTER `archived`;
+INSERT INTO `permissions` (`name`, `display_name`, `description`, `entity`, `operation_type`, `at_status_id`, `approval_level_id`, `created_at`, `updated_at`, `deleted_at`)
+VALUES ('Restrict payments', 'Restrict payments', NULL, 'Payment', 'Processing', NULL, NULL, now(), now(), NULL);

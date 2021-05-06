@@ -612,4 +612,28 @@ class PaymentApi extends Controller
         }
         return $statuses;
     }
+
+    public function restrictTransaction() {
+        $input = Request::all();
+        if($input['payable_type'] == 'invoices') {
+            Invoice::where('id', $input['payable_id'])->update(['restriction' => $input['restriction']]);
+        }
+        elseif($input['payable_type'] == 'claims') {
+            Claim::where('id', $input['payable_id'])->update(['restriction' => $input['restriction']]);
+        }
+
+        return response()->json(['msg' => 'Success'], 200);
+    }
+
+    public function unRestrictTransaction() {
+        $input = Request::all();
+        if($input['payable_type'] == 'invoices') {
+            Invoice::where('id', $input['payable_id'])->update(['restriction' => null]);
+        }
+        elseif($input['payable_type'] == 'claims') {
+            Claim::where('id', $input['payable_id'])->update(['restriction' => null]);
+        }
+
+        return response()->json(['msg' => 'Success'], 200);
+    }
 }

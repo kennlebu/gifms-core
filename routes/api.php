@@ -3410,6 +3410,8 @@ Route::POST('/payment/get_by_voucher', 'PaymentApi@getPaymentByPV')->middleware(
 Route::POST('/payments/search', 'PaymentApi@searchTransactions')->middleware('jwt.auth');
 
 Route::GET('/payments/download-tax-file', 'PaymentApi@downloadTaxFile')->middleware('jwt.auth');
+Route::POST('/payments/restrict-transaction', 'PaymentApi@restrictTransaction')->middleware('jwt.auth');
+Route::POST('/payments/unrestrict-transaction', 'PaymentApi@unRestrictTransaction')->middleware('jwt.auth');
 
 
 
