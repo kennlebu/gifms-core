@@ -2641,6 +2641,9 @@ CREATE TABLE `voucher_numbers_old` (
   `payable_type` text NULL,
   `payable_id` int NULL
 );
++~===== Add is_asset column on delivery items
+ALTER TABLE `delivery_items`
+ADD `is_asset` varchar(10) COLLATE 'latin1_swedish_ci' NULL AFTER `qty_description`;
 
 +~===== Add restriction column to invoices and claims and add payment restriction permission
 ALTER TABLE `invoices`
@@ -2649,6 +2652,3 @@ ALTER TABLE `claims`
 ADD `restriction` text NULL AFTER `archived`;
 INSERT INTO `permissions` (`name`, `display_name`, `description`, `entity`, `operation_type`, `at_status_id`, `approval_level_id`, `created_at`, `updated_at`, `deleted_at`)
 VALUES ('Restrict payments', 'Restrict payments', NULL, 'Payment', 'Processing', NULL, NULL, now(), now(), NULL);
-+~===== Add is_asset column on delivery items
-ALTER TABLE `delivery_items`
-ADD `is_asset` varchar(10) COLLATE 'latin1_swedish_ci' NULL AFTER `qty_description`;
